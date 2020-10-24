@@ -1,0 +1,7 @@
+{
+  "name": "dev-sidecar-parent",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  }
+}
