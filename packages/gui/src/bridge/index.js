@@ -1,5 +1,5 @@
 import lodash from 'lodash'
-import DevSidecar from 'dev-sidecar'
+import DevSidecar from '@docmirror/dev-sidecar'
 import { ipcMain } from 'electron'
 import fs from 'fs'
 import JSON5 from 'json5'
@@ -23,15 +23,28 @@ const localApi = {
 
       // TODO 保存到文件
       console.log('save config ', saveConfig)
-      fs.writeFileSync('./config.json5', JSON5.stringify(saveConfig, null, 2))
+      fs.writeFileSync(_getConfigPath(), JSON5.stringify(saveConfig, null, 2))
       return saveConfig
     },
     reload () {
-      const file = fs.readFileSync('./config.json5')
+      const path = _getConfigPath()
+      if (!fs.existsSync(path)) {
+        return
+      }
+      const file = fs.readFileSync(path)
       const userConfig = JSON5.parse(file.toString())
       DevSidecar.api.config.set(userConfig)
+      return DevSidecar.api.config.get()
     }
   }
+}
+
+function _getConfigPath () {
+  const dir = './config/'
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir)
+  }
+  return dir + 'config.json5'
 }
 
 function _merge (defConfig, newConfig, saveConfig, target, self = false) {
@@ -62,7 +75,6 @@ function _mergeConfig (defObj, newObj) {
     }
     // 深度对比 是否有修改
     if (lodash.isEqual(newItem, defItem)) {
-      console.log('equle', key, newItem, defItem)
       // 没有修改则删除
       delete newObj[key]
     }
@@ -75,10 +87,10 @@ export default {
     // 接收view的方法调用
     ipcMain.handle('apiInvoke', async (event, args) => {
       const api = args[0]
-      let target = lodash.get(DevSidecar.api, api)
+      let target = lodash.get(localApi, api)
       if (target == null) {
-        console.log('get local api')
-        target = lodash.get(localApi, api)
+        console.log('get core api')
+        target = lodash.get(DevSidecar.api, api)
       }
       if (target == null) {
         console.log('找不到此接口方法：', api)
@@ -96,6 +108,9 @@ export default {
       console.log('bridge on status', event)
       win.webContents.send('status', { ...event })
     })
+
+    // 合并用户配置
+    localApi.config.reload()
   },
   devSidecar: DevSidecar
 }

@@ -80,7 +80,7 @@ export default {
         key: '代理服务',
         loading: false,
         doClick: (checked) => {
-          this.onSwitchClick(this.server, api.server.start, api.server.close, checked)
+          this.onServerClick(checked)
         }
       },
       proxy: undefined,
@@ -96,17 +96,19 @@ export default {
     }
   },
   created () {
-    api.config.set().then(() => {
-      return api.config.get().then(ret => {
-        this.config = ret
-        this.start(true)
-      })
-    }).then(() => {
-      this.proxy = this.createProxyBtns()
+    this.proxy = this.createProxyBtns()
+    this.reloadConfig().then(() => {
+      this.start(true)
       console.log('proxy', this.proxy)
     })
   },
   methods: {
+    reloadConfig () {
+      return api.config.reload().then(ret => {
+        this.config = ret
+        return ret
+      })
+    },
     _lang (key, parent) {
       const label = parent ? lodash.get(parent, key) : lodash.get(this.langSetting, key)
       if (label) {
@@ -147,6 +149,9 @@ export default {
         this.apiCall(btn, closeApi)
       }
     },
+    onServerClick (checked) {
+      this.onSwitchClick(this.server, api.server.start, api.server.close, checked)
+    },
     start (checked) {
       this.apiCall(this.startup, api.startup)
     },
@@ -156,7 +161,13 @@ export default {
     onConfigChanged (newConfig) {
       console.log('config chagned', newConfig)
       api.config.save(newConfig).then(() => {
-        api.config.reload()
+        return this.reloadConfig()
+      }).then(() => {
+        if (this.status.server) {
+          this.onServerClick(false).then(() => {
+            this.onServerClick(true)
+          })
+        }
       })
     }
   }

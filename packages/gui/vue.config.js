@@ -25,12 +25,8 @@ module.exports = {
       builderOptions: {
         extraResources: [
           {
-            from: 'src/config.json5',
-            to: 'app/config.json5'
-          },
-          {
-            from: 'public',
-            to: 'public'
+            from: 'extra',
+            to: 'extra'
           }
         ]
       }

@@ -27,7 +27,10 @@ module.exports = {
     proxy,
     config,
     startup: async (newConfig) => {
-      config.set(newConfig)
+      if(newConfig){
+        config.set(newConfig)
+      }
+    
       try {
         if (config.get().setting.startup.server) {
           server.start(newConfig)

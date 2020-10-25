@@ -22,8 +22,8 @@
       <a-tab-pane tab="DNS设置" key="2">
         <div>
           <div>某些域名有时候需要通过其他DNS服务器获取到的IP才可以访问</div>
-          <a-row :gutter="10" style="margin-top: 10px" v-for="item in dnsMappings" :key = 'item.key'>
-            <a-col :span="18">
+          <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) in dnsMappings" :key = 'item.key'>
+            <a-col :span="16">
               <a-input v-model="item.key"></a-input>
             </a-col>
             <a-col :span="6">
@@ -31,8 +31,15 @@
                 <a-select-option value="usa">USA</a-select-option>
                 <a-select-option value="aliyun">Aliyun</a-select-option>
               </a-select>
+              <a-button style="margin-left:10px" type="danger" icon="minus" @click="deleteDnsMapping(item,index)" />
             </a-col>
           </a-row>
+          <a-row style="margin-top:10px">
+            <a-col>
+              <a-button  type="primary" icon="plus" @click="addDnsMapping(item)" />
+            </a-col>
+          </a-row>
+
         </div>
       </a-tab-pane>
       <a-tab-pane tab="启动设置" key="3" >
@@ -119,13 +126,27 @@ export default {
           title: '提示',
           content: '是否需要保存？',
           onOk: () => {
-            this.$emit('change', this.targetConfig)
+            this.doSave()
           },
           onCancel () {}
         })
       }
 
       this.$emit('update:visible', false)
+    },
+    doSave () {
+      const mapping = {}
+      for (const item of this.dnsMappings) {
+        mapping[item.key] = item.value
+      }
+      this.targetConfig.dns.mapping = mapping
+      this.$emit('change', this.targetConfig)
+    },
+    deleteDnsMapping (item, index) {
+      this.dnsMappings.splice(index, 1)
+    },
+    addDnsMapping () {
+      this.dnsMappings.push({ key: '', value: 'usa' })
     }
   }
 }

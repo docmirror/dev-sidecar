@@ -9,7 +9,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
-
+let tray
 let forceClose = false
 
 // Scheme must be registered before the app is ready
@@ -33,8 +33,7 @@ function setTray (app) {
     }
   ]
   // 设置系统托盘图标
-  const iconPath = path.join(__dirname, '../public/favicon.ico')
-
+  const iconPath = path.join(__dirname, '../extra/favicon.ico')
   const appTray = new Tray(iconPath)
 
   // 图标的上下文菜单
@@ -78,10 +77,9 @@ function createWindow () {
     win.loadURL('app://./index.html')
   }
 
-  win.on('closed', (e) => {
+  win.on('closed', async (e) => {
     win = null
-
-    bridge.devSidecar.expose.api.shutdown()
+    await bridge.devSidecar.api.shutdown()
   })
 
   win.on('close', (e) => {
@@ -122,9 +120,13 @@ app.on('ready', async () => {
     // }
   }
   createWindow()
-  // 最小化到托盘
-  setTray(app)
   bridge.init(win)
+  try {
+    // 最小化到托盘
+    tray = setTray(app)
+  } catch (err) {
+    console.log('err', err)
+  }
 })
 
 // Exit cleanly on request from parent process in development mode.

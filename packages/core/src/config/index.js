@@ -28,44 +28,37 @@ module.exports = {
     // ],
     'raw.githubusercontent.com': [
       {
-        regexp: '.*',
         proxy: 'https://raw.fastgit.org'
       }
     ],
     'github.githubassets.com': [
       {
-        regexp: '.*',
         proxy: 'https://assets.fastgit.org'
       }
     ],
     'customer-stories-feed.github.com': [
       {
-        regexp: '.*',
         proxy: 'https://customer-stories-feed.fastgit.org'
       }
     ],
     // google cdn
     'ajax.googleapis.com': [
       {
-        regexp: '.*',
         proxy: 'https://ajax.loli.net'
       }
     ],
     'fonts.googleapis.com': [
       {
-        regexp: '.*',
         proxy: 'https://fonts.loli.net'
       }
     ],
     'themes.googleapis.com': [
       {
-        regexp: '.*',
         proxy: 'https://themes.loli.net'
       }
     ],
     'fonts.gstatic.com': [
       {
-        regexp: '.*',
         proxy: 'https://gstatic.loli.net'
       }
     ],
@@ -77,20 +70,17 @@ module.exports = {
     ],
     'secure.gravatar.com': [
       {
-        regexp: '.*',
         redirect: 'https://gravatar.loli.net'
       }
     ],
     'clients*.google.com': [
       {
-        regexp: '.*',
-        redirect: 'https://localhost:99999'
+        abort:true
       }
     ],
     'lh*.googleusercontent.com': [
       {
-        regexp: '.*',
-        redirect: 'https://localhost:99999'
+        abort:true
       }
     ]
   },

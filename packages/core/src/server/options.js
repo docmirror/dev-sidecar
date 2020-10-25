@@ -46,15 +46,23 @@ module.exports = (config) => {
 
       for (const interceptOpt of interceptOpts) { // 遍历拦截配置
         let regexpList
-        if (interceptOpt.regexp instanceof Array) {
-          regexpList = interceptOpt.regexp
-        } else {
-          regexpList = [interceptOpt.regexp]
+        if(interceptOpt.regexp!=null){
+          if (interceptOpt.regexp instanceof Array) {
+            regexpList = interceptOpt.regexp
+          } else {
+            regexpList = [interceptOpt.regexp]
+          }
+        }else{
+          regexpList = [true]
         }
 
+
+
         for (const regexp of regexpList) { // 遍历regexp配置
-          if (!isMatched(req.url, regexp)) {
-            continue
+          if(regexp!==true){
+            if (!isMatched(req.url, regexp)) {
+              continue
+            }
           }
           for (const interceptImpl of interceptors) {
             // 根据拦截配置挑选合适的拦截器来处理
