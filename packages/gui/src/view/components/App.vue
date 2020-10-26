@@ -2,7 +2,7 @@
   <div id="app">
     <template>
       <div style="margin:auto">
-        <div style="text-align: center"><img height="80px" src="/logo.svg"></div>
+        <div style="text-align: center"><img height="80px" src="/logo/logo-lang.svg"></div>
         <a-card title="DevSidecar-开发者辅助工具 " style="width: 500px;margin:auto">
           <div style="display: flex; align-items:center;justify-content:space-around;flex-direction: row">
             <div style="text-align: center">

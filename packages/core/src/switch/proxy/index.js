@@ -1,5 +1,6 @@
 const systemProxy = require('./impl/system-proxy')
 const npmProxy = require('./impl/npm-proxy')
+const yarnProxy = require('./impl/yarn-proxy')
 const event = require('../../event')
 const config = require('../../config')
 function createProxyApi (type, impl) {
@@ -28,5 +29,6 @@ function createProxyApi (type, impl) {
 
 module.exports = {
   system: createProxyApi('system', systemProxy),
-  npm: createProxyApi('npm', npmProxy)
+  npm: createProxyApi('npm', npmProxy),
+  yarn: createProxyApi('yarn', yarnProxy)
 }

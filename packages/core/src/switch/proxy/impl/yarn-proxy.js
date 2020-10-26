@@ -2,7 +2,8 @@ const cmd = require('node-cmd')
 const util = require('util')
 const winExec = util.promisify(cmd.get, { multiArgs: true, context: cmd })
 const os = require('os')
-
+// eslint-disable-next-line no-unused-vars
+const config = require('../../../lib/proxy/common/config')
 class SystemProxy {
   static async setProxy (ip, port) {
     throw new Error('You have to implement the method setProxy!')
@@ -41,8 +42,8 @@ class WindowsSystemProxy extends SystemProxy {
     await winExec('yarn config  delete https-proxy')
     console.log('yarn https proxy unset success')
 
-    // await winExec(`yarn config  delete cafile`)
-    // console.log('yarn cafile unset success')
+    await winExec('yarn config  delete cafile')
+    console.log('yarn cafile unset success')
     await winExec(' yarn config delete strict-ssl')
     console.log('yarn strict-ssl true success')
   }

@@ -75,12 +75,12 @@ module.exports = {
     ],
     'clients*.google.com': [
       {
-        abort:true
+        abort: true
       }
     ],
     'lh*.googleusercontent.com': [
       {
-        abort:true
+        abort: true
       }
     ]
   },
@@ -109,7 +109,8 @@ module.exports = {
       server: true,
       proxy: {
         system: true,
-        npm: true
+        npm: true,
+        yarn: true
       }
     }
   }
