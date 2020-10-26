@@ -2,7 +2,7 @@
   "name": "@docmirror/dev-sidecar-gui",
   "version": "1.0.0",
   "private": false,
-  "license": "MPL2.0",
+  "license": "MPL-2.0",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

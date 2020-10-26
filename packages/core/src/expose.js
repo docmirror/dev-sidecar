@@ -13,7 +13,6 @@ async function proxyStartup ({ ip, port }) {
 }
 async function proxyShutdown () {
   for (const key in proxy) {
-    console.log('status', status)
     if (status.proxy[key] === false) {
       continue
     }

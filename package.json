@@ -1,6 +1,7 @@
 {
   "name": "dev-sidecar-parent",
-  "private": true,
+  "private": false,
+  "license": "MPL-2.0",
   "devDependencies": {
     "lerna": "^3.22.1"
   }

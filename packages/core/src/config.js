@@ -1,6 +1,6 @@
 const lodash = require('lodash')
 const defConfig = require('./config/index.js')
-let configTarget = defConfig
+let configTarget = lodash.cloneDeep(defConfig)
 
 function _deleteDisabledItem (target, objKey) {
   const obj = lodash.get(target, objKey)
@@ -18,18 +18,20 @@ module.exports = {
     if (newConfig == null) {
       return
     }
+    const merged = lodash.cloneDeep(newConfig)
     const clone = lodash.cloneDeep(defConfig)
-    lodash.merge(clone, newConfig)
+    lodash.merge(merged, clone)
+    lodash.merge(merged, newConfig)
 
-    _deleteDisabledItem(clone, 'intercepts')
-    _deleteDisabledItem(clone, 'dns.mapping')
-    configTarget = clone
+    _deleteDisabledItem(merged, 'intercepts')
+    _deleteDisabledItem(merged, 'dns.mapping')
+    configTarget = merged
     return configTarget
   },
   getDefault () {
-    return defConfig
+    return lodash.cloneDeep(defConfig)
   },
   resetDefault () {
-    configTarget = defConfig
+    configTarget = lodash.cloneDeep(defConfig)
   }
 }

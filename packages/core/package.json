@@ -6,7 +6,7 @@
   "depedencies": {},
   "keywords": [],
   "author": "docmirror.cn",
-  "license": "MPL2.0",
+  "license": "MPL-2.0",
   "private": false,
   "scripts": {
     "start": "node start.js",

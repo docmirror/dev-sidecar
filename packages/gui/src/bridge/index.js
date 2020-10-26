@@ -12,7 +12,7 @@ const localApi = {
      */
     save (newConfig) {
       // 对比默认config的异同
-      const defConfig = DevSidecar.api.config.get()
+      const defConfig = DevSidecar.api.config.getDefault()
 
       const saveConfig = {}
 
@@ -22,7 +22,7 @@ const localApi = {
       _merge(defConfig, newConfig, saveConfig, 'setting.startup.proxy')
 
       // TODO 保存到文件
-      console.log('save config ', saveConfig)
+      // console.log('save config ', saveConfig)
       fs.writeFileSync(_getConfigPath(), JSON5.stringify(saveConfig, null, 2))
       return saveConfig
     },
@@ -79,6 +79,7 @@ function _mergeConfig (defObj, newObj) {
       delete newObj[key]
     }
   }
+  console.log('newObj', newObj)
   return newObj
 }
 
@@ -89,7 +90,6 @@ export default {
       const api = args[0]
       let target = lodash.get(localApi, api)
       if (target == null) {
-        console.log('get core api')
         target = lodash.get(DevSidecar.api, api)
       }
       if (target == null) {
@@ -100,7 +100,7 @@ export default {
         param = args[1]
       }
       const ret = target(param)
-      console.log('api:', api, 'ret:', ret)
+      // console.log('api:', api, 'ret:', ret)
       return ret
     })
     // 注册从core里来的事件，并转发给view

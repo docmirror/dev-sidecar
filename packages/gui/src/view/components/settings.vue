@@ -22,21 +22,24 @@
       <a-tab-pane tab="DNS设置" key="2">
         <div>
           <div>某些域名有时候需要通过其他DNS服务器获取到的IP才可以访问</div>
-          <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) in dnsMappings" :key = 'item.key'>
-            <a-col :span="16">
-              <a-input v-model="item.key"></a-input>
+          <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of dnsMappings" :key = 'index'>
+            <a-col :span="14">
+              <a-input :disabled="item.value ===false" v-model="item.key"></a-input>
             </a-col>
-            <a-col :span="6">
-              <a-select v-model="item.value">
+            <a-col :span="5">
+              <a-select :disabled="item.value ===false" v-model="item.value">
                 <a-select-option value="usa">USA</a-select-option>
                 <a-select-option value="aliyun">Aliyun</a-select-option>
               </a-select>
-              <a-button style="margin-left:10px" type="danger" icon="minus" @click="deleteDnsMapping(item,index)" />
+            </a-col>
+            <a-col :span="3">
+              <a-button v-if="item.value!==false" style="margin-left:10px" type="danger" icon="minus" @click="deleteDnsMapping(item,index)" />
+              <a-button v-if="item.value===false" style="margin-left:10px" type="primary" icon="checked" @click="restoreDefDnsMapping(item,index)" ></a-button>
             </a-col>
           </a-row>
           <a-row style="margin-top:10px">
             <a-col>
-              <a-button  type="primary" icon="plus" @click="addDnsMapping(item)" />
+              <a-button  type="primary" icon="plus" @click="addDnsMapping()" />
             </a-col>
           </a-row>
 
@@ -89,8 +92,7 @@ export default {
   data () {
     return {
       targetConfig: {},
-      dnsMappings: [],
-      changed: false
+      dnsMappings: []
     }
   },
   created () {
@@ -109,7 +111,6 @@ export default {
       }
     },
     onJsonChange (config) {
-      this.changed = true
     },
     afterVisibleChange (val) {
       console.log('visible', val)
@@ -121,7 +122,7 @@ export default {
       this.$emit('update:visible', true)
     },
     onClose () {
-      if (this.changed) {
+      if (this.isChanged()) {
         this.$confirm({
           title: '提示',
           content: '是否需要保存？',
@@ -134,16 +135,25 @@ export default {
 
       this.$emit('update:visible', false)
     },
-    doSave () {
+    syncTargetConfig () {
       const mapping = {}
       for (const item of this.dnsMappings) {
         mapping[item.key] = item.value
       }
       this.targetConfig.dns.mapping = mapping
+    },
+    isChanged () {
+      this.syncTargetConfig()
+      return !lodash.isEqual(this.config, this.targetConfig)
+    },
+    doSave () {
       this.$emit('change', this.targetConfig)
     },
     deleteDnsMapping (item, index) {
       this.dnsMappings.splice(index, 1)
+    },
+    restoreDefDnsMapping (item, index) {
+
     },
     addDnsMapping () {
       this.dnsMappings.push({ key: '', value: 'usa' })

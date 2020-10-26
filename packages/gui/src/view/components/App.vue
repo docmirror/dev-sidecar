@@ -144,13 +144,13 @@ export default {
 
     onSwitchClick (btn, openApi, closeApi, checked) {
       if (checked) {
-        this.apiCall(btn, openApi)
+        return this.apiCall(btn, openApi)
       } else {
-        this.apiCall(btn, closeApi)
+        return this.apiCall(btn, closeApi)
       }
     },
     onServerClick (checked) {
-      this.onSwitchClick(this.server, api.server.start, api.server.close, checked)
+      return this.onSwitchClick(this.server, api.server.start, api.server.close, checked)
     },
     start (checked) {
       this.apiCall(this.startup, api.startup)
@@ -164,8 +164,8 @@ export default {
         return this.reloadConfig()
       }).then(() => {
         if (this.status.server) {
-          this.onServerClick(false).then(() => {
-            this.onServerClick(true)
+          return this.onServerClick(false).then(() => {
+            return this.onServerClick(true)
           })
         }
       })
@@ -190,5 +190,8 @@ export default {
 }
 .big_button >button i{
   size:40px
+}
+div.ant-form-item{
+  margin-bottom: 10px;
 }
 </style>
