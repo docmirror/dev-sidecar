@@ -29,8 +29,9 @@ bindApi('server.close')
 
 bindApi('proxy.system.open')
 bindApi('proxy.system.close')
-
 bindApi('proxy.npm.open')
 bindApi('proxy.npm.close')
+bindApi('proxy.yarn.open')
+bindApi('proxy.yarn.close')
 
 export default apiObj

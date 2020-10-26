@@ -29,11 +29,11 @@ class WindowsSystemProxy extends SystemProxy {
     ret = await winExec(`yarn config set https-proxy=http://${ip}:${port}`)
     console.log('yarn https proxy set success', ret)
 
-    // ret = await winExec(`yarn config set cafile ${config.getDefaultCAKeyPath()}`)
-    // console.log('yarn cafile set success', ret)
+    ret = await winExec(`yarn config set ca ${config.getDefaultCAKeyPath()}`)
+    console.log('yarn cafile set success', ret)
 
-    ret = await winExec('yarn config set strict-ssl false')
-    console.log('yarn strict-ssl false success', ret)
+    // ret = await winExec('yarn config set strict-ssl false')
+    // console.log('yarn strict-ssl false success', ret)
   }
 
   static async unsetProxy () {
@@ -42,10 +42,11 @@ class WindowsSystemProxy extends SystemProxy {
     await winExec('yarn config  delete https-proxy')
     console.log('yarn https proxy unset success')
 
-    await winExec('yarn config  delete cafile')
+    await winExec('yarn config  delete ca')
     console.log('yarn cafile unset success')
-    await winExec(' yarn config delete strict-ssl')
-    console.log('yarn strict-ssl true success')
+
+    // await winExec(' yarn config delete strict-ssl')
+    // console.log('yarn strict-ssl true success')
   }
 
   static _asyncRegSet (regKey, name, type, value) {
