@@ -82,6 +82,13 @@ module.exports = {
       {
         abort: true
       }
+    ],
+    // https://mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
+    '*.s3.amazonaws.com': [
+      {
+        regexp: '/sqlite3/.*',
+        redirect: 'http://npm.taobao.org/mirrors'
+      }
     ]
   },
   dns: {
@@ -104,11 +111,18 @@ module.exports = {
       // "avatars*.githubusercontent.com": "usa"
     }
   },
-  mirrors: {
-    SASS_BINARY_SITE: 'https://npm.taobao.org/mirrors/node-sass/',
-    PHANTOMJS_CDNURL: 'https://npm.taobao.org/mirrors/phantomjs/',
-    ELECTRON_MIRROR: 'https://npm.taobao.org/mirrors/electron/',
-    CYPRESS_DOWNLOAD_MIRROR: 'https://cdn.cypress.io'
+  variables: {
+    npm: {
+      SASS_BINARY_SITE: 'https://npm.taobao.org/mirrors/node-sass/',
+      PHANTOMJS_CDNURL: 'https://npm.taobao.org/mirrors/phantomjs/',
+      ELECTRON_MIRROR: 'https://npm.taobao.org/mirrors/electron/',
+      CYPRESS_DOWNLOAD_MIRROR: 'https://cdn.cypress.io',
+      NVM_NODEJS_ORG_MIRROR: 'http://npm.taobao.org/mirrors/node',
+      CHROMEDRIVER_CDNURL: 'http://npm.taobao.org/mirrors/chromedriver',
+      OPERADRIVER: 'http://npm.taobao.org/mirrors/operadriver',
+      ELECTRON_BUILDER_BINARIES_MIRROR: 'http://npm.taobao.org/mirrors/electron-builder-binaries/',
+      PYTHON_MIRROR: 'http://npm.taobao.org/mirrors/python'
+    }
   },
   setting: {
     startup: { // 开机启动
@@ -118,8 +132,8 @@ module.exports = {
         npm: true,
         yarn: true
       },
-      mirrors: {
-        set: true
+      variables: {
+        npm: true
       }
     }
   }

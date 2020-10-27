@@ -28,7 +28,7 @@ class WindowsSystemProxy extends SystemProxy {
     ret = await winExec(`npm config set https-proxy=http://${ip}:${port}`)
     console.log('npm https proxy set success', ret)
 
-    ret = await winExec(`npm config set ca ${config.getDefaultCAKeyPath()}`)
+    ret = await winExec(`npm config set ca ${config.getDefaultCACertPath()}`)
     console.log('npm cafile set success', ret)
 
     // ret = await winExec('npm config set strict-ssl false')

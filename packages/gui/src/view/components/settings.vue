@@ -17,19 +17,24 @@
       :style="{ height: '100%' }"
     >
       <a-tab-pane tab="拦截设置" key="1"  >
-        <vue-json-editor  style="height:100%;" ref="editor" v-model="targetConfig.intercepts" :show-btns="false" :expandedOnStart="true" @json-change="onJsonChange" ></vue-json-editor>
+        <vue-json-editor  style="height:100%;" ref="editor" v-model="targetConfig.intercepts" mode="code" :show-btns="false" :expandedOnStart="true" @json-change="onJsonChange" ></vue-json-editor>
       </a-tab-pane>
       <a-tab-pane tab="DNS设置" key="2">
         <div>
           <div>某些域名有时候需要通过其他DNS服务器获取到的IP才可以访问</div>
+          <a-row style="margin-top:10px">
+            <a-col>
+              <a-button  type="primary" icon="plus" @click="addDnsMapping()" />
+            </a-col>
+          </a-row>
           <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of dnsMappings" :key = 'index'>
             <a-col :span="14">
               <a-input :disabled="item.value ===false" v-model="item.key"></a-input>
             </a-col>
             <a-col :span="5">
               <a-select :disabled="item.value ===false" v-model="item.value">
-                <a-select-option value="usa">USA</a-select-option>
-                <a-select-option value="aliyun">Aliyun</a-select-option>
+                <a-select-option value="usa">USA DNS</a-select-option>
+                <a-select-option value="aliyun">Aliyun DNS</a-select-option>
               </a-select>
             </a-col>
             <a-col :span="3">
@@ -37,28 +42,24 @@
               <a-button v-if="item.value===false" style="margin-left:10px" type="primary" icon="checked" @click="restoreDefDnsMapping(item,index)" ></a-button>
             </a-col>
           </a-row>
-          <a-row style="margin-top:10px">
-            <a-col>
-              <a-button  type="primary" icon="plus" @click="addDnsMapping()" />
-            </a-col>
-          </a-row>
+
         </div>
       </a-tab-pane>
-      <a-tab-pane tab="镜像变量" key="3">
+      <a-tab-pane tab="环境变量" key="3">
         <div>
-          <div>某些库需要自己设置代理环境变量，才能安装，比如：electron</div>
+          <div>某些库需要自己设置镜像变量，才能下载，比如：electron</div>
           <div>
             <a-form-item label="镜像环境变量" >
-              <a-switch  v-model="targetConfig.setting.startup.mirrors.set"  default-checked   v-on:click="(checked)=>{targetConfig.setting.startup.mirrors.set = checked}">
+              <a-switch  v-model="targetConfig.setting.startup.variables.npm"  default-checked   v-on:click="(checked)=>{targetConfig.setting.startup.variables.npm = checked}">
                 <a-icon slot="checkedChildren" type="check" />
                 <a-icon slot="unCheckedChildren" type="close" />
               </a-switch>
               启动后自动检查设置
 
-              <a-button style="margin-left:10px" @click="doSetMirrorEnvNow">立即设置</a-button>
+              <a-button style="margin-left:10px" @click="doSetNpmVariablesNow">立即设置</a-button>
             </a-form-item>
           </div>
-          <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of mirrorEnvs" :key = 'index'>
+          <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of npmVariables" :key = 'index'>
             <a-col :span="10">
               <a-input :disabled="item.key ===false" v-model="item.key"></a-input>
             </a-col>
@@ -121,7 +122,7 @@ export default {
     return {
       targetConfig: {},
       dnsMappings: [],
-      mirrorEnvs: []
+      npmVariables: []
     }
   },
   created () {
@@ -139,8 +140,8 @@ export default {
         })
       }
 
-      api.config.getMirrorEnv().then(ret => {
-        this.mirrorEnvs = ret
+      api.config.getVariables('npm').then(ret => {
+        this.npmVariables = ret
       })
     },
     onJsonChange (config) {
@@ -159,6 +160,8 @@ export default {
         this.$confirm({
           title: '提示',
           content: '是否需要保存？',
+          cancelText: '取消',
+          okText: '确定',
           onOk: () => {
             this.doSave()
           },
@@ -175,11 +178,11 @@ export default {
       }
       this.targetConfig.dns.mapping = mapping
 
-      const mirrors = {}
-      for (const item of this.mirrorEnvs) {
-        mirrors[item.key] = item.value
+      const variables = {}
+      for (const item of this.npmVariables) {
+        variables[item.key] = item.value
       }
-      this.targetConfig.mirrors = mirrors
+      this.targetConfig.variables.npm = variables
     },
     isChanged () {
       this.syncTargetConfig()
@@ -197,22 +200,22 @@ export default {
 
     },
     addDnsMapping () {
-      this.dnsMappings.push({ key: '', value: 'usa' })
+      this.dnsMappings.unshift({ key: '', value: 'usa' })
     },
-    doSetMirrorEnvNow () {
+    doSetNpmVariablesNow () {
       this.syncTargetConfig()
       this.doSave().then(() => {
-        return api.config.setupMirrors()
+        return api.config.setVariables('npm')
       }).then(() => {
-        return api.config.getMirrorEnv().then(ret => {
-          this.mirrorEnvs = ret
+        return api.config.getVariables('npm').then(ret => {
+          this.npmVariables = ret
         })
       }).then(() => {
         this.$message.info('设置成功')
       })
     },
-    addMirrors () {
-      this.mirrorEnvs.push({ key: '', value: '', exists: false })
+    addNpmVariable () {
+      this.npmVariables.push({ key: '', value: '', exists: false })
     }
   }
 }

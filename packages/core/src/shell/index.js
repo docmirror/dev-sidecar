@@ -1,10 +1,14 @@
 const killByPort = require('./scripts/kill-by-port')
 const setupCa = require('./scripts/setup-ca')
-const getEnv = require('./scripts/get-env')
-const setEnv = require('./scripts/set-env')
+const getSystemEnv = require('./scripts/get-system-env')
+const setSystemEnv = require('./scripts/set-system-env')
+const getNpmEnv = require('./scripts/get-npm-env')
+const setNpmEnv = require('./scripts/set-npm-env')
 module.exports = {
   killByPort,
   setupCa,
-  getEnv,
-  setEnv
+  getSystemEnv,
+  setSystemEnv,
+  getNpmEnv,
+  setNpmEnv
 }

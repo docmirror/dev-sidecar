@@ -29,7 +29,7 @@ class WindowsSystemProxy extends SystemProxy {
     ret = await winExec(`yarn config set https-proxy=http://${ip}:${port}`)
     console.log('yarn https proxy set success', ret)
 
-    ret = await winExec(`yarn config set ca ${config.getDefaultCAKeyPath()}`)
+    ret = await winExec(`yarn config set ca ${config.getDefaultCACertPath()}`)
     console.log('yarn cafile set success', ret)
 
     // ret = await winExec('yarn config set strict-ssl false')

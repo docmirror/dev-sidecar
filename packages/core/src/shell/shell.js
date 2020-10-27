@@ -34,7 +34,8 @@ class DarwinSystemShell extends SystemShell {
 }
 
 class WindowsSystemShell extends SystemShell {
-  static async exec (cmds, { type = 'ps' }) {
+  static async exec (cmds, args = { type: 'ps' }) {
+    const { type } = args
     if (cmds instanceof String) {
       cmds = [cmds]
     }
@@ -45,12 +46,11 @@ class WindowsSystemShell extends SystemShell {
       })
 
       for (const cmd of cmds) {
-        console.log('ps:', cmd)
         ps.addCommand(cmd)
       }
 
       const ret = await ps.invoke()
-      console.log('ps complete:', ret)
+      console.log('ps complete:', cmds, ret)
       return ret
     } else {
       let compose = 'chcp 65001  '

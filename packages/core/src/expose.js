@@ -36,8 +36,8 @@ module.exports = {
         }
         await proxyStartup({ ip: '127.0.0.1', port: config.get().server.port })
 
-        if (startup.mirrors.set) {
-          await config.setupMirrors()
+        if (startup.variables.npm) {
+          await config.setVariables('npm')
         }
       } catch (error) {
         console.log(error)

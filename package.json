@@ -4,5 +4,8 @@
   "license": "MPL-2.0",
   "devDependencies": {
     "lerna": "^3.22.1"
+  },
+  "dependencies": {
+    "sqlite3": "^5.0.0"
   }
 }

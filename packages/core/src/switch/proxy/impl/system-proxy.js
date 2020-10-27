@@ -4,7 +4,6 @@ const childProcess = require('child_process')
 const _exec = childProcess.exec
 const Registry = require('winreg')
 // const cmd = require('node-cmd')
-console.log('childProcess', childProcess)
 const exec = util.promisify(_exec)
 const refreshInternetPs = require('./refresh-internet')
 const Shell = require('node-powershell')

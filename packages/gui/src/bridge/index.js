@@ -97,7 +97,6 @@ function _mergeConfig (defObj, newObj) {
       delete newObj[key]
     }
   }
-  console.log('newObj', newObj)
   return newObj
 }
 
