@@ -6,7 +6,6 @@ const createRequestHandler = require('./createRequestHandler')
 const createConnectHandler = require('./createConnectHandler')
 const createFakeServerCenter = require('./createFakeServerCenter')
 const createUpgradeHandler = require('./createUpgradeHandler')
-
 module.exports = {
   createProxy ({
     port = config.defaultPort,

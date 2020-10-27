@@ -10,13 +10,15 @@
     "electron:build": "vue-cli-service electron:build",
     "electron": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten"
   },
   "main": "background.js",
   "dependencies": {
     "@docmirror/dev-sidecar": "1.0.0",
     "ant-design-vue": "^1.6.5",
     "core-js": "^3.6.5",
+    "electron-updater": "^4.3.5",
     "es-abstract": "^1.17.7",
     "json5": "^2.1.3",
     "lodash": "^4.17.20",

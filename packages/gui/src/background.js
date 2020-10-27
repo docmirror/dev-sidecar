@@ -1,4 +1,5 @@
 'use strict'
+/* global __static */
 import path from 'path'
 import { app, protocol, BrowserWindow, Menu, Tray } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
@@ -9,7 +10,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
-let tray
+// eslint-disable-next-line no-unused-vars
+let tray // 防止被内存清理
 let forceClose = false
 
 // Scheme must be registered before the app is ready
@@ -28,7 +30,7 @@ function setTray (app) {
       label: '退出',
       click: () => {
         forceClose = true
-        app.quit()
+        quit(app)
       }
     }
   ]
@@ -57,14 +59,16 @@ function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 700,
     webPreferences: {
       enableRemoteModule: true,
       // preload: path.join(__dirname, 'preload.js'),
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true// process.env.ELECTRON_NODE_INTEGRATION
-    }
+    },
+    // eslint-disable-next-line no-undef
+    icon: path.join(__static, 'icon.png')
   })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -79,7 +83,7 @@ function createWindow () {
 
   win.on('closed', async (e) => {
     win = null
-    await bridge.devSidecar.api.shutdown()
+    tray = null
   })
 
   win.on('close', (e) => {
@@ -95,7 +99,7 @@ app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    app.quit()
+    quit(app)
   }
 })
 
@@ -129,17 +133,22 @@ app.on('ready', async () => {
   }
 })
 
+function quit (app) {
+  bridge.devSidecar.api.shutdown().then(() => {
+    app.quit()
+  })
+}
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
     process.on('message', (data) => {
       if (data === 'graceful-exit') {
-        app.quit()
+        quit(app)
       }
     })
   } else {
     process.on('SIGTERM', () => {
-      app.quit()
+      quit(app)
     })
   }
 }

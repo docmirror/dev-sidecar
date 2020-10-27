@@ -104,6 +104,12 @@ module.exports = {
       // "avatars*.githubusercontent.com": "usa"
     }
   },
+  mirrors: {
+    SASS_BINARY_SITE: 'https://npm.taobao.org/mirrors/node-sass/',
+    PHANTOMJS_CDNURL: 'https://npm.taobao.org/mirrors/phantomjs/',
+    ELECTRON_MIRROR: 'https://npm.taobao.org/mirrors/electron/',
+    CYPRESS_DOWNLOAD_MIRROR: 'https://cdn.cypress.io'
+  },
   setting: {
     startup: { // 开机启动
       server: true,
@@ -111,6 +117,9 @@ module.exports = {
         system: true,
         npm: true,
         yarn: true
+      },
+      mirrors: {
+        set: true
       }
     }
   }

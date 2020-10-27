@@ -5,6 +5,14 @@ import fs from 'fs'
 import JSON5 from 'json5'
 
 const localApi = {
+  getApiList () {
+    const core = lodash.cloneDeep(DevSidecar.api)
+    const local = lodash.cloneDeep(localApi)
+    lodash.merge(core, local)
+    const list = []
+    _deepFindFunction(list, core, '')
+    return list
+  },
   config: {
     /**
      * 保存自定义的 config
@@ -21,20 +29,30 @@ const localApi = {
       _merge(defConfig, newConfig, saveConfig, 'setting.startup.server', true)
       _merge(defConfig, newConfig, saveConfig, 'setting.startup.proxy')
 
-      // TODO 保存到文件
-      // console.log('save config ', saveConfig)
       fs.writeFileSync(_getConfigPath(), JSON5.stringify(saveConfig, null, 2))
       return saveConfig
     },
     reload () {
       const path = _getConfigPath()
       if (!fs.existsSync(path)) {
-        return
+        return DevSidecar.api.config.get()
       }
       const file = fs.readFileSync(path)
       const userConfig = JSON5.parse(file.toString())
       DevSidecar.api.config.set(userConfig)
-      return DevSidecar.api.config.get()
+      const config = DevSidecar.api.config.get()
+      return config
+    }
+  }
+}
+
+function _deepFindFunction (list, parent, parentKey) {
+  for (const key in parent) {
+    const item = parent[key]
+    if (item instanceof Function) {
+      list.push(parentKey + key)
+    } else if (item instanceof Object) {
+      _deepFindFunction(list, item, parentKey + key + '.')
     }
   }
 }
@@ -107,6 +125,10 @@ export default {
     DevSidecar.api.event.register('status', (event) => {
       console.log('bridge on status', event)
       win.webContents.send('status', { ...event })
+    })
+    DevSidecar.api.event.register('error', (event) => {
+      console.error('bridge on error', event)
+      win.webContents.send('error.core', event)
     })
 
     // 合并用户配置

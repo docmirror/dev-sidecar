@@ -3,11 +3,14 @@
     <template>
       <div style="margin:auto">
         <div style="text-align: center"><img height="80px" src="/logo/logo-lang.svg"></div>
-        <a-card title="DevSidecar-开发者辅助工具 " style="width: 500px;margin:auto">
+        <a-card title="给开发者的辅助工具" style="width: 500px;margin:auto">
           <div style="display: flex; align-items:center;justify-content:space-around;flex-direction: row">
             <div style="text-align: center">
               <div class="big_button" >
-                <a-button shape="circle" icon="poweroff" :type="startup.type()" :loading="startup.loading" @click="startup.doClick"  ></a-button>
+                <a-button shape="circle"  :type="startup.type()" :loading="startup.loading" @click="startup.doClick"  >
+                  <img v-if="!startup.loading && !status.server" width="50" src="/logo/logo-simple.svg">
+                 <img v-if="!startup.loading && status.server" width="50" src="/logo/logo-fff.svg">
+                </a-button>
                 <div style="margin-top: 10px">{{status.server?'已开启':'已关闭'}}</div>
               </div>
             </div>
@@ -32,11 +35,13 @@
             </div>
           </div>
 
-          <span  slot="extra" >
+           <span  slot="extra" >
+                <a-button style="margin-right:10px" @click="openSetupCa" >安装根证书</a-button>
                 <a-button v-if="config" @click="openSettings" icon="setting" ></a-button>
-             </span>
+           </span>
         </a-card>
 
+        <setup-ca title="安装证书" :visible.sync="setupCa.visible"></setup-ca>
         <settings  v-if="config" title="设置" :config="config" :visible.sync="settings.visible"  @change="onConfigChanged"></settings>
       </div>
     </template>
@@ -48,10 +53,11 @@ import api from '../api'
 import status from '../status'
 import lodash from 'lodash'
 import Settings from './settings'
+import setupCa from './setup-ca'
 export default {
   name: 'App',
   components: {
-    Settings
+    Settings, setupCa
   },
   data () {
     return {
@@ -87,6 +93,9 @@ export default {
       config: undefined,
       settings: {
         visible: false
+      },
+      setupCa: {
+        visible: false
       }
     }
   },
@@ -105,6 +114,7 @@ export default {
   methods: {
     reloadConfig () {
       return api.config.reload().then(ret => {
+        console.log('config', ret)
         this.config = ret
         return ret
       })
@@ -160,15 +170,14 @@ export default {
     },
     onConfigChanged (newConfig) {
       console.log('config chagned', newConfig)
-      api.config.save(newConfig).then(() => {
-        return this.reloadConfig()
-      }).then(() => {
+      this.reloadConfig().then(() => {
         if (this.status.server) {
-          return this.onServerClick(false).then(() => {
-            return this.onServerClick(true)
-          })
+          return api.server.restart()
         }
       })
+    },
+    openSetupCa () {
+      this.setupCa.visible = true
     }
   }
 }

@@ -1,7 +1,9 @@
 import lodash from 'lodash'
 import { ipcRenderer } from 'electron'
 const doInvoke = (api, args) => {
-  return ipcRenderer.invoke('apiInvoke', [api, args])
+  return ipcRenderer.invoke('apiInvoke', [api, args]).catch(err => {
+    console.error('api invoke error:', err)
+  })
 }
 
 const bindApi = (api, param1) => {
@@ -15,23 +17,21 @@ const apiObj = {
   },
   doInvoke
 }
+let inited = false
 
-bindApi('startup')
-bindApi('shutdown')
-
-bindApi('config.set')
-bindApi('config.get')
-bindApi('config.save')
-bindApi('config.reload')
-
-bindApi('server.start')
-bindApi('server.close')
-
-bindApi('proxy.system.open')
-bindApi('proxy.system.close')
-bindApi('proxy.npm.open')
-bindApi('proxy.npm.close')
-bindApi('proxy.yarn.open')
-bindApi('proxy.yarn.close')
-
+export function apiInit () {
+  if (!inited) {
+    return doInvoke('getApiList').then(list => {
+      console.log('apiList', list)
+      inited = true
+      for (const item of list) {
+        bindApi(item)
+      }
+      return apiObj
+    })
+  }
+  return new Promise(resolve => {
+    resolve(apiObj)
+  })
+}
 export default apiObj

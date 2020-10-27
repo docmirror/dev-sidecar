@@ -1,8 +1,8 @@
 const DevSidercar = require('.')
-require('json5/lib/register')
-const config = require('../../config/index.json5')
+// require('json5/lib/register')
+// const config = require('../../config/index.json5')
 // 启动服务
-DevSidercar.api.startup(config)
+DevSidercar.api.startup()
 async function onClose () {
   console.log('on sigint ')
   await DevSidercar.api.shutdown()

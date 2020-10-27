@@ -1,14 +1,11 @@
 const util = require('util')
 const os = require('os')
-const path = require('path')
 const childProcess = require('child_process')
 const _exec = childProcess.exec
-const spawn = childProcess.spawn
 const Registry = require('winreg')
 // const cmd = require('node-cmd')
 console.log('childProcess', childProcess)
 const exec = util.promisify(_exec)
-const setproxyPs = require('./set-internet-proxy')
 const refreshInternetPs = require('./refresh-internet')
 const Shell = require('node-powershell')
 
@@ -89,7 +86,7 @@ class WindowsSystemProxy extends SystemProxy {
     for (const string of _lanIP) {
       lanIpStr += string + ';'
     }
-    console.log('lanIps:', lanIpStr, ip, port)
+    // console.log('lanIps:', lanIpStr, ip, port)
     await Promise.all([
       WindowsSystemProxy._asyncRegSet(regKey, 'MigrateProxy', Registry.REG_DWORD, 1),
       WindowsSystemProxy._asyncRegSet(regKey, 'ProxyEnable', Registry.REG_DWORD, 1),

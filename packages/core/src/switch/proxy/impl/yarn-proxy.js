@@ -43,7 +43,7 @@ class WindowsSystemProxy extends SystemProxy {
     console.log('yarn https proxy unset success')
 
     await winExec('yarn config  delete ca')
-    console.log('yarn cafile unset success')
+    console.log('yarn ca unset success')
 
     // await winExec(' yarn config delete strict-ssl')
     // console.log('yarn strict-ssl true success')

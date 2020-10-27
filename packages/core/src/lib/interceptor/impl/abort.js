@@ -1,4 +1,3 @@
-const url = require('url')
 module.exports = {
   requestInterceptor (interceptOpt, rOptions, req, res, ssl) {
     req.abort()

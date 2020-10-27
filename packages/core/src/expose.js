@@ -3,7 +3,7 @@ const proxy = require('./switch/proxy/index.js')
 const status = require('./status')
 const config = require('./config')
 const event = require('./event')
-
+const shell = require('./shell')
 async function proxyStartup ({ ip, port }) {
   for (const key in proxy) {
     if (config.get().setting.startup.proxy[key]) {
@@ -30,10 +30,15 @@ module.exports = {
         config.set(newConfig)
       }
       try {
-        if (config.get().setting.startup.server) {
+        const startup = config.get().setting.startup
+        if (startup.server) {
           server.start(newConfig)
         }
         await proxyStartup({ ip: '127.0.0.1', port: config.get().server.port })
+
+        if (startup.mirrors.set) {
+          await config.setupMirrors()
+        }
       } catch (error) {
         console.log(error)
       }
@@ -49,6 +54,7 @@ module.exports = {
         console.log(error)
       }
     },
-    event
+    event,
+    shell
   }
 }

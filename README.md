@@ -4,19 +4,22 @@
 解决一些网站和库无法访问或访问速度慢的问题
 
 ## 特性
-### 1、 解决git push某些情况下需要临时输入账号密码的问题
 
-### 2、 github的release、source、zip下载加速
+### 1、 github的release、source、zip下载加速
 可解决npm install 时某些安装包下载不下来的问题
 
+### 2、 解决git push某些情况下需要临时输入账号密码的问题
+通过将api.github.com域名解析到美国服务器
+
 ### 3、 github的源代码查看（raw/blame查看）
-
+通过跳转到国内加速链接上
 ### 4、 Stack Overflow 加速
-
+将ajax.google.com代理到加速代理上
 ### 5、 google cdn 加速
+通过代理到加速链接上
 
-### 6、 gist.github.com 加速
-
+### 6、 更多加速配置
+等你来提issue
 
 ## 快速开始
 
@@ -85,13 +88,62 @@ sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keyc
 ### npm加速
  1. yarn 设置淘宝镜像registry
  2. npm设置官方registry。 
- 3. 项目install使用yarn，publish用npm，互不影响
+ 3. 项目install使用yarn，发布包publish用npm，互不影响
  
 ### 其他加速
  1. git clone 加速  [fgit-go](https://github.com/FastGitORG/fgit-go)
  2. github.com代理网站(不能登录) [hub.fastgit.org](https://hub.fastgit.org/)
 
- 
+
+## api
+
+### 拦截配置
+没有配置域名的不会拦截，其他根据配置进行拦截处理
+```js
+'github.com': [
+  { // 此条配置  release archive 下载链接替换,
+    regexp: [ //需要拦截的url
+      '/.*/.*/releases/download/',
+      '/.*/.*/archive/'
+    ],
+    //拦截类型
+    // redirect:url,  临时重定向(url会变，一些下载资源可以通过此方式配置)
+    // proxy:url,     代理（url不会变，没有跨域问题）
+    // abort:true,    取消请求（适用于被GFW封锁的资源，找不到替代，直接取消请求，快速失败，节省时间）
+    redirect: 'https://download.fastgit.org' //跳转到加速下载链接上
+  },
+  'ajax.googleapis.com': [
+    {
+      regexp:'.*'                       // .* 拦截全部url路径，可省略
+      proxy: 'https://ajax.loli.net'    //代理到加速链接上（url不会变，没有跨域问题，适用于一些静态资源比如js、css的请求）
+    }
+  ],
+  'clients*.google.com': [ 
+    {
+      abort: true //取消请求，被GFW封锁的资源，找不到替代，直接取消请求，快速失败，节省时间
+    }
+  ]
+],
+```
+
+### DNS配置
+某些域名（比如api.github.com）会被解析到新加坡的ip上，新加坡的服务器在上午挺好，到了晚上就卡死，基本不可用。     
+所以将这些域名解析到美国服务器上就可以正常访问
+
+```js
+ dns: {
+    mapping: {
+      // "解决push的时候需要输入密码的问题",
+      'api.github.com': 'usa', //配置该域名，使用USA的域名解析服务器
+      'gist.github.com': 'usa'
+      // "avatars*.githubusercontent.com": "usa"
+    }
+  },
+```
+
+注意：暂时只支持IPv4的解析
+
+
 ## 开发计划
 1. 桌面端，右下角小图标
 2. √ google cdn加速 

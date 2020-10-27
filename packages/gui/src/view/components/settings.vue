@@ -42,26 +42,53 @@
               <a-button  type="primary" icon="plus" @click="addDnsMapping()" />
             </a-col>
           </a-row>
-
         </div>
       </a-tab-pane>
-      <a-tab-pane tab="启动设置" key="3" >
+      <a-tab-pane tab="镜像变量" key="3">
+        <div>
+          <div>某些库需要自己设置代理环境变量，才能安装，比如：electron</div>
+          <div>
+            <a-form-item label="镜像环境变量" >
+              <a-switch  v-model="targetConfig.setting.startup.mirrors.set"  default-checked   v-on:click="(checked)=>{targetConfig.setting.startup.mirrors.set = checked}">
+                <a-icon slot="checkedChildren" type="check" />
+                <a-icon slot="unCheckedChildren" type="close" />
+              </a-switch>
+              启动后自动检查设置
+
+              <a-button style="margin-left:10px" @click="doSetMirrorEnvNow">立即设置</a-button>
+            </a-form-item>
+          </div>
+          <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of mirrorEnvs" :key = 'index'>
+            <a-col :span="10">
+              <a-input :disabled="item.key ===false" v-model="item.key"></a-input>
+            </a-col>
+            <a-col :span="10">
+              <a-input :disabled="item.value ===false" v-model="item.value"></a-input>
+            </a-col>
+            <a-col :span="4">
+              <a-icon v-if="item.exists" style="color:green" type="check" />
+              <a-icon v-if="!item.exists" title="还未设置" style="color:red" type="exclamation-circle" />
+            </a-col>
+          </a-row>
+        </div>
+      </a-tab-pane>
+
+      <a-tab-pane tab="启动设置" key="4" >
         <div>启动应用程序后自动启动</div>
         <a-form style="margin-top: 20px"  :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" >
-          <a-form-item label="代理服务" style="margin-bottom: 10px">
+          <a-form-item label="代理服务" >
             <a-switch  v-model="targetConfig.setting.startup.server"  default-checked   v-on:click="(checked)=>{targetConfig.setting.startup.server = checked}">
               <a-icon slot="checkedChildren" type="check" />
               <a-icon slot="unCheckedChildren" type="close" />
             </a-switch>
           </a-form-item>
 
-          <a-form-item style="margin-bottom: 10px" v-for="(item,key) in targetConfig.setting.startup.proxy" :key="key" :label="key">
+          <a-form-item  v-for="(item,key) in targetConfig.setting.startup.proxy" :key="key" :label="key">
             <a-switch  v-model="targetConfig.setting.startup.proxy[key]"  default-checked   v-on:click="(checked)=>{targetConfig.setting.startup.proxy[key] = checked}">
               <a-icon slot="checkedChildren" type="check" />
               <a-icon slot="unCheckedChildren" type="close" />
             </a-switch>
           </a-form-item>
-
         </a-form>
       </a-tab-pane>
     </a-tabs>
@@ -72,8 +99,9 @@
 <script>
 import vueJsonEditor from 'vue-json-editor'
 import lodash from 'lodash'
+import api from '../api'
 export default {
-  name: 'App',
+  name: 'settings',
   components: {
     vueJsonEditor
   },
@@ -92,7 +120,8 @@ export default {
   data () {
     return {
       targetConfig: {},
-      dnsMappings: []
+      dnsMappings: [],
+      mirrorEnvs: []
     }
   },
   created () {
@@ -109,6 +138,10 @@ export default {
           key, value
         })
       }
+
+      api.config.getMirrorEnv().then(ret => {
+        this.mirrorEnvs = ret
+      })
     },
     onJsonChange (config) {
     },
@@ -141,13 +174,21 @@ export default {
         mapping[item.key] = item.value
       }
       this.targetConfig.dns.mapping = mapping
+
+      const mirrors = {}
+      for (const item of this.mirrorEnvs) {
+        mirrors[item.key] = item.value
+      }
+      this.targetConfig.mirrors = mirrors
     },
     isChanged () {
       this.syncTargetConfig()
       return !lodash.isEqual(this.config, this.targetConfig)
     },
     doSave () {
-      this.$emit('change', this.targetConfig)
+      return api.config.save(this.targetConfig).then(ret => {
+        this.$emit('change', ret)
+      })
     },
     deleteDnsMapping (item, index) {
       this.dnsMappings.splice(index, 1)
@@ -157,6 +198,21 @@ export default {
     },
     addDnsMapping () {
       this.dnsMappings.push({ key: '', value: 'usa' })
+    },
+    doSetMirrorEnvNow () {
+      this.syncTargetConfig()
+      this.doSave().then(() => {
+        return api.config.setupMirrors()
+      }).then(() => {
+        return api.config.getMirrorEnv().then(ret => {
+          this.mirrorEnvs = ret
+        })
+      }).then(() => {
+        this.$message.info('设置成功')
+      })
+    },
+    addMirrors () {
+      this.mirrorEnvs.push({ key: '', value: '', exists: false })
     }
   }
 }
@@ -182,5 +238,11 @@ export default {
 }
 .json-wrapper .ant-tabs-tabpane-active{
   height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.a-form{
+  margin-bottom: 10px;
 }
 </style>

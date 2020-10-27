@@ -51,7 +51,7 @@ module.exports = class CertAndKeyContainer {
         }
       }
       let certObj
-      const fast = false
+      const fast = true
       if (fast) {
         certObj = tlsUtils.createFakeCertificateByDomain(this.caKey, this.caCert, hostname)
         _resolve(certObj)
