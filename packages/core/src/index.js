@@ -1,6 +1,6 @@
 const expose = require('./expose.js')
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 // 避免异常崩溃
 process.on('uncaughtException', function (err) {

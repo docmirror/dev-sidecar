@@ -8,7 +8,7 @@ const executor = {
     const cmds = []
     for (const item of list) {
       // [Environment]::SetEnvironmentVariable('FOO', 'bar', 'Machine')
-      cmds.push(`[Environment]::SetEnvironmentVariable('${item.key} ', '${item.value}', 'Machine')`)
+      cmds.push(`[Environment]::SetEnvironmentVariable('${item.key}', '${item.value}', 'Machine')`)
     }
     const ret = await exec(cmds, { type: 'ps' })
     return ret

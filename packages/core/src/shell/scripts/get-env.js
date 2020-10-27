@@ -12,7 +12,7 @@ const executor = {
       for (const item of lines) {
         const kv = item.split('=')
         if (kv.length > 1) {
-          map[kv[0]] = kv[1]
+          map[kv[0].trim()] = kv[1].trim()
         }
       }
     }

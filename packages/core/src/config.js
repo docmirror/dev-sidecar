@@ -34,11 +34,13 @@ const configApi = {
   resetDefault () {
     configTarget = lodash.cloneDeep(defConfig)
   },
-  getMirrorEnv () {
-    const envMap = Shell.getEnv()
+  async getMirrorEnv () {
+    const envMap = await Shell.getEnv()
     const list = []
     const mirrors = configTarget.mirrors
+    console.log('envMap', envMap)
     for (const key in mirrors) {
+      console.log('equale', key, envMap[key])
       const exists = envMap[key] != null
       list.push({
         key,
@@ -49,14 +51,14 @@ const configApi = {
     console.log('mirrors:', list)
     return list
   },
-  setupMirrors () {
-    const list = configApi.getMirrorEnv()
+  async setupMirrors () {
+    const list = await configApi.getMirrorEnv()
     const noSetList = list.filter(item => {
       return !item.exists
     })
     console.log('mirrors will set:', noSetList)
     if (list.length > 0) {
-      Shell.setEnv({ list: noSetList })
+      return Shell.setEnv({ list: noSetList })
     }
   }
 }

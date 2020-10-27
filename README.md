@@ -14,7 +14,7 @@
 ### 3、 github的源代码查看（raw/blame查看）
 通过跳转到国内加速链接上
 ### 4、 Stack Overflow 加速
-将ajax.google.com代理到加速代理上
+将ajax.google.com代理到加速代理上 ,recaptcha 加速
 ### 5、 google cdn 加速
 通过代理到加速链接上
 
