@@ -20,7 +20,7 @@ module.exports = {
     dnsConfig
   }, callback) {
     // Don't reject unauthorized
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+   // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
     if (!caCertPath && !caKeyPath) {
       const rs = this.createCA()
