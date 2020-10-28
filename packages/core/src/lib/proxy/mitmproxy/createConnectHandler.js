@@ -9,7 +9,6 @@ module.exports = function createConnectHandler (sslConnectInterceptor, fakeServe
   return function connectHandler (req, cltSocket, head) {
     // eslint-disable-next-line node/no-deprecated-api
     const srvUrl = url.parse(`https://${req.url}`)
-
     const hostname = srvUrl.hostname
     if (typeof sslConnectInterceptor === 'function' && sslConnectInterceptor(req, cltSocket, head)) {
       fakeServerCenter.getServerPromise(hostname, srvUrl.port).then((serverObj) => {

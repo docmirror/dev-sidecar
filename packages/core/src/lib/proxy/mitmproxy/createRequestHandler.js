@@ -11,7 +11,6 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
     let proxyReq
 
     const rOptions = commonUtil.getOptionsFormRequest(req, ssl, externalProxy)
-
     if (rOptions.headers.connection === 'close') {
       req.socket.setKeepAlive(false)
     } else if (rOptions.customSocketId != null) { // for NTLM
@@ -63,9 +62,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
         function onFree () {
           const url = `${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
           const start = new Date().getTime()
-          if (rOptions.protocol === 'https:') {
-            console.log('代理请求:', url)
-          }
+          console.log('代理请求:', url)
 
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const end = new Date().getTime()
@@ -76,12 +73,12 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
           })
 
           proxyReq.on('timeout', () => {
-            console.error('代理请求超时', rOptions.host, rOptions.path)
+            console.error('代理请求超时', rOptions.hostname, rOptions.path)
             reject(new Error(`${rOptions.host}:${rOptions.port}, 代理请求超时`))
           })
 
           proxyReq.on('error', (e, req, res) => {
-            console.error('代理请求错误', e.errno, rOptions.host, rOptions.path)
+            console.error('代理请求错误', e.errno, rOptions.hostname, rOptions.path)
             reject(e)
             if (res) {
               res.end()
@@ -89,26 +86,26 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
           })
 
           proxyReq.on('aborted', () => {
-            console.error('代理请求被取消', rOptions.host, rOptions.path)
+            console.error('代理请求被取消', rOptions.hostname, rOptions.path)
             reject(new Error('代理请求被取消'))
-            req.abort()
+            req.destroy()
           })
 
           req.on('aborted', function () {
-            console.error('请求被取消', rOptions.host, rOptions.path)
-            proxyReq.abort()
+            console.error('请求被取消', rOptions.hostname, rOptions.path)
+            proxyReq.destroy()
             reject(new Error('请求被取消'))
           })
           req.on('error', function (e, req, res) {
-            console.error('请求错误：', e.errno, rOptions.host, rOptions.path)
+            console.error('请求错误：', e.errno, rOptions.hostname, rOptions.path)
             reject(e)
             if (res) {
               res.end()
             }
           })
           req.on('timeout', () => {
-            console.error('请求超时', rOptions.host, rOptions.path)
-            reject(new Error(`${rOptions.host}:${rOptions.port}, 请求超时`))
+            console.error('请求超时', rOptions.hostname, rOptions.path)
+            reject(new Error(`${rOptions.hostname}:${rOptions.port}, 请求超时`))
           })
           req.pipe(proxyReq)
         }

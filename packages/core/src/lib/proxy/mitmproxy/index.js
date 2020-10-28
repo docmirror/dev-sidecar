@@ -20,7 +20,7 @@ module.exports = {
     dnsConfig
   }, callback) {
     // Don't reject unauthorized
-   // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+    // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
     if (!caCertPath && !caKeyPath) {
       const rs = this.createCA()
@@ -65,10 +65,12 @@ module.exports = {
       })
       server.on('request', (req, res) => {
         const ssl = false
+        // console.log('request,', req.url, req.port, req.host)
         requestHandler(req, res, ssl)
       })
       // tunneling for https
       server.on('connect', (req, cltSocket, head) => {
+        // console.log('connect,', req.url)
         connectHandler(req, cltSocket, head)
       })
       // TODO: handler WebSocket

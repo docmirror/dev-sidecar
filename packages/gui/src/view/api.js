@@ -22,7 +22,6 @@ let inited = false
 export function apiInit () {
   if (!inited) {
     return doInvoke('getApiList').then(list => {
-      console.log('apiList', list)
       inited = true
       for (const item of list) {
         bindApi(item)

@@ -20,10 +20,14 @@
 // })
 
 // var HttpsProxyAgent = require('https-proxy-agent')
-// var proxy = 'http://user:pass@xxx.com:port'
+// var proxy = 'http://127.0.0.1:1181'
 // var agent = new HttpsProxyAgent(proxy)
+// console.log('111',process.env.NODE_EXTRA_CA_CERTS)
 // const https = require('https')
-// https.get('https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js', (res) => {
+// https_options = {
+//   "agent": agent,
+// };
+// https.get('https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js', https_options,(res) => {
 //   console.log('状态码:', res.statusCode)
 //   console.log('请求头:', res.headers)
 //
@@ -34,13 +38,6 @@
 //   console.error(e)
 // })
 
-const request = require('request')
 const fs = require('fs')
-request({
-  url: 'https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
-  proxy: 'http://127.0.0.1:1181',
-  ca: fs.readFileSync('C:/Users/Administrator/.dev-sidecar/dev-sidecar.ca.crt')
-// eslint-disable-next-line handle-callback-err
-}, (err, res, body) => {
-  console.log(body)
-})
+const content = fs.readFileSync('C:\\Users\\Administrator\\.dev-sidecar\\dev-sidecar.ca.crt')
+console.log('content:',JSON.stringify(content.toString().replace(new RegExp('\r\n','g'),'\n')));

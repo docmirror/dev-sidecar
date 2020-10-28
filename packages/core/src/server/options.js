@@ -26,7 +26,6 @@ function isMatched (url, regexp) {
 }
 
 module.exports = (config) => {
-  console.log('config', config)
   return {
     port: config.server.port,
     dnsConfig: {

@@ -28,11 +28,14 @@ class WindowsSystemProxy extends SystemProxy {
     ret = await winExec(`npm config set https-proxy=http://${ip}:${port}`)
     console.log('npm https proxy set success', ret)
 
-    ret = await winExec(`npm config set ca ${config.getDefaultCACertPath()}`)
-    console.log('npm cafile set success', ret)
+    // ret = await winExec(`npm config set cafile ${config.getDefaultCACertPath()}`)
+    // console.log('npm cafile set success', ret)
 
-    // ret = await winExec('npm config set strict-ssl false')
-    // console.log('npm strict-ssl false success', ret)
+    ret = await winExec(`npm config set NODE_EXTRA_CA_CERTS ${config.getDefaultCACertPath()}`)
+    console.log('npm NODE_EXTRA_CA_CERTS set success', ret)
+
+    ret = await winExec('npm config set strict-ssl false')
+    console.log('npm strict-ssl false success', ret)
   }
 
   static async unsetProxy () {
@@ -41,10 +44,13 @@ class WindowsSystemProxy extends SystemProxy {
     await winExec('npm config  delete https-proxy')
     console.log('npm https proxy unset success')
 
-    await winExec('npm config  delete ca')
-    console.log('npm ca unset success')
-    // await winExec(' npm config delete strict-ssl')
-    // console.log('npm strict-ssl true success')
+    // await winExec('npm config  delete cafile')
+    // console.log('npm ca unset success')
+    await winExec('npm config  delete NODE_EXTRA_CA_CERTS')
+    console.log('npm NODE_EXTRA_CA_CERTS unset success')
+
+    await winExec(' npm config delete strict-ssl')
+    console.log('npm strict-ssl true success')
   }
 
   static _asyncRegSet (regKey, name, type, value) {

@@ -108,13 +108,11 @@ export default {
     this.proxy = this.createProxyBtns()
     this.reloadConfig().then(() => {
       this.start(true)
-      console.log('proxy', this.proxy)
     })
   },
   methods: {
     reloadConfig () {
       return api.config.reload().then(ret => {
-        console.log('config', ret)
         this.config = ret
         return ret
       })
@@ -128,7 +126,6 @@ export default {
     },
     createProxyBtns () {
       const btns = {}
-      console.log('api.proxy', api.proxy, api)
       for (const type in api.proxy) {
         btns[type] = {
           loading: false,
@@ -169,7 +166,7 @@ export default {
       this.settings.visible = true
     },
     onConfigChanged (newConfig) {
-      console.log('config chagned', newConfig)
+      console.log('config changed', newConfig)
       this.reloadConfig().then(() => {
         if (this.status.server) {
           return api.server.restart()

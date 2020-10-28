@@ -42,14 +42,15 @@ module.exports = {
       }
     ],
     // google cdn
+    // https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
     'ajax.googleapis.com': [
       {
-        proxy: 'https://ajax.loli.net'
+        proxy: 'https://ajax.proxy.ustclug.org'
       }
     ],
     'fonts.googleapis.com': [
       {
-        proxy: 'https://fonts.loli.net'
+        proxy: 'https://fonts.proxy.ustclug.org'
       }
     ],
     'themes.googleapis.com': [
@@ -59,7 +60,7 @@ module.exports = {
     ],
     'fonts.gstatic.com': [
       {
-        proxy: 'https://gstatic.loli.net'
+        proxy: 'https://fonts-gstatic.proxy.ustclug.org'
       }
     ],
     'www.google.com': [
@@ -68,28 +69,24 @@ module.exports = {
         proxy: 'https://www.recaptcha.net'
       }
     ],
-    'secure.gravatar.com': [
-      {
-        redirect: 'https://gravatar.loli.net'
-      }
-    ],
-    'clients*.google.com': [
-      {
-        abort: true
-      }
-    ],
-    'lh*.googleusercontent.com': [
-      {
-        abort: true
-      }
-    ],
+    'clients*.google.com': [{ abort: true }],
+    'www.googleapis.com': [{ abort: true }],
+    'lh*.googleusercontent.com': [{ abort: true }],
     // https://mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
     '*.s3.amazonaws.com': [
       {
         regexp: '/sqlite3/.*',
         redirect: 'http://npm.taobao.org/mirrors'
       }
-    ]
+    ],
+    'registry-1.docker.io': [{ proxy: 'docker.mirrors.ustc.edu.cn' }],
+    'packages.elastic.co': [{ proxy: 'elastic.proxy.ustclug.org' }],
+    'ppa.launchpad.net': [{ proxy: 'launchpad.proxy.ustclug.org' }],
+    'archive.cloudera.com': [{ regexp: '/cdh5/.*', proxy: 'cloudera.proxy.ustclug.org' }],
+    'downloads.lede-project.org': [{ proxy: 'lede.proxy.ustclug.org' }],
+    'downloads.openwrt.org': [{ proxy: 'openwrt.proxy.ustclug.org' }],
+    'themes.googleusercontent.com': [{ proxy: 'google-themes.proxy.ustclug.org' }],
+    'secure.gravatar.com': [{ proxy: 'gravatar.proxy.ustclug.org' }]
   },
   dns: {
     providers: {

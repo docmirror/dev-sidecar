@@ -1,12 +1,13 @@
 const ProxyOptions = require('./options')
 const mitmproxy = require('../lib/proxy')
-const getLogger = require('../lib/utils/logger')
-const logger = getLogger('proxy')
 const config = require('../config')
 const event = require('../event')
 let server
 const serverApi = {
   async start (newConfig) {
+    if (server != null) {
+      server.close()
+    }
     config.set(newConfig)
     const proxyOptions = ProxyOptions(config.get())
     server = mitmproxy.createProxy(proxyOptions, () => {
@@ -22,21 +23,22 @@ const serverApi = {
     return server.config
   },
   async close () {
-    try {
+    return new Promise((resolve, reject) => {
       if (server) {
-        return new Promise((resolve, reject) => {
-          server.close((err) => {
-            if (err) {
-              reject(err)
-            } else {
-              resolve()
-            }
-          })
+        server.close((err) => {
+          if (err) {
+            console.log('close error', err)
+            reject(err)
+          } else {
+            resolve()
+          }
         })
+        server = null
+      } else {
+        console.log('server is null')
+        resolve()
       }
-    } catch (err) {
-      logger.error(err)
-    }
+    })
   },
   async restart () {
     try {
