@@ -1,6 +1,7 @@
 const Shell = require('./shell')
 const lodash = require('lodash')
 const defConfig = require('./config/index.js')
+const proxyConfig = require('./lib/proxy/common/config')
 let configTarget = lodash.cloneDeep(defConfig)
 function _deleteDisabledItem (target, objKey) {
   const obj = lodash.get(target, objKey)
@@ -55,6 +56,16 @@ const configApi = {
       return !item.exists
     })
     if (list.length > 0) {
+      const context = {
+        ca_cert_path: proxyConfig.getDefaultCACertPath()
+      }
+      for (const item of noSetList) {
+        if (item.value.indexOf('${') >= 0) {
+          for (const key in context) {
+            item.value = item.value.replcace(new RegExp('${' + key + '}', 'g'), context[key])
+          }
+        }
+      }
       const method = type === 'npm' ? Shell.setNpmEnv : Shell.setSystemEnv
       return method({ list: noSetList })
     }

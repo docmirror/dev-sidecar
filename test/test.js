@@ -19,25 +19,58 @@
 //   console.log('stderr:' + stderr)
 // })
 
-// var HttpsProxyAgent = require('https-proxy-agent')
-// var proxy = 'http://127.0.0.1:1181'
-// var agent = new HttpsProxyAgent(proxy)
-// console.log('111',process.env.NODE_EXTRA_CA_CERTS)
-// const https = require('https')
-// https_options = {
-//   "agent": agent,
-// };
-// https.get('https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js', https_options,(res) => {
-//   console.log('状态码:', res.statusCode)
-//   console.log('请求头:', res.headers)
-//
-//   res.on('data', (d) => {
-//     process.stdout.write(d)
-//   })
-// }).on('error', (e) => {
-//   console.error(e)
-// })
 
-const fs = require('fs')
-const content = fs.readFileSync('C:\\Users\\Administrator\\.dev-sidecar\\dev-sidecar.ca.crt')
-console.log('content:',JSON.stringify(content.toString().replace(new RegExp('\r\n','g'),'\n')));
+// const fs = require('fs')
+// const content = fs.readFileSync('C:\\Users\\Administrator\\.dev-sidecar\\dev-sidecar.ca.crt')
+// console.log('content:',JSON.stringify(content.toString().replace(new RegExp('\r\n','g'),'\n')));
+
+function testCa() {
+    const https = require('https')
+    const fs = require('fs')
+    const content = fs.readFileSync('C:\\Users\\Administrator\\.dev-sidecar\\dev-sidecar.ca.crt')
+    process.env.NODE_EXTRA_CA_CERTS = 'C:\\Users\\Administrator\\.dev-sidecar\\dev-sidecar.ca.crt'
+    process.env.GLOBAL_AGENT_HTTP_PROXY = "http://127.0.0.1:1181"
+    process.env.GLOBAL_AGENT_HTTPS_PROXY = "http://127.0.0.1:1181"
+    console.log('111', process.env.NODE_EXTRA_CA_CERTS)
+
+    const options = {
+        agent : new https.Agent({
+            proxy: "http://127.0.0.1:1181"
+        })
+    }
+    console.log('options', options)
+
+    https.get('https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',options, (res) => {
+        console.log('状态码:', res.statusCode)
+        console.log('请求头:', res.headers)
+
+        res.on('data', (d) => {
+            process.stdout.write(d)
+        })
+    }).on('error', (e) => {
+        console.error(e)
+    })
+}
+
+function testRequest(){
+    // process.env.NODE_EXTRA_CA_CERTS='C:\\Users\\Administrator\\.dev-sidecar\\dev-sidecar.ca.crt'
+    console.log(process.env.NODE_EXTRA_CA_CERTS)
+    const request = require("request").defaults({
+        proxy: "http://127.0.0.1:1181"
+    })
+    request("https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js",(error, response, body)=>{
+        if(error){
+            console.error(error)
+        }else{
+            console.log(body)
+        }
+    })
+
+}
+
+
+// testCa()
+
+testRequest()
+
+

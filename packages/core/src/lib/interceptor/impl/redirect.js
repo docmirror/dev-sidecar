@@ -3,7 +3,7 @@ module.exports = {
     const url = req.url
     let redirect
     if (typeof interceptOpt.redirect === 'string') {
-      redirect = interceptOpt.redirect + url
+      redirect = rOptions.protocol + '//' + interceptOpt.redirect + url
     } else {
       redirect = interceptOpt.redirect(url)
     }

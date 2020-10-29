@@ -16,8 +16,7 @@ module.exports = {
         if (target.indexOf('*') < 0) {
           continue
         }
-        const regexp = target.replace('.', '\\.')
-          .replace('*', '.*')
+        const regexp = target.replace(/\./g, '\\.').replace(/\*/g, '.*')
         if (hostname.match(regexp)) {
           providerName = dnsConfig.mapping[target]
         }

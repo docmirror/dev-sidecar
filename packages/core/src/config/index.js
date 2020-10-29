@@ -10,73 +10,78 @@ module.exports = {
           '/.*/.*/releases/download/',
           '/.*/.*/archive/'
         ],
-        redirect: 'https://download.fastgit.org'
+        redirect: 'download.fastgit.org'
       },
       {
         regexp: [
           '/.*/.*/raw/',
           '/.*/.*/blame/'
         ],
-        redirect: 'https://hub.fastgit.org'
+        redirect: 'hub.fastgit.org'
       }
     ],
     // 'codeload.github.com': [
     //     {
     //         regexp: '.*',
-    //         redirect:"https://download.fastgit.org"
+    //         redirect:"download.fastgit.org"
     //     }
     // ],
-    'raw.githubusercontent.com': [
-      {
-        proxy: 'https://raw.fastgit.org'
-      }
-    ],
+    'raw.githubusercontent.com': [{ proxy: 'raw.fastgit.org' }],
     'github.githubassets.com': [
       {
-        proxy: 'https://assets.fastgit.org'
+        proxy: 'assets.fastgit.org'
       }
     ],
     'customer-stories-feed.github.com': [
       {
-        proxy: 'https://customer-stories-feed.fastgit.org'
+        proxy: 'customer-stories-feed.fastgit.org'
       }
     ],
+
     // google cdn
-    // https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js
     'ajax.googleapis.com': [
       {
-        proxy: 'https://ajax.proxy.ustclug.org'
+        proxy: 'ajax.loli.net',
+        backup: ['ajax.proxy.ustclug.org'],
+        case: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'
       }
     ],
     'fonts.googleapis.com': [
       {
-        proxy: 'https://fonts.proxy.ustclug.org'
+        proxy: 'fonts.loli.net',
+        backup: ['fonts.proxy.ustclug.org'],
+        case: 'https://fonts.googleapis.com/css?family=Oswald'
       }
     ],
     'themes.googleapis.com': [
       {
-        proxy: 'https://themes.loli.net'
+        proxy: 'themes.loli.net',
+        backup: ['themes.proxy.ustclug.org']
       }
     ],
-    'fonts.gstatic.com': [
-      {
-        proxy: 'https://fonts-gstatic.proxy.ustclug.org'
-      }
+    'themes.googleusercontent.com': [
+      { proxy: 'google-themes.proxy.ustclug.org' }
     ],
     'www.google.com': [
       {
         regexp: '/recaptcha/.*',
-        proxy: 'https://www.recaptcha.net'
+        proxy: 'www.recaptcha.net'
+      }
+    ],
+    'fonts.gstatic.com': [
+      {
+        proxy: 'fonts-gstatic.proxy.ustclug.org',
+        backup: ['gstatic.loli.net']
       }
     ],
     'clients*.google.com': [{ abort: true }],
     'www.googleapis.com': [{ abort: true }],
     'lh*.googleusercontent.com': [{ abort: true }],
-    // https://mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
+    // mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
     '*.s3.amazonaws.com': [
       {
         regexp: '/sqlite3/.*',
-        redirect: 'http://npm.taobao.org/mirrors'
+        redirect: 'npm.taobao.org/mirrors'
       }
     ],
     'registry-1.docker.io': [{ proxy: 'docker.mirrors.ustc.edu.cn' }],
@@ -85,19 +90,18 @@ module.exports = {
     'archive.cloudera.com': [{ regexp: '/cdh5/.*', proxy: 'cloudera.proxy.ustclug.org' }],
     'downloads.lede-project.org': [{ proxy: 'lede.proxy.ustclug.org' }],
     'downloads.openwrt.org': [{ proxy: 'openwrt.proxy.ustclug.org' }],
-    'themes.googleusercontent.com': [{ proxy: 'google-themes.proxy.ustclug.org' }],
     'secure.gravatar.com': [{ proxy: 'gravatar.proxy.ustclug.org' }]
   },
   dns: {
     providers: {
       aliyun: {
         type: 'https',
-        server: 'https://dns.alidns.com/dns-query',
+        server: 'dns.alidns.com/dns-query',
         cacheSize: 1000
       },
       usa: {
         type: 'https',
-        server: 'https://cloudflare-dns.com/dns-query',
+        server: 'cloudflare-dns.com/dns-query',
         cacheSize: 1000
       }
     },
@@ -114,11 +118,15 @@ module.exports = {
       PHANTOMJS_CDNURL: 'https://npm.taobao.org/mirrors/phantomjs/',
       ELECTRON_MIRROR: 'https://npm.taobao.org/mirrors/electron/',
       CYPRESS_DOWNLOAD_MIRROR: 'https://cdn.cypress.io',
-      NVM_NODEJS_ORG_MIRROR: 'http://npm.taobao.org/mirrors/node',
-      CHROMEDRIVER_CDNURL: 'http://npm.taobao.org/mirrors/chromedriver',
-      OPERADRIVER: 'http://npm.taobao.org/mirrors/operadriver',
-      ELECTRON_BUILDER_BINARIES_MIRROR: 'http://npm.taobao.org/mirrors/electron-builder-binaries/',
-      PYTHON_MIRROR: 'http://npm.taobao.org/mirrors/python'
+      NVM_NODEJS_ORG_MIRROR: 'https://npm.taobao.org/mirrors/node',
+      CHROMEDRIVER_CDNURL: 'https://npm.taobao.org/mirrors/chromedriver',
+      OPERADRIVER: 'https://npm.taobao.org/mirrors/operadriver',
+      ELECTRON_BUILDER_BINARIES_MIRROR: 'https://npm.taobao.org/mirrors/electron-builder-binaries/',
+      PYTHON_MIRROR: 'https://npm.taobao.org/mirrors/python'
+    },
+    system: {
+      // eslint-disable-next-line no-template-curly-in-string
+      NODE_EXTRA_CA_CERTS: '${ca_cert_path}'
     }
   },
   setting: {
