@@ -26,6 +26,7 @@ export function apiInit () {
       for (const item of list) {
         bindApi(item)
       }
+      console.log('api inited:', apiObj)
       return apiObj
     })
   }

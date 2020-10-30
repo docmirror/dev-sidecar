@@ -12,7 +12,7 @@ function register (app) {
   api.on('error.core', (event, message) => {
     console.error('view on error', message)
     const key = message.key
-    if (key === 'server.start') {
+    if (key === 'server') {
       handleServerStartError(message.error, app)
     }
   })

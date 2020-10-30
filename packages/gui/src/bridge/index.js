@@ -132,6 +132,7 @@ export default {
 
     // 合并用户配置
     localApi.config.reload()
+    DevSidecar.api.startup()
   },
   devSidecar: DevSidecar
 }

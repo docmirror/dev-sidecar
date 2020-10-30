@@ -1,0 +1,29 @@
+module.exports = {
+  name: 'NPM加速',
+  enabled: true,
+  startup: {
+    npm: true,
+    yarn: true,
+    variables: true
+  },
+  setting: {
+    'strict-ssl': false,
+    cafile: true,
+    NODE_EXTRA_CA_CERTS: true,
+    NODE_TLS_REJECT_UNAUTHORIZED: false
+  },
+  intercepts: {
+    'cdn.cypress.io': [{ regexp: '/desktop/.*', proxy: 'http://npm.taobao.org/mirrors/cypress/' }]
+  },
+  variables: {
+    SASS_BINARY_SITE: 'https://npm.taobao.org/mirrors/node-sass/',
+    PHANTOMJS_CDNURL: 'https://npm.taobao.org/mirrors/phantomjs/',
+    ELECTRON_MIRROR: 'https://npm.taobao.org/mirrors/electron/',
+    // CYPRESS_DOWNLOAD_MIRROR: 'https://cdn.cypress.io',
+    NVM_NODEJS_ORG_MIRROR: 'https://npm.taobao.org/mirrors/node',
+    CHROMEDRIVER_CDNURL: 'https://npm.taobao.org/mirrors/chromedriver',
+    OPERADRIVER: 'https://npm.taobao.org/mirrors/operadriver',
+    ELECTRON_BUILDER_BINARIES_MIRROR: 'https://npm.taobao.org/mirrors/electron-builder-binaries/',
+    PYTHON_MIRROR: 'https://npm.taobao.org/mirrors/python'
+  }
+}

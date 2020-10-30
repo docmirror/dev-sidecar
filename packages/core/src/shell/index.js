@@ -1,3 +1,4 @@
+const shell = require('./shell')
 const killByPort = require('./scripts/kill-by-port')
 const setupCa = require('./scripts/setup-ca')
 const getSystemEnv = require('./scripts/get-system-env')
@@ -10,5 +11,8 @@ module.exports = {
   getSystemEnv,
   setSystemEnv,
   getNpmEnv,
-  setNpmEnv
+  setNpmEnv,
+  exec (cmds, args) {
+    shell.getSystemShell().exec(cmds, args)
+  }
 }

@@ -32,6 +32,9 @@ const configApi = {
   getDefault () {
     return lodash.cloneDeep(defConfig)
   },
+  addDefault (key, defValue) {
+    lodash.set(defConfig, key, defValue)
+  },
   resetDefault () {
     configTarget = lodash.cloneDeep(defConfig)
   },
