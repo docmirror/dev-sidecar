@@ -7,6 +7,7 @@ import { apiInit } from './view/api'
 import VueRouter from 'vue-router'
 import routes from './view/router'
 import DsContainer from './view/components/container'
+import './view/style/index.scss'
 Vue.config.productionTip = false
 Vue.use(antd)
 Vue.use(VueRouter)

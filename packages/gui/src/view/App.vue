@@ -9,6 +9,7 @@
           <a-menu
             mode="inline"
             :defaultSelectedKeys="[$route.fullPath]"
+            :defaultOpenKeys="['/plugin']"
           >
             <template v-for="(item) of menus">
               <a-sub-menu v-if="item.children && item.children.length>0"   :key="item.path" @titleClick="titleClick(item)">
@@ -56,9 +57,9 @@ export default {
         { title: '系统代理', path: '/proxy' },
         {
           title: '应用',
-          path: '/app',
+          path: '/plugin',
           children: [
-            { title: 'NPM加速', path: '/app/node' }
+            { title: 'NPM加速', path: '/plugin/node' }
           ]
         }
       ]

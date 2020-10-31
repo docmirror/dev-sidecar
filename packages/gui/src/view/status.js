@@ -1,8 +1,12 @@
 const status = {
-  server: false,
+  server: {
+    enabled: false
+  },
   proxy: {
-    system: false,
-    npm: false
+    enabled: false
+  },
+  plugin: {
+    node: {}
   }
 }
 export default status

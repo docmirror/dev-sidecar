@@ -1,31 +1,31 @@
 const nodeConfig = require('./config')
 const NodePlugin = function (context) {
   const { config, shell, event, rootCaFile } = context
-  const api = {
+  const nodeApi = {
     async start () {
       try {
-        await api.setVariables()
+        await nodeApi.setVariables()
       } catch (err) {
         console.warn('set variables error', err)
       }
 
       const ip = '127.0.0.1'
       const port = config.get().server.port
-      await api.setProxy(ip, port)
+      await nodeApi.setProxy(ip, port)
       return { ip, port }
     },
 
     async close () {
-      return api.unsetProxy()
+      return nodeApi.unsetProxy()
     },
 
     async restart () {
-      await api.close()
-      await api.start()
+      await nodeApi.close()
+      await nodeApi.start()
     },
 
     async save (newConfig) {
-      api.setVariables()
+      nodeApi.setVariables()
     },
     async getNpmEnv () {
       const ret = await shell.exec(['npm config list --json'], { type: 'cmd' })
@@ -55,7 +55,7 @@ const NodePlugin = function (context) {
     },
 
     async getVariables () {
-      const currentMap = await api.getNpmEnv()
+      const currentMap = await nodeApi.getNpmEnv()
       const list = []
       const map = config.get().plugin.node.variables
       for (const key in map) {
@@ -72,13 +72,19 @@ const NodePlugin = function (context) {
     },
 
     async setVariables () {
-      const list = await api.getVariables()
+      const list = await nodeApi.getVariables()
       const noSetList = list.filter(item => {
         return !item.exists
       })
       if (noSetList.length > 0) {
-        return api.setNpmEnv(noSetList)
+        return nodeApi.setNpmEnv(noSetList)
       }
+    },
+
+    async setRegistry (registry) {
+      await nodeApi.setNpmEnv([{ key: 'registry', value: registry }])
+      console.log(1111)
+      return true
     },
 
     async setProxy (ip, port) {
@@ -135,7 +141,7 @@ const NodePlugin = function (context) {
       return ret
     }
   }
-  return api
+  return nodeApi
 }
 
 module.exports = {
