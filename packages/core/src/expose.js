@@ -47,21 +47,15 @@ module.exports = {
       const conf = config.get()
       if (conf.server.enabled) {
         try {
-          const cfg = await server.start()
-          fireStatus({ key: 'server.enabled', value: true })
-          console.log('代理服务已启动：127.0.0.1:' + cfg.port)
+          await server.start()
         } catch (err) {
-          fireStatus({ key: 'server.enabled', value: false })
           console.error('代理服务启动失败：', err)
         }
       }
       if (conf.proxy.enabled) {
         try {
-          const ret = await proxy.start()
-          fireStatus({ key: 'proxy.enabled', value: true })
-          console.log(`开启系统代理成功：${ret.ip}:${ret.port}`)
+          await proxy.start()
         } catch (err) {
-          fireStatus({ key: 'proxy.enabled', value: false })
           console.error('开启系统代理失败：', err)
         }
       }

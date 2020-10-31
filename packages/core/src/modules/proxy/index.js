@@ -14,6 +14,7 @@ const ProxyPlugin = function (context) {
       const ip = '127.0.0.1'
       const port = config.get().server.port
       await systemProxy.setProxy(ip, port)
+      console.log(`开启系统代理成功：${ip}:${port}`)
       event.fire('status', { key: 'proxy.enabled', value: true })
       return { ip, port }
     },

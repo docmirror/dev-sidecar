@@ -63,7 +63,9 @@ const NodePlugin = function (context) {
         list.push({
           key,
           value: map[key],
-          exists
+          oldValue: currentMap[key],
+          exists,
+          hadSet: currentMap[key] === map[key]
         })
       }
       return list
@@ -113,10 +115,11 @@ const NodePlugin = function (context) {
 
       const ret = await shell.exec(cmds, { type: 'cmd' })
       if (env.length > 0) {
-        await shell.setSystemEnv({ list: env })
+        //  await shell.setSystemEnv({ list: env })
       }
       event.fire('status', { key: 'plugin.node.enabled', value: true })
       console.info('开启【NPM】代理成功')
+
       return ret
     },
 

@@ -24,7 +24,7 @@ const serverApi = {
     const proxyOptions = ProxyOptions(config.get())
     const newServer = mitmproxy.createProxy(proxyOptions, () => {
       event.fire('status', { key: 'server.enabled', value: true })
-      console.log(`代理服务已启动:127.0.0.1:${proxyOptions.port}`)
+      console.log('代理服务已启动：127.0.0.1:' + proxyOptions.port)
     })
     newServer.on('close', () => {
       if (server === newServer) {
@@ -44,21 +44,36 @@ const serverApi = {
   async close () {
     return new Promise((resolve, reject) => {
       if (server) {
+        const currentServer = server
+        let closed = false
         server.close((err) => {
           if (err) {
-            console.log('close error', err)
+            console.log('close error', err, ',', err.code, ',', err.message, ',', err.errno)
+            if (err.code === 'ERR_SERVER_NOT_RUNNING') {
+              console.log('代理服务关闭成功')
+              closed = true
+              resolve()
+              return
+            }
             reject(err)
           } else {
-            console.log('代理服务关闭')
+            console.log('代理服务关闭成功')
+            closed = true
             resolve()
           }
         })
         // 3秒后强制关闭
-        setTimeout(() => {
-          console.log('强制关闭')
-          shell.killByPort(config.get().server.port)
-          server = null
-          event.fire('status', { key: 'server.enabled', value: false })
+        setTimeout(async () => {
+          if (closed) {
+            return
+          }
+          console.log('强制关闭:', config.get().server.port)
+          await shell.killByPort({ port: config.get().server.port })
+          if (currentServer === server) {
+            server = null
+            event.fire('status', { key: 'server.enabled', value: false })
+          }
+          closed = true
           resolve()
         }, 3000)
       } else {

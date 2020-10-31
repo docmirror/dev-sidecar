@@ -14,8 +14,7 @@ utils.createCA = function (CN) {
   const cert = pki.createCertificate()
   cert.publicKey = keys.publicKey
   cert.serialNumber = (new Date()).getTime() + ''
-  cert.validity.notBefore = new Date()
-  cert.validity.notBefore.setFullYear(cert.validity.notBefore.getFullYear() - 5)
+  cert.validity.notBefore = new Date(new Date().getTime() - (60 * 60 * 1000))
   cert.validity.notAfter = new Date()
   cert.validity.notAfter.setFullYear(cert.validity.notAfter.getFullYear() + 20)
   const attrs = [{

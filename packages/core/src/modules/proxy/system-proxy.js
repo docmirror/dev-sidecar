@@ -92,8 +92,8 @@ class WindowsSystemProxy extends SystemProxy {
       WindowsSystemProxy._asyncRegSet(regKey, 'ProxyServer', Registry.REG_SZ, `${ip}:${port}`),
       WindowsSystemProxy._asyncRegSet(regKey, 'ProxyOverride', Registry.REG_SZ, lanIpStr)
     ])
-    await WindowsSystemProxy._resetWininetProxySettings('echo refreshing') // 要执行以下这个才能生效
-    await WindowsSystemProxy._resetWininetProxySettings(refreshInternetPs)
+    WindowsSystemProxy._resetWininetProxySettings('echo refreshing') // 要执行一下这个才能生效
+    WindowsSystemProxy._resetWininetProxySettings(refreshInternetPs)
   }
 
   static async unsetProxy () {
@@ -106,7 +106,7 @@ class WindowsSystemProxy extends SystemProxy {
       WindowsSystemProxy._asyncRegSet(regKey, 'ProxyEnable', Registry.REG_DWORD, 0),
       WindowsSystemProxy._asyncRegSet(regKey, 'ProxyServer', Registry.REG_SZ, '')
     ])
-    await WindowsSystemProxy._resetWininetProxySettings(refreshInternetPs)
+    WindowsSystemProxy._resetWininetProxySettings(refreshInternetPs)
   }
 
   static _asyncRegSet (regKey, name, type, value) {

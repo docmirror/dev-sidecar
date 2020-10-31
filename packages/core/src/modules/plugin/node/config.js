@@ -10,7 +10,8 @@ module.exports = {
     'strict-ssl': false,
     cafile: true,
     NODE_EXTRA_CA_CERTS: true,
-    NODE_TLS_REJECT_UNAUTHORIZED: false
+    NODE_TLS_REJECT_UNAUTHORIZED: false,
+    registry: 'http://registry.npmjs.org'// 可以选择切换官方或者淘宝镜像
   },
   intercepts: {
     'cdn.cypress.io': [{ regexp: '/desktop/.*', proxy: 'http://npm.taobao.org/mirrors/cypress/' }]

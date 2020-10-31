@@ -11,6 +11,7 @@ const localApi = {
     lodash.merge(core, local)
     const list = []
     _deepFindFunction(list, core, '')
+    console.log('api list:', list)
     return list
   },
   config: {
