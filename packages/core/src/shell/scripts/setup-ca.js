@@ -1,9 +1,9 @@
 const Shell = require('../shell')
 const execute = Shell.execute
-const proxyConfig = require('../../lib/proxy/common/config')
+const proxyServer = require('@docmirror/mitmproxy')
 const executor = {
   async windows (exec) {
-    const cmds = ['start ' + proxyConfig.getDefaultCACertPath()]
+    const cmds = ['start ' + proxyServer.config.getDefaultCACertPath()]
     // eslint-disable-next-line no-unused-vars
     const ret = await exec(cmds, { type: 'cmd' })
     return true

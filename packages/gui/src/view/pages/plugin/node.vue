@@ -7,19 +7,27 @@
     </template>
 
     <div v-if="config">
-      <div>
-        <a-form-item label="启用NPM加速插件" >
-          <a-checkbox v-model="config.plugin.node.enabled" >
-            自动开启NPM加速
+      <a-form layout="horizontal">
+        <a-form-item label="启用NPM代理" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-checkbox v-model="config.plugin.node.enabled">
+            随应用启动
           </a-checkbox>
-          当前状态：
           <a-tag v-if="status.plugin.node.enabled" color="green">
-            已启动
+            当前已启动
+          </a-tag>
+          <a-tag v-else color="red">
+            当前未启动
           </a-tag>
         </a-form-item>
-
-        <a-form-item label="切换registry" >
-          <a-radio-group v-model="config.plugin.node.setting.registry" @change="onSwitchRegistry" default-value="https://registry.npmjs.org" button-style="solid">
+        <a-form-item label="SSL相关" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-checkbox v-model="config.plugin.node.setting['strict-ssl']">
+            关闭strict-ssl
+          </a-checkbox>
+          npm代理启用后必须关闭
+        </a-form-item>
+        <a-form-item label="切换registry" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-radio-group v-model="config.plugin.node.setting.registry" @change="onSwitchRegistry"
+                         default-value="https://registry.npmjs.org" button-style="solid">
             <a-radio-button value="https://registry.npmjs.org">
               npmjs
             </a-radio-button>
@@ -28,27 +36,31 @@
             </a-radio-button>
           </a-radio-group>
         </a-form-item>
-      </div>
 
-      <div>
-        <div>某些库需要自己设置镜像变量，才能下载，比如：electron</div>
-        <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of npmVariables" :key = 'index'>
-          <a-col :span="10">
-            <a-input :disabled="item.key ===false" v-model="item.key"></a-input>
-          </a-col>
-          <a-col :span="10">
-            <a-input :disabled="item.value ===false" v-model="item.value"></a-input>
-          </a-col>
-          <a-col :span="4">
-            <a-icon v-if="item.exists" style="color:green" type="check" />
-            <a-icon v-if="!item.exists || !item.set" title="还未设置" style="color:red" type="exclamation-circle" />
-          </a-col>
-        </a-row>
-      </div>
+        <a-form-item label="镜像变量设置" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-checkbox v-model="config.plugin.node.startup.variables">
+            自动设置
+          </a-checkbox>
+          <div>某些库需要自己设置镜像变量，才能下载，比如：electron</div>
+          <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of npmVariables" :key='index'>
+            <a-col :span="10">
+              <a-input :disabled="item.key ===false" v-model="item.key"></a-input>
+            </a-col>
+            <a-col :span="10">
+              <a-input :disabled="item.value ===false" v-model="item.value"></a-input>
+            </a-col>
+            <a-col :span="4">
+              <a-icon v-if="item.exists&& item.hadSet" title="已设置" style="color:green" type="check"/>
+              <a-icon v-else title="还未设置" style="color:red" type="exclamation-circle"/>
+            </a-col>
+          </a-row>
+        </a-form-item>
+      </a-form>
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button  type="primary" @click="submit()">应用</a-button>
+        <a-button class="md-mr-10"   @click="reloadDefault('plugin.node')">恢复默认</a-button>
+        <a-button type="primary" @click="apply()">应用</a-button>
       </div>
     </template>
   </ds-container>
@@ -56,45 +68,40 @@
 </template>
 
 <script>
-import DsContainer from '../../components/container'
-import api from '../../api'
-import status from '../../status'
+import Plugin from '../../mixins/plugin'
+
 export default {
   name: 'Node',
-  components: {
-    DsContainer
-  },
+  mixins: [Plugin],
   data () {
     return {
-      config: undefined,
-      status: status,
       npmVariables: undefined,
       registry: false
     }
   },
   created () {
-    api.config.reload().then(ret => {
-      this.config = ret
-    })
-    api.plugin.node.getVariables().then(ret => {
-      this.npmVariables = ret
-    })
+    console.log('status:', this.status)
   },
   mounted () {
   },
   methods: {
-
+    ready () {
+      return this.$api.plugin.node.getVariables().then(ret => {
+        console.log('variables', ret)
+        this.npmVariables = ret
+      })
+    },
     onSwitchRegistry (event) {
       return this.setRegistry(event.target.value).then(() => {
         this.$message.success('切换成功')
       })
     },
     setRegistry (registry) {
-      return api.plugin.node.setRegistry(registry)
+      return this.$api.plugin.node.setRegistry(registry)
     },
-    submit () {
-      return api.config.set(this.config).then(() => {
-        this.$message.success('设置已保存')
+    setNpmVariableAll () {
+      this.saveConfig().then(() => {
+        this.$api.plugin.node.setVariables()
       })
     }
   }

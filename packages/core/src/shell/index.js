@@ -12,7 +12,7 @@ module.exports = {
   setSystemEnv,
   getNpmEnv,
   setNpmEnv,
-  exec (cmds, args) {
-    shell.getSystemShell().exec(cmds, args)
+  async exec (cmds, args) {
+    return shell.getSystemShell().exec(cmds, args)
   }
 }

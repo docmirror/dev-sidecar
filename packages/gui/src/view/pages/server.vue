@@ -6,7 +6,7 @@
       </span>
     </template>
 
-    <div style="height: 100%" >
+    <div style="height: 100%" class="json-wrapper" >
 
       <a-tabs
         default-active-key="1"
@@ -15,21 +15,29 @@
         v-if="config"
       >
         <a-tab-pane tab="基本设置" key="1"  >
-          <a-form-item label="启用代理服务" >
+          <a-form-item label="代理服务:" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-checkbox :checked="config.server.enabled" @change="config.server.enabled = $event">
-              自动开启代理服务
+              随应用启动
             </a-checkbox>
-            当前状态：
-            <a-tag v-if="status.plugin.node.enabled" color="green">
-              已启动
+            <a-tag v-if="status.proxy.enabled" color="green">
+              当前已启动
+            </a-tag>
+            <a-tag v-else color="red">
+              当前未启动
             </a-tag>
           </a-form-item>
-          <a-form-item label="代理端口" >
+          <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol" >
             <a-input v-model="config.server.port"/>
+          </a-form-item>
+          <a-form-item label="校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
+            <a-checkbox :checked="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED" @change="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED = $event">
+              NODE_TLS_REJECT_UNAUTHORIZED
+            </a-checkbox>
+            <div>开启此项之后，被代理应用关闭SSL校验也问题不大了</div>
           </a-form-item>
         </a-tab-pane>
         <a-tab-pane tab="拦截设置" key="2"  >
-          <vue-json-editor  style="height:100%;" ref="editor" v-model="config.server.intercepts" mode="code" :show-btns="false" :expandedOnStart="true" @json-change="onJsonChange" ></vue-json-editor>
+            <vue-json-editor  style="height:100%;" ref="editor" v-model="config.server.intercepts" mode="code" :show-btns="false" :expandedOnStart="true" @json-change="onJsonChange" ></vue-json-editor>
         </a-tab-pane>
         <a-tab-pane tab="DNS设置" key="3">
           <div>
@@ -61,7 +69,8 @@
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button  type="primary" @click="submit()">应用</a-button>
+        <a-button class="md-mr-10"   @click="reloadDefault('server')">恢复默认</a-button>
+        <a-button  type="primary" @click="apply()">应用</a-button>
       </div>
     </template>
   </ds-container>
@@ -70,24 +79,28 @@
 
 <script>
 import vueJsonEditor from 'vue-json-editor'
-import DsContainer from '../components/container'
-import api from '../api'
-import status from '../status'
+import Plugin from '../mixins/plugin'
 export default {
   name: 'Server',
   components: {
-    DsContainer, vueJsonEditor
+    vueJsonEditor
   },
+  mixins: [Plugin],
   data () {
     return {
-      config: undefined,
-      status: status,
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
       dnsMappings: []
     }
   },
   created () {
-    api.config.reload().then(ret => {
-      this.config = ret
+  },
+  mounted () {
+  },
+  methods: {
+    onJsonChange (json) {
+    },
+    ready () {
       this.dnsMappings = []
       for (const key in this.config.server.dns.mapping) {
         const value = this.config.server.dns.mapping[key]
@@ -95,17 +108,9 @@ export default {
           key, value
         })
       }
-    })
-  },
-  mounted () {
-  },
-  methods: {
-    onJsonChange (json) {
     },
-    submit () {
-      api.config.set(this.config).then(() => {
-        this.$message.info('设置已保存')
-      })
+    applyAfter () {
+
     }
   }
 }

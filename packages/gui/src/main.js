@@ -19,6 +19,8 @@ const router = new VueRouter({
 })
 
 apiInit().then((api) => {
+  Vue.prototype.$api = api
+
   const app = new Vue({
     router,
     render: h => h(App)

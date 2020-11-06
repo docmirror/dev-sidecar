@@ -3,7 +3,8 @@ import DevSidecar from '@docmirror/dev-sidecar'
 import { ipcMain } from 'electron'
 import fs from 'fs'
 import JSON5 from 'json5'
-
+import path from 'path'
+const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
 const localApi = {
   getApiList () {
     const core = lodash.cloneDeep(DevSidecar.api)
@@ -14,6 +15,14 @@ const localApi = {
     console.log('api list:', list)
     return list
   },
+  startup () {
+    return DevSidecar.api.startup({ mitmproxyPath })
+  },
+  server: {
+    start () {
+      return DevSidecar.api.server.start({ mitmproxyPath })
+    }
+  },
   config: {
     /**
      * 保存自定义的 config
@@ -22,13 +31,12 @@ const localApi = {
     save (newConfig) {
       // 对比默认config的异同
       const defConfig = DevSidecar.api.config.getDefault()
+      const saveConfig = doMerge(defConfig, newConfig)
 
-      const saveConfig = {}
-
-      _merge(defConfig, newConfig, saveConfig, 'intercepts')
-      _merge(defConfig, newConfig, saveConfig, 'dns.mapping')
-      _merge(defConfig, newConfig, saveConfig, 'setting.startup.server', true)
-      _merge(defConfig, newConfig, saveConfig, 'setting.startup.proxy')
+      // _merge(defConfig, newConfig, saveConfig, 'intercepts')
+      // _merge(defConfig, newConfig, saveConfig, 'dns.mapping')
+      // _merge(defConfig, newConfig, saveConfig, 'setting.startup.server', true)
+      // _merge(defConfig, newConfig, saveConfig, 'setting.startup.proxy')
 
       fs.writeFileSync(_getConfigPath(), JSON5.stringify(saveConfig, null, 2))
       return saveConfig
@@ -66,39 +74,42 @@ function _getConfigPath () {
   return dir + 'config.json5'
 }
 
-function _merge (defConfig, newConfig, saveConfig, target, self = false) {
-  if (self) {
-    const defValue = lodash.get(defConfig, target)
-    const newValue = lodash.get(newConfig, target)
-    if (newValue != null && newValue !== defValue) {
-      lodash.set(saveConfig, newValue, target)
-    }
-    return
-  }
-  const saveObj = _mergeConfig(lodash.get(defConfig, target), lodash.get(newConfig, target))
-  lodash.set(saveConfig, target, saveObj)
-}
-
-function _mergeConfig (defObj, newObj) {
-  for (const key in defObj) {
-    // 从默认里面提取对比，是否有被删除掉的
-    if (newObj[key] == null) {
-      newObj[key] = false
-    }
-  }
+function doMerge (defObj, newObj) {
+  const defObj2 = { ...defObj }
+  const newObj2 = {}
   for (const key in newObj) {
-    const newItem = newObj[key]
-    const defItem = defObj[key]
-    if (newItem && !defItem) {
+    const newValue = newObj[key]
+    const defValue = defObj[key]
+    if (newValue != null && defValue == null) {
+      newObj2[key] = newValue
       continue
     }
-    // 深度对比 是否有修改
-    if (lodash.isEqual(newItem, defItem)) {
-      // 没有修改则删除
-      delete newObj[key]
+    if (lodash.isEqual(newValue, defValue)) {
+      delete defObj2[key]
+      continue
+    }
+
+    if (lodash.isArray(newValue)) {
+      delete defObj2[key]
+      newObj2[key] = newValue
+      continue
+    }
+    if (lodash.isObject(newValue)) {
+      newObj2[key] = doMerge(defValue, newValue)
+      delete defObj2[key]
+      continue
+    } else {
+      // 基础类型，直接覆盖
+      delete defObj2[key]
+      newObj2[key] = newValue
+      continue
     }
   }
-  return newObj
+  // defObj 里面剩下的是被删掉的
+  lodash.forEach(defObj2, (defValue, key) => {
+    newObj2[key] = null
+  })
+  return newObj2
 }
 
 export default {
@@ -133,7 +144,7 @@ export default {
 
     // 合并用户配置
     localApi.config.reload()
-    DevSidecar.api.startup()
+    localApi.startup()
   },
   devSidecar: DevSidecar
 }

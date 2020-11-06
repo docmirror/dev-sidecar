@@ -34,8 +34,9 @@ class DarwinSystemShell extends SystemShell {
 }
 
 class WindowsSystemShell extends SystemShell {
-  static async exec (cmds, args = { type: 'ps' }) {
-    const { type } = args
+  static async exec (cmds, args = { }) {
+    let { type } = args
+    type = type || 'ps'
     if (cmds instanceof String) {
       cmds = [cmds]
     }
@@ -50,26 +51,31 @@ class WindowsSystemShell extends SystemShell {
       }
 
       const ret = await ps.invoke()
-      console.log('ps complete:', cmds, ret)
+      // console.log('ps complete:', cmds, ret)
       return ret
     } else {
       let compose = 'chcp 65001  '
       for (const cmd of cmds) {
         compose += ' && ' + cmd
       }
-      return new Promise((resolve, reject) => {
-        childProcess.exec(compose, function (error, stdout, stderr) {
-          if (error) {
-            console.error('cmd 命令执行错误：', compose, error, stderr)
-            reject(error)
-          } else {
-            const data = stdout
-            resolve(data)
-          }
-        })
-      })
+      const ret = await childExec(compose)
+      // console.log('cmd complete:', cmds)
+      return ret
     }
   }
+}
+
+function childExec (composeCmds) {
+  return new Promise((resolve, reject) => {
+    childProcess.exec(composeCmds, function (error, stdout, stderr) {
+      if (error) {
+        console.error('cmd 命令执行错误：', composeCmds, error, stderr)
+        reject(error)
+      } else {
+        resolve(stdout)
+      }
+    })
+  })
 }
 
 function getSystemShell () {

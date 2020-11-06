@@ -83,7 +83,6 @@ const NodePlugin = function (context) {
 
     async setRegistry (registry) {
       await nodeApi.setNpmEnv([{ key: 'registry', value: registry }])
-      console.log(1111)
       return true
     },
 
@@ -103,7 +102,7 @@ const NodePlugin = function (context) {
        */
       const nodeConfig = config.get().plugin.node
       if (nodeConfig.setting['strict-ssl']) {
-        cmds.push('npm nodeConfig set strict-ssl false')
+        cmds.push('npm config set strict-ssl false')
       }
       if (nodeConfig.setting.cafile) {
         cmds.push(`npm config set cafile "${rootCaFile}"`)
@@ -115,13 +114,13 @@ const NodePlugin = function (context) {
       }
 
       if (nodeConfig.setting.NODE_TLS_REJECT_UNAUTHORIZED) {
-        cmds.push('npm nodeConfig set NODE_TLS_REJECT_UNAUTHORIZED 0')
+        cmds.push('npm config set NODE_TLS_REJECT_UNAUTHORIZED 0')
         env.push({ key: 'NODE_TLS_REJECT_UNAUTHORIZED', value: '0' })
       }
 
       const ret = await shell.exec(cmds, { type: 'cmd' })
       if (env.length > 0) {
-        //  await shell.setSystemEnv({ list: env })
+        await shell.setSystemEnv({ list: env })
       }
       event.fire('status', { key: 'plugin.node.enabled', value: true })
       console.info('开启【NPM】代理成功')

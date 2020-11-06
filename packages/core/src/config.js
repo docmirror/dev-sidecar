@@ -1,15 +1,17 @@
 const Shell = require('./shell')
 const lodash = require('lodash')
 const defConfig = require('./config/index.js')
-const proxyConfig = require('./lib/proxy/common/config')
+const proxyServer = require('@docmirror/mitmproxy')
 let configTarget = lodash.cloneDeep(defConfig)
-function _deleteDisabledItem (target, objKey) {
-  const obj = lodash.get(target, objKey)
-  for (const key in obj) {
-    if (obj[key] === false) {
-      delete obj[key]
+function _deleteDisabledItem (target) {
+  lodash.forEach(target, (item, key) => {
+    if (item == null) {
+      delete target[key]
     }
-  }
+    if (lodash.isObject(item)) {
+      _deleteDisabledItem(item)
+    }
+  })
 }
 const configApi = {
   get () {
@@ -24,8 +26,7 @@ const configApi = {
     lodash.merge(merged, clone)
     lodash.merge(merged, newConfig)
 
-    _deleteDisabledItem(merged, 'intercepts')
-    _deleteDisabledItem(merged, 'dns.mapping')
+    _deleteDisabledItem(merged)
     configTarget = merged
     return configTarget
   },
@@ -35,8 +36,15 @@ const configApi = {
   addDefault (key, defValue) {
     lodash.set(defConfig, key, defValue)
   },
-  resetDefault () {
-    configTarget = lodash.cloneDeep(defConfig)
+  resetDefault (key) {
+    if (key) {
+      let value = lodash.get(defConfig, key)
+      value = lodash.cloneDeep(value)
+      lodash.set(configTarget, key, value)
+    } else {
+      configTarget = lodash.cloneDeep(defConfig)
+    }
+    return configTarget
   },
   async getVariables (type) {
     const method = type === 'npm' ? Shell.getNpmEnv : Shell.getSystemEnv
@@ -60,7 +68,7 @@ const configApi = {
     })
     if (list.length > 0) {
       const context = {
-        ca_cert_path: proxyConfig.getDefaultCACertPath()
+        ca_cert_path: proxyServer.config.getDefaultCACertPath()
       }
       for (const item of noSetList) {
         if (item.value.indexOf('${') >= 0) {

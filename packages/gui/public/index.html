@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"  style="height:100%">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,11 +7,13 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
-  <body>
+  <body  style="height:100%">
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
-    <div id="app"></div>
+    <div id="app" style="height:100%">
+        <div style="display: flex;align-items: center;justify-content: center;height:100%;width:100%"><img src="loading-spin.svg"></div>
+    </div>
     <!-- built files will be auto injected -->
   </body>
 </html>

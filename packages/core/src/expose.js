@@ -3,8 +3,9 @@ const config = require('./config')
 const event = require('./event')
 const shell = require('./shell')
 const modules = require('./modules')
-const proxyConfig = require('./lib/proxy/common/config')
 const lodash = require('lodash')
+const proxyServer = require('@docmirror/mitmproxy')
+const proxyConfig = proxyServer.config
 const context = {
   config,
   shell,
@@ -23,10 +24,6 @@ function setupPlugin (key, plugin, context, config) {
   return api
 }
 
-function fireStatus (target) {
-  event.fire('status', target)
-}
-
 const server = modules.server
 const proxy = setupPlugin('proxy', modules.proxy, context, config)
 const plugin = {}
@@ -40,14 +37,11 @@ config.resetDefault()
 module.exports = {
   status,
   api: {
-    startup: async (newConfig) => {
-      if (newConfig) {
-        config.set(newConfig)
-      }
+    startup: async ({ mitmproxyPath }) => {
       const conf = config.get()
       if (conf.server.enabled) {
         try {
-          await server.start()
+          await server.start({ mitmproxyPath })
         } catch (err) {
           console.error('代理服务启动失败：', err)
         }

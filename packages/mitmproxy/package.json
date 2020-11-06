@@ -1,5 +1,5 @@
 {
-  "name": "@docmirror/dev-sidecar",
+  "name": "@docmirror/mitmproxy",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -47,8 +47,7 @@
     "util": "^0.12.3",
     "validator": "^13.1.17",
     "vue": "^2.6.11",
-    "winreg": "^1.2.4",
-    "@docmirror/mitmproxy": "1.0.0"
+    "winreg": "^1.2.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

@@ -11,17 +11,17 @@
       <div style="text-align: center">
         <div class="big_button">
           <a-button shape="circle" :type="startup.type()" :loading="startup.loading" @click="startup.doClick">
-            <img v-if="!startup.loading && !status.server" width="50" src="/logo/logo-simple.svg">
-            <img v-if="!startup.loading && status.server" width="50" src="/logo/logo-fff.svg">
+            <img v-if="!startup.loading && !status.server.enabled" width="50" src="/logo/logo-simple.svg">
+            <img v-if="!startup.loading && status.server.enabled" width="50" src="/logo/logo-fff.svg">
           </a-button>
-          <div style="margin-top: 10px">{{ status.server ? '已开启' : '已关闭' }}</div>
+          <div style="margin-top: 10px">{{ status.server.enabled ? '已开启' : '已关闭' }}</div>
         </div>
       </div>
       <div :span="12">
         <a-form style="margin-top:20px" :label-col="{ span: 12 }" :wrapper-col="{ span: 12 }">
 
           <a-form-item v-for=" (item, key) in switchBtns" :key="key" :label="item.label">
-            <a-switch :loading="item.loading" v-model="item.status[key].enabled" default-checked v-on:click="item.doClick">
+            <a-switch style="margin-left:10px" :loading="item.loading" v-model="item.status[key].enabled" default-checked v-on:click="item.doClick">
               <a-icon slot="checkedChildren" type="check"/>
               <a-icon slot="unCheckedChildren" type="close"/>
             </a-switch>
@@ -30,6 +30,7 @@
         </a-form>
 
       </div>
+
     </div>
     <setup-ca title="安装证书" :visible.sync="setupCa.visible"></setup-ca>
   </ds-container>
@@ -51,19 +52,14 @@ export default {
   },
   data () {
     return {
-      status: {
-        proxy: {},
-        plugin: {
-          node: {}
-        }
-      },
+      status: status,
       startup: {
         loading: false,
         type: () => {
-          return this.status.server ? 'primary' : 'default'
+          return (this.status.server && this.status.server.enabled) ? 'primary' : 'default'
         },
         doClick: () => {
-          if (this.status.server) {
+          if (this.status.server.enabled) {
             this.apiCall(this.startup, api.shutdown)
           } else {
             this.apiCall(this.startup, api.startup)
@@ -192,4 +188,5 @@ export default {
 div.ant-form-item {
   margin-bottom: 10px;
 }
+
 </style>

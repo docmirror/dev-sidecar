@@ -134,7 +134,7 @@ class WindowsSystemProxy extends SystemProxy {
 
       ps.invoke()
         .then(output => {
-          console.log(output)
+          // console.log(output)
           resolve()
         })
         .catch(err => {

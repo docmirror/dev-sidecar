@@ -1,3 +1,4 @@
+const path = require('path')
 module.exports = {
   configureWebpack: config => {
     const configNew = {
@@ -29,6 +30,9 @@ module.exports = {
             to: 'extra'
           }
         ]
+      },
+      chainWebpackMainProcess (config) {
+        config.entry('mitmproxy').add(path.join(__dirname, 'src/bridge/mitmproxy.js'))
       }
     }
   }

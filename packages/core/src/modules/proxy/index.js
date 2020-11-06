@@ -39,12 +39,7 @@ module.exports = {
     enabled: true,
     name: '系统代理',
     use: 'local',
-    other: {
-      host: undefined,
-      port: undefined,
-      username: undefined,
-      password: undefined
-    }
+    other: []
   },
   status: {
     enabled: false,

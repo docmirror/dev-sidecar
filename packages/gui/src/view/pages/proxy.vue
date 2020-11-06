@@ -7,19 +7,22 @@
     </template>
 
     <div v-if="config">
-      <a-form-item label="启用系统代理" >
+      <a-form-item label="启用系统代理" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.proxy.enabled" >
-          自动开启系统代理
+          随应用启动
         </a-checkbox>
-        当前状态：
-        <a-tag v-if="status.plugin.node.enabled" color="green">
-          已启动
+        <a-tag v-if="status.proxy.enabled" color="green">
+          当前已启动
+        </a-tag>
+        <a-tag v-else color="red">
+          当前未启动
         </a-tag>
       </a-form-item>
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button  type="primary" @click="submit()">应用</a-button>
+        <a-button class="md-mr-10"   @click="reloadDefault('proxy')">恢复默认</a-button>
+        <a-button  type="primary" @click="apply()">应用</a-button>
       </div>
     </template>
   </ds-container>
@@ -27,34 +30,22 @@
 </template>
 
 <script>
-import DsContainer from '../components/container'
-import api from '../api'
-import status from '../status'
+import Plugin from '../mixins/plugin'
 export default {
   name: 'Proxy',
-  components: {
-    DsContainer
-  },
+  mixins: [Plugin],
   data () {
     return {
-      config: undefined,
-      status: status
+
     }
   },
   created () {
-    api.config.reload().then(ret => {
-      this.config = ret
-    })
+
   },
   mounted () {
   },
   methods: {
 
-    submit () {
-      api.config.set(this.config).then(() => {
-        this.$message.info('设置已保存')
-      })
-    }
   }
 }
 </script>

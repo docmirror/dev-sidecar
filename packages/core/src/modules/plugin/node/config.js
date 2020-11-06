@@ -1,15 +1,13 @@
 module.exports = {
   name: 'NPM加速',
-  enabled: true,
+  enabled: false,
   startup: {
-    npm: true,
-    yarn: true,
     variables: true
   },
   setting: {
-    'strict-ssl': false,
-    cafile: true,
-    NODE_EXTRA_CA_CERTS: true,
+    'strict-ssl': true,
+    cafile: false,
+    NODE_EXTRA_CA_CERTS: false,
     NODE_TLS_REJECT_UNAUTHORIZED: false,
     registry: 'https://registry.npmjs.org'// 可以选择切换官方或者淘宝镜像
   },

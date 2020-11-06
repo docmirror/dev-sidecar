@@ -1,10 +1,19 @@
-const ProxyOptions = require('./options')
-const mitmproxy = require('../../lib/proxy')
 const config = require('../../config')
 const event = require('../../event')
 const status = require('../../status')
-const shell = require('../../shell')
+const lodash = require('lodash')
+const fork = require('child_process').fork
 let server
+function fireStatus (status) {
+  event.fire('status', { key: 'server.enabled', value: status })
+}
+function sleep (time) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve()
+    }, time)
+  })
+}
 const serverApi = {
   async startup () {
     if (config.get().server.startup) {
@@ -16,66 +25,73 @@ const serverApi = {
       return this.close()
     }
   },
-  async start (newConfig) {
-    if (server != null) {
-      server.close()
+  async start ({ mitmproxyPath }) {
+    const allConfig = config.get()
+    const serverConfig = lodash.cloneDeep(allConfig.server)
+
+    const intercepts = serverConfig.intercepts
+    const dnsMapping = serverConfig.dns.mapping
+
+    if (allConfig.plugin) {
+      lodash.each(allConfig.plugin, (value) => {
+        const plugin = value
+        if (plugin.intercepts) {
+          lodash.merge(intercepts, plugin.intercepts)
+        }
+        if (plugin.dns) {
+          lodash.merge(dnsMapping, plugin.dns)
+        }
+      })
     }
-    config.set(newConfig)
-    const proxyOptions = ProxyOptions(config.get())
-    const newServer = mitmproxy.createProxy(proxyOptions, () => {
-      event.fire('status', { key: 'server.enabled', value: true })
-      console.log('代理服务已启动：127.0.0.1:' + proxyOptions.port)
-    })
-    newServer.on('close', () => {
-      if (server === newServer) {
-        server = null
-        event.fire('status', { key: 'server.enabled', value: false })
+    // fireStatus('ing') // 启动中
+    const serverProcess = fork(mitmproxyPath, [JSON.stringify(serverConfig)])
+    server = {
+      id: serverProcess.pid,
+      process: serverProcess,
+      close () {
+        serverProcess.send({ type: 'action', event: { key: 'close' } })
+      }
+    }
+    console.log('fork return pid: ' + serverProcess.pid)
+    serverProcess.on('message', function (msg) {
+      console.log('收到子进程消息', msg)
+      if (msg.type === 'status') {
+        fireStatus(msg.event)
+      } else if (msg.type === 'error') {
+        event.fire('error', { key: 'server', error: msg.event })
       }
     })
-    newServer.on('error', (e) => {
-      console.log('server error', e)
-      // newServer = null
-      event.fire('error', { key: 'server', error: e })
-    })
-    newServer.config = proxyOptions
-    server = newServer
-    return { port: proxyOptions.port }
+    return { port: config.port }
+  },
+  async kill () {
+    if (server) {
+      server.process.kill('SIGINT')
+      await sleep(1000)
+    }
+    fireStatus(false)
   },
   async close () {
+    return await serverApi.kill()
+  },
+  async close1 () {
     return new Promise((resolve, reject) => {
       if (server) {
-        const currentServer = server
-        let closed = false
+        // fireStatus('ing')// 关闭中
         server.close((err) => {
           if (err) {
             console.log('close error', err, ',', err.code, ',', err.message, ',', err.errno)
             if (err.code === 'ERR_SERVER_NOT_RUNNING') {
               console.log('代理服务关闭成功')
-              closed = true
               resolve()
               return
             }
+            console.log('代理服务关闭失败', err)
             reject(err)
           } else {
             console.log('代理服务关闭成功')
-            closed = true
             resolve()
           }
         })
-        // 3秒后强制关闭
-        setTimeout(async () => {
-          if (closed) {
-            return
-          }
-          console.log('强制关闭:', config.get().server.port)
-          await shell.killByPort({ port: config.get().server.port })
-          if (currentServer === server) {
-            server = null
-            event.fire('status', { key: 'server.enabled', value: false })
-          }
-          closed = true
-          resolve()
-        }, 3000)
       } else {
         console.log('server is null')
         resolve()
@@ -83,11 +99,7 @@ const serverApi = {
     })
   },
   async restart () {
-    try {
-      await serverApi.close()
-    } catch (err) {
-      console.log('stop error', err)
-    }
+    await serverApi.kill()
     await serverApi.start()
   },
   getServer () {
