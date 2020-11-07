@@ -73,12 +73,14 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
           })
 
           proxyReq.on('timeout', () => {
-            console.error('代理请求超时', rOptions.protocol, rOptions.hostname, rOptions.path)
+            const end = new Date().getTime()
+            console.error('代理请求超时', rOptions.protocol, rOptions.hostname, rOptions.path, (end - start) + 'ms')
             reject(new Error(`${rOptions.host}:${rOptions.port}, 代理请求超时`))
           })
 
           proxyReq.on('error', (e, req, res) => {
-            console.error('代理请求错误', e.errno, rOptions.hostname, rOptions.path)
+            const end = new Date().getTime()
+            console.error('代理请求错误', e.errno, rOptions.hostname, rOptions.path, (end - start) + 'ms')
             reject(e)
             if (res) {
               res.end()

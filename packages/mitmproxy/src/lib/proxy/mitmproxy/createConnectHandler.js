@@ -33,6 +33,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, fakeServe
 function connect (req, cltSocket, head, hostname, port) {
   // tunneling https
   // console.log('connect:', hostname, port)
+  const start = new Date().getTime()
   try {
     const proxySocket = net.connect(port, hostname, () => {
       cltSocket.write('HTTP/1.1 200 Connection Established\r\n' +
@@ -46,7 +47,8 @@ function connect (req, cltSocket, head, hostname, port) {
     })
     proxySocket.on('error', (e) => {
       // 连接失败，可能被GFW拦截，或者服务端拥挤
-      console.error('代理连接失败：', e.errno, hostname, port)
+      const end = new Date().getTime()
+      console.error('代理连接失败：', e.errno, hostname, port, (end - start) / 1000 + 'ms')
       cltSocket.destroy()
     })
     return proxySocket

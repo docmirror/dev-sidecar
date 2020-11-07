@@ -6,13 +6,13 @@ const tunnelAgent = require('tunnel-agent')
 const util = exports
 const httpsAgent = new HttpsAgent({
   keepAlive: true,
-  timeout: 15000,
+  timeout: 5000,
   keepAliveTimeout: 60000, // free socket keepalive for 30 seconds
   rejectUnauthorized: false
 })
 const httpAgent = new Agent({
   keepAlive: true,
-  timeout: 15000,
+  timeout: 5000,
   keepAliveTimeout: 60000 // free socket keepalive for 30 seconds
 })
 let socketId = 0
