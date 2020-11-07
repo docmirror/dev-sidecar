@@ -67,7 +67,9 @@ module.exports = {
           plugins.push(start())
         }
       }
-      await Promise.all(plugins)
+      if (plugins && plugins.length > 0) {
+        await Promise.all(plugins)
+      }
     },
     shutdown: async () => {
       try {

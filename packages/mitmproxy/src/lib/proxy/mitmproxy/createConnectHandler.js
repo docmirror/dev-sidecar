@@ -14,7 +14,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, fakeServe
       fakeServerCenter.getServerPromise(hostname, srvUrl.port).then((serverObj) => {
         connect(req, cltSocket, head, localIP, serverObj.port)
       }, (e) => {
-        console.error(e)
+        console.error('getServerPromise', e)
       })
     } else {
       if (dnsConfig) {
@@ -35,7 +35,7 @@ function connect (req, cltSocket, head, hostname, port) {
   // console.log('connect:', hostname, port)
   const start = new Date().getTime()
   try {
-    const proxySocket = net.connect(port, hostname, () => {
+    const proxySocket = net.connect({ port, host: hostname, connectTimeout: 5000 }, () => {
       cltSocket.write('HTTP/1.1 200 Connection Established\r\n' +
                 'Proxy-agent: dev-sidecar\r\n' +
                 '\r\n')
@@ -45,14 +45,21 @@ function connect (req, cltSocket, head, hostname, port) {
 
       cltSocket.pipe(proxySocket)
     })
+
+    proxySocket.on('timeout', () => {
+      const end = new Date().getTime()
+      console.log('代理socket timeout：', hostname, port, (end - start) + 'ms')
+      proxySocket.destroy()
+      cltSocket.destroy()
+    })
     proxySocket.on('error', (e) => {
       // 连接失败，可能被GFW拦截，或者服务端拥挤
       const end = new Date().getTime()
-      console.error('代理连接失败：', e.errno, hostname, port, (end - start) / 1000 + 'ms')
+      console.error('代理连接失败：', e.message, hostname, port, (end - start) + 'ms')
       cltSocket.destroy()
     })
     return proxySocket
   } catch (error) {
-    console.log('err', error)
+    console.log('connect err', error)
   }
 }

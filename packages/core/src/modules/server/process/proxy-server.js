@@ -12,7 +12,6 @@ let server
 function start () {
   const config = JSON.parse(process.argv[2])
   const proxyOptions = ProxyOptions(config)
-  console.log('proxy options:', proxyOptions)
   const newServer = mitmproxy.createProxy(proxyOptions, () => {
     fireStatus(true)
     console.log('代理服务已启动：127.0.0.1:' + proxyOptions.port)

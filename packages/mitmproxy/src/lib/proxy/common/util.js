@@ -34,7 +34,7 @@ util.getOptionsFormRequest = (req, ssl, externalProxy = null) => {
       try {
         externalProxyUrl = externalProxy(req, ssl)
       } catch (e) {
-        console.error(e)
+        console.error('externalProxy',e)
       }
     }
   }

@@ -79,7 +79,7 @@ module.exports = (config) => {
             }
           } catch (err) {
             // 拦截失败
-            console.error(err)
+            console.error('拦截处理失败',err)
           }
         }
       }

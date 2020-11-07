@@ -65,8 +65,9 @@ async function _winSetProxy (exec, ip, port) {
     _winAsyncRegSet(regKey, 'ProxyServer', Registry.REG_SZ, `${ip}:${port}`),
     _winAsyncRegSet(regKey, 'ProxyOverride', Registry.REG_SZ, lanIpStr)
   ])
-  console.log('---代理设置成功，等待refresh------')
+  console.log('代理设置成功，等待refresh')
   await exec([refreshInternetPs])
+  console.log('代理设置refresh完成')
   return true
 }
 

@@ -42,7 +42,6 @@ function registerProcessListener () {
 const api = {
   async start (config) {
     const proxyOptions = ProxyOptions(config)
-    console.log('proxy options:', proxyOptions)
     if (proxyOptions.setting && proxyOptions.setting.NODE_TLS_REJECT_UNAUTHORIZED === false) {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
     } else {
