@@ -9,7 +9,7 @@
   "license": "MPL-2.0",
   "private": false,
   "scripts": {
-    "start": "node start.js",
+    "start": "node ./start",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"

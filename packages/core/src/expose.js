@@ -53,22 +53,26 @@ module.exports = {
           console.error('开启系统代理失败：', err)
         }
       }
-      const plugins = []
-      for (const key in plugin) {
-        if (conf.plugin[key].enabled) {
-          const start = async () => {
-            try {
-              await plugin[key].start()
-              console.log(`插件【${key}】已启动`)
-            } catch (err) {
-              console.log(`插件【${key}】启动失败`, err)
+      try {
+        const plugins = []
+        for (const key in plugin) {
+          if (conf.plugin[key].enabled) {
+            const start = async () => {
+              try {
+                await plugin[key].start()
+                console.log(`插件【${key}】已启动`)
+              } catch (err) {
+                console.log(`插件【${key}】启动失败`, err)
+              }
             }
+            plugins.push(start())
           }
-          plugins.push(start())
         }
-      }
-      if (plugins && plugins.length > 0) {
-        await Promise.all(plugins)
+        if (plugins && plugins.length > 0) {
+          await Promise.all(plugins)
+        }
+      } catch (err) {
+        console.error('开启插件失败：', err)
       }
     },
     shutdown: async () => {
@@ -90,25 +94,25 @@ module.exports = {
         if (plugins.length > 0) {
           await Promise.all(plugins)
         }
-
-        if (status.proxy.enabled) {
-          try {
-            await proxy.close()
-            console.log('系统代理已关闭')
-          } catch (err) {
-            console.log('系统代理关闭失败', err)
-          }
-        }
-        if (status.server.enabled) {
-          try {
-            await server.close()
-            console.log('代理服务已关闭')
-          } catch (err) {
-            console.log('代理服务关闭失败', err)
-          }
-        }
       } catch (error) {
-        console.log(error)
+        console.error('插件关闭失败'.error)
+      }
+
+      if (status.proxy.enabled) {
+        try {
+          await proxy.close()
+          console.log('系统代理已关闭')
+        } catch (err) {
+          console.error('系统代理关闭失败', err)
+        }
+      }
+      if (status.server.enabled) {
+        try {
+          await server.close()
+          console.log('代理服务已关闭')
+        } catch (err) {
+          console.error('代理服务关闭失败', err)
+        }
       }
     },
     status: {

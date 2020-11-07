@@ -78,7 +78,7 @@ function childExec (composeCmds) {
         console.error('cmd 命令执行错误：', composeCmds, error, stderr)
         reject(error)
       } else {
-        console.log('cmd 命令完成：', stdout)
+        // console.log('cmd 命令完成：', stdout)
         resolve(stdout)
       }
       // console.log('关闭 cmd')

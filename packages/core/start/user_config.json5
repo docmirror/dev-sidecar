@@ -1,0 +1,7 @@
+{
+  plugin: {
+    node: {
+      enabled: true
+    }
+  }
+}
