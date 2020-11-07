@@ -52,7 +52,6 @@ const serverApi = {
         serverProcess.send({ type: 'action', event: { key: 'close' } })
       }
     }
-    console.log('fork return pid: ' + serverProcess.pid)
     serverProcess.on('message', function (msg) {
       console.log('收到子进程消息', msg)
       if (msg.type === 'status') {

@@ -80,6 +80,12 @@ module.exports = {
       'downloads.openwrt.org': { '.*': { proxy: 'openwrt.proxy.ustclug.org' } },
       'secure.gravatar.com': { '.*': { proxy: 'gravatar.proxy.ustclug.org' } }
     },
+    whiteList: {
+      'alipay.com': true,
+      '*.alipay.com': true,
+      'pay.weixin.qq.com': true,
+      'www.baidu.com': true
+    },
     dns: {
       providers: {
         aliyun: {

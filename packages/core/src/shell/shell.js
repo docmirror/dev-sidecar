@@ -37,7 +37,7 @@ class WindowsSystemShell extends SystemShell {
   static async exec (cmds, args = { }) {
     let { type } = args
     type = type || 'ps'
-    if (cmds instanceof String) {
+    if (typeof cmds === 'string') {
       cmds = [cmds]
     }
     if (type === 'ps') {

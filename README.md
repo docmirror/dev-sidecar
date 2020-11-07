@@ -22,7 +22,7 @@
 等你来提issue
 
 ## 快速开始
-
+目前仅支持windows
 ### 1、安装与启动
 ```shell
 git clone https://gitee.com/docmirror/dev-sidecar.git

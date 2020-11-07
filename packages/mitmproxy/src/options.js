@@ -1,19 +1,19 @@
 const interceptors = require('./lib/interceptor')
 const dnsUtil = require('./lib/dns')
 const lodash = require('lodash')
-function matchHostname (intercepts, hostname) {
-  const interceptOpts = intercepts[hostname]
-  if (interceptOpts) {
-    return interceptOpts
+function matchHostname (hostMap, hostname) {
+  const value = hostMap[hostname]
+  if (value) {
+    return value
   }
-  if (!interceptOpts) {
-    for (const target in intercepts) {
+  if (!value) {
+    for (const target in hostMap) {
       if (target.indexOf('*') < 0) {
         continue
       }
       // 正则表达式匹配
       if (hostname.match(target)) {
-        return intercepts[target]
+        return hostMap[target]
       }
     }
   }
@@ -27,18 +27,23 @@ function domainRegexply (target) {
   return target.replace(/\./g, '\\.').replace(/\*/g, '.*')
 }
 
-module.exports = (config) => {
-  const regexpIntercepts = {}
-  lodash.each(config.intercepts, (value, domain) => {
+function domainMapRegexply (hostMap) {
+  const regexpMap = {}
+  lodash.each(hostMap, (value, domain) => {
     if (domain.indexOf('*') >= 0) {
       const regDomain = domainRegexply(domain)
-      regexpIntercepts[regDomain] = value
+      regexpMap[regDomain] = value
     } else {
-      regexpIntercepts[domain] = value
+      regexpMap[domain] = value
     }
   })
+  return regexpMap
+}
 
-  const intercepts = regexpIntercepts
+module.exports = (config) => {
+  const intercepts = domainMapRegexply(config.intercepts)
+  const whiteList = domainMapRegexply(config.whiteList)
+
   const dnsMapping = config.dns.mapping
   const serverConfig = config
 
@@ -50,6 +55,11 @@ module.exports = (config) => {
     },
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]
+      const inWhiteList = matchHostname(whiteList, hostname) != null
+      if (inWhiteList) {
+        console.log('白名单域名，不拦截', hostname)
+        return false
+      }
       return !!matchHostname(intercepts, hostname) // 配置了拦截的域名，将会被代理
     },
     requestInterceptor: (rOptions, req, res, ssl, next) => {

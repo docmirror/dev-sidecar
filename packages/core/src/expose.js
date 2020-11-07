@@ -87,7 +87,9 @@ module.exports = {
             plugins.push(close())
           }
         }
-        await Promise.all(plugins)
+        if (plugins.length > 0) {
+          await Promise.all(plugins)
+        }
 
         if (status.proxy.enabled) {
           try {

@@ -20,7 +20,7 @@ const ProxyPlugin = function (context) {
 
     async unsetProxy () {
       try {
-        shell.setSystemProxy()
+        await shell.setSystemProxy()
         event.fire('status', { key: 'proxy.enabled', vlaue: false })
         console.log('关闭系统代理成功')
         return true
