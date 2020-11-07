@@ -29,7 +29,19 @@ module.exports = {
             from: 'extra',
             to: 'extra'
           }
-        ]
+        ],
+        appId: 'dev-sidecar',
+        productName: 'Dev-Sidecar',
+        // eslint-disable-next-line no-template-curly-in-string
+        artifactName: 'Dev-Sidecar-${version}.${ext}',
+        copyright: 'Copyright © 2020',
+        nsis: {
+          oneClick: false,
+          perMachine: false,
+          allowElevation: true,
+          allowToChangeInstallationDirectory: true
+        },
+        compression: 'maximum'
       },
       chainWebpackMainProcess (config) {
         config.entry('mitmproxy').add(path.join(__dirname, 'src/bridge/mitmproxy.js'))
