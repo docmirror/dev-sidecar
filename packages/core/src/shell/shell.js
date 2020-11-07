@@ -3,7 +3,7 @@ const os = require('os')
 const childProcess = require('child_process')
 const _exec = childProcess.exec
 const exec = util.promisify(_exec)
-const Shell = require('node-powershell')
+const PowerShell = require('node-powershell')
 
 class SystemShell {
   static async exec (cmds, args) {
@@ -41,7 +41,7 @@ class WindowsSystemShell extends SystemShell {
       cmds = [cmds]
     }
     if (type === 'ps') {
-      const ps = new Shell({
+      const ps = new PowerShell({
         executionPolicy: 'Bypass',
         noProfile: true
       })
@@ -50,16 +50,21 @@ class WindowsSystemShell extends SystemShell {
         ps.addCommand(cmd)
       }
 
-      const ret = await ps.invoke()
-      // console.log('ps complete:', cmds, ret)
-      return ret
+      try {
+        const ret = await ps.invoke()
+        // console.log('ps complete', cmds)
+        return ret
+      } finally {
+        ps.dispose()
+      }
     } else {
       let compose = 'chcp 65001  '
       for (const cmd of cmds) {
         compose += ' && ' + cmd
       }
+      // compose += '&& exit'
       const ret = await childExec(compose)
-      // console.log('cmd complete:', cmds)
+      // console.log('cmd complete:', compose)
       return ret
     }
   }
@@ -67,13 +72,17 @@ class WindowsSystemShell extends SystemShell {
 
 function childExec (composeCmds) {
   return new Promise((resolve, reject) => {
+    const childProcess = require('child_process')
     childProcess.exec(composeCmds, function (error, stdout, stderr) {
       if (error) {
         console.error('cmd 命令执行错误：', composeCmds, error, stderr)
         reject(error)
       } else {
+        console.log('cmd 命令完成：', stdout)
         resolve(stdout)
       }
+      // console.log('关闭 cmd')
+      // ps.kill('SIGINT')
     })
   })
 }

@@ -94,50 +94,71 @@ function createWindow () {
   })
 }
 
-// Quit when all windows are closed.
-app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    quit(app)
-  }
-})
-
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (win === null) {
-    createWindow()
-  }
-})
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    // try {
-    //   await installExtension(VUEJS_DEVTOOLS)
-    // } catch (e) {
-    //   console.error('Vue Devtools failed to install:', e.toString())
-    // }
-  }
-  createWindow()
-  bridge.init(win)
-  try {
-    // 最小化到托盘
-    tray = setTray(app)
-  } catch (err) {
-    console.log('err', err)
-  }
-})
-
 function quit (app) {
   bridge.devSidecar.api.shutdown().then(() => {
     app.quit()
   })
+  if (tray) {
+    tray.displayBalloon({ title: '正在关闭，请稍候...', content: '正在关闭中,请稍候。。。' })
+  }
 }
+
+const isFirstInstance = app.requestSingleInstanceLock()
+
+if (!isFirstInstance) {
+  console.log('is second instance')
+  setTimeout(() => {
+    app.quit()
+  }, 1000)
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    console.log('new app started', commandLine)
+    if (win) {
+      win.show()
+      win.focus()
+    }
+  })
+
+  // Quit when all windows are closed.
+  app.on('window-all-closed', () => {
+    // On macOS it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== 'darwin') {
+      quit(app)
+    }
+  })
+
+  app.on('activate', () => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (win === null) {
+      createWindow()
+    }
+  })
+
+  // This method will be called when Electron has finished
+  // initialization and is ready to create browser windows.
+  // Some APIs can only be used after this event occurs.
+  app.on('ready', async () => {
+    if (isDevelopment && !process.env.IS_TEST) {
+      // Install Vue Devtools
+      // try {
+      //   await installExtension(VUEJS_DEVTOOLS)
+      // } catch (e) {
+      //   console.error('Vue Devtools failed to install:', e.toString())
+      // }
+    }
+    createWindow()
+    bridge.init(win)
+    try {
+      // 最小化到托盘
+      tray = setTray(app)
+    } catch (err) {
+      console.log('err', err)
+    }
+  })
+}
+
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
@@ -147,7 +168,7 @@ if (isDevelopment) {
       }
     })
   } else {
-    process.on('SIGTERM', () => {
+    process.on('SIGINT', () => {
       quit(app)
     })
   }

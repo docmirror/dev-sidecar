@@ -1,6 +1,5 @@
-const systemProxy = require('./system-proxy')
 const ProxyPlugin = function (context) {
-  const { config, event } = context
+  const { config, event, shell } = context
   const api = {
     async start () {
       return api.setProxy()
@@ -13,7 +12,7 @@ const ProxyPlugin = function (context) {
     async setProxy () {
       const ip = '127.0.0.1'
       const port = config.get().server.port
-      await systemProxy.setProxy(ip, port)
+      await shell.setSystemProxy({ ip, port })
       console.log(`开启系统代理成功：${ip}:${port}`)
       event.fire('status', { key: 'proxy.enabled', value: true })
       return { ip, port }
@@ -21,7 +20,7 @@ const ProxyPlugin = function (context) {
 
     async unsetProxy () {
       try {
-        systemProxy.unsetProxy()
+        shell.setSystemProxy()
         event.fire('status', { key: 'proxy.enabled', vlaue: false })
         console.log('关闭系统代理成功')
         return true

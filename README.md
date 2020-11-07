@@ -100,30 +100,31 @@ sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keyc
 ### 拦截配置
 没有配置域名的不会拦截，其他根据配置进行拦截处理
 ```js
-'github.com': [
-  { // 此条配置  release archive 下载链接替换,
-    regexp: [ //需要拦截的url
-      '/.*/.*/releases/download/',
-      '/.*/.*/archive/'
-    ],
-    //拦截类型
-    // redirect:url,  临时重定向(url会变，一些下载资源可以通过此方式配置)
-    // proxy:url,     代理（url不会变，没有跨域问题）
-    // abort:true,    取消请求（适用于被GFW封锁的资源，找不到替代，直接取消请求，快速失败，节省时间）
-    redirect: 'https://download.fastgit.org' //跳转到加速下载链接上
-  },
-  'ajax.googleapis.com': [
-    {
-      regexp:'.*'                       // .* 拦截全部url路径，可省略
-      proxy: 'https://ajax.loli.net'    //代理到加速链接上（url不会变，没有跨域问题，适用于一些静态资源比如js、css的请求）
-    }
-  ],
-  'clients*.google.com': [ 
-    {
-      abort: true //取消请求，被GFW封锁的资源，找不到替代，直接取消请求，快速失败，节省时间
-    }
-  ]
-],
+const intercepts = {
+  // 要拦截的域名
+  'github.com': {
+     //需要拦截url的正则表达式
+     '/.*/.*/releases/download/': {
+        //拦截类型
+        // redirect:url,  临时重定向(url会变，一些下载资源可以通过此方式配置)
+        // proxy:url,     代理（url不会变，没有跨域问题）
+        // abort:true,    取消请求（适用于被GFW封锁的资源，找不到替代，直接取消请求，快速失败，节省时间）
+        redirect: 'download.fastgit.org'
+      },
+   },
+   'ajax.googleapis.com': {
+     '.*': {
+       proxy: 'ajax.loli.net', //代理请求，url不会变
+       backup: ['ajax.proxy.ustclug.org'],
+       test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'
+     }
+   },
+   'clients*.google.com': {
+      '.*':{
+        abort: true //取消请求，被GFW封锁的资源，找不到替代，直接取消请求，快速失败，节省时间
+      }
+    }       
+}
 ```
 
 ### DNS配置
@@ -140,13 +141,7 @@ sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keyc
     }
   },
 ```
-
 注意：暂时只支持IPv4的解析
-
-
-## 开发计划
-1. 桌面端，右下角小图标
-2. √ google cdn加速 
 
 ## 感谢
 本项目参考如下开源项目

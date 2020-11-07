@@ -25,7 +25,7 @@ module.exports = class BaseDNS {
       ip = hostname
       for (let depth = 0; !_isIP(ip) && depth < 5; depth++) {
         ip = await this._lookup(ip).catch(error => {
-          logger.debug(error)
+          logger.debug(ip, error)
           return ip
         })
       }
@@ -38,8 +38,8 @@ module.exports = class BaseDNS {
       this.cache.set(hostname, ip)
       return ip
     } catch (error) {
-      console.error(error)
       logger.debug(`[DNS] cannot resolve hostname ${hostname} (${error})`)
+      return hostname
     }
   }
 }

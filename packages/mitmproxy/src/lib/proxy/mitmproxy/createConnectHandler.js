@@ -23,7 +23,6 @@ module.exports = function createConnectHandler (sslConnectInterceptor, fakeServe
           dns.lookup(hostname).then(ip => {
             connect(req, cltSocket, head, ip, srvUrl.port)
           })
-          return
         }
       }
       connect(req, cltSocket, head, hostname, srvUrl.port)

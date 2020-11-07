@@ -84,12 +84,12 @@ module.exports = {
       providers: {
         aliyun: {
           type: 'https',
-          server: 'dns.alidns.com/dns-query',
+          server: 'https://dns.alidns.com/dns-query',
           cacheSize: 1000
         },
         usa: {
           type: 'https',
-          server: 'cloudflare-dns.com/dns-query',
+          server: 'https://cloudflare-dns.com/dns-query',
           cacheSize: 1000
         }
       },

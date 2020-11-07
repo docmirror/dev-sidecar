@@ -5,6 +5,7 @@ const getSystemEnv = require('./scripts/get-system-env')
 const setSystemEnv = require('./scripts/set-system-env')
 const getNpmEnv = require('./scripts/get-npm-env')
 const setNpmEnv = require('./scripts/set-npm-env')
+const setSystemProxy = require('./scripts/set-system-proxy/index')
 module.exports = {
   killByPort,
   setupCa,
@@ -12,6 +13,7 @@ module.exports = {
   setSystemEnv,
   getNpmEnv,
   setNpmEnv,
+  setSystemProxy,
   async exec (cmds, args) {
     return shell.getSystemShell().exec(cmds, args)
   }
