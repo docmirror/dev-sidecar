@@ -12,6 +12,17 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
 
   async _lookup (hostname) {
     const result = await dohQueryAsync({ url: this.dnsServer }, [{ type: 'A', name: hostname }])
-    return result.answers[0].data
+    if (result.answers.length === 0) {
+      // 说明没有获取到ip
+      console.log('该域名没有ip地址解析', hostname)
+      return []
+    }
+    const ret = result.answers.filter(item => { return item.type === 'A' }).map(item => { return item.data })
+    if (ret.length === 0) {
+      console.log('该域名没有ipv4地址解析', hostname)
+    } else {
+      console.log('获取到域名地址：', hostname, JSON.stringify(ret))
+    }
+    return ret
   }
 }

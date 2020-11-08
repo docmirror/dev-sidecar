@@ -23,7 +23,6 @@ module.exports = {
       }
     }
     if (providerName) {
-      console.log('匹配到dns:', providerName, hostname)
       return dnsConfig.providers[providerName]
     }
   }

@@ -137,6 +137,7 @@ const NodePlugin = function (context) {
       ]
       const ret = await shell.exec(cmds, { type: 'cmd' })
       event.fire('status', { key: 'plugin.node.enabled', value: false })
+      console.info('关闭【NPM】代理成功')
       return ret
     }
   }

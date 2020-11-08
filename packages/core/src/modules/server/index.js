@@ -97,9 +97,9 @@ const serverApi = {
       }
     })
   },
-  async restart () {
+  async restart ({ mitmproxyPath }) {
     await serverApi.kill()
-    await serverApi.start()
+    await serverApi.start({ mitmproxyPath })
   },
   getServer () {
     return server

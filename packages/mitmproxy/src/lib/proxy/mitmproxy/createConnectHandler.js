@@ -21,7 +21,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, fakeServe
         const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
         if (dns) {
           dns.lookup(hostname).then(ip => {
-            connect(req, cltSocket, head, ip, srvUrl.port)
+            connect(req, cltSocket, head, ip, srvUrl.port, { dns, hostname, ip })
           })
         }
       }
@@ -30,7 +30,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, fakeServe
   }
 }
 
-function connect (req, cltSocket, head, hostname, port) {
+function connect (req, cltSocket, head, hostname, port, isDnsIntercept) {
   // tunneling https
   // console.log('connect:', hostname, port)
   const start = new Date().getTime()
@@ -57,6 +57,12 @@ function connect (req, cltSocket, head, hostname, port) {
       const end = new Date().getTime()
       console.error('代理连接失败：', e.message, hostname, port, (end - start) + 'ms')
       cltSocket.destroy()
+
+      if (isDnsIntercept) {
+        const { dns, ip, hostname } = isDnsIntercept
+        dns.count(hostname, ip, true)
+        console.error('记录ip失败次数,用于优选ip：', hostname, ip)
+      }
     })
     return proxySocket
   } catch (error) {

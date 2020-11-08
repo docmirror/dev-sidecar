@@ -35,7 +35,7 @@ function setTray (app) {
     }
   ]
   // 设置系统托盘图标
-  const iconPath = path.join(__dirname, '../extra/favicon.ico')
+  const iconPath = path.join(__dirname, '../extra/icons/128x128.png')
   const appTray = new Tray(iconPath)
 
   // 图标的上下文菜单
@@ -44,14 +44,25 @@ function setTray (app) {
   // 设置托盘悬浮提示
   appTray.setToolTip('DevSidecar-开发者边车辅助工具')
 
-  // 设置托盘菜单
-  appTray.setContextMenu(contextMenu)
-
   // 单击托盘小图标显示应用
   appTray.on('click', () => {
     // 显示主程序
     win.show()
   })
+
+  // 设置托盘菜单
+  // appTray.setContextMenu(contextMenu)
+
+  // appTray.on('double-click', function () {
+  //   console.log('double click')
+  //   win.show()
+  // })
+  appTray.on('right-click', function (event, bounds) {
+    setTimeout(function () {
+      appTray.popUpContextMenu(contextMenu)
+    }, 200)
+  })
+
   return appTray
 }
 

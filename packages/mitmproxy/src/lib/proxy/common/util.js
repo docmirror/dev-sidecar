@@ -6,13 +6,13 @@ const tunnelAgent = require('tunnel-agent')
 const util = exports
 const httpsAgent = new HttpsAgent({
   keepAlive: true,
-  timeout: 5000,
+  timeout: 15000,
   keepAliveTimeout: 60000, // free socket keepalive for 30 seconds
   rejectUnauthorized: false
 })
 const httpAgent = new Agent({
   keepAlive: true,
-  timeout: 5000,
+  timeout: 15000,
   keepAliveTimeout: 60000 // free socket keepalive for 30 seconds
 })
 let socketId = 0
@@ -34,7 +34,7 @@ util.getOptionsFormRequest = (req, ssl, externalProxy = null) => {
       try {
         externalProxyUrl = externalProxy(req, ssl)
       } catch (e) {
-        console.error('externalProxy',e)
+        console.error('externalProxy', e)
       }
     }
   }

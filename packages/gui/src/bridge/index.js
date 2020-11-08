@@ -21,6 +21,9 @@ const localApi = {
   server: {
     start () {
       return DevSidecar.api.server.start({ mitmproxyPath })
+    },
+    restart () {
+      return DevSidecar.api.server.restart({ mitmproxyPath })
     }
   },
   config: {

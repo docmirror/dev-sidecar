@@ -22,7 +22,7 @@ function register (app) {
 }
 
 function handleServerStartError (err, app) {
-  if (err.message.indexOf('listen EADDRINUSE') >= 0) {
+  if (err.message && err.message.indexOf('listen EADDRINUSE') >= 0) {
     app.$confirm({
       title: '端口被占用，代理服务启动失败',
       content: '是否要杀掉占用进程？',

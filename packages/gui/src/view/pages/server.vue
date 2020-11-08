@@ -69,8 +69,8 @@
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button class="md-mr-10"   @click="reloadDefault('server')">恢复默认</a-button>
-        <a-button  type="primary" @click="apply()">应用</a-button>
+        <a-button class="md-mr-10" icon="sync"   @click="reloadDefault('server')">恢复默认</a-button>
+        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
       </div>
     </template>
   </ds-container>
@@ -109,8 +109,28 @@ export default {
         })
       }
     },
-    applyAfter () {
+    async applyBefore () {
+      const dnsMapping = {}
+      for (const item of this.dnsMappings) {
+        if (item.key) {
+          dnsMapping[item.key] = item.value
+        }
+      }
+      this.config.server.dns.mapping = dnsMapping
+    },
+    async applyAfter () {
+      if (this.status.server.enabled) {
+        return this.$api.server.restart()
+      }
+    },
+    deleteDnsMapping (item, index) {
+      this.dnsMappings.splice(index, 1)
+    },
+    restoreDefDnsMapping (item, index) {
 
+    },
+    addDnsMapping () {
+      this.dnsMappings.unshift({ key: '', value: 'usa' })
     }
   }
 }

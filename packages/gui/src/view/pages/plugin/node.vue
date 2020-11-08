@@ -59,8 +59,8 @@
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button class="md-mr-10"   @click="reloadDefault('plugin.node')">恢复默认</a-button>
-        <a-button type="primary" @click="apply()">应用</a-button>
+        <a-button class="md-mr-10" icon="sync"   @click="reloadDefault('server')">恢复默认</a-button>
+        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
       </div>
     </template>
   </ds-container>
@@ -91,13 +91,13 @@ export default {
         this.npmVariables = ret
       })
     },
-    onSwitchRegistry (event) {
-      return this.setRegistry(event.target.value).then(() => {
-        this.$message.success('切换成功')
-      })
+    async onSwitchRegistry (event) {
+      await this.setRegistry(event.target.value)
+      this.$message.success('切换成功')
     },
-    setRegistry (registry) {
-      return this.$api.plugin.node.setRegistry(registry)
+    async setRegistry (registry) {
+      this.apply()
+      await this.$api.plugin.node.setRegistry(registry)
     },
     setNpmVariableAll () {
       this.saveConfig().then(() => {

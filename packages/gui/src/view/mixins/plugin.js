@@ -10,7 +10,8 @@ export default {
       config: undefined,
       status: status,
       labelCol: { span: 4 },
-      wrapperCol: { span: 20 }
+      wrapperCol: { span: 20 },
+      applyLoading: false
     }
   },
   created () {
@@ -27,12 +28,17 @@ export default {
         }
       })
     },
-    apply () {
-      return this.saveConfig().then(() => {
-        if (this.applyAfter) {
-          return this.applyAfter()
-        }
-      })
+    async apply () {
+      this.applyLoading = true
+      await this.applyBefore()
+      await this.saveConfig()
+      if (this.applyAfter) {
+        await this.applyAfter()
+      }
+      this.applyLoading = false
+    },
+    async applyBefore () {
+
     },
     reloadDefault (key) {
       this.$api.config.resetDefault(key).then(ret => {

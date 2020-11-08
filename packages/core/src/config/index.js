@@ -24,7 +24,7 @@ module.exports = {
         '.*': { proxy: 'raw.fastgit.org' }
       },
       'github.githubassets.com': {
-        '.*': { proxy: 'assets.fastgit.org' }
+        '.*': { proxy: 'assets.fastgit.org', test: 'https://github.githubassets.com/favicons/favicon.svg' }
       },
       'customer-stories-feed.github.com': {
         '.*': { proxy: 'customer-stories-feed.fastgit.org' }
