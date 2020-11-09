@@ -1,5 +1,11 @@
 const path = require('path')
 module.exports = {
+  pages: {
+    index: {
+      entry: 'src/main.js',
+      title: 'Dev-Sidecar-给开发者的边车辅助工具'
+    }
+  },
   configureWebpack: config => {
     const configNew = {
       module: {
@@ -40,6 +46,10 @@ module.exports = {
           perMachine: false,
           allowElevation: true,
           allowToChangeInstallationDirectory: true
+        },
+        publish: {
+          provider: 'generic',
+          url: ''
         },
         compression: 'maximum'
       },

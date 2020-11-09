@@ -128,6 +128,7 @@ export default {
       btn.loading = true
       try {
         const ret = await api(param)
+        console.log('this status', this.status)
         return ret
       } catch (err) {
         console.log('api invoke error:', err)

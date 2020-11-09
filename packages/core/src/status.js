@@ -1,12 +1,9 @@
 const event = require('./event')
 const lodash = require('lodash')
 const status = {
-  server: false,
-  proxy: {
-  },
-  plugin: {
-
-  }
+  server: { enabled: false },
+  proxy: {},
+  plugin: {}
 }
 
 event.register('status', (event) => {

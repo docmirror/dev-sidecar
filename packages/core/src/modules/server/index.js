@@ -57,7 +57,10 @@ const serverApi = {
       if (msg.type === 'status') {
         fireStatus(msg.event)
       } else if (msg.type === 'error') {
-        event.fire('error', { key: 'server', error: msg.event })
+        if (msg.event.code && msg.event.code === 'EADDRINUSE') {
+          fireStatus(false) // 启动失败
+        }
+        event.fire('error', { key: 'server', value: 'EADDRINUSE', error: msg.event })
       }
     })
     return { port: config.port }

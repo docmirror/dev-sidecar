@@ -4,6 +4,10 @@ import path from 'path'
 import { app, protocol, BrowserWindow, Menu, Tray } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import bridge from './bridge/index'
+import updateHandle from './bridge/update-handle'
+// eslint-disable-next-line no-unused-vars
+const isMac = process.platform === 'darwin'
+
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -114,6 +118,8 @@ function quit (app) {
   }
 }
 
+// -------------执行开始---------------
+
 const isFirstInstance = app.requestSingleInstanceLock()
 
 if (!isFirstInstance) {
@@ -161,6 +167,7 @@ if (!isFirstInstance) {
     }
     createWindow()
     bridge.init(win)
+    updateHandle(win, 'http://localhost/dev-sidecar/')
     try {
       // 最小化到托盘
       tray = setTray(app)

@@ -13,7 +13,7 @@ function register (app) {
     console.error('view on error', message)
     const key = message.key
     if (key === 'server') {
-      handleServerStartError(message.error, app)
+      handleServerStartError(message, message.error, app)
     }
   })
   api.on('error', (event, message) => {
@@ -21,8 +21,8 @@ function register (app) {
   })
 }
 
-function handleServerStartError (err, app) {
-  if (err.message && err.message.indexOf('listen EADDRINUSE') >= 0) {
+function handleServerStartError (message, err, app) {
+  if (message.value === 'EADDRINUSE') {
     app.$confirm({
       title: '端口被占用，代理服务启动失败',
       content: '是否要杀掉占用进程？',

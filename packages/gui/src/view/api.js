@@ -30,6 +30,8 @@ export function apiInit () {
       return apiObj
     })
   }
+  ipcRenderer.send('checkForUpdate')
+
   return new Promise(resolve => {
     resolve(apiObj)
   })

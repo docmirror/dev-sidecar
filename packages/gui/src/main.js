@@ -26,7 +26,7 @@ apiInit().then((api) => {
     render: h => h(App)
   }).$mount('#app')
 
-  view.register(app)
+  view.init(app)
 })
 
 // fix vue-router NavigationDuplicated

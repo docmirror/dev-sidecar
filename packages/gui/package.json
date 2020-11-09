@@ -19,6 +19,7 @@
     "@docmirror/mitmproxy": "1.0.1",
     "ant-design-vue": "^1.6.5",
     "core-js": "^3.6.5",
+    "electron-store": "^6.0.1",
     "electron-updater": "^4.3.5",
     "es-abstract": "^1.17.7",
     "json5": "^2.1.3",

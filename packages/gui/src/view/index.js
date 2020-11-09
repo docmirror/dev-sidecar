@@ -1,5 +1,7 @@
 import './status'
 import register from './event'
 export default {
-  register
+  init (app) {
+    register(app)
+  }
 }
