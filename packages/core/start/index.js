@@ -4,7 +4,7 @@ const fs = require('fs')
 // 启动服务
 const mitmproxyPath = './start/mitmproxy'
 async function startup () {
-  const banner = fs.readFileSync('./banner.txt')
+  const banner = fs.readFileSync('./start/banner.txt')
   console.log(banner.toString())
 
   const configPath = './start/user_config.json5'

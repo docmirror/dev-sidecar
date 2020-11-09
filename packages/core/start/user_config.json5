@@ -1,4 +1,13 @@
 {
+  server: {
+    intercepts: {
+      'notify3.note.youdao.com': {
+        '/pushserver3/.*': {
+          abort: true
+        },
+      }
+    }
+  },
   plugin: {
     node: {
       enabled: true

@@ -18,6 +18,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
     } else {
       req.socket.setKeepAlive(true, 30000)
     }
+    const context = {}
 
     const requestInterceptorPromise = () => {
       return new Promise((resolve, reject) => {
@@ -26,7 +27,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
         }
         try {
           if (typeof requestInterceptor === 'function') {
-            requestInterceptor(rOptions, req, res, ssl, next)
+            requestInterceptor(rOptions, req, res, ssl, next, context)
           } else {
             resolve()
           }
@@ -82,15 +83,11 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
             const end = new Date().getTime()
             console.error('代理请求错误', e.errno, rOptions.hostname, rOptions.path, (end - start) + 'ms')
             reject(e)
-            if (res) {
-              res.end()
-            }
           })
 
           proxyReq.on('aborted', () => {
             console.error('代理请求被取消', rOptions.hostname, rOptions.path)
             reject(new Error('代理请求被取消'))
-            req.destroy()
           })
 
           req.on('aborted', function () {
@@ -101,9 +98,6 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
           req.on('error', function (e, req, res) {
             console.error('请求错误：', e.errno, rOptions.hostname, rOptions.path)
             reject(e)
-            if (res) {
-              res.end()
-            }
           })
           req.on('timeout', () => {
             console.error('请求超时', rOptions.hostname, rOptions.path)
@@ -130,7 +124,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
         }
         try {
           if (typeof responseInterceptor === 'function') {
-            responseInterceptor(req, res, proxyReq, proxyRes, ssl, next)
+            responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, context)
           } else {
             resolve()
           }

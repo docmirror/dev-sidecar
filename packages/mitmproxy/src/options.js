@@ -62,7 +62,7 @@ module.exports = (config) => {
       }
       return !!matchHostname(intercepts, hostname) // 配置了拦截的域名，将会被代理
     },
-    requestInterceptor: (rOptions, req, res, ssl, next) => {
+    requestInterceptor: (rOptions, req, res, ssl, next, context) => {
       const hostname = rOptions.hostname
       const interceptOpts = matchHostname(intercepts, hostname)
       if (!interceptOpts) { // 该域名没有配置拦截器，直接过
@@ -83,7 +83,7 @@ module.exports = (config) => {
             continue
           }
           try {
-            const result = interceptImpl.requestInterceptor(interceptOpt, rOptions, req, res, ssl)
+            const result = interceptImpl.requestInterceptor(interceptOpt, rOptions, req, res, ssl, context)
             if (result) { // 拦截成功,其他拦截器就不处理了
               return
             }
@@ -95,7 +95,7 @@ module.exports = (config) => {
       }
       next()
     },
-    responseInterceptor: (req, res, proxyReq, proxyRes, ssl, next) => {
+    responseInterceptor: (req, res, proxyReq, proxyRes, ssl, next, context) => {
       next()
     }
   }

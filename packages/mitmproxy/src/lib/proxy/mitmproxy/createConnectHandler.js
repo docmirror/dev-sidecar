@@ -3,6 +3,7 @@ const url = require('url')
 // const colors = require('colors')
 const DnsUtil = require('../../dns/index')
 const localIP = '127.0.0.1'
+const defaultDns = require('dns')
 // create connectHandler function
 module.exports = function createConnectHandler (sslConnectInterceptor, fakeServerCenter, dnsConfig) {
   // return
@@ -17,25 +18,38 @@ module.exports = function createConnectHandler (sslConnectInterceptor, fakeServe
         console.error('getServerPromise', e)
       })
     } else {
-      if (dnsConfig) {
-        const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
-        if (dns) {
-          dns.lookup(hostname).then(ip => {
-            connect(req, cltSocket, head, ip, srvUrl.port, { dns, hostname, ip })
-          })
-        }
-      }
-      connect(req, cltSocket, head, hostname, srvUrl.port)
+      connect(req, cltSocket, head, hostname, srvUrl.port, dnsConfig)
     }
   }
 }
 
-function connect (req, cltSocket, head, hostname, port, isDnsIntercept) {
+function connect (req, cltSocket, head, hostname, port, dnsConfig) {
   // tunneling https
   // console.log('connect:', hostname, port)
   const start = new Date().getTime()
+  let isDnsIntercept = null
   try {
-    const proxySocket = net.connect({ port, host: hostname, connectTimeout: 5000 }, () => {
+    const options = {
+      port,
+      host: hostname,
+      connectTimeout: 10000
+    }
+    if (dnsConfig) {
+      const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
+      if (dns) {
+        options.lookup = (hostname, options, callback) => {
+          dns.lookup(hostname).then(ip => {
+            isDnsIntercept = { dns, hostname, ip }
+            if (ip !== hostname) {
+              callback(null, ip, 4)
+            } else {
+              defaultDns.lookup(hostname, options, callback)
+            }
+          })
+        }
+      }
+    }
+    const proxySocket = net.connect(options, () => {
       cltSocket.write('HTTP/1.1 200 Connection Established\r\n' +
                 'Proxy-agent: dev-sidecar\r\n' +
                 '\r\n')

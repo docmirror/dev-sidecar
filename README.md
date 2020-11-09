@@ -1,7 +1,8 @@
 # dev-sidecar
 开发者边车，命名取自service-mesh的service-sidecar，意为为开发者打辅助的边车工具    
-通过本地代理的方式将请求代理到一些国内的加速通道上
+通过本地代理的方式将http请求代理到一些国内的加速通道上
 解决一些网站和库无法访问或访问速度慢的问题
+
 
 ## 特性
 
@@ -144,6 +145,10 @@ const intercepts = {
 注意：暂时只支持IPv4的解析
 
 ## 感谢
+本项目使用lerna包管理工具   
+
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
+
 本项目参考如下开源项目
 * [node-mitmproxy](https://github.com/wuchangming/node-mitmproxy)   
 * [ReplaceGoogleCDN](https://github.com/justjavac/ReplaceGoogleCDN)

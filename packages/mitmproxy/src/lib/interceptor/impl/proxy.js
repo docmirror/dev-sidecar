@@ -1,7 +1,9 @@
 const url = require('url')
 module.exports = {
-  requestInterceptor (interceptOpt, rOptions, req, res, ssl) {
-    const proxy = interceptOpt.proxy.indexOf('http') === 0 ? interceptOpt.proxy : rOptions.protocol + '//' + interceptOpt.proxy
+  requestInterceptor (interceptOpt, rOptions, req, res, ssl, next) {
+    const proxyTarget = interceptOpt.proxy
+    // const backup = interceptOpt.backup
+    const proxy = proxyTarget.indexOf('http') === 0 ? proxyTarget : rOptions.protocol + '//' + proxyTarget
     // eslint-disable-next-line node/no-deprecated-api
     const URL = url.parse(proxy)
     rOptions.protocol = URL.protocol
@@ -12,7 +14,7 @@ module.exports = {
       rOptions.port = rOptions.protocol === 'https:' ? 443 : 80
     }
 
-    console.log('proxy:', rOptions.hostname, req.url, interceptOpt.proxy)
+    console.log('proxy:', rOptions.hostname, req.url, proxyTarget)
   },
   is (interceptOpt) {
     return !!interceptOpt.proxy
