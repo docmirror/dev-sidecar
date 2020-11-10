@@ -9,13 +9,22 @@
 ### 1、 github的release、source、zip下载加速
 可解决npm install 时某些安装包下载不下来的问题
 
-### 2、 解决git push某些情况下需要临时输入账号密码的问题
-通过将api.github.com域名解析到美国服务器
+### 2、 dns优选
+根据网络状况智能解析域名ip地址，获取最佳网络速度   
+比如：   
+1. 解决git push 偶尔失败需要输入账号密码的问题
+2. 解决github头像加载不出来的问题
+3. 解决gist.github.com访问不到的问题
 
 ### 3、 github的源代码查看（raw/blame查看）
 通过跳转到国内加速链接上
+
 ### 4、 Stack Overflow 加速
-将ajax.google.com代理到加速代理上 ,recaptcha 加速
+
+将ajax.google.com代理到加速CDN上 
+recaptcha 图片验证码加速
+
+
 ### 5、 google cdn 加速
 通过代理到加速链接上
 
@@ -90,10 +99,16 @@ sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keyc
  1. yarn 设置淘宝镜像registry
  2. npm设置官方registry。 
  3. 项目install使用yarn，发布包publish用npm，互不影响
- 
+ 4. 某些库用cnpm也下载不下来的话，可以试试打开dev-sidecar的npm加速
 ### 其他加速
- 1. git clone 加速  [fgit-go](https://github.com/FastGitORG/fgit-go)
- 2. github.com代理网站(不能登录) [hub.fastgit.org](https://hub.fastgit.org/)
+ 1. git clone 加速   
+  > 使用方式用实际的名称替换{}的内容，即可加速clone  
+  > https://hub.fastgit.org/{username}/{reponame}.git     
+  > clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来  
+  > 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
+ 2. github.com的镜像网站(注意：不能登录)   
+   >1. [hub.fastgit.org](https://hub.fastgit.org/)
+   >2. [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限
 
 
 ## api
@@ -128,21 +143,28 @@ const intercepts = {
 }
 ```
 
-### DNS配置
+### DNS优选
 某些域名（比如api.github.com）会被解析到新加坡的ip上，新加坡的服务器在上午挺好，到了晚上就卡死，基本不可用。     
 所以将这些域名解析到美国服务器上就可以正常访问
+
+另外，配置了dns mapping的域名，将会从dns获取到的ip列表中选择相对快一点的服务器进行访问
 
 ```js
  dns: {
     mapping: {
-      // "解决push的时候需要输入密码的问题",
-      'api.github.com': 'usa', //配置该域名，使用USA的域名解析服务器
-      'gist.github.com': 'usa'
-      // "avatars*.githubusercontent.com": "usa"
+      //
+      'api.github.com': 'usa', // "解决push的时候需要输入密码的问题",
+      'gist.github.com': 'usa' // 解决gist无法访问的问题
+      "*.githubusercontent.com": "usa" // 解决github头像经常下载不到的问题
     }
   },
 ```
 注意：暂时只支持IPv4的解析
+#### 开启前vs 开启后  
+![](./doc/avatar2.png)
+![](./doc/avatar1.png)
+
+
 
 ## 感谢
 本项目使用lerna包管理工具   

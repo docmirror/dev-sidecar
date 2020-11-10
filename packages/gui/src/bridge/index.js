@@ -1,11 +1,15 @@
 import lodash from 'lodash'
 import DevSidecar from '@docmirror/dev-sidecar'
-import { ipcMain } from 'electron'
+import { ipcMain, Menu } from 'electron'
 import fs from 'fs'
 import JSON5 from 'json5'
 import path from 'path'
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
 const localApi = {
+  /**
+   * 返回所有api列表，供vue来ipc调用
+   * @returns {[]}
+   */
   getApiList () {
     const core = lodash.cloneDeep(DevSidecar.api)
     const local = lodash.cloneDeep(localApi)
@@ -15,13 +19,40 @@ const localApi = {
     // console.log('api list:', list)
     return list
   },
+  /**
+   * 软件设置
+   */
+  setting: {
+    load () {
+      const settingPath = _getSettingPath()
+      const file = fs.readFileSync(settingPath)
+      const settings = JSON5.parse(file.toString())
+      return settings || {}
+    },
+    save (settings = {}) {
+      const settingPath = _getSettingPath()
+      fs.writeFileSync(settingPath, JSON5.stringify(settings, null, 2))
+    }
+  },
+  /**
+   * 启动所有
+   * @returns {Promise<void>}
+   */
   startup () {
     return DevSidecar.api.startup({ mitmproxyPath })
   },
   server: {
+    /**
+     * 启动代理服务
+     * @returns {Promise<{port: *}>}
+     */
     start () {
       return DevSidecar.api.server.start({ mitmproxyPath })
     },
+    /**
+     * 重启代理服务
+     * @returns {Promise<void>}
+     */
     restart () {
       return DevSidecar.api.server.restart({ mitmproxyPath })
     }
@@ -35,15 +66,13 @@ const localApi = {
       // 对比默认config的异同
       const defConfig = DevSidecar.api.config.getDefault()
       const saveConfig = doMerge(defConfig, newConfig)
-
-      // _merge(defConfig, newConfig, saveConfig, 'intercepts')
-      // _merge(defConfig, newConfig, saveConfig, 'dns.mapping')
-      // _merge(defConfig, newConfig, saveConfig, 'setting.startup.server', true)
-      // _merge(defConfig, newConfig, saveConfig, 'setting.startup.proxy')
-
       fs.writeFileSync(_getConfigPath(), JSON5.stringify(saveConfig, null, 2))
       return saveConfig
     },
+    /**
+     * 读取后合并配置
+     * @returns {*}
+     */
     reload () {
       const path = _getConfigPath()
       if (!fs.existsSync(path)) {
@@ -53,7 +82,7 @@ const localApi = {
       const userConfig = JSON5.parse(file.toString())
       DevSidecar.api.config.set(userConfig)
       const config = DevSidecar.api.config.get()
-      return config
+      return config || {}
     }
   }
 }
@@ -69,6 +98,13 @@ function _deepFindFunction (list, parent, parentKey) {
   }
 }
 
+function _getSettingPath () {
+  const dir = './config/'
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir)
+  }
+  return dir + 'setting.json5'
+}
 function _getConfigPath () {
   const dir = './config/'
   if (!fs.existsSync(dir)) {
@@ -147,6 +183,7 @@ export default {
 
     // 合并用户配置
     localApi.config.reload()
+    // 启动所有
     localApi.startup()
   },
   devSidecar: DevSidecar

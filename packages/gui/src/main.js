@@ -3,7 +3,6 @@ import App from './view/App.vue'
 import antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import view from './view'
-import { apiInit } from './view/api'
 import VueRouter from 'vue-router'
 import routes from './view/router'
 import DsContainer from './view/components/container'
@@ -17,16 +16,17 @@ Vue.component(DsContainer)
 const router = new VueRouter({
   routes // (缩写) 相当于 routes: routes
 })
-
-apiInit().then((api) => {
+Vue.prototype.$global = {}
+view.initApi().then(async (api) => {
   Vue.prototype.$api = api
-
+  // 初始化status
+  await view.initPre(api)
   const app = new Vue({
     router,
     render: h => h(App)
   }).$mount('#app')
 
-  view.init(app)
+  view.initModules(app)
 })
 
 // fix vue-router NavigationDuplicated

@@ -1,6 +1,6 @@
 import DsContainer from '../components/container'
-import status from '../status'
 import lodash from 'lodash'
+
 export default {
   components: {
     DsContainer
@@ -8,7 +8,7 @@ export default {
   data () {
     return {
       config: undefined,
-      status: status,
+      status: {},
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
       applyLoading: false
@@ -20,8 +20,15 @@ export default {
   mounted () {
   },
   methods: {
+    getKey () {
+      if (this.key) {
+        return this.key
+      }
+      throw new Error('请设置key')
+    },
     init () {
-      this.$api.config.reload().then(ret => {
+      this.status = this.$status
+      return this.$api.config.reload().then(ret => {
         this.config = ret
         if (this.ready) {
           return this.ready(this.config)
@@ -40,11 +47,21 @@ export default {
     async applyBefore () {
 
     },
-    reloadDefault (key) {
-      this.$api.config.resetDefault(key).then(ret => {
-        this.config = ret
-      }).then(() => {
-        this.apply()
+    resetDefault () {
+      const key = this.getKey()
+      this.$confirm({
+        title: '提示',
+        content: '确定要恢复默认设置吗？',
+        cancelText: '取消',
+        okText: '确定',
+        onOk: async () => {
+          this.config = await this.$api.config.resetDefault(key)
+          if (this.ready) {
+            await this.ready(this.config)
+          }
+          await this.apply()
+        },
+        onCancel () {}
       })
     },
     saveConfig () {

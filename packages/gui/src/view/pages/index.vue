@@ -4,10 +4,13 @@
       给开发者的辅助工具
       <span>
           <a-button style="margin-right:10px" @click="openSetupCa">安装根证书</a-button>
+         <a-badge :count="update.newVersion?1:0" dot>
+          <a-button style="margin-right:10px" @click="doCheckUpdate">检查更新</a-button>
+         </a-badge>
       </span>
     </template>
 
-    <div style="display: flex; align-items:center;justify-content:space-around;flex-direction: row">
+    <div v-if="status" style="display: flex; align-items:center;justify-content:space-around;flex-direction: row">
       <div style="text-align: center">
         <div class="big_button">
           <a-button shape="circle" :type="startup.type()" :loading="startup.loading" @click="startup.doClick">
@@ -38,8 +41,6 @@
 </template>
 
 <script>
-import api from '../api'
-import status from '../status'
 import lodash from 'lodash'
 import setupCa from '../components/setup-ca'
 import DsContainer from '../components/container'
@@ -52,7 +53,7 @@ export default {
   },
   data () {
     return {
-      status: status,
+      status: undefined,
       startup: {
         loading: false,
         type: () => {
@@ -60,9 +61,9 @@ export default {
         },
         doClick: () => {
           if (this.status.server.enabled) {
-            this.apiCall(this.startup, api.shutdown)
+            this.apiCall(this.startup, this.$api.shutdown)
           } else {
-            this.apiCall(this.startup, api.startup)
+            this.apiCall(this.startup, this.$api.startup)
           }
         }
       },
@@ -77,39 +78,48 @@ export default {
       config: undefined,
       setupCa: {
         visible: false
-      }
+      },
+      update: {}
     }
   },
-  created () {
-    console.log('index created')
-    this.reloadConfig().then(() => {
-      // this.start(true)
-      return api.status.get().then(ret => {
-        console.log('status', ret)
-        lodash.merge(status, ret)
-        this.$set(this, 'status', status)
-      })
-    }).then(() => {
-      this.switchBtns = this.createSwitchBtns()
-    })
+  async created () {
+    console.log('index created', this.status, this.$status)
+    await this.reloadConfig()
+    const status = await this.$api.status.get()
+    console.log('status', status)
+    this.$set(this, 'status', status)
+    this.switchBtns = this.createSwitchBtns()
+    console.log('switchBtns', this.switchBtns)
+    if (this.$global.update == null) {
+      this.$global.update = {
+        fromUser: false,
+        autoDownload: true,
+        progress: 0,
+        newVersion: false
+      }
+      this.update = this.$global.update
+      this.doCheckUpdate(false)
+    }
+    this.update = this.$global.update
   },
   mounted () {
     console.log('index mounted')
   },
   methods: {
     reloadConfig () {
-      return api.config.reload().then(ret => {
+      return this.$api.config.reload().then(ret => {
         this.config = ret
         return ret
       })
     },
     createSwitchBtns () {
-      console.log('api,', api)
+      console.log('api,', this.$api)
       const btns = {}
-      btns.server = this.createSwitchBtn('server', '代理服务', api.server, status)
-      btns.proxy = this.createSwitchBtn('proxy', '系统代理', api.proxy, status)
-      lodash.forEach(this.status.plugin, (item, key) => {
-        btns[key] = this.createSwitchBtn(key, this.config.plugin[key].name, api.plugin[key], status.plugin)
+      const status = this.status
+      btns.server = this.createSwitchBtn('server', '代理服务', this.$api.server, status)
+      btns.proxy = this.createSwitchBtn('proxy', '系统代理', this.$api.proxy, status)
+      lodash.forEach(status.plugin, (item, key) => {
+        btns[key] = this.createSwitchBtn(key, this.config.plugin[key].name, this.$api.plugin[key], status.plugin)
       })
       return btns
     },
@@ -145,10 +155,10 @@ export default {
       }
     },
     onServerClick (checked) {
-      return this.onSwitchClick(this.server, api.server.start, api.server.close, checked)
+      return this.onSwitchClick(this.server, this.$api.server.start, this.$api.server.close, checked)
     },
     start (checked) {
-      this.apiCall(this.startup, api.startup)
+      this.apiCall(this.startup, this.$api.startup)
     },
     openSettings () {
       this.settings.visible = true
@@ -157,12 +167,16 @@ export default {
       console.log('config changed', newConfig)
       this.reloadConfig().then(() => {
         if (this.status.server) {
-          return api.server.restart()
+          return this.$api.server.restart()
         }
       })
     },
     openSetupCa () {
       this.setupCa.visible = true
+    },
+    doCheckUpdate (fromUser = true) {
+      this.update.fromUser = fromUser
+      this.$api.update.checkForUpdate(this.update)
     }
   }
 }

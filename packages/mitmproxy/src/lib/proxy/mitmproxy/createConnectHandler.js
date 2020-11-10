@@ -63,15 +63,12 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig) {
     proxySocket.on('timeout', () => {
       const end = new Date().getTime()
       console.log('代理socket timeout：', hostname, port, (end - start) + 'ms')
-      proxySocket.destroy()
-      cltSocket.destroy()
     })
     proxySocket.on('error', (e) => {
       // 连接失败，可能被GFW拦截，或者服务端拥挤
       const end = new Date().getTime()
       console.error('代理连接失败：', e.message, hostname, port, (end - start) + 'ms')
       cltSocket.destroy()
-
       if (isDnsIntercept) {
         const { dns, ip, hostname } = isDnsIntercept
         dns.count(hostname, ip, true)

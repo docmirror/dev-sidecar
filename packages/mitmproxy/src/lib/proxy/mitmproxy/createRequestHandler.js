@@ -39,14 +39,14 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
 
     const proxyRequestPromise = async () => {
       rOptions.host = rOptions.hostname || rOptions.host || 'localhost'
-      if (dnsConfig) {
-        const dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.host)
-        if (dns) {
-          const ip = await dns.lookup(rOptions.host)
-          console.log('使用自定义dns:', rOptions.host, ip, dns.dnsServer)
-          rOptions.host = ip
-        }
-      }
+      // if (dnsConfig) {
+      //   const dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.host)
+      //   if (dns) {
+      //     const ip = await dns.lookup(rOptions.host)
+      //     console.log('使用自定义dns:', rOptions.host, ip, dns.dnsServer)
+      //     rOptions.host = ip
+      //   }
+      // }
 
       return new Promise((resolve, reject) => {
         // use the binded socket for NTLM
@@ -64,6 +64,22 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
           const url = `${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
           const start = new Date().getTime()
           console.log('代理请求:', url, rOptions.method)
+          let isDnsIntercept
+          if (dnsConfig) {
+            const dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.hostname)
+            if (dns) {
+              rOptions.lookup = (hostname, options, callback) => {
+                dns.lookup(hostname).then(ip => {
+                  isDnsIntercept = { dns, hostname, ip }
+                  if (ip !== hostname) {
+                    callback(null, ip, 4)
+                  } else {
+                    rOptions.lookup(hostname, options, callback)
+                  }
+                })
+              }
+            }
+          }
 
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const end = new Date().getTime()
@@ -75,12 +91,22 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
 
           proxyReq.on('timeout', () => {
             const end = new Date().getTime()
+            if (isDnsIntercept) {
+              const { dns, ip, hostname } = isDnsIntercept
+              dns.count(hostname, ip, true)
+              console.error('记录ip失败次数,用于优选ip：', hostname, ip)
+            }
             console.error('代理请求超时', rOptions.protocol, rOptions.hostname, rOptions.path, (end - start) + 'ms')
             reject(new Error(`${rOptions.host}:${rOptions.port}, 代理请求超时`))
           })
 
           proxyReq.on('error', (e, req, res) => {
             const end = new Date().getTime()
+            if (isDnsIntercept) {
+              const { dns, ip, hostname } = isDnsIntercept
+              dns.count(hostname, ip, true)
+              console.error('记录ip失败次数,用于优选ip：', hostname, ip)
+            }
             console.error('代理请求错误', e.errno, rOptions.hostname, rOptions.path, (end - start) + 'ms')
             reject(e)
           })
@@ -92,7 +118,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
 
           req.on('aborted', function () {
             console.error('请求被取消', rOptions.hostname, rOptions.path)
-            proxyReq.destroy()
+            proxyReq.abort()
             reject(new Error('请求被取消'))
           })
           req.on('error', function (e, req, res) {

@@ -21,7 +21,7 @@
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button class="md-mr-10" icon="sync"   @click="reloadDefault('server')">恢复默认</a-button>
+        <a-button class="md-mr-10" icon="sync"   @click="resetDefault()">恢复默认</a-button>
         <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
       </div>
     </template>
@@ -36,7 +36,7 @@ export default {
   mixins: [Plugin],
   data () {
     return {
-
+      key: 'proxy'
     }
   },
   created () {

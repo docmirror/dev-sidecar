@@ -75,6 +75,7 @@ function createWindow () {
   win = new BrowserWindow({
     width: 900,
     height: 700,
+    title: 'Dev-Sidecar',
     webPreferences: {
       enableRemoteModule: true,
       // preload: path.join(__dirname, 'preload.js'),
@@ -167,7 +168,17 @@ if (!isFirstInstance) {
     }
     createWindow()
     bridge.init(win)
-    updateHandle(win, 'http://localhost/dev-sidecar/')
+
+    let updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
+    if (process.env.NODE_ENV === 'development') {
+      Object.defineProperty(app, 'isPackaged', {
+        get () {
+          return true
+        }
+      })
+      updateUrl = 'http://localhost/dev-sidecar/'
+    }
+    updateHandle(win, updateUrl)
     try {
       // 最小化到托盘
       tray = setTray(app)

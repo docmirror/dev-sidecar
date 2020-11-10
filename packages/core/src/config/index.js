@@ -23,7 +23,7 @@ module.exports = {
       'raw.githubusercontent.com': {
         '.*': { proxy: 'raw.fastgit.org' }
       },
-      'github.githubassets.com': {
+      'github11.githubassets.com': {
         '.*': { proxy: 'assets.fastgit.org', test: 'https://github.githubassets.com/favicons/favicon.svg' }
       },
       'customer-stories-feed.github.com': {
@@ -100,10 +100,11 @@ module.exports = {
         }
       },
       mapping: {
+        '*.github.com': 'usa',
+        '*.githubusercontent.com': 'usa',
+        '*.githubassets.com': 'usa',
         // "解决push的时候需要输入密码的问题",
-        'api.github.com': 'usa',
-        'gist.github.com': 'usa'
-        // "avatars*.githubusercontent.com": "usa"
+        'github.com': 'usa'
       }
     }
   },
