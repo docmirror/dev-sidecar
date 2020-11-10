@@ -12,7 +12,7 @@
 ### 2、 dns优选
 根据网络状况智能解析域名ip地址，获取最佳网络速度   
 比如：   
-1. 解决git push 偶尔失败需要输入账号密码的问题
+1. 解决git push 偶尔失败需要输入账号密码的问题（fatal: TaskCanceledException encountered）
 2. 解决github头像加载不出来的问题
 3. 解决gist.github.com访问不到的问题
 
