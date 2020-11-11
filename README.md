@@ -37,11 +37,11 @@ recaptcha 图片验证码加速
 ### 1、 DevSidecar桌面应用发布啦
 暂时只支持windows    
  
-1.1 下载安装包  
+#### 1.1 下载安装包  
 [点此去下载](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.0.2.exe)        
-1.2 安装根证书     
+#### 1.2 安装根证书     
 第一次打开会提示安装根证书    
-1.3 开始加速吧      
+#### 1.3 开始加速吧      
 去试试打开github    
 `Download ZIP`、`Release` 下载试试，体验秒下的感觉    
 比如去下载它： https://github.com/greper/d2-crud-plus/archive/master.zip    
