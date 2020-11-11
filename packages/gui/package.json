@@ -5,7 +5,6 @@
   "license": "MPL-2.0",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
     "electron": "vue-cli-service electron:serve",
