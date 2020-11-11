@@ -11,7 +11,7 @@
 可解决npm install 时某些安装包下载不下来的问题
 
 ### 2、 dns优选
-根据网络状况智能解析域名ip地址，获取最佳网络速度   
+根据网络状况智能解析域名ip地址，获取最佳网络速度 
 比如：   
 1. 解决git push 偶尔失败需要输入账号密码的问题（fatal: TaskCanceledException encountered）
 2. 解决github头像加载不出来的问题
@@ -111,8 +111,10 @@ start %HOMEPATH%/.dev-sidecar/dev-sidecar.ca.crt
 
 ## 最佳实践
 
-把dev-sidecar一直开着就行了
-
+把dev-sidecar一直开着就行了    
+建议遇到打开比较慢的国外网站，可以优先尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）      
+如果还访问不了，就需要寻找镜像cdn进行拦截代理    
+ 
 ### npm加速
  1. yarn 设置淘宝镜像registry
  2. npm设置官方registry。 
