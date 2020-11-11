@@ -125,12 +125,12 @@ if (!isFirstInstance) {
   }, 1000)
 } else {
   app.on('before-quit', async (event) => {
-    console.log('before-quit', event)
+    console.log('before-quit')
     if (!isShutdown) {
       event.preventDefault()
-      if (tray) {
-        tray.displayBalloon({ title: '正在关闭，请稍候...', content: '正在关闭中,请稍候。。。' })
-      }
+      // if (tray) {
+      //   tray.displayBalloon({ title: '正在关闭，请稍候...', content: '正在关闭中,请稍候。。。' })
+      // }
       await bridge.devSidecar.api.shutdown()
       isShutdown = true
       app.quit()
