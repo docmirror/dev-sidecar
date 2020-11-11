@@ -111,24 +111,31 @@ function createWindow () {
 }
 
 function quit (app) {
-  bridge.devSidecar.api.shutdown().then(() => {
-    app.quit()
-  })
-  if (tray) {
-    tray.displayBalloon({ title: '正在关闭，请稍候...', content: '正在关闭中,请稍候。。。' })
-  }
+  app.quit()
 }
 
 // -------------执行开始---------------
 
 const isFirstInstance = app.requestSingleInstanceLock()
-
+let isShutdown = false
 if (!isFirstInstance) {
   console.log('is second instance')
   setTimeout(() => {
     app.quit()
   }, 1000)
 } else {
+  app.on('before-quit', async (event) => {
+    console.log('before-quit', event)
+    if (!isShutdown) {
+      event.preventDefault()
+      if (tray) {
+        tray.displayBalloon({ title: '正在关闭，请稍候...', content: '正在关闭中,请稍候。。。' })
+      }
+      await bridge.devSidecar.api.shutdown()
+      isShutdown = true
+      app.quit()
+    }
+  })
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     console.log('new app started', commandLine)
     if (win) {
@@ -169,14 +176,15 @@ if (!isFirstInstance) {
     createWindow()
     bridge.init(win)
 
-    let updateUrl = 'https://update-dev-sidecar.docmirror.cn/update/'
+    let updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
     if (process.env.NODE_ENV === 'development') {
       Object.defineProperty(app, 'isPackaged', {
         get () {
           return true
         }
       })
-      updateUrl = 'http://localhost/dev-sidecar/'
+      updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
+      // updateUrl = 'http://localhost/dev-sidecar/'
     }
     updateHandle(win, updateUrl)
     try {

@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "给开发者的加速代理工具",
   "main": "src/index.js",
   "keywords": ["dev-sidecar","github加速","google加速","代理"],
@@ -35,7 +35,7 @@
     "util": "^0.12.3",
     "validator": "^13.1.17",
     "winreg": "^1.2.4",
-    "@docmirror/mitmproxy": "1.0.1"
+    "@docmirror/mitmproxy": "1.0.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-eslint": "~4.5.0",

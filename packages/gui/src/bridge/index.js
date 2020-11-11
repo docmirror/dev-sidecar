@@ -4,6 +4,7 @@ import { ipcMain, Menu } from 'electron'
 import fs from 'fs'
 import JSON5 from 'json5'
 import path from 'path'
+const pk = require('../../package.json')
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
 const localApi = {
   /**
@@ -19,6 +20,14 @@ const localApi = {
     // console.log('api list:', list)
     return list
   },
+  info: {
+    get () {
+      console.log(pk)
+      return {
+        version: pk.version
+      }
+    }
+  },
   /**
    * 软件设置
    */
@@ -30,7 +39,6 @@ const localApi = {
       }
       const file = fs.readFileSync(settingPath)
       const setting = JSON5.parse(file.toString())
-      console.log('read file,', file.toString(), setting)
       return setting || {}
     },
     save (setting = {}) {

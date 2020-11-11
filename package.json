@@ -6,5 +6,6 @@
     "lerna": "^3.22.1"
   },
   "dependencies": {
-  }
+  },
+  "version": "1.0.2"
 }

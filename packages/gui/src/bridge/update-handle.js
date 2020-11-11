@@ -67,7 +67,7 @@ function updateHandle (win, updateUrl) {
   ipcMain.on('update', (e, arg) => {
     if (arg.key === 'doUpdateNow') {
       // some code here to handle event
-      autoUpdater.quitAndInstall(true, true)
+      autoUpdater.quitAndInstall()
     } else if (arg.key === 'checkForUpdate') {
       // 执行自动更新检查
       console.log('autoUpdater checkForUpdates')
