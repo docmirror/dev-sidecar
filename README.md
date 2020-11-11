@@ -125,7 +125,7 @@ start %HOMEPATH%/.dev-sidecar/dev-sidecar.ca.crt
   > clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来  
   > 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
  2. github.com的镜像网站(注意：不能登录)   
-   >1. [hub.fastgit.org](https://hub.fastgit.org/)
+   >1. [hub.fastgit.org](https://hub.fastgit.org/) (好像已经不行了)
    >2. [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限
 
 
