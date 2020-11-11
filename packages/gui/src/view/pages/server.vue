@@ -41,7 +41,7 @@
         </a-tab-pane>
         <a-tab-pane tab="DNS设置" key="3">
           <div>
-            <div>某些域名有时候需要通过其他DNS服务器获取到的IP才可以访问</div>
+            <div>某些域名需要通过国外DNS服务器获取到IP列表中选取相对最优的IP进行访问</div>
             <a-row style="margin-top:10px">
               <a-col>
                 <a-button  type="primary" icon="plus" @click="addDnsMapping()" />

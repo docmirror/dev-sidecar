@@ -43,7 +43,7 @@ module.exports = {
         copyright: 'Copyright © 2020',
         nsis: {
           oneClick: false,
-          perMachine: false,
+          perMachine: true,
           allowElevation: true,
           allowToChangeInstallationDirectory: true
         },
