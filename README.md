@@ -34,7 +34,13 @@ recaptcha 图片验证码加速
 
 ## 快速开始
 目前仅支持windows
-### 1、安装与启动
+### 1、 DevSidecar 桌面应用【推荐】
+暂时只支持windows, [点此去下载](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.0.2.exe)    
+安装完成后，需要添加信任根证书
+
+![](./doc/index.png)
+### 2、命令行方式 
+#### 1、安装与启动
 ```shell
 git clone https://gitee.com/docmirror/dev-sidecar.git
 cd ./dev-sidecar/packages/core
@@ -62,7 +68,7 @@ dev-sidecar启动端口: 1181
 ```
 启动后会自动设置系统代理、npm代理   
 
-### 2、设置信任根证书
+#### 2、设置信任根证书
 
 第一次启动时会本地随机生成一个根证书放在此目录下（由于此证书是本地随机生成的，所以信任它是安全的）   
 ```
