@@ -48,6 +48,11 @@ recaptcha 图片验证码加速
 
 ![](./doc/index.png)
 
+#### 开启前vs 开启后  
+![](./doc/avatar2.png)
+![](./doc/avatar1.png)
+
+
 ### 2、命令行方式 
 此方式适用于nodejs开发者  
 
@@ -173,11 +178,6 @@ const intercepts = {
   },
 ```
 注意：暂时只支持IPv4的解析
-#### 开启前vs 开启后  
-![](./doc/avatar2.png)
-![](./doc/avatar1.png)
-
-
 
 ## 感谢
 本项目使用lerna包管理工具   
