@@ -34,13 +34,24 @@ recaptcha 图片验证码加速
 
 ## 快速开始
 目前仅支持windows
-### 1、 DevSidecar 桌面应用【推荐】
-暂时只支持windows, [点此去下载](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.0.2.exe)    
-安装完成后，需要添加信任根证书
+### 1、 DevSidecar桌面应用发布啦
+暂时只支持windows    
+ 
+1.1 下载安装包  
+[点此去下载](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.0.2.exe)        
+1.2 安装根证书     
+第一次打开会提示安装根证书    
+1.3 开始加速吧      
+去试试打开github    
+`Download ZIP`、`Release` 下载试试，体验秒下的感觉    
+比如去下载它： https://github.com/greper/d2-crud-plus/archive/master.zip    
 
 ![](./doc/index.png)
+
 ### 2、命令行方式 
-#### 1、安装与启动
+此方式适用于nodejs开发者  
+
+1. 安装与启动  
 ```shell
 git clone https://gitee.com/docmirror/dev-sidecar.git
 cd ./dev-sidecar/packages/core
@@ -68,7 +79,7 @@ dev-sidecar启动端口: 1181
 ```
 启动后会自动设置系统代理、npm代理   
 
-#### 2、设置信任根证书
+2. 设置信任根证书    
 
 第一次启动时会本地随机生成一个根证书放在此目录下（由于此证书是本地随机生成的，所以信任它是安全的）   
 ```
@@ -86,12 +97,7 @@ start %HOMEPATH%/.dev-sidecar/dev-sidecar.ca.crt
 
 ![](./doc/setup.png)
 
-Mac 用户安装根证书
-```
-sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.dev-sidecar/dev-sidecar.ca.crt
-```
-
-### 开始加速吧
+3. 开始加速吧
 去github上`Download ZIP`、`Release` 下载试试，体验秒下的感觉
 
 比如去下载它： https://github.com/greper/d2-crud-plus/archive/master.zip
