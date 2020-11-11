@@ -189,7 +189,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
       (e) => {
         if (!res.finished) {
           res.writeHead(500)
-          res.write(`Dev-Sidecar Warning:\n\n ${e.toString()}`)
+          res.write(`DevSidecar Warning:\n\n ${e.toString()}`)
           res.end()
         }
         console.error('request error', e.message)

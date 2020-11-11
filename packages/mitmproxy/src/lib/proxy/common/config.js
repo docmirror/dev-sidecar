@@ -8,7 +8,7 @@ config.caKeyFileName = 'dev-sidecar.ca.key.pem'
 
 config.defaultPort = 1181
 
-config.caName = 'Dev-Sidecar CA'
+config.caName = 'DevSidecar CA'
 
 config.getDefaultCABasePath = function () {
   const userHome = process.env.HOME || process.env.USERPROFILE

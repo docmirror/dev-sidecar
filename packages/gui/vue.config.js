@@ -3,7 +3,7 @@ module.exports = {
   pages: {
     index: {
       entry: 'src/main.js',
-      title: 'Dev-Sidecar-给开发者的边车辅助工具'
+      title: 'DevSidecar-给开发者的边车辅助工具'
     }
   },
   configureWebpack: config => {
@@ -37,9 +37,9 @@ module.exports = {
           }
         ],
         appId: 'dev-sidecar',
-        productName: 'Dev-Sidecar',
+        productName: 'DevSidecar',
         // eslint-disable-next-line no-template-curly-in-string
-        artifactName: 'Dev-Sidecar-${version}.${ext}',
+        artifactName: 'DevSidecar-${version}.${ext}',
         copyright: 'Copyright © 2020',
         nsis: {
           oneClick: false,

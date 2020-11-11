@@ -75,7 +75,7 @@ function createWindow () {
   win = new BrowserWindow({
     width: 900,
     height: 700,
-    title: 'Dev-Sidecar',
+    title: 'DevSidecar',
     webPreferences: {
       enableRemoteModule: true,
       // preload: path.join(__dirname, 'preload.js'),
