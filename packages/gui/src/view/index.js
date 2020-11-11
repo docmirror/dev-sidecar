@@ -3,7 +3,10 @@ import modules from './modules'
 import status from './status'
 export default {
   initApi: apiInit,
-  async initPre (api) {
+  async initPre (Vue, api) {
+    Vue.prototype.$api = api
+    const setting = await api.setting.load()
+    Vue.prototype.$global = { setting }
     await status.install(api)
   },
   initModules (app) {

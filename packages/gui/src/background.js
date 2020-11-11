@@ -74,7 +74,7 @@ function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({
     width: 900,
-    height: 700,
+    height: 750,
     title: 'DevSidecar',
     webPreferences: {
       enableRemoteModule: true,

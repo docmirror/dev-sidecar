@@ -16,11 +16,10 @@ Vue.component(DsContainer)
 const router = new VueRouter({
   routes // (缩写) 相当于 routes: routes
 })
-Vue.prototype.$global = {}
+
 view.initApi().then(async (api) => {
-  Vue.prototype.$api = api
   // 初始化status
-  await view.initPre(api)
+  await view.initPre(Vue, api)
   const app = new Vue({
     router,
     render: h => h(App)

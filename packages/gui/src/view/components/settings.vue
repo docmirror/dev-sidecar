@@ -102,7 +102,7 @@ import vueJsonEditor from 'vue-json-editor'
 import lodash from 'lodash'
 import api from '../api'
 export default {
-  name: 'settings',
+  name: 'setting',
   components: {
     vueJsonEditor
   },

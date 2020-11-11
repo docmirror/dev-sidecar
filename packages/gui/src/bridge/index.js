@@ -24,14 +24,18 @@ const localApi = {
    */
   setting: {
     load () {
-      const settingPath = _getSettingPath()
+      const settingPath = _getSettingsPath()
+      if (!fs.existsSync(settingPath)) {
+        return {}
+      }
       const file = fs.readFileSync(settingPath)
-      const settings = JSON5.parse(file.toString())
-      return settings || {}
+      const setting = JSON5.parse(file.toString())
+      console.log('read file,', file.toString(), setting)
+      return setting || {}
     },
-    save (settings = {}) {
-      const settingPath = _getSettingPath()
-      fs.writeFileSync(settingPath, JSON5.stringify(settings, null, 2))
+    save (setting = {}) {
+      const settingPath = _getSettingsPath()
+      fs.writeFileSync(settingPath, JSON5.stringify(setting, null, 2))
     }
   },
   /**
@@ -98,7 +102,7 @@ function _deepFindFunction (list, parent, parentKey) {
   }
 }
 
-function _getSettingPath () {
+function _getSettingsPath () {
   const dir = './config/'
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)

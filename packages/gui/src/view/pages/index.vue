@@ -3,10 +3,17 @@
     <template slot="header">
       给开发者的辅助工具
       <span>
-          <a-button style="margin-right:10px" @click="openSetupCa">安装根证书</a-button>
-         <a-badge :count="update.newVersion?1:0" dot>
-          <a-button style="margin-right:10px" @click="doCheckUpdate">检查更新</a-button>
-         </a-badge>
+
+          <a-button style="margin-right:10px" @click="openSetupCa">
+            <a-badge :count="_rootCaSetuped?0:1" dot>安装根证书 </a-badge>
+          </a-button>
+
+          <a-button style="margin-right:10px" @click="doCheckUpdate">
+            <a-badge :count="update.newVersion?1:0" dot>
+              检查更新
+            </a-badge>
+          </a-button>
+
       </span>
     </template>
 
@@ -35,7 +42,7 @@
       </div>
 
     </div>
-    <setup-ca title="安装证书" :visible.sync="setupCa.visible"></setup-ca>
+    <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
   </ds-container>
 
 </template>
@@ -50,6 +57,14 @@ export default {
   components: {
     DsContainer,
     setupCa
+  },
+  computed: {
+    _rootCaSetuped () {
+      if (this.setting && this.setting.rootCa) {
+        return this.setting.rootCa.setuped === true
+      }
+      return false
+    }
   },
   data () {
     return {
@@ -67,6 +82,7 @@ export default {
           }
         }
       },
+      setting: undefined,
       server: {
         key: '代理服务',
         loading: false,
@@ -83,6 +99,7 @@ export default {
     }
   },
   async created () {
+    this.doCheckRootCa()
     console.log('index created', this.status, this.$status)
     await this.reloadConfig()
     const status = await this.$api.status.get()
@@ -106,6 +123,40 @@ export default {
     console.log('index mounted')
   },
   methods: {
+    doCheckRootCa () {
+      this.$api.setting.load().then(setting => {
+        console.log('setting', setting)
+        this.setting = setting
+        if (this.setting.rootCa && (this.setting.rootCa.setuped || this.setting.rootCa.noTip)) {
+          return
+        }
+        this.$confirm({
+          title: '提示',
+          content: '第一次使用，请先安装CA根证书',
+          cancelText: '关闭此提示',
+          okText: '去安装',
+          onOk: () => {
+            this.openSetupCa()
+          },
+          onCancel: () => {
+            this.setting.rootCa = this.setting.rootCa || {}
+            const rootCa = this.setting.rootCa
+            rootCa.noTip = true
+            this.$api.setting.save(this.setting)
+          }
+        })
+      })
+    },
+    openSetupCa () {
+      this.setupCa.visible = true
+    },
+    handleCaSetuped () {
+      this.setting.rootCa = this.setting.rootCa || {}
+      const rootCa = this.setting.rootCa
+      rootCa.setuped = true
+      this.$set(this, 'setting', this.setting)
+      this.$api.setting.save(this.setting)
+    },
     reloadConfig () {
       return this.$api.config.reload().then(ret => {
         this.config = ret
@@ -161,7 +212,7 @@ export default {
       this.apiCall(this.startup, this.$api.startup)
     },
     openSettings () {
-      this.settings.visible = true
+      this.setting.visible = true
     },
     onConfigChanged (newConfig) {
       console.log('config changed', newConfig)
@@ -170,9 +221,6 @@ export default {
           return this.$api.server.restart()
         }
       })
-    },
-    openSetupCa () {
-      this.setupCa.visible = true
     },
     doCheckUpdate (fromUser = true) {
       this.update.fromUser = fromUser
