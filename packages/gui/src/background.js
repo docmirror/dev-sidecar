@@ -115,7 +115,9 @@ function quit (app) {
 }
 
 // -------------执行开始---------------
+app.disableHardwareAcceleration() // 禁用gpu
 
+// 禁止双开
 const isFirstInstance = app.requestSingleInstanceLock()
 let isShutdown = false
 if (!isFirstInstance) {
@@ -186,6 +188,7 @@ if (!isFirstInstance) {
       updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
       // updateUrl = 'http://localhost/dev-sidecar/'
     }
+    // 自动更新
     updateHandle(win, updateUrl)
     try {
       // 最小化到托盘
