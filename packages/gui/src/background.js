@@ -169,7 +169,7 @@ if (!isFirstInstance) {
     createWindow()
     bridge.init(win)
 
-    let updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
+    let updateUrl = 'https://update-dev-sidecar.docmirror.cn/update/'
     if (process.env.NODE_ENV === 'development') {
       Object.defineProperty(app, 'isPackaged', {
         get () {
