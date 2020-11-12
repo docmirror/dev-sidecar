@@ -1,9 +1,14 @@
 {
   "name": "@docmirror/dev-sidecar",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "给开发者的加速代理工具",
   "main": "src/index.js",
-  "keywords": ["dev-sidecar","github加速","google加速","代理"],
+  "keywords": [
+    "dev-sidecar",
+    "github加速",
+    "google加速",
+    "代理"
+  ],
   "author": "docmirror.cn",
   "license": "MPL-2.0",
   "private": false,
@@ -11,6 +16,7 @@
     "start": "node ./start"
   },
   "dependencies": {
+    "@docmirror/mitmproxy": "^1.1.0",
     "agentkeepalive": "^2.1.1",
     "charset": "^1.0.0",
     "child_process": "^1.0.2",
@@ -34,8 +40,7 @@
     "tunnel-agent": "^0.4.3",
     "util": "^0.12.3",
     "validator": "^13.1.17",
-    "winreg": "^1.2.4",
-    "@docmirror/mitmproxy": "1.0.2"
+    "winreg": "^1.2.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-eslint": "~4.5.0",
