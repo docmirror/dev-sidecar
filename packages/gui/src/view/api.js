@@ -1,5 +1,6 @@
 import lodash from 'lodash'
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, shell } from 'electron'
+
 const invoke = (api, args) => {
   return ipcRenderer.invoke('apiInvoke', [api, args]).catch(err => {
     console.error('api invoke error:', err)
@@ -20,7 +21,10 @@ const apiObj = {
     ipcRenderer.on(channel, callback)
   },
   invoke,
-  send
+  send,
+  openExternal (href) {
+    shell.openExternal(href)
+  }
 }
 let inited = false
 

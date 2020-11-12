@@ -53,13 +53,14 @@ export default {
     return {
       menus: [
         { title: '首页', path: '/index', icon: 'home' },
-        { title: '加速服务', path: '/server' },
-        { title: '系统代理', path: '/proxy' },
+        { title: '加速服务', path: '/server', icon: 'thunderbolt' },
+        { title: '系统代理', path: '/proxy', icon: 'deployment-unit' },
         {
           title: '应用',
           path: '/plugin',
+          icon: 'api',
           children: [
-            { title: 'NPM加速', path: '/plugin/node' }
+            { title: 'NPM加速', path: '/plugin/node', icon: 'like' }
           ]
         }
       ]

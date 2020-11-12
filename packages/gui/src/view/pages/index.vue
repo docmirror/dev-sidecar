@@ -1,5 +1,5 @@
 <template>
-  <ds-container>
+  <ds-container class="page_index">
     <template slot="header">
       给开发者的辅助工具
       <span>
@@ -17,7 +17,7 @@
       </span>
     </template>
 
-    <div v-if="status" style="display: flex; align-items:center;justify-content:space-around;flex-direction: row">
+    <div v-if="status" style="margin-top:50px;display: flex; align-items:center;justify-content:space-around;flex-direction: row">
       <div style="text-align: center">
         <div class="big_button">
           <a-button shape="circle" :type="startup.type()" :loading="startup.loading" @click="startup.doClick">
@@ -36,13 +36,19 @@
               <a-icon slot="unCheckedChildren" type="close"/>
             </a-switch>
           </a-form-item>
-
         </a-form>
-
       </div>
 
     </div>
     <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
+    <div slot="footer">
+      <div class="flex-l-r star" style="padding:10px;">
+        <div>如果它解决了你的问题，请不要吝啬你的star哟！ <a-icon type="smile" theme="outlined" /></div>
+        <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
+        <a  @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+      </div>
+
+    </div>
   </ds-container>
 
 </template>
@@ -225,17 +231,28 @@ export default {
     doCheckUpdate (fromUser = true) {
       this.update.fromUser = fromUser
       this.$api.update.checkForUpdate(this.update)
+    },
+    openExternal (url) {
+      this.$api.openExternal(url)
     }
   }
 }
 </script>
-<style>
+<style lang="scss">
 .page_index {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  padding-top: 60px;
+
+  .star {
+    >*{
+      margin-right:10px;
+    }
+    a {
+      height: 21px;
+
+      img {
+        height: 21px;
+      }
+    }
+  }
 }
 
 .big_button > button {
@@ -245,11 +262,10 @@ export default {
 }
 
 .big_button > button i {
-  size: 40px
+  size: 40px;
 }
 
 div.ant-form-item {
   margin-bottom: 10px;
 }
-
 </style>

@@ -4,6 +4,17 @@
   border-top:#eee 1px solid;
 }
 
+.flex-l-r{
+  align-content:  center;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center
+}
+.flex-l-r>a{
+  align-content:  center;
+  display: flex;
+  align-items: center
+}
 
 .md-mr-5{margin-right: 5px;}
 .md-mr-10{margin-right: 10px;}
