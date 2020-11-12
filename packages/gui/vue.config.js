@@ -1,4 +1,6 @@
 const path = require('path')
+const webpack = require('webpack')
+
 module.exports = {
   pages: {
     index: {
@@ -8,6 +10,9 @@ module.exports = {
   },
   configureWebpack: config => {
     const configNew = {
+      plugins: [
+        new webpack.DefinePlugin({ 'global.GENTLY': true })
+      ],
       module: {
         rules: [
           {

@@ -18,6 +18,7 @@
     "@docmirror/mitmproxy": "1.0.2",
     "ant-design-vue": "^1.6.5",
     "core-js": "^3.6.5",
+    "electron-baidu-tongji": "^1.0.5",
     "electron-store": "^6.0.1",
     "electron-updater": "^4.3.5",
     "es-abstract": "^1.17.7",
@@ -28,6 +29,10 @@
     "vue": "^2.6.11",
     "vue-json-editor": "^1.4.2",
     "vue-router": "^3.4.8"
+  },
+  "resolutions": {
+    "hexoid": "^1.0.0",
+    "formidable": "2.0.0-canary.20200504.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

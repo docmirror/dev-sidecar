@@ -1,10 +1,12 @@
 'use strict'
 /* global __static */
 import path from 'path'
-import { app, protocol, BrowserWindow, Menu, Tray } from 'electron'
+import { app, protocol, BrowserWindow, Menu, Tray, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import bridge from './bridge/index'
 import updateHandle from './bridge/update-handle'
+import { ebtMain } from './tongji'
+
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 
@@ -190,6 +192,10 @@ if (!isFirstInstance) {
     }
     // 自动更新
     updateHandle(win, updateUrl)
+
+    // 百度分析
+    ebtMain(ipcMain, isDevelopment)
+
     try {
       // 最小化到托盘
       tray = setTray(app)

@@ -120,14 +120,14 @@ function _getSettingsPath () {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }
-  return dir + 'setting.json5'
+  return dir + '/setting.json5'
 }
 function _getConfigPath () {
   const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }
-  return dir + 'config.json5'
+  return dir + '/config.json5'
 }
 
 function doMerge (defObj, newObj) {
