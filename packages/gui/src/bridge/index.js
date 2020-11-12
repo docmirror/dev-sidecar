@@ -6,6 +6,11 @@ import JSON5 from 'json5'
 import path from 'path'
 const pk = require('../../package.json')
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
+
+const getDefaultConfigBasePath = function () {
+  const userHome = process.env.HOME || process.env.USERPROFILE
+  return path.resolve(userHome, './.dev-sidecar')
+}
 const localApi = {
   /**
    * 返回所有api列表，供vue来ipc调用
@@ -111,14 +116,14 @@ function _deepFindFunction (list, parent, parentKey) {
 }
 
 function _getSettingsPath () {
-  const dir = './config/'
+  const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }
   return dir + 'setting.json5'
 }
 function _getConfigPath () {
-  const dir = './config/'
+  const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }

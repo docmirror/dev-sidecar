@@ -100,14 +100,14 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
             reject(new Error(`${rOptions.host}:${rOptions.port}, 代理请求超时`))
           })
 
-          proxyReq.on('error', (e, req, res) => {
+          proxyReq.on('error', (e) => {
             const end = new Date().getTime()
             if (isDnsIntercept) {
               const { dns, ip, hostname } = isDnsIntercept
               dns.count(hostname, ip, true)
               console.error('记录ip失败次数,用于优选ip：', hostname, ip)
             }
-            console.error('代理请求错误', e.errno, rOptions.hostname, rOptions.path, (end - start) + 'ms')
+            console.error('代理请求错误', e.errno, rOptions.hostname, rOptions.path, (end - start) + 'ms', e)
             reject(e)
           })
 
