@@ -121,7 +121,6 @@ app.disableHardwareAcceleration() // 禁用gpu
 
 // 禁止双开
 const isFirstInstance = app.requestSingleInstanceLock()
-let isShutdown = false
 if (!isFirstInstance) {
   console.log('is second instance')
   setTimeout(() => {
@@ -130,15 +129,12 @@ if (!isFirstInstance) {
 } else {
   app.on('before-quit', async (event) => {
     console.log('before-quit')
-    if (!isShutdown) {
-      event.preventDefault()
-      // if (tray) {
-      //   tray.displayBalloon({ title: '正在关闭，请稍候...', content: '正在关闭中,请稍候。。。' })
-      // }
-      await bridge.devSidecar.api.shutdown()
-      isShutdown = true
-      app.quit()
-    }
+    event.preventDefault()
+    // if (tray) {
+    //   tray.displayBalloon({ title: '正在关闭，请稍候...', content: '正在关闭中,请稍候。。。' })
+    // }
+    await bridge.devSidecar.api.shutdown()
+    app.exit()
   })
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     console.log('new app started', commandLine)
@@ -187,8 +183,8 @@ if (!isFirstInstance) {
           return true
         }
       })
-      updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
-      // updateUrl = 'http://localhost/dev-sidecar/'
+      // updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
+      updateUrl = 'http://localhost/dev-sidecar/'
     }
     // 自动更新
     updateHandle(win, updateUrl)
