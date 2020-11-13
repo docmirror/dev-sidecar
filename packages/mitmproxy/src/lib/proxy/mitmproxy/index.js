@@ -65,7 +65,7 @@ module.exports = {
       })
       server.on('request', (req, res) => {
         const ssl = false
-        // log.info('request,', req.url, req.port, req.host)
+        // log.info('request,', req.hostname)
         requestHandler(req, res, ssl)
       })
       // tunneling for https
@@ -77,6 +77,10 @@ module.exports = {
       server.on('upgrade', function (req, socket, head) {
         const ssl = false
         upgradeHandler(req, socket, head, ssl)
+      })
+      server.on('clientError', (err, socket) => {
+        log.error('client error', err)
+        socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
       })
 
       if (callback) {

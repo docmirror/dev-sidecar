@@ -33,8 +33,8 @@ function registerProcessListener () {
     log.error('uncaughtException:', err)
   })
 
-  process.on('unhandledRejection', (reason, p) => {
-    log.info('Unhandled Rejection at: Promise', p, 'reason:', reason)
+  process.on('unhandledRejection', (err, p) => {
+    log.info('Unhandled Rejection at: Promise', p, 'err:', err)
     // application specific logging, throwing an error, or other logic here
   })
 }
