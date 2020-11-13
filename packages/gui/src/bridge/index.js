@@ -27,7 +27,6 @@ const localApi = {
   },
   info: {
     get () {
-      log.info(pk)
       return {
         version: pk.version
       }
