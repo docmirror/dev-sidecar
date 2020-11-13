@@ -4,7 +4,6 @@ const commonUtil = require('../common/util')
 // const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i
 const DnsUtil = require('../../dns/index')
 
-// create requestHandler function
 module.exports = function createRequestHandler (requestInterceptor, responseInterceptor, middlewares, externalProxy, dnsConfig) {
   // return
   return function requestHandler (req, res, ssl) {
