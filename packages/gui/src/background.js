@@ -6,7 +6,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import bridge from './bridge/index'
 import updateHandle from './bridge/update-handle'
 import { ebtMain } from './tongji'
-
+import log from './utils/util.log'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 
@@ -60,7 +60,7 @@ function setTray (app) {
   // appTray.setContextMenu(contextMenu)
 
   // appTray.on('double-click', function () {
-  //   console.log('double click')
+  //   log.info('double click')
   //   win.show()
   // })
   appTray.on('right-click', function (event, bounds) {
@@ -122,13 +122,13 @@ app.disableHardwareAcceleration() // 禁用gpu
 // 禁止双开
 const isFirstInstance = app.requestSingleInstanceLock()
 if (!isFirstInstance) {
-  console.log('is second instance')
+  log.info('is second instance')
   setTimeout(() => {
     app.quit()
   }, 1000)
 } else {
   app.on('before-quit', async (event) => {
-    console.log('before-quit')
+    log.info('before-quit')
     event.preventDefault()
     // if (tray) {
     //   tray.displayBalloon({ title: '正在关闭，请稍候...', content: '正在关闭中,请稍候。。。' })
@@ -137,7 +137,7 @@ if (!isFirstInstance) {
     app.exit()
   })
   app.on('second-instance', (event, commandLine, workingDirectory) => {
-    console.log('new app started', commandLine)
+    log.info('new app started', commandLine)
     if (win) {
       win.show()
       win.focus()
@@ -170,7 +170,7 @@ if (!isFirstInstance) {
       // try {
       //   await installExtension(VUEJS_DEVTOOLS)
       // } catch (e) {
-      //   console.error('Vue Devtools failed to install:', e.toString())
+      //   log.error('Vue Devtools failed to install:', e.toString())
       // }
     }
     createWindow()
@@ -196,7 +196,7 @@ if (!isFirstInstance) {
       // 最小化到托盘
       tray = setTray(app)
     } catch (err) {
-      console.log('err', err)
+      log.info('err', err)
     }
   })
 }

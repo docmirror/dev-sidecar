@@ -7,7 +7,7 @@ const Registry = require('winreg')
 // const cmd = require('node-cmd')
 const refreshInternetPs = require('./refresh-internet')
 const PowerShell = require('node-powershell')
-
+const log = require('../../../utils/util.log')
 const _lanIP = [
   'localhost',
   '127.*',
@@ -42,9 +42,9 @@ async function _winUnsetProxy (exec) {
     _winAsyncRegSet(regKey, 'ProxyEnable', Registry.REG_DWORD, 0),
     _winAsyncRegSet(regKey, 'ProxyServer', Registry.REG_SZ, '')
   ])
-  console.log('代理关闭成功，等待refresh')
+  log.info('代理关闭成功，等待refresh')
   await exec(refreshInternetPs, { type: 'ps' })
-  console.log('代理关闭refresh完成')
+  log.info('代理关闭refresh完成')
   return true
 }
 
@@ -58,7 +58,7 @@ async function _winSetProxy (exec, ip, port) {
   for (const string of _lanIP) {
     lanIpStr += string + ';'
   }
-  // console.log('lanIps:', lanIpStr, ip, port)
+  // log.info('lanIps:', lanIpStr, ip, port)
   await Promise.all([
     _winAsyncRegSet(regKey, 'MigrateProxy', Registry.REG_DWORD, 1),
     _winAsyncRegSet(regKey, 'ProxyEnable', Registry.REG_DWORD, 1),
@@ -66,9 +66,9 @@ async function _winSetProxy (exec, ip, port) {
     _winAsyncRegSet(regKey, 'ProxyServer', Registry.REG_SZ, `${ip}:${port}`),
     _winAsyncRegSet(regKey, 'ProxyOverride', Registry.REG_SZ, lanIpStr)
   ])
-  console.log('代理设置成功，等待refresh')
+  log.info('代理设置成功，等待refresh')
   await exec(refreshInternetPs)
-  console.log('代理设置refresh完成')
+  log.info('代理设置refresh完成')
   return true
 }
 
@@ -84,32 +84,16 @@ function _winAsyncRegSet (regKey, name, type, value) {
   })
 }
 
-async function _winResetWininetProxySettings (script) {
-  const ps = new PowerShell({
-    executionPolicy: 'Bypass',
-    noProfile: true
-  })
-  ps.addCommand(script)
-
-  try {
-    const ret = await ps.invoke()
-    console.log('ps complete', script)
-    return ret
-  } finally {
-    ps.dispose()
-  }
-}
-
 const executor = {
   async windows (exec, params) {
     if (params == null) {
       // 清空代理
-      console.log('关闭代理')
+      log.info('关闭代理')
       return _winUnsetProxy(exec)
     } else {
       // 设置代理
       const { ip, port } = params
-      console.log('设置代理', ip, port)
+      log.info('设置代理', ip, port)
       return _winSetProxy(exec, ip, port)
     }
   },

@@ -1,5 +1,6 @@
 import { ipcMain, dialog } from 'electron'
 import { autoUpdater } from 'electron-updater'
+import log from '../utils/util.log'
 import path from 'path'
 // win是所有窗口的引用
 // const path = require('path') // 引入path模块
@@ -31,30 +32,30 @@ function updateHandle (win, updateUrl) {
     url: updateUrl
   })
   autoUpdater.on('error', function (error) {
-    console.log('autoUpdater error', error)
+    log.info('autoUpdater error', error)
     sendUpdateMessage({ key: 'error', value: error, error: error })
     // dialog.showErrorBox('Error: ', error == null ? 'unknown' : (error.stack || error).toString())
   })
   autoUpdater.on('checking-for-update', function () {
-    console.log('autoUpdater checking-for-update')
+    log.info('autoUpdater checking-for-update')
     sendUpdateMessage({ key: 'checking', value: message.checking })
   })
   autoUpdater.on('update-available', function (info) {
-    console.log('autoUpdater update-available')
+    log.info('autoUpdater update-available')
     sendUpdateMessage({ key: 'available', value: info })
   })
   autoUpdater.on('update-not-available', function (info) {
-    console.log('autoUpdater update-not-available')
+    log.info('autoUpdater update-not-available')
     sendUpdateMessage({ key: 'notAvailable', value: message.updateNotAva })
   })
   // 更新下载进度
   autoUpdater.on('download-progress', function (progressObj) {
-    console.log('autoUpdater download-progress')
+    log.info('autoUpdater download-progress')
     win.webContents.send('update', { key: 'progress', value: parseInt(progressObj.percent) })
   })
   // 更新完成，重启应用
   autoUpdater.on('update-downloaded', function (info) {
-    console.log('download complete', info.version)
+    log.info('download complete', info.version)
     win.webContents.send('update', {
       key: 'downloaded',
       value: {
@@ -70,21 +71,21 @@ function updateHandle (win, updateUrl) {
       autoUpdater.quitAndInstall()
     } else if (arg.key === 'checkForUpdate') {
       // 执行自动更新检查
-      console.log('autoUpdater checkForUpdates')
+      log.info('autoUpdater checkForUpdates')
       autoUpdater.checkForUpdates()
     } else if (arg.key === 'downloadUpdate') {
       // 下载新版本
-      console.log('autoUpdater downloadUpdate')
+      log.info('autoUpdater downloadUpdate')
       autoUpdater.downloadUpdate()
     }
   })
   // 通过main进程发送事件给renderer进程，提示更新信息
   function sendUpdateMessage (message) {
-    console.log('autoUpdater sendUpdateMessage')
+    log.info('autoUpdater sendUpdateMessage')
     win.webContents.send('update', message)
   }
 
-  console.log('auto update inited')
+  log.info('auto update inited')
   return autoUpdater
 }
 export default updateHandle

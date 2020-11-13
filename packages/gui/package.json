@@ -14,6 +14,7 @@
   },
   "main": "background.js",
   "dependencies": {
+    "log4js": "^6.3.0",
     "@docmirror/dev-sidecar": "^1.1.0",
     "@docmirror/mitmproxy": "^1.1.0",
     "ant-design-vue": "^1.6.5",

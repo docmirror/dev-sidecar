@@ -1,12 +1,12 @@
 const nodeConfig = require('./config')
 const NodePlugin = function (context) {
-  const { config, shell, event, rootCaFile } = context
+  const { config, shell, event, rootCaFile, log } = context
   const nodeApi = {
     async start () {
       try {
         await nodeApi.setVariables()
       } catch (err) {
-        console.warn('set variables error', err)
+        log.warn('set variables error', err)
       }
 
       const ip = '127.0.0.1'
@@ -123,7 +123,7 @@ const NodePlugin = function (context) {
         await shell.setSystemEnv({ list: env })
       }
       event.fire('status', { key: 'plugin.node.enabled', value: true })
-      console.info('开启【NPM】代理成功')
+      log.info('开启【NPM】代理成功')
 
       return ret
     },
@@ -137,7 +137,7 @@ const NodePlugin = function (context) {
       ]
       const ret = await shell.exec(cmds, { type: 'cmd' })
       event.fire('status', { key: 'plugin.node.enabled', value: false })
-      console.info('关闭【NPM】代理成功')
+      log.info('关闭【NPM】代理成功')
       return ret
     }
   }

@@ -1,5 +1,5 @@
 const expose = require('./expose.js')
-
+const log = require('./utils/util.log')
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 // 避免异常崩溃
@@ -8,11 +8,11 @@ process.on('uncaughtException', function (err) {
     //  console.error(err.errno)
     return
   }
-  console.error('uncaughtException', err)
+  log.error('uncaughtException', err)
 })
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
+  log.error('Unhandled Rejection at: Promise', p, 'reason:', reason)
   // application specific logging, throwing an error, or other logic here
 })
 
