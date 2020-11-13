@@ -25,6 +25,8 @@
             <a-tag v-else color="red">
               当前未启动
             </a-tag>
+
+            <a-button class="md-mr-10" icon="profile"   @click="openLog()">日志</a-button>
           </a-form-item>
           <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol" >
             <a-input v-model="config.server.port"/>
@@ -132,6 +134,10 @@ export default {
     },
     addDnsMapping () {
       this.dnsMappings.unshift({ key: '', value: 'usa' })
+    },
+    async openLog () {
+      const dir = await this.$api.info.getConfigDir()
+      this.$api.ipc.openPath(dir + '/logs/server.log')
     }
   }
 }

@@ -31,6 +31,9 @@ const localApi = {
       return {
         version: pk.version
       }
+    },
+    getConfigDir () {
+      return getDefaultConfigBasePath()
     }
   },
   /**
@@ -81,6 +84,7 @@ const localApi = {
      */
     save (newConfig) {
       // 对比默认config的异同
+      DevSidecar.api.config.set(newConfig)
       const defConfig = DevSidecar.api.config.getDefault()
       const saveConfig = doMerge(defConfig, newConfig)
       fs.writeFileSync(_getConfigPath(), JSON5.stringify(saveConfig, null, 2))

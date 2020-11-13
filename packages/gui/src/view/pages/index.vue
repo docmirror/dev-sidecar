@@ -45,7 +45,7 @@
       <div class="flex-l-r star" style="padding:10px;">
         <div>如果它解决了你的问题，请不要吝啬你的star哟！ <a-icon type="smile" theme="outlined" /></div>
         <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
-        <a  @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+        <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
       </div>
 
     </div>
@@ -233,7 +233,7 @@ export default {
       this.$api.update.checkForUpdate(this.update)
     },
     openExternal (url) {
-      this.$api.openExternal(url)
+      this.$api.ipc.openExternal(url)
     }
   }
 }

@@ -39,12 +39,13 @@ export default {
       this.applyLoading = true
       await this.applyBefore()
       await this.saveConfig()
-      if (this.applyAfter) {
-        await this.applyAfter()
-      }
+      await this.applyAfter()
       this.applyLoading = false
     },
     async applyBefore () {
+
+    },
+    async applyAfter () {
 
     },
     resetDefault () {

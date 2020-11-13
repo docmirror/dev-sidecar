@@ -1,6 +1,7 @@
 const interceptors = require('./lib/interceptor')
 const dnsUtil = require('./lib/dns')
 const lodash = require('lodash')
+const log = require('./utils/util.log')
 function matchHostname (hostMap, hostname) {
   const value = hostMap[hostname]
   if (value) {
@@ -57,7 +58,7 @@ module.exports = (config) => {
       const hostname = req.url.split(':')[0]
       const inWhiteList = matchHostname(whiteList, hostname) != null
       if (inWhiteList) {
-        console.log('白名单域名，不拦截', hostname)
+        log.info('白名单域名，不拦截', hostname)
         return false
       }
       return !!matchHostname(intercepts, hostname) // 配置了拦截的域名，将会被代理
@@ -89,7 +90,7 @@ module.exports = (config) => {
             }
           } catch (err) {
             // 拦截失败
-            console.error(err)
+            log.error('拦截器执行错误', err)
           }
         }
       }

@@ -1,8 +1,6 @@
 const LRU = require('lru-cache')
 // const { isIP } = require('validator')
-const getLogger = require('../utils/logger')
-
-const logger = getLogger('dns')
+const log = require('../../utils/util.log')
 const cacheSize = 1024
 // eslint-disable-next-line no-unused-vars
 // function _isIP (v) {
@@ -104,11 +102,11 @@ module.exports = class BaseDNS {
 
       ipCache.setIpList(ipList)
 
-      logger.debug(`[DNS] ${hostname} -> ${ipCache.ip} (${new Date() - t} ms)`)
+      log.info(`[DNS] ${hostname} -> ${ipCache.ip} (${new Date() - t} ms)`)
 
       return ipCache.ip
     } catch (error) {
-      logger.debug(`[DNS] cannot resolve hostname ${hostname} (${error})`)
+      log.error(`[DNS] cannot resolve hostname ${hostname} (${error})`)
       return hostname
     }
   }

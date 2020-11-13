@@ -1,7 +1,7 @@
 const http = require('http')
 const https = require('https')
 const util = require('../common/util')
-
+const log = require('../../../utils/util.log')
 // copy from node-http-proxy.  ^_^
 
 // create connectHandler function
@@ -11,7 +11,7 @@ module.exports = function createUpgradeHandler () {
     const clientOptions = util.getOptionsFormRequest(req, ssl)
     const proxyReq = (ssl ? https : http).request(clientOptions)
     proxyReq.on('error', (e) => {
-      console.error(e)
+      log.error('upgradeHandler', e)
     })
     proxyReq.on('response', function (res) {
       // if upgrade event isn't going to happen, close the socket
@@ -20,12 +20,11 @@ module.exports = function createUpgradeHandler () {
 
     proxyReq.on('upgrade', function (proxyRes, proxySocket, proxyHead) {
       proxySocket.on('error', (e) => {
-        console.log('error-----1111')
-        console.error(e)
+        log.error('on upgrade:', e)
       })
 
-      cltSocket.on('error', function () {
-        console.log('error-----2222')
+      cltSocket.on('error', function (e) {
+        log.error('upgrade socket ', e)
         proxySocket.end()
       })
 

@@ -5,7 +5,7 @@ const forge = require('node-forge')
 const pki = forge.pki
 // const colors = require('colors')
 const tls = require('tls')
-
+const log = require('../../../utils/util.log')
 module.exports = class FakeServersCenter {
   constructor ({ maxLength = 256, requestHandler, upgradeHandler, caCert, caKey, getCertSocketTimeout }) {
     this.queue = []
@@ -23,13 +23,13 @@ module.exports = class FakeServersCenter {
     if (this.queue.length >= this.maxLength) {
       const delServerObj = this.queue.shift()
       try {
-        console.log('超过最大服务数量，删除旧服务', delServerObj)
+        log.info('超过最大服务数量，删除旧服务', delServerObj)
         delServerObj.serverObj.server.close()
       } catch (e) {
-        console.log(e)
+        log.info(e)
       }
     }
-    console.log('add server promise:', serverPromiseObj)
+    log.info('add server promise:', serverPromiseObj)
     this.queue.push(serverPromiseObj)
     return serverPromiseObj
   }
@@ -64,7 +64,7 @@ module.exports = class FakeServersCenter {
           SNICallback: (hostname, done) => {
             (async () => {
               const certObj = await this.certAndKeyContainer.getCertPromise(hostname, port)
-              console.log('sni callback:', hostname)
+              log.info('sni callback:', hostname)
               done(null, tls.createSecureContext({
                 key: pki.privateKeyToPem(certObj.key),
                 cert: pki.certificateToPem(certObj.cert)
@@ -88,7 +88,7 @@ module.exports = class FakeServersCenter {
           this.requestHandler(req, res, ssl)
         })
         fakeServer.on('error', (e) => {
-          console.error(e)
+          log.error(e)
         })
         fakeServer.on('listening', () => {
           const mappingHostNames = tlsUtils.getMappingHostNamesFormCert(certObj.cert)

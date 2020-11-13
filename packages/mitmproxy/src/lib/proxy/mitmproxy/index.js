@@ -1,7 +1,7 @@
 const tlsUtils = require('../tls/tlsUtils')
 const http = require('http')
 const config = require('../common/config')
-const colors = require('colors')
+const log = require('../../../utils/util.log')
 const createRequestHandler = require('./createRequestHandler')
 const createConnectHandler = require('./createConnectHandler')
 const createFakeServerCenter = require('./createFakeServerCenter')
@@ -27,8 +27,8 @@ module.exports = {
       caCertPath = rs.caCertPath
       caKeyPath = rs.caKeyPath
       if (rs.create) {
-        console.log(colors.cyan(`CA Cert saved in: ${caCertPath}`))
-        console.log(colors.cyan(`CA private key saved in: ${caKeyPath}`))
+        log.info(`CA Cert saved in: ${caCertPath}`)
+        log.info(`CA private key saved in: ${caKeyPath}`)
       }
     }
 
@@ -59,18 +59,18 @@ module.exports = {
 
     const server = new http.Server()
     server.listen(port, () => {
-      console.log(colors.green(`dev-sidecar启动端口: ${port}`))
+      log.info(`dev-sidecar启动端口: ${port}`)
       server.on('error', (e) => {
-        console.error(colors.red(e))
+        log.error('server error', e)
       })
       server.on('request', (req, res) => {
         const ssl = false
-        // console.log('request,', req.url, req.port, req.host)
+        // log.info('request,', req.url, req.port, req.host)
         requestHandler(req, res, ssl)
       })
       // tunneling for https
       server.on('connect', (req, cltSocket, head) => {
-        // console.log('connect,', req.url)
+        // log.info('connect,', req.url)
         connectHandler(req, cltSocket, head)
       })
       // TODO: handler WebSocket

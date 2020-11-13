@@ -3,7 +3,7 @@ const https = require('https')
 const commonUtil = require('../common/util')
 // const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i
 const DnsUtil = require('../../dns/index')
-
+const log = require('../../../utils/util.log')
 // create requestHandler function
 module.exports = function createRequestHandler (requestInterceptor, responseInterceptor, middlewares, externalProxy, dnsConfig) {
   // return
@@ -43,7 +43,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
       //   const dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.host)
       //   if (dns) {
       //     const ip = await dns.lookup(rOptions.host)
-      //     console.log('使用自定义dns:', rOptions.host, ip, dns.dnsServer)
+      //     log.info('使用自定义dns:', rOptions.host, ip, dns.dnsServer)
       //     rOptions.host = ip
       //   }
       // }
@@ -63,7 +63,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
         function onFree () {
           const url = `${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
           const start = new Date().getTime()
-          console.log('代理请求:', url, rOptions.method)
+          log.info('代理请求:', url, rOptions.method)
           let isDnsIntercept
           if (dnsConfig) {
             const dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.hostname)
@@ -80,11 +80,10 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
               }
             }
           }
-
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const end = new Date().getTime()
             if (rOptions.protocol === 'https:') {
-              console.log('代理请求返回:', url, (end - start) + 'ms')
+              log.info('代理请求返回:', url, (end - start) + 'ms')
             }
             resolve(proxyRes)
           })
@@ -94,10 +93,15 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
             if (isDnsIntercept) {
               const { dns, ip, hostname } = isDnsIntercept
               dns.count(hostname, ip, true)
-              console.error('记录ip失败次数,用于优选ip：', hostname, ip)
+              log.error('记录ip失败次数,用于优选ip：', hostname, ip)
             }
-            console.error('代理请求超时', rOptions.protocol, rOptions.hostname, rOptions.path, (end - start) + 'ms')
-            reject(new Error(`${rOptions.host}:${rOptions.port}, 代理请求超时`))
+            log.error('代理请求超时', rOptions.protocol, rOptions.hostname, rOptions.path, (end - start) + 'ms')
+            // reject(new Error(`${rOptions.host}:${rOptions.port}, 代理请求超时`))
+            proxyReq.end()
+            proxyReq.destroy()
+            res.writeHead(408)
+            res.write('DevSidecar Warning:\n\n 请求超时')
+            res.end()
           })
 
           proxyReq.on('error', (e) => {
@@ -105,28 +109,34 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
             if (isDnsIntercept) {
               const { dns, ip, hostname } = isDnsIntercept
               dns.count(hostname, ip, true)
-              console.error('记录ip失败次数,用于优选ip：', hostname, ip)
+              log.error('记录ip失败次数,用于优选ip：', hostname, ip)
             }
-            console.error('代理请求错误', e.errno, rOptions.hostname, rOptions.path, (end - start) + 'ms', e)
+            log.error('代理请求错误', e.code, e.message, rOptions.hostname, rOptions.path, (end - start) + 'ms')
             reject(e)
           })
 
           proxyReq.on('aborted', () => {
-            console.error('代理请求被取消', rOptions.hostname, rOptions.path)
+            log.error('代理请求被取消', rOptions.hostname, rOptions.path)
+            if (res.finished) {
+              return
+            }
             reject(new Error('代理请求被取消'))
           })
 
           req.on('aborted', function () {
-            console.error('请求被取消', rOptions.hostname, rOptions.path)
+            log.error('请求被取消', rOptions.hostname, rOptions.path)
             proxyReq.abort()
+            if (res.finished) {
+              return
+            }
             reject(new Error('请求被取消'))
           })
           req.on('error', function (e, req, res) {
-            console.error('请求错误：', e.errno, rOptions.hostname, rOptions.path)
+            log.error('请求错误：', e.errno, rOptions.hostname, rOptions.path)
             reject(e)
           })
           req.on('timeout', () => {
-            console.error('请求超时', rOptions.hostname, rOptions.path)
+            log.error('请求超时', rOptions.hostname, rOptions.path)
             reject(new Error(`${rOptions.hostname}:${rOptions.port}, 请求超时`))
           })
           req.pipe(proxyReq)
@@ -191,8 +201,8 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
           res.writeHead(500)
           res.write(`DevSidecar Warning:\n\n ${e.toString()}`)
           res.end()
+          log.error('request error', e.message)
         }
-        console.error('request error', e.message)
       }
     )
   }

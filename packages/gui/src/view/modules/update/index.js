@@ -1,6 +1,6 @@
 let updateParams = { }
 function install (app, api) {
-  api.on('update', (event, message) => {
+  api.ipc.on('update', (event, message) => {
     console.log('on message', event, message)
     handleUpdateMessage(message, app)
   })
@@ -8,13 +8,13 @@ function install (app, api) {
   api.update = {
     checkForUpdate (params) {
       updateParams = params || { fromUser: false, autoDownload: true, progress: 0 }
-      api.send('update', { key: 'checkForUpdate' })
+      api.ipc.send('update', { key: 'checkForUpdate' })
     },
     downloadUpdate () {
-      api.send('update', { key: 'downloadUpdate' })
+      api.ipc.send('update', { key: 'downloadUpdate' })
     },
     doUpdateNow () {
-      api.send('update', { key: 'doUpdateNow' })
+      api.ipc.send('update', { key: 'doUpdateNow' })
     }
   }
 

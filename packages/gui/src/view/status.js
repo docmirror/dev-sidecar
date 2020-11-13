@@ -12,7 +12,7 @@ const status = {
   }
 }
 async function install (api) {
-  api.on('status', (event, message) => {
+  api.ipc.on('status', (event, message) => {
     console.log('view on status', event, message)
     const value = message.value
     const key = message.key
