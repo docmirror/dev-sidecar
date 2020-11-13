@@ -38,7 +38,7 @@ recaptcha 图片验证码加速
 暂时只支持windows    
  
 #### 1.1 下载安装包  
-[点此去下载](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.0.2.exe)  
+[点此去下载](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.1.0.exe)  
 安装后打开： 
 ![](./doc/index.png)     
 #### 1.2 安装根证书     
