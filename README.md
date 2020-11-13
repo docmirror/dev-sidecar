@@ -3,7 +3,9 @@
 通过本地代理的方式将http请求代理到一些国内的加速通道上    
 不用`ss小飞机`也能解决一些网站和库无法访问或访问速度慢的问题
 
-
+<a href='https://gitee.com/docmirror/dev-sidecar'><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
+<a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+      
 
 ## 特性
 
@@ -37,17 +39,23 @@ recaptcha 图片验证码加速
 ### 1、 DevSidecar桌面应用发布啦
 暂时只支持windows    
  
+ 
+ 
 #### 1.1 下载安装包  
+
 [点此去下载](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.1.0.exe)  
-安装后打开： 
+
+安装后打开
+
 ![](./doc/index.png)     
+
 #### 1.2 安装根证书     
 第一次打开会提示安装根证书    
+
 #### 1.3 开始加速吧      
 去试试打开github    
 `Download ZIP`、`Release` 下载试试，体验秒下的感觉    
 比如去下载它： https://github.com/greper/d2-crud-plus/archive/master.zip    
-
 
 
 #### 开启前vs 开启后  
