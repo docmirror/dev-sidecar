@@ -8,7 +8,7 @@
             <a-badge :count="_rootCaSetuped?0:1" dot>安装根证书 </a-badge>
           </a-button>
 
-          <a-button style="margin-right:10px" @click="doCheckUpdate">
+          <a-button style="margin-right:10px" @click="doCheckUpdate" :title="'当前版本:'+info.version">
             <a-badge :count="update.newVersion?1:0" dot>
               检查更新
             </a-badge>
@@ -88,6 +88,7 @@ export default {
           }
         }
       },
+      info: {},
       setting: undefined,
       server: {
         key: '代理服务',
@@ -124,6 +125,10 @@ export default {
       this.doCheckUpdate(false)
     }
     this.update = this.$global.update
+
+    this.$api.info.get().then(ret => {
+      this.info = ret
+    })
   },
   mounted () {
     console.log('index mounted')
