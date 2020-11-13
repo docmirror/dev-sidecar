@@ -100,11 +100,12 @@ module.exports = {
         }
       },
       mapping: {
-        '*.github.com': 'usa',
-        '*.githubusercontent.com': 'usa',
-        '*.githubassets.com': 'usa',
+        'img.shields.io': 'aliyun',
+        '*.github.com': 'aliyun',
+        '*.githubusercontent.com': 'aliyun',
+        '*.githubassets.com': 'aliyun',
         // "解决push的时候需要输入密码的问题",
-        'github.com': 'usa'
+        'github.com': 'aliyun'
       }
     }
   },
