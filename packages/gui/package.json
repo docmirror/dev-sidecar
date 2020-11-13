@@ -31,10 +31,6 @@
     "vue-json-editor": "^1.4.2",
     "vue-router": "^3.4.8"
   },
-  "resolutions": {
-    "hexoid": "^1.0.0",
-    "formidable": "2.0.0-canary.20200504.1"
-  },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
