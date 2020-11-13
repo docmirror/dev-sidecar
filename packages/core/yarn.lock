@@ -93,6 +93,32 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@docmirror/mitmproxy@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@docmirror/mitmproxy/-/mitmproxy-1.1.0.tgz#d2dfa4c8047306c40105e0673365fdb4182be39b"
+  integrity sha512-KgNQ24o18G3Gnw9F9EkKKIKuEf3EnHh2uASMs72HvmuLobZo+D+0L+lL2xYPp+w5t8aXt0bgQeK8lRcz2C6wWw==
+  dependencies:
+    agentkeepalive "^2.1.1"
+    child_process "^1.0.2"
+    colors "^1.1.2"
+    commander "^2.9.0"
+    debug "^4.1.1"
+    dns-over-http "^0.2.0"
+    dns-over-tls "^0.0.8"
+    is-browser "^2.1.0"
+    json5 "^2.1.3"
+    lodash "^4.7.0"
+    log4js "^6.3.0"
+    lru-cache "^6.0.0"
+    mkdirp "^0.5.1"
+    node-cmd "^3.0.0"
+    node-forge "^0.8.2"
+    require-context "^1.1.0"
+    through2 "^2.0.1"
+    tunnel-agent "^0.4.3"
+    util "^0.12.3"
+    validator "^13.1.17"
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.npm.taobao.org/@hapi/address/download/@hapi/address-2.1.4.tgz?cache=0&sync_timestamp=1593993895205&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40hapi%2Faddress%2Fdownload%2F%40hapi%2Faddress-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"

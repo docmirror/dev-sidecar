@@ -3,7 +3,12 @@ module.exports = function createInterceptor (context) {
   const { log } = context
   return {
     requestInterceptor (interceptOpt, rOptions, req, res, ssl, next) {
-      const proxyTarget = interceptOpt.proxy
+      let proxyTarget = interceptOpt.proxy + req.url
+      if (interceptOpt.replace) {
+        const regexp = new RegExp(interceptOpt.replace)
+        proxyTarget = req.url.replace(regexp, interceptOpt.proxy)
+      }
+      console.log('proxy', rOptions.path, rOptions.url)
       // const backup = interceptOpt.backup
       const proxy = proxyTarget.indexOf('http') === 0 ? proxyTarget : rOptions.protocol + '//' + proxyTarget
       // eslint-disable-next-line node/no-deprecated-api
@@ -12,6 +17,7 @@ module.exports = function createInterceptor (context) {
       rOptions.hostname = URL.host
       rOptions.host = URL.host
       rOptions.headers.host = URL.host
+      rOptions.path = URL.path
       if (URL.port == null) {
         rOptions.port = rOptions.protocol === 'https:' ? 443 : 80
       }
