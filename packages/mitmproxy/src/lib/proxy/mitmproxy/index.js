@@ -12,8 +12,7 @@ module.exports = {
     caCertPath,
     caKeyPath,
     sslConnectInterceptor,
-    requestInterceptor,
-    responseInterceptor,
+    createIntercepts,
     getCertSocketTimeout = 1 * 1000,
     middlewares = [],
     externalProxy,
@@ -34,8 +33,7 @@ module.exports = {
 
     port = ~~port
     const requestHandler = createRequestHandler(
-      requestInterceptor,
-      responseInterceptor,
+      createIntercepts,
       middlewares,
       externalProxy,
       dnsConfig

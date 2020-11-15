@@ -63,41 +63,41 @@ module.exports = (config) => {
       }
       return !!matchHostname(intercepts, hostname) // 配置了拦截的域名，将会被代理
     },
-    requestInterceptor: (rOptions, req, res, ssl, next, context) => {
+    createIntercepts: (rOptions) => {
       const hostname = rOptions.hostname
       const interceptOpts = matchHostname(intercepts, hostname)
       if (!interceptOpts) { // 该域名没有配置拦截器，直接过
-        next()
         return
       }
 
+      const matchIntercepts = []
       for (const regexp in interceptOpts) { // 遍历拦截配置
         const interceptOpt = interceptOpts[regexp]
         if (regexp !== true) {
-          if (!isMatched(req.url, regexp)) {
+          if (!isMatched(rOptions.path, regexp)) {
             continue
           }
         }
-        for (const interceptImpl of interceptors) {
+        for (const impl of interceptors) {
           // 根据拦截配置挑选合适的拦截器来处理
-          if (!interceptImpl.is(interceptOpt) && interceptImpl.requestInterceptor) {
-            continue
-          }
-          try {
-            const result = interceptImpl.requestInterceptor(interceptOpt, rOptions, req, res, ssl, context)
-            if (result) { // 拦截成功,其他拦截器就不处理了
-              return
+          if (impl.is(interceptOpt)) {
+            const interceptor = {}
+            if (impl.requestIntercept) {
+              // req拦截器
+              interceptor.requestIntercept = (req, res, ssl) => {
+                impl.requestIntercept(interceptOpt, rOptions, req, res, ssl)
+              }
+            } else if (impl.responseIntercept) {
+              // res拦截器
+              interceptor.responseIntercept = (req, res, proxyReq, proxyRes, ssl) => {
+                impl.responseIntercept(interceptOpt, rOptions, req, res, proxyReq, proxyRes, ssl)
+              }
             }
-          } catch (err) {
-            // 拦截失败
-            log.error('拦截器执行错误', err)
+            matchIntercepts.push(interceptor)
           }
         }
       }
-      next()
-    },
-    responseInterceptor: (req, res, proxyReq, proxyRes, ssl, next, context) => {
-      next()
+      return matchIntercepts
     }
   }
 }

@@ -4,8 +4,9 @@ const commonUtil = require('../common/util')
 // const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i
 const DnsUtil = require('../../dns/index')
 const log = require('../../../utils/util.log')
+const HtmlMiddleware = require('../middleware/HtmlMiddleware')
 // create requestHandler function
-module.exports = function createRequestHandler (requestInterceptor, responseInterceptor, middlewares, externalProxy, dnsConfig) {
+module.exports = function createRequestHandler (createIntercepts, externalProxy, dnsConfig) {
   // return
   return function requestHandler (req, res, ssl) {
     let proxyReq
@@ -18,7 +19,12 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
     } else {
       req.socket.setKeepAlive(true, 30000)
     }
-    const context = {}
+    let interceptors = createIntercepts(rOptions)
+    if (interceptors == null) {
+      interceptors = []
+    }
+    const reqIncpts = interceptors.filter(item => { return item.requestIntercept != null })
+    const resIncpts = interceptors.filter(item => { return item.responseIntercept != null })
 
     const requestInterceptorPromise = () => {
       return new Promise((resolve, reject) => {
@@ -26,10 +32,17 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
           resolve()
         }
         try {
-          if (typeof requestInterceptor === 'function') {
-            requestInterceptor(rOptions, req, res, ssl, next, context)
+          if (reqIncpts && reqIncpts.length > 0) {
+            for (const reqIncpt of reqIncpts) {
+              const writableEnded = reqIncpt.requestIntercept(req, res, ssl)
+              if (writableEnded) {
+                next()
+                return
+              }
+            }
+            next()
           } else {
-            resolve()
+            next()
           }
         } catch (e) {
           reject(e)
@@ -39,15 +52,6 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
 
     const proxyRequestPromise = async () => {
       rOptions.host = rOptions.hostname || rOptions.host || 'localhost'
-      // if (dnsConfig) {
-      //   const dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.host)
-      //   if (dns) {
-      //     const ip = await dns.lookup(rOptions.host)
-      //     log.info('使用自定义dns:', rOptions.host, ip, dns.dnsServer)
-      //     rOptions.host = ip
-      //   }
-      // }
-
       return new Promise((resolve, reject) => {
         // use the binded socket for NTLM
         if (rOptions.agent && rOptions.customSocketId != null && rOptions.agent.getName) {
@@ -116,7 +120,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
 
           proxyReq.on('aborted', () => {
             log.error('代理请求被取消', rOptions.hostname, rOptions.path)
-            if (res.finished) {
+            if (res.writableEnded) {
               return
             }
             reject(new Error('代理请求被取消'))
@@ -125,7 +129,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
           req.on('aborted', function () {
             log.error('请求被取消', rOptions.hostname, rOptions.path)
             proxyReq.abort()
-            if (res.finished) {
+            if (res.writableEnded) {
               return
             }
             reject(new Error('请求被取消'))
@@ -147,21 +151,39 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
     (async () => {
       await requestInterceptorPromise()
 
-      if (res.finished) {
+      if (res.writableEnded) {
         return false
       }
 
       const proxyRes = await proxyRequestPromise()
+
+      // proxyRes.on('data', (chunk) => {
+      //   // console.log('BODY: ')
+      // })
+      proxyRes.on('error', (error) => {
+        log.error('proxy res error', error)
+      })
 
       const responseInterceptorPromise = new Promise((resolve, reject) => {
         const next = () => {
           resolve()
         }
         try {
-          if (typeof responseInterceptor === 'function') {
-            responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, context)
+          if (resIncpts && resIncpts.length > 0) {
+            let head = ''
+            let body = ''
+            for (const resIncpt of resIncpts) {
+              const append = resIncpt.responseIntercept(req, res, proxyReq, proxyRes, ssl)
+              if (append && append.head) {
+                head += append.head
+              }
+              if (append && append.body) {
+                body += append.body
+              }
+            }
+            HtmlMiddleware.responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, { head, body })
           } else {
-            resolve()
+            next()
           }
         } catch (e) {
           reject(e)
@@ -169,10 +191,6 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
       })
 
       await responseInterceptorPromise
-
-      if (res.finished) {
-        return false
-      }
 
       if (!res.headersSent) { // prevent duplicate set headers
         Object.keys(proxyRes.headers).forEach(function (key) {
@@ -194,9 +212,10 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
     })().then(
       (flag) => {
         // do nothing
+        // console.log('res', flag)
       },
       (e) => {
-        if (!res.finished) {
+        if (!res.writableEnded) {
           const status = e.status || 500
           res.writeHead(status)
           res.write(`DevSidecar Warning:\n\n ${e.toString()}`)

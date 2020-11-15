@@ -19,6 +19,9 @@ module.exports = {
         },
         '/.*/.*/blame/': {
           redirect: 'hub.fastgit.org'
+        },
+        '/.*/[^\\/]*$': {
+          script: 'console.log("123123132")'
         }
       },
       'raw.githubusercontent.com': {
@@ -101,12 +104,12 @@ module.exports = {
         }
       },
       mapping: {
-        'img.shields.io': 'aliyun',
-        '*.github.com': 'aliyun',
-        '*.githubusercontent.com': 'aliyun',
-        '*.githubassets.com': 'aliyun',
+        'img.shields.io': 'usa',
+        '*.github.com': 'usa',
+        '*.githubusercontent.com': 'usa',
+        '*.githubassets.com': 'usa',
         // "解决push的时候需要输入密码的问题",
-        'github.com': 'aliyun'
+        'github.com': 'usa'
       }
     }
   },

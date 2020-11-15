@@ -1,7 +1,7 @@
 module.exports = function createInterceptor (context) {
   const { log } = context
   return {
-    requestInterceptor (interceptOpt, rOptions, req, res, ssl) {
+    requestIntercept (interceptOpt, rOptions, req, res, ssl) {
       const url = req.url
       let redirect
       if (typeof interceptOpt.redirect === 'string') {
@@ -12,7 +12,7 @@ module.exports = function createInterceptor (context) {
       log.info('请求重定向：', rOptions.hostname, url, redirect)
       res.writeHead(302, { Location: redirect })
       res.end()
-      return true
+      return true// 是否结束
     },
     is (interceptOpt) {
       return interceptOpt.redirect // 如果配置中有redirect，那么这个配置是需要redirect拦截的
