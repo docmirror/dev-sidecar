@@ -96,12 +96,11 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
               log.error('记录ip失败次数,用于优选ip：', hostname, ip)
             }
             log.error('代理请求超时', rOptions.protocol, rOptions.hostname, rOptions.path, (end - start) + 'ms')
-            // reject(new Error(`${rOptions.host}:${rOptions.port}, 代理请求超时`))
             proxyReq.end()
             proxyReq.destroy()
-            res.writeHead(408)
-            res.write('DevSidecar Warning:\n\n 请求超时')
-            res.end()
+            const error = new Error(`${rOptions.host}:${rOptions.port}, 代理请求超时`)
+            error.status = 408
+            reject(error)
           })
 
           proxyReq.on('error', (e) => {
@@ -198,7 +197,8 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
       },
       (e) => {
         if (!res.finished) {
-          res.writeHead(500)
+          const status = e.status || 500
+          res.writeHead(status)
           res.write(`DevSidecar Warning:\n\n ${e.toString()}`)
           res.end()
           log.error('request error', e.message)

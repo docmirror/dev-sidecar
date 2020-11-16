@@ -14,7 +14,8 @@ module.exports = {
           redirect: 'download.fastgit.org'
         },
         '/.*/.*/raw/': {
-          redirect: 'hub.fastgit.org'
+          replace: '(.+)\\/raw\\/(.+)',
+          proxy: 'raw.fastgit.org$1/$2'
         },
         '/.*/.*/blame/': {
           redirect: 'hub.fastgit.org'
