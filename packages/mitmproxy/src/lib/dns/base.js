@@ -1,69 +1,26 @@
 const LRU = require('lru-cache')
 // const { isIP } = require('validator')
 const log = require('../../utils/util.log')
+const { DynamicChoice } = require('../choice/index')
 const cacheSize = 1024
 // eslint-disable-next-line no-unused-vars
 // function _isIP (v) {
 //   return v && isIP(v)
 // }
 
-class IpCache {
+class IpCache extends DynamicChoice {
   constructor (hostname) {
-    this.hostname = hostname
-    this.count = {}
+    super(hostname)
     this.lookupCount = 0
-    this.createTime = new Date()
   }
 
   /**
    * 获取到新的ipList
    * @param ipList
    */
-  setIpList (ipList) {
-    this.ip = ipList.shift()
-    this.ipList = ipList
+  setBackupList (ipList) {
+    super.setBackupList(ipList)
     this.lookupCount++
-    this.doCount(this.ip, false)
-  }
-
-  /**
-   * 换下一个ip
-   * @param count
-   */
-  changeNext (count) {
-    count.keepErrorCount = 0 // 清空连续失败
-    if (this.ipList > 0) {
-      this.ip = this.ipList.shift()
-    } else {
-      this.ip = null
-    }
-  }
-
-  /**
-   * 记录使用次数或错误次数
-   * @param ip
-   * @param isError
-   */
-  doCount (ip, isError) {
-    let count = this.count[ip]
-    if (count == null) {
-      count = this.count[ip] = { total: 0, error: 0, keepErrorCount: 0, successRate: 0 }
-    }
-    if (isError) {
-      count.error++
-      count.keepErrorCount++
-    } else {
-      count.total++
-    }
-    count.successRate = 1 - (count.error / count.total)
-    if (isError && this.ip === ip) {
-      if (count.keepErrorCount >= 5) {
-        this.changeNext(count)
-      }
-      if (count.successRate < 0.51) {
-        this.changeNext(count)
-      }
-    }
   }
 }
 
@@ -83,9 +40,9 @@ module.exports = class BaseDNS {
     try {
       let ipCache = this.cache.get(hostname)
       if (ipCache) {
-        if (ipCache.ip != null) {
-          ipCache.doCount(ipCache.ip, false)
-          return ipCache.ip
+        if (ipCache.value != null) {
+          ipCache.doCount(ipCache.value, false)
+          return ipCache.value
         }
       } else {
         ipCache = new IpCache(hostname)
@@ -100,13 +57,13 @@ module.exports = class BaseDNS {
       }
       ipList.push(hostname) // 把原域名加入到统计里去
 
-      ipCache.setIpList(ipList)
+      ipCache.setBackupList(ipList)
 
-      log.info(`[DNS] ${hostname} -> ${ipCache.ip} (${new Date() - t} ms)`)
+      log.info(`[DNS] ${hostname} -> ${ipCache.value} (${new Date() - t} ms)`)
 
-      return ipCache.ip
+      return ipCache.value
     } catch (error) {
-      log.error(`[DNS] cannot resolve hostname ${hostname} (${error})`)
+      log.error(`[DNS] cannot resolve hostname ${hostname} (${error})`, error)
       return hostname
     }
   }

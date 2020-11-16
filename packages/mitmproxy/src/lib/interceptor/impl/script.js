@@ -1,8 +1,7 @@
-module.exports = function createInterceptor (context) {
-  const { log } = context
-  return {
-    responseIntercept (interceptOpt, rOptions, req, res, proxyReq, proxyRes, ssl) {
-      const script = `
+module.exports = {
+  responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
+    const { rOptions, log } = context
+    const script = `
       <script>
       try{
           ${interceptOpt.script}
@@ -11,13 +10,12 @@ module.exports = function createInterceptor (context) {
       }
       </script>
       `
-      log.info('responseIntercept: body script', rOptions.hostname, rOptions.path)
-      return {
-        body: script
-      }
-    },
-    is (interceptOpt) {
-      return interceptOpt.script
+    log.info('responseIntercept: append script', rOptions.hostname, rOptions.path)
+    return {
+      head: script
     }
+  },
+  is (interceptOpt) {
+    return interceptOpt.script
   }
 }

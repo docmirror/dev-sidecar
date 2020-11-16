@@ -63,7 +63,8 @@ module.exports = (config) => {
       }
       return !!matchHostname(intercepts, hostname) // 配置了拦截的域名，将会被代理
     },
-    createIntercepts: (rOptions) => {
+    createIntercepts: (context) => {
+      const rOptions = context.rOptions
       const hostname = rOptions.hostname
       const interceptOpts = matchHostname(intercepts, hostname)
       if (!interceptOpts) { // 该域名没有配置拦截器，直接过
@@ -73,6 +74,7 @@ module.exports = (config) => {
       const matchIntercepts = []
       for (const regexp in interceptOpts) { // 遍历拦截配置
         const interceptOpt = interceptOpts[regexp]
+        interceptOpt.key = regexp
         if (regexp !== true) {
           if (!isMatched(rOptions.path, regexp)) {
             continue
@@ -84,13 +86,13 @@ module.exports = (config) => {
             const interceptor = {}
             if (impl.requestIntercept) {
               // req拦截器
-              interceptor.requestIntercept = (req, res, ssl) => {
-                impl.requestIntercept(interceptOpt, rOptions, req, res, ssl)
+              interceptor.requestIntercept = (context, req, res, ssl, next) => {
+                return impl.requestIntercept(context, interceptOpt, req, res, ssl, next)
               }
             } else if (impl.responseIntercept) {
               // res拦截器
-              interceptor.responseIntercept = (req, res, proxyReq, proxyRes, ssl) => {
-                impl.responseIntercept(interceptOpt, rOptions, req, res, proxyReq, proxyRes, ssl)
+              interceptor.responseIntercept = (context, req, res, proxyReq, proxyRes, ssl, next) => {
+                return impl.responseIntercept(context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next)
               }
             }
             matchIntercepts.push(interceptor)

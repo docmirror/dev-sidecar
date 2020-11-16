@@ -5,6 +5,7 @@ const commonUtil = require('../common/util')
 const DnsUtil = require('../../dns/index')
 const log = require('../../../utils/util.log')
 const HtmlMiddleware = require('../middleware/HtmlMiddleware')
+const RequestCounter = require('../../choice/RequestCounter')
 // create requestHandler function
 module.exports = function createRequestHandler (createIntercepts, externalProxy, dnsConfig) {
   // return
@@ -19,7 +20,12 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
     } else {
       req.socket.setKeepAlive(true, 30000)
     }
-    let interceptors = createIntercepts(rOptions)
+    const context = {
+      rOptions,
+      log,
+      RequestCounter
+    }
+    let interceptors = createIntercepts(context)
     if (interceptors == null) {
       interceptors = []
     }
@@ -34,8 +40,8 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
         try {
           if (reqIncpts && reqIncpts.length > 0) {
             for (const reqIncpt of reqIncpts) {
-              const writableEnded = reqIncpt.requestIntercept(req, res, ssl)
-              if (writableEnded) {
+              const goNext = reqIncpt.requestIntercept(context, req, res, ssl, next)
+              if (goNext) {
                 next()
                 return
               }
@@ -99,6 +105,11 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
               dns.count(hostname, ip, true)
               log.error('记录ip失败次数,用于优选ip：', hostname, ip)
             }
+            const counter = context.requestCount
+            if (counter != null) {
+              counter.count.doCount(counter.value, true)
+              log.error('记录prxoy失败次数：', counter.value)
+            }
             log.error('代理请求超时', rOptions.protocol, rOptions.hostname, rOptions.path, (end - start) + 'ms')
             proxyReq.end()
             proxyReq.destroy()
@@ -114,12 +125,33 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
               dns.count(hostname, ip, true)
               log.error('记录ip失败次数,用于优选ip：', hostname, ip)
             }
+            const counter = context.requestCount
+            if (counter != null) {
+              counter.count.doCount(counter.value, true)
+              log.error('记录prxoy失败次数：', counter.value)
+            }
             log.error('代理请求错误', e.code, e.message, rOptions.hostname, rOptions.path, (end - start) + 'ms')
             reject(e)
           })
 
           proxyReq.on('aborted', () => {
-            log.error('代理请求被取消', rOptions.hostname, rOptions.path)
+            const end = new Date().getTime()
+            const cost = end - start
+            log.error('代理请求被取消', rOptions.hostname, rOptions.path, cost + 'ms')
+
+            if (cost > 8000) {
+              if (isDnsIntercept) {
+                const { dns, ip, hostname } = isDnsIntercept
+                dns.count(hostname, ip, true)
+                log.error('记录ip失败次数,用于优选ip：', hostname, ip)
+              }
+              const counter = context.requestCount
+              if (counter != null) {
+                counter.count.doCount(counter.value, true)
+                log.error('记录prxoy失败次数：', counter.value)
+              }
+            }
+
             if (res.writableEnded) {
               return
             }
@@ -161,6 +193,11 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
       //   // console.log('BODY: ')
       // })
       proxyRes.on('error', (error) => {
+        const counter = context.requestCount
+        if (counter != null) {
+          counter.count.doCount(counter.value, true)
+          log.error('记录prxoy失败次数：', counter.value)
+        }
         log.error('proxy res error', error)
       })
 
@@ -173,7 +210,7 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
             let head = ''
             let body = ''
             for (const resIncpt of resIncpts) {
-              const append = resIncpt.responseIntercept(req, res, proxyReq, proxyRes, ssl)
+              const append = resIncpt.responseIntercept(context, req, res, proxyReq, proxyRes, ssl)
               if (append && append.head) {
                 head += append.head
               }
@@ -209,20 +246,14 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
         res.writeHead(proxyRes.statusCode)
         proxyRes.pipe(res)
       }
-    })().then(
-      (flag) => {
-        // do nothing
-        // console.log('res', flag)
-      },
-      (e) => {
-        if (!res.writableEnded) {
-          const status = e.status || 500
-          res.writeHead(status)
-          res.write(`DevSidecar Warning:\n\n ${e.toString()}`)
-          res.end()
-          log.error('request error', e.message)
-        }
+    })().catch(e => {
+      if (!res.writableEnded) {
+        const status = e.status || 500
+        res.writeHead(status)
+        res.write(`DevSidecar Warning:\n\n ${e.toString()}`)
+        res.end()
+        log.error('request error', e.message)
       }
-    )
+    })
   }
 }
