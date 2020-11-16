@@ -18,12 +18,18 @@ module.exports = {
         },
         '/.*/.*/blame/': {
           redirect: 'hub.fastgit.org'
+        },
+        '/.*': {
+          proxy: 'github.com',
+          backup: [
+            'github.docmirror.cn'
+          ]
         }
       },
       'raw.githubusercontent.com': {
         '.*': { proxy: 'raw.fastgit.org' }
       },
-      'github11.githubassets.com': {
+      'github.githubassets.com': {
         '.*': { proxy: 'assets.fastgit.org', test: 'https://github.githubassets.com/favicons/favicon.svg' }
       },
       'customer-stories-feed.github.com': {
@@ -78,7 +84,13 @@ module.exports = {
       'archive.cloudera.com': { '.*': { regexp: '/cdh5/.*', proxy: 'cloudera.proxy.ustclug.org' } },
       'downloads.lede-project.org': { '.*': { proxy: 'lede.proxy.ustclug.org' } },
       'downloads.openwrt.org': { '.*': { proxy: 'openwrt.proxy.ustclug.org' } },
-      'secure.gravatar.com': { '.*': { proxy: 'gravatar.proxy.ustclug.org' } }
+      'secure.gravatar.com': { '.*': { proxy: 'gravatar.proxy.ustclug.org' } },
+      '*.carbonads.com': {
+        '/carbon.*': {
+          abort: true,
+          desc: '广告拦截'
+        }
+      }
     },
     whiteList: {
       'alipay.com': true,
@@ -100,12 +112,13 @@ module.exports = {
         }
       },
       mapping: {
-        'img.shields.io': 'aliyun',
-        '*.github.com': 'aliyun',
-        '*.githubusercontent.com': 'aliyun',
-        '*.githubassets.com': 'aliyun',
+        'img.shields.io': 'usa',
+        '*.github.com': 'usa',
+        '*.githubusercontent.com': 'usa',
+        '*.githubassets.com': 'usa',
         // "解决push的时候需要输入密码的问题",
-        'github.com': 'aliyun'
+        'github.com': 'usa',
+        '*.vuepress.vuejs.org': 'usa'
       }
     }
   },
