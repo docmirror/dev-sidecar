@@ -32,7 +32,6 @@ module.exports = {
       const regexp = new RegExp(interceptOpt.replace)
       proxyTarget = req.url.replace(regexp, proxyConf)
     }
-    log.info('proxy', rOptions.path, rOptions.url)
     // const backup = interceptOpt.backup
     const proxy = proxyTarget.indexOf('http') === 0 ? proxyTarget : rOptions.protocol + '//' + proxyTarget
     // eslint-disable-next-line node/no-deprecated-api
@@ -45,7 +44,7 @@ module.exports = {
     if (URL.port == null) {
       rOptions.port = rOptions.protocol === 'https:' ? 443 : 80
     }
-    log.info('proxy:', rOptions.hostname, req.url, proxyTarget)
+    log.info('proxy:', rOptions.hostname, rOptions.path, proxyTarget)
     return true
   },
   is (interceptOpt) {
