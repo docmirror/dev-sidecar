@@ -35,8 +35,7 @@ function chunkReplace (_this, chunk, enc, callback, append) {
   if (append && append.body) {
     chunkString = injectScriptIntoBodyHtml(chunkString, append.body)
   }
-  // eslint-disable-next-line node/no-deprecated-api
-  _this.push(new Buffer(chunkString))
+  _this.push(Buffer.from(chunkString))
   callback()
 }
 
@@ -62,9 +61,23 @@ module.exports = {
           const newkey = key
           if (isHtml && key === 'content-length') {
             // do nothing
-          } else {
-            res.setHeader(newkey, proxyRes.headers[key])
+            return
           }
+          if (isHtml && key === 'content-security-policy') {
+            // content-security-policy
+            let policy = proxyRes.headers[key]
+            const reg = /script-src ([^:]*);/i
+            const matched = policy.match(reg)
+            if (matched) {
+              if (matched[1].indexOf('self') < 0) {
+                policy = policy.replace('script-src', 'script-src \'self\' ')
+              }
+            }
+            res.setHeader(newkey, policy)
+            return
+          }
+
+          res.setHeader(newkey, proxyRes.headers[key])
         }
       })
 

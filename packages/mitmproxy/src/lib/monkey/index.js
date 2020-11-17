@@ -1,16 +1,17 @@
 const fs = require('fs')
 const path = require('path')
-let scripts = []
+let scripts
 
 function buildScript (sc, content) {
   const grant = sc.grant
-  const pre = '(function () { \r\n'
+  const pre = 'window.addEventListener("load",' +
+      ' ()=> { \r\n'
   let grantSc = ''
   for (const item of grant) {
-    grantSc += 'const ' + item + ' = Monkey_Grants[\'' + item + '\']\r\n'
+    grantSc += 'const ' + item + ' = window.__ds_global__[\'' + item + '\']\r\n'
   }
-  const tail = content + '\r\n' +
-      '})()'
+  const tail = ';' + content + '\r\n' +
+      '})'
   return pre + grantSc + tail
 }
 
@@ -25,7 +26,6 @@ function loadScript (content) {
   const arr = content.split(annoFlag)
   const start = 0
 
-  console.log('arr', arr.length)
   const confStr = arr[start]
   const confItemArr = confStr.split('\n')
   const sc = {
@@ -54,14 +54,24 @@ function loadScript (content) {
   return sc
 }
 
-module.exports = {
+function readFile (script) {
+  return fs.readFileSync(path.join(__dirname, './scripts/' + script)).toString()
+}
+
+const api = {
   get () {
+    if (scripts == null) {
+      api.load()
+    }
     return scripts
   },
   load () {
-    const github = loadScript(fs.readFileSync(path.join(__dirname, './scripts/github.script')).toString())
-    scripts = []
-    scripts.push(github)
+    scripts = {}
+    scripts.github = loadScript(readFile('github.script'))
+    scripts.jquery = { script: readFile('jquery.min.js') }
+    scripts.global = { script: readFile('global.script') }
     return scripts
   }
 }
+
+module.exports = api

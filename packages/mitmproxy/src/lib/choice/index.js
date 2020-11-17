@@ -38,7 +38,7 @@ class DynamicChoice {
       if (this.count[item]) {
         continue
       }
-      this.count[item] = { value: item, total: 0, error: 0, keepErrorCount: 0, successRate: 1 }
+      this.count[item] = { value: item, total: 0, error: 0, keepErrorCount: 0, successRate: 1.0 }
     }
     this.doCount(this.value, false)
   }
@@ -47,10 +47,14 @@ class DynamicChoice {
     // 将count里面根据权重排序
     const list = []
     for (const key in this.count) {
-      list.put(this.count[key])
+      list.push(this.count[key])
     }
-    list.sort(function (a, b) { return a.successRate - b.successRate })
+    list.sort((a, b) => {
+      return b.successRate - a.successRate
+    })
+    console.log('do rank', list)
     const backup = list.map(item => item.value)
+
     this.setBackupList(backup)
   }
 
@@ -87,7 +91,7 @@ class DynamicChoice {
     } else {
       count.total++
     }
-    count.successRate = 1 - (count.error / count.total)
+    count.successRate = 1.0 - (count.error / count.total)
     if (isError && this.value === value) {
       // 连续错误4次，切换下一个
       if (count.keepErrorCount >= 4) {

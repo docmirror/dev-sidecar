@@ -5,7 +5,7 @@ const getDefaultConfigBasePath = function () {
   return path.resolve(userHome, './.dev-sidecar')
 }
 log4js.configure({
-  appenders: { std: { type: 'stdout' }, file: { type: 'file', pattern: '.yyyy-MM-dd', daysToKeep: 3, filename: getDefaultConfigBasePath() + '/logs/server.log' } },
+  appenders: { std: { type: 'stdout' }, file: { type: 'file', pattern: 'yyyy-MM-dd', daysToKeep: 3, filename: getDefaultConfigBasePath() + '/logs/server.log' } },
   categories: { default: { appenders: ['file', 'std'], level: 'info' } }
 })
 const logger = log4js.getLogger('server')

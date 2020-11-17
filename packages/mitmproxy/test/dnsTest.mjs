@@ -20,4 +20,11 @@ const dnsProviders = dns.initDNS({
 // dnsProviders.usa.lookup(hostname)
 
 const hostname1 = 'api.github.com'
-dnsProviders.aliyun.lookup(hostname1)
+dnsProviders.usa.lookup(hostname1)
+
+const hostname2 = 'hk.docmirror.cn'
+dnsProviders.usa.lookup(hostname2)
+const hostname3 = 'github.docmirror.cn'
+dnsProviders.usa.lookup(hostname3)
+const hostname4 = 'gh.docmirror.top'
+dnsProviders.usa.lookup(hostname4)

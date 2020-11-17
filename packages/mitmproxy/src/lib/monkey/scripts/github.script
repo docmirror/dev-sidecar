@@ -20,6 +20,7 @@
 // ==/UserScript==
 
 (function () {
+  console.log('github script  loaded')
   var download_url = [
     'https://gh.con.sh',
     'https://gh.api.99988866.xyz',

@@ -13,7 +13,8 @@
 可解决npm install 时某些安装包下载不下来的问题
 
 ### 2、 dns优选
-根据网络状况智能解析域名ip地址，获取最佳网络速度 
+根据网络状况智能解析最佳域名ip地址，获取最佳网络速度     
+第一次访问会比较慢，等多次访问之后，慢慢的选到比较快的ip，之后就很快了      
 比如：   
 1. 解决git push 偶尔失败需要输入账号密码的问题（
 fatal: TaskCanceledException encountered  /  fatal: HttpRequestException encountered）
@@ -76,10 +77,14 @@ recaptcha 图片验证码加速
  4. 某些库用cnpm也下载不下来的话，可以试试打开dev-sidecar的npm加速
 ### 其他加速
  1. git clone 加速   
+ 新增快捷方式：
+ ![](./doc/clone.png)  
+ 方式2：
   > 使用方式用实际的名称替换{}的内容，即可加速clone  
   > https://hub.fastgit.org/{username}/{reponame}.git     
   > clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来  
   > 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
+
  2. github.com的镜像网站(注意：不能登录)   
    >1. [hub.fastgit.org](https://hub.fastgit.org/) 
    >2. [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限
@@ -117,11 +122,9 @@ const intercepts = {
 }
 ```
 
-### DNS优选
-某些域名（比如api.github.com）会被解析到新加坡的ip上，新加坡的服务器在上午挺好，到了晚上就卡死，基本不可用。     
-所以将这些域名解析到美国服务器上就可以正常访问
-
-另外，配置了dns mapping的域名，将会从dns获取到的ip列表中选择相对快一点的服务器进行访问
+### DNS优选配置
+某些域名解析出来的ip会无法访问，（比如api.github.com会被解析到新加坡的ip上，新加坡的服务器在上午挺好，到了晚上就卡死，基本不可用）        
+通过从dns上获取ip列表，切换不同的ip进行尝试，最终会挑选到一个最快的ip
 
 ```js
  dns: {
@@ -143,6 +146,7 @@ const intercepts = {
 本项目参考如下开源项目
 * [node-mitmproxy](https://github.com/wuchangming/node-mitmproxy)   
 * [ReplaceGoogleCDN](https://github.com/justjavac/ReplaceGoogleCDN)
+* [github增强油猴脚本](https://greasyfork.org/zh-CN/scripts/412245-github-%E5%A2%9E%E5%BC%BA-%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD)
 
 本项目加速资源由如下组织提供
 * [fastgit](https://fastgit.org/)

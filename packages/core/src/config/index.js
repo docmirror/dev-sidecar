@@ -20,14 +20,17 @@ module.exports = {
         '/.*/.*/blame/': {
           redirect: 'hub.fastgit.org'
         },
+        '/.+/[^\\/]+$': {
+          script: [
+            'jquery',
+            'github'
+          ]
+        },
         '/.*': {
           proxy: 'github.com',
           backup: [
-            'github.docmirror.cn'
+            'github.docmirror.cn/_proxy'
           ]
-        },
-        '/.*/[^\\/]*$': {
-          script: 'console.log("123123132")'
         }
       },
       'raw.githubusercontent.com': {
@@ -122,7 +125,9 @@ module.exports = {
         '*.githubassets.com': 'usa',
         // "解决push的时候需要输入密码的问题",
         'github.com': 'usa',
-        '*.vuepress.vuejs.org': 'usa'
+        '*.vuepress.vuejs.org': 'usa',
+        'github.docmirror.cn': 'usa',
+        'gh.docmirror.top': 'usa'
       }
     }
   },

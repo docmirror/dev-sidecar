@@ -15,6 +15,7 @@
     "child_process": "^1.0.2",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
+    "crypto-js": "^4.0.0",
     "debug": "^4.1.1",
     "dns-over-http": "^0.2.0",
     "dns-over-tls": "^0.0.8",

@@ -1,23 +1,24 @@
 const url = require('url')
 module.exports = {
   requestIntercept (context, interceptOpt, req, res, ssl, next) {
-    const { rOptions, log, RequestConter } = context
+    const { rOptions, log, RequestCounter } = context
 
     let proxyConf = interceptOpt.proxy
-    if (RequestConter && interceptOpt.backup && interceptOpt.backup.length > 0) {
+    if (RequestCounter && interceptOpt.backup && interceptOpt.backup.length > 0) {
       // 优选逻辑
       const backup = [proxyConf]
       for (const bk of interceptOpt.backup) {
         backup.push(bk)
       }
       const key = interceptOpt.key
-      const count = RequestConter.getOrCreate(key, backup)
+      const count = RequestCounter.getOrCreate(key, backup)
       if (count.value == null) {
         count.doRank()
       }
       if (count.value == null) {
         log.error('count value is null', count)
       } else {
+        count.doCount(count.value)
         proxyConf = count.value
         context.requestCount = {
           key,

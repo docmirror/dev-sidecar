@@ -6,6 +6,7 @@ const DnsUtil = require('../../dns/index')
 const log = require('../../../utils/util.log')
 const HtmlMiddleware = require('../middleware/HtmlMiddleware')
 const RequestCounter = require('../../choice/RequestCounter')
+const ScriptMiddleware = require('../middleware/ScriptMiddleware')
 // create requestHandler function
 module.exports = function createRequestHandler (createIntercepts, externalProxy, dnsConfig) {
   // return
@@ -29,7 +30,7 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
     if (interceptors == null) {
       interceptors = []
     }
-    const reqIncpts = interceptors.filter(item => { return item.requestIntercept != null })
+    let reqIncpts = interceptors.filter(item => { return item.requestIntercept != null })
     const resIncpts = interceptors.filter(item => { return item.responseIntercept != null })
 
     const requestInterceptorPromise = () => {
@@ -38,6 +39,13 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
           resolve()
         }
         try {
+          if (ScriptMiddleware.is(rOptions)) {
+            if (reqIncpts == null) {
+              reqIncpts = []
+            }
+            reqIncpts.unshift(ScriptMiddleware)
+          }
+
           if (reqIncpts && reqIncpts.length > 0) {
             for (const reqIncpt of reqIncpts) {
               const goNext = reqIncpt.requestIntercept(context, req, res, ssl, next)
@@ -54,6 +62,19 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
           reject(e)
         }
       })
+    }
+
+    function countSlow (isDnsIntercept) {
+      if (isDnsIntercept) {
+        const { dns, ip, hostname } = isDnsIntercept
+        dns.count(hostname, ip, true)
+        log.error('记录ip失败次数,用于优选ip：', hostname, ip)
+      }
+      const counter = context.requestCount
+      if (counter != null) {
+        counter.count.doCount(counter.value, true)
+        log.error('记录prxoy失败次数：', counter.value)
+      }
     }
 
     const proxyRequestPromise = async () => {
@@ -92,24 +113,19 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
           }
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const end = new Date().getTime()
+            const cost = end - start
             if (rOptions.protocol === 'https:') {
-              log.info('代理请求返回:', url, (end - start) + 'ms')
+              log.info('代理请求返回:', url, cost + 'ms')
+            }
+            if (cost > 8000) {
+              countSlow(isDnsIntercept)
             }
             resolve(proxyRes)
           })
 
           proxyReq.on('timeout', () => {
             const end = new Date().getTime()
-            if (isDnsIntercept) {
-              const { dns, ip, hostname } = isDnsIntercept
-              dns.count(hostname, ip, true)
-              log.error('记录ip失败次数,用于优选ip：', hostname, ip)
-            }
-            const counter = context.requestCount
-            if (counter != null) {
-              counter.count.doCount(counter.value, true)
-              log.error('记录prxoy失败次数：', counter.value)
-            }
+            countSlow(isDnsIntercept)
             log.error('代理请求超时', rOptions.protocol, rOptions.hostname, rOptions.path, (end - start) + 'ms')
             proxyReq.end()
             proxyReq.destroy()
@@ -120,16 +136,7 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
 
           proxyReq.on('error', (e) => {
             const end = new Date().getTime()
-            if (isDnsIntercept) {
-              const { dns, ip, hostname } = isDnsIntercept
-              dns.count(hostname, ip, true)
-              log.error('记录ip失败次数,用于优选ip：', hostname, ip)
-            }
-            const counter = context.requestCount
-            if (counter != null) {
-              counter.count.doCount(counter.value, true)
-              log.error('记录prxoy失败次数：', counter.value)
-            }
+            countSlow(isDnsIntercept)
             log.error('代理请求错误', e.code, e.message, rOptions.hostname, rOptions.path, (end - start) + 'ms')
             reject(e)
           })
@@ -140,16 +147,7 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
             log.error('代理请求被取消', rOptions.hostname, rOptions.path, cost + 'ms')
 
             if (cost > 8000) {
-              if (isDnsIntercept) {
-                const { dns, ip, hostname } = isDnsIntercept
-                dns.count(hostname, ip, true)
-                log.error('记录ip失败次数,用于优选ip：', hostname, ip)
-              }
-              const counter = context.requestCount
-              if (counter != null) {
-                counter.count.doCount(counter.value, true)
-                log.error('记录prxoy失败次数：', counter.value)
-              }
+              countSlow(isDnsIntercept)
             }
 
             if (res.writableEnded) {
@@ -193,11 +191,7 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
       //   // console.log('BODY: ')
       // })
       proxyRes.on('error', (error) => {
-        const counter = context.requestCount
-        if (counter != null) {
-          counter.count.doCount(counter.value, true)
-          log.error('记录prxoy失败次数：', counter.value)
-        }
+        countSlow()
         log.error('proxy res error', error)
       })
 

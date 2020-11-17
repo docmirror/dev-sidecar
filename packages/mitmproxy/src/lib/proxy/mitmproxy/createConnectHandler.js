@@ -61,6 +61,9 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig) {
       cltSocket.pipe(proxySocket)
     })
 
+    cltSocket.on('error', (e) => {
+      log.error('cltSocket error', e.message)
+    })
     proxySocket.on('timeout', () => {
       const end = new Date().getTime()
       log.info('代理socket timeout：', hostname, port, (end - start) + 'ms')
