@@ -1,5 +1,6 @@
 const LRU = require('lru-cache')
 const cacheSize = 1024
+const log = require('../../utils/util.log')
 class ChoiceCache {
   constructor () {
     this.cache = new LRU(cacheSize)
@@ -52,7 +53,7 @@ class DynamicChoice {
     list.sort((a, b) => {
       return b.successRate - a.successRate
     })
-    console.log('do rank', list)
+    log.info('do rank', JSON.stringify(list))
     const backup = list.map(item => item.value)
 
     this.setBackupList(backup)
