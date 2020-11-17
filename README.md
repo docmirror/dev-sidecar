@@ -76,9 +76,12 @@ recaptcha 图片验证码加速
  3. 项目install使用yarn，发布包publish用npm，互不影响
  4. 某些库用cnpm也下载不下来的话，可以试试打开dev-sidecar的npm加速
 ### 其他加速
- 1. git clone 加速   
- 新增快捷方式：
- ![](./doc/clone.png)  
+ 1. git clone 加速      
+ 
+ 方式1：快捷复制：     
+ 
+ ![](./doc/clone.png)    
+ 
  方式2：
   > 使用方式用实际的名称替换{}的内容，即可加速clone  
   > https://hub.fastgit.org/{username}/{reponame}.git     
