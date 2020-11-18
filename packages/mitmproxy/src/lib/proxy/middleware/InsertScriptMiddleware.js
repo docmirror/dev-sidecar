@@ -70,7 +70,7 @@ module.exports = {
     const urlPath = rOptions.path
     const filename = urlPath.replace(contextPath, '')
 
-    const script = monkey.get(setting.scriptDir)[filename]
+    const script = monkey.get(setting.script.defaultDir)[filename]
 
     log.info('ds_script', filename, script != null)
     res.writeHead(200)

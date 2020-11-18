@@ -7,6 +7,6 @@ let scriptDir = '../extra/scripts/'
 if (process.env.NODE_ENV === 'development') {
   scriptDir = '../extra/scripts/'
 }
-config.setting.scriptDir = path.join(__dirname, scriptDir)
-log.debug('scriptDir', config.setting.scriptDir)
+config.setting.script.defaultDir = path.join(__dirname, scriptDir)
+log.debug('scriptDir', config.setting.script.defaultDir)
 server.start(config)

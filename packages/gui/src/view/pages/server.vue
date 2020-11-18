@@ -16,7 +16,7 @@
       >
         <a-tab-pane tab="基本设置" key="1"  >
           <a-form-item label="代理服务:" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-checkbox :checked="config.server.enabled" @change="config.server.enabled = $event">
+            <a-checkbox v-model="config.server.enabled" >
               随应用启动
             </a-checkbox>
             <a-tag v-if="status.proxy.enabled" color="green">
@@ -32,10 +32,17 @@
             <a-input v-model="config.server.port"/>
           </a-form-item>
           <a-form-item label="校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-checkbox :checked="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED" @change="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED = $event">
+            <a-checkbox v-model="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED">
               NODE_TLS_REJECT_UNAUTHORIZED
             </a-checkbox>
             <div>开启此项之后，被代理应用关闭SSL校验也问题不大了</div>
+          </a-form-item>
+          <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
+            <a-tooltip title="关闭后，github的clone加速链接复制也将关闭">
+              <a-checkbox v-model="config.server.setting.script.enabled" >
+                允许插入并运行脚本
+              </a-checkbox>
+            </a-tooltip>
           </a-form-item>
         </a-tab-pane>
         <a-tab-pane tab="拦截设置" key="2"  >

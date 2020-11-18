@@ -4,7 +4,10 @@ module.exports = {
     port: 1181,
     setting: {
       NODE_TLS_REJECT_UNAUTHORIZED: true,
-      scriptDir: '../../../scripts/'
+      script: {
+        enabled: true,
+        defaultDir: '../../../scripts/'
+      }
     },
     intercepts: {
       'github.com': {

@@ -30,6 +30,7 @@ export default {
       this.status = this.$status
       return this.$api.config.reload().then(ret => {
         this.config = ret
+        console.log('config', this.config)
         if (this.ready) {
           return this.ready(this.config)
         }

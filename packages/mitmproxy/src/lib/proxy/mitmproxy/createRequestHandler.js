@@ -41,7 +41,9 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
           resolve()
         }
         try {
-          reqIncpts.unshift(InsertScriptMiddleware)
+          if (setting.script.enabled) {
+            reqIncpts.unshift(InsertScriptMiddleware)
+          }
           if (reqIncpts && reqIncpts.length > 0) {
             for (const reqIncpt of reqIncpts) {
               const goNext = reqIncpt.requestIntercept(context, req, res, ssl, next)
@@ -196,6 +198,10 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
         const next = () => {
           resolve()
         }
+        if (!setting.script.enabled) {
+          next()
+          return
+        }
         try {
           if (resIncpts && resIncpts.length > 0) {
             let head = ''
@@ -209,6 +215,7 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
                 body += append.body
               }
             }
+
             InsertScriptMiddleware.responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, { head, body })
           } else {
             next()
