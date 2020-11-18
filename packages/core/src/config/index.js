@@ -29,7 +29,7 @@ module.exports = {
         '/.*': {
           proxy: 'github.com',
           backup: [
-            'github.docmirror.cn/_proxy'
+            'gh.docmirror.top/_proxy'
           ]
         }
       },

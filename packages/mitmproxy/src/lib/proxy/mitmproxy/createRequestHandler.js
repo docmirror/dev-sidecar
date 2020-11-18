@@ -4,9 +4,10 @@ const commonUtil = require('../common/util')
 // const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i
 const DnsUtil = require('../../dns/index')
 const log = require('../../../utils/util.log')
-const HtmlMiddleware = require('../middleware/HtmlMiddleware')
 const RequestCounter = require('../../choice/RequestCounter')
-const ScriptMiddleware = require('../middleware/ScriptMiddleware')
+const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
+const defaultDns = require('dns')
+const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
 // create requestHandler function
 module.exports = function createRequestHandler (createIntercepts, externalProxy, dnsConfig) {
   // return
@@ -30,7 +31,7 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
     if (interceptors == null) {
       interceptors = []
     }
-    let reqIncpts = interceptors.filter(item => { return item.requestIntercept != null })
+    const reqIncpts = interceptors.filter(item => { return item.requestIntercept != null })
     const resIncpts = interceptors.filter(item => { return item.responseIntercept != null })
 
     const requestInterceptorPromise = () => {
@@ -39,13 +40,7 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
           resolve()
         }
         try {
-          if (ScriptMiddleware.is(rOptions)) {
-            if (reqIncpts == null) {
-              reqIncpts = []
-            }
-            reqIncpts.unshift(ScriptMiddleware)
-          }
-
+          reqIncpts.unshift(InsertScriptMiddleware)
           if (reqIncpts && reqIncpts.length > 0) {
             for (const reqIncpt of reqIncpts) {
               const goNext = reqIncpt.requestIntercept(context, req, res, ssl, next)
@@ -105,19 +100,20 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
                   if (ip !== hostname) {
                     callback(null, ip, 4)
                   } else {
-                    rOptions.lookup(hostname, options, callback)
+                    defaultDns.lookup(hostname, options, callback)
                   }
                 })
               }
             }
           }
+
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const end = new Date().getTime()
             const cost = end - start
             if (rOptions.protocol === 'https:') {
               log.info('代理请求返回:', url, cost + 'ms')
             }
-            if (cost > 8000) {
+            if (cost > MAX_SLOW_TIME) {
               countSlow(isDnsIntercept)
             }
             resolve(proxyRes)
@@ -146,7 +142,7 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
             const cost = end - start
             log.error('代理请求被取消', rOptions.hostname, rOptions.path, cost + 'ms')
 
-            if (cost > 8000) {
+            if (cost > MAX_SLOW_TIME) {
               countSlow(isDnsIntercept)
             }
 
@@ -212,7 +208,7 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
                 body += append.body
               }
             }
-            HtmlMiddleware.responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, { head, body })
+            InsertScriptMiddleware.responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, { head, body })
           } else {
             next()
           }

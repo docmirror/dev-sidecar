@@ -28,7 +28,7 @@ module.exports = {
       const scriptTag = getScript(key, script.script)
       tags += '\r\n' + scriptTag
     }
-    log.info('responseIntercept: append script', rOptions.hostname, rOptions.path)
+    log.info('responseIntercept: insert script', rOptions.hostname, rOptions.path)
     return {
       head: tags
     }
