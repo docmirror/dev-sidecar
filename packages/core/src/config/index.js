@@ -34,6 +34,12 @@ module.exports = {
           ]
         }
       },
+      'api.github.com': {
+        '^/_private/browser/stats$': {
+          success: true,
+          desc: 'github的访问速度分析上传，没有必要，直接返回成功'
+        }
+      },
       'raw.githubusercontent.com': {
         '.*': { proxy: 'raw.fastgit.org' }
       },
