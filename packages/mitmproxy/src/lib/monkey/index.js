@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const log = require('../../utils/util.log')
 let scripts
 
 function buildScript (sc, content) {
@@ -54,22 +55,24 @@ function loadScript (content) {
   return sc
 }
 
-function readFile (script) {
-  return fs.readFileSync(path.join(__dirname, './scripts/' + script)).toString()
+function readFile (rootDir, script) {
+  const location = path.join(rootDir, './' + script)
+  log.debug('script location:', location)
+  return fs.readFileSync(location).toString()
 }
 
 const api = {
-  get () {
+  get (rootDir) {
     if (scripts == null) {
-      api.load()
+      api.load(rootDir)
     }
     return scripts
   },
-  load () {
+  load (rootDir) {
     scripts = {}
-    scripts.github = loadScript(readFile('github.script'))
-    scripts.jquery = { script: readFile('jquery.min.js') }
-    scripts.global = { script: readFile('global.script') }
+    scripts.github = loadScript(readFile(rootDir, 'github.script'))
+    scripts.jquery = { script: readFile(rootDir, 'jquery.min.js') }
+    scripts.global = { script: readFile(rootDir, 'global.script') }
     return scripts
   }
 }

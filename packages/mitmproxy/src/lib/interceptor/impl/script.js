@@ -14,23 +14,27 @@ function getScript (key, script) {
 
 module.exports = {
   responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
-    const { rOptions, log } = context
+    const { rOptions, log, setting } = context
     let keys = interceptOpt.script
     if (typeof keys === 'string') {
       keys = [keys]
     }
-    let tags = getScript('global', monkey.get().global.script)
-    for (const key of keys) {
-      const script = monkey.get()[key]
-      if (script == null) {
-        continue
+    try {
+      let tags = getScript('global', monkey.get(setting.scriptDir).global.script)
+      for (const key of keys) {
+        const script = monkey.get(setting.scriptDir)[key]
+        if (script == null) {
+          continue
+        }
+        const scriptTag = getScript(key, script.script)
+        tags += '\r\n' + scriptTag
       }
-      const scriptTag = getScript(key, script.script)
-      tags += '\r\n' + scriptTag
-    }
-    log.info('responseIntercept: insert script', rOptions.hostname, rOptions.path)
-    return {
-      head: tags
+      log.info('responseIntercept: insert script', rOptions.hostname, rOptions.path)
+      return {
+        head: tags
+      }
+    } catch (err) {
+      log.error('load monkey script error', err)
     }
   },
   is (interceptOpt) {

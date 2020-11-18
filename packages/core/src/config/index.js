@@ -3,7 +3,8 @@ module.exports = {
     enabled: true,
     port: 1181,
     setting: {
-      NODE_TLS_REJECT_UNAUTHORIZED: true
+      NODE_TLS_REJECT_UNAUTHORIZED: true,
+      scriptDir: '../../../scripts/'
     },
     intercepts: {
       'github.com': {

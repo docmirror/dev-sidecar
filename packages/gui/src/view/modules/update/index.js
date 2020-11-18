@@ -49,6 +49,7 @@ function install (app, api) {
     updateParams.newVersion = true
 
     if (updateParams.autoDownload !== false) {
+      app.$message.info('发现新版本，正在下载中...')
       api.update.downloadUpdate()
       return
     }

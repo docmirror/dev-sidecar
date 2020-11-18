@@ -16,7 +16,8 @@ module.exports = {
     getCertSocketTimeout = 1 * 1000,
     middlewares = [],
     externalProxy,
-    dnsConfig
+    dnsConfig,
+    setting
   }, callback) {
     // Don't reject unauthorized
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
@@ -34,9 +35,9 @@ module.exports = {
     port = ~~port
     const requestHandler = createRequestHandler(
       createIntercepts,
-      middlewares,
       externalProxy,
-      dnsConfig
+      dnsConfig,
+      setting
     )
 
     const upgradeHandler = createUpgradeHandler()

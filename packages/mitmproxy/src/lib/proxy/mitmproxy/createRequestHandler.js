@@ -9,7 +9,7 @@ const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
 const defaultDns = require('dns')
 const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
 // create requestHandler function
-module.exports = function createRequestHandler (createIntercepts, externalProxy, dnsConfig) {
+module.exports = function createRequestHandler (createIntercepts, externalProxy, dnsConfig, setting) {
   // return
   return function requestHandler (req, res, ssl) {
     let proxyReq
@@ -25,7 +25,8 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
     const context = {
       rOptions,
       log,
-      RequestCounter
+      RequestCounter,
+      setting
     }
     let interceptors = createIntercepts(context)
     if (interceptors == null) {

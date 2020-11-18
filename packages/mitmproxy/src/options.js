@@ -2,6 +2,7 @@ const interceptors = require('./lib/interceptor')
 const dnsUtil = require('./lib/dns')
 const lodash = require('lodash')
 const log = require('./utils/util.log')
+const path = require('path')
 function matchHostname (hostMap, hostname) {
   const value = hostMap[hostname]
   if (value) {
@@ -47,13 +48,13 @@ module.exports = (config) => {
 
   const dnsMapping = config.dns.mapping
   const serverConfig = config
-
   return {
     port: serverConfig.port,
     dnsConfig: {
       providers: dnsUtil.initDNS(serverConfig.dns.providers),
       mapping: dnsMapping
     },
+    setting: serverConfig.setting,
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]
       const inWhiteList = matchHostname(whiteList, hostname) != null

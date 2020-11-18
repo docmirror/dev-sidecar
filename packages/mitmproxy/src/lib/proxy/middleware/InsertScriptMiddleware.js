@@ -63,14 +63,14 @@ const monkey = require('../../monkey')
 module.exports = {
 
   requestIntercept (context, req, res, ssl, next) {
-    const { rOptions, log } = context
+    const { rOptions, log, setting } = context
     if (rOptions.path.indexOf(contextPath) !== 0) {
       return
     }
     const urlPath = rOptions.path
     const filename = urlPath.replace(contextPath, '')
 
-    const script = monkey.get()[filename]
+    const script = monkey.get(setting.scriptDir)[filename]
 
     log.info('ds_script', filename, script != null)
     res.writeHead(200)
