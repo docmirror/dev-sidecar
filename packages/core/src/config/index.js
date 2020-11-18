@@ -9,7 +9,8 @@ module.exports = {
     intercepts: {
       'github.com': {
         '/.*/.*/releases/download/': {
-          redirect: 'download.fastgit.org'
+          redirect: 'download.fastgit.org',
+          desc: 'release文件加速下载跳转地址'
         },
         '/.*/.*/archive/': {
           redirect: 'download.fastgit.org'
@@ -25,13 +26,15 @@ module.exports = {
           script: [
             'jquery',
             'github'
-          ]
+          ],
+          desc: 'clone加速复制链接脚本'
         },
         '/.*': {
           proxy: 'github.com',
           backup: [
             'gh.docmirror.top/_proxy'
-          ]
+          ],
+          desc: '备用主站加速地址'
         }
       },
       'api.github.com': {
@@ -44,7 +47,8 @@ module.exports = {
         '.*': { proxy: 'raw.fastgit.org' }
       },
       'github.githubassets.com': {
-        '.*': { proxy: 'assets.fastgit.org', test: 'https://github.githubassets.com/favicons/favicon.svg' }
+        '.*': { proxy: 'assets.fastgit.org', test: 'https://github.githubassets.com/favicons/favicon.svg', desc: '静态资源加速' }
+
       },
       'customer-stories-feed.github.com': {
         '.*': { proxy: 'customer-stories-feed.fastgit.org' }
