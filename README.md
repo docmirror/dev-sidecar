@@ -45,7 +45,9 @@ recaptcha 图片验证码加速
  
 #### 1.1 下载安装包  
 
-[点此去下载](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.1.0.exe)  
+[点此去下载](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.2.0.exe)  
+[Gitee](https://gitee.com/docmirror/dev-sidecar/releases)  
+[Github](https://github.com/docmirror/dev-sidecar/releases)  
 
 安装后打开
 
