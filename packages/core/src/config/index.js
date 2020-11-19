@@ -35,7 +35,8 @@ module.exports = {
         '/.*': {
           proxy: 'github.com',
           backup: [
-            'gh.docmirror.top/_proxy'
+            'gh.docmirror.top/_proxy',
+            'gh2.docmirror.top/_proxy'
           ],
           desc: '备用主站加速地址'
         }

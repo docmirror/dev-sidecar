@@ -28,3 +28,5 @@ const hostname3 = 'github.docmirror.cn'
 dnsProviders.usa.lookup(hostname3)
 const hostname4 = 'gh.docmirror.top'
 dnsProviders.usa.lookup(hostname4)
+const hostname5 = 'gh2.docmirror.top'
+dnsProviders.usa.lookup(hostname5)
