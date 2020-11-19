@@ -112,7 +112,14 @@ function createWindow () {
   })
 }
 
-function quit (app) {
+async function beforeQuit () {
+  return bridge.devSidecar.api.shutdown()
+}
+async function quit (app, callback) {
+  if (tray) {
+    tray.displayBalloon({ title: '正在关闭', content: '关闭中,请稍候。。。' })
+  }
+  await beforeQuit()
   app.quit()
 }
 
@@ -129,12 +136,12 @@ if (!isFirstInstance) {
 } else {
   app.on('before-quit', async (event) => {
     log.info('before-quit')
-    event.preventDefault()
-    // if (tray) {
-    //   tray.displayBalloon({ title: '正在关闭，请稍候...', content: '正在关闭中,请稍候。。。' })
-    // }
-    await bridge.devSidecar.api.shutdown()
-    app.exit()
+    // event.preventDefault()
+    // // if (tray) {
+    // //   tray.displayBalloon({ title: '正在关闭，请稍候...', content: '正在关闭中,请稍候。。。' })
+    // // }
+    // await bridge.devSidecar.api.shutdown()
+    // app.exit()
   })
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     log.info('new app started', commandLine)
@@ -187,7 +194,7 @@ if (!isFirstInstance) {
       updateUrl = 'http://localhost/dev-sidecar/'
     }
     // 自动更新
-    updateHandle(win, updateUrl)
+    updateHandle(app, win, beforeQuit, updateUrl)
 
     // 百度分析
     ebtMain(ipcMain, isDevelopment)

@@ -8,7 +8,7 @@ import path from 'path'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 // 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
-function updateHandle (win, updateUrl) {
+function updateHandle (app, win, beforeQuit, updateUrl) {
   // // 更新前，删除本地安装包 ↓
   // const updaterCacheDirName = 'dev-sidecar-updater'
   // const updatePendingPath = path.join(autoUpdater.app.baseCachePath, updaterCacheDirName, 'pending')
@@ -68,7 +68,14 @@ function updateHandle (win, updateUrl) {
   ipcMain.on('update', (e, arg) => {
     if (arg.key === 'doUpdateNow') {
       // some code here to handle event
-      autoUpdater.quitAndInstall()
+      beforeQuit().then(() => {
+        autoUpdater.quitAndInstall()
+        if (app) {
+          setTimeout(() => {
+            app.exit()
+          }, 1000)
+        }
+      })
     } else if (arg.key === 'checkForUpdate') {
       // 执行自动更新检查
       log.info('autoUpdater checkForUpdates')
