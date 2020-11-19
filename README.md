@@ -5,14 +5,20 @@
 
 <a href='https://gitee.com/docmirror/dev-sidecar'><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+    
       
 
 ## 特性
 
 ### 1、 dns优选
 根据网络状况智能解析最佳域名ip地址，获取最佳网络速度     
-第一次访问会比较慢，等多次访问之后，慢慢的选到比较快的ip，之后就很快了 
+
 建议遇到打开比较慢的国外网站，可以优先尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）      
+
+-------------
+>注意：
+>第一次访问会比较慢，耐心的刷新几次之后，慢慢的选到比较快的ip，之后就很快了 
+-------------
 
 ### 2、 请求拦截
 拦截打不开的网站，代理到加速镜像站点上去。    
