@@ -35,10 +35,9 @@ module.exports = {
         '/.*': {
           proxy: 'github.com',
           backup: [
-            'gh.docmirror.top/_proxy',
-            'gh2.docmirror.top/_proxy'
+            'gh.docmirror.top/_proxy'
           ],
-          desc: '备用主站加速地址'
+          desc: '如果出现dev-sidecar报错，可能是备用加速地址dns被污染了，需要将本条配置删除'
         }
       },
       'api.github.com': {
