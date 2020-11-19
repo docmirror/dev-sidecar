@@ -9,45 +9,48 @@
 
 ## 特性
 
-### 1、 github的release、source、zip下载加速
-可解决npm install 时某些安装包下载不下来的问题
-
-### 2、 dns优选
+### 1、 dns优选
 根据网络状况智能解析最佳域名ip地址，获取最佳网络速度     
-第一次访问会比较慢，等多次访问之后，慢慢的选到比较快的ip，之后就很快了      
-比如：   
-1. 解决git push 偶尔失败需要输入账号密码的问题（
-fatal: TaskCanceledException encountered  /  fatal: HttpRequestException encountered）
-2. 解决github头像加载不出来的问题
-3. 解决gist.github.com访问不到的问题
+第一次访问会比较慢，等多次访问之后，慢慢的选到比较快的ip，之后就很快了 
+建议遇到打开比较慢的国外网站，可以优先尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）      
 
-### 3、 github的源代码查看（raw/blame查看）
-通过跳转到国内加速链接上
+### 2、 请求拦截
+拦截打不开的网站，代理到加速镜像站点上去。    
+可配置多个镜像站作为备份    
+具备测速机制，当访问失败或超时之后，自动切换到备用站点。    
+使得目标服务高可用
+
+### 3、 github加速
+* release、source、zip下载加速
+* clone 加速
+* 头像加速
+* 解决readme中图片引用无法加载的问题
+* gist.github.com 加速
+* 解决git push 偶尔失败需要输入账号密码的问题（fatal: TaskCanceledException encountered  /  fatal: HttpRequestException encountered）
+* raw/blame加速
 
 ### 4、 Stack Overflow 加速
+* 将ajax.google.com代理到加速CDN上     
+* recaptcha 图片验证码加速
 
-将ajax.google.com代理到加速CDN上 
-recaptcha 图片验证码加速
-
-
-### 5、 google cdn 加速
-通过代理到加速链接上
+### 5、 npm加速
+* 支持开启npm代理
+* 切换npm淘宝registry
+* 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
 
 ### 6、 更多加速配置
 等你来提issue
 
 ## 快速开始
 目前仅支持windows
-### 1、 DevSidecar桌面应用发布啦
-暂时只支持windows    
- 
- 
+### 1、 DevSidecar桌面应用
  
 #### 1.1 下载安装包  
 
-[点此去下载](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.2.0.exe)  
-[Gitee](https://gitee.com/docmirror/dev-sidecar/releases)  
-[Github](https://github.com/docmirror/dev-sidecar/releases)  
+下载安装包：    
+[阿里云](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.2.0.exe)  
+[Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
+[Github Release](https://github.com/docmirror/dev-sidecar/releases)  
 
 安装后打开
 
@@ -68,6 +71,10 @@ recaptcha 图片验证码加速
 ![](./doc/avatar2.png)
 ![](./doc/avatar1.png)
 
+clone加速
+![](./doc/clone.png)    
+ 
+
 ## 最佳实践
 
 把dev-sidecar一直开着就行了    
@@ -83,9 +90,7 @@ recaptcha 图片验证码加速
  1. git clone 加速      
  
  方式1：快捷复制：     
- 
- ![](./doc/clone.png)    
- 
+    开启脚本支持，然后在复制clone链接下方，即可复制到加速链接    
  方式2：
   > 使用方式用实际的名称替换{}的内容，即可加速clone  
   > https://hub.fastgit.org/{username}/{reponame}.git     
@@ -111,14 +116,16 @@ const intercepts = {
         // redirect:url,  临时重定向(url会变，一些下载资源可以通过此方式配置)
         // proxy:url,     代理（url不会变，没有跨域问题）
         // abort:true,    取消请求（适用于被GFW封锁的资源，找不到替代，直接取消请求，快速失败，节省时间）
+        // success:true,  直接返回成功请求（某些请求不想发出去，可以伪装成功返回）
         redirect: 'download.fastgit.org'
       },
    },
    'ajax.googleapis.com': {
      '.*': {
        proxy: 'ajax.loli.net', //代理请求，url不会变
-       backup: ['ajax.proxy.ustclug.org'],
-       test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'
+       backup: ['ajax.proxy.ustclug.org'], //备份，当前代理请求失败后，将会切换到备用地址
+       test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
+       replace:'/(.*)/xxx'//当加速地址的链接和原链接不是完全相同时，可以通过正则表达式replace，此时proxy通过$1$2来重组url， proxy:'ajax.loli.net/xxx/$1'
      }
    },
    'clients*.google.com': {
