@@ -133,6 +133,7 @@ module.exports = {
         }
       },
       mapping: {
+        '*github.io': 'usa',
         'img.shields.io': 'usa',
         '*.github.com': 'usa',
         '*.githubusercontent.com': 'usa',
