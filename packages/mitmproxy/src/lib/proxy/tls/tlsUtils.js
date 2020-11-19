@@ -9,6 +9,15 @@ const mkdirp = require('mkdirp')
 const utils = exports
 const pki = forge.pki
 
+// const os = require('os')
+// let username = 'dev-sidecar'
+// try {
+//   const user = os.userInfo()
+//   username = user.username
+// } catch (e) {
+//   console.log('get userinfo error', e)
+// }
+
 utils.createCA = function (CN) {
   const keys = pki.rsa.generateKeyPair(2046)
   const cert = pki.createCertificate()
