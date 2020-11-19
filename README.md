@@ -68,10 +68,13 @@
 
 
 #### 开启前vs 开启后  
+头像加速：    
 ![](./doc/avatar2.png)
 ![](./doc/avatar1.png)
 
-clone加速
+
+clone加速    
+
 ![](./doc/clone.png)    
  
 
