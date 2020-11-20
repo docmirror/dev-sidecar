@@ -15,11 +15,6 @@
 
 建议遇到打开比较慢的国外网站，可以优先尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）      
 
--------------
->注意：
->第一次访问会比较慢，耐心的刷新几次之后，慢慢的选到比较快的ip，之后就很快了 
--------------
-
 ### 2、 请求拦截
 拦截打不开的网站，代理到加速镜像站点上去。    
 可配置多个镜像站作为备份    
@@ -49,9 +44,9 @@
 
 ## 快速开始
 目前仅支持windows
-### 1、 DevSidecar桌面应用
+### DevSidecar桌面应用
  
-#### 1.1 下载安装包  
+#### 1 下载安装包  
 
 下载安装包：    
 [阿里云](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.2.0.exe)  
@@ -63,7 +58,7 @@
 
 ![](./doc/index.png)     
 
-#### 1.2 安装根证书     
+#### 2 安装根证书     
        
 第一次打开会提示安装证书，根据提示操作即可  
  
@@ -71,22 +66,21 @@
 >根证书是本地随机生成的，所以不用担心根证书的安全问题  
 
 
-#### 1.3 开始加速吧      
-去试试打开github    
-`Download ZIP`、`Release` 下载试试，体验秒下的感觉    
-比如去下载它： https://github.com/greper/d2-crud-plus/archive/master.zip    
-
-
-#### 开启前vs 开启后  
-头像加速：    
-![](./doc/avatar2.png)
-![](./doc/avatar1.png)
-
-
-clone加速    
-
-![](./doc/clone.png)    
+#### 3 开始加速吧      
+去试试打开github   
  
+---------
+>第一次访问会去国外的dns服务器上获取ip，会比较慢一点，后面就快了 
+---------
+
+### 开启前 vs 开启后 
+ 
+|  | 开启前 | 开启后 |
+| ---- | ---- | ---- |
+|头像| ![](./doc/avatar2.png) |![](./doc/avatar1.png)  |
+|clone |![](./doc/clone-before.png) |![](./doc/clone.png)    |  
+|zip 下载 |![](./doc/download-before.png) |![](./doc/download.png)秒下的，实在截不到速度的图    |  
+
 
 ## 最佳实践
 
@@ -99,6 +93,7 @@ clone加速
  2. npm设置官方registry。 
  3. 项目install使用yarn，发布包publish用npm，互不影响
  4. 某些库用cnpm也下载不下来的话，可以试试打开dev-sidecar的npm加速
+ 
 ### 其他加速
  1. git clone 加速      
  
