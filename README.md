@@ -1,7 +1,7 @@
 # dev-sidecar
 开发者边车，命名取自service-mesh的service-sidecar，意为为开发者打辅助的边车工具    
 通过本地代理的方式将http请求代理到一些国内的加速通道上    
-不用`ss小飞机`也能解决一些网站和库无法访问或访问速度慢的问题
+不用`ｆａｎ qiang`也能解决一些网站和库无法访问或访问速度慢的问题
 
 <a href='https://gitee.com/docmirror/dev-sidecar'><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
