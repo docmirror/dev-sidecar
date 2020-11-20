@@ -35,11 +35,13 @@ class DynamicChoice {
   setBackupList (backupList) {
     this.value = backupList.shift()
     this.backup = backupList
+    let defaultTotal = backupList.length > 6 ? backupList.length : 6
     for (const item of backupList) {
       if (this.count[item]) {
         continue
       }
-      this.count[item] = { value: item, total: 0, error: 0, keepErrorCount: 0, successRate: 1.0 }
+      this.count[item] = { value: item, total: defaultTotal, error: 0, keepErrorCount: 0, successRate: 1 }
+      defaultTotal--
     }
     this.doCount(this.value, false)
   }
