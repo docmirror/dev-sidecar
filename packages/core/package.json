@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "给开发者的加速代理工具",
   "main": "src/index.js",
   "keywords": [
@@ -16,7 +16,7 @@
     "start": "node ./start"
   },
   "dependencies": {
-    "@docmirror/mitmproxy": "^1.2.0",
+    "@docmirror/mitmproxy": "^1.2.1",
     "agentkeepalive": "^2.1.1",
     "charset": "^1.0.0",
     "child_process": "^1.0.2",
