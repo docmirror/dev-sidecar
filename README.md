@@ -36,7 +36,7 @@
 
 ### 5、 npm加速
 * 支持开启npm代理
-* 切换npm淘宝registry
+* 官方与淘宝npm registry一键切换,
 * 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
 
 ### 6、 更多加速配置
@@ -87,12 +87,6 @@
 把dev-sidecar一直开着就行了    
 建议遇到打开比较慢的国外网站，可以优先尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）      
 如果还访问不了，就需要寻找镜像cdn进行拦截代理    
- 
-### npm加速
- 1. yarn 设置淘宝镜像registry
- 2. npm设置官方registry。 
- 3. 项目install使用yarn，发布包publish用npm，互不影响
- 4. 某些库用cnpm也下载不下来的话，可以试试打开dev-sidecar的npm加速
  
 ### 其他加速
  1. git clone 加速      
