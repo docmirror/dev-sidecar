@@ -8,7 +8,7 @@ const pk = require('../../package.json')
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
 const log = require('../utils/util.log')
 const getDefaultConfigBasePath = function () {
-  const userHome = process.env.HOME || process.env.USERPROFILE
+  const userHome = process.env.USERPROFILE
   return path.resolve(userHome, './.dev-sidecar')
 }
 const localApi = {

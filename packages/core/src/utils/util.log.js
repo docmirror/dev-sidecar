@@ -1,7 +1,7 @@
 const log4js = require('log4js')
 const path = require('path')
 const getDefaultConfigBasePath = function () {
-  const userHome = process.env.HOME || process.env.USERPROFILE
+  const userHome = process.env.USERPROFILE
   return path.resolve(userHome, './.dev-sidecar')
 }
 log4js.configure({

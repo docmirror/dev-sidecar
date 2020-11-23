@@ -10,7 +10,7 @@ config.defaultPort = 1181
 config.caName = 'This certificate is generated locally'
 
 config.getDefaultCABasePath = function () {
-  const userHome = process.env.HOME || process.env.USERPROFILE
+  const userHome = process.env.USERPROFILE
   return path.resolve(userHome, './.dev-sidecar')
 }
 
