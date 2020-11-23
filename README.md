@@ -44,12 +44,14 @@
 
 ## 快速开始
 目前仅支持windows
+
 ### DevSidecar桌面应用
  
 #### 1 下载安装包  
+下载安装包：  
+  
+[阿里云](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.2.1.exe)  
 
-下载安装包：    
-[阿里云](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.2.0.exe)  
 [Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 [Github Release](https://github.com/docmirror/dev-sidecar/releases)  
 
@@ -92,7 +94,8 @@
  1. git clone 加速      
  
  方式1：快捷复制：     
-    开启脚本支持，然后在复制clone链接下方，即可复制到加速链接    
+  > 开启脚本支持，然后在复制clone链接下方，即可复制到加速链接    
+    
  方式2：
   > 使用方式用实际的名称替换{}的内容，即可加速clone  
   > https://hub.fastgit.org/{username}/{reponame}.git     
