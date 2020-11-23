@@ -8,9 +8,9 @@
             <a-badge :count="_rootCaSetuped?0:1" dot>安装根证书 </a-badge>
           </a-button>
 
-          <a-button style="margin-right:10px" @click="doCheckUpdate" :title="'当前版本:'+info.version">
+          <a-button style="margin-right:10px" @click="doCheckUpdate(true)" :loading="update.downloading" :title="'当前版本:'+info.version">
             <a-badge :count="update.newVersion?1:0" dot>
-              检查更新
+              <span v-if="update.downloading">{{update.progress}}%</span>{{update.downloading?'新版本下载中':'检查更新'}}
             </a-badge>
           </a-button>
 
@@ -31,7 +31,7 @@
         <a-form style="margin-top:20px" :label-col="{ span: 12 }" :wrapper-col="{ span: 12 }">
 
           <a-form-item v-for=" (item, key) in switchBtns" :key="key" :label="item.label">
-            <a-switch style="margin-left:10px" :loading="item.loading" v-model="item.status[key].enabled" default-checked v-on:click="item.doClick">
+            <a-switch style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked @change="item.doClick">
               <a-icon slot="checkedChildren" type="check"/>
               <a-icon slot="unCheckedChildren" type="close"/>
             </a-switch>
@@ -57,7 +57,6 @@
 import lodash from 'lodash'
 import setupCa from '../components/setup-ca'
 import DsContainer from '../components/container'
-
 export default {
   name: 'Index',
   components: {
@@ -89,6 +88,7 @@ export default {
         }
       },
       info: {},
+      newVersionDownloading: false,
       setting: undefined,
       server: {
         key: '代理服务',
@@ -102,30 +102,20 @@ export default {
       setupCa: {
         visible: false
       },
-      update: {}
+      update: { downloading: false, progress: 0, newVersion: false }
     }
   },
   async created () {
     this.doCheckRootCa()
-    console.log('index created', this.status, this.$status)
     await this.reloadConfig()
-    const status = await this.$api.status.get()
-    console.log('status', status)
-    this.$set(this, 'status', status)
+    this.$set(this, 'status', this.$status)
     this.switchBtns = this.createSwitchBtns()
     console.log('switchBtns', this.switchBtns)
-    if (this.$global.update == null) {
-      this.$global.update = {
-        fromUser: false,
-        autoDownload: true,
-        progress: 0,
-        newVersion: false
-      }
-      this.update = this.$global.update
+    this.$set(this, 'update', this.$global.update)
+    if (!this.update.autoChecked) {
+      this.update.autoChecked = true
       this.doCheckUpdate(false)
     }
-    this.update = this.$global.update
-
     this.$api.info.get().then(ret => {
       this.info = ret
     })
@@ -190,7 +180,9 @@ export default {
         loading: false,
         key: key,
         label: label,
-        status: statusParent,
+        status: () => {
+          return statusParent[key].enabled
+        },
         doClick: (checked) => {
           this.onSwitchClick(this.switchBtns[key], apiTarget.start, apiTarget.close, checked)
         }
@@ -235,7 +227,7 @@ export default {
     },
     doCheckUpdate (fromUser = true) {
       this.update.fromUser = fromUser
-      this.$api.update.checkForUpdate(this.update)
+      this.$api.update.checkForUpdate(this)
     },
     openExternal (url) {
       this.$api.ipc.openExternal(url)
