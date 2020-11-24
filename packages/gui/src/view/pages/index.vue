@@ -151,7 +151,9 @@ export default {
     openSetupCa () {
       this.setupCa.visible = true
     },
-    handleCaSetuped () {
+    async handleCaSetuped () {
+      console.log('this.config.server.setting.rootCaFile.certPath', this.config.server.setting.rootCaFile.certPath)
+      await this.$api.shell.setupCa({ certPath: this.config.server.setting.rootCaFile.certPath })
       this.setting.rootCa = this.setting.rootCa || {}
       const rootCa = this.setting.rootCa
       rootCa.setuped = true
@@ -226,8 +228,7 @@ export default {
       })
     },
     doCheckUpdate (fromUser = true) {
-      this.update.fromUser = fromUser
-      this.$api.update.checkForUpdate(this)
+      this.$api.update.checkForUpdate(fromUser)
     },
     openExternal (url) {
       this.$api.ipc.openExternal(url)

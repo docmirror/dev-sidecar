@@ -24,7 +24,6 @@
 </template>
 
 <script>
-import api from '../api'
 export default {
   name: 'setup-ca',
   components: {
@@ -55,7 +54,6 @@ export default {
       this.$emit('update:visible', false)
     },
     async doSetup () {
-      await api.shell.setupCa()
       this.$emit('setup')
     }
   }

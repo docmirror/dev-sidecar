@@ -1,6 +1,6 @@
 const nodeConfig = require('./config')
 const NodePlugin = function (context) {
-  const { config, shell, event, rootCaFile, log } = context
+  const { config, shell, event, log } = context
   const nodeApi = {
     async start () {
       try {
@@ -101,16 +101,17 @@ const NodePlugin = function (context) {
        NODE_TLS_REJECT_UNAUTHORIZED: false
        */
       const nodeConfig = config.get().plugin.node
+      const rootCaCertFile = config.get().server.setting.rootCaFile.certPath
       if (nodeConfig.setting['strict-ssl']) {
         cmds.push('npm config set strict-ssl false')
       }
       if (nodeConfig.setting.cafile) {
-        cmds.push(`npm config set cafile "${rootCaFile}"`)
+        cmds.push(`npm config set cafile "${rootCaCertFile}"`)
       }
 
       if (nodeConfig.setting.NODE_EXTRA_CA_CERTS) {
-        cmds.push(`npm config set NODE_EXTRA_CA_CERTS "${rootCaFile}"`)
-        env.push({ key: 'NODE_EXTRA_CA_CERTS', value: rootCaFile })
+        cmds.push(`npm config set NODE_EXTRA_CA_CERTS "${rootCaCertFile}"`)
+        env.push({ key: 'NODE_EXTRA_CA_CERTS', value: rootCaCertFile })
       }
 
       if (nodeConfig.setting.NODE_TLS_REJECT_UNAUTHORIZED) {

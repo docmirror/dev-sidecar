@@ -237,10 +237,7 @@ utils.getMappingHostNamesFormCert = function (cert) {
 }
 
 // sync
-utils.initCA = function (basePath = config.getDefaultCABasePath()) {
-  const caCertPath = path.resolve(basePath, config.caCertFileName)
-  const caKeyPath = path.resolve(basePath, config.caKeyFileName)
-
+utils.initCA = function ({ caCertPath, caKeyPath }) {
   try {
     fs.accessSync(caCertPath, fs.F_OK)
     fs.accessSync(caKeyPath, fs.F_OK)

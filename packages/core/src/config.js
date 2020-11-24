@@ -1,7 +1,7 @@
 const Shell = require('./shell')
 const lodash = require('lodash')
 const defConfig = require('./config/index.js')
-const proxyServer = require('@docmirror/mitmproxy')
+
 let configTarget = lodash.cloneDeep(defConfig)
 function _deleteDisabledItem (target) {
   lodash.forEach(target, (item, key) => {
@@ -13,6 +13,7 @@ function _deleteDisabledItem (target) {
     }
   })
 }
+
 const configApi = {
   get () {
     return configTarget
@@ -68,7 +69,7 @@ const configApi = {
     })
     if (list.length > 0) {
       const context = {
-        ca_cert_path: proxyServer.config.getDefaultCACertPath()
+        root_ca_cert_path: configApi.get().server.setting.rootCaFile.certPath
       }
       for (const item of noSetList) {
         if (item.value.indexOf('${') >= 0) {

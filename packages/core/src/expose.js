@@ -4,15 +4,12 @@ const event = require('./event')
 const shell = require('./shell')
 const modules = require('./modules')
 const lodash = require('lodash')
-const proxyServer = require('@docmirror/mitmproxy')
-const proxyConfig = proxyServer.config
 const log = require('./utils/util.log')
 const context = {
   config,
   shell,
   status,
   event,
-  rootCaFile: proxyConfig.getDefaultCACertPath(),
   log
 }
 
@@ -127,6 +124,7 @@ module.exports = {
     shell,
     server,
     proxy,
-    plugin
+    plugin,
+    log
   }
 }

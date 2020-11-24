@@ -48,13 +48,14 @@ module.exports = (config) => {
 
   const dnsMapping = config.dns.mapping
   const serverConfig = config
-  return {
+  const setting = serverConfig.setting
+  const options = {
     port: serverConfig.port,
     dnsConfig: {
       providers: dnsUtil.initDNS(serverConfig.dns.providers),
       mapping: dnsMapping
     },
-    setting: serverConfig.setting,
+    setting,
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]
       const inWhiteList = matchHostname(whiteList, hostname) != null
@@ -103,4 +104,10 @@ module.exports = (config) => {
       return matchIntercepts
     }
   }
+
+  if (setting.rootCaFile) {
+    options.caCertPath = setting.rootCaFile.certPath
+    options.caKeyPath = setting.rootCaFile.keyPath
+  }
+  return options
 }

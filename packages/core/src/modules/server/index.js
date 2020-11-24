@@ -4,6 +4,7 @@ const status = require('../../status')
 const lodash = require('lodash')
 const fork = require('child_process').fork
 const log = require('../../utils/util.log')
+const fs = require('fs')
 let server
 function fireStatus (status) {
   event.fire('status', { key: 'server.enabled', value: status })
@@ -45,7 +46,10 @@ const serverApi = {
       })
     }
     // fireStatus('ing') // 启动中
-    const serverProcess = fork(mitmproxyPath, [JSON.stringify(serverConfig)])
+    const basePath = serverConfig.setting.userBasePath
+    const runningConfig = basePath + '/running.json'
+    fs.writeFileSync(runningConfig, JSON.stringify(serverConfig))
+    const serverProcess = fork(mitmproxyPath, [runningConfig])
     server = {
       id: serverProcess.pid,
       process: serverProcess,
@@ -64,7 +68,7 @@ const serverApi = {
         event.fire('error', { key: 'server', value: 'EADDRINUSE', error: msg.event })
       }
     })
-    return { port: config.port }
+    return { port: runningConfig.port }
   },
   async kill () {
     if (server) {

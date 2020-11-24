@@ -1,13 +1,8 @@
 const mitmproxy = require('./lib/proxy')
 const ProxyOptions = require('./options')
-const config = require('./lib/proxy/common/config')
+const proxyConfig = require('./lib/proxy/common/config')
 const log = require('./utils/util.log')
-function fireError (e) {
-  process.send({ type: 'error', event: e })
-}
-function fireStatus (status) {
-  process.send({ type: 'status', event: status })
-}
+const { fireError, fireStatus } = require('./utils/util.process')
 
 let server
 
@@ -42,6 +37,13 @@ function registerProcessListener () {
 const api = {
   async start (config) {
     const proxyOptions = ProxyOptions(config)
+    const setting = config.setting
+    if (setting) {
+      if (setting.userBasePath) {
+        proxyConfig.setDefaultCABasePath(setting.userBasePath)
+      }
+    }
+
     if (proxyOptions.setting && proxyOptions.setting.NODE_TLS_REJECT_UNAUTHORIZED === false) {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
     } else {
@@ -95,5 +97,6 @@ const api = {
 
 module.exports = {
   ...api,
-  config
+  config: proxyConfig,
+  log
 }
