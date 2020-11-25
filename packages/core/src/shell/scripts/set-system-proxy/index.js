@@ -3,11 +3,12 @@
  */
 const Shell = require('../../shell')
 const execute = Shell.execute
+const execFile = Shell.execFile
 const Registry = require('winreg')
-// const cmd = require('node-cmd')
 const refreshInternetPs = require('./refresh-internet')
 const PowerShell = require('node-powershell')
 const log = require('../../../utils/util.log')
+const path = require('path')
 const _lanIP = [
   'localhost',
   '127.*',
@@ -33,6 +34,12 @@ const _lanIP = [
 ]
 
 async function _winUnsetProxy (exec) {
+  // eslint-disable-next-line no-constant-condition
+  if (true) {
+    const proxyPath = path.resolve(__dirname, './extra/sysproxy.exe')
+    await execFile(proxyPath, ['off'])
+    return
+  }
   const regKey = new Registry({
     hive: Registry.HKCU,
     key: '\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings'
@@ -48,16 +55,30 @@ async function _winUnsetProxy (exec) {
   return true
 }
 
+function getProxyExePath () {
+  const proxyPath = process.env.DS_SYSPROXY_PATH
+  if (proxyPath) {
+    return proxyPath
+  }
+  return path.join(__dirname, './sysproxy.exe')
+}
+
 async function _winSetProxy (exec, ip, port) {
+  let lanIpStr = ''
+  for (const string of _lanIP) {
+    lanIpStr += string + ';'
+  }
+  // eslint-disable-next-line no-constant-condition
+  if (true) {
+    const proxyPath = getProxyExePath()
+    await execFile(proxyPath, ['global', `${ip}:${port}`, lanIpStr])
+    return
+  }
   const regKey = new Registry({
     hive: Registry.HKCU,
     key: '\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings'
   })
 
-  let lanIpStr = ''
-  for (const string of _lanIP) {
-    lanIpStr += string + ';'
-  }
   // log.info('lanIps:', lanIpStr, ip, port)
   await Promise.all([
     _winAsyncRegSet(regKey, 'MigrateProxy', Registry.REG_DWORD, 1),
