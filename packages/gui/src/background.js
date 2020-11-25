@@ -190,8 +190,8 @@ if (!isFirstInstance) {
           return true
         }
       })
-      // updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
-      updateUrl = 'http://localhost/dev-sidecar/'
+      updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
+      // updateUrl = 'http://localhost/dev-sidecar/'
     }
     // 自动更新
     updateHandle(app, win, beforeQuit, updateUrl)

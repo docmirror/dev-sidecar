@@ -36,7 +36,7 @@
 
 ### 5、 npm加速
 * 支持开启npm代理
-* 切换npm淘宝registry
+* 官方与淘宝npm registry一键切换,
 * 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
 
 ### 6、 更多加速配置
@@ -44,12 +44,14 @@
 
 ## 快速开始
 目前仅支持windows
+
 ### DevSidecar桌面应用
  
 #### 1 下载安装包  
+下载安装包：  
+  
+[阿里云](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.2.1.exe)  
 
-下载安装包：    
-[阿里云](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.2.0.exe)  
 [Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 [Github Release](https://github.com/docmirror/dev-sidecar/releases)  
 
@@ -88,17 +90,12 @@
 建议遇到打开比较慢的国外网站，可以优先尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）      
 如果还访问不了，就需要寻找镜像cdn进行拦截代理    
  
-### npm加速
- 1. yarn 设置淘宝镜像registry
- 2. npm设置官方registry。 
- 3. 项目install使用yarn，发布包publish用npm，互不影响
- 4. 某些库用cnpm也下载不下来的话，可以试试打开dev-sidecar的npm加速
- 
 ### 其他加速
  1. git clone 加速      
  
  方式1：快捷复制：     
-    开启脚本支持，然后在复制clone链接下方，即可复制到加速链接    
+  > 开启脚本支持，然后在复制clone链接下方，即可复制到加速链接    
+    
  方式2：
   > 使用方式用实际的名称替换{}的内容，即可加速clone  
   > https://hub.fastgit.org/{username}/{reponame}.git     

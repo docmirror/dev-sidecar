@@ -21,15 +21,18 @@ module.exports = {
   }, callback) {
     // Don't reject unauthorized
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-
-    if (!caCertPath && !caKeyPath) {
-      const rs = this.createCA()
-      caCertPath = rs.caCertPath
-      caKeyPath = rs.caKeyPath
-      if (rs.create) {
-        log.info(`CA Cert saved in: ${caCertPath}`)
-        log.info(`CA private key saved in: ${caKeyPath}`)
-      }
+    log.info(`CA Cert read in: ${caCertPath}`)
+    log.info(`CA private key read in: ${caKeyPath}`)
+    if (!caCertPath) {
+      caCertPath = config.getDefaultCACertPath()
+    }
+    if (!caKeyPath) {
+      caKeyPath = config.getDefaultCAKeyPath()
+    }
+    const rs = this.createCA({ caCertPath, caKeyPath })
+    if (rs.create) {
+      log.info(`CA Cert saved in: ${caCertPath}`)
+      log.info(`CA private key saved in: ${caKeyPath}`)
     }
 
     port = ~~port
@@ -88,7 +91,7 @@ module.exports = {
     })
     return server
   },
-  createCA (caBasePath = config.getDefaultCABasePath()) {
-    return tlsUtils.initCA(caBasePath)
+  createCA (caPaths) {
+    return tlsUtils.initCA(caPaths)
   }
 }

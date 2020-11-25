@@ -1,8 +1,7 @@
 const log4js = require('log4js')
-const path = require('path')
+const DevSidecar = require('@docmirror/dev-sidecar')
 const getDefaultConfigBasePath = function () {
-  const userHome = process.env.HOME || process.env.USERPROFILE
-  return path.resolve(userHome, './.dev-sidecar')
+  return DevSidecar.api.config.get().server.setting.userBasePath
 }
 log4js.configure({
   appenders: { std: { type: 'stdout' }, file: { type: 'file', pattern: 'yyyy-MM-dd', daysToKeep: 3, filename: getDefaultConfigBasePath() + '/logs/gui.log' } },

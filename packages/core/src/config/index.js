@@ -1,3 +1,14 @@
+const path = require('path')
+function getUserBasePath () {
+  const userHome = process.env.USERPROFILE
+  return path.resolve(userHome, './.dev-sidecar')
+}
+function getRootCaCertPath () {
+  return getUserBasePath() + '/dev-sidecar.ca.crt'
+}
+function getRootCaKeyPath () {
+  return getUserBasePath() + '/dev-sidecar.ca.key.pem'
+}
 module.exports = {
   server: {
     enabled: true,
@@ -7,6 +18,11 @@ module.exports = {
       script: {
         enabled: true,
         defaultDir: '../../../scripts/'
+      },
+      userBasePath: getUserBasePath(),
+      rootCaFile: {
+        certPath: getRootCaCertPath(),
+        keyPath: getRootCaKeyPath()
       }
     },
     intercepts: {

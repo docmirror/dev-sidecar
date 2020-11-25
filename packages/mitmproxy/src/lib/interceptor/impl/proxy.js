@@ -4,7 +4,7 @@ module.exports = {
     const { rOptions, log, RequestCounter } = context
 
     let proxyConf = interceptOpt.proxy
-    if (RequestCounter) {
+    if (RequestCounter && interceptOpt.backup) {
       // 优选逻辑
       const backup = [proxyConf]
       if (interceptOpt.backup) {
@@ -12,7 +12,6 @@ module.exports = {
           backup.push(bk)
         }
       }
-      backup.push(rOptions.hostname)
 
       const key = interceptOpt.key
       const count = RequestCounter.getOrCreate(key, backup)
