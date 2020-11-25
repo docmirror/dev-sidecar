@@ -43,7 +43,7 @@ async function _winUnsetProxy (exec) {
     _winAsyncRegSet(regKey, 'ProxyServer', Registry.REG_SZ, '')
   ])
   log.info('代理关闭成功，等待refresh')
-  await exec(refreshInternetPs, { type: 'ps' })
+  await exec(['echo "do refresh"', refreshInternetPs], { type: 'ps' })
   log.info('代理关闭refresh完成')
   return true
 }
@@ -67,7 +67,7 @@ async function _winSetProxy (exec, ip, port) {
     _winAsyncRegSet(regKey, 'ProxyOverride', Registry.REG_SZ, lanIpStr)
   ])
   log.info('代理设置成功，等待refresh')
-  await exec(refreshInternetPs)
+  await exec(['echo "do refresh"', refreshInternetPs], { type: 'ps' })
   log.info('代理设置refresh完成')
   return true
 }

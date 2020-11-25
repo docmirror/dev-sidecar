@@ -66,18 +66,20 @@ module.exports = {
         '.*': { proxy: 'raw.fastgit.org' }
       },
       'github.githubassets.com': {
-        '.*': { proxy: 'assets.fastgit.org', test: 'https://github.githubassets.com/favicons/favicon.svg', desc: '静态资源加速' }
-
+        '.*': {
+          proxy: 'assets.fastgit.org',
+          backup: ['github.githubassets.com'],
+          test: 'https://github.githubassets.com/favicons/favicon.svg',
+          desc: '静态资源加速'
+        }
       },
       'customer-stories-feed.github.com': {
         '.*': { proxy: 'customer-stories-feed.fastgit.org' }
       },
-
       // google cdn
       'ajax.googleapis.com': {
         '.*': {
           proxy: 'ajax.loli.net',
-          backup: ['ajax.proxy.ustclug.org'],
           test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'
         }
       },
@@ -102,8 +104,8 @@ module.exports = {
       },
       'fonts.gstatic.com': {
         '.*': {
-          proxy: 'fonts-gstatic.proxy.ustclug.org',
-          backup: ['gstatic.loli.net']
+          proxy: 'gstatic.loli.net',
+          backup: ['fonts-gstatic.proxy.ustclug.org']
         }
       },
       'clients*.google.com': { '.*': { abort: true } },
