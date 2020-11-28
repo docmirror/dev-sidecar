@@ -17,13 +17,18 @@ const bindApi = (api, param1) => {
   })
 }
 const apiObj = {
-  on (channel, callback) {
-    ipcRenderer.on(channel, callback)
-  },
-  invoke,
-  send,
-  openExternal (href) {
-    shell.openExternal(href)
+  ipc: {
+    on (channel, callback) {
+      ipcRenderer.on(channel, callback)
+    },
+    invoke,
+    send,
+    openExternal (href) {
+      shell.openExternal(href)
+    },
+    openPath (file) {
+      shell.openPath(file)
+    }
   }
 }
 let inited = false

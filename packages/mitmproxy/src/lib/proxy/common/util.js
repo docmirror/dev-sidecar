@@ -2,7 +2,7 @@ const url = require('url')
 const Agent = require('./ProxyHttpAgent')
 const HttpsAgent = require('./ProxyHttpsAgent')
 const tunnelAgent = require('tunnel-agent')
-
+const log = require('../../../utils/util.log')
 const util = exports
 const httpsAgent = new HttpsAgent({
   keepAlive: true,
@@ -34,7 +34,7 @@ util.getOptionsFormRequest = (req, ssl, externalProxy = null) => {
       try {
         externalProxyUrl = externalProxy(req, ssl)
       } catch (e) {
-        console.error('externalProxy', e)
+        log.error('externalProxy', e)
       }
     }
   }

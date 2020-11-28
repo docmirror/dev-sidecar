@@ -1,12 +1,12 @@
 function install (app, api) {
-  api.on('error.core', (event, message) => {
+  api.ipc.on('error.core', (event, message) => {
     console.error('view on error', message)
     const key = message.key
     if (key === 'server') {
       handleServerStartError(message, message.error, app, api)
     }
   })
-  api.on('error', (event, message) => {
+  api.ipc.on('error', (event, message) => {
     console.error('error', event, message)
   })
 }

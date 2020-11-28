@@ -9,6 +9,15 @@ const mkdirp = require('mkdirp')
 const utils = exports
 const pki = forge.pki
 
+// const os = require('os')
+// let username = 'dev-sidecar'
+// try {
+//   const user = os.userInfo()
+//   username = user.username
+// } catch (e) {
+//   console.log('get userinfo error', e)
+// }
+
 utils.createCA = function (CN) {
   const keys = pki.rsa.generateKeyPair(2046)
   const cert = pki.createCertificate()
@@ -228,10 +237,7 @@ utils.getMappingHostNamesFormCert = function (cert) {
 }
 
 // sync
-utils.initCA = function (basePath = config.getDefaultCABasePath()) {
-  const caCertPath = path.resolve(basePath, config.caCertFileName)
-  const caKeyPath = path.resolve(basePath, config.caKeyFileName)
-
+utils.initCA = function ({ caCertPath, caKeyPath }) {
   try {
     fs.accessSync(caCertPath, fs.F_OK)
     fs.accessSync(caKeyPath, fs.F_OK)

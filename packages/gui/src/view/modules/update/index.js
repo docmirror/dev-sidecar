@@ -1,20 +1,23 @@
-let updateParams = { }
+
 function install (app, api) {
-  api.on('update', (event, message) => {
+  const updateParams = app.$global.update = { fromUser: false, autoDownload: true, progress: 0, downloading: false, newVersion: false }
+  api.ipc.on('update', (event, message) => {
     console.log('on message', event, message)
     handleUpdateMessage(message, app)
   })
 
   api.update = {
-    checkForUpdate (params) {
-      updateParams = params || { fromUser: false, autoDownload: true, progress: 0 }
-      api.send('update', { key: 'checkForUpdate' })
+    checkForUpdate (fromUser) {
+      if (fromUser != null) {
+        updateParams.fromUser = fromUser
+      }
+      api.ipc.send('update', { key: 'checkForUpdate' })
     },
     downloadUpdate () {
-      api.send('update', { key: 'downloadUpdate' })
+      api.ipc.send('update', { key: 'downloadUpdate' })
     },
     doUpdateNow () {
-      api.send('update', { key: 'doUpdateNow' })
+      api.ipc.send('update', { key: 'doUpdateNow' })
     }
   }
 
@@ -26,6 +29,8 @@ function install (app, api) {
       noNewVersion()
     } else if (type === 'downloaded') {
       // 更新包已下载完成，让用户确认是否更新
+      updateParams.downloading = false
+      console.log('updateParams', updateParams)
       newUpdateIsReady(message.value)
     } else if (type === 'progress') {
       progressUpdate(message.value)
@@ -49,6 +54,8 @@ function install (app, api) {
     updateParams.newVersion = true
 
     if (updateParams.autoDownload !== false) {
+      app.$message.info('发现新版本，正在下载中...')
+      updateParams.downloading = true
       api.update.downloadUpdate()
       return
     }
@@ -69,6 +76,7 @@ function install (app, api) {
   }
 
   function newUpdateIsReady (value) {
+    updateParams.downloading = false
     app.$confirm({
       title: '新版本已准备好',
       content: `是否立即升级安装v${value.version}?`,

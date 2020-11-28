@@ -8,9 +8,9 @@
             <a-badge :count="_rootCaSetuped?0:1" dot>安装根证书 </a-badge>
           </a-button>
 
-          <a-button style="margin-right:10px" @click="doCheckUpdate">
+          <a-button style="margin-right:10px" @click="doCheckUpdate(true)" :loading="update.downloading" :title="'当前版本:'+info.version">
             <a-badge :count="update.newVersion?1:0" dot>
-              检查更新
+              <span v-if="update.downloading">{{update.progress}}%</span>{{update.downloading?'新版本下载中':'检查更新'}}
             </a-badge>
           </a-button>
 
@@ -31,7 +31,7 @@
         <a-form style="margin-top:20px" :label-col="{ span: 12 }" :wrapper-col="{ span: 12 }">
 
           <a-form-item v-for=" (item, key) in switchBtns" :key="key" :label="item.label">
-            <a-switch style="margin-left:10px" :loading="item.loading" v-model="item.status[key].enabled" default-checked v-on:click="item.doClick">
+            <a-switch style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked @change="item.doClick">
               <a-icon slot="checkedChildren" type="check"/>
               <a-icon slot="unCheckedChildren" type="close"/>
             </a-switch>
@@ -45,7 +45,7 @@
       <div class="flex-l-r star" style="padding:10px;">
         <div>如果它解决了你的问题，请不要吝啬你的star哟！ <a-icon type="smile" theme="outlined" /></div>
         <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
-        <a  @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+        <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
       </div>
 
     </div>
@@ -57,7 +57,6 @@
 import lodash from 'lodash'
 import setupCa from '../components/setup-ca'
 import DsContainer from '../components/container'
-
 export default {
   name: 'Index',
   components: {
@@ -88,6 +87,8 @@ export default {
           }
         }
       },
+      info: {},
+      newVersionDownloading: false,
       setting: undefined,
       server: {
         key: '代理服务',
@@ -101,29 +102,23 @@ export default {
       setupCa: {
         visible: false
       },
-      update: {}
+      update: { downloading: false, progress: 0, newVersion: false }
     }
   },
   async created () {
     this.doCheckRootCa()
-    console.log('index created', this.status, this.$status)
     await this.reloadConfig()
-    const status = await this.$api.status.get()
-    console.log('status', status)
-    this.$set(this, 'status', status)
+    this.$set(this, 'status', this.$status)
     this.switchBtns = this.createSwitchBtns()
     console.log('switchBtns', this.switchBtns)
-    if (this.$global.update == null) {
-      this.$global.update = {
-        fromUser: false,
-        autoDownload: true,
-        progress: 0,
-        newVersion: false
-      }
-      this.update = this.$global.update
+    this.$set(this, 'update', this.$global.update)
+    if (!this.update.autoChecked) {
+      this.update.autoChecked = true
       this.doCheckUpdate(false)
     }
-    this.update = this.$global.update
+    this.$api.info.get().then(ret => {
+      this.info = ret
+    })
   },
   mounted () {
     console.log('index mounted')
@@ -156,7 +151,9 @@ export default {
     openSetupCa () {
       this.setupCa.visible = true
     },
-    handleCaSetuped () {
+    async handleCaSetuped () {
+      console.log('this.config.server.setting.rootCaFile.certPath', this.config.server.setting.rootCaFile.certPath)
+      await this.$api.shell.setupCa({ certPath: this.config.server.setting.rootCaFile.certPath })
       this.setting.rootCa = this.setting.rootCa || {}
       const rootCa = this.setting.rootCa
       rootCa.setuped = true
@@ -185,7 +182,9 @@ export default {
         loading: false,
         key: key,
         label: label,
-        status: statusParent,
+        status: () => {
+          return statusParent[key].enabled
+        },
         doClick: (checked) => {
           this.onSwitchClick(this.switchBtns[key], apiTarget.start, apiTarget.close, checked)
         }
@@ -229,11 +228,10 @@ export default {
       })
     },
     doCheckUpdate (fromUser = true) {
-      this.update.fromUser = fromUser
-      this.$api.update.checkForUpdate(this.update)
+      this.$api.update.checkForUpdate(fromUser)
     },
     openExternal (url) {
-      this.$api.openExternal(url)
+      this.$api.ipc.openExternal(url)
     }
   }
 }

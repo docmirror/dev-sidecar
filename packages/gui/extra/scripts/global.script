@@ -1,0 +1,9 @@
+window.__ds_global__={
+    GM_registerMenuCommand: () => {},
+    GM_unregisterMenuCommand: () => {},
+    GM_openInTab: () => {},
+    GM_getValue: () => {},
+    GM_setValue: () => {},
+    GM_notification: () => {}
+}
+console.log('ds_global loaded')

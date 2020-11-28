@@ -4,14 +4,13 @@ const event = require('./event')
 const shell = require('./shell')
 const modules = require('./modules')
 const lodash = require('lodash')
-const proxyServer = require('@docmirror/mitmproxy')
-const proxyConfig = proxyServer.config
+const log = require('./utils/util.log')
 const context = {
   config,
   shell,
   status,
   event,
-  rootCaFile: proxyConfig.getDefaultCACertPath()
+  log
 }
 
 function setupPlugin (key, plugin, context, config) {
@@ -43,14 +42,14 @@ module.exports = {
         try {
           await server.start({ mitmproxyPath })
         } catch (err) {
-          console.error('代理服务启动失败：', err)
+          log.error('代理服务启动失败：', err)
         }
       }
       if (conf.proxy.enabled) {
         try {
           await proxy.start()
         } catch (err) {
-          console.error('开启系统代理失败：', err)
+          log.error('开启系统代理失败：', err)
         }
       }
       try {
@@ -60,9 +59,9 @@ module.exports = {
             const start = async () => {
               try {
                 await plugin[key].start()
-                console.log(`插件【${key}】已启动`)
+                log.info(`插件【${key}】已启动`)
               } catch (err) {
-                console.log(`插件【${key}】启动失败`, err)
+                log.error(`插件【${key}】启动失败`, err)
               }
             }
             plugins.push(start())
@@ -72,7 +71,7 @@ module.exports = {
           await Promise.all(plugins)
         }
       } catch (err) {
-        console.error('开启插件失败：', err)
+        log.error('开启插件失败：', err)
       }
     },
     shutdown: async () => {
@@ -83,9 +82,9 @@ module.exports = {
             const close = async () => {
               try {
                 await plugin[key].close()
-                console.log(`插件【${key}】已关闭`)
+                log.info(`插件【${key}】已关闭`)
               } catch (err) {
-                console.log(`插件【${key}】关闭失败`, err)
+                log.info(`插件【${key}】关闭失败`, err)
               }
             }
             plugins.push(close())
@@ -95,23 +94,23 @@ module.exports = {
           await Promise.all(plugins)
         }
       } catch (error) {
-        console.error('插件关闭失败'.error)
+        log.error('插件关闭失败'.error)
       }
 
       if (status.proxy.enabled) {
         try {
           await proxy.close()
-          console.log('系统代理已关闭')
+          log.info('系统代理已关闭')
         } catch (err) {
-          console.error('系统代理关闭失败', err)
+          log.error('系统代理关闭失败', err)
         }
       }
       if (status.server.enabled) {
         try {
           await server.close()
-          console.log('代理服务已关闭')
+          log.info('代理服务已关闭')
         } catch (err) {
-          console.error('代理服务关闭失败', err)
+          log.error('代理服务关闭失败', err)
         }
       }
     },
@@ -125,6 +124,7 @@ module.exports = {
     shell,
     server,
     proxy,
-    plugin
+    plugin,
+    log
   }
 }

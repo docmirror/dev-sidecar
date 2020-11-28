@@ -3,6 +3,8 @@ const event = require('../../event')
 const status = require('../../status')
 const lodash = require('lodash')
 const fork = require('child_process').fork
+const log = require('../../utils/util.log')
+const fs = require('fs')
 let server
 function fireStatus (status) {
   event.fire('status', { key: 'server.enabled', value: status })
@@ -44,7 +46,10 @@ const serverApi = {
       })
     }
     // fireStatus('ing') // 启动中
-    const serverProcess = fork(mitmproxyPath, [JSON.stringify(serverConfig)])
+    const basePath = serverConfig.setting.userBasePath
+    const runningConfig = basePath + '/running.json'
+    fs.writeFileSync(runningConfig, JSON.stringify(serverConfig))
+    const serverProcess = fork(mitmproxyPath, [runningConfig])
     server = {
       id: serverProcess.pid,
       process: serverProcess,
@@ -53,7 +58,7 @@ const serverApi = {
       }
     }
     serverProcess.on('message', function (msg) {
-      console.log('收到子进程消息', msg)
+      log.info('收到子进程消息', msg)
       if (msg.type === 'status') {
         fireStatus(msg.event)
       } else if (msg.type === 'error') {
@@ -63,7 +68,7 @@ const serverApi = {
         event.fire('error', { key: 'server', value: 'EADDRINUSE', error: msg.event })
       }
     })
-    return { port: config.port }
+    return { port: runningConfig.port }
   },
   async kill () {
     if (server) {
@@ -81,21 +86,21 @@ const serverApi = {
         // fireStatus('ing')// 关闭中
         server.close((err) => {
           if (err) {
-            console.log('close error', err, ',', err.code, ',', err.message, ',', err.errno)
+            log.info('close error', err, ',', err.code, ',', err.message, ',', err.errno)
             if (err.code === 'ERR_SERVER_NOT_RUNNING') {
-              console.log('代理服务关闭成功')
+              log.info('代理服务关闭成功')
               resolve()
               return
             }
-            console.log('代理服务关闭失败', err)
+            log.info('代理服务关闭失败', err)
             reject(err)
           } else {
-            console.log('代理服务关闭成功')
+            log.info('代理服务关闭成功')
             resolve()
           }
         })
       } else {
-        console.log('server is null')
+        log.info('server is null')
         resolve()
       }
     })

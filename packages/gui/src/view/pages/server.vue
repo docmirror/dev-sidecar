@@ -16,7 +16,7 @@
       >
         <a-tab-pane tab="基本设置" key="1"  >
           <a-form-item label="代理服务:" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-checkbox :checked="config.server.enabled" @change="config.server.enabled = $event">
+            <a-checkbox v-model="config.server.enabled" >
               随应用启动
             </a-checkbox>
             <a-tag v-if="status.proxy.enabled" color="green">
@@ -25,15 +25,28 @@
             <a-tag v-else color="red">
               当前未启动
             </a-tag>
+
+            <a-button class="md-mr-10" icon="profile"   @click="openLog()">日志</a-button>
           </a-form-item>
           <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol" >
             <a-input v-model="config.server.port"/>
           </a-form-item>
           <a-form-item label="校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-checkbox :checked="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED" @change="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED = $event">
+            <a-checkbox v-model="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED">
               NODE_TLS_REJECT_UNAUTHORIZED
             </a-checkbox>
             <div>开启此项之后，被代理应用关闭SSL校验也问题不大了</div>
+          </a-form-item>
+          <a-form-item label="根证书：" :label-col="labelCol" :wrapper-col="wrapperCol">
+             <a-input addon-before="Cert" addon-after="选择" v-model="config.server.setting.rootCaFile.certPath" ></a-input>
+             <a-input addon-before="Key" addon-after="选择" v-model="config.server.setting.rootCaFile.keyPath" ></a-input>
+          </a-form-item>
+          <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
+            <a-tooltip title="关闭后，github的clone加速链接复制也将关闭">
+              <a-checkbox v-model="config.server.setting.script.enabled" >
+                允许插入并运行脚本
+              </a-checkbox>
+            </a-tooltip>
           </a-form-item>
         </a-tab-pane>
         <a-tab-pane tab="拦截设置" key="2"  >
@@ -132,6 +145,10 @@ export default {
     },
     addDnsMapping () {
       this.dnsMappings.unshift({ key: '', value: 'usa' })
+    },
+    async openLog () {
+      const dir = await this.$api.info.getConfigDir()
+      this.$api.ipc.openPath(dir + '/logs/server.log')
     }
   }
 }

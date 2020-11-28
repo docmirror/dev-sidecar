@@ -1,7 +1,41 @@
 const url = require('url')
 module.exports = {
-  requestInterceptor (interceptOpt, rOptions, req, res, ssl, next) {
-    const proxyTarget = interceptOpt.proxy
+  requestIntercept (context, interceptOpt, req, res, ssl, next) {
+    const { rOptions, log, RequestCounter } = context
+
+    let proxyConf = interceptOpt.proxy
+    if (RequestCounter && interceptOpt.backup) {
+      // 优选逻辑
+      const backup = [proxyConf]
+      if (interceptOpt.backup) {
+        for (const bk of interceptOpt.backup) {
+          backup.push(bk)
+        }
+      }
+
+      const key = interceptOpt.key
+      const count = RequestCounter.getOrCreate(key, backup)
+      if (count.value == null) {
+        count.doRank()
+      }
+      if (count.value == null) {
+        log.error('count value is null', count)
+      } else {
+        count.doCount(count.value)
+        proxyConf = count.value
+        context.requestCount = {
+          key,
+          value: count.value,
+          count
+        }
+      }
+    }
+
+    let proxyTarget = proxyConf + req.url
+    if (interceptOpt.replace) {
+      const regexp = new RegExp(interceptOpt.replace)
+      proxyTarget = req.url.replace(regexp, proxyConf)
+    }
     // const backup = interceptOpt.backup
     const proxy = proxyTarget.indexOf('http') === 0 ? proxyTarget : rOptions.protocol + '//' + proxyTarget
     // eslint-disable-next-line node/no-deprecated-api
@@ -10,11 +44,13 @@ module.exports = {
     rOptions.hostname = URL.host
     rOptions.host = URL.host
     rOptions.headers.host = URL.host
+    rOptions.path = URL.path
     if (URL.port == null) {
       rOptions.port = rOptions.protocol === 'https:' ? 443 : 80
     }
-
-    console.log('proxy:', rOptions.hostname, req.url, proxyTarget)
+    log.info('proxy:', rOptions.hostname, proxyTarget)
+    log.debug('proxy choice:', JSON.stringify(context.requestCount))
+    return true
   },
   is (interceptOpt) {
     return !!interceptOpt.proxy

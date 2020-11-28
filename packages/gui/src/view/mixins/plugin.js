@@ -30,6 +30,7 @@ export default {
       this.status = this.$status
       return this.$api.config.reload().then(ret => {
         this.config = ret
+        console.log('config', this.config)
         if (this.ready) {
           return this.ready(this.config)
         }
@@ -39,12 +40,13 @@ export default {
       this.applyLoading = true
       await this.applyBefore()
       await this.saveConfig()
-      if (this.applyAfter) {
-        await this.applyAfter()
-      }
+      await this.applyAfter()
       this.applyLoading = false
     },
     async applyBefore () {
+
+    },
+    async applyAfter () {
 
     },
     resetDefault () {

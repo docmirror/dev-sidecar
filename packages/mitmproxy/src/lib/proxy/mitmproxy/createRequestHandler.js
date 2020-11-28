@@ -3,8 +3,13 @@ const https = require('https')
 const commonUtil = require('../common/util')
 // const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i
 const DnsUtil = require('../../dns/index')
-
-module.exports = function createRequestHandler (requestInterceptor, responseInterceptor, middlewares, externalProxy, dnsConfig) {
+const log = require('../../../utils/util.log')
+const RequestCounter = require('../../choice/RequestCounter')
+const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
+const defaultDns = require('dns')
+const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
+// create requestHandler function
+module.exports = function createRequestHandler (createIntercepts, externalProxy, dnsConfig, setting) {
   // return
   return function requestHandler (req, res, ssl) {
     let proxyReq
@@ -17,7 +22,18 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
     } else {
       req.socket.setKeepAlive(true, 30000)
     }
-    const context = {}
+    const context = {
+      rOptions,
+      log,
+      RequestCounter,
+      setting
+    }
+    let interceptors = createIntercepts(context)
+    if (interceptors == null) {
+      interceptors = []
+    }
+    const reqIncpts = interceptors.filter(item => { return item.requestIntercept != null })
+    const resIncpts = interceptors.filter(item => { return item.responseIntercept != null })
 
     const requestInterceptorPromise = () => {
       return new Promise((resolve, reject) => {
@@ -25,10 +41,20 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
           resolve()
         }
         try {
-          if (typeof requestInterceptor === 'function') {
-            requestInterceptor(rOptions, req, res, ssl, next, context)
+          if (setting.script.enabled) {
+            reqIncpts.unshift(InsertScriptMiddleware)
+          }
+          if (reqIncpts && reqIncpts.length > 0) {
+            for (const reqIncpt of reqIncpts) {
+              const goNext = reqIncpt.requestIntercept(context, req, res, ssl, next)
+              if (goNext) {
+                next()
+                return
+              }
+            }
+            next()
           } else {
-            resolve()
+            next()
           }
         } catch (e) {
           reject(e)
@@ -36,17 +62,21 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
       })
     }
 
+    function countSlow (isDnsIntercept, type) {
+      if (isDnsIntercept) {
+        const { dns, ip, hostname } = isDnsIntercept
+        dns.count(hostname, ip, true)
+        log.error('记录ip失败次数,用于优选ip：', hostname, ip, type)
+      }
+      const counter = context.requestCount
+      if (counter != null) {
+        counter.count.doCount(counter.value, true)
+        log.error('记录proxy失败次数：', counter.value, type)
+      }
+    }
+
     const proxyRequestPromise = async () => {
       rOptions.host = rOptions.hostname || rOptions.host || 'localhost'
-      // if (dnsConfig) {
-      //   const dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.host)
-      //   if (dns) {
-      //     const ip = await dns.lookup(rOptions.host)
-      //     console.log('使用自定义dns:', rOptions.host, ip, dns.dnsServer)
-      //     rOptions.host = ip
-      //   }
-      // }
-
       return new Promise((resolve, reject) => {
         // use the binded socket for NTLM
         if (rOptions.agent && rOptions.customSocketId != null && rOptions.agent.getName) {
@@ -62,7 +92,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
         function onFree () {
           const url = `${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
           const start = new Date().getTime()
-          console.log('代理请求:', url, rOptions.method)
+          log.info('代理请求:', url, rOptions.method)
           let isDnsIntercept
           if (dnsConfig) {
             const dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.hostname)
@@ -73,7 +103,7 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
                   if (ip !== hostname) {
                     callback(null, ip, 4)
                   } else {
-                    rOptions.lookup(hostname, options, callback)
+                    defaultDns.lookup(hostname, options, callback)
                   }
                 })
               }
@@ -82,50 +112,65 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
 
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const end = new Date().getTime()
+            const cost = end - start
             if (rOptions.protocol === 'https:') {
-              console.log('代理请求返回:', url, (end - start) + 'ms')
+              log.info('代理请求返回:', url, cost + 'ms')
+            }
+            if (cost > MAX_SLOW_TIME) {
+              countSlow(isDnsIntercept, 'to slow  ' + cost + 'ms')
             }
             resolve(proxyRes)
           })
 
           proxyReq.on('timeout', () => {
             const end = new Date().getTime()
-            if (isDnsIntercept) {
-              const { dns, ip, hostname } = isDnsIntercept
-              dns.count(hostname, ip, true)
-              console.error('记录ip失败次数,用于优选ip：', hostname, ip)
-            }
-            console.error('代理请求超时', rOptions.protocol, rOptions.hostname, rOptions.path, (end - start) + 'ms')
-            reject(new Error(`${rOptions.host}:${rOptions.port}, 代理请求超时`))
+            const cost = end - start
+            log.error('代理请求超时', rOptions.protocol, rOptions.hostname, rOptions.path, cost + 'ms')
+            countSlow(isDnsIntercept, 'to slow  ' + cost + 'ms')
+            proxyReq.end()
+            proxyReq.destroy()
+            const error = new Error(`${rOptions.host}:${rOptions.port}, 代理请求超时`)
+            error.status = 408
+            reject(error)
           })
 
           proxyReq.on('error', (e) => {
             const end = new Date().getTime()
-            if (isDnsIntercept) {
-              const { dns, ip, hostname } = isDnsIntercept
-              dns.count(hostname, ip, true)
-              console.error('记录ip失败次数,用于优选ip：', hostname, ip)
-            }
-            console.error('代理请求错误', e.errno, rOptions.hostname, rOptions.path, (end - start) + 'ms', e)
+            const cost = end - start
+            log.error('代理请求错误', e.code, e.message, rOptions.hostname, rOptions.path, cost + 'ms')
+            countSlow(isDnsIntercept, 'error:' + e.message)
             reject(e)
           })
 
           proxyReq.on('aborted', () => {
-            console.error('代理请求被取消', rOptions.hostname, rOptions.path)
+            const end = new Date().getTime()
+            const cost = end - start
+            log.error('代理请求被取消', rOptions.hostname, rOptions.path, cost + 'ms')
+
+            if (cost > MAX_SLOW_TIME) {
+              countSlow(isDnsIntercept, 'to slow  ' + cost + 'ms')
+            }
+
+            if (res.writableEnded) {
+              return
+            }
             reject(new Error('代理请求被取消'))
           })
 
           req.on('aborted', function () {
-            console.error('请求被取消', rOptions.hostname, rOptions.path)
+            log.error('请求被取消', rOptions.hostname, rOptions.path)
             proxyReq.abort()
+            if (res.writableEnded) {
+              return
+            }
             reject(new Error('请求被取消'))
           })
           req.on('error', function (e, req, res) {
-            console.error('请求错误：', e.errno, rOptions.hostname, rOptions.path)
+            log.error('请求错误：', e.errno, rOptions.hostname, rOptions.path)
             reject(e)
           })
           req.on('timeout', () => {
-            console.error('请求超时', rOptions.hostname, rOptions.path)
+            log.error('请求超时', rOptions.hostname, rOptions.path)
             reject(new Error(`${rOptions.hostname}:${rOptions.port}, 请求超时`))
           })
           req.pipe(proxyReq)
@@ -137,21 +182,45 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
     (async () => {
       await requestInterceptorPromise()
 
-      if (res.finished) {
+      if (res.writableEnded) {
         return false
       }
 
       const proxyRes = await proxyRequestPromise()
 
+      // proxyRes.on('data', (chunk) => {
+      //   // console.log('BODY: ')
+      // })
+      proxyRes.on('error', (error) => {
+        countSlow(null, 'error:' + error.message)
+        log.error('proxy res error', error)
+      })
+
       const responseInterceptorPromise = new Promise((resolve, reject) => {
         const next = () => {
           resolve()
         }
+        if (!setting.script.enabled) {
+          next()
+          return
+        }
         try {
-          if (typeof responseInterceptor === 'function') {
-            responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, context)
+          if (resIncpts && resIncpts.length > 0) {
+            let head = ''
+            let body = ''
+            for (const resIncpt of resIncpts) {
+              const append = resIncpt.responseIntercept(context, req, res, proxyReq, proxyRes, ssl)
+              if (append && append.head) {
+                head += append.head
+              }
+              if (append && append.body) {
+                body += append.body
+              }
+            }
+
+            InsertScriptMiddleware.responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, { head, body })
           } else {
-            resolve()
+            next()
           }
         } catch (e) {
           reject(e)
@@ -159,10 +228,6 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
       })
 
       await responseInterceptorPromise
-
-      if (res.finished) {
-        return false
-      }
 
       if (!res.headersSent) { // prevent duplicate set headers
         Object.keys(proxyRes.headers).forEach(function (key) {
@@ -178,21 +243,20 @@ module.exports = function createRequestHandler (requestInterceptor, responseInte
           }
         })
 
+        if (proxyRes.statusCode >= 400) {
+          countSlow(null, 'status return :' + proxyRes.statusCode)
+        }
         res.writeHead(proxyRes.statusCode)
         proxyRes.pipe(res)
       }
-    })().then(
-      (flag) => {
-        // do nothing
-      },
-      (e) => {
-        if (!res.finished) {
-          res.writeHead(500)
-          res.write(`DevSidecar Warning:\n\n ${e.toString()}`)
-          res.end()
-        }
-        console.error('request error', e.message)
+    })().catch(e => {
+      if (!res.writableEnded) {
+        const status = e.status || 500
+        res.writeHead(status)
+        res.write(`DevSidecar Warning:\n\n ${e.toString()}`)
+        res.end()
+        log.error('request error', e.message)
       }
-    )
+    })
   }
 }

@@ -6,10 +6,9 @@ import JSON5 from 'json5'
 import path from 'path'
 const pk = require('../../package.json')
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
-
+const log = require('../utils/util.log')
 const getDefaultConfigBasePath = function () {
-  const userHome = process.env.HOME || process.env.USERPROFILE
-  return path.resolve(userHome, './.dev-sidecar')
+  return DevSidecar.api.config.get().server.setting.userBasePath
 }
 const localApi = {
   /**
@@ -22,15 +21,17 @@ const localApi = {
     lodash.merge(core, local)
     const list = []
     _deepFindFunction(list, core, '')
-    // console.log('api list:', list)
+    // log.info('api list:', list)
     return list
   },
   info: {
     get () {
-      console.log(pk)
       return {
         version: pk.version
       }
+    },
+    getConfigDir () {
+      return getDefaultConfigBasePath()
     }
   },
   /**
@@ -81,6 +82,7 @@ const localApi = {
      */
     save (newConfig) {
       // 对比默认config的异同
+      DevSidecar.api.config.set(newConfig)
       const defConfig = DevSidecar.api.config.getDefault()
       const saveConfig = doMerge(defConfig, newConfig)
       fs.writeFileSync(_getConfigPath(), JSON5.stringify(saveConfig, null, 2))
@@ -178,23 +180,23 @@ export default {
         target = lodash.get(DevSidecar.api, api)
       }
       if (target == null) {
-        console.log('找不到此接口方法：', api)
+        log.info('找不到此接口方法：', api)
       }
       let param
       if (args.length >= 2) {
         param = args[1]
       }
       const ret = target(param)
-      // console.log('api:', api, 'ret:', ret)
+      // log.info('api:', api, 'ret:', ret)
       return ret
     })
     // 注册从core里来的事件，并转发给view
     DevSidecar.api.event.register('status', (event) => {
-      console.log('bridge on status', event)
+      log.info('bridge on status', event)
       win.webContents.send('status', { ...event })
     })
     DevSidecar.api.event.register('error', (event) => {
-      console.error('bridge on error', event)
+      log.error('bridge on error', event)
       win.webContents.send('error.core', event)
     })
 

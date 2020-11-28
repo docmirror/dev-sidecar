@@ -1,6 +1,8 @@
 const interceptors = require('./lib/interceptor')
 const dnsUtil = require('./lib/dns')
 const lodash = require('lodash')
+const log = require('./utils/util.log')
+const path = require('path')
 function matchHostname (hostMap, hostname) {
   const value = hostMap[hostname]
   if (value) {
@@ -46,57 +48,66 @@ module.exports = (config) => {
 
   const dnsMapping = config.dns.mapping
   const serverConfig = config
-
-  return {
+  const setting = serverConfig.setting
+  const options = {
     port: serverConfig.port,
     dnsConfig: {
       providers: dnsUtil.initDNS(serverConfig.dns.providers),
       mapping: dnsMapping
     },
+    setting,
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]
       const inWhiteList = matchHostname(whiteList, hostname) != null
       if (inWhiteList) {
-        console.log('白名单域名，不拦截', hostname)
+        log.info('白名单域名，不拦截', hostname)
         return false
       }
       return !!matchHostname(intercepts, hostname) // 配置了拦截的域名，将会被代理
     },
-    requestInterceptor: (rOptions, req, res, ssl, next, context) => {
+    createIntercepts: (context) => {
+      const rOptions = context.rOptions
       const hostname = rOptions.hostname
       const interceptOpts = matchHostname(intercepts, hostname)
       if (!interceptOpts) { // 该域名没有配置拦截器，直接过
-        next()
         return
       }
 
+      const matchIntercepts = []
       for (const regexp in interceptOpts) { // 遍历拦截配置
         const interceptOpt = interceptOpts[regexp]
+        interceptOpt.key = regexp
         if (regexp !== true) {
-          if (!isMatched(req.url, regexp)) {
+          if (!isMatched(rOptions.path, regexp)) {
             continue
           }
         }
-        for (const interceptImpl of interceptors) {
+        for (const impl of interceptors) {
           // 根据拦截配置挑选合适的拦截器来处理
-          if (!interceptImpl.is(interceptOpt) && interceptImpl.requestInterceptor) {
-            continue
-          }
-          try {
-            const result = interceptImpl.requestInterceptor(interceptOpt, rOptions, req, res, ssl, context)
-            if (result) { // 拦截成功,其他拦截器就不处理了
-              return
+          if (impl.is(interceptOpt)) {
+            const interceptor = {}
+            if (impl.requestIntercept) {
+              // req拦截器
+              interceptor.requestIntercept = (context, req, res, ssl, next) => {
+                return impl.requestIntercept(context, interceptOpt, req, res, ssl, next)
+              }
+            } else if (impl.responseIntercept) {
+              // res拦截器
+              interceptor.responseIntercept = (context, req, res, proxyReq, proxyRes, ssl, next) => {
+                return impl.responseIntercept(context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next)
+              }
             }
-          } catch (err) {
-            // 拦截失败
-            console.error(err)
+            matchIntercepts.push(interceptor)
           }
         }
       }
-      next()
-    },
-    responseInterceptor: (req, res, proxyReq, proxyRes, ssl, next, context) => {
-      next()
+      return matchIntercepts
     }
   }
+
+  if (setting.rootCaFile) {
+    options.caCertPath = setting.rootCaFile.certPath
+    options.caKeyPath = setting.rootCaFile.keyPath
+  }
+  return options
 }

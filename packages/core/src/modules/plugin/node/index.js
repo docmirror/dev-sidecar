@@ -1,12 +1,12 @@
 const nodeConfig = require('./config')
 const NodePlugin = function (context) {
-  const { config, shell, event, rootCaFile } = context
+  const { config, shell, event, log } = context
   const nodeApi = {
     async start () {
       try {
         await nodeApi.setVariables()
       } catch (err) {
-        console.warn('set variables error', err)
+        log.warn('set variables error', err)
       }
 
       const ip = '127.0.0.1'
@@ -101,16 +101,17 @@ const NodePlugin = function (context) {
        NODE_TLS_REJECT_UNAUTHORIZED: false
        */
       const nodeConfig = config.get().plugin.node
+      const rootCaCertFile = config.get().server.setting.rootCaFile.certPath
       if (nodeConfig.setting['strict-ssl']) {
         cmds.push('npm config set strict-ssl false')
       }
       if (nodeConfig.setting.cafile) {
-        cmds.push(`npm config set cafile "${rootCaFile}"`)
+        cmds.push(`npm config set cafile "${rootCaCertFile}"`)
       }
 
       if (nodeConfig.setting.NODE_EXTRA_CA_CERTS) {
-        cmds.push(`npm config set NODE_EXTRA_CA_CERTS "${rootCaFile}"`)
-        env.push({ key: 'NODE_EXTRA_CA_CERTS', value: rootCaFile })
+        cmds.push(`npm config set NODE_EXTRA_CA_CERTS "${rootCaCertFile}"`)
+        env.push({ key: 'NODE_EXTRA_CA_CERTS', value: rootCaCertFile })
       }
 
       if (nodeConfig.setting.NODE_TLS_REJECT_UNAUTHORIZED) {
@@ -123,7 +124,7 @@ const NodePlugin = function (context) {
         await shell.setSystemEnv({ list: env })
       }
       event.fire('status', { key: 'plugin.node.enabled', value: true })
-      console.info('开启【NPM】代理成功')
+      log.info('开启【NPM】代理成功')
 
       return ret
     },
@@ -137,7 +138,7 @@ const NodePlugin = function (context) {
       ]
       const ret = await shell.exec(cmds, { type: 'cmd' })
       event.fire('status', { key: 'plugin.node.enabled', value: false })
-      console.info('关闭【NPM】代理成功')
+      log.info('关闭【NPM】代理成功')
       return ret
     }
   }

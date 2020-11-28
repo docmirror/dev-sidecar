@@ -4,7 +4,7 @@ const childProcess = require('child_process')
 const _exec = childProcess.exec
 const exec = util.promisify(_exec)
 const PowerShell = require('node-powershell')
-
+const log = require('../utils/util.log')
 class SystemShell {
   static async exec (cmds, args) {
     throw new Error('You have to implement the method exec!')
@@ -52,7 +52,7 @@ class WindowsSystemShell extends SystemShell {
 
       try {
         const ret = await ps.invoke()
-        // console.log('ps complete', cmds)
+        // log.info('ps complete', cmds)
         return ret
       } finally {
         ps.dispose()
@@ -64,7 +64,7 @@ class WindowsSystemShell extends SystemShell {
       }
       // compose += '&& exit'
       const ret = await childExec(compose)
-      // console.log('cmd complete:', compose)
+      // log.info('cmd complete:', compose)
       return ret
     }
   }
@@ -75,13 +75,13 @@ function childExec (composeCmds) {
     const childProcess = require('child_process')
     childProcess.exec(composeCmds, function (error, stdout, stderr) {
       if (error) {
-        console.error('cmd 命令执行错误：', composeCmds, error, stderr)
+        log.error('cmd 命令执行错误：', composeCmds, error, stderr)
         reject(error)
       } else {
-        // console.log('cmd 命令完成：', stdout)
+        // log.info('cmd 命令完成：', stdout)
         resolve(stdout)
       }
-      // console.log('关闭 cmd')
+      // log.info('关闭 cmd')
       // ps.kill('SIGINT')
     })
   })

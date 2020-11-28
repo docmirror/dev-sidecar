@@ -1,5 +1,6 @@
 const net = require('net')
 const url = require('url')
+const log = require('../../../utils/util.log')
 // const colors = require('colors')
 const DnsUtil = require('../../dns/index')
 const localIP = '127.0.0.1'
@@ -15,7 +16,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, fakeServe
       fakeServerCenter.getServerPromise(hostname, srvUrl.port).then((serverObj) => {
         connect(req, cltSocket, head, localIP, serverObj.port)
       }, (e) => {
-        console.error('getServerPromise', e)
+        log.error('getServerPromise', e)
       })
     } else {
       connect(req, cltSocket, head, hostname, srvUrl.port, dnsConfig)
@@ -25,7 +26,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, fakeServe
 
 function connect (req, cltSocket, head, hostname, port, dnsConfig) {
   // tunneling https
-  // console.log('connect:', hostname, port)
+  // log.info('connect:', hostname, port)
   const start = new Date().getTime()
   let isDnsIntercept = null
   try {
@@ -60,23 +61,26 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig) {
       cltSocket.pipe(proxySocket)
     })
 
+    cltSocket.on('error', (e) => {
+      log.error('cltSocket error', e.message)
+    })
     proxySocket.on('timeout', () => {
       const end = new Date().getTime()
-      console.log('代理socket timeout：', hostname, port, (end - start) + 'ms')
+      log.info('代理socket timeout：', hostname, port, (end - start) + 'ms')
     })
     proxySocket.on('error', (e) => {
       // 连接失败，可能被GFW拦截，或者服务端拥挤
       const end = new Date().getTime()
-      console.error('代理连接失败：', e.message, hostname, port, (end - start) + 'ms')
+      log.error('代理连接失败：', e.message, hostname, port, (end - start) + 'ms')
       cltSocket.destroy()
       if (isDnsIntercept) {
         const { dns, ip, hostname } = isDnsIntercept
         dns.count(hostname, ip, true)
-        console.error('记录ip失败次数,用于优选ip：', hostname, ip)
+        log.error('记录ip失败次数,用于优选ip：', hostname, ip)
       }
     })
     return proxySocket
   } catch (error) {
-    console.log('connect err', error)
+    log.error('connect err', error)
   }
 }

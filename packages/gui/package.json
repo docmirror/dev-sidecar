@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar-gui",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "private": false,
   "license": "MPL-2.0",
   "scripts": {
@@ -14,8 +14,8 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@docmirror/dev-sidecar": "^1.1.0",
-    "@docmirror/mitmproxy": "^1.1.0",
+    "@docmirror/dev-sidecar": "^1.2.1",
+    "@docmirror/mitmproxy": "^1.2.1",
     "ant-design-vue": "^1.6.5",
     "core-js": "^3.6.5",
     "electron-baidu-tongji": "^1.0.5",
@@ -24,15 +24,12 @@
     "es-abstract": "^1.17.7",
     "json5": "^2.1.3",
     "lodash": "^4.17.20",
+    "log4js": "^6.3.0",
     "sass": "^1.27.1",
     "sass-loader": "^10.0.4",
     "vue": "^2.6.11",
     "vue-json-editor": "^1.4.2",
     "vue-router": "^3.4.8"
-  },
-  "resolutions": {
-    "hexoid": "^1.0.0",
-    "formidable": "2.0.0-canary.20200504.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

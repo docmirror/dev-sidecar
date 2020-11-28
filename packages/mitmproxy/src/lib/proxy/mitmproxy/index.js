@@ -1,7 +1,7 @@
 const tlsUtils = require('../tls/tlsUtils')
 const http = require('http')
 const config = require('../common/config')
-const colors = require('colors')
+const log = require('../../../utils/util.log')
 const createRequestHandler = require('./createRequestHandler')
 const createConnectHandler = require('./createConnectHandler')
 const createFakeServerCenter = require('./createFakeServerCenter')
@@ -12,33 +12,35 @@ module.exports = {
     caCertPath,
     caKeyPath,
     sslConnectInterceptor,
-    requestInterceptor,
-    responseInterceptor,
+    createIntercepts,
     getCertSocketTimeout = 1 * 1000,
     middlewares = [],
     externalProxy,
-    dnsConfig
+    dnsConfig,
+    setting
   }, callback) {
     // Don't reject unauthorized
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-
-    if (!caCertPath && !caKeyPath) {
-      const rs = this.createCA()
-      caCertPath = rs.caCertPath
-      caKeyPath = rs.caKeyPath
-      if (rs.create) {
-        console.log(colors.cyan(`CA Cert saved in: ${caCertPath}`))
-        console.log(colors.cyan(`CA private key saved in: ${caKeyPath}`))
-      }
+    log.info(`CA Cert read in: ${caCertPath}`)
+    log.info(`CA private key read in: ${caKeyPath}`)
+    if (!caCertPath) {
+      caCertPath = config.getDefaultCACertPath()
+    }
+    if (!caKeyPath) {
+      caKeyPath = config.getDefaultCAKeyPath()
+    }
+    const rs = this.createCA({ caCertPath, caKeyPath })
+    if (rs.create) {
+      log.info(`CA Cert saved in: ${caCertPath}`)
+      log.info(`CA private key saved in: ${caKeyPath}`)
     }
 
     port = ~~port
     const requestHandler = createRequestHandler(
-      requestInterceptor,
-      responseInterceptor,
-      middlewares,
+      createIntercepts,
       externalProxy,
-      dnsConfig
+      dnsConfig,
+      setting
     )
 
     const upgradeHandler = createUpgradeHandler()
@@ -59,24 +61,28 @@ module.exports = {
 
     const server = new http.Server()
     server.listen(port, () => {
-      console.log(colors.green(`dev-sidecar启动端口: ${port}`))
+      log.info(`dev-sidecar启动端口: ${port}`)
       server.on('error', (e) => {
-        console.error(colors.red(e))
+        log.error('server error', e)
       })
       server.on('request', (req, res) => {
         const ssl = false
-        // console.log('request,', req.url, req.port, req.host)
+        // log.info('request,', req.hostname)
         requestHandler(req, res, ssl)
       })
       // tunneling for https
       server.on('connect', (req, cltSocket, head) => {
-        // console.log('connect,', req.url)
+        // log.info('connect,', req.url)
         connectHandler(req, cltSocket, head)
       })
       // TODO: handler WebSocket
       server.on('upgrade', function (req, socket, head) {
         const ssl = false
         upgradeHandler(req, socket, head, ssl)
+      })
+      server.on('clientError', (err, socket) => {
+        log.error('client error', err)
+        socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
       })
 
       if (callback) {
@@ -85,7 +91,7 @@ module.exports = {
     })
     return server
   },
-  createCA (caBasePath = config.getDefaultCABasePath()) {
-    return tlsUtils.initCA(caBasePath)
+  createCA (caPaths) {
+    return tlsUtils.initCA(caPaths)
   }
 }

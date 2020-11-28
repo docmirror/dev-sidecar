@@ -1,30 +1,73 @@
+const path = require('path')
+function getUserBasePath () {
+  const userHome = process.env.USERPROFILE
+  return path.resolve(userHome, './.dev-sidecar')
+}
+function getRootCaCertPath () {
+  return getUserBasePath() + '/dev-sidecar.ca.crt'
+}
+function getRootCaKeyPath () {
+  return getUserBasePath() + '/dev-sidecar.ca.key.pem'
+}
 module.exports = {
   server: {
     enabled: true,
     port: 1181,
     setting: {
-      NODE_TLS_REJECT_UNAUTHORIZED: true
+      NODE_TLS_REJECT_UNAUTHORIZED: true,
+      script: {
+        enabled: true,
+        defaultDir: '../../../scripts/'
+      },
+      userBasePath: getUserBasePath(),
+      rootCaFile: {
+        certPath: getRootCaCertPath(),
+        keyPath: getRootCaKeyPath()
+      }
     },
     intercepts: {
       'github.com': {
         '/.*/.*/releases/download/': {
-          redirect: 'download.fastgit.org'
+          redirect: 'download.fastgit.org',
+          desc: 'release文件加速下载跳转地址'
         },
         '/.*/.*/archive/': {
           redirect: 'download.fastgit.org'
         },
         '/.*/.*/raw/': {
-          redirect: 'hub.fastgit.org'
+          replace: '(.+)\\/raw\\/(.+)',
+          proxy: 'raw.fastgit.org$1/$2'
         },
         '/.*/.*/blame/': {
           redirect: 'hub.fastgit.org'
+        },
+        '^/[^/]+/[^/]+$': {
+          script: [
+            'jquery',
+            'github'
+          ],
+          desc: 'clone加速复制链接脚本'
+        },
+        '/.*': {
+          proxy: 'github.com',
+          backup: [
+            'gh.docmirror.top/_proxy'
+          ],
+          desc: '如果出现dev-sidecar报错，可能是备用加速地址dns被污染了，需要将本条配置删除'
+        }
+      },
+      'api.github.com': {
+        '^/_private/browser/stats$': {
+          success: true,
+          desc: 'github的访问速度分析上传，没有必要，直接返回成功'
         }
       },
       'raw.githubusercontent.com': {
         '.*': { proxy: 'raw.fastgit.org' }
       },
-      'github11.githubassets.com': {
-        '.*': { proxy: 'assets.fastgit.org', test: 'https://github.githubassets.com/favicons/favicon.svg' }
+      'github.githubassets.com': {
+        '.*': { proxy: 'assets.fastgit.org', test: 'https://github.githubassets.com/favicons/favicon.svg', desc: '静态资源加速' }
+
       },
       'customer-stories-feed.github.com': {
         '.*': { proxy: 'customer-stories-feed.fastgit.org' }
@@ -78,7 +121,13 @@ module.exports = {
       'archive.cloudera.com': { '.*': { regexp: '/cdh5/.*', proxy: 'cloudera.proxy.ustclug.org' } },
       'downloads.lede-project.org': { '.*': { proxy: 'lede.proxy.ustclug.org' } },
       'downloads.openwrt.org': { '.*': { proxy: 'openwrt.proxy.ustclug.org' } },
-      'secure.gravatar.com': { '.*': { proxy: 'gravatar.proxy.ustclug.org' } }
+      'secure.gravatar.com': { '.*': { proxy: 'gravatar.proxy.ustclug.org' } },
+      '*.carbonads.com': {
+        '/carbon.*': {
+          abort: true,
+          desc: '广告拦截'
+        }
+      }
     },
     whiteList: {
       'alipay.com': true,
@@ -100,11 +149,16 @@ module.exports = {
         }
       },
       mapping: {
+        '*github.io': 'usa',
+        'img.shields.io': 'usa',
         '*.github.com': 'usa',
         '*.githubusercontent.com': 'usa',
         '*.githubassets.com': 'usa',
         // "解决push的时候需要输入密码的问题",
-        'github.com': 'usa'
+        'github.com': 'usa',
+        '*.vuepress.vuejs.org': 'usa',
+        'github.docmirror.cn': 'usa',
+        'gh.docmirror.top': 'usa'
       }
     }
   },
