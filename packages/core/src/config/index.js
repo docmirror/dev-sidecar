@@ -98,7 +98,13 @@ module.exports = {
         '.*': { proxy: 'google-themes.proxy.ustclug.org' }
       },
       'www.google.com': {
-        '/recaptcha/.*': { proxy: 'www.recaptcha.net' }
+        '/recaptcha/.*': { proxy: 'www.recaptcha.net' },
+        '.*': {
+          proxy: 'gg.docmirror.top/_yxorp',
+          script: [
+            'google'
+          ]
+        }
       },
       'fonts.gstatic.com': {
         '.*': {
