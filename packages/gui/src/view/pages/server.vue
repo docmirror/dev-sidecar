@@ -38,8 +38,8 @@
             <div>开启此项之后，被代理应用关闭SSL校验也问题不大了</div>
           </a-form-item>
           <a-form-item label="根证书：" :label-col="labelCol" :wrapper-col="wrapperCol">
-             <a-input addon-before="Cert"  v-model="config.server.setting.rootCaFile.certPath" ></a-input>
-             <a-input addon-before="Key"  v-model="config.server.setting.rootCaFile.keyPath" ></a-input>
+             <a-input-search addon-before="Cert" enter-button="选择" @search="onCrtSelect"   v-model="config.server.setting.rootCaFile.certPath" />
+             <a-input-search addon-before="Key" enter-button="选择" @search="onKeySelect" v-model="config.server.setting.rootCaFile.keyPath" />
           </a-form-item>
           <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-tooltip title="关闭后，github的clone加速链接复制也将关闭">
@@ -112,6 +112,18 @@ export default {
   mounted () {
   },
   methods: {
+    async onCrtSelect () {
+      const value = await this.$api.fileSelector.open()
+      if (value != null && value.length > 0) {
+        this.config.server.setting.rootCaFile.certPath = value[0]
+      }
+    },
+    async onKeySelect () {
+      const value = await this.$api.fileSelector.open()
+      if (value != null && value.length > 0) {
+        this.config.server.setting.rootCaFile.keyPath = value[0]
+      }
+    },
     onJsonChange (json) {
     },
     ready () {

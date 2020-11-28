@@ -1,5 +1,5 @@
 import api, { apiInit } from './api'
-import modules from './modules'
+import modules from '../bridge/front'
 import status from './status'
 export default {
   initApi: apiInit,
@@ -9,7 +9,7 @@ export default {
     Vue.prototype.$global = { setting }
     await status.install(api)
   },
-  initModules (app) {
-    modules.install(app, api)
+  initModules (app, router) {
+    modules.install(app, api, router)
   }
 }

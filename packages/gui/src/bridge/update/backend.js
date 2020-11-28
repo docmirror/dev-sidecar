@@ -1,6 +1,5 @@
-import { ipcMain, dialog } from 'electron'
+import { ipcMain } from 'electron'
 import { autoUpdater } from 'electron-updater'
-import log from '../utils/util.log'
 import path from 'path'
 // win是所有窗口的引用
 // const path = require('path') // 引入path模块
@@ -8,7 +7,7 @@ import path from 'path'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 // 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
-function updateHandle (app, win, beforeQuit, updateUrl) {
+function updateHandle (app, win, beforeQuit, updateUrl,log) {
   // // 更新前，删除本地安装包 ↓
   // const updaterCacheDirName = 'dev-sidecar-updater'
   // const updatePendingPath = path.join(autoUpdater.app.baseCachePath, updaterCacheDirName, 'pending')
@@ -95,4 +94,20 @@ function updateHandle (app, win, beforeQuit, updateUrl) {
   log.info('auto update inited')
   return autoUpdater
 }
-export default updateHandle
+
+export default {
+  install (context) {
+    const { app, win, beforeQuit,log } = context
+    let updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
+    if (process.env.NODE_ENV === 'development') {
+      Object.defineProperty(app, 'isPackaged', {
+        get () {
+          return true
+        }
+      })
+      updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
+      // updateUrl = 'http://localhost/dev-sidecar/'
+    }
+    updateHandle(app, win, beforeQuit, updateUrl,log)
+  }
+}

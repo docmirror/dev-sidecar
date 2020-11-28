@@ -37,7 +37,7 @@ async function _winUnsetProxy (exec) {
   // eslint-disable-next-line no-constant-condition
   if (true) {
     const proxyPath = getProxyExePath()
-    await execFile(proxyPath, ['off'])
+    await execFile(proxyPath, ['set', '1'])
     return
   }
   const regKey = new Registry({

@@ -7,9 +7,6 @@ import VueRouter from 'vue-router'
 import routes from './view/router'
 import DsContainer from './view/components/container'
 import './view/style/index.scss'
-import { ipcRenderer } from 'electron'
-
-const tongji = require('./tongji')
 
 Vue.config.productionTip = false
 Vue.use(antd)
@@ -28,12 +25,7 @@ view.initApi().then(async (api) => {
     router,
     render: h => h(App)
   }).$mount('#app')
-
-  const BAIDU_SITE_ID = 'f2d170ce560aef0005b689f28697f852'
-  // 百度统计
-  tongji.ebtRenderer(ipcRenderer, BAIDU_SITE_ID, router)
-
-  view.initModules(app)
+  view.initModules(app, router)
 })
 
 // fix vue-router NavigationDuplicated
