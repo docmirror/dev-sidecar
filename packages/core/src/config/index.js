@@ -49,11 +49,11 @@ module.exports = {
           desc: 'clone加速复制链接脚本'
         },
         '/.*': {
-          proxy: 'github.com',
+          proxy: 'gh.docmirror.top/_proxy',
           backup: [
-            'gh.docmirror.top/_proxy'
+            'github.com'
           ],
-          desc: '如果出现dev-sidecar报错，可能是备用加速地址dns被污染了，需要将本条配置删除'
+          desc: '如果出现dev-sidecar报错，可能是加速地址dns被污染了，需要将本条配置删除'
         }
       },
       'api.github.com': {

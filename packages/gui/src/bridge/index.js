@@ -6,6 +6,7 @@ import JSON5 from 'json5'
 import path from 'path'
 const pk = require('../../package.json')
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
+process.env.DS_SYSPROXY_PATH = path.join(__dirname, '../extra/sysproxy.exe')
 const log = require('../utils/util.log')
 const getDefaultConfigBasePath = function () {
   return DevSidecar.api.config.get().server.setting.userBasePath

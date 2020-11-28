@@ -39,7 +39,7 @@ class DynamicChoice {
       if (this.count[item]) {
         continue
       }
-      this.count[item] = { value: item, total: defaultTotal, error: 0, keepErrorCount: 0, successRate: 1 }
+      this.count[item] = { value: item, total: defaultTotal, error: 0, keepErrorCount: 0, successRate: 0.5 }
       defaultTotal--
     }
     this.value = backupList.shift()

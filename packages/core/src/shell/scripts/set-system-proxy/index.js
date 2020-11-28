@@ -36,7 +36,7 @@ const _lanIP = [
 async function _winUnsetProxy (exec) {
   // eslint-disable-next-line no-constant-condition
   if (true) {
-    const proxyPath = path.resolve(__dirname, './extra/sysproxy.exe')
+    const proxyPath = getProxyExePath()
     await execFile(proxyPath, ['off'])
     return
   }
@@ -57,6 +57,7 @@ async function _winUnsetProxy (exec) {
 
 function getProxyExePath () {
   const proxyPath = process.env.DS_SYSPROXY_PATH
+  log.info('proxyPath', proxyPath)
   if (proxyPath) {
     return proxyPath
   }

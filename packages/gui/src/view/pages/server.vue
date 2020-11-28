@@ -38,8 +38,8 @@
             <div>开启此项之后，被代理应用关闭SSL校验也问题不大了</div>
           </a-form-item>
           <a-form-item label="根证书：" :label-col="labelCol" :wrapper-col="wrapperCol">
-             <a-input addon-before="Cert" addon-after="选择" v-model="config.server.setting.rootCaFile.certPath" ></a-input>
-             <a-input addon-before="Key" addon-after="选择" v-model="config.server.setting.rootCaFile.keyPath" ></a-input>
+             <a-input addon-before="Cert"  v-model="config.server.setting.rootCaFile.certPath" ></a-input>
+             <a-input addon-before="Key"  v-model="config.server.setting.rootCaFile.keyPath" ></a-input>
           </a-form-item>
           <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-tooltip title="关闭后，github的clone加速链接复制也将关闭">
@@ -148,7 +148,7 @@ export default {
     },
     async openLog () {
       const dir = await this.$api.info.getConfigDir()
-      this.$api.ipc.openPath(dir + '/logs/server.log')
+      this.$api.ipc.openPath(dir + '/logs/')
     }
   }
 }
