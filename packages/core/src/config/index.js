@@ -74,6 +74,13 @@ module.exports = {
       },
 
       // google cdn
+      'www.google.com': {
+        '/recaptcha/.*': { proxy: 'www.recaptcha.net' },
+        '.*': {
+          proxy: 'gg.docmirror.top/_yxorp',
+          desc: '呀，被你发现了，偷偷的用，别声张'
+        }
+      },
       'ajax.googleapis.com': {
         '.*': {
           proxy: 'ajax.loli.net',
@@ -96,13 +103,6 @@ module.exports = {
       },
       'themes.googleusercontent.com': {
         '.*': { proxy: 'google-themes.proxy.ustclug.org' }
-      },
-      'www.google.com': {
-        '/recaptcha/.*': { proxy: 'www.recaptcha.net' },
-        '.*': {
-          proxy: 'gg.docmirror.top/_yxorp',
-          desc: '呀，被你发现了，偷偷的用，别声张'
-        }
       },
       'fonts.gstatic.com': {
         '.*': {
