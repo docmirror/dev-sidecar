@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar-gui",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": false,
   "license": "MPL-2.0",
   "scripts": {
@@ -14,8 +14,8 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@docmirror/dev-sidecar": "^1.2.1",
-    "@docmirror/mitmproxy": "^1.2.1",
+    "@docmirror/dev-sidecar": "^1.2.2",
+    "@docmirror/mitmproxy": "^1.2.2",
     "ant-design-vue": "^1.6.5",
     "core-js": "^3.6.5",
     "electron-baidu-tongji": "^1.0.5",
