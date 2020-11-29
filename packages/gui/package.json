@@ -12,6 +12,7 @@
     "postuninstall": "electron-builder install-app-deps",
     "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten"
   },
+  "author": "docmirror.cn",
   "main": "background.js",
   "dependencies": {
     "@docmirror/dev-sidecar": "^1.2.2",
