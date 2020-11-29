@@ -101,7 +101,7 @@ module.exports = {
         '/recaptcha/.*': { proxy: 'www.recaptcha.net' },
         '.*': {
           proxy: 'gg.docmirror.top/_yxorp',
-          desc: '呀，被你发现了，答应我，偷偷的用，别声张'
+          desc: '呀，被你发现了，偷偷的用，别声张'
         }
       },
       'fonts.gstatic.com': {
