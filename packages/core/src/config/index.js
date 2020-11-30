@@ -129,6 +129,12 @@ module.exports = {
           abort: true,
           desc: '广告拦截'
         }
+      },
+      '*.buysellads.com': {
+        '/ads/.*': {
+          abort: true,
+          desc: '广告拦截'
+        }
       }
     },
     whiteList: {
