@@ -27,7 +27,7 @@ const serverApi = {
       return this.close()
     }
   },
-  async start ({ mitmproxyPath }) {
+  async start ({ mitmproxyPath, plugins }) {
     const allConfig = config.get()
     const serverConfig = lodash.cloneDeep(allConfig.server)
 
@@ -37,6 +37,9 @@ const serverApi = {
     if (allConfig.plugin) {
       lodash.each(allConfig.plugin, (value) => {
         const plugin = value
+        if (!plugin.enabled) {
+          return
+        }
         if (plugin.intercepts) {
           lodash.merge(intercepts, plugin.intercepts)
         }
@@ -44,6 +47,13 @@ const serverApi = {
           lodash.merge(dnsMapping, plugin.dns)
         }
       })
+    }
+    log.error('plugins', plugins)
+    for (const key in plugins) {
+      const plugin = plugins[key]
+      if (plugin.overrideRunningConfig) {
+        plugin.overrideRunningConfig(serverConfig)
+      }
     }
     // fireStatus('ing') // 启动中
     const basePath = serverConfig.setting.userBasePath

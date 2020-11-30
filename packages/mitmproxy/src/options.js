@@ -63,7 +63,10 @@ module.exports = (config) => {
         log.info('白名单域名，不拦截', hostname)
         return false
       }
-      return !!matchHostname(intercepts, hostname) // 配置了拦截的域名，将会被代理
+      const ret = !!matchHostname(intercepts, hostname) // 配置了拦截的域名，将会被代理
+      if (ret) {
+        return true
+      }
     },
     createIntercepts: (context) => {
       const rOptions = context.rOptions

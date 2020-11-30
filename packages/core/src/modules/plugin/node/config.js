@@ -11,9 +11,9 @@ module.exports = {
     NODE_TLS_REJECT_UNAUTHORIZED: false,
     registry: 'https://registry.npmjs.org'// 可以选择切换官方或者淘宝镜像
   },
-  intercepts: {
-    'cdn.cypress.io': [{ regexp: '/desktop/.*', proxy: 'http://npm.taobao.org/mirrors/cypress/' }]
-  },
+  // intercepts: {
+  //   'cdn.cypress.io': [{ regexp: '/desktop/.*', proxy: 'http://npm.taobao.org/mirrors/cypress/' }]
+  // },
   variables: {
     SASS_BINARY_SITE: 'https://npm.taobao.org/mirrors/node-sass/',
     PHANTOMJS_CDNURL: 'https://npm.taobao.org/mirrors/phantomjs/',

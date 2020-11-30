@@ -121,13 +121,12 @@ module.exports = {
           redirect: 'npm.taobao.org/mirrors'
         }
       },
-      'registry-1.docker.io': { '.*': { proxy: 'docker.mirrors.ustc.edu.cn' } },
-      'packages.elastic.co': { '.*': { proxy: 'elastic.proxy.ustclug.org' } },
-      'ppa.launchpad.net': { '.*': { proxy: 'launchpad.proxy.ustclug.org' } },
-      'archive.cloudera.com': { '.*': { regexp: '/cdh5/.*', proxy: 'cloudera.proxy.ustclug.org' } },
-      'downloads.lede-project.org': { '.*': { proxy: 'lede.proxy.ustclug.org' } },
-      'downloads.openwrt.org': { '.*': { proxy: 'openwrt.proxy.ustclug.org' } },
-      'secure.gravatar.com': { '.*': { proxy: 'gravatar.proxy.ustclug.org' } },
+      // 'packages.elastic.co': { '.*': { proxy: 'elastic.proxy.ustclug.org' } },
+      // 'ppa.launchpad.net': { '.*': { proxy: 'launchpad.proxy.ustclug.org' } },
+      // 'archive.cloudera.com': { '.*': { regexp: '/cdh5/.*', proxy: 'cloudera.proxy.ustclug.org' } },
+      // 'downloads.lede-project.org': { '.*': { proxy: 'lede.proxy.ustclug.org' } },
+      // 'downloads.openwrt.org': { '.*': { proxy: 'openwrt.proxy.ustclug.org' } },
+      // 'secure.gravatar.com': { '.*': { proxy: 'gravatar.proxy.ustclug.org' } },
       '*.carbonads.com': {
         '/carbon.*': {
           abort: true,
