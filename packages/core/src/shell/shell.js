@@ -2,6 +2,7 @@ const util = require('util')
 const os = require('os')
 const childProcess = require('child_process')
 const _exec = childProcess.exec
+const _execFile = childProcess.execFile
 const exec = util.promisify(_exec)
 const PowerShell = require('node-powershell')
 const log = require('../utils/util.log')
@@ -119,8 +120,23 @@ async function execute (executor, args) {
   return executor[getSystemPlatform()](getSystemShell().exec, args)
 }
 
+async function execFile (file, args, options) {
+  return new Promise((resolve, reject) => {
+    _execFile(file, args, options, (err, stdout) => {
+      if (err) {
+        log.error('文件执行出错：', file, err)
+        reject(err)
+        return
+      }
+      log.debug('执行成功：', stdout)
+      resolve(stdout)
+    })
+  })
+}
+
 module.exports = {
   getSystemShell,
   getSystemPlatform,
-  execute
+  execute,
+  execFile
 }

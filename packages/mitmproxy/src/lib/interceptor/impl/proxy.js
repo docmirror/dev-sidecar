@@ -49,7 +49,10 @@ module.exports = {
       rOptions.port = rOptions.protocol === 'https:' ? 443 : 80
     }
     log.info('proxy:', rOptions.hostname, proxyTarget)
-    log.debug('proxy choice:', JSON.stringify(context.requestCount))
+    if (context.requestCount) {
+      log.debug('proxy choice:', JSON.stringify(context.requestCount))
+    }
+
     return true
   },
   is (interceptOpt) {

@@ -49,11 +49,11 @@ module.exports = {
           desc: 'clone加速复制链接脚本'
         },
         '/.*': {
-          proxy: 'github.com',
+          proxy: 'gh.docmirror.top/_proxy',
           backup: [
-            'gh.docmirror.top/_proxy'
+            'github.com'
           ],
-          desc: '如果出现dev-sidecar报错，可能是备用加速地址dns被污染了，需要将本条配置删除'
+          desc: '如果出现dev-sidecar报错，可能是加速地址dns被污染了，需要将本条配置删除'
         }
       },
       'api.github.com': {
@@ -77,6 +77,13 @@ module.exports = {
         '.*': { proxy: 'customer-stories-feed.fastgit.org' }
       },
       // google cdn
+      'www.google.com': {
+        '/recaptcha/.*': { proxy: 'www.recaptcha.net' },
+        '.*': {
+          proxy: 'gg.docmirror.top/_yxorp',
+          desc: '呀，被你发现了，偷偷的用，别声张'
+        }
+      },
       'ajax.googleapis.com': {
         '.*': {
           proxy: 'ajax.loli.net',
@@ -98,9 +105,6 @@ module.exports = {
       },
       'themes.googleusercontent.com': {
         '.*': { proxy: 'google-themes.proxy.ustclug.org' }
-      },
-      'www.google.com': {
-        '/recaptcha/.*': { proxy: 'www.recaptcha.net' }
       },
       'fonts.gstatic.com': {
         '.*': {

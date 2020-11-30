@@ -48,6 +48,7 @@ function injectScriptIntoHtml (tags, chunk, script) {
     if (index < 0) {
       continue
     }
+    console.log('insert script:', tag)
     const scriptBuf = Buffer.from(script)
     const chunkNew = Buffer.alloc(chunk.length + scriptBuf.length)
     chunk.copy(chunkNew, 0, 0, index)

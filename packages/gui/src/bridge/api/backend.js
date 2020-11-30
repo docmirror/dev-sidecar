@@ -1,12 +1,13 @@
 import lodash from 'lodash'
 import DevSidecar from '@docmirror/dev-sidecar'
-import { ipcMain, Menu } from 'electron'
+import { ipcMain } from 'electron'
 import fs from 'fs'
 import JSON5 from 'json5'
 import path from 'path'
-const pk = require('../../package.json')
+const pk = require('../../../package.json')
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
-const log = require('../utils/util.log')
+process.env.DS_SYSPROXY_PATH = path.join(__dirname, '../extra/sysproxy.exe')
+const log = require('../../utils/util.log')
 const getDefaultConfigBasePath = function () {
   return DevSidecar.api.config.get().server.setting.userBasePath
 }
@@ -170,25 +171,29 @@ function doMerge (defObj, newObj) {
   return newObj2
 }
 
+function invoke (api, param) {
+  let target = lodash.get(localApi, api)
+  if (target == null) {
+    target = lodash.get(DevSidecar.api, api)
+  }
+  if (target == null) {
+    log.info('找不到此接口方法：', api)
+  }
+  const ret = target(param)
+  // log.info('api:', api, 'ret:', ret)
+  return ret
+}
+
 export default {
-  init (win) {
+  install ({ win }) {
     // 接收view的方法调用
     ipcMain.handle('apiInvoke', async (event, args) => {
       const api = args[0]
-      let target = lodash.get(localApi, api)
-      if (target == null) {
-        target = lodash.get(DevSidecar.api, api)
-      }
-      if (target == null) {
-        log.info('找不到此接口方法：', api)
-      }
       let param
       if (args.length >= 2) {
         param = args[1]
       }
-      const ret = target(param)
-      // log.info('api:', api, 'ret:', ret)
-      return ret
+      return invoke(api, param)
     })
     // 注册从core里来的事件，并转发给view
     DevSidecar.api.event.register('status', (event) => {
@@ -205,5 +210,6 @@ export default {
     // 启动所有
     localApi.startup()
   },
-  devSidecar: DevSidecar
+  devSidecar: DevSidecar,
+  invoke
 }
