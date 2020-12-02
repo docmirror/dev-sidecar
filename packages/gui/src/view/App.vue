@@ -61,7 +61,7 @@ export default {
           icon: 'api',
           children: [
             { title: 'NPM加速', path: '/plugin/node', icon: 'like' },
-            { title: '不好说', path: '/plugin/overwall', icon: 'global' }
+            { title: '功能增强', path: '/plugin/overwall', icon: 'global' }
           ]
         }
       ]
