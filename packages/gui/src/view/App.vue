@@ -45,31 +45,20 @@
 </template>
 
 <script>
+import createMenus from '@/view/router/menu'
 export default {
   name: 'App',
   components: {
   },
   data () {
     return {
-      menus: [
-        { title: '首页', path: '/index', icon: 'home' },
-        { title: '加速服务', path: '/server', icon: 'thunderbolt' },
-        { title: '系统代理', path: '/proxy', icon: 'deployment-unit' },
-        {
-          title: '应用',
-          path: '/plugin',
-          icon: 'api',
-          children: [
-            { title: 'NPM加速', path: '/plugin/node', icon: 'like' },
-            { title: '功能增强', path: '/plugin/overwall', icon: 'global' }
-          ]
-        }
-      ]
+      menus: undefined
     }
   },
   computed: {
   },
   created () {
+    this.menus = createMenus(this)
   },
   methods: {
     handleClick (e) {
