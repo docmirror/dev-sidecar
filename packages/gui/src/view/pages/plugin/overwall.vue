@@ -1,19 +1,20 @@
 <template>
   <ds-container>
     <template slot="header">
-      梯子
+      Ladder
       <span>
+           <a-button type="primary" @click="openExternal('https://github.com/docmirror/dev-sidecar-doc/blob/main/ow.md')">原理说明</a-button>
       </span>
     </template>
 
     <div v-if="config">
       <a-form layout="horizontal">
-        <a-form-item label="梯子" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item label="Ladder" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.overwall.enabled">
             启用
           </a-checkbox>
-          <div>这是什么功能？你懂的！偷偷的用，别声张。（可以分享给信得过的朋友）</div>
-          <div>还有，不要看视频，流量挺小的</div>
+          <div>这是什么功能？你懂的！偷偷的用，别声张。(不要看视频，流量挺小的。)</div>
+          <div>建议按右上角“说明”自建服务端</div>
         </a-form-item>
         <a-form-item label="PAC" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.overwall.pac.enabled">
@@ -36,6 +37,26 @@
               </a-col>
               <a-col :span="3">
                 <a-button  type="danger" icon="minus" @click="deleteTarget(item,index)" />
+              </a-col>
+            </a-row>
+          </div>
+        </a-form-item>
+        <a-form-item label="代理服务端" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <div>
+            <a-row :gutter="10" style="">
+              <a-col :span="14">
+                <span>Nginx二层代理服务端配置</span>
+              </a-col>
+              <a-col :span="3">
+                <a-button  type="primary" icon="plus" @click="addServer()" />
+              </a-col>
+            </a-row>
+            <a-row :gutter="10"  v-for="(item,index) of servers" :key = 'index'>
+              <a-col :span="14">
+                <a-input  v-model="item.key"></a-input>
+              </a-col>
+              <a-col :span="3">
+                <a-button  type="danger" icon="minus" @click="deleteServer(item,index)" />
               </a-col>
             </a-row>
 
@@ -62,7 +83,8 @@ export default {
   data () {
     return {
       key: 'plugin.overwall',
-      targets: undefined
+      targets: undefined,
+      servers: undefined
     }
   },
   created () {
@@ -71,12 +93,23 @@ export default {
   mounted () {
   },
   methods: {
+    openExternal (url) {
+      this.$api.ipc.openExternal(url)
+    },
     async applyAfter () {
       if (this.status.server.enabled) {
         return this.$api.server.restart()
       }
     },
     ready () {
+      this.initTarget()
+      this.initServer()
+    },
+    async applyBefore () {
+      this.saveTarget()
+      this.saveServer()
+    },
+    initTarget () {
       this.targets = []
       const targetsMap = this.config.plugin.overwall.targets
       for (const key in targetsMap) {
@@ -92,7 +125,7 @@ export default {
     addTarget () {
       this.targets.unshift({ key: '', value: true })
     },
-    async applyBefore () {
+    saveTarget () {
       const map = {}
       for (const item of this.targets) {
         if (item.key) {
@@ -100,7 +133,34 @@ export default {
         }
       }
       this.config.plugin.overwall.targets = map
+    },
+
+    initServer () {
+      this.servers = []
+      const targetsMap = this.config.plugin.overwall.server
+      for (const key in targetsMap) {
+        const value = targetsMap[key]
+        this.servers.push({
+          key, value
+        })
+      }
+    },
+    deleteServer (item, index) {
+      this.servers.splice(index, 1)
+    },
+    addServer () {
+      this.servers.unshift({ key: '', value: true })
+    },
+    saveServer () {
+      const map = {}
+      for (const item of this.servers) {
+        if (item.key) {
+          map[item.key] = item.value
+        }
+      }
+      this.config.plugin.overwall.server = map
     }
+
   }
 }
 </script>

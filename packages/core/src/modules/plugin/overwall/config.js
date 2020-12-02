@@ -1,14 +1,11 @@
 module.exports = {
-  name: 'OverWall',
-  enabled: true,
+  name: '梯子',
+  enabled: false,
   server: {
     'ow.docmirror.top/_go_over_wall_': true
   },
   targets: {
-    '*facebook.com': true,
-    '*.fbcdn.net': true,
-    '*twitter.com': true,
-    '*youtube.com': true
+    '*facebook.com': true
   },
   pac: {
     enabled: true,
