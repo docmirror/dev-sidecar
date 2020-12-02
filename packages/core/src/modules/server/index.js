@@ -48,13 +48,14 @@ const serverApi = {
         }
       })
     }
-    log.error('plugins', plugins)
+
     for (const key in plugins) {
       const plugin = plugins[key]
       if (plugin.overrideRunningConfig) {
         plugin.overrideRunningConfig(serverConfig)
       }
     }
+    serverConfig.plugin = allConfig.plugin
     // fireStatus('ing') // 启动中
     const basePath = serverConfig.setting.userBasePath
     const runningConfig = basePath + '/running.json'

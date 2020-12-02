@@ -19,7 +19,10 @@ function setupPlugin (key, plugin, context, config) {
   const pluginStatus = plugin.status
   const api = PluginClass(context)
   config.addDefault(key, pluginConfig)
-  lodash.set(status, key, pluginStatus)
+  if (pluginStatus) {
+    lodash.set(status, key, pluginStatus)
+  }
+
   return api
 }
 

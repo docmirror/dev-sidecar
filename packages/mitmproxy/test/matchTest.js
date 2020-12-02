@@ -15,3 +15,6 @@ chunk.copy(chunkNew, 0, 0, index)
 scriptBuf.copy(chunkNew, index, 0)
 chunk.copy(chunkNew, index + scriptBuf.length, index)
 console.log(chunkNew.toString())
+
+const reg2 = '/aaaa/i'
+console.log(new RegExp(reg2).test('aaaa'))

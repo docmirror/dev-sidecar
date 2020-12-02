@@ -4,13 +4,11 @@ module.exports = {
     const { rOptions, log, RequestCounter } = context
 
     let proxyConf = interceptOpt.proxy
-    if (RequestCounter && interceptOpt.backup) {
+    if (RequestCounter && interceptOpt.backup && interceptOpt.backup.length > 0) {
       // 优选逻辑
       const backup = [proxyConf]
-      if (interceptOpt.backup) {
-        for (const bk of interceptOpt.backup) {
-          backup.push(bk)
-        }
+      for (const bk of interceptOpt.backup) {
+        backup.push(bk)
       }
 
       const key = interceptOpt.key
@@ -38,6 +36,7 @@ module.exports = {
     }
     // eslint-disable-next-line no-template-curly-in-string
     proxyTarget = proxyTarget.replace('${host}', rOptions.hostname)
+
     // const backup = interceptOpt.backup
     const proxy = proxyTarget.indexOf('http') === 0 ? proxyTarget : rOptions.protocol + '//' + proxyTarget
     // eslint-disable-next-line node/no-deprecated-api

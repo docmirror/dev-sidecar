@@ -18,6 +18,7 @@
   "dependencies": {
     "@docmirror/mitmproxy": "^1.2.2",
     "agentkeepalive": "^2.1.1",
+    "babel-preset-es2020": "^1.0.2",
     "charset": "^1.0.0",
     "child_process": "^1.0.2",
     "colors": "^1.1.2",

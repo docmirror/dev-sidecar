@@ -1,6 +1,10 @@
 // eslint-disable-next-line no-unused-vars
 const server = require('@docmirror/mitmproxy')
-const configPath = process.argv[2]
+let configPath = 'C:/Users/Administrator/.dev-sidecar/running.json'
+if (process.argv && process.argv.length > 3) {
+  configPath = process.argv[2]
+}
+
 const fs = require('fs')
 const path = require('path')
 const configJson = fs.readFileSync(configPath)

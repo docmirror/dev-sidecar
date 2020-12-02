@@ -1,13 +1,14 @@
 const pluginConfig = require('./config')
+
 const Plugin = function (context) {
   const { config, shell, event, log } = context
   const api = {
     async start () {
-      event.fire('status', { key: 'plugin.overwall.enabled', value: true })
+      // event.fire('status', { key: 'plugin.overwall.enabled', value: true })
     },
 
     async close () {
-      event.fire('status', { key: 'plugin.overwall.enabled', value: false })
+      // event.fire('status', { key: 'plugin.overwall.enabled', value: false })
     },
 
     async restart () {
@@ -15,12 +16,9 @@ const Plugin = function (context) {
       await api.start()
     },
 
-    async overrideRunningConfig (serverConfig) {
+    async  overrideRunningConfig_bak (serverConfig) {
       const conf = config.get().plugin.overwall
-      if (!conf?.enabled) {
-        return
-      }
-      if (!conf.targets) {
+      if (!conf || !conf.enabled || !conf.targets) {
         return
       }
       const server = conf.server
@@ -53,8 +51,5 @@ const Plugin = function (context) {
 module.exports = {
   key: 'overwall',
   config: pluginConfig,
-  status: {
-    enabled: false
-  },
   plugin: Plugin
 }

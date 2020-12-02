@@ -15,7 +15,7 @@
               <a-sub-menu v-if="item.children && item.children.length>0"   :key="item.path" @titleClick="titleClick(item)">
                 <span slot="title"><a-icon  :type="item.icon?item.icon:'file'" /><span>{{item.title}}</span></span>
                   <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)" >
-                    {{ sub.title }}
+                    <a-icon  :type="sub.icon?sub.icon:'file'"/> {{ sub.title }}
                   </a-menu-item>
               </a-sub-menu>
               <a-menu-item v-else :key="item.path" @click="menuClick(item)">
@@ -60,7 +60,8 @@ export default {
           path: '/plugin',
           icon: 'api',
           children: [
-            { title: 'NPM加速', path: '/plugin/node', icon: 'like' }
+            { title: 'NPM加速', path: '/plugin/node', icon: 'like' },
+            { title: '？？？？', path: '/plugin/overwall', icon: 'global' }
           ]
         }
       ]
