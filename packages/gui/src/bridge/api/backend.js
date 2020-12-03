@@ -42,12 +42,16 @@ const localApi = {
     load () {
       const settingPath = _getSettingsPath()
       if (!fs.existsSync(settingPath)) {
-        this.save({ overwall: true })
+        this.save({})
       }
       const file = fs.readFileSync(settingPath)
       const setting = JSON5.parse(file.toString())
       if (setting && setting.installTime == null) {
         setting.installTime = new Date().getTime()
+        this.save(setting)
+      }
+      if (setting && setting.overwall == null) {
+        setting.overwall = true
         this.save(setting)
       }
       return setting || {}
