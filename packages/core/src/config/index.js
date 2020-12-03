@@ -89,6 +89,7 @@ module.exports = {
           proxy: 'ajax.loli.net',
           test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'
         }
+
       },
       'fonts.googleapis.com': {
         '.*': {
