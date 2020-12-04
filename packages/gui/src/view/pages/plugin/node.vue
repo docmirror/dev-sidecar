@@ -19,7 +19,7 @@
             当前未启动
           </a-tag>
         </a-form-item>
-        <a-form-item label="SSL相关" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item label="SSL校验" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.node.setting['strict-ssl']">
             关闭strict-ssl
           </a-checkbox>
