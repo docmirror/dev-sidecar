@@ -50,7 +50,7 @@
 #### 1 下载安装包  
 下载安装包：  
   
-[阿里云](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.3.0.exe)  
+[阿里云](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.3.1.exe)  
 
 [Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 [Github Release](https://github.com/docmirror/dev-sidecar/releases)  
