@@ -27,7 +27,7 @@ const Plugin = function (context) {
         `git config --global http.proxy  http://${ip}:${port} `,
         `git config --global https.proxy http://${ip}:${port} `
       ]
-      if (pluginConfig.setting.sslVerify === false) {
+      if (pluginConfig.setting.sslVerify === true) {
         cmds.push('git config --global http.sslVerify false ')
       }
 
@@ -43,7 +43,7 @@ const Plugin = function (context) {
         'git config --global --unset https.proxy ',
         'git config --global --unset http.proxy '
       ]
-      if (pluginConfig.setting.sslVerify === false) {
+      if (pluginConfig.setting.sslVerify === true) {
         cmds.push('git config --global   http.sslVerify true ')
       }
       const ret = await shell.exec(cmds, { type: 'cmd' })
