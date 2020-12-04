@@ -24,11 +24,11 @@ const Plugin = function (context) {
 
     async setProxy (ip, port) {
       const cmds = [
-        `git config --global http.proxy  http://${ip}:${port}`,
-        `git config --global https.proxy http://${ip}:${port}`
+        `git config --global http.proxy  http://${ip}:${port} `,
+        `git config --global https.proxy http://${ip}:${port} `
       ]
       if (pluginConfig.setting.sslVerify === false) {
-        cmds.push('git config http.sslVerify "false"')
+        cmds.push('git config --global http.sslVerify false ')
       }
 
       const ret = await shell.exec(cmds, { type: 'cmd' })
@@ -40,11 +40,11 @@ const Plugin = function (context) {
 
     async unsetProxy () {
       const cmds = [
-        'git config --global --unset https.proxy',
-        'git config --global --unset http.proxy'
+        'git config --global --unset https.proxy ',
+        'git config --global --unset http.proxy '
       ]
       if (pluginConfig.setting.sslVerify === false) {
-        cmds.push('git config --unset  http.sslVerify ')
+        cmds.push('git config --global   http.sslVerify true ')
       }
       const ret = await shell.exec(cmds, { type: 'cmd' })
       event.fire('status', { key: 'plugin.git.enabled', value: false })
