@@ -41,20 +41,23 @@ const localApi = {
   setting: {
     load () {
       const settingPath = _getSettingsPath()
-      if (!fs.existsSync(settingPath)) {
-        this.save({})
+      let setting = {}
+      if (fs.existsSync(settingPath)) {
+        const file = fs.readFileSync(settingPath)
+        setting = JSON5.parse(file.toString())
+        if (setting == null) {
+          setting = {}
+        }
       }
-      const file = fs.readFileSync(settingPath)
-      const setting = JSON5.parse(file.toString())
-      if (setting && setting.installTime == null) {
-        setting.installTime = new Date().getTime()
-        this.save(setting)
-      }
-      if (setting && setting.overwall == null) {
+      if (setting.overwall == null) {
         setting.overwall = true
-        this.save(setting)
       }
-      return setting || {}
+
+      if (setting.installTime == null) {
+        setting.installTime = new Date().getTime()
+        localApi.setting.save(setting)
+      }
+      return setting
     },
     save (setting = {}) {
       const settingPath = _getSettingsPath()

@@ -47,7 +47,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             reqIncpts.unshift(InsertScriptMiddleware)
           }
           for (const middleware of middlewares) {
-            reqIncpts.unshift(middleware)
+            reqIncpts.push(middleware)
           }
           if (reqIncpts && reqIncpts.length > 0) {
             for (const reqIncpt of reqIncpts) {

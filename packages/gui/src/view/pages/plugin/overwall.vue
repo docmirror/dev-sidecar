@@ -24,18 +24,18 @@
         <a-form-item label="自定义域名" :label-col="labelCol" :wrapper-col="wrapperCol">
           <div>
             <a-row :gutter="10" style="">
-              <a-col :span="14">
+              <a-col :span="22">
                 <span>PAC没有拦截到的域名，可以在此处定义</span>
               </a-col>
-              <a-col :span="3">
+              <a-col :span="2">
                 <a-button  type="primary" icon="plus" @click="addTarget()" />
               </a-col>
             </a-row>
             <a-row :gutter="10"  v-for="(item,index) of targets" :key = 'index'>
-              <a-col :span="14">
+              <a-col :span="22">
                 <a-input  v-model="item.key"></a-input>
               </a-col>
-              <a-col :span="3">
+              <a-col :span="2">
                 <a-button  type="danger" icon="minus" @click="deleteTarget(item,index)" />
               </a-col>
             </a-row>
@@ -44,22 +44,28 @@
         <a-form-item label="代理服务端" :label-col="labelCol" :wrapper-col="wrapperCol">
           <div>
             <a-row :gutter="10" style="">
-              <a-col :span="14">
+              <a-col :span="22">
                 <span>Nginx二层代理服务端配置</span>
               </a-col>
-              <a-col :span="3">
+              <a-col :span="2">
                 <a-button  type="primary" icon="plus" @click="addServer()" />
               </a-col>
             </a-row>
             <a-row :gutter="10"  v-for="(item,index) of servers" :key = 'index'>
-              <a-col :span="14">
-                <a-input  v-model="item.key"></a-input>
+              <a-col :span="8">
+                <a-input addon-before="域名"  placeholder="yourdomain.com"  v-model="item.key"></a-input>
               </a-col>
-              <a-col :span="3">
+              <a-col :span="7">
+                <a-input addon-before="路径"  placeholder="xxxxxx"  v-model="item.value.path"/>
+              </a-col>
+              <a-col :span="7">
+                <a-input addon-before="密码" type="password" placeholder="password" v-model="item.value.password"/>
+              </a-col>
+              <a-col :span="2">
                 <a-button  type="danger" icon="minus" @click="deleteServer(item,index)" />
               </a-col>
             </a-row>
-
+            <div>您可以在此处配置你自己的服务器地址</div>
           </div>
         </a-form-item>
       </a-form>
@@ -144,12 +150,15 @@ export default {
           key, value
         })
       }
+      if (this.servers.length === 0) {
+        this.addServer()
+      }
     },
     deleteServer (item, index) {
       this.servers.splice(index, 1)
     },
     addServer () {
-      this.servers.unshift({ key: '', value: true })
+      this.servers.unshift({ key: '', value: { type: 'path' } })
     },
     saveServer () {
       const map = {}

@@ -2,7 +2,12 @@ module.exports = {
   name: '梯子',
   enabled: false,
   server: {
-    'ow.docmirror.top/_go_over_wall_': true
+  },
+  serverDefault: {
+    'ow-prod.docmirror.top': {
+      path: 'X2dvX292ZXJfd2FsbF8',
+      password: 'dev_sidecar_is_666'
+    }
   },
   targets: {
     '*facebook.com': true
