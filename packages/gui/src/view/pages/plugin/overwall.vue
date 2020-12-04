@@ -15,6 +15,7 @@
           </a-checkbox>
           <div>这是什么功能？你懂的！偷偷的用，别声张。(不要看视频，流量挺小的。)</div>
           <div>建议按右上角“说明”自建服务端</div>
+          <div>仅供技术学习与探讨</div>
         </a-form-item>
         <a-form-item label="PAC" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.overwall.pac.enabled">
