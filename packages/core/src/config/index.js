@@ -149,6 +149,7 @@ module.exports = {
         }
       },
       mapping: {
+        'assets.fastgit.org': 'usa',
         '*github.io': 'usa',
         'img.shields.io': 'usa',
         '*.github.com': 'usa',
