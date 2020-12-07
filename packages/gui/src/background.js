@@ -1,11 +1,10 @@
 'use strict'
 /* global __static */
 import path from 'path'
-import { app, protocol, BrowserWindow, Menu, Tray, ipcMain } from 'electron'
+import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-import bridge from './bridge/index'
-import updateHandle from './bridge/update-handle'
-import { ebtMain } from './tongji'
+import backend from './bridge/backend'
+import DevSidecar from '@docmirror/dev-sidecar'
 import log from './utils/util.log'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
@@ -113,7 +112,7 @@ function createWindow () {
 }
 
 async function beforeQuit () {
-  return bridge.devSidecar.api.shutdown()
+  return DevSidecar.api.shutdown()
 }
 async function quit (app, callback) {
   if (tray) {
@@ -136,12 +135,6 @@ if (!isFirstInstance) {
 } else {
   app.on('before-quit', async (event) => {
     log.info('before-quit')
-    // event.preventDefault()
-    // // if (tray) {
-    // //   tray.displayBalloon({ title: '正在关闭，请稍候...', content: '正在关闭中,请稍候。。。' })
-    // // }
-    // await bridge.devSidecar.api.shutdown()
-    // app.exit()
   })
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     log.info('new app started', commandLine)
@@ -180,24 +173,13 @@ if (!isFirstInstance) {
       //   log.error('Vue Devtools failed to install:', e.toString())
       // }
     }
-    createWindow()
-    bridge.init(win)
-
-    let updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
-    if (process.env.NODE_ENV === 'development') {
-      Object.defineProperty(app, 'isPackaged', {
-        get () {
-          return true
-        }
-      })
-      updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
-      // updateUrl = 'http://localhost/dev-sidecar/'
+    try {
+      createWindow()
+      const context = { win, app, beforeQuit, ipcMain, dialog,log }
+      backend.install(context) // 模块安装
+    } catch (err) {
+      log.info('err', err)
     }
-    // 自动更新
-    updateHandle(app, win, beforeQuit, updateUrl)
-
-    // 百度分析
-    ebtMain(ipcMain, isDevelopment)
 
     try {
       // 最小化到托盘

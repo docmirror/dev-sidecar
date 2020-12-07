@@ -15,7 +15,7 @@
               <a-sub-menu v-if="item.children && item.children.length>0"   :key="item.path" @titleClick="titleClick(item)">
                 <span slot="title"><a-icon  :type="item.icon?item.icon:'file'" /><span>{{item.title}}</span></span>
                   <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)" >
-                    {{ sub.title }}
+                    <a-icon  :type="sub.icon?sub.icon:'file'"/> {{ sub.title }}
                   </a-menu-item>
               </a-sub-menu>
               <a-menu-item v-else :key="item.path" @click="menuClick(item)">
@@ -45,30 +45,20 @@
 </template>
 
 <script>
+import createMenus from '@/view/router/menu'
 export default {
   name: 'App',
   components: {
   },
   data () {
     return {
-      menus: [
-        { title: '首页', path: '/index', icon: 'home' },
-        { title: '加速服务', path: '/server', icon: 'thunderbolt' },
-        { title: '系统代理', path: '/proxy', icon: 'deployment-unit' },
-        {
-          title: '应用',
-          path: '/plugin',
-          icon: 'api',
-          children: [
-            { title: 'NPM加速', path: '/plugin/node', icon: 'like' }
-          ]
-        }
-      ]
+      menus: undefined
     }
   },
   computed: {
   },
   created () {
+    this.menus = createMenus(this)
   },
   methods: {
     handleClick (e) {

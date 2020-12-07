@@ -49,11 +49,11 @@ module.exports = {
           desc: 'clone加速复制链接脚本'
         },
         '/.*': {
-          proxy: 'github.com',
+          proxy: 'gh.docmirror.top/_proxy',
           backup: [
-            'gh.docmirror.top/_proxy'
+            'github.com'
           ],
-          desc: '如果出现dev-sidecar报错，可能是备用加速地址dns被污染了，需要将本条配置删除'
+          desc: '如果出现dev-sidecar报错，可能是加速地址dns被污染了，需要将本条配置删除'
         }
       },
       'api.github.com': {
@@ -66,20 +66,30 @@ module.exports = {
         '.*': { proxy: 'raw.fastgit.org' }
       },
       'github.githubassets.com': {
-        '.*': { proxy: 'assets.fastgit.org', test: 'https://github.githubassets.com/favicons/favicon.svg', desc: '静态资源加速' }
-
+        '.*': {
+          proxy: 'assets.fastgit.org',
+          backup: ['github.githubassets.com'],
+          test: 'https://github.githubassets.com/favicons/favicon.svg',
+          desc: '静态资源加速'
+        }
       },
       'customer-stories-feed.github.com': {
         '.*': { proxy: 'customer-stories-feed.fastgit.org' }
       },
-
       // google cdn
+      'www.google.com': {
+        '/recaptcha/.*': { proxy: 'www.recaptcha.net' },
+        '.*': {
+          proxy: 'gg.docmirror.top/_yxorp',
+          desc: '呀，被你发现了，偷偷的用，别声张'
+        }
+      },
       'ajax.googleapis.com': {
         '.*': {
           proxy: 'ajax.loli.net',
-          backup: ['ajax.proxy.ustclug.org'],
           test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'
         }
+
       },
       'fonts.googleapis.com': {
         '.*': {
@@ -97,13 +107,10 @@ module.exports = {
       'themes.googleusercontent.com': {
         '.*': { proxy: 'google-themes.proxy.ustclug.org' }
       },
-      'www.google.com': {
-        '/recaptcha/.*': { proxy: 'www.recaptcha.net' }
-      },
       'fonts.gstatic.com': {
         '.*': {
-          proxy: 'fonts-gstatic.proxy.ustclug.org',
-          backup: ['gstatic.loli.net']
+          proxy: 'gstatic.loli.net',
+          backup: ['fonts-gstatic.proxy.ustclug.org']
         }
       },
       'clients*.google.com': { '.*': { abort: true } },
@@ -115,15 +122,20 @@ module.exports = {
           redirect: 'npm.taobao.org/mirrors'
         }
       },
-      'registry-1.docker.io': { '.*': { proxy: 'docker.mirrors.ustc.edu.cn' } },
-      'packages.elastic.co': { '.*': { proxy: 'elastic.proxy.ustclug.org' } },
-      'ppa.launchpad.net': { '.*': { proxy: 'launchpad.proxy.ustclug.org' } },
-      'archive.cloudera.com': { '.*': { regexp: '/cdh5/.*', proxy: 'cloudera.proxy.ustclug.org' } },
-      'downloads.lede-project.org': { '.*': { proxy: 'lede.proxy.ustclug.org' } },
-      'downloads.openwrt.org': { '.*': { proxy: 'openwrt.proxy.ustclug.org' } },
-      'secure.gravatar.com': { '.*': { proxy: 'gravatar.proxy.ustclug.org' } },
+      // 'packages.elastic.co': { '.*': { proxy: 'elastic.proxy.ustclug.org' } },
+      // 'ppa.launchpad.net': { '.*': { proxy: 'launchpad.proxy.ustclug.org' } },
+      // 'archive.cloudera.com': { '.*': { regexp: '/cdh5/.*', proxy: 'cloudera.proxy.ustclug.org' } },
+      // 'downloads.lede-project.org': { '.*': { proxy: 'lede.proxy.ustclug.org' } },
+      // 'downloads.openwrt.org': { '.*': { proxy: 'openwrt.proxy.ustclug.org' } },
+      // 'secure.gravatar.com': { '.*': { proxy: 'gravatar.proxy.ustclug.org' } },
       '*.carbonads.com': {
         '/carbon.*': {
+          abort: true,
+          desc: '广告拦截'
+        }
+      },
+      '*.buysellads.com': {
+        '/ads/.*': {
           abort: true,
           desc: '广告拦截'
         }

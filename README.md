@@ -39,8 +39,8 @@
 * 官方与淘宝npm registry一键切换,
 * 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
 
-### 6、 更多加速配置
-等你来提issue
+### 6、 增强功能
+* 等你来探索
 
 ## 快速开始
 目前仅支持windows
@@ -50,7 +50,7 @@
 #### 1 下载安装包  
 下载安装包：  
   
-[阿里云](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.2.1.exe)  
+[阿里云](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.3.1.exe)  
 
 [Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 [Github Release](https://github.com/docmirror/dev-sidecar/releases)  
@@ -160,18 +160,19 @@ const intercepts = {
 ## 问题排查
 如果没有加速效果，请根据以下步骤进行排查     
 
-#### 1、请确认windows的代理设置处于勾选状态       
+#### 1. 请确认windows的代理设置处于勾选状态     
  如何打开查看windows代理设置：    
  * win10: 开始->设置->网络和Internet->最下方代理      
  * win7: 开始->控制面板->网络和Internet->网络和共享中心->左下角Internet选项->连接选项卡->局域网设置      
 
 ![](./doc/proxy.png)    
    
-#### 2. 360软件会严重拖慢设置代理命令的执行时间   
-如果开启了360，那么软件开启windows代理的时间会特别长，需要耐心等待。    
+   
+#### 2. 尝试将代理设置关闭再重新打开  
+按上图中先关闭代理，保存，再打开代理，再保存
 
-#### 3.如果还是不行，请在下方加作者好友，将服务日志发送给作者进行分析          
- 日志打开方式：加速服务->右边日志按钮->另存为    
+#### 3. 如果还是不行，请在下方加作者好友，将服务日志发送给作者进行分析          
+ 日志打开方式：加速服务->右边日志按钮->打开日志文件夹    
  
 ![](./doc/log.png)      
 

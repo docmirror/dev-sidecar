@@ -38,6 +38,7 @@ module.exports = {
     port = ~~port
     const requestHandler = createRequestHandler(
       createIntercepts,
+      middlewares,
       externalProxy,
       dnsConfig,
       setting
@@ -55,6 +56,7 @@ module.exports = {
 
     const connectHandler = createConnectHandler(
       sslConnectInterceptor,
+      middlewares,
       fakeServersCenter,
       dnsConfig
     )

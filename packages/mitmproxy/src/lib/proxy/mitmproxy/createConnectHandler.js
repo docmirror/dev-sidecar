@@ -5,14 +5,32 @@ const log = require('../../../utils/util.log')
 const DnsUtil = require('../../dns/index')
 const localIP = '127.0.0.1'
 const defaultDns = require('dns')
+
+function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
+  for (const intercept of sslConnectInterceptors) {
+    const ret = intercept(req, cltSocket, head)
+    if (ret) {
+      return true
+    }
+  }
+  return false
+}
+
 // create connectHandler function
-module.exports = function createConnectHandler (sslConnectInterceptor, fakeServerCenter, dnsConfig) {
+module.exports = function createConnectHandler (sslConnectInterceptor, middlewares, fakeServerCenter, dnsConfig) {
   // return
+  const sslConnectInterceptors = []
+  sslConnectInterceptors.push(sslConnectInterceptor)
+  for (const middleware of middlewares) {
+    if (middleware.sslConnectInterceptor) {
+      sslConnectInterceptors.push(middleware.sslConnectInterceptor)
+    }
+  }
   return function connectHandler (req, cltSocket, head) {
     // eslint-disable-next-line node/no-deprecated-api
     const srvUrl = url.parse(`https://${req.url}`)
     const hostname = srvUrl.hostname
-    if (typeof sslConnectInterceptor === 'function' && sslConnectInterceptor(req, cltSocket, head)) {
+    if (isSslConnect(sslConnectInterceptors, req, cltSocket, head)) {
       fakeServerCenter.getServerPromise(hostname, srvUrl.port).then((serverObj) => {
         connect(req, cltSocket, head, localIP, serverObj.port)
       }, (e) => {

@@ -901,12 +901,12 @@
     ajv "^6.12.0"
     ajv-keywords "^3.4.1"
 
-"@docmirror/dev-sidecar@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@docmirror/dev-sidecar/-/dev-sidecar-1.2.0.tgz#2320c31f786afd495b8e12557bea396cb96e0985"
-  integrity sha512-i96YlPjQtrrAgDW52YOpuVFmQDl1A0Nx3x6/riv2yKVN4nGqAugdJvcAuhNi7BDrJfdLyls2jI35uzN5+bpYfQ==
+"@docmirror/dev-sidecar@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@docmirror/dev-sidecar/-/dev-sidecar-1.2.2.tgz#4963a9dd9f3f46e614e1c1479887b8680f0f6650"
+  integrity sha512-gWD5WPuyijIuFrpinMR0QSLdqdhLEfZVi9lnRSor9TnnaoBpeY6QlufHACpDDo6hME8f62adXGFmL3UoFJS49Q==
   dependencies:
-    "@docmirror/mitmproxy" "^1.2.0"
+    "@docmirror/mitmproxy" "^1.2.2"
     agentkeepalive "^2.1.1"
     charset "^1.0.0"
     child_process "^1.0.2"
@@ -933,10 +933,10 @@
     validator "^13.1.17"
     winreg "^1.2.4"
 
-"@docmirror/mitmproxy@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@docmirror/mitmproxy/-/mitmproxy-1.2.0.tgz#ab9910031272d8e16fe0e38d434f7b42971bc74e"
-  integrity sha512-DlzquSNVZOC/p5GwAdDwSiI4KCb3HlUY4A44pGGOBehsNThBoRU8ESKJjbyay9ah4RPSAWTSVYgMEiPZctR+wg==
+"@docmirror/mitmproxy@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@docmirror/mitmproxy/-/mitmproxy-1.2.2.tgz#a4d0020e073eaa68adb7902b5634ab2a1a3bc058"
+  integrity sha512-xW1xyqUfpGAZZTzqSjoQM0Mmq8VVEyvS8AiTUBvgpxUAYG2sqNCacLETwYfNBP1MStUBtGXKklcISpIY6+R+DA==
   dependencies:
     agentkeepalive "^2.1.1"
     child_process "^1.0.2"

@@ -6,10 +6,12 @@ const DnsUtil = require('../../dns/index')
 const log = require('../../../utils/util.log')
 const RequestCounter = require('../../choice/RequestCounter')
 const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
+const OverWallMiddleware = require('../middleware/overwall')
+
 const defaultDns = require('dns')
 const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
 // create requestHandler function
-module.exports = function createRequestHandler (createIntercepts, externalProxy, dnsConfig, setting) {
+module.exports = function createRequestHandler (createIntercepts, middlewares, externalProxy, dnsConfig, setting) {
   // return
   return function requestHandler (req, res, ssl) {
     let proxyReq
@@ -44,8 +46,14 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
           if (setting.script.enabled) {
             reqIncpts.unshift(InsertScriptMiddleware)
           }
+          for (const middleware of middlewares) {
+            reqIncpts.push(middleware)
+          }
           if (reqIncpts && reqIncpts.length > 0) {
             for (const reqIncpt of reqIncpts) {
+              if (!reqIncpt.requestIntercept) {
+                continue
+              }
               const goNext = reqIncpt.requestIntercept(context, req, res, ssl, next)
               if (goNext) {
                 next()
@@ -200,6 +208,11 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
         const next = () => {
           resolve()
         }
+        for (const middleware of middlewares) {
+          if (middleware.responseInterceptor) {
+            middleware.responseInterceptor(req, res, proxyReq, proxyRes, ssl, next)
+          }
+        }
         if (!setting.script.enabled) {
           next()
           return
@@ -217,7 +230,6 @@ module.exports = function createRequestHandler (createIntercepts, externalProxy,
                 body += append.body
               }
             }
-
             InsertScriptMiddleware.responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, { head, body })
           } else {
             next()
