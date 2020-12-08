@@ -161,6 +161,7 @@ module.exports = {
         }
       },
       mapping: {
+        'assets.fastgit.org': 'usa',
         '*yarnpkg.com': 'usa',
         '*cloudfront.net': 'usa',
         '*github.io': 'usa',
