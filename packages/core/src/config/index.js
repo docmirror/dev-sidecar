@@ -161,6 +161,8 @@ module.exports = {
         }
       },
       mapping: {
+        '*yarnpkg.com': 'usa',
+        '*cloudfront.net': 'usa',
         '*github.io': 'usa',
         'img.shields.io': 'usa',
         '*.github.com': 'usa',
