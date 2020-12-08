@@ -102,7 +102,7 @@ export default {
           return true
         }
       })
-      // updateUrl = 'https://dev-sidecar.docmirror.cn/update/'
+      // updateUrl = 'http://dev-sidecar.docmirror.cn/update/'
       updateUrl = 'http://localhost/dev-sidecar/'
     }
     updateHandle(app, win, beforeQuit, updateUrl, log)
