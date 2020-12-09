@@ -161,6 +161,9 @@ module.exports = {
         }
       },
       mapping: {
+        'assets.fastgit.org': 'usa',
+        '*yarnpkg.com': 'usa',
+        '*cloudfront.net': 'usa',
         '*github.io': 'usa',
         'img.shields.io': 'usa',
         '*.github.com': 'usa',
@@ -169,7 +172,6 @@ module.exports = {
         // "解决push的时候需要输入密码的问题",
         'github.com': 'usa',
         '*.vuepress.vuejs.org': 'usa',
-        'github.docmirror.cn': 'usa',
         'gh.docmirror.top': 'usa'
       }
     }

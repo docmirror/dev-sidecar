@@ -27,7 +27,7 @@ module.exports = function createOverWallIntercept (overWallConfig) {
   if (keys.length === 0) {
     return null
   }
-  const regexpMap = matchUtil.domainMapRegexply(overWallConfig.intercepts)
+  const regexpMap = matchUtil.domainMapRegexply(overWallConfig.targets)
   return {
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]
