@@ -1,8 +1,16 @@
+const fs = require('fs')
 const Shell = require('./shell')
 const lodash = require('lodash')
 const defConfig = require('./config/index.js')
+const JSON5 = require('json5').default
 
+console.log('JSON5', JSON5, JSON5.parse)
 let configTarget = lodash.cloneDeep(defConfig)
+
+function get () {
+  return configTarget
+}
+
 function _deleteDisabledItem (target) {
   lodash.forEach(target, (item, key) => {
     if (item == null) {
@@ -13,11 +21,86 @@ function _deleteDisabledItem (target) {
     }
   })
 }
+const getDefaultConfigBasePath = function () {
+  return get().server.setting.userBasePath
+}
+function _getConfigPath () {
+  const dir = getDefaultConfigBasePath()
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir)
+  }
+  return dir + '/config.json5'
+}
+
+function doMerge (defObj, newObj) {
+  const defObj2 = { ...defObj }
+  const newObj2 = {}
+  for (const key in newObj) {
+    const newValue = newObj[key]
+    const defValue = defObj[key]
+    if (newValue != null && defValue == null) {
+      newObj2[key] = newValue
+      continue
+    }
+    if (lodash.isEqual(newValue, defValue)) {
+      delete defObj2[key]
+      continue
+    }
+
+    if (lodash.isArray(newValue)) {
+      delete defObj2[key]
+      newObj2[key] = newValue
+      continue
+    }
+    if (lodash.isObject(newValue)) {
+      newObj2[key] = doMerge(defValue, newValue)
+      delete defObj2[key]
+      continue
+    } else {
+      // 基础类型，直接覆盖
+      delete defObj2[key]
+      newObj2[key] = newValue
+      continue
+    }
+  }
+  // defObj 里面剩下的是被删掉的
+  lodash.forEach(defObj2, (defValue, key) => {
+    newObj2[key] = null
+  })
+  return newObj2
+}
 
 const configApi = {
-  get () {
-    return configTarget
+  /**
+   * 保存自定义的 config
+   * @param newConfig
+   */
+  save (newConfig) {
+    // 对比默认config的异同
+    // configApi.set(newConfig)
+    const defConfig = configApi.getDefault()
+    const saveConfig = doMerge(defConfig, newConfig)
+    fs.writeFileSync(_getConfigPath(), JSON5.stringify(saveConfig, null, 2))
+    configApi.reload()
+    return saveConfig
   },
+  doMerge,
+  /**
+   * 读取后合并配置
+   * @returns {*}
+   */
+  reload () {
+    const path = _getConfigPath()
+    if (!fs.existsSync(path)) {
+      return configApi.get()
+    }
+    const file = fs.readFileSync(path)
+    const userConfig = JSON5.parse(file.toString())
+    configApi.set(userConfig)
+    const config = configApi.get()
+    return config || {}
+  },
+  get,
   set (newConfig) {
     if (newConfig == null) {
       return

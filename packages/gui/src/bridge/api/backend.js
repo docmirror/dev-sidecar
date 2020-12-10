@@ -86,35 +86,6 @@ const localApi = {
     restart () {
       return DevSidecar.api.server.restart({ mitmproxyPath })
     }
-  },
-  config: {
-    /**
-     * 保存自定义的 config
-     * @param newConfig
-     */
-    save (newConfig) {
-      // 对比默认config的异同
-      DevSidecar.api.config.set(newConfig)
-      const defConfig = DevSidecar.api.config.getDefault()
-      const saveConfig = doMerge(defConfig, newConfig)
-      fs.writeFileSync(_getConfigPath(), JSON5.stringify(saveConfig, null, 2))
-      return saveConfig
-    },
-    /**
-     * 读取后合并配置
-     * @returns {*}
-     */
-    reload () {
-      const path = _getConfigPath()
-      if (!fs.existsSync(path)) {
-        return DevSidecar.api.config.get()
-      }
-      const file = fs.readFileSync(path)
-      const userConfig = JSON5.parse(file.toString())
-      DevSidecar.api.config.set(userConfig)
-      const config = DevSidecar.api.config.get()
-      return config || {}
-    }
   }
 }
 
@@ -135,51 +106,6 @@ function _getSettingsPath () {
     fs.mkdirSync(dir)
   }
   return dir + '/setting.json5'
-}
-function _getConfigPath () {
-  const dir = getDefaultConfigBasePath()
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir)
-  }
-  return dir + '/config.json5'
-}
-
-function doMerge (defObj, newObj) {
-  const defObj2 = { ...defObj }
-  const newObj2 = {}
-  for (const key in newObj) {
-    const newValue = newObj[key]
-    const defValue = defObj[key]
-    if (newValue != null && defValue == null) {
-      newObj2[key] = newValue
-      continue
-    }
-    if (lodash.isEqual(newValue, defValue)) {
-      delete defObj2[key]
-      continue
-    }
-
-    if (lodash.isArray(newValue)) {
-      delete defObj2[key]
-      newObj2[key] = newValue
-      continue
-    }
-    if (lodash.isObject(newValue)) {
-      newObj2[key] = doMerge(defValue, newValue)
-      delete defObj2[key]
-      continue
-    } else {
-      // 基础类型，直接覆盖
-      delete defObj2[key]
-      newObj2[key] = newValue
-      continue
-    }
-  }
-  // defObj 里面剩下的是被删掉的
-  lodash.forEach(defObj2, (defValue, key) => {
-    newObj2[key] = null
-  })
-  return newObj2
 }
 
 function invoke (api, param) {
@@ -217,7 +143,7 @@ export default {
     })
 
     // 合并用户配置
-    localApi.config.reload()
+    DevSidecar.api.config.reload()
     // 启动所有
     localApi.startup()
   },

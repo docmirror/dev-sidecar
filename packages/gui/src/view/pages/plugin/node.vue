@@ -25,11 +25,22 @@
           </a-checkbox>
           npm代理启用后必须关闭
         </a-form-item>
-        <a-form-item label="切换registry" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item label="npm registry" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group v-model="config.plugin.node.setting.registry" @change="onSwitchRegistry"
                          default-value="https://registry.npmjs.org" button-style="solid">
             <a-radio-button value="https://registry.npmjs.org">
               npmjs
+            </a-radio-button>
+            <a-radio-button value="https://registry.npm.taobao.org">
+              taobao
+            </a-radio-button>
+          </a-radio-group>
+        </a-form-item>
+
+        <a-form-item label="yarn registry" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-radio-group v-model="config.plugin.node.setting.yarnRegistry" :default-value="null"  @change="onSwitchYarnRegistry" button-style="solid">
+            <a-radio-button :value="null">
+              yarn
             </a-radio-button>
             <a-radio-button value="https://registry.npm.taobao.org">
               taobao
@@ -93,12 +104,19 @@ export default {
       })
     },
     async onSwitchRegistry (event) {
-      await this.setRegistry(event.target.value)
+      await this.setRegistry({ registry: event.target.value, type: 'npm' })
       this.$message.success('切换成功')
     },
-    async setRegistry (registry) {
+    async onSwitchYarnRegistry (event) {
+      const registry = event.target.value
+      console.log('registry', registry)
+      await this.setRegistry({ registry, type: 'yarn' })
+      this.$message.success('切换成功')
+    },
+    async setRegistry ({ registry, type }) {
       this.apply()
-      await this.$api.plugin.node.setRegistry(registry)
+      console.log('type', type)
+      await this.$api.plugin.node.setRegistry({ registry, type })
     },
     setNpmVariableAll () {
       this.saveConfig().then(() => {

@@ -1,4 +1,6 @@
-{
+const config = require('../src/config')
+
+config.set({
   server: {
     intercepts: {
       'github1.githubassets.com': {
@@ -8,17 +10,11 @@
           desc: '静态资源加速'
         }
       },
-      'github.githubassets.com': null,
-      'notify3.note.youdao.com': {
-        '/pushserver3/.*': {
-          abort: true
-        },
-      }
-    },
-  },
-  plugin: {
-    node: {
-      enabled: true
+      'github.githubassets.com': null
     }
   }
-}
+})
+
+console.log(config.get())
+
+config.reload()

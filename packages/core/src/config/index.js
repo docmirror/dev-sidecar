@@ -67,8 +67,7 @@ module.exports = {
       },
       'github.githubassets.com': {
         '.*': {
-          proxy: 'assets.fastgit.org',
-          backup: ['github.githubassets.com'],
+          proxy: 'assets-gh.docmirror.top/_proxy',
           test: 'https://github.githubassets.com/favicons/favicon.svg',
           desc: '静态资源加速'
         }
