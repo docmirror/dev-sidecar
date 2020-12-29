@@ -4,7 +4,7 @@ const lodash = require('lodash')
 const defConfig = require('./config/index.js')
 const JSON5 = require('json5').default
 
-console.log('JSON5', JSON5, JSON5.parse)
+console.log('JSON5', JSON5)
 let configTarget = lodash.cloneDeep(defConfig)
 
 function get () {

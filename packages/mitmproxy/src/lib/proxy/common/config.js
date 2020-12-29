@@ -18,7 +18,7 @@ config.setDefaultCABasePath = function (path) {
   config.caBasePath = path
 }
 function buildDefaultCABasePath () {
-  const userHome = process.env.USERPROFILE
+  const userHome = process.env.USERPROFILE || process.env.HOME
   return path.resolve(userHome, './.dev-sidecar')
 }
 

@@ -1,7 +1,7 @@
 <template>
   <ds-container>
     <template slot="header">
-      Ladder
+      梯子
       <span>
            <a-button type="primary" @click="openExternal('https://github.com/docmirror/dev-sidecar-doc/blob/main/ow.md')">原理说明</a-button>
       </span>
@@ -9,7 +9,7 @@
 
     <div v-if="config">
       <a-form layout="horizontal">
-        <a-form-item label="Ladder" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item label="梯子" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.overwall.enabled">
             启用
           </a-checkbox>

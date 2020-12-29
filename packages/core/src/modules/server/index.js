@@ -6,7 +6,11 @@ const fork = require('child_process').fork
 const log = require('../../utils/util.log')
 const fs = require('fs')
 const path = require('path')
-const JSON5 = require('json5').default
+let JSON5 = require('json5')
+if (JSON5.default) {
+  JSON5 = JSON5.default
+}
+
 let server
 function fireStatus (status) {
   event.fire('status', { key: 'server.enabled', value: status })
