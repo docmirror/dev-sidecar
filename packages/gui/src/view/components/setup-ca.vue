@@ -18,7 +18,7 @@
       请按如下步骤将<b>本地随机生成</b>的根证书添加到<b>信任的根证书颁发机构</b><br/>
       证书是本地随机生成，所以信任它是安全的
     </div>
-    <img width="100%" src="/setup.png" />
+    <img width="100%" :src="setupImage" />
 
   </a-drawer>
 </template>
@@ -40,9 +40,22 @@ export default {
   },
   data () {
     return {
+      systemPlatform: 'win'
     }
   },
-  created () {
+  async created () {
+    const platform = await this.$api.info.getSystemPlatform()
+    console.log('11', platform)
+    this.systemPlatform = platform
+  },
+  computed: {
+    setupImage () {
+      if (this.systemPlatform === 'mac') {
+        return '/setup-mac.png'
+      } else {
+        return '/setup.png'
+      }
+    }
   },
   methods: {
     afterVisibleChange (val) {

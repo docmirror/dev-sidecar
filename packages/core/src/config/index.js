@@ -1,10 +1,6 @@
 const path = require('path')
-const shell = require('../shell/shell')
 function getUserBasePath () {
-  let userHome = process.env.USERPROFILE
-  if(shell.getSystemPlatform() === 'mac'){
-    userHome = process.env.HOME
-  }
+  const userHome = process.env.USERPROFILE || process.env.HOME || '/'
   return path.resolve(userHome, './.dev-sidecar')
 }
 function getRootCaCertPath () {

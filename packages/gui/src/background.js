@@ -40,7 +40,7 @@ function setTray (app) {
     }
   ]
   // 设置系统托盘图标
-  const iconPath = path.join(__dirname, '../extra/icons/128x128.png')
+  const iconPath = path.join(__dirname, '../extra/icons/16x16.png')
   const appTray = new Tray(iconPath)
 
   // 图标的上下文菜单
@@ -85,7 +85,7 @@ function createWindow () {
       nodeIntegration: true// process.env.ELECTRON_NODE_INTEGRATION
     },
     // eslint-disable-next-line no-undef
-    icon: path.join(__static, 'icon.png')
+    icon: path.join(__dirname, '../build/icons/icon.png')
   })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -125,25 +125,12 @@ async function quit (app, callback) {
 
 // eslint-disable-next-line no-unused-vars
 function setDock () {
-  const { app, Menu } = require('electron')
-
-  const dockMenu = Menu.buildFromTemplate([
-    {
-      label: 'New Window',
-      click () { console.log('New Window') }
-    }, {
-      label: 'New Window with Settings',
-      submenu: [
-        { label: 'Basic' },
-        { label: 'Pro' }
-      ]
-    },
-    { label: '退出' }
-  ])
-
-  app.whenReady().then(() => {
-    app.dock.setMenu(dockMenu)
-  })
+  const { app } = require('electron')
+  if (process.platform === 'darwin') {
+    app.whenReady().then(() => {
+      app.dock.setIcon(path.join(__dirname, '../build/icons/1024x1024.png'))
+    })
+  }
 }
 // -------------执行开始---------------
 app.disableHardwareAcceleration() // 禁用gpu
@@ -219,6 +206,8 @@ if (!isFirstInstance) {
     }
   })
 }
+
+setDock()
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

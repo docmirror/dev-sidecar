@@ -1,0 +1,18 @@
+<svg id="svg_canvas" viewBox="0 0 280 280" width="280" height="280" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g transform="scale(2)">
+        <g class="logo-entity" transform="translate(142,-1.5) scale(-1.30,1.30)">
+            <circle fill="#1B7FCD" cx="45.9" cy="55.2" r="17.5"
+            ></circle>
+            <circle cx="23.5" cy="21.7" r="9.6" fill="#1B7FCD"></circle>
+            <circle cx="52.3" cy="23.9" r="6.9" fill="#1B7FCD"></circle>
+            <circle stroke="#1B7FCD" stroke-miterlimit="10" cx="32.5" cy="89.7" r="9.6" fill="#1B7FCD"></circle>
+
+            <circle fill="none" stroke="#1B7FCD" stroke-width="5" stroke-miterlimit="10" cx="84" cy="61.3" r="10.4"></circle>
+
+            <line fill="none" stroke="#1B7FCD" stroke-width="5" stroke-miterlimit="10" x1="37.9" y1="44.7" x2="26.2" y2="26.9"></line>
+            <line fill="none" stroke="#1B7FCD" stroke-width="5" stroke-miterlimit="10" x1="48.1" y1="44.7" x2="51.3" y2="27.7"></line>
+            <line fill="none" stroke="#1B7FCD" stroke-width="5" stroke-miterlimit="10" x1="40.1" y1="67.4" x2="34.9" y2="82.5"></line>
+            <line fill="none" stroke="#1B7FCD" stroke-width="5" stroke-miterlimit="10" x1="57" y1="55.5" x2="71.8" y2="58.6"></line>
+        </g>
+    </g>
+</svg>

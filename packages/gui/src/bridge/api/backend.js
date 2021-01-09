@@ -33,6 +33,9 @@ const localApi = {
     },
     getConfigDir () {
       return getDefaultConfigBasePath()
+    },
+    getSystemPlatform () {
+      return DevSidecar.api.shell.getSystemPlatform()
     }
   },
   /**
