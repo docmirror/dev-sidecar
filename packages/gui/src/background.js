@@ -128,7 +128,7 @@ function setDock () {
   const { app } = require('electron')
   if (process.platform === 'darwin') {
     app.whenReady().then(() => {
-      app.dock.setIcon(path.join(__dirname, '../build/icons/1024x1024.png'))
+      app.dock.setIcon(path.join(__dirname, '../build/icons/512x512.png'))
     })
   }
 }

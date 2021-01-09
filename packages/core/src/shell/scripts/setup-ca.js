@@ -8,13 +8,13 @@ const executor = {
     return true
   },
   async linux (exec, { certPath }) {
-    const cmds = ['open "" "' + certPath + '"']
+    const cmds = ['open "' + certPath + '"']
     // eslint-disable-next-line no-unused-vars
     const ret = await exec(cmds, { type: 'cmd' })
     return true
   },
   async mac (exec, { certPath }) {
-    const cmds = ['open "" "' + certPath + '"']
+    const cmds = ['open "' + certPath + '"']
     // eslint-disable-next-line no-unused-vars
     const ret = await exec(cmds, { type: 'cmd' })
     return true
