@@ -10,7 +10,8 @@
     "electron": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten"
+    "electron:icons": "electron-icon-builder --input=./public/logo/win.png --output=build --flatten",
+    "electron:icons-mac": "electron-icon-builder --input=./public/logo/mac.png --output=build --flatten"
   },
   "author": "docmirror.cn",
   "main": "background.js",

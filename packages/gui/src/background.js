@@ -40,7 +40,11 @@ function setTray (app) {
     }
   ]
   // 设置系统托盘图标
-  const iconPath = path.join(__dirname, '../extra/icons/16x16.png')
+  let icon = '32x32.png'
+  if (isMac) {
+    icon = '16x16.png'
+  }
+  const iconPath = path.join(__dirname, '../extra/icons/', icon)
   const appTray = new Tray(iconPath)
 
   // 图标的上下文菜单
@@ -128,7 +132,7 @@ function setDock () {
   const { app } = require('electron')
   if (process.platform === 'darwin') {
     app.whenReady().then(() => {
-      app.dock.setIcon(path.join(__dirname, '../build/icons/512x512.png'))
+      app.dock.setIcon(path.join(__dirname, '../build/mac/512x512.png'))
     })
   }
 }

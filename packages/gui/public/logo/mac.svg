@@ -23,16 +23,16 @@
                     <g id="编组" mask="url(#mask-2)">
                         <g>
                             <rect id="矩形" stroke="#979797" fill="#1B7FCD" x="0.5" y="0.5" width="823" height="823"></rect>
-                            <g transform="translate(412.000000, 411.500000) scale(-1, 1) translate(-412.000000, -411.500000) translate(91.000000, 63.000000)">
-                                <ellipse id="椭圆形" fill="#FFFFFF" fill-rule="nonzero" cx="255" cy="345" rx="139" ry="140"></ellipse>
-                                <circle id="椭圆形" fill="#FFFFFF" fill-rule="nonzero" cx="76.5" cy="76.5" r="76.5"></circle>
-                                <circle id="椭圆形" fill="#FFFFFF" fill-rule="nonzero" cx="306.5" cy="94.5" r="55.5"></circle>
-                                <circle id="椭圆形" stroke="#FFFFFF" stroke-width="2.8" fill="#FFFFFF" fill-rule="nonzero" cx="147.5" cy="620.5" r="76.5"></circle>
-                                <circle id="椭圆形" stroke="#FFFFFF" stroke-width="14" cx="559" cy="393" r="83"></circle>
-                                <line x1="190" y1="262" x2="98" y2="119" id="路径" stroke="#FFFFFF" stroke-width="14"></line>
-                                <line x1="273" y1="260" x2="298" y2="124" id="路径" stroke="#FFFFFF" stroke-width="14"></line>
-                                <line x1="209" y1="442" x2="168" y2="563" id="路径" stroke="#FFFFFF" stroke-width="14"></line>
-                                <line x1="344" y1="346" x2="476" y2="371" id="路径" stroke="#FFFFFF" stroke-width="14"></line>
+                            <g transform="translate(411.500000, 411.500000) scale(-1, 1) translate(-411.500000, -411.500000) translate(92.000000, 65.000000)">
+                                <ellipse id="椭圆形" fill="#FFFFFF" fill-rule="nonzero" cx="253.5" cy="343" rx="138.5" ry="139"></ellipse>
+                                <circle id="椭圆形" fill="#FFFFFF" fill-rule="nonzero" cx="76" cy="76" r="76"></circle>
+                                <circle id="椭圆形" fill="#FFFFFF" fill-rule="nonzero" cx="304.5" cy="94.5" r="55.5"></circle>
+                                <circle id="椭圆形" stroke="#FFFFFF" stroke-width="2.8" fill="#FFFFFF" fill-rule="nonzero" cx="147" cy="617" r="76"></circle>
+                                <circle id="椭圆形" stroke="#FFFFFF" stroke-width="50" cx="556.5" cy="390.5" r="82.5"></circle>
+                                <line x1="189" y1="260" x2="97" y2="118" id="路径" stroke="#FFFFFF" stroke-width="50"></line>
+                                <line x1="272" y1="258" x2="297" y2="123" id="路径" stroke="#FFFFFF" stroke-width="50"></line>
+                                <line x1="208" y1="439" x2="167" y2="560" id="路径" stroke="#FFFFFF" stroke-width="50"></line>
+                                <line x1="342" y1="344" x2="474" y2="368" id="路径" stroke="#FFFFFF" stroke-width="50"></line>
                             </g>
                         </g>
                     </g>
