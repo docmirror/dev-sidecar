@@ -53,10 +53,7 @@ module.exports = {
           allowToChangeInstallationDirectory: true
         },
         mac: {
-          target: 'dmg'
-        },
-        win: {
-          icon: '/public/icon.png'
+          icon: 'build/mac/icon.icns'
         },
         publish: {
           provider: 'generic',

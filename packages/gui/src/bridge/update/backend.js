@@ -95,7 +95,7 @@ function updateHandle (app, win, beforeQuit, updateUrl, log) {
 export default {
   install (context) {
     const { app, win, beforeQuit, log } = context
-    let updateUrl = 'http://dev-sidecar.docmirror.cn/update/'
+    const updateUrl = 'http://dev-sidecar.docmirror.cn/update/'
     if (process.env.NODE_ENV === 'development') {
       Object.defineProperty(app, 'isPackaged', {
         get () {
@@ -103,7 +103,7 @@ export default {
         }
       })
       // updateUrl = 'http://dev-sidecar.docmirror.cn/update/'
-      updateUrl = 'http://localhost/dev-sidecar/'
+      // updateUrl = 'http://localhost/dev-sidecar/'
     }
     updateHandle(app, win, beforeQuit, updateUrl, log)
   }
