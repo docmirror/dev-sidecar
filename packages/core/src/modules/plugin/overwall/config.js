@@ -1,6 +1,6 @@
 module.exports = {
   name: '梯子',
-  enabled: false,
+  enabled: true,
   server: {
   },
   serverDefault: {
