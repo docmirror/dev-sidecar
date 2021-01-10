@@ -40,7 +40,7 @@ function setTray (app) {
     }
   ]
   // 设置系统托盘图标
-  let icon = '32x32.png'
+  let icon = '128x128.png'
   if (isMac) {
     icon = '16x16.png'
   }
@@ -89,7 +89,7 @@ function createWindow () {
       nodeIntegration: true// process.env.ELECTRON_NODE_INTEGRATION
     },
     // eslint-disable-next-line no-undef
-    icon: path.join(__dirname, '../build/icons/icon.png')
+    icon: path.join(__static, 'icon.png')
   })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {

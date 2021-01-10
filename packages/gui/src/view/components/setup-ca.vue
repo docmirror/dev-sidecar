@@ -15,8 +15,15 @@
       <a-button type="primary" style="float:right" @click="doSetup()">点此去安装</a-button>
     </template>
     <div>
-      请按如下步骤将<b>本地随机生成</b>的根证书添加到<b>信任的根证书颁发机构</b><br/>
-      证书是本地随机生成，所以信任它是安全的
+      <b>本应用正常使用必须信任本地自动随机生成的根证书</b><br/>
+      1、点击右上角“点此去安装按钮”<br/>
+      <template v-if="this.systemPlatform === 'mac'">
+        2、然后按如下图步骤将随机生成的根证书设置为信任<br/>
+      </template>
+      <template v-else>
+        2、然后按如下图步骤将根证书添加到<b>信任的根证书颁发机构</b><br/>
+      </template>
+
     </div>
     <img width="100%" :src="setupImage" />
 

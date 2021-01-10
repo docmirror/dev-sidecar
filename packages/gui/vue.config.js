@@ -55,6 +55,9 @@ module.exports = {
         mac: {
           target: 'dmg'
         },
+        win: {
+          icon: '/public/icon.png'
+        },
         publish: {
           provider: 'generic',
           url: ''
