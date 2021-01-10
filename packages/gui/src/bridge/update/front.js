@@ -56,6 +56,21 @@ function install (app, api) {
     if (updateParams.autoDownload !== false) {
       app.$message.info('发现新版本，正在下载中...')
       updateParams.downloading = true
+
+      api.shell.getSystemPlatform().then((platform) => {
+        if (platform === 'mac') {
+          app.$notification.open({
+            duration: 10,
+            message: 'Mac暂不支持自动升级',
+            description:
+              '请前往github或gitee项目主页下载新版本手动安装，听说苹果对于Electron开发的应用审核不好过。。。。好吧我承认是因为没有钱买苹果开发者账号，┓( ´∀` )┏',
+            onClick: () => {
+
+            }
+          })
+        }
+      })
+
       api.update.downloadUpdate()
       return
     }
