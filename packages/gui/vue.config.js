@@ -52,6 +52,9 @@ module.exports = {
           allowElevation: true,
           allowToChangeInstallationDirectory: true
         },
+        mac: {
+          target: 'dmg'
+        },
         publish: {
           provider: 'generic',
           url: ''
