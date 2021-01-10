@@ -40,18 +40,22 @@
 * 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
 
 ### 6、 增强功能
-* 等你来探索
+* 众所周知的原因，不能在这里展示太多，自己下载来安装看看吧
 
 ## 快速开始
-目前仅支持windows
+支持windows、Mac
 
 ### DevSidecar桌面应用
  
 #### 1 下载安装包  
 下载安装包：  
-  
-[阿里云](http://dev-sidecar.docmirror.cn/update/DevSidecar-1.3.2.exe)  
+ 
+阿里云直接下载 
+[windows版](http://dev-sidecar.docmirror.cn/update/DevSidecar-1.3.2.exe)      
+[Mac版](http://dev-sidecar.docmirror.cn/update/DevSidecar-1.4.0.dmg)     
+注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
+从Release下载
 [Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 [Github Release](https://github.com/docmirror/dev-sidecar/releases)  
 
@@ -64,7 +68,7 @@
        
 第一次打开会提示安装证书，根据提示操作即可  
  
-
+ 
 >根证书是本地随机生成的，所以不用担心根证书的安全问题  
 
 
