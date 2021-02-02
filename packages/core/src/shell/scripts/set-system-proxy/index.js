@@ -9,6 +9,9 @@ const refreshInternetPs = require('./refresh-internet')
 const PowerShell = require('node-powershell')
 const log = require('../../../utils/util.log')
 const path = require('path')
+const childProcess = require('child_process')
+const util = require('util')
+const _exec = util.promisify(childProcess.exec)
 const _lanIP = [
   'localhost',
   '127.*',
@@ -119,11 +122,22 @@ const executor = {
       return _winSetProxy(exec, ip, port)
     }
   },
-  async linux (exec, { port }) {
+  async linux (exec, params) {
     throw Error('暂未实现此功能')
   },
-  async mac (exec, { port }) {
-    throw Error('暂未实现此功能')
+  async mac (exec, params) {
+    // exec = _exec
+    let wifiAdaptor = await exec('sh -c "networksetup -listnetworkserviceorder | grep `route -n get 0.0.0.0 | grep \'interface\' | cut -d \':\' -f2` -B 1 | head -n 1 | cut -d \' \' -f2"')
+    wifiAdaptor = wifiAdaptor.trim()
+
+    if (params == null) {
+      await exec(`networksetup -setwebproxystate '${wifiAdaptor}' off`)
+      await exec(`networksetup -setsecurewebproxystate '${wifiAdaptor}' off`)
+    } else {
+      const { ip, port } = params
+      await exec(`networksetup -setwebproxy '${wifiAdaptor}' ${ip} ${port}`)
+      await exec(`networksetup -setsecurewebproxy '${wifiAdaptor}' ${ip} ${port}`)
+    }
   }
 }
 

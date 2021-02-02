@@ -30,6 +30,7 @@
           </a-form-item>
           <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol" >
             <a-input v-model="config.server.port"/>
+            <div>修改后需要重启应用</div>
           </a-form-item>
           <a-form-item label="校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-checkbox v-model="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED">

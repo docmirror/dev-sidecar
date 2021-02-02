@@ -14,23 +14,25 @@ class SystemShell {
 
 class LinuxSystemShell extends SystemShell {
   static async exec (cmds) {
-    if (cmds instanceof String) {
+    if (typeof cmds === 'string') {
       cmds = [cmds]
     }
     for (const cmd of cmds) {
-      await exec(cmd)
+      await childExec(cmd)
     }
   }
 }
 
 class DarwinSystemShell extends SystemShell {
   static async exec (cmds) {
-    if (cmds instanceof String) {
+    if (typeof cmds === 'string') {
       cmds = [cmds]
     }
+    let ret
     for (const cmd of cmds) {
-      await exec(cmd)
+      ret = await childExec(cmd)
     }
+    return ret
   }
 }
 

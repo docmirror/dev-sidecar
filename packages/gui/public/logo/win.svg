@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>window</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="window">
+            <rect id="矩形" stroke="#979797" fill="#1B7FCD" fill-rule="nonzero" x="0.5" y="0.5" width="1023" height="1023" rx="140"></rect>
+            <g id="编组" transform="translate(512.000000, 511.000000) scale(-1, 1) translate(-512.000000, -511.000000) translate(113.000000, 78.000000)">
+                <ellipse id="椭圆形" fill="#FFFFFF" fill-rule="nonzero" cx="316.962617" cy="428.651363" rx="172.775701" ry="173.945481"></ellipse>
+                <ellipse id="椭圆形" fill="#FFFFFF" fill-rule="nonzero" cx="95.088785" cy="95.0487805" rx="95.088785" ry="95.0487805"></ellipse>
+                <ellipse id="椭圆形" fill="#FFFFFF" fill-rule="nonzero" cx="380.976636" cy="117.413199" rx="68.9859813" ry="68.9569584"></ellipse>
+                <ellipse id="椭圆形" stroke="#FFFFFF" stroke-width="2.8" fill="#FFFFFF" fill-rule="nonzero" cx="183.341121" cy="770.95122" rx="95.088785" ry="95.0487805"></ellipse>
+                <ellipse id="椭圆形" stroke="#FFFFFF" stroke-width="50" cx="694.831776" cy="488.289813" rx="103.168224" ry="103.124821"></ellipse>
+                <line x1="236.168224" y1="325.526542" x2="121.813084" y2="147.853659" id="路径" stroke="#FFFFFF" stroke-width="50"></line>
+                <line x1="339.336449" y1="323.041607" x2="370.411215" y2="154.065997" id="路径" stroke="#FFFFFF" stroke-width="50"></line>
+                <line x1="259.785047" y1="549.170732" x2="208.82243" y2="699.509326" id="路径" stroke="#FFFFFF" stroke-width="50"></line>
+                <line x1="427.588785" y1="429.893831" x2="591.663551" y2="460.955524" id="路径" stroke="#FFFFFF" stroke-width="50"></line>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -15,10 +15,18 @@
       <a-button type="primary" style="float:right" @click="doSetup()">点此去安装</a-button>
     </template>
     <div>
-      请按如下步骤将<b>本地随机生成</b>的根证书添加到<b>信任的根证书颁发机构</b><br/>
-      证书是本地随机生成，所以信任它是安全的
+      <b>本应用正常使用必须安装和信任CA根证书</b>，该证书是应用启动时本地随机生成的<br/>
+      <template v-if="this.systemPlatform === 'mac'">
+        1、点击右上角“点此去安装按钮”，打开钥匙串<br/>
+        2、然后按如下图步骤将随机生成的根证书设置为始终信任<br/>
+        3、可能需要重新启动应用和浏览器才能生效<br/>
+      </template>
+      <template v-else>
+        1、点击右上角“点此去安装按钮”，打开证书<br/>
+        2、然后按如下图步骤将根证书添加到<b>信任的根证书颁发机构</b><br/>
+      </template>
     </div>
-    <img width="100%" src="/setup.png" />
+    <img width="100%" :src="setupImage" />
 
   </a-drawer>
 </template>
@@ -40,9 +48,22 @@ export default {
   },
   data () {
     return {
+      systemPlatform: 'win'
     }
   },
-  created () {
+  async created () {
+    const platform = await this.$api.info.getSystemPlatform()
+    console.log('11', platform)
+    this.systemPlatform = platform
+  },
+  computed: {
+    setupImage () {
+      if (this.systemPlatform === 'mac') {
+        return '/setup-mac.png'
+      } else {
+        return '/setup.png'
+      }
+    }
   },
   methods: {
     afterVisibleChange (val) {

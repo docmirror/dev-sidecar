@@ -5,6 +5,12 @@ const lodash = require('lodash')
 const fork = require('child_process').fork
 const log = require('../../utils/util.log')
 const fs = require('fs')
+const path = require('path')
+let JSON5 = require('json5')
+if (JSON5.default) {
+  JSON5 = JSON5.default
+}
+
 let server
 function fireStatus (status) {
   event.fire('status', { key: 'server.enabled', value: status })
@@ -58,8 +64,8 @@ const serverApi = {
     serverConfig.plugin = allConfig.plugin
     // fireStatus('ing') // 启动中
     const basePath = serverConfig.setting.userBasePath
-    const runningConfig = basePath + '/running.json'
-    fs.writeFileSync(runningConfig, JSON.stringify(serverConfig))
+    const runningConfig = path.join(basePath, '/running.json')
+    fs.writeFileSync(runningConfig, JSON5.stringify(serverConfig, null, 2))
     const serverProcess = fork(mitmproxyPath, [runningConfig])
     server = {
       id: serverProcess.pid,

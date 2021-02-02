@@ -132,18 +132,18 @@ export default {
           return
         }
         this.$confirm({
-          title: '提示',
-          content: '第一次使用，请先安装CA根证书',
-          cancelText: '关闭此提示',
+          title: '第一次使用，请先安装CA根证书',
+          content: '本应用正常使用，必须安装和信任CA根证书',
+          cancelText: '下次',
           okText: '去安装',
           onOk: () => {
             this.openSetupCa()
           },
           onCancel: () => {
             this.setting.rootCa = this.setting.rootCa || {}
-            const rootCa = this.setting.rootCa
-            rootCa.noTip = true
-            this.$api.setting.save(this.setting)
+            //  const rootCa = this.setting.rootCa
+            // rootCa.noTip = true
+            // this.$api.setting.save(this.setting)
           }
         })
       })

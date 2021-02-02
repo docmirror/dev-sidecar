@@ -39,7 +39,11 @@ const NodePlugin = function (context) {
     async setNpmEnv (list) {
       const cmds = []
       for (const item of list) {
-        cmds.push(`npm config set ${item.key}  ${item.value}`)
+        if (item.value != null) {
+          cmds.push(`npm config set ${item.key}  ${item.value}`)
+        } else {
+          cmds.push(`npm config delete ${item.key}`)
+        }
       }
       const ret = await shell.exec(cmds, { type: 'cmd' })
       return ret
@@ -49,6 +53,29 @@ const NodePlugin = function (context) {
       const cmds = []
       for (const item of list) {
         cmds.push(`npm config delete ${item} `)
+      }
+      const ret = await shell.exec(cmds, { type: 'cmd' })
+      return ret
+    },
+
+    async setYarnEnv (list) {
+      const cmds = []
+      log.debug('yarn set:', JSON.stringify(list))
+      for (const item of list) {
+        if (item.value != null) {
+          cmds.push(`yarn config set ${item.key}  ${item.value}`)
+        } else {
+          cmds.push(`yarn config delete ${item.key}`)
+        }
+      }
+      const ret = await shell.exec(cmds, { type: 'cmd' })
+      return ret
+    },
+
+    async unsetYarnEnv (list) {
+      const cmds = []
+      for (const item of list) {
+        cmds.push(`yarn config delete ${item} `)
       }
       const ret = await shell.exec(cmds, { type: 'cmd' })
       return ret
@@ -81,8 +108,12 @@ const NodePlugin = function (context) {
       }
     },
 
-    async setRegistry (registry) {
-      await nodeApi.setNpmEnv([{ key: 'registry', value: registry }])
+    async setRegistry ({ registry, type }) {
+      if (type === 'npm') {
+        await nodeApi.setNpmEnv([{ key: 'registry', value: registry }])
+      } else {
+        await nodeApi.setYarnEnv([{ key: 'registry', value: registry }])
+      }
       return true
     },
 

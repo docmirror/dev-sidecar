@@ -1,7 +1,7 @@
 <template>
   <ds-container>
     <template slot="header">
-      Ladder
+      梯子
       <span>
            <a-button type="primary" @click="openExternal('https://github.com/docmirror/dev-sidecar-doc/blob/main/ow.md')">原理说明</a-button>
       </span>
@@ -9,12 +9,13 @@
 
     <div v-if="config">
       <a-form layout="horizontal">
-        <a-form-item label="Ladder" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item label="梯子" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.overwall.enabled">
             启用
           </a-checkbox>
           <div>这是什么功能？你懂的！偷偷的用，别声张。(不要看视频，流量挺小的。)</div>
           <div>建议按右上角“说明”自建服务端</div>
+          <div>仅供技术学习与探讨</div>
         </a-form-item>
         <a-form-item label="PAC" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.overwall.pac.enabled">

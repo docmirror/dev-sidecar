@@ -7,7 +7,7 @@ config.caKeyFileName = 'dev-sidecar.ca.key.pem'
 
 config.defaultPort = 1181
 
-config.caName = 'This certificate is generated locally'
+config.caName = 'DevSidecar - This certificate is generated locally'
 
 config.caBasePath = buildDefaultCABasePath()
 
@@ -18,7 +18,7 @@ config.setDefaultCABasePath = function (path) {
   config.caBasePath = path
 }
 function buildDefaultCABasePath () {
-  const userHome = process.env.USERPROFILE
+  const userHome = process.env.USERPROFILE || process.env.HOME || '/'
   return path.resolve(userHome, './.dev-sidecar')
 }
 

@@ -40,7 +40,11 @@ function setTray (app) {
     }
   ]
   // 设置系统托盘图标
-  const iconPath = path.join(__dirname, '../extra/icons/128x128.png')
+  let icon = '128x128.png'
+  if (isMac) {
+    icon = '16x16.png'
+  }
+  const iconPath = path.join(__dirname, '../extra/icons/', icon)
   const appTray = new Tray(iconPath)
 
   // 图标的上下文菜单
@@ -119,9 +123,19 @@ async function quit (app, callback) {
     tray.displayBalloon({ title: '正在关闭', content: '关闭中,请稍候。。。' })
   }
   await beforeQuit()
+  forceClose = true
   app.quit()
 }
 
+// eslint-disable-next-line no-unused-vars
+function setDock () {
+  const { app } = require('electron')
+  if (process.platform === 'darwin') {
+    app.whenReady().then(() => {
+      app.dock.setIcon(path.join(__dirname, '../build/mac/512x512.png'))
+    })
+  }
+}
 // -------------执行开始---------------
 app.disableHardwareAcceleration() // 禁用gpu
 
@@ -135,6 +149,9 @@ if (!isFirstInstance) {
 } else {
   app.on('before-quit', async (event) => {
     log.info('before-quit')
+    if (process.platform === 'darwin') {
+      quit(app)
+    }
   })
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     log.info('new app started', commandLine)
@@ -156,10 +173,14 @@ if (!isFirstInstance) {
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (win === null) {
+    if (win == null) {
       createWindow()
+    } else {
+      win.show()
     }
   })
+
+  // setDock()
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
@@ -175,7 +196,7 @@ if (!isFirstInstance) {
     }
     try {
       createWindow()
-      const context = { win, app, beforeQuit, ipcMain, dialog,log }
+      const context = { win, app, beforeQuit, ipcMain, dialog, log }
       backend.install(context) // 模块安装
     } catch (err) {
       log.info('err', err)
@@ -189,6 +210,8 @@ if (!isFirstInstance) {
     }
   })
 }
+
+setDock()
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

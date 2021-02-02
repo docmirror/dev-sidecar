@@ -1,6 +1,6 @@
 const path = require('path')
 function getUserBasePath () {
-  const userHome = process.env.USERPROFILE
+  const userHome = process.env.USERPROFILE || process.env.HOME || '/'
   return path.resolve(userHome, './.dev-sidecar')
 }
 function getRootCaCertPath () {
@@ -67,8 +67,7 @@ module.exports = {
       },
       'github.githubassets.com': {
         '.*': {
-          proxy: 'assets.fastgit.org',
-          backup: ['github.githubassets.com'],
+          proxy: 'assets-gh.docmirror.top/_proxy',
           test: 'https://github.githubassets.com/favicons/favicon.svg',
           desc: '静态资源加速'
         }
@@ -162,6 +161,8 @@ module.exports = {
       },
       mapping: {
         'assets.fastgit.org': 'usa',
+        '*yarnpkg.com': 'usa',
+        '*cloudfront.net': 'usa',
         '*github.io': 'usa',
         'img.shields.io': 'usa',
         '*.github.com': 'usa',
@@ -170,7 +171,6 @@ module.exports = {
         // "解决push的时候需要输入密码的问题",
         'github.com': 'usa',
         '*.vuepress.vuejs.org': 'usa',
-        'github.docmirror.cn': 'usa',
         'gh.docmirror.top': 'usa'
       }
     }

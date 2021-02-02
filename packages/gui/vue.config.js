@@ -52,11 +52,13 @@ module.exports = {
           allowElevation: true,
           allowToChangeInstallationDirectory: true
         },
+        mac: {
+          icon: 'build/mac/icon.icns'
+        },
         publish: {
           provider: 'generic',
           url: ''
-        },
-        compression: 'maximum'
+        }
       },
       chainWebpackMainProcess (config) {
         config.entry('mitmproxy').add(path.join(__dirname, 'src/bridge/mitmproxy.js'))
