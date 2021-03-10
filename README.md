@@ -169,6 +169,25 @@ const intercepts = {
 1. 尝试将开关按钮手动打开
 2. 请尝试右键dev-sidecar图标，点退出。再重新打开
 3. 如果还不行，请将日志发送给作者
+   
+如果是mac系统，可能是下面的原因
+
+#### Mac系统使用时，首页的系统代理开关无法打开
+出现这个问题可能是没有开启系统代理命令的执行权限    
+请按照如下步骤确认和修复
+```
+networksetup -setwebproxy 'WiFi' 127.0.0.1 1181 
+#看是否有如下错误提示
+** Error: Command requires admin privileges.
+```
+如果有上面的错误提示，可能是由于安装了xcode，但未授权导致     
+请在终端输入如下命令进行授权
+```
+sudo xcodebuild -license
+# 一直按回车，该agree的时候输入agree即可
+```
+然后再次尝试看是否能够打开系统代理开关       
+如果还不行，请联系作者
 
 ### 2、没有加速效果
 
@@ -179,10 +198,10 @@ const intercepts = {
  * win10: 开始->设置->网络和Internet->最下方代理      
  * win7: 开始->控制面板->网络和Internet->网络和共享中心->左下角Internet选项->连接选项卡->局域网设置      
 
-windows 代理查看
+windows 代理查看    
 ![windows](./doc/proxy.png)
 
-mac 代理查看
+mac 代理查看   
 ![](./doc/mac-proxy.png)
 
 
@@ -202,24 +221,7 @@ mac: 请确认证书已经被安装并已经设置信任。
 然后浏览器访问： https://gh.docmirror.top/     
 看是否能打开，且显示403 forbidden错误   
 
-### 5. Mac系统使用时，首页的系统代理开关无法打开     
-出现这个问题可能是没有开启系统代理命令的执行权限    
-请按照如下步骤确认和修复     
-```
-networksetup -setwebproxy 'WiFi' 127.0.0.1 1181 
-#看是否有如下错误提示
-** Error: Command requires admin privileges.
-```
-如果有上面的错误提示，可能是由于安装了xcode，但未授权导致     
-请在终端输入如下命令进行授权     
-```
-sudo xcodebuild -license
-# 一直按回车，该agree的时候输入agree即可
-```
-然后再次尝试看是否能够打开系统代理开关       
-如果还不行，请联系作者
-
-### 6、查看日志是否有报错
+### 5、查看日志是否有报错
  如果还是不行，请在下方加作者好友，将服务日志发送给作者进行分析             
  日志打开方式：加速服务->右边日志按钮->打开日志文件夹    
  
