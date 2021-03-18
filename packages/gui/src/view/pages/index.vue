@@ -42,12 +42,26 @@
     </div>
     <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
     <div slot="footer">
-      <div class="flex-l-r star" style="padding:10px;">
-        <div>如果它解决了你的问题，请不要吝啬你的star哟！ <a-icon type="smile" theme="outlined" /></div>
-        <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
-        <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
-      </div>
+      <div class="star" style="padding:10px;">
 
+        <div class="donate" @click="donateModal=true"> <a-icon  type="like" theme="outlined" /> 捐赠</div>
+        <div class="right">
+          <div>如果它解决了你的问题，请不要吝啬你的star哟！ <a-icon style="margin-right:10px;" type="smile" theme="outlined" /></div>
+          <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
+          <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+
+        </div>
+       </div>
+
+      <a-modal title="捐赠" v-model="donateModal" cancelText="不了" okText="支持一下" @ok="goDonate">
+          <div>* 随着越来越多用户来使用，我的1m带宽的小服务器已经满负荷运转了。</div>
+          <div>* 也请大家不要看油管视频，把带宽留给想要访问github的同学，致敬爱学习的你。</div>
+          <div>* 如果您觉得这个软件帮助到你，而你也想帮助更多的人，可以捐赠我, 我将会用捐赠的钱来购买带宽，感谢支持。</div>
+        <div class="payQrcode">
+          <img height="200px" src="/alipay.jpg"/>
+          <img height="200px" src="/wxpay.jpg"/>
+        </div>
+      </a-modal>
     </div>
   </ds-container>
 
@@ -73,6 +87,7 @@ export default {
   },
   data () {
     return {
+      donateModal: false,
       status: undefined,
       startup: {
         loading: false,
@@ -227,6 +242,9 @@ export default {
         }
       })
     },
+    goDonate () {
+      this.$message.info('感谢支持')
+    },
     doCheckUpdate (fromUser = true) {
       this.$api.update.checkForUpdate(fromUser)
     },
@@ -240,6 +258,18 @@ export default {
 .page_index {
 
   .star {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    .donate{
+      cursor:pointer;
+    }
+    .right{
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+    }
     >*{
       margin-right:10px;
     }
@@ -252,7 +282,14 @@ export default {
     }
   }
 }
-
+.payQrcode{
+  padding:10px;
+  display: flex;
+  justify-content: space-evenly;
+  img{
+    border:1px #c7c7c7 solid;
+  }
+}
 .big_button > button {
   width: 100px;
   height: 100px;
