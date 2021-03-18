@@ -58,8 +58,7 @@
           <div>* 也请大家不要看油管视频，把带宽留给想要访问github的同学，致敬爱学习的你。</div>
           <div>* 如果您觉得这个软件帮助到你，而你也想帮助更多的人，可以捐赠我, 我将会用捐赠的钱来购买带宽，感谢支持。</div>
         <div class="payQrcode">
-          <img height="200px" src="/alipay.jpg"/>
-          <img height="200px" src="/wxpay.jpg"/>
+          <img height="200px" src="/pay.jpg"/>
         </div>
       </a-modal>
     </div>
@@ -286,9 +285,6 @@ export default {
   padding:10px;
   display: flex;
   justify-content: space-evenly;
-  img{
-    border:1px #c7c7c7 solid;
-  }
 }
 .big_button > button {
   width: 100px;
