@@ -10,7 +10,6 @@ module.exports = {
       for (const bk of interceptOpt.backup) {
         backup.push(bk)
       }
-
       const key = interceptOpt.key
       const count = RequestCounter.getOrCreate(key, backup)
       if (count.value == null) {

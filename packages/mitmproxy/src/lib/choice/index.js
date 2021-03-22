@@ -28,24 +28,6 @@ class DynamicChoice {
     this.createTime = new Date()
   }
 
-  /**
-     * 设置新的backup列表
-     * @param backupList
-     */
-  setBackupList (backupList) {
-    this.backup = backupList
-    let defaultTotal = backupList.length
-    for (const item of backupList) {
-      if (this.count[item]) {
-        continue
-      }
-      this.count[item] = { value: item, total: defaultTotal, error: 0, keepErrorCount: 0, successRate: 0.5 }
-      defaultTotal--
-    }
-    this.value = backupList.shift()
-    this.doCount(this.value, false)
-  }
-
   doRank () {
     // 将count里面根据权重排序
     const list = []
@@ -59,6 +41,24 @@ class DynamicChoice {
     const backup = list.map(item => item.value)
 
     this.setBackupList(backup)
+  }
+
+  /**
+   * 设置新的backup列表
+   * @param backupList
+   */
+  setBackupList (backupList) {
+    this.backup = backupList
+    let defaultTotal = backupList.length
+    for (const item of backupList) {
+      if (this.count[item]) {
+        continue
+      }
+      this.count[item] = { value: item, total: defaultTotal, error: 0, keepErrorCount: 0, successRate: 0.5 }
+      defaultTotal--
+    }
+    this.value = backupList.shift()
+    this.doCount(this.value, false)
   }
 
   countStart (value) {
@@ -92,12 +92,12 @@ class DynamicChoice {
       count.error++
       count.keepErrorCount++
     } else {
-      count.total++
+      count.total += 10
     }
     count.successRate = 1.0 - (count.error / count.total)
     if (isError && this.value === value) {
-      // 连续错误4次，切换下一个
-      if (count.keepErrorCount >= 4) {
+      // 连续错误10次，切换下一个
+      if (count.keepErrorCount >= 10) {
         this.changeNext(count)
       }
       // 成功率小于50%,切换下一个

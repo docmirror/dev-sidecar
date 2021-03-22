@@ -47,14 +47,14 @@ module.exports = {
             'github'
           ],
           desc: 'clone加速复制链接脚本'
-        },
-        '/.*': {
-          proxy: 'gh.docmirror.top/_proxy',
-          backup: [
-            'github.com'
-          ],
-          desc: '如果出现dev-sidecar报错，可能是加速地址dns被污染了，需要将本条配置删除'
         }
+        // '/.*': {
+        //   proxy: 'gh.docmirror.top/_proxy',
+        //   backup: [
+        //     'github.com'
+        //   ],
+        //   desc: '如果出现dev-sidecar报错，可能是加速地址dns被污染了，需要将本条配置删除'
+        // }
       },
       'api.github.com': {
         '^/_private/browser/stats$': {
@@ -76,19 +76,18 @@ module.exports = {
         '.*': { proxy: 'customer-stories-feed.fastgit.org' }
       },
       // google cdn
-      'www.google.com': {
-        '/recaptcha/.*': { proxy: 'www.recaptcha.net' },
-        '.*': {
-          proxy: 'gg.docmirror.top/_yxorp',
-          desc: '呀，被你发现了，偷偷的用，别声张'
-        }
-      },
+      // 'www.google.com': {
+      //   '/recaptcha/.*': { proxy: 'www.recaptcha.net' },
+      //   '.*': {
+      //     proxy: 'gg.docmirror.top/_yxorp',
+      //     desc: '呀，被你发现了，偷偷的用，别声张'
+      //   }
+      // },
       'ajax.googleapis.com': {
         '.*': {
           proxy: 'ajax.loli.net',
           test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'
         }
-
       },
       'fonts.googleapis.com': {
         '.*': {
@@ -112,9 +111,9 @@ module.exports = {
           backup: ['fonts-gstatic.proxy.ustclug.org']
         }
       },
-      'clients*.google.com': { '.*': { abort: true } },
-      'www.googleapis.com': { '.*': { abort: true } },
-      'lh*.googleusercontent.com': { '.*': { abort: true } },
+      // 'clients*.google.com': { '.*': { abort: true } },
+      // 'www.googleapis.com': { '.*': { abort: true } },
+      // 'lh*.googleusercontent.com': { '.*': { abort: true } },
       // mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
       '*.s3.amazonaws.com': {
         '/sqlite3/.*': {
@@ -155,21 +154,20 @@ module.exports = {
         },
         usa: {
           type: 'https',
-          server: 'https://cloudflare-dns.com/dns-query',
+          server: 'https://1.1.1.1/dns-query',
           cacheSize: 1000
-        }
+        },
       },
       mapping: {
-        'assets.fastgit.org': 'usa',
+        // 'assets.fastgit.org': 'usa',
         '*yarnpkg.com': 'usa',
         '*cloudfront.net': 'usa',
         '*github.io': 'usa',
         'img.shields.io': 'usa',
-        '*.github.com': 'usa',
         '*.githubusercontent.com': 'usa',
         '*.githubassets.com': 'usa',
         // "解决push的时候需要输入密码的问题",
-        'github.com': 'usa',
+        '*github.com': 'usa',
         '*.vuepress.vuejs.org': 'usa',
         'gh.docmirror.top': 'usa'
       }

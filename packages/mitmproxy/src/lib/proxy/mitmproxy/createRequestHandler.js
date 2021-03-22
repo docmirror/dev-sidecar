@@ -109,8 +109,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
                 dns.lookup(hostname).then(ip => {
                   isDnsIntercept = { dns, hostname, ip }
                   if (ip !== hostname) {
+                    log.info(`request url :${url},use ip :${ip}`)
                     callback(null, ip, 4)
                   } else {
+                    log.info(`request url :${url},use hostname :${hostname}`)
                     defaultDns.lookup(hostname, options, callback)
                   }
                 })
