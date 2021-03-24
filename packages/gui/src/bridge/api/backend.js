@@ -144,6 +144,9 @@ export default {
       log.error('bridge on error', event)
       win.webContents.send('error.core', event)
     })
+    DevSidecar.api.event.register('speed', (event) => {
+      win.webContents.send('speed', event)
+    })
 
     // 合并用户配置
     DevSidecar.api.config.reload()

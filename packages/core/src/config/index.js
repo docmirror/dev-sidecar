@@ -65,13 +65,13 @@ module.exports = {
       'raw.githubusercontent.com': {
         '.*': { proxy: 'raw.fastgit.org' }
       },
-      'github.githubassets.com': {
-        '.*': {
-          proxy: 'assets-gh.docmirror.top/_proxy',
-          test: 'https://github.githubassets.com/favicons/favicon.svg',
-          desc: '静态资源加速'
-        }
-      },
+      // 'github.githubassets.com': {
+      //   '.*': {
+      //     proxy: 'assets-gh.docmirror.top/_proxy',
+      //     test: 'https://github.githubassets.com/favicons/favicon.svg',
+      //     desc: '静态资源加速'
+      //   }
+      // },
       'customer-stories-feed.github.com': {
         '.*': { proxy: 'customer-stories-feed.fastgit.org' }
       },

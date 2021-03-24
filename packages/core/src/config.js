@@ -107,9 +107,13 @@ const configApi = {
     }
     const merged = lodash.cloneDeep(newConfig)
     const clone = lodash.cloneDeep(defConfig)
-    lodash.merge(merged, clone)
-    lodash.merge(merged, newConfig)
-
+    function customizer (objValue, srcValue) {
+      if (lodash.isArray(objValue)) {
+        return srcValue
+      }
+    }
+    lodash.mergeWith(merged, clone, customizer)
+    lodash.mergeWith(merged, newConfig, customizer)
     _deleteDisabledItem(merged)
     configTarget = merged
     return configTarget

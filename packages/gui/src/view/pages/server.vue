@@ -80,6 +80,60 @@
 
           </div>
         </a-tab-pane>
+        <a-tab-pane tab="DNS测速设置" key="4">
+          <div>
+            <div>使用以下dns获取ip进行测速</div>
+            <a-row style="margin-top:10px">
+              <a-col span="24">
+                <a-checkbox-group
+                  v-model="getSpeedTestConfig().dnsProviders"
+                  :options="speedDnsOptions"
+                />
+              </a-col>
+            </a-row>
+            <a-row :gutter="10" class="mt20" >
+              <a-col :span="21">
+                以下域名在启动后立即进行测速，其他域名在第一次访问时才测速
+              </a-col>
+              <a-col :span="2">
+                <a-button  style="margin-left:10px" type="primary" icon="plus" @click="addSpeedHostname()" />
+              </a-col>
+            </a-row>
+            <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of getSpeedTestConfig().hostnameList" :key = 'index'>
+              <a-col :span="21">
+                <a-input  v-model="getSpeedTestConfig().hostnameList[index]"/>
+              </a-col>
+              <a-col :span="2">
+                <a-button style="margin-left:10px" type="danger" icon="minus" @click="delSpeedHostname(item,index)" />
+              </a-col>
+            </a-row>
+
+          </div>
+        </a-tab-pane>
+        <a-tab-pane tab="DNS测速详情" key="5">
+          <div>
+            <div>对获取到的ip进行测速</div>
+            <a-row :gutter="10" class="mt10">
+              <a-col span="24">
+                <a-button  type="primary" icon="plus" @click="reSpeedTest()" >重新测速</a-button>
+                <a-button class="md-ml-10" type="primary" icon="refresh" @click="reloadAllSpeedTester()" >刷新</a-button>
+              </a-col>
+            </a-row>
+
+            <a-row :gutter="20">
+              <a-col span="12" v-for="(item,key) of speedTestList" :key='key'>
+                <a-card size="small" class="md-mt-10"    :title="key"  >
+                  <a slot="extra" href="#">
+                    <a-icon v-if="item.alive.length>0"  type="check" />
+                    <a-icon v-else  type="info-circle" />
+                  </a>
+                  <a-tag style="margin:2px;" v-for="(element,index) of item.backupList"  :color="element.time?'green':'red'" :key = 'index'>{{element.host}} {{element.time}}{{element.time?'ms':''}}</a-tag>
+                </a-card>
+              </a-col>
+            </a-row>
+
+          </div>
+        </a-tab-pane>
       </a-tabs>
     </div>
     <template slot="footer">
@@ -95,6 +149,7 @@
 <script>
 import vueJsonEditor from 'vue-json-editor'
 import Plugin from '../mixins/plugin'
+import _ from 'lodash'
 export default {
   name: 'Server',
   components: {
@@ -106,12 +161,30 @@ export default {
       key: 'server',
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
-      dnsMappings: []
+      dnsMappings: [],
+      speedTestList: []
     }
   },
   created () {
   },
   mounted () {
+    this.registerSpeedTestEvent()
+  },
+  computed: {
+    speedDnsOptions () {
+      const options = []
+      console.log('this.config', this.config)
+      if (!this.config || !this.config.server || !this.config.server.dns || !this.config.server.dns.providers) {
+        return options
+      }
+      _.forEach(this.config.server.dns.providers, (dnsConf, key) => {
+        options.push({
+          value: key,
+          label: key
+        })
+      })
+      return options
+    }
   },
   methods: {
     async onCrtSelect () {
@@ -135,6 +208,9 @@ export default {
         this.dnsMappings.push({
           key, value
         })
+      }
+      if (this.config.server.dns.speedTest.dnsProviders) {
+        this.speedDns = this.config.server.dns.speedTest.dnsProviders
       }
     },
     async applyBefore () {
@@ -163,6 +239,43 @@ export default {
     async openLog () {
       const dir = await this.$api.info.getConfigDir()
       this.$api.ipc.openPath(dir + '/logs/')
+    },
+
+    getSpeedTestConfig () {
+      return this.config.server.dns.speedTest
+    },
+    addSpeedHostname () {
+      this.getSpeedTestConfig().hostnameList.unshift('')
+    },
+    delSpeedHostname (item, index) {
+      this.getSpeedTestConfig().hostnameList.splice(index, 1)
+    },
+    reSpeedTest () {
+      this.$api.server.reSpeedTest()
+    },
+    registerSpeedTestEvent () {
+      const listener = async (event, message) => {
+        console.log('get speed event', event, message)
+        if (message.key === 'getList') {
+          this.speedTestList = message.value
+        }
+      }
+      this.$api.ipc.on('speed', listener)
+      const interval = this.startSpeedRefreshInterval()
+      this.reloadAllSpeedTester()
+
+      this.$once('hook:beforeDestroy', () => {
+        clearInterval(interval)
+        this.$api.ipc.removeAllListeners('speed')
+      })
+    },
+    async reloadAllSpeedTester () {
+      this.$api.server.getSpeedTestList()
+    },
+    startSpeedRefreshInterval () {
+      return setInterval(() => {
+        this.reloadAllSpeedTester()
+      }, 5000)
     }
   }
 }

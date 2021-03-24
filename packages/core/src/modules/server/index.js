@@ -75,7 +75,7 @@ const serverApi = {
       }
     }
     serverProcess.on('message', function (msg) {
-      log.info('收到子进程消息', msg)
+      log.info('收到子进程消息', msg.type, msg.event.key)
       if (msg.type === 'status') {
         fireStatus(msg.event)
       } else if (msg.type === 'error') {
@@ -83,6 +83,8 @@ const serverApi = {
           fireStatus(false) // 启动失败
         }
         event.fire('error', { key: 'server', value: 'EADDRINUSE', error: msg.event })
+      } else if (msg.type === 'speed') {
+        event.fire('speed', msg.event)
       }
     })
     return { port: runningConfig.port }
@@ -128,6 +130,16 @@ const serverApi = {
   },
   getServer () {
     return server
+  },
+  getSpeedTestList () {
+    if (server) {
+      server.process.send({ type: 'speed', event: { key: 'getList' } })
+    }
+  },
+  reSpeedTest () {
+    if (server) {
+      server.process.send({ type: 'speed', event: { key: 'reTest' } })
+    }
   }
 }
 module.exports = serverApi

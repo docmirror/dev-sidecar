@@ -1,8 +1,9 @@
+// 1个小时不访问，取消获取
+const _ = require('lodash')
 const net = require('net')
 const config = require('./config.js')
 const log = require('../../utils/util.log.js')
-const DISABLE_TIMEOUT = 60 * 60 * 1000 // 1个小时不访问，取消获取
-
+const DISABLE_TIMEOUT = 60 * 60 * 1000
 class SpeedTester {
   constructor ({ hostname }) {
     this.dnsMap = config.getConfig().dnsMap
@@ -82,6 +83,9 @@ class SpeedTester {
     this.backupList = await this.getIpListFromDns(this.dnsMap)
     log.info('[speed]', this.hostname, ' ips:', this.backupList)
     await this.testBackups()
+    if (config.notify) {
+      config.notify({ key: 'test' })
+    }
   }
 
   async testBackups () {
@@ -98,8 +102,10 @@ class SpeedTester {
   async doTest (item, aliveList) {
     try {
       const ret = await this.testOne(item)
+      _.merge(item, ret)
       aliveList.push({ ...ret, ...item })
       aliveList.sort((a, b) => a.time - b.time)
+      this.backupList.sort((a, b) => a.time - b.time)
     } catch (e) {
       log.error('[speed] test error', this.hostname, item.host, e.message)
     }

@@ -49,14 +49,12 @@
           <div>如果它解决了你的问题，请不要吝啬你的star哟！ <a-icon style="margin-right:10px;" type="smile" theme="outlined" /></div>
           <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
           <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
-
         </div>
        </div>
 
-      <a-modal title="捐赠" v-model="donateModal" cancelText="不了" okText="支持一下" @ok="goDonate">
+      <a-modal title="捐赠" v-model="donateModal" width="550px" cancelText="不了" okText="支持一下" @ok="goDonate">
           <div>* 随着越来越多用户来使用，我的1m带宽的小服务器已经满负荷运转了。</div>
-          <div>* 也请大家不要看油管视频，把带宽留给想要访问github的同学，致敬爱学习的你。</div>
-          <div>* 如果您觉得这个软件帮助到你，而你也想帮助更多的人，可以捐赠我, 我将会用捐赠的钱来购买带宽，感谢支持。</div>
+          <div>* 请大家不要看油管视频，把带宽留给想要访问github的同学，致敬爱学习的你。</div>
         <div class="payQrcode">
           <img height="200px" src="/pay.jpg"/>
         </div>
