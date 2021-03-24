@@ -81,7 +81,7 @@ class SpeedTester {
   async test () {
     this.backupList = await this.getIpListFromDns(this.dnsMap)
     log.info('[speed]', this.hostname, ' ips:', this.backupList)
-    this.testBackups()
+    await this.testBackups()
   }
 
   async testBackups () {

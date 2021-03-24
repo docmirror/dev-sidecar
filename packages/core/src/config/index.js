@@ -166,6 +166,11 @@ module.exports = {
           type: 'https',
           server: 'https://9.9.9.9/dns-query',
           cacheSize: 1000
+        },
+        rubyfish: {
+          type: 'https',
+          server: 'https://rubyfish.cn/dns-query',
+          cacheSize: 1000
         }
         // google: {
         //   type: 'https',
@@ -194,7 +199,7 @@ module.exports = {
       },
       speedTest: {
         hostnameList: ['github.com'],
-        dnsProviders: ['usa', 'quad9']
+        dnsProviders: ['usa', 'quad9', 'rubyfish']
       }
     }
   },
