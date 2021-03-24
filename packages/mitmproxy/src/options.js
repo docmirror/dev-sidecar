@@ -21,7 +21,8 @@ module.exports = (config) => {
     port: serverConfig.port,
     dnsConfig: {
       providers: dnsUtil.initDNS(serverConfig.dns.providers),
-      mapping: dnsMapping
+      mapping: dnsMapping,
+      speedTest: config.dns.speedTest
     },
     setting,
     middlewares,

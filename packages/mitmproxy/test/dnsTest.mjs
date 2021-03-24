@@ -10,13 +10,34 @@ const dnsProviders = dns.initDNS({
     type: 'https',
     server: 'https://1.1.1.1/dns-query',
     cacheSize: 1000
+  },
+  ipaddress: {
+    type: 'ipaddress',
+    server: 'ipaddress',
+    cacheSize: 1000
+  },
+  quad9: {
+    type: 'https',
+    server: 'https://9.9.9.9/dns-query',
+    cacheSize: 1000
   }
 })
 
+// const test = '111<tr><th>IP Address</th><td><ul class="comma-separated"><li>140.82.113.4</li></ul></td></tr>2222'
+// // <tr><th>IP Address</th><td><ul class="comma-separated"><li>140.82.113.4</li></ul></td></tr>
+// // <tr><th>IP Address</th><td><ul class="comma-separated"><li>(.*)</li></ul></td></tr>
+// const regexp = /<tr><th>IP Address<\/th><td><ul class="comma-separated"><li>(.*)<\/li><\/ul><\/td><\/tr>/
+// const matched = regexp.exec(test)
+// console.log('data:', matched)
+
 const hostname0 = 'github.com'
-dnsProviders.usa.lookup(hostname0)
-dnsProviders.usa.lookup(hostname0)
-dnsProviders.usa.lookup(hostname0)
+// console.log('first')
+// dnsProviders.usa.lookup(hostname0)
+console.log('test')
+dnsProviders.quad9.lookup(hostname0)
+// dnsProviders.usa.lookup(hostname0)
+// dnsProviders.ipaddress.lookup(hostname0)
+// dnsProviders.ipaddress.lookup(hostname0)
 
 // const hostname = 'api.github.com'
 // dnsProviders.usa.lookup(hostname)

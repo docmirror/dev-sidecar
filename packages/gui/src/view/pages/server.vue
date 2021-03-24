@@ -69,6 +69,7 @@
                 <a-select :disabled="item.value ===false" v-model="item.value">
                   <a-select-option value="usa">USA DNS</a-select-option>
                   <a-select-option value="aliyun">Aliyun DNS</a-select-option>
+                  <a-select-option value="ipaddress">IpAddress</a-select-option>
                 </a-select>
               </a-col>
               <a-col :span="3">

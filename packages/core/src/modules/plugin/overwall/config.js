@@ -1,6 +1,6 @@
 module.exports = {
   name: '梯子',
-  enabled: false,
+  enabled: false, // 默认关闭梯子
   server: {
   },
   serverDefault: {
@@ -10,7 +10,8 @@ module.exports = {
     }
   },
   targets: {
-    '*facebook.com': true
+    '*facebook.com': true,
+    'github.com': true
   },
   pac: {
     enabled: true,

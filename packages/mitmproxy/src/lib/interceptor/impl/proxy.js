@@ -33,7 +33,8 @@ module.exports = {
       const regexp = new RegExp(interceptOpt.replace)
       proxyTarget = req.url.replace(regexp, proxyConf)
     }
-    // eslint-disable-next-line no-template-curly-in-string
+    // eslint-disable-next-line
+    // no-template-curly-in-string
     proxyTarget = proxyTarget.replace('${host}', rOptions.hostname)
 
     // const backup = interceptOpt.backup

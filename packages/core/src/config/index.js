@@ -152,11 +152,31 @@ module.exports = {
           server: 'https://dns.alidns.com/dns-query',
           cacheSize: 1000
         },
+        ipaddress: {
+          type: 'ipaddress',
+          server: 'ipaddress',
+          cacheSize: 1000
+        },
         usa: {
           type: 'https',
           server: 'https://1.1.1.1/dns-query',
           cacheSize: 1000
         },
+        quad9: {
+          type: 'https',
+          server: 'https://9.9.9.9/dns-query',
+          cacheSize: 1000
+        }
+        // google: {
+        //   type: 'https',
+        //   server: 'https://8.8.8.8/dns-query',
+        //   cacheSize: 1000
+        // },
+        // dnsSB: {
+        //   type: 'https',
+        //   server: 'https://doh.dns.sb/dns-query',
+        //   cacheSize: 1000
+        // }
       },
       mapping: {
         // 'assets.fastgit.org': 'usa',
@@ -167,9 +187,14 @@ module.exports = {
         '*.githubusercontent.com': 'usa',
         '*.githubassets.com': 'usa',
         // "解决push的时候需要输入密码的问题",
+        'github.com': 'usa',
         '*github.com': 'usa',
         '*.vuepress.vuejs.org': 'usa',
         'gh.docmirror.top': 'usa'
+      },
+      speedTest: {
+        hostnameList: ['github.com'],
+        dnsProviders: ['usa', 'quad9']
       }
     }
   },

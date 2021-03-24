@@ -12,6 +12,7 @@
   "scripts": {},
   "dependencies": {
     "agentkeepalive": "^2.1.1",
+    "axios": "^0.21.1",
     "child_process": "^1.0.2",
     "colors": "^1.1.2",
     "commander": "^2.9.0",

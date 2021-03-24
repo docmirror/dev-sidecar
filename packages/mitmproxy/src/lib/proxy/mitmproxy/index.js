@@ -1,11 +1,15 @@
 const tlsUtils = require('../tls/tlsUtils')
 const http = require('http')
+const https = require('https')
 const config = require('../common/config')
 const log = require('../../../utils/util.log')
 const createRequestHandler = require('./createRequestHandler')
 const createConnectHandler = require('./createConnectHandler')
 const createFakeServerCenter = require('./createFakeServerCenter')
 const createUpgradeHandler = require('./createUpgradeHandler')
+const DnsUtil = require('../../dns/index')
+const defaultDns = require('dns')
+const speedTest = require('../../speed/index.js')
 module.exports = {
   createProxy ({
     port = config.defaultPort,
@@ -35,7 +39,40 @@ module.exports = {
       log.info(`CA private key saved in: ${caKeyPath}`)
     }
 
+    // function lookup (hostname, options, callback) {
+    //   const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
+    //   if (dns) {
+    //     dns.lookup(hostname).then(ip => {
+    //       // isDnsIntercept = { dns, hostname, ip }
+    //       if (ip !== hostname) {
+    //         log.info(`-----${hostname} use ip:${ip}-----`)
+    //         callback(null, ip, 4)
+    //       } else {
+    //         defaultDns.lookup(hostname, options, callback)
+    //       }
+    //     })
+    //   } else {
+    //     defaultDns.lookup(hostname, options, callback)
+    //   }
+    // }
+    //
+    // https.globalAgent.lookup = lookup
+
     port = ~~port
+
+    const speedTestConfig = dnsConfig.speedTest
+    const dnsMap = dnsConfig.providers
+    if (speedTestConfig) {
+      const dnsProviders = speedTestConfig.dnsProviders
+      const map = {}
+      for (const dnsProvider of dnsProviders) {
+        if (dnsMap[dnsProvider]) {
+          map[dnsProvider] = dnsMap[dnsProvider]
+        }
+      }
+      speedTest.initSpeedTestPool({ hostnameList: speedTestConfig.hostnameList, dnsMap: map })
+    }
+
     const requestHandler = createRequestHandler(
       createIntercepts,
       middlewares,

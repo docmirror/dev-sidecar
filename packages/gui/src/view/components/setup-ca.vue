@@ -53,7 +53,6 @@ export default {
   },
   async created () {
     const platform = await this.$api.info.getSystemPlatform()
-    console.log('11', platform)
     this.systemPlatform = platform
   },
   computed: {

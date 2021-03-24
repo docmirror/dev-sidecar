@@ -7,7 +7,7 @@ const log = require('../../../utils/util.log')
 const RequestCounter = require('../../choice/RequestCounter')
 const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
 const OverWallMiddleware = require('../middleware/overwall')
-
+const speedTest = require('../../speed/index.js')
 const defaultDns = require('dns')
 const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
 // create requestHandler function
@@ -106,10 +106,19 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             const dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.hostname)
             if (dns) {
               rOptions.lookup = (hostname, options, callback) => {
+                const tester = speedTest.getSpeedTester(hostname)
+                if (tester) {
+                  const ip = tester.pickFastAliveIp()
+                  if (ip) {
+                    log.info(`-----${hostname} use alive ip:${ip}-----`)
+                    callback(null, ip, 4)
+                    return
+                  }
+                }
                 dns.lookup(hostname).then(ip => {
                   isDnsIntercept = { dns, hostname, ip }
                   if (ip !== hostname) {
-                    log.info(`request url :${url},use ip :${ip}`)
+                    log.info(`----request url :${url},use ip :${ip}----`)
                     callback(null, ip, 4)
                   } else {
                     log.info(`request url :${url},use hostname :${hostname}`)
@@ -266,7 +275,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
     })().catch(e => {
       if (!res.writableEnded) {
         const status = e.status || 500
-        res.writeHead(status)
+        res.writeHead(status, { 'Content-Type': 'text/html;charset=UTF8' })
         res.write(`DevSidecar Warning:\n\n ${e.toString()}`)
         res.end()
         log.error('request error', e.message)

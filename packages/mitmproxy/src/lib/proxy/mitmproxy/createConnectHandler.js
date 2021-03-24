@@ -6,6 +6,8 @@ const DnsUtil = require('../../dns/index')
 const localIP = '127.0.0.1'
 const defaultDns = require('dns')
 
+const speedTest = require('../../speed/index.js')
+
 function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
   for (const intercept of sslConnectInterceptors) {
     const ret = intercept(req, cltSocket, head)
@@ -32,6 +34,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
     const hostname = srvUrl.hostname
     if (isSslConnect(sslConnectInterceptors, req, cltSocket, head)) {
       fakeServerCenter.getServerPromise(hostname, srvUrl.port).then((serverObj) => {
+        log.info('--- fakeServer connect', hostname)
         connect(req, cltSocket, head, localIP, serverObj.port)
       }, (e) => {
         log.error('getServerPromise', e)
@@ -57,9 +60,19 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig) {
       const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
       if (dns) {
         options.lookup = (hostname, options, callback) => {
+          const tester = speedTest.getSpeedTester(hostname)
+          if (tester) {
+            const ip = tester.pickFastAliveIp()
+            if (ip) {
+              log.info(`-----${hostname} use alive ip:${ip}-----`)
+              callback(null, ip, 4)
+              return
+            }
+          }
           dns.lookup(hostname).then(ip => {
             isDnsIntercept = { dns, hostname, ip }
             if (ip !== hostname) {
+              log.info(`-----${hostname} use ip:${ip}-----`)
               callback(null, ip, 4)
             } else {
               defaultDns.lookup(hostname, options, callback)
