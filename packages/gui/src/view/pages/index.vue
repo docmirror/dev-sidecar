@@ -17,50 +17,65 @@
       </span>
     </template>
 
-    <div v-if="status" style="margin-top:50px;display: flex; align-items:center;justify-content:space-around;flex-direction: row">
-      <div style="text-align: center">
-        <div class="big_button">
-          <a-button shape="circle" :type="startup.type()" :loading="startup.loading" @click="startup.doClick">
-            <img v-if="!startup.loading && !status.server.enabled" width="50" src="/logo/logo-simple.svg">
-            <img v-if="!startup.loading && status.server.enabled" width="50" src="/logo/logo-fff.svg">
-          </a-button>
-          <div style="margin-top: 10px">{{ status.server.enabled ? '已开启' : '已关闭' }}</div>
-
-        </div>
+    <div class="box">
+      <div class="mode-bar" style="margin:20px;" v-if="config && config.app">
+        <a-radio-group   v-model="config.app.mode"  button-style="solid" @change="modeChange">
+          <a-radio-button value="default">
+            默认模式
+          </a-radio-button>
+          <a-radio-button value="ow">
+            增强模式
+          </a-radio-button>
+        </a-radio-group>
       </div>
-      <div :span="12">
-        <a-form style="margin-top:20px" :label-col="{ span: 12 }" :wrapper-col="{ span: 12 }">
 
-          <a-form-item v-for=" (item, key) in switchBtns" :key="key" :label="item.label">
-            <a-switch style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked @change="item.doClick">
-              <a-icon slot="checkedChildren" type="check"/>
-              <a-icon slot="unCheckedChildren" type="close"/>
-            </a-switch>
-          </a-form-item>
-        </a-form>
+      <div v-if="status" style="margin-top:20px;display: flex; align-items:center;justify-content:space-around;flex-direction: row">
+
+        <div style="text-align: center">
+          <div class="big_button">
+            <a-button shape="circle" :type="startup.type()" :loading="startup.loading" @click="startup.doClick">
+              <img v-if="!startup.loading && !status.server.enabled" width="50" src="/logo/logo-simple.svg">
+              <img v-if="!startup.loading && status.server.enabled" width="50" src="/logo/logo-fff.svg">
+            </a-button>
+            <div class="mt10">{{ status.server.enabled ? '已开启' : '已关闭' }}</div>
+
+          </div>
+        </div>
+        <div :span="12">
+          <a-form style="margin-top:20px" :label-col="{ span: 12 }" :wrapper-col="{ span: 12 }">
+
+            <a-form-item v-for=" (item, key) in switchBtns" :key="key" :label="item.label">
+              <a-switch style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked @change="item.doClick">
+                <a-icon slot="checkedChildren" type="check"/>
+                <a-icon slot="unCheckedChildren" type="close"/>
+              </a-switch>
+            </a-form-item>
+          </a-form>
+        </div>
       </div>
 
     </div>
-    <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
-    <div slot="footer">
-      <div class="star" style="padding:10px;">
+      <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
+      <div slot="footer">
+        <div class="star" style="padding:10px;">
 
-        <div class="donate" @click="donateModal=true"> <a-icon  type="like" theme="outlined" /> 捐赠</div>
-        <div class="right">
-          <div>如果它解决了你的问题，请不要吝啬你的star哟！ <a-icon style="margin-right:10px;" type="smile" theme="outlined" /></div>
-          <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
-          <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+          <div class="donate" @click="donateModal=true"> <a-icon  type="like" theme="outlined" /> 捐赠</div>
+          <div class="right">
+            <div>如果它解决了你的问题，请不要吝啬你的star哟！ <a-icon style="margin-right:10px;" type="smile" theme="outlined" /></div>
+            <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
+            <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+          </div>
         </div>
-       </div>
 
-      <a-modal title="捐赠" v-model="donateModal" width="550px" cancelText="不了" okText="支持一下" @ok="goDonate">
+        <a-modal title="捐赠" v-model="donateModal" width="550px" cancelText="不了" okText="支持一下" @ok="goDonate">
           <div>* 随着越来越多用户来使用，我的1m带宽的小服务器已经满负荷运转了。</div>
           <div>* 请大家不要看油管视频，把带宽留给想要访问github的同学，致敬爱学习的你。</div>
-        <div class="payQrcode">
-          <img height="200px" src="/pay.jpg"/>
-        </div>
-      </a-modal>
-    </div>
+          <div class="payQrcode">
+            <img height="200px" src="/pay.jpg"/>
+          </div>
+        </a-modal>
+      </div>
+
   </ds-container>
 
 </template>
@@ -137,6 +152,21 @@ export default {
     console.log('index mounted')
   },
   methods: {
+    modeChange (mode) {
+      if (mode === 'ow') {
+        this.config.server.dns.speedTest.enabled = false
+        this.config.plugins.overwall.enabled = true
+      } else if (mode === 'default') {
+        this.config.server.dns.speedTest.enabled = false
+        this.config.plugins.overwall.enabled = true
+      }
+      this.$api.config.save(this.config).then(() => {
+        this.$message.info('设置已保存')
+      })
+      if (this.status.server.enabled) {
+        return this.$api.server.restart()
+      }
+    },
     doCheckRootCa () {
       this.$api.setting.load().then(setting => {
         console.log('setting', setting)
@@ -254,7 +284,10 @@ export default {
 </script>
 <style lang="scss">
 .page_index {
-
+  .mode-bar{
+    margin:30px;
+    text-align: center;
+  }
   .star {
     display: flex;
     flex-direction: row;

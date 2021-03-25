@@ -83,13 +83,16 @@
 
           </div>
         </a-tab-pane>
-        <a-tab-pane tab="DNS测速设置" key="4">
+        <a-tab-pane tab="IP测速" key="4">
           <div>
             <a-alert type="info" message="对从dns获取到的ip进行测速，使用速度最快的ip进行访问。（对使用增强功能的域名没啥用）"></a-alert>
             <a-form-item label="开启dns测速" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-checkbox v-model="getSpeedTestConfig().enabled" >
                 启用
               </a-checkbox>
+            </a-form-item>
+            <a-form-item label="自动测试间隔" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-number id="inputNumber" v-model="getSpeedTestConfig().interval" :step="1000" :min="1" />
             </a-form-item>
             <div>使用以下dns获取ip进行测速</div>
             <a-row style="margin-top:10px">
@@ -117,15 +120,11 @@
               </a-col>
             </a-row>
 
-          </div>
-        </a-tab-pane>
-        <a-tab-pane tab="DNS测速详情" key="5">
-          <div>
-            <div>对获取到的ip进行测速</div>
+            <a-divider />
             <a-row :gutter="10" class="mt10">
               <a-col span="24">
-                <a-button  type="primary" icon="plus" @click="reSpeedTest()" >重新测速</a-button>
-                <a-button class="md-ml-10" type="primary" icon="refresh" @click="reloadAllSpeedTester()" >刷新</a-button>
+                <a-button  type="primary" icon="plus" @click="reSpeedTest()" >立即重新测速</a-button>
+                <a-button class="md-ml-10" type="primary" icon="reload" @click="reloadAllSpeedTester()" >刷新</a-button>
               </a-col>
             </a-row>
 

@@ -10,6 +10,9 @@ function getRootCaKeyPath () {
   return getUserBasePath() + '/dev-sidecar.ca.key.pem'
 }
 module.exports = {
+  app: {
+    mode: 'default'
+  },
   server: {
     enabled: true,
     port: 1181,
@@ -199,6 +202,7 @@ module.exports = {
       },
       speedTest: {
         enabled: true,
+        interval: 60000,
         hostnameList: ['github.com'],
         dnsProviders: ['usa', 'quad9', 'rubyfish']
       }

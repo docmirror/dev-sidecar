@@ -5,17 +5,16 @@ const log = require('../../utils/util.log.js')
 const SpeedTestPool = {
 
 }
-function initSpeedTest ({ enabled, hostnameList, dnsMap }) {
+function initSpeedTest (runtimeConfig) {
+  const { enabled, hostnameList } = runtimeConfig
   const conf = config.getConfig()
-  conf.enabled = enabled
-  if (!conf.enabled) {
+  _.merge(conf, runtimeConfig)
+  if (!enabled) {
     return
   }
-  conf.dnsMap = dnsMap
   _.forEach(hostnameList, (hostname) => {
     SpeedTestPool[hostname] = new SpeedTester({ hostname })
   })
-
   log.info('[speed] enabled')
 }
 

@@ -51,7 +51,7 @@ class SpeedTester {
         return
       }
       this.test()
-    }, 60 * 1000)
+    }, config.getConfig().interval)
   }
 
   async getIpListFromDns (dnsMap) {
