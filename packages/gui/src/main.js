@@ -17,14 +17,14 @@ Vue.component(DsContainer)
 const router = new VueRouter({
   routes // (缩写) 相当于 routes: routes
 })
-
-view.initApi().then(async (api) => {
+const app = new Vue({
+  router,
+  render: h => h(App)
+})
+view.initApi(app).then(async (api) => {
   // 初始化status
   await view.initPre(Vue, api)
-  const app = new Vue({
-    router,
-    render: h => h(App)
-  }).$mount('#app')
+  app.$mount('#app')
   view.initModules(app, router)
 })
 

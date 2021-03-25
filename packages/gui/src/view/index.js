@@ -1,4 +1,4 @@
-import api, { apiInit } from './api'
+import { apiInit, useApi } from './api'
 import modules from '../bridge/front'
 import status from './status'
 export default {
@@ -10,6 +10,7 @@ export default {
     await status.install(api)
   },
   initModules (app, router) {
+    const api = useApi()
     modules.install(app, api, router)
   }
 }

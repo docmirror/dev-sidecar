@@ -55,10 +55,13 @@
         </a-tab-pane>
         <a-tab-pane tab="DNS设置" key="3">
           <div>
-            <div>某些域名需要通过国外DNS服务器获取到IP列表中选取相对最优的IP进行访问</div>
+
             <a-row style="margin-top:10px">
-              <a-col>
-                <a-button  type="primary" icon="plus" @click="addDnsMapping()" />
+              <a-col span="19">
+                <div>这里配置哪些域名需要通过国外DNS服务器获取IP进行访问</div>
+              </a-col>
+              <a-col span="3">
+                <a-button style="margin-left:8px" type="primary" icon="plus" @click="addDnsMapping()" />
               </a-col>
             </a-row>
             <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of dnsMappings" :key = 'index'>
@@ -73,8 +76,8 @@
                 </a-select>
               </a-col>
               <a-col :span="3">
-                <a-button v-if="item.value!==false" style="margin-left:10px" type="danger" icon="minus" @click="deleteDnsMapping(item,index)" />
-                <a-button v-if="item.value===false" style="margin-left:10px" type="primary" icon="checked" @click="restoreDefDnsMapping(item,index)" ></a-button>
+                <a-button v-if="item.value!==false"  type="danger" icon="minus" @click="deleteDnsMapping(item,index)" />
+                <a-button v-if="item.value===false"  type="primary" icon="checked" @click="restoreDefDnsMapping(item,index)" ></a-button>
               </a-col>
             </a-row>
 
@@ -82,6 +85,12 @@
         </a-tab-pane>
         <a-tab-pane tab="DNS测速设置" key="4">
           <div>
+            <a-alert type="info" message="对从dns获取到的ip进行测速，使用速度最快的ip进行访问。（对使用增强功能的域名没啥用）"></a-alert>
+            <a-form-item label="开启dns测速" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-checkbox v-model="getSpeedTestConfig().enabled" >
+                启用
+              </a-checkbox>
+            </a-form-item>
             <div>使用以下dns获取ip进行测速</div>
             <a-row style="margin-top:10px">
               <a-col span="24">

@@ -70,7 +70,7 @@ module.exports = {
           map[dnsProvider] = dnsMap[dnsProvider]
         }
       }
-      speedTest.initSpeedTestPool({ hostnameList: speedTestConfig.hostnameList, dnsMap: map })
+      speedTest.initSpeedTest({ enabled: speedTestConfig.enabled, hostnameList: speedTestConfig.hostnameList, dnsMap: map })
     }
 
     const requestHandler = createRequestHandler(

@@ -127,8 +127,8 @@ const executor = {
   },
   async mac (exec, params) {
     // exec = _exec
-    let wifiAdaptor = await exec('sh -c "networksetup -listnetworkserviceorder | grep `route -n get 0.0.0.0 | grep \'interface\' | cut -d \':\' -f2` -B 1 | head -n 1 | cut -d \' \' -f2"')
-    wifiAdaptor = wifiAdaptor.trim()
+    let wifiAdaptor = await exec('sh -c "networksetup -listnetworkserviceorder | grep `route -n get 0.0.0.0 | grep \'interface\' | cut -d \':\' -f2` -B 1 | head -n 1 "')
+    wifiAdaptor = wifiAdaptor.substring(3).trim()
 
     if (params == null) {
       await exec(`networksetup -setwebproxystate '${wifiAdaptor}' off`)

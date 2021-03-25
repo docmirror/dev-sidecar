@@ -1,42 +1,46 @@
 import lodash from 'lodash'
 import { ipcRenderer, shell } from 'electron'
+let inited = false
+let apiObj = null
+export function apiInit (app) {
+  const invoke = (api, args) => {
+    return ipcRenderer.invoke('apiInvoke', [api, args]).catch(e => {
+      app.$notification.error({
+        message: 'Api invoke error',
+        description: e.message
+      })
+    })
+  }
+  const send = (channel, message) => {
+    console.log('do send,', channel, message)
+    return ipcRenderer.send(channel, message)
+  }
 
-const invoke = (api, args) => {
-  return ipcRenderer.invoke('apiInvoke', [api, args]).catch(err => {
-    console.error('api invoke error:', err)
-  })
-}
-const send = (channel, message) => {
-  console.log('do send,', channel, message)
-  return ipcRenderer.send(channel, message)
-}
-
-const bindApi = (api, param1) => {
-  lodash.set(apiObj, api, (param2) => {
-    return invoke(api, param2 || param1)
-  })
-}
-const apiObj = {
-  ipc: {
-    on (channel, callback) {
-      ipcRenderer.on(channel, callback)
-    },
-    removeAllListeners (channel) {
-      ipcRenderer.removeAllListeners(channel)
-    },
-    invoke,
-    send,
-    openExternal (href) {
-      shell.openExternal(href)
-    },
-    openPath (file) {
-      shell.openPath(file)
+  apiObj = {
+    ipc: {
+      on (channel, callback) {
+        ipcRenderer.on(channel, callback)
+      },
+      removeAllListeners (channel) {
+        ipcRenderer.removeAllListeners(channel)
+      },
+      invoke,
+      send,
+      openExternal (href) {
+        shell.openExternal(href)
+      },
+      openPath (file) {
+        shell.openPath(file)
+      }
     }
   }
-}
-let inited = false
 
-export function apiInit () {
+  const bindApi = (api, param1) => {
+    lodash.set(apiObj, api, (param2) => {
+      return invoke(api, param2 || param1)
+    })
+  }
+
   if (!inited) {
     return invoke('getApiList').then(list => {
       inited = true
@@ -52,4 +56,6 @@ export function apiInit () {
     resolve(apiObj)
   })
 }
-export default apiObj
+export function useApi () {
+  return apiObj
+}

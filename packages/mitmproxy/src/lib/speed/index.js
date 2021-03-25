@@ -1,21 +1,29 @@
 const SpeedTester = require('./SpeedTester.js')
 const _ = require('lodash')
 const config = require('./config')
-
+const log = require('../../utils/util.log.js')
 const SpeedTestPool = {
 
 }
-function initSpeedTestPool ({ hostnameList, dnsMap }) {
-  config.getConfig().dnsMap = dnsMap
+function initSpeedTest ({ enabled, hostnameList, dnsMap }) {
+  const conf = config.getConfig()
+  conf.enabled = enabled
+  if (!conf.enabled) {
+    return
+  }
+  conf.dnsMap = dnsMap
   _.forEach(hostnameList, (hostname) => {
     SpeedTestPool[hostname] = new SpeedTester({ hostname })
   })
 
-  console.log('[speed] dnsMap', dnsMap)
+  log.info('[speed] dnsMap', dnsMap)
 }
 
 function getAllSpeedTester () {
   const allSpeed = {}
+  if (!config.getConfig().enabled) {
+    return allSpeed
+  }
   _.forEach(SpeedTestPool, (item, key) => {
     allSpeed[key] = {
       hostname: key,
@@ -27,6 +35,9 @@ function getAllSpeedTester () {
 }
 
 function getSpeedTester (hostname) {
+  if (!config.getConfig().enabled) {
+    return
+  }
   let instance = SpeedTestPool[hostname]
   if (instance == null) {
     instance = new SpeedTester({ hostname })
@@ -55,7 +66,7 @@ function action (event) {
 }
 module.exports = {
   SpeedTester,
-  initSpeedTestPool,
+  initSpeedTest,
   getSpeedTester,
   getAllSpeedTester,
   registerNotify,

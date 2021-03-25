@@ -30,7 +30,7 @@ const dnsMap = dns.initDNS({
   // }
 })
 
-SpeedTest.initSpeedTestPool({ hostnameList: {}, dnsMap })
+SpeedTest.initSpeedTest({ hostnameList: {}, dnsMap })
 
 const tester = new SpeedTester({ hostname: 'github.com' })
 tester.test().then(ret => {

@@ -198,6 +198,7 @@ module.exports = {
         'gh.docmirror.top': 'usa'
       },
       speedTest: {
+        enabled: true,
         hostnameList: ['github.com'],
         dnsProviders: ['usa', 'quad9', 'rubyfish']
       }
