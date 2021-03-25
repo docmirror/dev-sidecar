@@ -16,7 +16,7 @@ function initSpeedTest ({ enabled, hostnameList, dnsMap }) {
     SpeedTestPool[hostname] = new SpeedTester({ hostname })
   })
 
-  log.info('[speed] dnsMap', dnsMap)
+  log.info('[speed] enabled')
 }
 
 function getAllSpeedTester () {

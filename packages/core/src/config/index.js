@@ -152,11 +152,11 @@ module.exports = {
           server: 'https://dns.alidns.com/dns-query',
           cacheSize: 1000
         },
-        ipaddress: {
-          type: 'ipaddress',
-          server: 'ipaddress',
-          cacheSize: 1000
-        },
+        // ipaddress: {
+        //   type: 'ipaddress',
+        //   server: 'ipaddress',
+        //   cacheSize: 1000
+        // },
         usa: {
           type: 'https',
           server: 'https://1.1.1.1/dns-query',
@@ -192,7 +192,7 @@ module.exports = {
         '*.githubusercontent.com': 'usa',
         '*.githubassets.com': 'usa',
         // "解决push的时候需要输入密码的问题",
-        'github.com': 'usa',
+        'github.com': 'quad9',
         '*github.com': 'usa',
         '*.vuepress.vuejs.org': 'usa',
         'gh.docmirror.top': 'usa'

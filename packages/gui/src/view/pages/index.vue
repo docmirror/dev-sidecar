@@ -25,6 +25,7 @@
             <img v-if="!startup.loading && status.server.enabled" width="50" src="/logo/logo-fff.svg">
           </a-button>
           <div style="margin-top: 10px">{{ status.server.enabled ? '已开启' : '已关闭' }}</div>
+
         </div>
       </div>
       <div :span="12">
