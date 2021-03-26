@@ -156,13 +156,14 @@ export default {
     console.log('index mounted')
   },
   methods: {
-    modeChange (mode) {
+    async modeChange () {
+      const mode = this.config.app.mode
       if (mode === 'ow') {
         this.config.server.dns.speedTest.enabled = false
-        this.config.plugins.overwall.enabled = true
+        this.config.plugin.overwall.enabled = true
       } else if (mode === 'default') {
-        this.config.server.dns.speedTest.enabled = false
-        this.config.plugins.overwall.enabled = true
+        this.config.server.dns.speedTest.enabled = true
+        this.config.plugin.overwall.enabled = false
       }
       this.$api.config.save(this.config).then(() => {
         this.$message.info('设置已保存')
