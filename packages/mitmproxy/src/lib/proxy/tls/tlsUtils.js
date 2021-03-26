@@ -94,7 +94,7 @@ utils.createFakeCertificateByDomain = function (caKey, caCert, domain) {
     value: 'GuangDong'
   }, {
     name: 'localityName',
-    value: 'ShengZhen'
+    value: 'ShenZhen'
   }, {
     name: 'organizationName',
     value: 'dev-sidecar'
