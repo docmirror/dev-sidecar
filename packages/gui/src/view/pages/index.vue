@@ -30,7 +30,7 @@
               默认模式
             </a-radio-button>
           </a-tooltip>
-          <a-tooltip placement="topLeft" title="启用增强，关闭测速（默认模式访问不了github时，请使用此模式）">
+          <a-tooltip placement="topLeft" title="启用增强，关闭测速（安全模式或默认模式访问不了github时，请使用此模式）">
             <a-radio-button value="ow">
               增强模式
             </a-radio-button>
