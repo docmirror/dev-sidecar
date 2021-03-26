@@ -37,7 +37,7 @@ const serverApi = {
     const allConfig = config.get()
     const serverConfig = lodash.cloneDeep(allConfig.server)
 
-    const intercepts = serverConfig.intercepts
+    let intercepts = serverConfig.intercepts
     const dnsMapping = serverConfig.dns.mapping
 
     if (allConfig.plugin) {
@@ -53,6 +53,11 @@ const serverApi = {
           lodash.merge(dnsMapping, plugin.dns)
         }
       })
+    }
+
+    if (serverConfig.intercept.enabled === false) {
+      // 如果设置为关闭拦截
+      intercepts = {}
     }
 
     for (const key in plugins) {

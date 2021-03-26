@@ -20,12 +20,17 @@
     <div class="box">
       <div class="mode-bar" style="margin:20px;" v-if="config && config.app">
         <a-radio-group   v-model="config.app.mode"  button-style="solid" @change="modeChange">
-          <a-tooltip placement="topLeft" title="启用测速，关闭增强功能（此模式不fanqiang，但不是很稳定）">
+          <a-tooltip placement="topLeft" title="启用测速，关闭拦截，关闭增强（功能最弱，不需要信任证书，最安全）">
+            <a-radio-button value="safe">
+              安全模式
+            </a-radio-button>
+          </a-tooltip>
+          <a-tooltip placement="topLeft" title="启用测速，关闭增强（此模式不fanqiang，但不是很稳定）">
             <a-radio-button value="default">
               默认模式
             </a-radio-button>
           </a-tooltip>
-          <a-tooltip placement="topLeft" title="启用增强功能，关闭测速（默认模式访问不了github时，请使用此模式）">
+          <a-tooltip placement="topLeft" title="启用增强，关闭测速（默认模式访问不了github时，请使用此模式）">
             <a-radio-button value="ow">
               增强模式
             </a-radio-button>
@@ -159,9 +164,15 @@ export default {
     async modeChange () {
       const mode = this.config.app.mode
       if (mode === 'ow') {
+        this.config.server.intercept.enabled = true
         this.config.server.dns.speedTest.enabled = false
         this.config.plugin.overwall.enabled = true
       } else if (mode === 'default') {
+        this.config.server.intercept.enabled = true
+        this.config.server.dns.speedTest.enabled = true
+        this.config.plugin.overwall.enabled = false
+      } else if (mode === 'safe') {
+        this.config.server.intercept.enabled = false
         this.config.server.dns.speedTest.enabled = true
         this.config.plugin.overwall.enabled = false
       }

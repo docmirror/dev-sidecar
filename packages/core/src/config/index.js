@@ -28,6 +28,9 @@ module.exports = {
         keyPath: getRootCaKeyPath()
       }
     },
+    intercept: {
+      enabled: true
+    },
     intercepts: {
       'github.com': {
         '/.*/.*/releases/download/': {

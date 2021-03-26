@@ -42,6 +42,13 @@
              <a-input-search addon-before="Cert" enter-button="选择" @search="onCrtSelect"   v-model="config.server.setting.rootCaFile.certPath" />
              <a-input-search addon-before="Key" enter-button="选择" @search="onKeySelect" v-model="config.server.setting.rootCaFile.keyPath" />
           </a-form-item>
+          <a-form-item label="启用拦截" :label-col="labelCol" :wrapper-col="wrapperCol">
+            <a-tooltip title="关闭拦截，且关闭功能增强的话，就不需要安装根证书，本应用退化为dns优选，最安全">
+              <a-checkbox v-model="config.server.intercept.enabled" >
+                启用拦截
+              </a-checkbox>
+            </a-tooltip>
+          </a-form-item>
           <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-tooltip title="关闭后，github的clone加速链接复制也将关闭">
               <a-checkbox v-model="config.server.setting.script.enabled" >
