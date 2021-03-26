@@ -99,7 +99,7 @@
               </a-checkbox>
             </a-form-item>
             <a-form-item label="自动测试间隔" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number id="inputNumber" v-model="getSpeedTestConfig().interval" :step="1000" :min="1" />
+              <a-input-number id="inputNumber" v-model="getSpeedTestConfig().interval" :step="1000" :min="1" /> ms
             </a-form-item>
             <div>使用以下dns获取ip进行测速</div>
             <a-row style="margin-top:10px">

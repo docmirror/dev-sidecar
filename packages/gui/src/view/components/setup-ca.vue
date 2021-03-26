@@ -15,7 +15,7 @@
       <a-button type="primary" style="float:right" @click="doSetup()">点此去安装</a-button>
     </template>
     <div>
-      <b>本应用正常使用必须安装和信任CA根证书</b>，该证书是应用启动时本地随机生成的<br/>
+      <b>本应用在非“安全模式”下必须安装和信任CA根证书</b>，该证书是应用启动时本地随机生成的<br/>
       <template v-if="this.systemPlatform === 'mac'">
         1、点击右上角“点此去安装按钮”，打开钥匙串<br/>
         2、然后按如下图步骤将随机生成的根证书设置为始终信任<br/>

@@ -20,18 +20,18 @@
     <div class="box">
       <div class="mode-bar" style="margin:20px;" v-if="config && config.app">
         <a-radio-group   v-model="config.app.mode"  button-style="solid" @change="modeChange">
-          <a-tooltip placement="topLeft" title="启用测速，关闭拦截，关闭增强（功能最弱，不稳定，不需要信任证书，最安全）">
+          <a-tooltip placement="topLeft" title="启用测速，关闭拦截，关闭增强（功能最弱，不稳定，不需要安装证书，最安全）">
             <a-radio-button value="safe">
               安全模式
             </a-radio-button>
           </a-tooltip>
-          <a-tooltip placement="topLeft" title="启用测速，关闭增强（此模式不fan qiang，但不是很稳定）">
+          <a-tooltip placement="topLeft" title="关闭测速，启用拦截，关闭增强（功能稍强，需要安装证书）">
             <a-radio-button value="default">
               默认模式
             </a-radio-button>
           </a-tooltip>
-          <a-tooltip placement="topLeft" title="启用增强，关闭测速（安全模式或默认模式访问不了github时，请使用此模式）">
-            <a-radio-button value="ow">
+          <a-tooltip placement="topLeft" title="关闭测速，启用增强，启用拦截（敏感原因，默认关闭，感兴趣的话可以私下交流）">
+            <a-radio-button :disabled="!this.setting.overwall" value="ow">
               增强模式
             </a-radio-button>
           </a-tooltip>
@@ -77,8 +77,7 @@
         </div>
 
         <a-modal title="捐赠" v-model="donateModal" width="550px" cancelText="不了" okText="支持一下" @ok="goDonate">
-          <div>* 随着越来越多用户来使用，我的1m带宽的小服务器已经满负荷运转了。</div>
-          <div>* 请大家不要看油管视频，把带宽留给想要访问github的同学，致敬爱学习的你。</div>
+          <div>* 如果觉得好用，请给我一点鼓励，感谢。</div>
           <div class="payQrcode">
             <img height="200px" src="/pay.jpg"/>
           </div>
@@ -163,18 +162,18 @@ export default {
   methods: {
     async modeChange () {
       const mode = this.config.app.mode
-      if (mode === 'ow') {
-        this.config.server.intercept.enabled = true
-        this.config.server.dns.speedTest.enabled = false
-        this.config.plugin.overwall.enabled = true
-      } else if (mode === 'default') {
-        this.config.server.intercept.enabled = true
-        this.config.server.dns.speedTest.enabled = true
-        this.config.plugin.overwall.enabled = false
-      } else if (mode === 'safe') {
+      if (mode === 'safe') {
         this.config.server.intercept.enabled = false
         this.config.server.dns.speedTest.enabled = true
         this.config.plugin.overwall.enabled = false
+      } else if (mode === 'default') {
+        this.config.server.intercept.enabled = true
+        this.config.server.dns.speedTest.enabled = false
+        this.config.plugin.overwall.enabled = false
+      } else if (mode === 'ow') {
+        this.config.server.intercept.enabled = true
+        this.config.server.dns.speedTest.enabled = false
+        this.config.plugin.overwall.enabled = true
       }
       this.$api.config.save(this.config).then(() => {
         this.$message.info('设置已保存')

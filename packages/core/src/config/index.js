@@ -53,14 +53,13 @@ module.exports = {
             'github'
           ],
           desc: 'clone加速复制链接脚本'
+        },
+        '/.*': {
+          proxy: 'gh.docmirror.top/_proxy',
+          backup: [
+            'github.com'
+          ]
         }
-        // '/.*': {
-        //   proxy: 'gh.docmirror.top/_proxy',
-        //   backup: [
-        //     'github.com'
-        //   ],
-        //   desc: '如果出现dev-sidecar报错，可能是加速地址dns被污染了，需要将本条配置删除'
-        // }
       },
       'api.github.com': {
         '^/_private/browser/stats$': {
@@ -117,9 +116,9 @@ module.exports = {
           backup: ['fonts-gstatic.proxy.ustclug.org']
         }
       },
-      // 'clients*.google.com': { '.*': { abort: true } },
-      // 'www.googleapis.com': { '.*': { abort: true } },
-      // 'lh*.googleusercontent.com': { '.*': { abort: true } },
+      'clients*.google.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
+      'www.googleapis.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
+      'lh*.googleusercontent.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
       // mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
       '*.s3.amazonaws.com': {
         '/sqlite3/.*': {
