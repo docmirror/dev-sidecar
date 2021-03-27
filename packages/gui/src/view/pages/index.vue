@@ -31,7 +31,7 @@
             </a-radio-button>
           </a-tooltip>
           <a-tooltip placement="topLeft" title="关闭测速，启用增强，启用拦截（敏感原因，默认关闭，感兴趣的话可以私下交流）">
-            <a-radio-button :disabled="!this.setting.overwall" value="ow">
+            <a-radio-button value="ow">
               增强模式
             </a-radio-button>
           </a-tooltip>
@@ -160,7 +160,7 @@ export default {
     console.log('index mounted')
   },
   methods: {
-    async modeChange () {
+    async modeChange (event) {
       const mode = this.config.app.mode
       if (mode === 'safe') {
         this.config.server.intercept.enabled = false
@@ -171,6 +171,11 @@ export default {
         this.config.server.dns.speedTest.enabled = false
         this.config.plugin.overwall.enabled = false
       } else if (mode === 'ow') {
+        console.log('event', event)
+        if (!this.setting.overwall) {
+          this.wantOW()
+          return
+        }
         this.config.server.intercept.enabled = true
         this.config.server.dns.speedTest.enabled = false
         this.config.plugin.overwall.enabled = true
@@ -181,6 +186,16 @@ export default {
       if (this.status.server.enabled) {
         return this.$api.server.restart()
       }
+    },
+    wantOW () {
+      this.$success({
+        title: '来找我吧',
+        content: (
+          <div>
+            敏感原因，我关闭了它，如果你对此功能感兴趣，你可以尝试找一找它，我把打开的方法藏在了源码里（线索提示 // TODO）
+          </div>
+        )
+      })
     },
     doCheckRootCa () {
       this.$api.setting.load().then(setting => {
