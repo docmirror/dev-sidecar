@@ -77,6 +77,15 @@ function setTray (app) {
 
 function createWindow () {
   // Create the browser window.
+
+  let startHideWindow = false
+  if (process.argv) {
+    const args = minimist(process.argv)
+    if (args.hideWindow) {
+      startHideWindow = true
+    }
+  }
+
   win = new BrowserWindow({
     width: 900,
     height: 750,
@@ -88,6 +97,7 @@ function createWindow () {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true// process.env.ELECTRON_NODE_INTEGRATION
     },
+    show: !startHideWindow,
     // eslint-disable-next-line no-undef
     icon: path.join(__static, 'icon.png')
   })
@@ -102,6 +112,10 @@ function createWindow () {
     win.loadURL('app://./index.html')
   }
 
+  if (startHideWindow) {
+    win.hide()
+  }
+
   win.on('closed', async (e) => {
     win = null
     tray = null
@@ -113,14 +127,6 @@ function createWindow () {
       win.hide()
     }
   })
-
-  if (process.argv) {
-    const args = minimist(process.argv)
-    console.log('start args', args)
-    if (args.hideWindow) {
-      win.hide()
-    }
-  }
 }
 
 async function beforeQuit () {
