@@ -11,7 +11,10 @@ function getRootCaKeyPath () {
 }
 module.exports = {
   app: {
-    mode: 'default'
+    mode: 'default',
+    autoStart: {
+      enabled: false
+    }
   },
   server: {
     enabled: true,

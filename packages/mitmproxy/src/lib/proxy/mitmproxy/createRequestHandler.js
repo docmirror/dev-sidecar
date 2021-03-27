@@ -276,7 +276,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       if (!res.writableEnded) {
         const status = e.status || 500
         res.writeHead(status, { 'Content-Type': 'text/html;charset=UTF8' })
-        res.write(`DevSidecar Warning:\n\n ${e.toString()}`)
+        res.write(`DevSidecar Warning:<br/> ${e.toString()}`)
         res.end()
         log.error('request error', e.message)
       }
