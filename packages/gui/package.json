@@ -13,7 +13,7 @@
     "electron:icons": "electron-icon-builder --input=./public/logo/win.png --output=build --flatten",
     "electron:icons-mac": "electron-icon-builder --input=./public/logo/mac.png --output=build --flatten"
   },
-  "author": "docmirror.cn",
+  "author": "docmirror.cn by Greper",
   "main": "background.js",
   "dependencies": {
     "@docmirror/dev-sidecar": "^1.5.0",
