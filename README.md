@@ -198,7 +198,7 @@ const intercepts = {
 出现这个问题可能是没有开启系统代理命令的执行权限    
 请按照如下步骤确认和修复
 ```
-networksetup -setwebproxy 'WiFi' 127.0.0.1 1181 
+networksetup -setwebproxy 'WiFi（你的网卡名称）' 127.0.0.1 1181 
 #看是否有如下错误提示
 ** Error: Command requires admin privileges.
 ```
@@ -242,12 +242,11 @@ mac 代理查看
 
 * mac: 请确认证书已经被安装并已经设置信任。   
 
-* 火狐浏览器：   
-火狐浏览器不走系统的根证书，需要在选项中添加根证书
-1、火狐浏览器->选项->隐私与安全->证书->查看证书
-2、证书颁发机构->导入
-3、选择证书文件`C:\Users\Administrator\.dev-sidecar\dev-sidecar.ca.crt`（Mac为`~/.dev-sidecar`目录）
-4、勾选信任由此证书颁发机构来标识网站，确定即可
+* 火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书   
+1、火狐浏览器->选项->隐私与安全->证书->查看证书   
+2、证书颁发机构->导入    
+3、选择证书文件`C:\Users\Administrator\.dev-sidecar\dev-sidecar.ca.crt`（Mac为`~/.dev-sidecar`目录）    
+4、勾选信任由此证书颁发机构来标识网站，确定即可      
 
 ### 4. 打开github显示连接超时
 请右键退出dev-sidecar    
