@@ -6,6 +6,8 @@ const _execFile = childProcess.execFile
 const exec = util.promisify(_exec)
 const PowerShell = require('node-powershell')
 const log = require('../utils/util.log')
+const fixPath = require('fix-path')
+fixPath()
 class SystemShell {
   static async exec (cmds, args) {
     throw new Error('You have to implement the method exec!')

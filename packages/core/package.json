@@ -26,6 +26,7 @@
     "debug": "^4.1.1",
     "dns-over-http": "^0.2.0",
     "dns-over-tls": "^0.0.8",
+    "fix-path": "^3.0.0",
     "iconv-lite": "^0.4.13",
     "is-browser": "^2.1.0",
     "jschardet": "^1.4.1",
