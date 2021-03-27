@@ -6,9 +6,9 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
 import DevSidecar from '@docmirror/dev-sidecar'
 import log from './utils/util.log'
+import minimist from 'minimist'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
-
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -113,6 +113,14 @@ function createWindow () {
       win.hide()
     }
   })
+
+  if (process.argv) {
+    const args = minimist(process.argv)
+    console.log('start args', args)
+    if (args.hideWindow) {
+      win.hide()
+    }
+  }
 }
 
 async function beforeQuit () {

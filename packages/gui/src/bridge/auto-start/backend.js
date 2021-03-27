@@ -13,7 +13,9 @@ export default {
         app.setLoginItemSettings({
           openAtLogin: true,
           path: ex,
-          args: []
+          args: [
+            '--hideWindow', '"true"'
+          ]
         })
         event.sender.send('auto-start', { key: 'enabled', value: true })
       } else {
