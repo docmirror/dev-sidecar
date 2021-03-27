@@ -25,12 +25,12 @@
               安全模式
             </a-radio-button>
           </a-tooltip>
-          <a-tooltip placement="topLeft" title="关闭测速，启用拦截，关闭增强（功能稍强，需要安装证书）">
+          <a-tooltip placement="topLeft" title="启用测速，启用拦截，关闭增强（功能稍强，需要安装证书）">
             <a-radio-button value="default">
               默认模式
             </a-radio-button>
           </a-tooltip>
-          <a-tooltip placement="topLeft" title="关闭测速，启用增强，启用拦截（敏感原因，默认关闭，感兴趣的话可以私下交流）">
+          <a-tooltip placement="topLeft" title="关闭测速，启用增强，启用拦截（敏感原因，默认禁用，感兴趣的话可以私下交流）">
             <a-radio-button value="ow">
               增强模式
             </a-radio-button>
@@ -168,7 +168,7 @@ export default {
         this.config.plugin.overwall.enabled = false
       } else if (mode === 'default') {
         this.config.server.intercept.enabled = true
-        this.config.server.dns.speedTest.enabled = false
+        this.config.server.dns.speedTest.enabled = true
         this.config.plugin.overwall.enabled = false
       } else if (mode === 'ow') {
         console.log('event', event)

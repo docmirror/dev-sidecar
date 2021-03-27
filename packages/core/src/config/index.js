@@ -70,7 +70,7 @@ module.exports = {
           desc: 'github的访问速度分析上传，没有必要，直接返回成功'
         }
       },
-      'raw.githubusercontent.com': {
+      'raw.11githubusercontent.com': {
         '.*': { proxy: 'raw.fastgit.org' }
       },
       // 'github.githubassets.com': {
@@ -193,6 +193,7 @@ module.exports = {
       },
       mapping: {
         // 'assets.fastgit.org': 'usa',
+        '*githubusercontent.com': 'quad9',
         '*yarnpkg.com': 'usa',
         '*cloudfront.net': 'usa',
         '*github.io': 'usa',
@@ -203,7 +204,7 @@ module.exports = {
         'github.com': 'quad9',
         '*github.com': 'usa',
         '*.vuepress.vuejs.org': 'usa',
-        'gh.docmirror.top': 'usa'
+        'gh.docmirror.top': 'aliyun'
       },
       speedTest: {
         enabled: true,

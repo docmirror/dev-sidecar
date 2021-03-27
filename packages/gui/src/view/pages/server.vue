@@ -76,10 +76,8 @@
                 <a-input :disabled="item.value ===false" v-model="item.key"></a-input>
               </a-col>
               <a-col :span="5">
-                <a-select :disabled="item.value ===false" v-model="item.value">
-                  <a-select-option value="usa">USA DNS</a-select-option>
-                  <a-select-option value="aliyun">Aliyun DNS</a-select-option>
-                  <a-select-option value="ipaddress">IpAddress</a-select-option>
+                <a-select :disabled="item.value ===false" v-model="item.value" style="width: 100%">
+                  <a-select-option v-for="(item) of speedDnsOptions" :key="item.value" :value="item.value">{{item.value}}</a-select-option>
                 </a-select>
               </a-col>
               <a-col :span="3">
