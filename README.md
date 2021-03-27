@@ -197,7 +197,7 @@ const intercepts = {
 出现这个问题可能是没有开启系统代理命令的执行权限    
 请按照如下步骤确认和修复
 ```
-networksetup -setwebproxy 'WiFi（你的网卡名称）' 127.0.0.1 1181 
+networksetup -setwebproxy 'WiFi' 127.0.0.1 1181 
 #看是否有如下错误提示
 ** Error: Command requires admin privileges.
 ```
