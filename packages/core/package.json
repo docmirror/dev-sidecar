@@ -13,7 +13,8 @@
   "license": "MPL-2.0",
   "private": false,
   "scripts": {
-    "start": "node ./start"
+    "start": "node ./start",
+    "test": "mocha"
   },
   "dependencies": {
     "@docmirror/mitmproxy": "^1.5.0",
@@ -49,6 +50,7 @@
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/eslint-config-standard": "^5.1.2",
     "babel-eslint": "^10.1.0",
+    "chai": "^4.3.4",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
