@@ -38,7 +38,7 @@
 * 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
 
 ### 6、 增强功能
-* 众所周知的原因，不能说太多，怕被查水表，默认关闭，感兴趣的可以私下交流
+* 众所周知的原因，不能说太多，默认关闭，感兴趣的可以私下交流
 * 反正开了这个之后，上面那些dns优选什么的特性好像都不香了
 
 ***安全警告***：
@@ -55,8 +55,8 @@
 下载安装包：  
  
 阿里云直接下载     
-[windows版](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.4.0.exe)      
-[Mac版](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.4.0.dmg)     
+[windows版](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.exe)      
+[Mac版](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.dmg)     
 注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
 从Release下载     
@@ -91,14 +91,14 @@
 |zip 下载 |![](./doc/download-before.png) |![](./doc/download.png)秒下的，实在截不到速度的图    |  
 
 
-## 模式说明（v1.5.0 准备发布）
+## 模式说明
 
 ### 安全模式
-* 此模式：关闭拦截、关闭增强、开启dns优选、开启测速     
+* 此模式：关闭拦截、关闭增强、开启dns优选、开启测速
 * 最安全，无需安装证书，可以在浏览器地址栏左侧查看域名证书
 * 功能也最弱，只有特性1，相当于查询github的国外ip，手动改hosts一个意思。
 * github的可访问性不稳定，取决于IP测速，如果有绿色ip存在，就 `有可能` 可以直连访问。
-![](./doc/speed.png)
+  ![](./doc/speed.png)
 
 ### 默认模式
 * 此模式：开启拦截、关闭增强、开启dns优选、开启测速
@@ -255,7 +255,7 @@ mac 代理查看
 ### 5、查看日志是否有报错
  如果还是不行，请在下方加作者好友，将服务日志发送给作者进行分析             
  日志打开方式：加速服务->右边日志按钮->打开日志文件夹    
- 
+
 ![](./doc/log.png)      
 
 
