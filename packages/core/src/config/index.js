@@ -43,10 +43,7 @@ module.exports = {
         '/.*/.*/archive/': {
           redirect: 'download.fastgit.org'
         },
-        '/.*/.*/raw/': {
-          replace: '(.+)\\/raw\\/(.+)',
-          proxy: 'raw.fastgit.org$1/$2'
-        },
+
         '/.*/.*/blame/': {
           redirect: 'hub.fastgit.org'
         },
@@ -69,6 +66,10 @@ module.exports = {
           success: true,
           desc: 'github的访问速度分析上传，没有必要，直接返回成功'
         }
+      },
+      '/.*/.*/raw11/': {
+        replace: '(.+)\\/raw\\/(.+)',
+        proxy: 'raw.fastgit.org$1/$2'
       },
       'raw.11githubusercontent.com': {
         '.*': { proxy: 'raw.fastgit.org' }
@@ -192,7 +193,7 @@ module.exports = {
         // }
       },
       mapping: {
-        // 'assets.fastgit.org': 'usa',
+        'assets.fastgit.org': 'usa',
         '*githubusercontent.com': 'quad9',
         '*yarnpkg.com': 'usa',
         '*cloudfront.net': 'usa',
