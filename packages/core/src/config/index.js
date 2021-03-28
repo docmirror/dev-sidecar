@@ -50,7 +50,7 @@ module.exports = {
         '/.*/.*/blame/': {
           redirect: 'hub.fastgit.org'
         },
-        '^/[^/]+/[^/]+/?(/releases)?$': {
+        '^/[^/]+/[^/]+(/releases(/.*)?)?$': {
           script: [
             'jquery',
             'github'
