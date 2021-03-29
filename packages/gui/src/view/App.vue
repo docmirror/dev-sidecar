@@ -36,7 +36,7 @@
         </a-layout-content>
         <a-layout-footer>
           <div class="footer">
-            ©2020 docmirror.cn
+            ©2020-2021 docmirror.cn by Greper
           </div>
         </a-layout-footer>
       </a-layout>

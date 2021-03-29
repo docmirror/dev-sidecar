@@ -11,7 +11,10 @@ function getRootCaKeyPath () {
 }
 module.exports = {
   app: {
-    mode: 'default'
+    mode: 'default',
+    autoStart: {
+      enabled: false
+    }
   },
   server: {
     enabled: true,
@@ -40,14 +43,11 @@ module.exports = {
         '/.*/.*/archive/': {
           redirect: 'download.fastgit.org'
         },
-        '/.*/.*/raw/': {
-          replace: '(.+)\\/raw\\/(.+)',
-          proxy: 'raw.fastgit.org$1/$2'
-        },
+
         '/.*/.*/blame/': {
           redirect: 'hub.fastgit.org'
         },
-        '^/[^/]+/[^/]+$': {
+        '^/[^/]+/[^/]+(/releases(/.*)?)?$': {
           script: [
             'jquery',
             'github'
@@ -67,7 +67,11 @@ module.exports = {
           desc: 'github的访问速度分析上传，没有必要，直接返回成功'
         }
       },
-      'raw.githubusercontent.com': {
+      '/.*/.*/raw11/': {
+        replace: '(.+)\\/raw\\/(.+)',
+        proxy: 'raw.fastgit.org$1/$2'
+      },
+      'raw.11githubusercontent.com': {
         '.*': { proxy: 'raw.fastgit.org' }
       },
       // 'github.githubassets.com': {
@@ -81,13 +85,13 @@ module.exports = {
         '.*': { proxy: 'customer-stories-feed.fastgit.org' }
       },
       // google cdn
-      // 'www.google.com': {
-      //   '/recaptcha/.*': { proxy: 'www.recaptcha.net' },
+      'www.google.com': {
+        '/recaptcha/.*': { proxy: 'www.recaptcha.net' }
       //   '.*': {
       //     proxy: 'gg.docmirror.top/_yxorp',
       //     desc: '呀，被你发现了，偷偷的用，别声张'
       //   }
-      // },
+      },
       'ajax.googleapis.com': {
         '.*': {
           proxy: 'ajax.loli.net',
@@ -189,7 +193,8 @@ module.exports = {
         // }
       },
       mapping: {
-        // 'assets.fastgit.org': 'usa',
+        'assets.fastgit.org': 'usa',
+        '*githubusercontent.com': 'quad9',
         '*yarnpkg.com': 'usa',
         '*cloudfront.net': 'usa',
         '*github.io': 'usa',
@@ -200,7 +205,7 @@ module.exports = {
         'github.com': 'quad9',
         '*github.com': 'usa',
         '*.vuepress.vuejs.org': 'usa',
-        'gh.docmirror.top': 'usa'
+        'gh.docmirror.top': 'aliyun'
       },
       speedTest: {
         enabled: true,

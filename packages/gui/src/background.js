@@ -6,9 +6,9 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
 import DevSidecar from '@docmirror/dev-sidecar'
 import log from './utils/util.log'
+import minimist from 'minimist'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
-
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -77,6 +77,15 @@ function setTray (app) {
 
 function createWindow () {
   // Create the browser window.
+
+  let startHideWindow = false
+  if (process.argv) {
+    const args = minimist(process.argv)
+    if (args.hideWindow) {
+      startHideWindow = true
+    }
+  }
+
   win = new BrowserWindow({
     width: 900,
     height: 750,
@@ -88,6 +97,7 @@ function createWindow () {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true// process.env.ELECTRON_NODE_INTEGRATION
     },
+    show: !startHideWindow,
     // eslint-disable-next-line no-undef
     icon: path.join(__static, 'icon.png')
   })
@@ -100,6 +110,10 @@ function createWindow () {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
+  }
+
+  if (startHideWindow) {
+    win.hide()
   }
 
   win.on('closed', async (e) => {

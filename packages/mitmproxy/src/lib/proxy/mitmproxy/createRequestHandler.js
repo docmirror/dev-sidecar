@@ -126,33 +126,6 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
                   }
                 })
               }
-              // if (rOptions.agent) {
-              //   const lookup2 = (hostname, options, callback) => {
-              //     const tester = speedTest.getSpeedTester(hostname)
-              //     if (tester) {
-              //       const ip = tester.pickFastAliveIp()
-              //       if (ip) {
-              //         log.info(`-----${hostname} use alive ip from agent:${ip}-----`)
-              //         callback(null, ip, 4)
-              //         return
-              //       }
-              //     }
-              //     dns.lookup(hostname).then(ip => {
-              //       isDnsIntercept = { dns, hostname, ip }
-              //       if (ip !== hostname) {
-              //         log.info(`----request url :${url},use ip from agent :${ip}----`)
-              //         callback(null, ip, 4)
-              //       } else {
-              //         log.info(`request url :${url},use hostname :${hostname}`)
-              //         defaultDns.lookup(hostname, options, callback)
-              //       }
-              //     })
-              //   }
-              //   if (rOptions.agent.options) {
-              //     rOptions.agent.options.lookup = lookup2
-              //   }
-              //   rOptions.agent.lookup = lookup2
-              // }
             }
           }
 
@@ -303,7 +276,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       if (!res.writableEnded) {
         const status = e.status || 500
         res.writeHead(status, { 'Content-Type': 'text/html;charset=UTF8' })
-        res.write(`DevSidecar Warning:\n\n ${e.toString()}`)
+        res.write(`DevSidecar Warning:<br/> ${e.toString()}`)
         res.end()
         log.error('request error', e.message)
       }

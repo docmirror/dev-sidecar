@@ -29,7 +29,6 @@ module.exports = class FakeServersCenter {
         log.info(e)
       }
     }
-    log.info('add server promise:', serverPromiseObj)
     this.queue.push(serverPromiseObj)
     return serverPromiseObj
   }

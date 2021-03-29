@@ -2,6 +2,7 @@
   "name": "dev-sidecar-parent",
   "private": false,
   "license": "MPL-2.0",
+  "author": "Greper",
   "devDependencies": {
     "lerna": "^3.22.1"
   },

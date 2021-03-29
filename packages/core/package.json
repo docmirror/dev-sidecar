@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "给开发者的加速代理工具",
   "main": "src/index.js",
   "keywords": [
@@ -13,10 +13,11 @@
   "license": "MPL-2.0",
   "private": false,
   "scripts": {
-    "start": "node ./start"
+    "start": "node ./start",
+    "test": "mocha"
   },
   "dependencies": {
-    "@docmirror/mitmproxy": "^1.4.0",
+    "@docmirror/mitmproxy": "^1.5.0",
     "agentkeepalive": "^2.1.1",
     "babel-preset-es2020": "^1.0.2",
     "charset": "^1.0.0",
@@ -26,6 +27,7 @@
     "debug": "^4.1.1",
     "dns-over-http": "^0.2.0",
     "dns-over-tls": "^0.0.8",
+    "fix-path": "^3.0.0",
     "iconv-lite": "^0.4.13",
     "is-browser": "^2.1.0",
     "jschardet": "^1.4.1",
@@ -48,6 +50,7 @@
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/eslint-config-standard": "^5.1.2",
     "babel-eslint": "^10.1.0",
+    "chai": "^4.3.4",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
