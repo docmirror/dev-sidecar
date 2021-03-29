@@ -55,8 +55,8 @@
 下载安装包：  
  
 阿里云直接下载     
-[windows版](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.exe)      
-[Mac版](https://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.dmg)     
+[windows版](http://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.exe)      
+[Mac版](http://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.dmg)     
 注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
 从Release下载     
