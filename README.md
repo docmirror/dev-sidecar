@@ -54,12 +54,12 @@
 #### 1 下载安装包  
 下载安装包：  
  
-阿里云直接下载     
+1、 阿里云直接下载     
 [windows版](http://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.exe)      
 [Mac版](http://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.dmg)     
 注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
-从Release下载     
+2、 以上为http链接，可能在某些浏览器上无法下载，请选择release下载    
 [Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 [Github Release](https://github.com/docmirror/dev-sidecar/releases)  
 
