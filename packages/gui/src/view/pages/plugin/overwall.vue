@@ -53,13 +53,16 @@
               </a-col>
             </a-row>
             <a-row :gutter="10"  v-for="(item,index) of servers" :key = 'index'>
-              <a-col :span="8">
-                <a-input addon-before="域名"  placeholder="yourdomain.com"  v-model="item.key"></a-input>
+              <a-col :span="6">
+                <a-input addon-before="域名"  placeholder="yourdomain.com"  v-model="item.key"/>
               </a-col>
-              <a-col :span="7">
+              <a-col :span="5">
+                <a-input addon-before="端口"  placeholder="443"  v-model="item.value.port"/>
+              </a-col>
+              <a-col :span="6">
                 <a-input addon-before="路径"  placeholder="xxxxxx"  v-model="item.value.path"/>
               </a-col>
-              <a-col :span="7">
+              <a-col :span="5">
                 <a-input addon-before="密码" type="password" placeholder="password" v-model="item.value.password"/>
               </a-col>
               <a-col :span="2">

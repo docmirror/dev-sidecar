@@ -1,7 +1,7 @@
 const url = require('url')
 const pac = require('./source/pac')
 const matchUtil = require('../../../utils/util.match')
-const lodash = require('lodash')
+
 function matched (hostname, regexpMap) {
   const ret1 = matchUtil.matchHostname(regexpMap, hostname)
   if (ret1) {
@@ -63,6 +63,7 @@ module.exports = function createOverWallIntercept (overWallConfig) {
       }
 
       const domain = proxyServer
+      const port = server[domain].port
       const path = server[domain].path
       const password = server[domain].password
       const proxyTarget = domain + '/' + path + '/' + hostname + req.url
@@ -80,7 +81,7 @@ module.exports = function createOverWallIntercept (overWallConfig) {
       }
       rOptions.path = URL.path
       if (URL.port == null) {
-        rOptions.port = rOptions.protocol === 'https:' ? 443 : 80
+        rOptions.port = port || (rOptions.protocol === 'https:' ? 443 : 80)
       }
       log.info('OverWall:', rOptions.hostname, proxyTarget)
       if (context.requestCount) {
