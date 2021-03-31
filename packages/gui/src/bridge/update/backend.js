@@ -95,7 +95,7 @@ function updateHandle (app, win, beforeQuit, updateUrl, log) {
 export default {
   install (context) {
     const { app, win, beforeQuit, log } = context
-    const updateUrl = 'http://dev-sidecar.docmirror.cn/update/'
+    const updateUrl = 'https://dev-sidecar.oss-cn-shenzhen.aliyuncs.com/update/'
     if (process.env.NODE_ENV === 'development') {
       Object.defineProperty(app, 'isPackaged', {
         get () {

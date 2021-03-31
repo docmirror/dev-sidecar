@@ -114,12 +114,12 @@ module.exports = {
       'themes.googleusercontent.com': {
         '.*': { proxy: 'google-themes.proxy.ustclug.org' }
       },
-      'fonts.gstatic.com': {
-        '.*': {
-          proxy: 'gstatic.loli.net',
-          backup: ['fonts-gstatic.proxy.ustclug.org']
-        }
-      },
+      // 'fonts.gstatic.com': {
+      //   '.*': {
+      //     proxy: 'gstatic.loli.net',
+      //     backup: ['fonts-gstatic.proxy.ustclug.org']
+      //   }
+      // },
       'clients*.google.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
       'www.googleapis.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
       'lh*.googleusercontent.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
