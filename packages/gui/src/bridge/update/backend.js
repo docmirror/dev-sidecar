@@ -89,11 +89,11 @@ function updateHandle (app, win, beforeQuit, quit, log) {
     const appPath = appPathUtil.getAppRootPath()
     const target = path.join(appPath, 'resources')
     log.info('开始解压缩，安装升级包', partPackagePath, target)
+    app.relaunch()
     // 解压缩
     var zip = new AdmZip(partPackagePath)
     zip.extractAllTo(target, true)
     log.info('安装完成，重启app')
-    app.relaunch()
     app.exit(0)
   }
 
