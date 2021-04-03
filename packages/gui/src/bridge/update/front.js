@@ -1,6 +1,6 @@
 
 function install (app, api) {
-  const updateParams = app.$global.update = { fromUser: false, autoDownload: true, progress: 0, downloading: false, newVersion: false }
+  const updateParams = app.$global.update = { fromUser: false, autoDownload: true, progress: 0, downloading: false, newVersion: false, isFullUpdate: true }
   api.ipc.on('update', (event, message) => {
     console.log('on message', event, message)
     handleUpdateMessage(message, app)
@@ -15,6 +15,10 @@ function install (app, api) {
     },
     downloadUpdate () {
       api.ipc.send('update', { key: 'downloadUpdate' })
+    },
+    downloadPart (value) {
+      // 增量更新
+      api.ipc.send('update', { key: 'downloadPart', value })
     },
     doUpdateNow () {
       api.ipc.send('update', { key: 'doUpdateNow' })
@@ -50,6 +54,15 @@ function install (app, api) {
   function progressUpdate (value) {
     updateParams.progress = value
   }
+
+  function downloadNewVersion (value) {
+    if (value.partPackage) {
+      // 有增量更新
+      api.update.downloadPart(value)
+    } else {
+      api.update.downloadUpdate()
+    }
+  }
   function foundNewVersion (value) {
     updateParams.newVersion = true
 
@@ -71,18 +84,26 @@ function install (app, api) {
         }
       })
 
-      api.update.downloadUpdate()
+      downloadNewVersion(value)
       return
     }
     app.$confirm({
       title: '发现新版本',
-      content: `是否要更新到v${value.version}?`,
       cancelText: '暂不升级',
       okText: '升级',
-      // content: h => <div><h4>{value.version}更新内容：</h4><div>{value.releaseNotes}</div></div>,
+      content: h => {
+        console.log(value)
+        if (value.releaseNotes) {
+          const notes = []
+          for (const note of value.releaseNotes) {
+            notes.push(<li>{note}</li>)
+          }
+          return <div><div>更新内容：</div><ol>{notes}</ol></div>
+        }
+      },
       onOk () {
         console.log('OK')
-        api.update.downloadUpdate()
+        downloadNewVersion(value)
       },
       onCancel () {
         console.log('Cancel')

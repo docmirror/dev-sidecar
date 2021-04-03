@@ -11,3 +11,6 @@
 // test().then((ret) => {
 //   console.log('haha', ret)
 // })
+let wifiAdaptor = '(151) test'
+wifiAdaptor = wifiAdaptor.substring(wifiAdaptor.indexOf(' ')).trim()
+console.log(wifiAdaptor)

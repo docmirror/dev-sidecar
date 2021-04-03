@@ -1,13 +1,39 @@
 import { ipcMain } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import path from 'path'
+import request from 'request'
+import progress from 'request-progress'
 // win是所有窗口的引用
-// const path = require('path') // 引入path模块
-// const fs = require('fs-extra')
+import fs from 'fs'
+import AdmZip from 'adm-zip'
+import logger from '../../utils/util.log'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
+
+function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
+  progress(request(uri), {
+    // throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
+    // delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
+    // lengthHeader: 'x-transfer-length'  // Length header to use, defaults to content-length
+  })
+    .on('progress', function (state) {
+      onProgress(state.percent * 100)
+      logger.log('progress', state.percent)
+    })
+    .on('error', function (err) {
+      // Do something with err
+      logger.error('下载升级包失败', err)
+      onError(err)
+    })
+    .on('end', function () {
+      // Do something after request finishes
+      onSuccess()
+    })
+    .pipe(fs.createWriteStream(filePath))
+}
+
 // 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
-function updateHandle (app, win, beforeQuit, updateUrl, log) {
+function updateHandle (app, win, beforeQuit, log) {
   // // 更新前，删除本地安装包 ↓
   // const updaterCacheDirName = 'dev-sidecar-updater'
   // const updatePendingPath = path.join(autoUpdater.app.baseCachePath, updaterCacheDirName, 'pending')
@@ -22,14 +48,54 @@ function updateHandle (app, win, beforeQuit, updateUrl, log) {
   // 本地开发环境，改变app-update.yml地址
   if (process.env.NODE_ENV === 'development' && !isMac) {
     autoUpdater.updateConfigPath = path.join(__dirname, 'win-unpacked/resources/app-update.yml')
+    autoUpdater.setFeedURL({
+      provider: 'generic',
+      url: 'http://localhost/dev-sidecar/'
+    })
   }
   autoUpdater.autoDownload = false
 
-  // 设置服务器更新地址
-  autoUpdater.setFeedURL({
-    provider: 'generic',
-    url: updateUrl
-  })
+  let partPackagePath = null
+
+  function downloadPart (app, value) {
+    const appPath = app.getAppPath()
+    const fileDir = path.join(appPath, 'update')
+    console.log('fileDir', fileDir)
+    try {
+      fs.accessSync(fileDir, fs.constants.F_OK)
+    } catch (e) {
+      fs.mkdirSync(fileDir)
+    }
+    const filePath = path.join(fileDir, value.version + '.zip')
+
+    downloadFile(value.partPackage, filePath, (data) => {
+      win.webContents.send('update', { key: 'progress', value: parseInt(data) })
+    }, () => {
+      // 文件下载完成
+      win.webContents.send('update', { key: 'progress', value: 100 })
+      logger.info('升级包下载成功：', filePath)
+      partPackagePath = filePath
+      win.webContents.send('update', {
+        key: 'downloaded',
+        value: value
+      })
+    }, (error) => {
+      sendUpdateMessage({ key: 'error', value: error, error: error })
+    })
+  }
+
+  function updatePart (app, value, partPackagePath) {
+    const appPath = app.getAppPath()
+    const target = path.join(appPath, 'resources')
+    log.info('开始解压缩，安装升级包', partPackagePath, target)
+    // 解压缩
+    var zip = new AdmZip(partPackagePath)
+    zip.extractAllTo(target, true)
+    log.info('安装完成，重启app')
+    app.relaunch()
+    app.quit()
+  }
+
   autoUpdater.on('error', function (error) {
     log.info('autoUpdater error', error)
     sendUpdateMessage({ key: 'error', value: error, error: error })
@@ -63,6 +129,10 @@ function updateHandle (app, win, beforeQuit, updateUrl, log) {
 
   ipcMain.on('update', (e, arg) => {
     if (arg.key === 'doUpdateNow') {
+      if (partPackagePath) {
+        updatePart(app, arg.value, partPackagePath)
+        return
+      }
       // some code here to handle event
       beforeQuit().then(() => {
         autoUpdater.quitAndInstall()
@@ -80,6 +150,11 @@ function updateHandle (app, win, beforeQuit, updateUrl, log) {
       // 下载新版本
       log.info('autoUpdater downloadUpdate')
       autoUpdater.downloadUpdate()
+    } else if (arg.key === 'downloadPart') {
+      // 下载增量更新版本
+      log.info('autoUpdater downloadPart')
+      // autoUpdater.downloadUpdate()
+      downloadPart(app, arg.value)
     }
   })
   // 通过main进程发送事件给renderer进程，提示更新信息
@@ -95,7 +170,6 @@ function updateHandle (app, win, beforeQuit, updateUrl, log) {
 export default {
   install (context) {
     const { app, win, beforeQuit, log } = context
-    const updateUrl = 'http://dev-sidecar.docmirror.cn/update/'
     if (process.env.NODE_ENV === 'development') {
       Object.defineProperty(app, 'isPackaged', {
         get () {
@@ -105,6 +179,6 @@ export default {
       // updateUrl = 'http://dev-sidecar.docmirror.cn/update/'
       // updateUrl = 'http://localhost/dev-sidecar/'
     }
-    updateHandle(app, win, beforeQuit, updateUrl, log)
+    updateHandle(app, win, beforeQuit, log)
   }
 }
