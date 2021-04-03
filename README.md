@@ -51,31 +51,29 @@
 
 ### DevSidecar桌面应用
  
-#### 1 下载安装包  
-下载安装包：  
- 
-1、 阿里云直接下载     
-[windows版](https://dev-sidecar.oss-cn-shenzhen.aliyuncs.com/update/DevSidecar-1.5.0.exe)      
-[Mac版](https://dev-sidecar.oss-cn-shenzhen.aliyuncs.com/update/DevSidecar-1.5.0.dmg)     
-注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
-
-2、 release下载    
+#### 1 下载安装包 
+* release下载    
 [Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 [Github Release](https://github.com/docmirror/dev-sidecar/releases)  
 
-安装后打开
+* 阿里云直接下载（http链接，某些浏览器可能打不开，请前往release下载）     
+[windows版](http://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.exe)      
+[Mac版](http://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.dmg)  
 
+
+#### 2 安装后打开    
+注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
 ![](./doc/index.png)     
 
-#### 2 安装根证书     
+#### 3 安装根证书     
        
 第一次打开会提示安装证书，根据提示操作即可      
  
 > 根证书是本地随机生成的，所以不用担心根证书的安全问题（本应用不收集任何用户信息）     
 > 你也可以在加速服务设置中自定义根证书（PEM格式的证书与私钥） 
 
-#### 3 开始加速吧      
+#### 4 开始加速吧      
 去试试打开github   
  
 ---------
