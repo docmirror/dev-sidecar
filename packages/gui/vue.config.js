@@ -30,12 +30,12 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
-      afterPack: './pkg/after-pack.js',
       nodeIntegration: true,
       // Provide an array of files that, when changed, will recompile the main process and restart Electron
       // Your main process file will be added by default
       mainProcessWatch: ['src/bridge', 'src/*.js', 'node_modules/dev-sidecar/src'],
       builderOptions: {
+        afterPack: './pkg/after-pack.js',
         // builderOptions: {
         //   publish: ['github']// 此处写入github 就好，不用添加其他内容
         // },

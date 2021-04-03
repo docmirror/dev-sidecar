@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar-gui",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "private": false,
   "license": "MPL-2.0",
   "scripts": {
