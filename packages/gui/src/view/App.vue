@@ -36,7 +36,7 @@
         </a-layout-content>
         <a-layout-footer>
           <div class="footer">
-            ©2020-2021 docmirror.cn by Greper
+            ©2020-2021 docmirror.cn by Greper  <span>{{info.version}}</span>
           </div>
         </a-layout-footer>
       </a-layout>
@@ -52,6 +52,7 @@ export default {
   },
   data () {
     return {
+      info: {},
       menus: undefined
     }
   },
@@ -59,6 +60,9 @@ export default {
   },
   created () {
     this.menus = createMenus(this)
+    this.$api.info.get().then(ret => {
+      this.info = ret
+    })
   },
   methods: {
     handleClick (e) {

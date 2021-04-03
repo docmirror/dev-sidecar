@@ -7,6 +7,7 @@ import progress from 'request-progress'
 import fs from 'fs'
 import AdmZip from 'adm-zip'
 import logger from '../../utils/util.log'
+import appPathUtil from '../../utils/util.apppath'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 
@@ -33,7 +34,7 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
 }
 
 // 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
-function updateHandle (app, win, beforeQuit, log) {
+function updateHandle (app, win, beforeQuit, quit, log) {
   // // 更新前，删除本地安装包 ↓
   // const updaterCacheDirName = 'dev-sidecar-updater'
   // const updatePendingPath = path.join(autoUpdater.app.baseCachePath, updaterCacheDirName, 'pending')
@@ -58,9 +59,9 @@ function updateHandle (app, win, beforeQuit, log) {
   let partPackagePath = null
 
   function downloadPart (app, value) {
-    const appPath = app.getAppPath()
+    const appPath = appPathUtil.getAppRootPath()
     const fileDir = path.join(appPath, 'update')
-    console.log('fileDir', fileDir)
+    logger.info('download dir', fileDir)
     try {
       fs.accessSync(fileDir, fs.constants.F_OK)
     } catch (e) {
@@ -84,8 +85,8 @@ function updateHandle (app, win, beforeQuit, log) {
     })
   }
 
-  function updatePart (app, value, partPackagePath) {
-    const appPath = app.getAppPath()
+  function updatePart (app, value, partPackagePath, quit) {
+    const appPath = appPathUtil.getAppRootPath()
     const target = path.join(appPath, 'resources')
     log.info('开始解压缩，安装升级包', partPackagePath, target)
     // 解压缩
@@ -93,7 +94,7 @@ function updateHandle (app, win, beforeQuit, log) {
     zip.extractAllTo(target, true)
     log.info('安装完成，重启app')
     app.relaunch()
-    app.quit()
+    quit()
   }
 
   autoUpdater.on('error', function (error) {
@@ -169,7 +170,7 @@ function updateHandle (app, win, beforeQuit, log) {
 
 export default {
   install (context) {
-    const { app, win, beforeQuit, log } = context
+    const { app, win, beforeQuit, quit, log } = context
     if (process.env.NODE_ENV === 'development') {
       Object.defineProperty(app, 'isPackaged', {
         get () {
@@ -179,6 +180,6 @@ export default {
       // updateUrl = 'http://dev-sidecar.docmirror.cn/update/'
       // updateUrl = 'http://localhost/dev-sidecar/'
     }
-    updateHandle(app, win, beforeQuit, log)
+    updateHandle(app, win, beforeQuit, quit, log)
   }
 }

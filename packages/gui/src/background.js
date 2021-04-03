@@ -210,7 +210,7 @@ if (!isFirstInstance) {
     }
     try {
       createWindow()
-      const context = { win, app, beforeQuit, ipcMain, dialog, log }
+      const context = { win, app, beforeQuit, quit, ipcMain, dialog, log }
       backend.install(context) // 模块安装
     } catch (err) {
       log.info('err', err)

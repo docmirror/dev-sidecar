@@ -36,6 +36,7 @@ module.exports = {
       mainProcessWatch: ['src/bridge', 'src/*.js', 'node_modules/dev-sidecar/src'],
       builderOptions: {
         afterPack: './pkg/after-pack.js',
+        afterAllArtifactBuild: './pkg/after-all-artifact-build.js',
         // builderOptions: {
         //   publish: ['github']// 此处写入github 就好，不用添加其他内容
         // },
