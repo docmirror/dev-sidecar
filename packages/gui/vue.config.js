@@ -61,7 +61,8 @@ module.exports = {
         },
         publish: {
           provider: 'generic',
-          url: 'http://dev-sidecar.docmirror.cn/update/'
+          // url: 'http://dev-sidecar.docmirror.cn/update/'
+          url: 'http://localhost/dev-sidecar/'
         }
       },
       chainWebpackMainProcess (config) {
