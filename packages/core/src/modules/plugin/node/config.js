@@ -16,8 +16,9 @@ module.exports = {
   //   'cdn.cypress.io': [{ regexp: '/desktop/.*', proxy: 'http://npm.taobao.org/mirrors/cypress/' }]
   // },
   variables: {
-    SASS_BINARY_SITE: 'https://npm.taobao.org/mirrors/node-sass/',
-    PHANTOMJS_CDNURL: 'https://npm.taobao.org/mirrors/phantomjs/',
+    phantomjs_cdnurl: 'https://npm.taobao.org/dist/phantomjs',
+    chromedriver_cdnurl: 'https://npm.taobao.org/mirrors/chromedriver',
+    sass_binary_site: 'https://npm.taobao.org/mirrors/node-sass',
     ELECTRON_MIRROR: 'https://npm.taobao.org/mirrors/electron/',
     // CYPRESS_DOWNLOAD_MIRROR: 'https://cdn.cypress.io',
     NVM_NODEJS_ORG_MIRROR: 'https://npm.taobao.org/mirrors/node',

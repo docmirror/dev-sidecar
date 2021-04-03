@@ -12,7 +12,8 @@ const executor = {
     throw Error('暂未实现此功能')
   },
   async mac (exec, { port }) {
-    throw Error('暂未实现此功能')
+    await exec('kill `lsof -i:' + port + " |grep 'DevSide\\|Elect' |awk '{print $2}'`")
+    return true
   }
 }
 

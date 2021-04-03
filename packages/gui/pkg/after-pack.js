@@ -2,7 +2,7 @@ const path = require('path')
 const AdmZip = require('adm-zip')
 const pkg = require('../package.json')
 exports.default = async function (context) {
-  console.log('context', context)
+  // console.log('context', context)
   let targetPath
   let systemType = ''
   if (context.packager.platform.nodeName === 'darwin') {

@@ -15,7 +15,7 @@ function appendIntro (context, systemType, latest) {
   })
 }
 exports.default = async function (context) {
-  console.log('context222', context)
+  // console.log('context222', context)
   appendIntro(context, 'mac', 'latest-mac.yml')
   appendIntro(context, 'win', 'latest.yml')
 }

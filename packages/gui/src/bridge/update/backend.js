@@ -8,7 +8,6 @@ import fs from 'fs'
 import AdmZip from 'adm-zip'
 import logger from '../../utils/util.log'
 import appPathUtil from '../../utils/util.apppath'
-import DevSidecar from '@docmirror/dev-sidecar'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 
@@ -49,18 +48,22 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   }
   // 本地开发环境，改变app-update.yml地址
   if (process.env.NODE_ENV === 'development' && !isMac) {
-    autoUpdater.updateConfigPath = path.join(__dirname, 'win-unpacked/resources/app-update.yml')
     autoUpdater.setFeedURL({
       provider: 'generic',
       url: 'http://localhost/dev-sidecar/'
     })
+    if (isMac) {
+      autoUpdater.updateConfigPath = path.join(__dirname, 'mac/DevSidecar.app/Contents/Resources/app-update.yml')
+    } else {
+      autoUpdater.updateConfigPath = path.join(__dirname, 'win-unpacked/resources/app-update.yml')
+    }
   }
   autoUpdater.autoDownload = false
 
   let partPackagePath = null
 
   function downloadPart (app, value) {
-    const appPath = appPathUtil.getAppRootPath()
+    const appPath = appPathUtil.getAppRootPath(app)
     const fileDir = path.join(appPath, 'update')
     logger.info('download dir', fileDir)
     try {
@@ -87,11 +90,11 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   }
 
   function updatePart (app, api, value, partPackagePath, quit) {
-    const appPath = appPathUtil.getAppRootPath()
+    const appPath = appPathUtil.getAppRootPath(app)
     const platform = api.shell.getSystemPlatform()
     let target = path.join(appPath, 'resources')
     if (platform === 'mac') {
-      target = path.join(appPath, 'Contents/Resources')
+      target = path.join(appPath, 'Resources')
     }
 
     log.info('开始解压缩，安装升级包', partPackagePath, target)
@@ -176,15 +179,13 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
 
 export default {
   install (context) {
-    const { app, win, beforeQuit, quit, log } = context
+    const { app, api, win, beforeQuit, quit, log } = context
     if (process.env.NODE_ENV === 'development') {
       Object.defineProperty(app, 'isPackaged', {
         get () {
           return true
         }
       })
-      // updateUrl = 'http://dev-sidecar.docmirror.cn/update/'
-      // updateUrl = 'http://localhost/dev-sidecar/'
     }
     updateHandle(app, api, win, beforeQuit, quit, log)
   }

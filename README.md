@@ -58,11 +58,6 @@
 
   Windows: 请选择DevSidecar-x.x.x.exe   
   Mac: 请选择DevSidecar-x.x.x.dmg
-  
-
-* 阿里云直接下载（http链接，某些浏览器可能打不开，请前往release下载）        
-[windows版](http://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.exe)      
-[Mac版](http://dev-sidecar.docmirror.cn/update/DevSidecar-1.5.0.dmg)  
 
 
 #### 2 安装后打开    
