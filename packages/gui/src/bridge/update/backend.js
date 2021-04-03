@@ -8,6 +8,7 @@ import fs from 'fs'
 import AdmZip from 'adm-zip'
 import logger from '../../utils/util.log'
 import appPathUtil from '../../utils/util.apppath'
+import DevSidecar from '@docmirror/dev-sidecar'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 
@@ -34,7 +35,7 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
 }
 
 // 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
-function updateHandle (app, win, beforeQuit, quit, log) {
+function updateHandle (app, api, win, beforeQuit, quit, log) {
   // // 更新前，删除本地安装包 ↓
   // const updaterCacheDirName = 'dev-sidecar-updater'
   // const updatePendingPath = path.join(autoUpdater.app.baseCachePath, updaterCacheDirName, 'pending')
@@ -85,9 +86,14 @@ function updateHandle (app, win, beforeQuit, quit, log) {
     })
   }
 
-  function updatePart (app, value, partPackagePath, quit) {
+  function updatePart (app, api, value, partPackagePath, quit) {
     const appPath = appPathUtil.getAppRootPath()
-    const target = path.join(appPath, 'resources')
+    const platform = api.shell.getSystemPlatform()
+    let target = path.join(appPath, 'resources')
+    if (platform === 'mac') {
+      target = path.join(appPath, 'Contents/Resources')
+    }
+
     log.info('开始解压缩，安装升级包', partPackagePath, target)
     app.relaunch()
     // 解压缩
@@ -131,7 +137,7 @@ function updateHandle (app, win, beforeQuit, quit, log) {
   ipcMain.on('update', (e, arg) => {
     if (arg.key === 'doUpdateNow') {
       if (partPackagePath) {
-        updatePart(app, arg.value, partPackagePath)
+        updatePart(app, api, arg.value, partPackagePath)
         return
       }
       // some code here to handle event
@@ -180,6 +186,6 @@ export default {
       // updateUrl = 'http://dev-sidecar.docmirror.cn/update/'
       // updateUrl = 'http://localhost/dev-sidecar/'
     }
-    updateHandle(app, win, beforeQuit, quit, log)
+    updateHandle(app, api, win, beforeQuit, quit, log)
   }
 }
