@@ -94,7 +94,7 @@ function updateHandle (app, win, beforeQuit, quit, log) {
     zip.extractAllTo(target, true)
     log.info('安装完成，重启app')
     app.relaunch()
-    quit()
+    app.exit(0)
   }
 
   autoUpdater.on('error', function (error) {
