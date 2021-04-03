@@ -20,7 +20,8 @@ exports.default = async function (context) {
 
   const partUpdateUrl = 'http://dev-sidecar.docmirror.cn/update/' + partUpdateFile
 
-  fs.appendFile(path.join(context.outDir, latest), `partPackage: ${partUpdateUrl}\nreleaseNotes: \n  - 升级日志`, (err) => {
+  const latestFilePath = path.join(context.outDir, latest)
+  fs.appendFile(latestFilePath, `\npartPackage: ${partUpdateUrl}\nreleaseNotes: \n  - 升级日志`, (err) => {
     if (err) {
       console.log('修改latest 失败')
     }

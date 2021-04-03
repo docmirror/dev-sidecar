@@ -49,7 +49,7 @@ module.exports = {
         productName: 'DevSidecar',
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: 'DevSidecar-${version}.${ext}',
-        copyright: 'Copyright © 2020',
+        copyright: 'Copyright © 2020-2021 Greper',
         nsis: {
           oneClick: false,
           perMachine: true,
