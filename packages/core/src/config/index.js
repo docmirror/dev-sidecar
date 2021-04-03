@@ -193,7 +193,7 @@ module.exports = {
         // }
       },
       mapping: {
-        'assets.fastgit.org': 'usa',
+        // 'assets.fastgit.org': 'usa',
         '*githubusercontent.com': 'quad9',
         '*yarnpkg.com': 'usa',
         '*cloudfront.net': 'usa',
