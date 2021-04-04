@@ -98,13 +98,14 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     }
 
     log.info('开始解压缩，安装升级包', partPackagePath, target)
-    app.relaunch()
-    // 解压缩
-    var zip = new AdmZip(partPackagePath)
-    zip.extractAllTo(target, true)
-    log.info('安装完成，重启app')
+
     try {
       await beforeQuit()
+      app.relaunch()
+      // 解压缩
+      const zip = new AdmZip(partPackagePath)
+      zip.extractAllTo(target, true)
+      log.info('安装完成，重启app')
     } finally {
       app.exit(0)
     }
