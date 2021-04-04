@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar",
-  "version": "1.5.1",
+  "version": "1.5.0",
   "description": "给开发者的加速代理工具",
   "main": "src/index.js",
   "keywords": [
