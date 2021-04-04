@@ -89,7 +89,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     })
   }
 
-  function updatePart (app, api, value, partPackagePath, quit) {
+  async function updatePart (app, api, value, partPackagePath, quit) {
     const appPath = appPathUtil.getAppRootPath(app)
     const platform = api.shell.getSystemPlatform()
     let target = path.join(appPath, 'resources')
@@ -103,7 +103,11 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     var zip = new AdmZip(partPackagePath)
     zip.extractAllTo(target, true)
     log.info('安装完成，重启app')
-    app.exit(0)
+    try {
+      await beforeQuit()
+    } finally {
+      app.exit(0)
+    }
   }
 
   autoUpdater.on('error', function (error) {
