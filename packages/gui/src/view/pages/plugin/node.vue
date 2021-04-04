@@ -2,7 +2,8 @@
   <ds-container>
     <template slot="header">
       NPM加速
-      <span>
+      <span style="color:#999;">
+        由于nodejs不走系统证书，所以npm加速不是很好用，可以用淘宝registry
       </span>
     </template>
 
