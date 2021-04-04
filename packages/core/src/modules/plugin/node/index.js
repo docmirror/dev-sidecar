@@ -119,8 +119,8 @@ const NodePlugin = function (context) {
 
     async setProxy (ip, port) {
       const cmds = [
-        `npm config set proxy=http://${ip}:${port}`,
-        `npm config set https-proxy=http://${ip}:${port}`
+        `npm1 config set proxy=http://${ip}:${port}`,
+        `npm1 config set https-proxy=http://${ip}:${port}`
       ]
 
       const env = []

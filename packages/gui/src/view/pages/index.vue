@@ -54,10 +54,12 @@
           <a-form style="margin-top:20px" :label-col="{ span: 12 }" :wrapper-col="{ span: 12 }">
 
             <a-form-item v-for=" (item, key) in switchBtns" :key="key" :label="item.label">
-              <a-switch style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked @change="item.doClick">
-                <a-icon slot="checkedChildren" type="check"/>
-                <a-icon slot="unCheckedChildren" type="close"/>
-              </a-switch>
+              <a-tooltip placement="topLeft" :title="item.tip">
+                <a-switch style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked @change="item.doClick">
+                  <a-icon slot="checkedChildren" type="check"/>
+                  <a-icon slot="unCheckedChildren" type="close"/>
+                </a-switch>
+              </a-tooltip>
             </a-form-item>
           </a-form>
         </div>
@@ -76,7 +78,7 @@
           </div>
         </div>
 
-        <a-modal title="捐赠" v-model="donateModal" width="550px" cancelText="不了" okText="支持一下" @ok="goDonate">
+        <a-modal title="捐赠" v-model="donateModal" width="550px" cancelText="不了" okText="果断支持" @ok="goDonate">
           <div>* 如果觉得好用，请给我一点鼓励，感谢。</div>
           <div class="payQrcode">
             <img height="200px" src="/pay.jpg"/>
@@ -246,15 +248,16 @@ export default {
       btns.server = this.createSwitchBtn('server', '代理服务', this.$api.server, status)
       btns.proxy = this.createSwitchBtn('proxy', '系统代理', this.$api.proxy, status)
       lodash.forEach(status.plugin, (item, key) => {
-        btns[key] = this.createSwitchBtn(key, this.config.plugin[key].name, this.$api.plugin[key], status.plugin)
+        btns[key] = this.createSwitchBtn(key, this.config.plugin[key].name, this.$api.plugin[key], status.plugin, this.config.plugin[key].tip)
       })
       return btns
     },
-    createSwitchBtn (key, label, apiTarget, statusParent) {
+    createSwitchBtn (key, label, apiTarget, statusParent, tip) {
       return {
         loading: false,
-        key: key,
-        label: label,
+        key,
+        label,
+        tip,
         status: () => {
           return statusParent[key].enabled
         },

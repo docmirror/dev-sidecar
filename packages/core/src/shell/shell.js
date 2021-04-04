@@ -7,6 +7,7 @@ const exec = util.promisify(_exec)
 const PowerShell = require('node-powershell')
 const log = require('../utils/util.log')
 const fixPath = require('fix-path')
+const iconv = require('iconv-lite')
 fixPath()
 class SystemShell {
   static async exec (cmds, args) {
@@ -63,7 +64,7 @@ class WindowsSystemShell extends SystemShell {
         ps.dispose()
       }
     } else {
-      let compose = 'chcp 65001  '
+      let compose = 'echo  "test" ' // 'chcp 65001  '
       for (const cmd of cmds) {
         compose += ' && ' + cmd
       }
@@ -77,14 +78,21 @@ class WindowsSystemShell extends SystemShell {
 
 function childExec (composeCmds) {
   return new Promise((resolve, reject) => {
+
+    var encoding = 'cp936'
+    var binaryEncoding = 'binary'
+
     const childProcess = require('child_process')
-    childProcess.exec(composeCmds, function (error, stdout, stderr) {
+    childProcess.exec(composeCmds, { encoding: binaryEncoding }, function (error, stdout, stderr) {
       if (error) {
-        log.error('cmd 命令执行错误：', composeCmds, error, stderr)
-        reject(error)
+        // console.log('------', decoder.decode(stderr))
+        const message = iconv.decode(Buffer.from(stderr, binaryEncoding), encoding)
+        log.error('cmd 命令执行错误：', composeCmds, message)
+        reject(new Error(message))
       } else {
         // log.info('cmd 命令完成：', stdout)
-        resolve(stdout)
+        const message = iconv.decode(Buffer.from(stdout, binaryEncoding), encoding)
+        resolve(message)
       }
       // log.info('关闭 cmd')
       // ps.kill('SIGINT')

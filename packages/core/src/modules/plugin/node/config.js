@@ -1,6 +1,7 @@
 module.exports = {
   name: 'NPM加速',
   enabled: false,
+  tip: '没有安装nodejs，不需要启动',
   startup: {
     variables: true
   },

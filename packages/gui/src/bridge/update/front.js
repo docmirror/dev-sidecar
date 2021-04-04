@@ -1,6 +1,6 @@
 
 function install (app, api) {
-  const updateParams = app.$global.update = { fromUser: false, autoDownload: true, progress: 0, downloading: false, newVersion: false, isFullUpdate: true }
+  const updateParams = app.$global.update = { fromUser: false, autoDownload: false, progress: 0, downloading: false, newVersion: false, isFullUpdate: true }
   api.ipc.on('update', (event, message) => {
     console.log('on message', event, message)
     handleUpdateMessage(message, app)
