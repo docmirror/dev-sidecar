@@ -11,7 +11,8 @@ module.exports = {
   },
   targets: {
     '*facebook.com': true,
-    'github.com': true
+    'github.com': true,
+    '*wikimedia.org': true
   },
   pac: {
     enabled: true,
