@@ -262,6 +262,33 @@ Error: www.github.com:443, 代理请求超时
 ![](./doc/log.png)      
 
 
+## 贡献代码
+
+### 开发调试模式启动
+
+运行如下命令即可开发模式启动
+```shell
+git clone https://github.com/docmirror/dev-sidecar
+
+cd dev-sidecar 
+
+npm install lerna -g
+lerna bootstrap
+
+cd packages/gui
+
+npm run electron
+
+```
+
+### 打包成可执行文件
+```shell
+cd packages/gui
+npm run build:electron
+```
+
+
+
 ## 联系作者
 
 欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS）      
