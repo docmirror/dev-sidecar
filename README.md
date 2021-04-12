@@ -287,6 +287,8 @@ cd packages/gui
 npm run build:electron
 ```
 
+### 提交pr
+如果你想将你的修改贡献出来，请提交pr
 
 
 ## 联系作者
