@@ -284,7 +284,7 @@ npm run electron
 ### 打包成可执行文件
 ```shell
 cd packages/gui
-npm run build:electron
+npm run electron:build
 ```
 
 ### 提交pr
