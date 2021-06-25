@@ -315,6 +315,17 @@ npm run electron:build
 
 ![](./doc/contact.png)      
 
+
+## 求star
+我的其他项目求star
+* [fast-crud](https://github.com/fast-crud/fast-crud) : 开发crud快如闪电
+* [certd](https://github.com/certd/certd) : 让你的证书永不过期
+
+## 广告
+* [腾讯云企业老用户3折服务器](https://curl.qcloud.com/MRY91neQ)
+* [腾讯云新用户大礼包](https://curl.qcloud.com/VQ2ARft2)
+* [阿里云618](https://www.aliyun.com/activity/618/2021?userCode=qya11txb)
+
 ## 感谢
 本项目使用lerna包管理工具   
 
