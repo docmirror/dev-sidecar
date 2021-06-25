@@ -316,6 +316,12 @@ npm run electron:build
 ![](./doc/contact.png)      
 
 
+## 求star
+我的其他项目求star
+* [fast-crud](https://github.com/fast-crud/fast-crud) : 开发crud快如闪电
+* [certd](https://github.com/certd/certd) : 让你的证书永不过期
+
+
 ## 感谢
 本项目使用lerna包管理工具   
 
