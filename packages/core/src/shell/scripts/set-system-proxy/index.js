@@ -32,8 +32,7 @@ const _lanIP = [
   '172.29.*',
   '172.30.*',
   '172.31.*',
-  '192.168.*',
-  '<local>'
+  '192.168.*'
 ]
 
 async function _winUnsetProxy (exec) {
