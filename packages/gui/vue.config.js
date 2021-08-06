@@ -60,6 +60,9 @@ module.exports = {
         mac: {
           icon: 'build/mac/icon.icns'
         },
+        win: {
+          requestedExecutionLevel: 'requireAdministrator'
+        },
         publish: {
           provider: 'generic',
           url: 'http://dev-sidecar.docmirror.cn/update/'
