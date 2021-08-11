@@ -38,27 +38,29 @@ module.exports = {
       'github.com': {
         '/.*/.*/releases/download/': {
           redirect: 'download.fastgit.org',
-          desc: 'release文件加速下载跳转地址'
+          desc: 'release文件加速下载跳转地址',
+          sni: 'no.sni'
         },
         '/.*/.*/archive/': {
-          redirect: 'download.fastgit.org'
+          redirect: 'download.fastgit.org',
+          sni: 'no.sni'
         },
 
         '/.*/.*/blame/': {
-          redirect: 'hub.fastgit.org'
+          redirect: 'hub.fastgit.org',
+          sni: 'no.sni'
         },
         '^/[^/]+/[^/]+(/releases(/.*)?)?$': {
           script: [
-            'jquery',
             'github'
           ],
-          desc: 'clone加速复制链接脚本'
+          desc: 'clone加速复制链接脚本',
+          sni: 'no.sni'
         },
         '/.*': {
-          proxy: 'gh.docmirror.top/_proxy',
-          backup: [
-            'github.com'
-          ]
+          proxy: 'github.com',
+          // proxy: 'gh.docmirror.top/_proxy', // 如果后续github.com的ip被封锁之后，只能再把这个放开
+          sni: 'baidu.com'
         }
       },
       'api.github.com': {

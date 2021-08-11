@@ -54,6 +54,9 @@ module.exports = {
       log.debug('proxy choice:', JSON.stringify(context.requestCount))
     }
 
+    if (interceptOpt.sni != null) {
+      rOptions.servername = interceptOpt.sni
+    }
     return true
   },
   is (interceptOpt) {
