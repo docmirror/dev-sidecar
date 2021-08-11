@@ -3919,9 +3919,9 @@ gigporno.ru
 !--wsgzao.github.io
 !--|https://wsgzao.github.io
 .github.io
-||github.io
-||githubusercontent.com
-||githubassets.com
+!||github.io
+!||githubusercontent.com
+!||githubassets.com
 
 .gizlen.net
 ||gizlen.net
