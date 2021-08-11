@@ -1,13 +1,14 @@
 const url = require('url')
 const pac = require('./source/pac')
 const matchUtil = require('../../../utils/util.match')
+let pacClient = null
 
 function matched (hostname, regexpMap) {
   const ret1 = matchUtil.matchHostname(regexpMap, hostname)
   if (ret1) {
     return true
   }
-  const ret = pac.FindProxyForURL('https://' + hostname, hostname)
+  const ret = pacClient.FindProxyForURL('https://' + hostname, hostname)
   if (ret && ret.indexOf('PROXY ') === 0) {
     return true
   }
@@ -18,6 +19,11 @@ module.exports = function createOverWallIntercept (overWallConfig) {
   if (!overWallConfig || overWallConfig.enabled !== true) {
     return null
   }
+  if (overWallConfig.pac) {
+    // 初始化pac
+    pacClient = pac.createPacClient(overWallConfig.pac.customPacFilePath)
+  }
+
   let server = overWallConfig.server
   let keys = Object.keys(server)
   if (keys.length === 0) {

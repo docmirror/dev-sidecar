@@ -39,23 +39,23 @@ module.exports = {
         '/.*/.*/releases/download/': {
           redirect: 'download.fastgit.org',
           desc: 'release文件加速下载跳转地址',
-          sni: 'no.sni'
+          sni: 'baidu.com'
         },
         '/.*/.*/archive/': {
           redirect: 'download.fastgit.org',
-          sni: 'no.sni'
+          sni: 'baidu.com'
         },
 
         '/.*/.*/blame/': {
           redirect: 'hub.fastgit.org',
-          sni: 'no.sni'
+          sni: 'baidu.com'
         },
         '^/[^/]+/[^/]+(/releases(/.*)?)?$': {
           script: [
             'github'
           ],
           desc: 'clone加速复制链接脚本',
-          sni: 'no.sni'
+          sni: 'baidu.com'
         },
         '/.*': {
           proxy: 'github.com',
@@ -90,10 +90,10 @@ module.exports = {
       // google cdn
       'www.google.com': {
         '/recaptcha/.*': { proxy: 'www.recaptcha.net' }
-      //   '.*': {
-      //     proxy: 'gg.docmirror.top/_yxorp',
-      //     desc: '呀，被你发现了，偷偷的用，别声张'
-      //   }
+        // '.*': {
+        //   proxy: 'gg.docmirror.top/_yxorp',
+        //   desc: '呀，被你发现了，偷偷的用，别声张'
+        // }
       },
       'ajax.googleapis.com': {
         '.*': {

@@ -16,8 +16,9 @@ module.exports = {
   },
   pac: {
     enabled: true,
-    update: [
-      'https://gitlab.com/gfwlist/gfwlist/raw/master/gfwlist.txt'
-    ]
+    // update: [
+    //   'https://gitlab.com/gfwlist/gfwlist/raw/master/gfwlist.txt'
+    // ],
+    customPacFilePath: './extra/pac/pac.txt'
   }
 }
