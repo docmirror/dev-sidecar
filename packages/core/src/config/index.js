@@ -59,7 +59,8 @@ module.exports = {
         },
         '/.*': {
           proxy: 'github.com',
-          // proxy: 'gh.docmirror.top/_proxy', // 如果后续github.com的ip被封锁之后，只能再把这个放开
+          // proxy: 'gh.docmirror.top/_proxy',
+          desc: '目前禁掉sni就可以直接访问，如果后续github.com的ip被封锁，只能再走proxy模式',
           sni: 'baidu.com'
         }
       },
