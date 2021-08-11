@@ -74,8 +74,30 @@ module.exports = {
         replace: '(.+)\\/raw\\/(.+)',
         proxy: 'raw.fastgit.org$1/$2'
       },
-      'raw.11githubusercontent.com': {
-        '.*': { proxy: 'raw.fastgit.org' }
+      'raw.githubusercontent.com': {
+        '.*': {
+          proxy: 'raw.githubusercontent.com',
+          sni: 'baidu.com'
+        }
+        // '.*': { proxy: 'raw.fastgit.org' }
+      },
+      'user-images.githubusercontent.com': {
+        '.*': {
+          proxy: 'user-images.githubusercontent.com',
+          sni: 'baidu.com'
+        }
+      },
+      'github.githubassets.com': {
+        '.*': {
+          proxy: 'github.githubassets.com',
+          sni: 'baidu.com'
+        }
+      },
+      'avatars.githubusercontent.com': {
+        '.*': {
+          proxy: 'avatars.githubusercontent.com',
+          sni: 'baidu.com'
+        }
       },
       // 'github.githubassets.com': {
       //   '.*': {
@@ -164,11 +186,6 @@ module.exports = {
           server: 'https://dns.alidns.com/dns-query',
           cacheSize: 1000
         },
-        // ipaddress: {
-        //   type: 'ipaddress',
-        //   server: 'ipaddress',
-        //   cacheSize: 1000
-        // },
         usa: {
           type: 'https',
           server: 'https://1.1.1.1/dns-query',
@@ -184,16 +201,6 @@ module.exports = {
           server: 'https://rubyfish.cn/dns-query',
           cacheSize: 1000
         }
-        // google: {
-        //   type: 'https',
-        //   server: 'https://8.8.8.8/dns-query',
-        //   cacheSize: 1000
-        // },
-        // dnsSB: {
-        //   type: 'https',
-        //   server: 'https://doh.dns.sb/dns-query',
-        //   cacheSize: 1000
-        // }
       },
       mapping: {
         // 'assets.fastgit.org': 'usa',

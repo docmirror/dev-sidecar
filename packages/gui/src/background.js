@@ -241,3 +241,9 @@ if (isDevelopment) {
     })
   }
 }
+
+// 系统关机和重启时的操作
+process.on('exit', function () {
+  log.info('系统关机，退出app')
+  quit(app)
+})
