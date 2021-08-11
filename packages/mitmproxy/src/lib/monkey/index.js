@@ -56,8 +56,9 @@ function loadScript (content) {
 }
 
 function readFile (rootDir, script) {
+  log.info('script root location', path.resolve('./'))
   const location = path.join(rootDir, './' + script)
-  log.debug('script location:', location)
+  log.info('script location:', location)
   return fs.readFileSync(location).toString()
 }
 

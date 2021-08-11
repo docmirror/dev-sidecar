@@ -6,10 +6,9 @@ const fs = require('fs')
 const path = require('path')
 const configJson = fs.readFileSync(configPath)
 const config = JSON5.parse(configJson)
-let scriptDir = '../extra/scripts/'
-if (process.env.NODE_ENV === 'development') {
-  scriptDir = '../extra/scripts/'
-}
-config.setting.script.defaultDir = path.join(__dirname, scriptDir)
-
+// const scriptDir = '../extra/scripts/'
+// config.setting.script.defaultDir = path.join(__dirname, scriptDir)
+// const pacFilePath = '../extra/pac/pac.txt'
+// config.plugin.overwall.pac.customPacFilePath = path.join(__dirname, pacFilePath)
+config.setting.rootDir = path.join(__dirname, '../')
 server.start(config)

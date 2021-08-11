@@ -21,7 +21,7 @@ module.exports = function createOverWallIntercept (overWallConfig) {
   }
   if (overWallConfig.pac) {
     // 初始化pac
-    pacClient = pac.createPacClient(overWallConfig.pac.customPacFilePath)
+    pacClient = pac.createPacClient(overWallConfig.pac.pacFileAbsolutePath)
   }
 
   let server = overWallConfig.server

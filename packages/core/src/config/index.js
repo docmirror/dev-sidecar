@@ -23,7 +23,7 @@ module.exports = {
       NODE_TLS_REJECT_UNAUTHORIZED: true,
       script: {
         enabled: true,
-        defaultDir: '../../../scripts/'
+        defaultDir: './extra/scripts/'
       },
       userBasePath: getUserBasePath(),
       rootCaFile: {

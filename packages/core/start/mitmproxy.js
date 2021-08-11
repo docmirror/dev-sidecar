@@ -13,4 +13,7 @@ const configJson = fs.readFileSync(configPath)
 const config = JSON5.parse(configJson)
 const scriptDir = '../../gui/extra/scripts/'
 config.setting.script.defaultDir = path.join(__dirname, scriptDir)
+const pacFilePath = '../../gui/extra/pac/pac.txt'
+config.plugin.overwall.pac.customPacFilePath = path.join(__dirname, pacFilePath)
+
 server.start(config)

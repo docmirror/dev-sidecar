@@ -2,6 +2,7 @@ const interceptors = require('./lib/interceptor')
 const dnsUtil = require('./lib/dns')
 const log = require('./utils/util.log')
 const matchUtil = require('./utils/util.match')
+const path = require('path')
 const createOverwallMiddleware = require('./lib/proxy/middleware/overwall')
 
 module.exports = (config) => {
@@ -12,7 +13,11 @@ module.exports = (config) => {
   const serverConfig = config
   const setting = serverConfig.setting
 
-  const overwallMiddleware = createOverwallMiddleware(serverConfig.plugin.overwall)
+  setting.script.dirAbsolutePath = path.join(setting.rootDir, setting.script.defaultDir)
+
+  const overwallConfig = serverConfig.plugin.overwall
+  overwallConfig.pac.pacFileAbsolutePath = path.join(setting.rootDir, overwallConfig.pac.pacFilePath)
+  const overwallMiddleware = createOverwallMiddleware(overwallConfig)
   const middlewares = []
   if (overwallMiddleware) {
     middlewares.push(overwallMiddleware)

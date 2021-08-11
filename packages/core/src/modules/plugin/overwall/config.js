@@ -19,6 +19,6 @@ module.exports = {
     // update: [
     //   'https://gitlab.com/gfwlist/gfwlist/raw/master/gfwlist.txt'
     // ],
-    customPacFilePath: './extra/pac/pac.txt'
+    pacFilePath: './extra/pac/pac.txt'
   }
 }

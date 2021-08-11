@@ -20,9 +20,9 @@ module.exports = {
       keys = [keys]
     }
     try {
-      let tags = getScript('global', monkey.get(setting.script.defaultDir).global.script)
+      let tags = getScript('global', monkey.get(setting.script.dirAbsolutePath).global.script)
       for (const key of keys) {
-        const script = monkey.get(setting.script.defaultDir)[key]
+        const script = monkey.get(setting.script.dirAbsolutePath)[key]
         if (script == null) {
           continue
         }
