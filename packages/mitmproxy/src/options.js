@@ -13,10 +13,14 @@ module.exports = (config) => {
   const serverConfig = config
   const setting = serverConfig.setting
 
-  setting.script.dirAbsolutePath = path.join(setting.rootDir, setting.script.defaultDir)
+  if (!setting.script.dirAbsolutePath) {
+    setting.script.dirAbsolutePath = path.join(setting.rootDir, setting.script.defaultDir)
+  }
 
   const overwallConfig = serverConfig.plugin.overwall
-  overwallConfig.pac.pacFileAbsolutePath = path.join(setting.rootDir, overwallConfig.pac.pacFilePath)
+  if (!overwallConfig.pac.pacFileAbsolutePath) {
+    overwallConfig.pac.pacFileAbsolutePath = path.join(setting.rootDir, overwallConfig.pac.pacFilePath)
+  }
   const overwallMiddleware = createOverwallMiddleware(overwallConfig)
   const middlewares = []
   if (overwallMiddleware) {
