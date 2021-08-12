@@ -122,7 +122,17 @@ const executor = {
     }
   },
   async linux (exec, params) {
-    throw Error('暂未实现此功能')
+    await exec('sudo sed -i \'/export https=/d\' ~/.bashrc')
+    await exec('sudo sed -i \'/export no_proxy=/d\' ~/.bashrc')
+    if (params != null) {
+      const { ip, port } = params
+      const local = 'localhost, 127.0.0.1, ::1'
+
+      const setProxyCmd = `sudo echo 'export https_proxy=https://${ip}:${port}' >> ~/.bashrc`
+      await exec(setProxyCmd)
+      await exec(`sudo echo 'export no_proxy="${local}"' >> ~/.bashrc`)
+    }
+    await exec('source ~/.bashrc')
   },
   async mac (exec, params) {
     // exec = _exec
