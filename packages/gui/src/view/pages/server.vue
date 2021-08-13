@@ -110,28 +110,28 @@
             </a-row>
           </div>
         </a-tab-pane>
-        <a-tab-pane tab="SNI" key="5">
-          <a-row style="margin-top:10px">
-            <a-col span="19">
-              <div>这里配置哪些域名要修改sni</div>
-            </a-col>
-            <a-col span="3">
-              <a-button style="margin-left:8px" type="primary" icon="plus" @click="addSniList()"/>
-            </a-col>
-          </a-row>
-          <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of sniList" :key='index'>
-            <a-col :span="14">
-              <a-input  v-model="item.key"></a-input>
-            </a-col>
-            <a-col :span="5">
-              <a-input  v-model="item.value"></a-input>
-            </a-col>
-            <a-col :span="3">
-              <a-button  type="danger" icon="minus" @click="deleteSniList(item,index)"/>
-            </a-col>
-          </a-row>
+<!--        <a-tab-pane tab="SNI" key="5">-->
+<!--          <a-row style="margin-top:10px">-->
+<!--            <a-col span="19">-->
+<!--              <div>这里配置哪些域名要修改sni</div>-->
+<!--            </a-col>-->
+<!--            <a-col span="3">-->
+<!--              <a-button style="margin-left:8px" type="primary" icon="plus" @click="addSniList()"/>-->
+<!--            </a-col>-->
+<!--          </a-row>-->
+<!--          <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of sniList" :key='index'>-->
+<!--            <a-col :span="14">-->
+<!--              <a-input  v-model="item.key"></a-input>-->
+<!--            </a-col>-->
+<!--            <a-col :span="5">-->
+<!--              <a-input  v-model="item.value"></a-input>-->
+<!--            </a-col>-->
+<!--            <a-col :span="3">-->
+<!--              <a-button  type="danger" icon="minus" @click="deleteSniList(item,index)"/>-->
+<!--            </a-col>-->
+<!--          </a-row>-->
 
-        </a-tab-pane>
+<!--        </a-tab-pane>-->
         <a-tab-pane tab="IP测速" key="6">
           <div>
             <a-alert type="info" message="对从dns获取到的ip进行测速，使用速度最快的ip进行访问。（对使用增强功能的域名没啥用）"></a-alert>

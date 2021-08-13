@@ -7,7 +7,7 @@ const localIP = '127.0.0.1'
 const defaultDns = require('dns')
 const matchUtil = require('../../../utils/util.match')
 const speedTest = require('../../speed/index.js')
-
+const sniExtract = require('../tls/sniUtil.js')
 function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
   for (const intercept of sslConnectInterceptors) {
     const ret = intercept(req, cltSocket, head)
@@ -55,16 +55,11 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig, sniRegexpMap)
   let isDnsIntercept = null
   const replaceSni = matchUtil.matchHostname(sniRegexpMap, hostname)
   console.log('replaceSni', replaceSni, sniRegexpMap)
-  let servername = null
-  if (replaceSni) {
-    servername = replaceSni
-  }
   try {
     const options = {
       port,
       host: hostname,
-      connectTimeout: 10000,
-      servername
+      connectTimeout: 10000
     }
     if (dnsConfig) {
       const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
@@ -100,6 +95,33 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig, sniRegexpMap)
       proxySocket.pipe(cltSocket)
 
       cltSocket.pipe(proxySocket)
+      // let sniReplaced = false
+      // cltSocket.on('data', (chunk) => {
+      //   // if (replaceSni && sniReplaced === false) {
+      //   //   const sniPackage = sniExtract(chunk)
+      //   //   if (sniPackage != null) {
+      //   //     sniReplaced = true
+      //   //     const bytes = Buffer.from(replaceSni)
+      //   //     const start = sniPackage.start
+      //   //     const length = sniPackage.length
+      //   //     for (let i = 0; i < length; i++) {
+      //   //       let char = 97 // a 的ascii
+      //   //       if (bytes.length > i) {
+      //   //         char = bytes[i]
+      //   //       }
+      //   //       chunk[start + i] = char
+      //   //     }
+      //   //   }
+      //   // }
+      //   if (sniReplaced === false) {
+      //     sniReplaced = true
+      //     chunk[chunk.length - 1] = 1
+      //   }
+      //   proxySocket.write(chunk)
+      // })
+      // cltSocket.on('end', () => {
+      //   proxySocket.end()
+      // })
     })
 
     cltSocket.on('error', (e) => {
