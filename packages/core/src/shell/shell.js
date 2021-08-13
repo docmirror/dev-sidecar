@@ -138,6 +138,7 @@ function getSystemPlatform () {
     case 'linux':
       return 'linux'
     case 'win32':
+      return 'windows'
     case 'win64':
       return 'windows'
     case 'unknown os':

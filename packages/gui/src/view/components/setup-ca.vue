@@ -21,13 +21,16 @@
         2、然后按如下图步骤将随机生成的根证书设置为始终信任<br/>
         3、可能需要重新启动应用和浏览器才能生效<br/>
       </template>
+      <template v-else-if="this.systemPlatform === 'linux'">
+        1、点击右上角“点此去安装按钮”,将自动安装到系统证书库中<br/>
+        2、火狐、chrome等浏览器不走系统证书，需要手动安装(下图以chrome为例安装根证书)<br/>
+      </template>
       <template v-else>
         1、点击右上角“点此去安装按钮”，打开证书<br/>
         2、然后按如下图步骤将根证书添加到<b>信任的根证书颁发机构</b><br/>
       </template>
     </div>
     <img width="100%" :src="setupImage" />
-
   </a-drawer>
 </template>
 
@@ -59,6 +62,8 @@ export default {
     setupImage () {
       if (this.systemPlatform === 'mac') {
         return '/setup-mac.png'
+      } else if (this.systemPlatform === 'linux') {
+        return '/setup-linux.png'
       } else {
         return '/setup.png'
       }
@@ -75,6 +80,9 @@ export default {
     },
     async doSetup () {
       this.$emit('setup')
+      if (this.systemPlatform === 'linux') {
+        this.$message.success('根证书已成功安装到系统证书库（注意：浏览器仍然需要手动安装）')
+      }
     }
   }
 }

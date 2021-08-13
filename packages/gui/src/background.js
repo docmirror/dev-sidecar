@@ -75,6 +75,21 @@ function setTray (app) {
   return appTray
 }
 
+function isLinux () {
+  const platform = DevSidecar.api.shell.getSystemPlatform()
+  return platform === 'linux'
+}
+
+function hideWin () {
+  if (win) {
+    if (isLinux()) {
+      win.minimize()
+    } else {
+      win.hide()
+    }
+  }
+}
+
 function createWindow () {
   // Create the browser window.
 
@@ -113,7 +128,7 @@ function createWindow () {
   }
 
   if (startHideWindow) {
-    win.hide()
+    hideWin()
   }
 
   win.on('closed', async (e) => {
@@ -124,7 +139,7 @@ function createWindow () {
   win.on('close', (e) => {
     if (!forceClose) {
       e.preventDefault()
-      win.hide()
+      hideWin()
     }
   })
 }
