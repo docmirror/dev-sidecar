@@ -122,17 +122,26 @@ const executor = {
     }
   },
   async linux (exec, params) {
-    await exec('sudo sed -i \'/export https=/d\' ~/.bashrc')
-    await exec('sudo sed -i \'/export no_proxy=/d\' ~/.bashrc')
     if (params != null) {
       const { ip, port } = params
-      const local = 'localhost, 127.0.0.1, ::1'
+      // const local = 'localhost, 127.0.0.0/8, ::1'
 
-      const setProxyCmd = `sudo echo 'export https_proxy=https://${ip}:${port}' >> ~/.bashrc`
+      const setProxyCmd = [
+        'gsettings set org.gnome.system.proxy mode manual',
+        `gsettings set org.gnome.system.proxy.https port ${port}`,
+        `gsettings set org.gnome.system.proxy.https host ${ip}`,
+        `gsettings set org.gnome.system.proxy.http port ${port}`,
+        `gsettings set org.gnome.system.proxy.http host ${ip}`
+        // `gsettings set org.gnome.system.proxy ignore-hosts "${local}"`
+      ]
+
       await exec(setProxyCmd)
-      await exec(`sudo echo 'export no_proxy="${local}"' >> ~/.bashrc`)
+    } else {
+      const setProxyCmd = [
+        'gsettings set org.gnome.system.proxy mode none'
+      ]
+      await exec(setProxyCmd)
     }
-    await exec('source ~/.bashrc')
   },
   async mac (exec, params) {
     // exec = _exec
