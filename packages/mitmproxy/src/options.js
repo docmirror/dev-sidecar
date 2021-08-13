@@ -30,6 +30,7 @@ module.exports = (config) => {
       speedTest: config.dns.speedTest
     },
     setting,
+    sniConfig: serverConfig.sniList,
     middlewares,
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]
