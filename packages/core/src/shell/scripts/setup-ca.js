@@ -8,9 +8,9 @@ const executor = {
     return true
   },
   async linux (exec, { certPath }) {
-    const cmds = ['open "' + certPath + '"']
+    const cmds = [`sudo cp ${certPath} /usr/local/share/ca-certificates`, 'sudo update-ca-certificates ']
     // eslint-disable-next-line no-unused-vars
-    const ret = await exec(cmds, { type: 'cmd' })
+    const ret = await exec(cmds)
     return true
   },
   async mac (exec, { certPath }) {

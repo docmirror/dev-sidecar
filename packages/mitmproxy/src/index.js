@@ -34,6 +34,10 @@ function registerProcessListener () {
     log.info('Unhandled Rejection at: Promise', p, 'err:', err)
     // application specific logging, throwing an error, or other logic here
   })
+
+  process.on('exit', function (code) {
+    log.info('代理服务进程被关闭:', code)
+  })
 }
 
 const api = {

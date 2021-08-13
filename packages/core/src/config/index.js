@@ -157,6 +157,9 @@ module.exports = {
       'pay.weixin.qq.com': true,
       'www.baidu.com': true
     },
+    sniList: {
+      'github.com': 'baidu.com'
+    },
     dns: {
       providers: {
         aliyun: {
