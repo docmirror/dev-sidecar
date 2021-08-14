@@ -51,11 +51,13 @@ utils.createCA = function (CN) {
     name: 'basicConstraints',
     critical: true,
     cA: true
-  }, {
+  },
+  {
     name: 'keyUsage',
     critical: true,
     keyCertSign: true
-  }, {
+  },
+  {
     name: 'subjectKeyIdentifier'
   }])
 
@@ -111,19 +113,19 @@ utils.createFakeCertificateByDomain = function (caKey, caCert, domain) {
     critical: true,
     cA: false
   },
-  {
-    name: 'keyUsage',
-    critical: true,
-    digitalSignature: true,
-    contentCommitment: true,
-    keyEncipherment: true,
-    dataEncipherment: true,
-    keyAgreement: true,
-    keyCertSign: true,
-    cRLSign: true,
-    encipherOnly: true,
-    decipherOnly: true
-  },
+  // {
+  //   name: 'keyUsage',
+  //   critical: true,
+  //   digitalSignature: true,
+  //   contentCommitment: true,
+  //   keyEncipherment: true,
+  //   dataEncipherment: true,
+  //   keyAgreement: true,
+  //   keyCertSign: true,
+  //   cRLSign: true,
+  //   encipherOnly: true,
+  //   decipherOnly: true
+  // },
   {
     name: 'subjectAltName',
     altNames: [{

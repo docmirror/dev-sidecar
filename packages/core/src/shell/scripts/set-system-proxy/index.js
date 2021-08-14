@@ -122,7 +122,26 @@ const executor = {
     }
   },
   async linux (exec, params) {
-    throw Error('暂未实现此功能')
+    if (params != null) {
+      const { ip, port } = params
+      // const local = 'localhost, 127.0.0.0/8, ::1'
+
+      const setProxyCmd = [
+        'gsettings set org.gnome.system.proxy mode manual',
+        `gsettings set org.gnome.system.proxy.https port ${port}`,
+        `gsettings set org.gnome.system.proxy.https host ${ip}`,
+        `gsettings set org.gnome.system.proxy.http port ${port}`,
+        `gsettings set org.gnome.system.proxy.http host ${ip}`
+        // `gsettings set org.gnome.system.proxy ignore-hosts "${local}"`
+      ]
+
+      await exec(setProxyCmd)
+    } else {
+      const setProxyCmd = [
+        'gsettings set org.gnome.system.proxy mode none'
+      ]
+      await exec(setProxyCmd)
+    }
   },
   async mac (exec, params) {
     // exec = _exec

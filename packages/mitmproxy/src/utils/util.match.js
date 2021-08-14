@@ -24,6 +24,9 @@ function domainMapRegexply (hostMap) {
 }
 
 function matchHostname (hostMap, hostname) {
+  if (hostMap == null) {
+    return null
+  }
   const value = hostMap[hostname]
   if (value) {
     return value
