@@ -34,6 +34,7 @@ function setTray (app) {
       // 系统托盘图标目录
       label: '退出',
       click: () => {
+        console.log('force quit')
         forceClose = true
         quit(app)
       }
@@ -83,7 +84,7 @@ function isLinux () {
 function hideWin () {
   if (win) {
     if (isLinux()) {
-      win.minimize()
+      quit(app)
     } else {
       win.hide()
     }
@@ -193,6 +194,7 @@ if (!isFirstInstance) {
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
+    console.log('window-all-closed')
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {

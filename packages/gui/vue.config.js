@@ -58,10 +58,17 @@ module.exports = {
           allowToChangeInstallationDirectory: true
         },
         mac: {
-          icon: 'build/mac/icon.icns'
+          icon: './build/mac/icon.icns'
         },
         win: {
           requestedExecutionLevel: 'requireAdministrator'
+        },
+        icon: './build/icons/512x512.png',
+        linux: {
+          icon: './build/icons/',
+          target: [
+            'AppImage'
+          ]
         },
         publish: {
           provider: 'generic',
