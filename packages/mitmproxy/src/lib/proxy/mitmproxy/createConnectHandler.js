@@ -54,7 +54,6 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig, sniRegexpMap)
   const start = new Date().getTime()
   let isDnsIntercept = null
   const replaceSni = matchUtil.matchHostname(sniRegexpMap, hostname)
-  console.log('replaceSni', replaceSni, sniRegexpMap)
   try {
     const options = {
       port,
