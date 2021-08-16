@@ -65,7 +65,7 @@ module.exports = {
         },
         icon: './build/icons/512x512.png',
         linux: {
-          icon: './build/icons/',
+          icon: './build/mac/',
           target: [
             'AppImage'
           ]
