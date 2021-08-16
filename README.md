@@ -28,6 +28,12 @@
 * 解决git push 偶尔失败需要输入账号密码的问题（fatal: TaskCanceledException encountered  /  fatal: HttpRequestException encountered）
 * raw/blame加速
 
+> 以上部分功能通过`X.I.U`的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
+> * https://github.com/XIU2/UserScript
+> * https://greasyfork.org/scripts/412245  
+> 
+> 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过`加速服务->基本设置->启用脚本`进行关闭）。
+
 ### 4、 Stack Overflow 加速
 * 将ajax.google.com代理到加速CDN上     
 * recaptcha 图片验证码加速
@@ -334,9 +340,12 @@ npm run electron:build
 本项目参考如下开源项目
 * [node-mitmproxy](https://github.com/wuchangming/node-mitmproxy)   
 * [ReplaceGoogleCDN](https://github.com/justjavac/ReplaceGoogleCDN)
-* [github增强油猴脚本](https://greasyfork.org/zh-CN/scripts/412245-github-%E5%A2%9E%E5%BC%BA-%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD)
+  
+特别感谢
+* [github增强油猴脚本](https://greasyfork.org/zh-CN/scripts/412245-github-%E5%A2%9E%E5%BC%BA-%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD) 本项目部分加速功能完全复制该脚本。
 
-本项目加速资源由如下组织提供
+本项目部分加速资源由如下组织提供
 * [FastGit UK](https://fastgit.org/)
+
 
 
