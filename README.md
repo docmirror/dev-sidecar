@@ -340,9 +340,12 @@ npm run electron:build
 本项目参考如下开源项目
 * [node-mitmproxy](https://github.com/wuchangming/node-mitmproxy)   
 * [ReplaceGoogleCDN](https://github.com/justjavac/ReplaceGoogleCDN)
-* [github增强油猴脚本](https://greasyfork.org/zh-CN/scripts/412245-github-%E5%A2%9E%E5%BC%BA-%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD)
+  
+特别感谢
+* [github增强油猴脚本](https://greasyfork.org/zh-CN/scripts/412245-github-%E5%A2%9E%E5%BC%BA-%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD) 本项目部分加速功能完全复制该脚本。
 
-本项目加速资源由如下组织提供
+本项目部分加速资源由如下组织提供
 * [FastGit UK](https://fastgit.org/)
+
 
 
