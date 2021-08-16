@@ -93,10 +93,10 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@docmirror/mitmproxy@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.npmjs.org/@docmirror/mitmproxy/-/mitmproxy-1.5.0.tgz#16b9a956542a56f9889cd0c69c08a33d06d77ab8"
-  integrity sha512-H17TAqKmvzCMSTO6VGTC6kKQskjk1gEJZYsU2ijziZU0XEC96ObG0TWOnsdKh2PhmwDLwxS9cUyb1hpYilLreQ==
+"@docmirror/mitmproxy@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.nlark.com/@docmirror/mitmproxy/download/@docmirror/mitmproxy-1.5.1.tgz#357142a41b89266491c3519a7528b9b83dc30c85"
+  integrity sha1-NXFCpBuJJmSRw1GadSi5uD3DDIU=
   dependencies:
     agentkeepalive "^2.1.1"
     axios "^0.21.1"

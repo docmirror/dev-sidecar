@@ -5,9 +5,9 @@ const log = require('../../../utils/util.log')
 const DnsUtil = require('../../dns/index')
 const localIP = '127.0.0.1'
 const defaultDns = require('dns')
-
+const matchUtil = require('../../../utils/util.match')
 const speedTest = require('../../speed/index.js')
-
+const sniExtract = require('../tls/sniUtil.js')
 function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
   for (const intercept of sslConnectInterceptors) {
     const ret = intercept(req, cltSocket, head)
@@ -19,7 +19,7 @@ function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
 }
 
 // create connectHandler function
-module.exports = function createConnectHandler (sslConnectInterceptor, middlewares, fakeServerCenter, dnsConfig) {
+module.exports = function createConnectHandler (sslConnectInterceptor, middlewares, fakeServerCenter, dnsConfig, sniConfig) {
   // return
   const sslConnectInterceptors = []
   sslConnectInterceptors.push(sslConnectInterceptor)
@@ -28,6 +28,9 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
       sslConnectInterceptors.push(middleware.sslConnectInterceptor)
     }
   }
+
+  console.log('sni config', sniConfig)
+  const sniRegexpMap = matchUtil.domainMapRegexply(sniConfig)
   return function connectHandler (req, cltSocket, head) {
     // eslint-disable-next-line node/no-deprecated-api
     const srvUrl = url.parse(`https://${req.url}`)
@@ -40,16 +43,17 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
         log.error('getServerPromise', e)
       })
     } else {
-      connect(req, cltSocket, head, hostname, srvUrl.port, dnsConfig)
+      connect(req, cltSocket, head, hostname, srvUrl.port, dnsConfig, sniRegexpMap)
     }
   }
 }
 
-function connect (req, cltSocket, head, hostname, port, dnsConfig) {
+function connect (req, cltSocket, head, hostname, port, dnsConfig, sniRegexpMap) {
   // tunneling https
   // log.info('connect:', hostname, port)
   const start = new Date().getTime()
   let isDnsIntercept = null
+  const replaceSni = matchUtil.matchHostname(sniRegexpMap, hostname)
   try {
     const options = {
       port,
@@ -90,6 +94,33 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig) {
       proxySocket.pipe(cltSocket)
 
       cltSocket.pipe(proxySocket)
+      // let sniReplaced = false
+      // cltSocket.on('data', (chunk) => {
+      //   // if (replaceSni && sniReplaced === false) {
+      //   //   const sniPackage = sniExtract(chunk)
+      //   //   if (sniPackage != null) {
+      //   //     sniReplaced = true
+      //   //     const bytes = Buffer.from(replaceSni)
+      //   //     const start = sniPackage.start
+      //   //     const length = sniPackage.length
+      //   //     for (let i = 0; i < length; i++) {
+      //   //       let char = 97 // a 的ascii
+      //   //       if (bytes.length > i) {
+      //   //         char = bytes[i]
+      //   //       }
+      //   //       chunk[start + i] = char
+      //   //     }
+      //   //   }
+      //   // }
+      //   if (sniReplaced === false) {
+      //     sniReplaced = true
+      //     chunk[chunk.length - 1] = 1
+      //   }
+      //   proxySocket.write(chunk)
+      // })
+      // cltSocket.on('end', () => {
+      //   proxySocket.end()
+      // })
     })
 
     cltSocket.on('error', (e) => {

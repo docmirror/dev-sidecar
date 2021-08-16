@@ -80,11 +80,9 @@
                 <a-button v-if="item.value!==false" type="danger" icon="minus" @click="deleteWhiteList(item,index)"/>
               </a-col>
             </a-row>
-
         </a-tab-pane>
         <a-tab-pane tab="DNS设置" key="4">
           <div>
-
             <a-row style="margin-top:10px">
               <a-col span="19">
                 <div>这里配置哪些域名需要通过国外DNS服务器获取IP进行访问</div>
@@ -110,10 +108,31 @@
                           @click="restoreDefDnsMapping(item,index)"></a-button>
               </a-col>
             </a-row>
-
           </div>
         </a-tab-pane>
-        <a-tab-pane tab="IP测速" key="5">
+<!--        <a-tab-pane tab="SNI" key="5">-->
+<!--          <a-row style="margin-top:10px">-->
+<!--            <a-col span="19">-->
+<!--              <div>这里配置哪些域名要修改sni</div>-->
+<!--            </a-col>-->
+<!--            <a-col span="3">-->
+<!--              <a-button style="margin-left:8px" type="primary" icon="plus" @click="addSniList()"/>-->
+<!--            </a-col>-->
+<!--          </a-row>-->
+<!--          <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of sniList" :key='index'>-->
+<!--            <a-col :span="14">-->
+<!--              <a-input  v-model="item.key"></a-input>-->
+<!--            </a-col>-->
+<!--            <a-col :span="5">-->
+<!--              <a-input  v-model="item.value"></a-input>-->
+<!--            </a-col>-->
+<!--            <a-col :span="3">-->
+<!--              <a-button  type="danger" icon="minus" @click="deleteSniList(item,index)"/>-->
+<!--            </a-col>-->
+<!--          </a-row>-->
+
+<!--        </a-tab-pane>-->
+        <a-tab-pane tab="IP测速" key="6">
           <div>
             <a-alert type="info" message="对从dns获取到的ip进行测速，使用速度最快的ip进行访问。（对使用增强功能的域名没啥用）"></a-alert>
             <a-form-item label="开启dns测速" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -207,7 +226,8 @@ export default {
       wrapperCol: { span: 20 },
       dnsMappings: [],
       speedTestList: [],
-      whiteList: []
+      whiteList: [],
+      sniList: []
     }
   },
   created () {
@@ -249,6 +269,7 @@ export default {
     ready () {
       this.initDnsMapping()
       this.initWhiteList()
+      this.initSniList()
       if (this.config.server.dns.speedTest.dnsProviders) {
         this.speedDns = this.config.server.dns.speedTest.dnsProviders
       }
@@ -256,6 +277,7 @@ export default {
     async applyBefore () {
       this.submitDnsMapping()
       this.submitWhiteList()
+      this.submitSniList()
     },
     async applyAfter () {
       if (this.status.server.enabled) {
@@ -318,6 +340,35 @@ export default {
     },
     addWhiteList () {
       this.whiteList.unshift({ key: '', value: true })
+    },
+
+    // sniList
+    initSniList () {
+      this.sniList = []
+      for (const key in this.config.server.sniList) {
+        const value = this.config.server.sniList[key]
+        this.sniList.push({
+          key, value
+        })
+      }
+    },
+    submitSniList () {
+      const sniList = {}
+      for (const item of this.sniList) {
+        if (item.key) {
+          sniList[item.key] = item.value
+        }
+      }
+      this.config.server.sniList = sniList
+    },
+    deleteSniList (item, index) {
+      this.sniList.splice(index, 1)
+    },
+    restoreDefSniList (item, index) {
+
+    },
+    addSniList () {
+      this.sniList.unshift({ key: '', value: true })
     },
 
     async openLog () {

@@ -21,7 +21,7 @@ class LinuxSystemShell extends SystemShell {
       cmds = [cmds]
     }
     for (const cmd of cmds) {
-      await childExec(cmd)
+      await _childExec(cmd, { shell: '/bin/bash' })
     }
   }
 }
@@ -33,7 +33,7 @@ class DarwinSystemShell extends SystemShell {
     }
     let ret
     for (const cmd of cmds) {
-      ret = await childExec(cmd)
+      ret = await _childExec(cmd)
     }
     return ret
   }
@@ -76,13 +76,31 @@ class WindowsSystemShell extends SystemShell {
   }
 }
 
+function _childExec (composeCmds, options = {}) {
+  return new Promise((resolve, reject) => {
+    const childProcess = require('child_process')
+    log.info('shell:', composeCmds)
+    childProcess.exec(composeCmds, options, function (error, stdout, stderr) {
+      if (error) {
+        log.error('cmd 命令执行错误：', composeCmds, stderr)
+        reject(new Error(stderr))
+      } else {
+        // log.info('cmd 命令完成：', stdout)
+        resolve(stdout)
+      }
+      // log.info('关闭 cmd')
+      // ps.kill('SIGINT')
+    })
+  })
+}
+
 function childExec (composeCmds) {
   return new Promise((resolve, reject) => {
-
     var encoding = 'cp936'
     var binaryEncoding = 'binary'
 
     const childProcess = require('child_process')
+    log.info('shell:', composeCmds)
     childProcess.exec(composeCmds, { encoding: binaryEncoding }, function (error, stdout, stderr) {
       if (error) {
         // console.log('------', decoder.decode(stderr))
@@ -120,6 +138,7 @@ function getSystemPlatform () {
     case 'linux':
       return 'linux'
     case 'win32':
+      return 'windows'
     case 'win64':
       return 'windows'
     case 'unknown os':

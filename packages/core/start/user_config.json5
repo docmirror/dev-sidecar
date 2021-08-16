@@ -1,24 +1,31 @@
 {
-  server: {
-    intercepts: {
-      'github1.githubassets.com': {
-        '.*': {
-          redirect: 'assets.fastgit.org',
-          test: 'https://github.githubassets.com/favicons/favicon.svg',
-          desc: '静态资源加速'
-        }
-      },
-      'github.githubassets.com': null,
-      'notify3.note.youdao.com': {
-        '/pushserver3/.*': {
-          abort: true
-        },
-      }
+  app: {
+    autoStart: {
+      enabled: true,
     },
+    mode: 'safe',
   },
   plugin: {
     node: {
-      enabled: true
-    }
-  }
+      setting: {
+        yarnRegistry: null,
+      },
+    },
+    git: {
+      enabled: true,
+    },
+    overwall: {
+      targets: {
+        '*yonsz.net': true,
+        '*bootstrapcdn.com': true,
+        '*cloudflare.com': true,
+        'help.yonsz.net': true,
+      },
+    },
+  },
+  server: {
+    intercept: {
+      enabled: false,
+    },
+  },
 }

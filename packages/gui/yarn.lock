@@ -1507,10 +1507,10 @@
   resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-14.11.8.tgz"
   integrity sha1-/iAS8jVeTOCLykSus6u7Ic+I0z8=
 
-"@types/node@^12.0.12":
-  version "12.20.6"
-  resolved "https://registry.npmjs.org/@types/node/-/node-12.20.6.tgz"
-  integrity sha512-sRVq8d+ApGslmkE9e3i+D3gFGk7aZHAT+G4cIpIEdLJYPsWiSPwcAnJEjddLQQDqV3Ra2jOclX/Sv6YrvGYiWA==
+"@types/node@^14.6.2":
+  version "14.17.9"
+  resolved "https://registry.nlark.com/@types/node/download/@types/node-14.17.9.tgz#b97c057e6138adb7b720df2bd0264b03c9f504fd"
+  integrity sha1-uXwFfmE4rbe3IN8r0CZLA8n1BP0=
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -1822,6 +1822,24 @@
     webpack-merge "^4.2.2"
   optionalDependencies:
     vue-loader-v16 "npm:vue-loader@^16.0.0-beta.7"
+
+"@vue/cli-shared-utils@^4.5.6":
+  version "4.5.13"
+  resolved "https://registry.nlark.com/@vue/cli-shared-utils/download/@vue/cli-shared-utils-4.5.13.tgz?cache=0&sync_timestamp=1628579241293&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40vue%2Fcli-shared-utils%2Fdownload%2F%40vue%2Fcli-shared-utils-4.5.13.tgz#acd40f31b4790f1634292bdaa5fca95dc1e0ff50"
+  integrity sha1-rNQPMbR5DxY0KSvapfypXcHg/1A=
+  dependencies:
+    "@hapi/joi" "^15.0.1"
+    chalk "^2.4.2"
+    execa "^1.0.0"
+    launch-editor "^2.2.1"
+    lru-cache "^5.1.1"
+    node-ipc "^9.1.1"
+    open "^6.3.0"
+    ora "^3.4.0"
+    read-pkg "^5.1.1"
+    request "^2.88.2"
+    semver "^6.1.0"
+    strip-ansi "^6.0.0"
 
 "@vue/cli-shared-utils@^4.5.7":
   version "4.5.7"
@@ -3876,7 +3894,7 @@ cross-spawn@^6.0.0, cross-spawn@^6.0.5:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-cross-spawn@^7.0.0:
+cross-spawn@^7.0.0, cross-spawn@^7.0.3:
   version "7.0.3"
   resolved "https://registry.npm.taobao.org/cross-spawn/download/cross-spawn-7.0.3.tgz"
   integrity sha1-9zqFudXUHQRVUcF34ogtSshXKKY=
@@ -4651,13 +4669,13 @@ electron-updater@^4.3.5:
     lodash.isequal "^4.5.0"
     semver "^7.3.2"
 
-electron@10.4.2:
-  version "10.4.2"
-  resolved "https://registry.nlark.com/electron/download/electron-10.4.2.tgz?cache=0&sync_timestamp=1620442447118&other_urls=https%3A%2F%2Fregistry.nlark.com%2Felectron%2Fdownload%2Felectron-10.4.2.tgz#2322a72f1e653e023250be91f3dd8d27662e3805"
-  integrity sha1-IyKnLx5lPgIyUL6R892NJ2YuOAU=
+electron@^13.0.0:
+  version "13.1.9"
+  resolved "https://registry.nlark.com/electron/download/electron-13.1.9.tgz#668e2632b81e9fa21edfd32876282d3e2ff7fd76"
+  integrity sha1-Zo4mMrgen6Ie39ModigtPi/3/XY=
   dependencies:
     "@electron/get" "^1.0.1"
-    "@types/node" "^12.0.12"
+    "@types/node" "^14.6.2"
     extract-zip "^1.0.3"
 
 elliptic@^6.5.3:
@@ -5160,19 +5178,19 @@ execa@^3.3.0:
     signal-exit "^3.0.2"
     strip-final-newline "^2.0.0"
 
-execa@^4.0.0:
-  version "4.0.3"
-  resolved "https://registry.npm.taobao.org/execa/download/execa-4.0.3.tgz"
-  integrity sha1-CjTau61tZhAL1vLFdshmlAPzF/I=
+execa@^5.0.0:
+  version "5.1.1"
+  resolved "https://registry.nlark.com/execa/download/execa-5.1.1.tgz?cache=0&sync_timestamp=1622825396605&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fexeca%2Fdownload%2Fexeca-5.1.1.tgz#f80ad9cbf4298f7bd1d4c9555c21e93741c411dd"
+  integrity sha1-+ArZy/Qpj3vR1MlVXCHpN0HEEd0=
   dependencies:
-    cross-spawn "^7.0.0"
-    get-stream "^5.0.0"
-    human-signals "^1.1.1"
+    cross-spawn "^7.0.3"
+    get-stream "^6.0.0"
+    human-signals "^2.1.0"
     is-stream "^2.0.0"
     merge-stream "^2.0.0"
-    npm-run-path "^4.0.0"
-    onetime "^5.1.0"
-    signal-exit "^3.0.2"
+    npm-run-path "^4.0.1"
+    onetime "^5.1.2"
+    signal-exit "^3.0.3"
     strip-final-newline "^2.0.0"
 
 exif-parser@^0.1.12:
@@ -5752,6 +5770,11 @@ get-stream@^5.0.0, get-stream@^5.1.0:
   dependencies:
     pump "^3.0.0"
 
+get-stream@^6.0.0:
+  version "6.0.1"
+  resolved "https://registry.npm.taobao.org/get-stream/download/get-stream-6.0.1.tgz#a262d8eef67aced57c2852ad6167526a43cbf7b7"
+  integrity sha1-omLY7vZ6ztV8KFKtYWdSakPL97c=
+
 get-value@^2.0.3, get-value@^2.0.6:
   version "2.0.6"
   resolved "https://registry.npm.taobao.org/get-value/download/get-value-2.0.6.tgz"
@@ -6251,6 +6274,11 @@ human-signals@^1.1.1:
   version "1.1.1"
   resolved "https://registry.npm.taobao.org/human-signals/download/human-signals-1.1.1.tgz"
   integrity sha1-xbHNFPUK6uCatsWf5jujOV/k36M=
+
+human-signals@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.nlark.com/human-signals/download/human-signals-2.1.0.tgz?cache=0&sync_timestamp=1624364695595&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fhuman-signals%2Fdownload%2Fhuman-signals-2.1.0.tgz#dc91fcba42e4d06e4abaed33b3e7a3c02f514ea0"
+  integrity sha1-3JH8ukLk0G5Kuu0zs+ejwC9RTqA=
 
 icon-gen@^2.0.0:
   version "2.0.0"
@@ -8028,7 +8056,7 @@ npm-run-path@^2.0.0:
   dependencies:
     path-key "^2.0.0"
 
-npm-run-path@^4.0.0:
+npm-run-path@^4.0.0, npm-run-path@^4.0.1:
   version "4.0.1"
   resolved "https://registry.npm.taobao.org/npm-run-path/download/npm-run-path-4.0.1.tgz"
   integrity sha1-t+zR5e1T2o43pV4cImnguX7XSOo=
@@ -8179,7 +8207,7 @@ onetime@^2.0.0:
   dependencies:
     mimic-fn "^1.0.0"
 
-onetime@^5.1.0:
+onetime@^5.1.0, onetime@^5.1.2:
   version "5.1.2"
   resolved "https://registry.npm.taobao.org/onetime/download/onetime-5.1.2.tgz?cache=0&sync_timestamp=1597005345612&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fonetime%2Fdownload%2Fonetime-5.1.2.tgz"
   integrity sha1-0Oluu1awdHbfHdnEgG5SN5hcpF4=
@@ -10001,7 +10029,7 @@ shortid@^2.2.14:
   dependencies:
     nanoid "^2.1.0"
 
-signal-exit@^3.0.0, signal-exit@^3.0.2:
+signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.3:
   version "3.0.3"
   resolved "https://registry.npm.taobao.org/signal-exit/download/signal-exit-3.0.3.tgz"
   integrity sha1-oUEMLt2PB3sItOJTyOrPyvBXRhw=
@@ -11267,14 +11295,15 @@ vm-browserify@^1.0.1:
   resolved "https://registry.npm.taobao.org/vm-browserify/download/vm-browserify-1.1.2.tgz?cache=0&sync_timestamp=1589682787766&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvm-browserify%2Fdownload%2Fvm-browserify-1.1.2.tgz"
   integrity sha1-eGQcSIuObKkadfUR56OzKobl3aA=
 
-vue-cli-plugin-electron-builder@^2.0.0-rc.4:
-  version "2.0.0-rc.4"
-  resolved "https://registry.npm.taobao.org/vue-cli-plugin-electron-builder/download/vue-cli-plugin-electron-builder-2.0.0-rc.4.tgz"
-  integrity sha1-yBknngD+Z3GRL18EaO4m8nl1Cls=
+vue-cli-plugin-electron-builder@~2.1.1:
+  version "2.1.1"
+  resolved "https://registry.nlark.com/vue-cli-plugin-electron-builder/download/vue-cli-plugin-electron-builder-2.1.1.tgz#de8bed25b32e73e28dd08061dd2a3c6bfff73227"
+  integrity sha1-3ovtJbMuc+KN0IBh3So8a//3Mic=
   dependencies:
+    "@vue/cli-shared-utils" "^4.5.6"
     chokidar "^3.0.2"
     electron-builder "^22.2.0"
-    execa "^4.0.0"
+    execa "^5.0.0"
     friendly-errors-webpack-plugin "^1.7.0"
     fs-extra "^9.0.1"
     lodash.merge "^4.6.1"

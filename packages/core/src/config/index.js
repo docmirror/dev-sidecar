@@ -157,6 +157,9 @@ module.exports = {
       'pay.weixin.qq.com': true,
       'www.baidu.com': true
     },
+    // sniList: {
+    //   'github.com': 'abaidu.com'
+    // },
     dns: {
       providers: {
         aliyun: {
@@ -212,7 +215,7 @@ module.exports = {
       },
       speedTest: {
         enabled: true,
-        interval: 60000,
+        interval: 160000,
         hostnameList: ['github.com'],
         dnsProviders: ['usa', 'quad9', 'rubyfish']
       }
