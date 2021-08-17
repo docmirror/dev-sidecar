@@ -11,7 +11,7 @@ if (JSON5.default) {
   JSON5 = JSON5.default
 }
 
-let server
+let server = null
 function fireStatus (status) {
   event.fire('status', { key: 'server.enabled', value: status })
 }
@@ -79,6 +79,15 @@ const serverApi = {
         serverProcess.send({ type: 'action', event: { key: 'close' } })
       }
     }
+    serverProcess.on('beforeExit', (code) => {
+      log.warn('server process beforeExit', code)
+    })
+    serverProcess.on('exit', (code) => {
+      log.warn('server process exit', code)
+    })
+    serverProcess.on('uncaughtException', (err, origin) => {
+      log.error('server process uncaughtException', err)
+    })
     serverProcess.on('message', function (msg) {
       log.info('收到子进程消息', msg.type, msg.event.key)
       if (msg.type === 'status') {
