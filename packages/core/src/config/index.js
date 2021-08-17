@@ -89,6 +89,12 @@ module.exports = {
           desc: 'github的访问速度分析上传，没有必要，直接返回成功'
         }
       },
+      'v2ex.com': {
+        '.*': {
+          proxy: 'v2ex.com',
+          sni: 'baidu.com'
+        }
+      },
       // google cdn
       'www.google.com': {
         '/recaptcha/.*': { proxy: 'www.recaptcha.net' }
