@@ -61,10 +61,10 @@ function install (app, api) {
       api.update.downloadPart(value)
     } else {
       api.shell.getSystemPlatform().then((platform) => {
-        if (platform === 'mac') {
+        if (platform === 'mac' || platform === 'linux') {
           app.$notification.open({
             duration: 15,
-            message: 'Mac暂不支持全量自动升级',
+            message: '暂不支持自动升级',
             description:
               '请前往github或gitee项目release页面下载新版本手动安装',
             onClick: () => {
