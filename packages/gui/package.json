@@ -3,6 +3,7 @@
   "version": "1.5.1",
   "private": false,
   "license": "MPL-2.0",
+  "main": "background.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
@@ -13,8 +14,11 @@
     "electron:icons": "electron-icon-builder --input=./public/logo/win.png --output=build --flatten",
     "electron:icons-mac": "electron-icon-builder --input=./public/logo/mac.png --output=build --flatten"
   },
-  "author": "Greper",
-  "main": "background.js",
+  "homepage": "https://github.com/docmirror/dev-sidecar",
+  "author": {
+    "email": "xiaojunnuo@qq.com",
+    "name": "Greper"
+  },
   "dependencies": {
     "@docmirror/dev-sidecar": "^1.5.1",
     "@docmirror/mitmproxy": "^1.5.1",
@@ -40,22 +44,22 @@
     "vue-router": "^3.4.8"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-standard": "^5.1.2",
-    "babel-eslint": "^10.1.0",
-    "electron": "10.4.2",
-    "electron-devtools-installer": "^3.1.0",
-    "electron-icon-builder": "^1.0.2",
-    "eslint": "^6.7.2",
+    "electron-icon-builder": "^2.0.1",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^6.2.2",
     "json5-loader": "^4.0.1",
-    "vue-cli-plugin-electron-builder": "^2.0.0-rc.4",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "babel-eslint": "^10.1.0",
+    "electron": "^13.0.0",
+    "electron-devtools-installer": "^3.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "vue-cli-plugin-electron-builder": "~2.1.1",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {

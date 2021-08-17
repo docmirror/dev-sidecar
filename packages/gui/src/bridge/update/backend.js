@@ -10,6 +10,7 @@ import logger from '../../utils/util.log'
 import appPathUtil from '../../utils/util.apppath'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
+const isLinux = process.platform === 'linux'
 
 function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
   progress(request(uri), {
@@ -54,6 +55,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     })
     if (isMac) {
       autoUpdater.updateConfigPath = path.join(__dirname, 'mac/DevSidecar.app/Contents/Resources/app-update.yml')
+    } else if (isLinux) {
+      // autoUpdater.updateConfigPath = path.join(__dirname, 'mac/DevSidecar.app/Contents/Resources/app-update.yml')
     } else {
       autoUpdater.updateConfigPath = path.join(__dirname, 'win-unpacked/resources/app-update.yml')
     }

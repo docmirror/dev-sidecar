@@ -3,7 +3,7 @@
     autoStart: {
       enabled: true,
     },
-    mode: 'safe',
+    mode: 'default',
   },
   plugin: {
     node: {
@@ -25,7 +25,7 @@
   },
   server: {
     intercept: {
-      enabled: false,
+      enabled: true,
     },
   },
 }
