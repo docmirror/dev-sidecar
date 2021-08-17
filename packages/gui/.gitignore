@@ -21,7 +21,8 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
-
+*.lock
+*.log
 #Electron-builder output
 /dist_electron
 /config
