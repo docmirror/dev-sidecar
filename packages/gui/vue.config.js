@@ -1,6 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
-
+const publishUrl = process.env.VUE_APP_PUBLISH_URL
 module.exports = {
   pages: {
     index: {
@@ -72,7 +72,7 @@ module.exports = {
         },
         publish: {
           provider: 'generic',
-          url: 'http://dev-sidecar.docmirror.cn/update/'
+          url: publishUrl
           // url: 'http://dev-sidecar.docmirror.cn/update/preview/'
         }
       },
