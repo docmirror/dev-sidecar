@@ -38,24 +38,19 @@ module.exports = {
       'github.com': {
         '/.*/.*/releases/download/': {
           redirect: 'download.fastgit.org',
-          desc: 'release文件加速下载跳转地址',
-          sni: 'baidu.com'
+          desc: 'release文件加速下载跳转地址'
         },
         '/.*/.*/archive/': {
-          redirect: 'download.fastgit.org',
-          sni: 'baidu.com'
+          redirect: 'download.fastgit.org'
         },
-
         '/.*/.*/blame/': {
-          redirect: 'hub.fastgit.org',
-          sni: 'baidu.com'
+          redirect: 'hub.fastgit.org'
         },
         '^/[^/]+/[^/]+(/releases(/.*)?)?$': {
           script: [
             'github'
           ],
-          desc: 'clone加速复制链接脚本',
-          sni: 'baidu.com'
+          desc: 'clone加速复制链接脚本'
         },
         '/.*': {
           proxy: 'github.com',
@@ -63,6 +58,30 @@ module.exports = {
           desc: '目前禁掉sni就可以直接访问，如果后续github.com的ip被封锁，只能再走proxy模式',
           sni: 'baidu.com'
         }
+        // '/.*/.*/raw11/': {
+        //   replace: '(.+)\\/raw\\/(.+)',
+        //   proxy: 'raw.fastgit.org$1/$2',
+        //   sni: 'baidu.com'
+        // }
+      },
+      'github-releases.githubusercontent.com': {
+        '.*': {
+          proxy: 'github-releases.githubusercontent.com',
+          sni: 'baidu.com'
+        }
+      },
+      'raw.githubusercontent.com': {
+        proxy: 'raw.githubusercontent.com',
+        sni: 'baidu.com'
+      },
+      'github.githubassets.com': {
+        '.*': {
+          proxy: 'github.githubassets.com',
+          sni: 'baidu.com'
+        }
+      },
+      'customer-stories-feed.github.com': {
+        '.*': { proxy: 'customer-stories-feed.fastgit.org' }
       },
       'api.github.com': {
         '^/_private/browser/stats$': {
@@ -70,22 +89,11 @@ module.exports = {
           desc: 'github的访问速度分析上传，没有必要，直接返回成功'
         }
       },
-      '/.*/.*/raw11/': {
-        replace: '(.+)\\/raw\\/(.+)',
-        proxy: 'raw.fastgit.org$1/$2'
-      },
-      'raw.11githubusercontent.com': {
-        '.*': { proxy: 'raw.fastgit.org' }
-      },
-      // 'github.githubassets.com': {
-      //   '.*': {
-      //     proxy: 'assets-gh.docmirror.top/_proxy',
-      //     test: 'https://github.githubassets.com/favicons/favicon.svg',
-      //     desc: '静态资源加速'
-      //   }
-      // },
-      'customer-stories-feed.github.com': {
-        '.*': { proxy: 'customer-stories-feed.fastgit.org' }
+      'v2ex.com': {
+        '.*': {
+          proxy: 'v2ex.com',
+          sni: 'baidu.com'
+        }
       },
       // google cdn
       'www.google.com': {

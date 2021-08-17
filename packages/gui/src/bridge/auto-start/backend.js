@@ -8,7 +8,7 @@ export default {
 
     // 开启 开机自启动
     ipcMain.on('auto-start', (event, message) => {
-      console.log('updateExe', ex)
+      log.info('auto-start', app.getPath('exe'))
       if (message.value) {
         app.setLoginItemSettings({
           openAtLogin: true,

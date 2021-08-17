@@ -47,7 +47,7 @@ module.exports = {
           }
         ],
         appId: 'dev-sidecar',
-        productName: 'DevSidecar',
+        productName: 'dev-sidecar',
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: 'DevSidecar-${version}.${ext}',
         copyright: 'Copyright © 2020-2021 Greper',
@@ -63,10 +63,10 @@ module.exports = {
         win: {
           requestedExecutionLevel: 'requireAdministrator'
         },
-        icon: './build/icons/512x512.png',
         linux: {
-          icon: './build/mac/',
+          icon: 'build/mac/',
           target: [
+            // 'deb'
             'AppImage'
           ]
         },

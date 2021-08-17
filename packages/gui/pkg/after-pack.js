@@ -8,6 +8,9 @@ exports.default = async function (context) {
   if (context.packager.platform.nodeName === 'darwin') {
     targetPath = path.join(context.appOutDir, `${context.packager.appInfo.productName}.app/Contents/Resources`)
     systemType = 'mac'
+  } else if (context.packager.platform.nodeName === 'linux') {
+    targetPath = path.join(context.appOutDir, './resources')
+    systemType = 'linux'
   } else {
     targetPath = path.join(context.appOutDir, './resources')
     systemType = 'win'
