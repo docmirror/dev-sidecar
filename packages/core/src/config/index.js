@@ -77,7 +77,7 @@ module.exports = {
         }
       },
       'customer-stories-feed.github.com': {
-        '.*': {proxy: 'customer-stories-feed.fastgit.org'}
+        '.*': { proxy: 'customer-stories-feed.fastgit.org' }
       },
 
       'raw.githubusercontent.com': {
@@ -109,128 +109,128 @@ module.exports = {
         '.*': {
           proxy: 'v2ex.com',
           sni: 'baidu.com'
-        },
-      },
-        // google cdn
-        'www.google.com': {
-          '/recaptcha/.*': {proxy: 'www.recaptcha.net'}
-          // '.*': {
-          //   proxy: 'gg.docmirror.top/_yxorp',
-          //   desc: '呀，被你发现了，偷偷的用，别声张'
-          // }
-        },
-        'ajax.googleapis.com': {
-          '.*': {
-            proxy: 'gapis.geekzu.org',
-            backup: ['fonts.loli.net'],
-            test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'
-          }
-        },
-        'fonts.googleapis.com': {
-          '.*': {
-            proxy: 'fonts.geekzu.org',
-            backup: ['fonts.loli.net'],
-            test: 'https://fonts.googleapis.com/css?family=Oswald'
-          }
-        },
-        'themes.googleapis.com': {
-          '.*': {
-            proxy: 'themes.loli.net',
-            backup: ['themes.proxy.ustclug.org']
-          }
-        },
-        'themes.googleusercontent.com': {
-          '.*': {proxy: 'google-themes.proxy.ustclug.org'}
-        },
-        // 'fonts.gstatic.com': {
-        //   '.*': {
-        //     proxy: 'gstatic.loli.net',
-        //     backup: ['fonts-gstatic.proxy.ustclug.org']
-        //   }
-        // },
-        'clients*.google.com': {'.*': {abort: false, desc: '设置abort：true可以快速失败，节省时间'}},
-        'www.googleapis.com': {'.*': {abort: false, desc: '设置abort：true可以快速失败，节省时间'}},
-        'lh*.googleusercontent.com': {'.*': {abort: false, desc: '设置abort：true可以快速失败，节省时间'}},
-        // mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
-        '*.s3.amazonaws.com': {
-          '/sqlite3/.*': {
-            redirect: 'npm.taobao.org/mirrors'
-          }
-        },
-        // 'packages.elastic.co': { '.*': { proxy: 'elastic.proxy.ustclug.org' } },
-        // 'ppa.launchpad.net': { '.*': { proxy: 'launchpad.proxy.ustclug.org' } },
-        // 'archive.cloudera.com': { '.*': { regexp: '/cdh5/.*', proxy: 'cloudera.proxy.ustclug.org' } },
-        // 'downloads.lede-project.org': { '.*': { proxy: 'lede.proxy.ustclug.org' } },
-        // 'downloads.openwrt.org': { '.*': { proxy: 'openwrt.proxy.ustclug.org' } },
-        // 'secure.gravatar.com': { '.*': { proxy: 'gravatar.proxy.ustclug.org' } },
-        '*.carbonads.com': {
-          '/carbon.*': {
-            abort: true,
-            desc: '广告拦截'
-          }
-        },
-        '*.buysellads.com': {
-          '/ads/.*': {
-            abort: true,
-            desc: '广告拦截'
-          }
         }
       },
-      whiteList: {
-        'alipay.com': true,
-        '*.alipay.com': true,
-        'pay.weixin.qq.com': true,
-        'www.baidu.com': true
+      // google cdn
+      'www.google.com': {
+        '/recaptcha/.*': { proxy: 'www.recaptcha.net' }
+        // '.*': {
+        //   proxy: 'gg.docmirror.top/_yxorp',
+        //   desc: '呀，被你发现了，偷偷的用，别声张'
+        // }
       },
-      // sniList: {
-      //   'github.com': 'abaidu.com'
+      'ajax.googleapis.com': {
+        '.*': {
+          proxy: 'gapis.geekzu.org',
+          backup: ['fonts.loli.net'],
+          test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'
+        }
+      },
+      'fonts.googleapis.com': {
+        '.*': {
+          proxy: 'fonts.geekzu.org',
+          backup: ['fonts.loli.net'],
+          test: 'https://fonts.googleapis.com/css?family=Oswald'
+        }
+      },
+      'themes.googleapis.com': {
+        '.*': {
+          proxy: 'themes.loli.net',
+          backup: ['themes.proxy.ustclug.org']
+        }
+      },
+      'themes.googleusercontent.com': {
+        '.*': { proxy: 'google-themes.proxy.ustclug.org' }
+      },
+      // 'fonts.gstatic.com': {
+      //   '.*': {
+      //     proxy: 'gstatic.loli.net',
+      //     backup: ['fonts-gstatic.proxy.ustclug.org']
+      //   }
       // },
-      dns: {
-        providers: {
-          aliyun: {
-            type: 'https',
-            server: 'https://dns.alidns.com/dns-query',
-            cacheSize: 1000
-          },
-          usa: {
-            type: 'https',
-            server: 'https://1.1.1.1/dns-query',
-            cacheSize: 1000
-          },
-          quad9: {
-            type: 'https',
-            server: 'https://9.9.9.9/dns-query',
-            cacheSize: 1000
-          },
-          rubyfish: {
-            type: 'https',
-            server: 'https://rubyfish.cn/dns-query',
-            cacheSize: 1000
-          }
-        },
-        mapping: {
-          // 'assets.fastgit.org': 'usa',
-          '*githubusercontent.com': 'quad9',
-          '*yarnpkg.com': 'usa',
-          '*cloudfront.net': 'usa',
-          '*github.io': 'usa',
-          'img.shields.io': 'usa',
-          '*.githubusercontent.com': 'usa',
-          '*.githubassets.com': 'usa',
-          // "解决push的时候需要输入密码的问题",
-          'github.com': 'quad9',
-          '*github.com': 'usa',
-          '*.vuepress.vuejs.org': 'usa',
-          'gh.docmirror.top': 'aliyun'
-        },
-        speedTest: {
-          enabled: true,
-          interval: 60000,
-          hostnameList: ['github.com'],
-          dnsProviders: ['usa', 'quad9', 'rubyfish']
+      'clients*.google.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
+      'www.googleapis.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
+      'lh*.googleusercontent.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
+      // mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
+      '*.s3.amazonaws.com': {
+        '/sqlite3/.*': {
+          redirect: 'npm.taobao.org/mirrors'
+        }
+      },
+      // 'packages.elastic.co': { '.*': { proxy: 'elastic.proxy.ustclug.org' } },
+      // 'ppa.launchpad.net': { '.*': { proxy: 'launchpad.proxy.ustclug.org' } },
+      // 'archive.cloudera.com': { '.*': { regexp: '/cdh5/.*', proxy: 'cloudera.proxy.ustclug.org' } },
+      // 'downloads.lede-project.org': { '.*': { proxy: 'lede.proxy.ustclug.org' } },
+      // 'downloads.openwrt.org': { '.*': { proxy: 'openwrt.proxy.ustclug.org' } },
+      // 'secure.gravatar.com': { '.*': { proxy: 'gravatar.proxy.ustclug.org' } },
+      '*.carbonads.com': {
+        '/carbon.*': {
+          abort: true,
+          desc: '广告拦截'
+        }
+      },
+      '*.buysellads.com': {
+        '/ads/.*': {
+          abort: true,
+          desc: '广告拦截'
         }
       }
     },
-    proxy: {},
-    plugin: {}
-  }
+    whiteList: {
+      'alipay.com': true,
+      '*.alipay.com': true,
+      'pay.weixin.qq.com': true,
+      'www.baidu.com': true
+    },
+    // sniList: {
+    //   'github.com': 'abaidu.com'
+    // },
+    dns: {
+      providers: {
+        aliyun: {
+          type: 'https',
+          server: 'https://dns.alidns.com/dns-query',
+          cacheSize: 1000
+        },
+        usa: {
+          type: 'https',
+          server: 'https://1.1.1.1/dns-query',
+          cacheSize: 1000
+        },
+        quad9: {
+          type: 'https',
+          server: 'https://9.9.9.9/dns-query',
+          cacheSize: 1000
+        },
+        rubyfish: {
+          type: 'https',
+          server: 'https://rubyfish.cn/dns-query',
+          cacheSize: 1000
+        }
+      },
+      mapping: {
+        // 'assets.fastgit.org': 'usa',
+        '*githubusercontent.com': 'quad9',
+        '*yarnpkg.com': 'usa',
+        '*cloudfront.net': 'usa',
+        '*github.io': 'usa',
+        'img.shields.io': 'usa',
+        '*.githubusercontent.com': 'usa',
+        '*.githubassets.com': 'usa',
+        // "解决push的时候需要输入密码的问题",
+        'github.com': 'quad9',
+        '*github.com': 'usa',
+        '*.vuepress.vuejs.org': 'usa',
+        'gh.docmirror.top': 'aliyun'
+      },
+      speedTest: {
+        enabled: true,
+        interval: 60000,
+        hostnameList: ['github.com'],
+        dnsProviders: ['usa', 'quad9', 'rubyfish']
+      }
+    }
+  },
+  proxy: {},
+  plugin: {}
+}
