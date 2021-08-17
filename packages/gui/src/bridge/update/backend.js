@@ -49,10 +49,10 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   }
   // 本地开发环境，改变app-update.yml地址
   if (process.env.NODE_ENV === 'development' && !isMac) {
+    const publishUrl = process.env.VUE_APP_PUBLISH_URL
     autoUpdater.setFeedURL({
       provider: 'generic',
-      // url: 'http://localhost/dev-sidecar/'
-      url: 'http://dev-sidecar.docmirror.cn/update/preview/'
+      url: publishUrl
     })
     if (isMac) {
       autoUpdater.updateConfigPath = path.join(__dirname, 'mac/DevSidecar.app/Contents/Resources/app-update.yml')
@@ -62,6 +62,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
       autoUpdater.updateConfigPath = path.join(__dirname, 'win-unpacked/resources/app-update.yml')
     }
   }
+
+  console.log('auto updater', autoUpdater.getFeedURL())
   autoUpdater.autoDownload = false
 
   let partPackagePath = null

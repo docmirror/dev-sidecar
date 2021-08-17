@@ -105,12 +105,12 @@ module.exports = {
           desc: 'github的访问速度分析上传，没有必要，直接返回成功'
         }
       },
-      'v2ex.com': {
-        '.*': {
-          proxy: 'v2ex.com',
-          sni: 'baidu.com'
-        }
-      },
+      // 'v2ex.com': {
+      //   '.*': {
+      //     proxy: 'v2ex.com',
+      //     sni: 'baidu.com'
+      //   }
+      // },
       // google cdn
       'www.google.com': {
         '/recaptcha/.*': { proxy: 'www.recaptcha.net' }
@@ -121,8 +121,8 @@ module.exports = {
       },
       'ajax.googleapis.com': {
         '.*': {
-          proxy: 'gapis.geekzu.org',
-          backup: ['fonts.loli.net'],
+          proxy: 'ajax.lug.ustc.edu.cn',
+          backup: ['gapis.geekzu.org'],
           test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'
         }
       },
