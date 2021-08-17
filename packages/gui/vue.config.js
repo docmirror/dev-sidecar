@@ -66,8 +66,8 @@ module.exports = {
         linux: {
           icon: 'build/mac/',
           target: [
-            'deb'
-            // 'AppImage'
+            'deb',
+            'AppImage'
           ]
         },
         publish: {
