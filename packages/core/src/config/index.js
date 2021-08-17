@@ -97,14 +97,15 @@ module.exports = {
       },
       'ajax.googleapis.com': {
         '.*': {
-          proxy: 'ajax.loli.net',
+          proxy: 'gapis.geekzu.org',
+          backup: ['fonts.loli.net'],
           test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'
         }
       },
       'fonts.googleapis.com': {
         '.*': {
-          proxy: 'fonts.loli.net',
-          backup: ['fonts.proxy.ustclug.org'],
+          proxy: 'fonts.geekzu.org',
+          backup: ['fonts.loli.net'],
           test: 'https://fonts.googleapis.com/css?family=Oswald'
         }
       },
