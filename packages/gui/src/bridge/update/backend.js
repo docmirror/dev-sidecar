@@ -51,7 +51,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   if (process.env.NODE_ENV === 'development' && !isMac) {
     autoUpdater.setFeedURL({
       provider: 'generic',
-      url: 'http://localhost/dev-sidecar/'
+      // url: 'http://localhost/dev-sidecar/'
+      url: 'http://dev-sidecar.docmirror.cn/update/preview/'
     })
     if (isMac) {
       autoUpdater.updateConfigPath = path.join(__dirname, 'mac/DevSidecar.app/Contents/Resources/app-update.yml')
