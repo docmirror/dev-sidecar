@@ -3,7 +3,7 @@
     autoStart: {
       enabled: true,
     },
-    mode: 'safe',
+    mode: 'default',
   },
   plugin: {
     node: {
