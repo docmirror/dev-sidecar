@@ -63,11 +63,11 @@ module.exports = {
         win: {
           requestedExecutionLevel: 'requireAdministrator'
         },
-        icon: './build/icons/512x512.png',
         linux: {
-          icon: './build/mac/',
+          icon: 'build/mac/',
           target: [
-            'deb'
+            // 'deb'
+            'AppImage'
           ]
         },
         publish: {
