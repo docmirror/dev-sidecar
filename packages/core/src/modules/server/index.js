@@ -82,8 +82,11 @@ const serverApi = {
     serverProcess.on('beforeExit', (code) => {
       log.warn('server process beforeExit', code)
     })
-    serverProcess.on('exit', (code) => {
-      log.warn('server process exit', code)
+    serverProcess.on('SIGPIPE', (code, signal) => {
+      log.warn('server process SIGPIPE', code, signal)
+    })
+    serverProcess.on('exit', (code, signal) => {
+      log.warn('server process exit', code, signal)
     })
     serverProcess.on('uncaughtException', (err, origin) => {
       log.error('server process uncaughtException', err)

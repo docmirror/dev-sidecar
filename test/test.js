@@ -31,7 +31,6 @@ function testCa() {
     process.env.NODE_EXTRA_CA_CERTS = 'C:\\Users\\Administrator\\.dev-sidecar\\dev-sidecar.ca.crt'
     process.env.GLOBAL_AGENT_HTTP_PROXY = "http://127.0.0.1:1181"
     process.env.GLOBAL_AGENT_HTTPS_PROXY = "http://127.0.0.1:1181"
-    console.log('111', process.env.NODE_EXTRA_CA_CERTS)
 
     const options = {
         agent : new https.Agent({

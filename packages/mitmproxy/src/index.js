@@ -37,11 +37,14 @@ function registerProcessListener () {
   process.on('uncaughtExceptionMonitor', (err, origin) => {
     log.info('uncaughtExceptionMonitor:', err, origin)
   })
-  process.on('exit', function (code) {
-    log.info('代理服务进程被关闭:', code)
+  process.on('exit', function (code, signal) {
+    log.info('代理服务进程被关闭:', code, signal)
   })
-  process.on('beforeExit', (code) => {
-    console.log('Process beforeExit event with code: ', code)
+  process.on('beforeExit', (code, signal) => {
+    console.log('Process beforeExit event with code: ', code, signal)
+  })
+  process.on('SIGPIPE', (code, signal) => {
+    log.warn('sub Process SIGPIPE', code, signal)
   })
 }
 
