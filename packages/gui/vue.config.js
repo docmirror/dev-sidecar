@@ -38,6 +38,7 @@ module.exports = {
       builderOptions: {
         afterPack: './pkg/after-pack.js',
         afterAllArtifactBuild: './pkg/after-all-artifact-build.js',
+        afterPackContent: './pkg/after-pack-content.js',
         // builderOptions: {
         //   publish: ['github']// 此处写入github 就好，不用添加其他内容
         // },

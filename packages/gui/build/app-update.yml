@@ -1,0 +1,3 @@
+provider: generic
+url: 'http://dev-sidecar.docmirror.cn/update/preview/'
+updaterCacheDirName: '@docmirrordev-sidecar-gui-updater'
