@@ -61,7 +61,10 @@ module.exports = {
           allowToChangeInstallationDirectory: true
         },
         mac: {
-          icon: './build/mac/icon.icns'
+          icon: './build/mac/icon.icns',
+          target: [
+            'dmg'
+          ]
         },
         win: {
           requestedExecutionLevel: 'requireAdministrator'

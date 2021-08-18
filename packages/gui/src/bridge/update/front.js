@@ -57,8 +57,8 @@ function install (app, api) {
   function goManualUpdate (value) {
     app.$confirm({
       title: '暂不支持自动升级',
-      cancelText: 'cancel',
-      okText: 'ok',
+      cancelText: '取消',
+      okText: '确定',
       content: h => {
         function openGithubUrl () {
           api.ipc.openExternal('https://github.com/docmirror/dev-sidecar/releases')
@@ -145,11 +145,9 @@ function install (app, api) {
         }
       },
       onOk () {
-        console.log('OK')
         api.update.doUpdateNow()
       },
       onCancel () {
-        console.log('Cancel')
       }
     })
   }

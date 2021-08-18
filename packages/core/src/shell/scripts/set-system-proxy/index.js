@@ -152,10 +152,25 @@ const executor = {
     if (params == null) {
       await exec(`networksetup -setwebproxystate '${wifiAdaptor}' off`)
       await exec(`networksetup -setsecurewebproxystate '${wifiAdaptor}' off`)
+
+      // const removeEnv = `
+      // sed -ie '/export http_proxy/d' ~/.zshrc
+      // sed -ie '/export https_proxy/d' ~/.zshrc
+      // source ~/.zshrc
+      // `
+      // await exec(removeEnv)
     } else {
       const { ip, port } = params
       await exec(`networksetup -setwebproxy '${wifiAdaptor}' ${ip} ${port}`)
       await exec(`networksetup -setsecurewebproxy '${wifiAdaptor}' ${ip} ${port}`)
+
+      //       const setEnv = `cat <<ENDOF >>  ~/.zshrc
+      // export http_proxy="http://${ip}:${port}"
+      // export https_proxy="http://${ip}:${port}"
+      // ENDOF
+      // source ~/.zshrc
+      //       `
+      //       await exec(setEnv)
     }
   }
 }

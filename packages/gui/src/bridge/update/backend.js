@@ -13,6 +13,7 @@ const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 
 function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
+  logger.info('download url', uri)
   progress(request(uri), {
     // throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
     // delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
@@ -55,7 +56,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     //   url: publishUrl
     // })
     if (isMac) {
-    //  autoUpdater.updateConfigPath = path.join(__dirname, 'mac/DevSidecar.app/Contents/Resources/app-update.yml')
+      autoUpdater.updateConfigPath = path.join(__dirname, 'mac/dev-sidecar.app/Contents/Resources/app-update.yml')
     } else if (isLinux) {
       autoUpdater.updateConfigPath = path.join(__dirname, 'linux-unpacked/resources/app-update.yml')
     } else {
