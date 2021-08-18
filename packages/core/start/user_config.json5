@@ -24,8 +24,12 @@
     },
   },
   server: {
-    intercept: {
-      enabled: true,
+    intercepts: {
+      'dev-sidecar.docmirror.cn': {
+        '.*': {
+          proxy: 'dev-sidecar-preview.docmirror.cn',
+        },
+      },
     },
-  },
+  }
 }

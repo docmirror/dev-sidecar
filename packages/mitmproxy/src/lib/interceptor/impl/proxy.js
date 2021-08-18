@@ -28,7 +28,13 @@ module.exports = {
       }
     }
 
-    let proxyTarget = proxyConf + req.url
+    let uri = req.url
+    if (uri.indexOf('http') === 0) {
+      // eslint-disable-next-line node/no-deprecated-api
+      const URL = url.parse(uri)
+      uri = URL.path
+    }
+    let proxyTarget = proxyConf + uri
     if (interceptOpt.replace) {
       const regexp = new RegExp(interceptOpt.replace)
       proxyTarget = req.url.replace(regexp, proxyConf)
@@ -50,7 +56,7 @@ module.exports = {
     if (URL.port == null) {
       rOptions.port = rOptions.protocol === 'https:' ? 443 : 80
     }
-    log.info('proxy:', rOptions.hostname, proxyTarget)
+    log.info('proxy:', rOptions.hostname, 'target', proxyTarget)
     if (context.requestCount) {
       log.debug('proxy choice:', JSON.stringify(context.requestCount))
     }

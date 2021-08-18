@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar-gui",
-  "version": "1.6.0",
+  "version": "1.5.0",
   "private": false,
   "license": "MPL-2.0",
   "main": "background.js",
@@ -8,9 +8,7 @@
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
-    "electron:build:pre": "cross-env NODE_ENV=production && vue-cli-service electron:build --mode pre",
     "electron": "vue-cli-service electron:serve",
-    "electron:pre": "vue-cli-service electron:serve --mode pre",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "electron:icons": "electron-icon-builder --input=./public/logo/win.png --output=build --flatten",

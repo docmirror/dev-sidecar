@@ -10,7 +10,7 @@ module.exports = {
       title: 'DevSidecar-给开发者的边车辅助工具'
     }
   },
-  configureWebpack: config => {
+  configureWebpack: (config) => {
     const configNew = {
       plugins: [
         new webpack.DefinePlugin({ 'global.GENTLY': true })
