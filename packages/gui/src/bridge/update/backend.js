@@ -48,9 +48,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     updateNotAva: '当前为最新版本，无需更新'
   }
   // 本地开发环境，改变app-update.yml地址
-  const isBuild = process.env.VUE_APP_IS_BUILD
-  console.log('is build', isBuild, process.env.NODE_ENV === 'development' && isBuild !== 'true')
-  if (process.env.NODE_ENV === 'development' && isBuild !== 'true') {
+  if (process.env.NODE_ENV === 'development') {
     // const publishUrl = process.env.VUE_APP_PUBLISH_URL
     // autoUpdater.setFeedURL({
     //   provider: 'generic',
