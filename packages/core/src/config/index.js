@@ -222,7 +222,7 @@ module.exports = {
         'github.com': 'quad9',
         '*github.com': 'quad9',
         '*.vuepress.vuejs.org': 'quad9',
-        'gh.docmirror.top': 'aliyun',
+        'gh.docmirror.top': 'quad9',
         '*cloudflare.com': 'quad9',
         '*v2ex.com': 'quad9'
       },
