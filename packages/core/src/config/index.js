@@ -224,7 +224,7 @@ module.exports = {
         '*.vuepress.vuejs.org': 'usa',
         'gh.docmirror.top': 'aliyun',
         '*cloudflare.com': 'usa',
-        '*v2ex.com': 'usa'
+        '*v2ex.com': 'quad9'
       },
       speedTest: {
         enabled: true,
