@@ -48,14 +48,14 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     updateNotAva: '当前为最新版本，无需更新'
   }
   // 本地开发环境，改变app-update.yml地址
-  if (process.env.NODE_ENV === 'development' && !isMac) {
-    const publishUrl = process.env.VUE_APP_PUBLISH_URL
-    autoUpdater.setFeedURL({
-      provider: 'generic',
-      url: publishUrl
-    })
+  if (process.env.NODE_ENV === 'development') {
+    // const publishUrl = process.env.VUE_APP_PUBLISH_URL
+    // autoUpdater.setFeedURL({
+    //   provider: 'generic',
+    //   url: publishUrl
+    // })
     if (isMac) {
-      autoUpdater.updateConfigPath = path.join(__dirname, 'mac/DevSidecar.app/Contents/Resources/app-update.yml')
+    //  autoUpdater.updateConfigPath = path.join(__dirname, 'mac/DevSidecar.app/Contents/Resources/app-update.yml')
     } else if (isLinux) {
       // autoUpdater.updateConfigPath = path.join(__dirname, 'mac/DevSidecar.app/Contents/Resources/app-update.yml')
     } else {

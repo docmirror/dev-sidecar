@@ -73,6 +73,7 @@ function install (app, api) {
           })
           return
         }
+        updateParams.downloading = true
         api.update.downloadUpdate()
       })
     }
@@ -82,7 +83,7 @@ function install (app, api) {
 
     if (updateParams.autoDownload !== false) {
       app.$message.info('发现新版本，正在下载中...')
-      updateParams.downloading = true
+
       downloadNewVersion(value)
       return
     }
