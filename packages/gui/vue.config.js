@@ -1,6 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const publishUrl = process.env.VUE_APP_PUBLISH_URL
+const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
 console.log('publish url', publishUrl)
 module.exports = {
   pages: {
@@ -38,7 +39,7 @@ module.exports = {
       builderOptions: {
         afterPack: './pkg/after-pack.js',
         afterAllArtifactBuild: './pkg/after-all-artifact-build.js',
-        afterPackContent: './pkg/after-pack-content.js',
+        // artifactBuildCompleted: './pkg/artifact-build-completed.js',
         // builderOptions: {
         //   publish: ['github']// 此处写入github 就好，不用添加其他内容
         // },
@@ -68,12 +69,12 @@ module.exports = {
         linux: {
           icon: 'build/mac/',
           target: [
-            'deb',
+            // 'deb',
             'AppImage'
           ]
         },
         publish: {
-          provider: 'generic',
+          provider: publishProvider,
           url: publishUrl
           // url: 'http://dev-sidecar.docmirror.cn/update/preview/'
         }

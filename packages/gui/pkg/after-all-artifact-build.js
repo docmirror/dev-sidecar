@@ -15,6 +15,7 @@ function appendIntro (context, systemType, latest) {
   })
 }
 exports.default = async function (context) {
+  console.log('after-all-artifact-build', context)
   appendIntro(context, 'mac', 'latest-mac.yml')
   appendIntro(context, 'win', 'latest.yml')
   appendIntro(context, 'linux', 'latest-linux.yml')
