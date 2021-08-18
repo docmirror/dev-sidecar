@@ -1,4 +1,3 @@
-
 function install (app, api) {
   const updateParams = app.$global.update = { fromUser: false, autoDownload: false, progress: 0, downloading: false, newVersion: false, isFullUpdate: true }
   api.ipc.on('update', (event, message) => {
@@ -55,26 +54,44 @@ function install (app, api) {
     updateParams.progress = value
   }
 
-  function downloadNewVersion (value) {
+  function goManualUpdate (value) {
+    app.$confirm({
+      title: '暂不支持自动升级',
+      cancelText: 'cancel',
+      okText: 'ok',
+      content: h => {
+        function openGithubUrl () {
+          api.ipc.openExternal('https://github.com/docmirror/dev-sidecar/releases')
+        }
+        function openGiteeUrl () {
+          api.ipc.openExternal('https://gitee.com/docmirror/dev-sidecar/releases')
+        }
+        return <div>
+          <div>请前往github或gitee项目release页面下载新版本手动安装</div>
+          <ol>
+            <li><a onClick={openGithubUrl}>Github release</a></li>
+            <li><a onClick={openGiteeUrl}>Gitee release</a></li>
+          </ol>
+        </div>
+      }
+    })
+  }
+  async function downloadNewVersion (value) {
+    const platform = await api.shell.getSystemPlatform()
+    console.log('download new version platform', platform)
+    if (platform === 'linux') {
+      goManualUpdate(app, value)
+      return
+    }
     if (value.partPackage) {
       // 有增量更新
       api.update.downloadPart(value)
     } else {
-      api.shell.getSystemPlatform().then((platform) => {
-        if (platform === 'mac' || platform === 'linux') {
-          app.$notification.open({
-            duration: 15,
-            message: '暂不支持自动升级',
-            description:
-              '请前往github或gitee项目release页面下载新版本手动安装',
-            onClick: () => {
-
-            }
-          })
-          return
-        }
-        api.update.downloadUpdate()
-      })
+      if (platform === 'mac') {
+        goManualUpdate(value)
+        return
+      }
+      api.update.downloadUpdate()
     }
   }
   function foundNewVersion (value) {

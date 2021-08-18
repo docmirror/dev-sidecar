@@ -50,8 +50,9 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   // 本地开发环境，改变app-update.yml地址
   if (process.env.NODE_ENV === 'development' && !isMac) {
     const publishUrl = process.env.VUE_APP_PUBLISH_URL
+    const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
     autoUpdater.setFeedURL({
-      provider: 'generic',
+      provider: publishProvider,
       url: publishUrl
     })
     if (isMac) {

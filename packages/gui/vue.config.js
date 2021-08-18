@@ -69,7 +69,7 @@ module.exports = {
         linux: {
           icon: 'build/mac/',
           target: [
-            // 'deb',
+            'deb',
             'AppImage'
           ]
         },
