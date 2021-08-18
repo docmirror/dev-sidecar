@@ -221,7 +221,9 @@ module.exports = {
         'github.com': 'quad9',
         '*github.com': 'usa',
         '*.vuepress.vuejs.org': 'usa',
-        'gh.docmirror.top': 'aliyun'
+        'gh.docmirror.top': 'aliyun',
+        '*cloudflare.com': 'usa',
+        '*v2ex.com': 'usa'
       },
       speedTest: {
         enabled: true,
