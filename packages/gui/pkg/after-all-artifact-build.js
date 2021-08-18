@@ -10,9 +10,9 @@ function appendIntro (context, systemType, latest) {
 
   const latestFilePath = path.join(context.outDir, latest)
   fs.appendFile(latestFilePath, `partPackage: ${partUpdateUrl}\n
-  releaseNotes: \n
-    - 升级日志\n
-    - https://download.fastgit.org/docmirror/dev-sidecar/releases/download/v${version}/DevSidecar-${version}.exe\n`,
+releaseNotes: \n
+  - 升级日志\n
+  - https://download.fastgit.org/docmirror/dev-sidecar/releases/download/v${version}/DevSidecar-${version}.exe\n`,
   (err) => {
     if (err) {
       console.log('修改latest 失败')
