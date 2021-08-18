@@ -48,7 +48,9 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     updateNotAva: '当前为最新版本，无需更新'
   }
   // 本地开发环境，改变app-update.yml地址
-  if (process.env.NODE_ENV === 'development') {
+  const isBuild = process.env.VUE_APP_IS_BUILD
+  console.log('is build', isBuild, process.env.NODE_ENV === 'development' && isBuild !== 'true')
+  if (process.env.NODE_ENV === 'development' && isBuild !== 'true') {
     // const publishUrl = process.env.VUE_APP_PUBLISH_URL
     // autoUpdater.setFeedURL({
     //   provider: 'generic',
@@ -63,7 +65,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     }
   }
 
-  console.log('auto updater', autoUpdater.getFeedURL())
+  logger.info('auto updater', autoUpdater.getFeedURL())
   autoUpdater.autoDownload = false
 
   let partPackagePath = null
@@ -102,6 +104,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     if (platform === 'mac') {
       target = path.join(appPath, 'Resources')
     }
+    const length = fs.statSync(partPackagePath)
+    log.info('安装包大小:', length)
 
     log.info('开始解压缩，安装升级包', partPackagePath, target)
 
