@@ -67,6 +67,7 @@ module.exports = {
           ]
         },
         win: {
+          icon: 'build/icons/',
           requestedExecutionLevel: 'requireAdministrator'
         },
         linux: {
