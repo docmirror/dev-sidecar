@@ -20,7 +20,7 @@
 * 具备测速机制，当访问失败或超时之后，自动切换到备用站点，使得目标服务高可用
 
 ### 3、 github加速
-* github 直连加速
+* github 直连加速 (通过修改sni实现，感谢 [fastGithub](https://github.com/dotnetcore/FastGithub) 提供的思路)
 * release、source、zip下载加速
 * clone 加速
 * 头像加速
@@ -285,7 +285,7 @@ Error: www.github.com:443, 代理请求超时
  2、如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
 
 ## 六、在其他程序使用
-* [java程序使用](./other.md#Java程序使用)
+* [java程序使用](./doc/other.md#Java程序使用)
 
 ## 七、贡献代码
 

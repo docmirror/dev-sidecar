@@ -214,6 +214,7 @@ module.exports = {
         '*githubusercontent.com': 'quad9',
         '*yarnpkg.com': 'quad9',
         '*cloudfront.net': 'quad9',
+        '*cloudflare.com': 'quad9',
         '*github.io': 'quad9',
         'img.shields.io': 'quad9',
         '*.githubusercontent.com': 'quad9',
@@ -223,7 +224,6 @@ module.exports = {
         '*github.com': 'quad9',
         '*.vuepress.vuejs.org': 'quad9',
         'gh.docmirror.top': 'quad9',
-        '*cloudflare.com': 'quad9',
         '*v2ex.com': 'quad9'
       },
       speedTest: {
