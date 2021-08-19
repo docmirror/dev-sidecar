@@ -285,20 +285,9 @@ Error: www.github.com:443, 代理请求超时
 当git push的数据大于200k时，会报错，目前的方案不太好解决。     
 临时方案：切到安全模式，尝试git push，多试几次就可以了。
 
-### 8、 Java程序使用
-需要先通过keytool安装证书  
-`keytool -import -alias dev-sidecar -keystore "jdk路径\security\cacerts" -file 用户目录\.dev-sidecar\dev-sidecar.ca.crt`默认密码为`changeit`  
-启动时还需要设置参数  
-`-Dhttp.proxyHost=localhost -Dhttp.proxyPort=1181 -Dhttps.proxyHost=localhost -Dhttps.proxyPort=1181`  
-Gradle还需在`用户目录/.gradle/gradle.properties`创建配置文件  
-```properties
-systemProp.http.proxyHost=localhost
-systemProp.http.proxyPort=1181
-systemProp.https.proxyHost=localhost
-systemProp.https.proxyPort=1181
-```
 
-
+## 在其他程序使用
+* [java程序使用](./other.md#Java程序使用)
 
 
 ## 贡献代码
