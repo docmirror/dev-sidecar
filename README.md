@@ -290,14 +290,8 @@ Error: www.github.com:443, 代理请求超时
 1、可以尝试关闭pac    
 2、可以将域名加入白名单，设置方式参考：https://github.com/docmirror/dev-sidecar/issues/25
 
-### 7、 git push报错
-当git push的数据大于200k时，会报错，目前的方案不太好解决。     
-临时方案：切到安全模式，尝试git push，多试几次就可以了。
-
-
 ## 六、在其他程序使用
 * [java程序使用](./other.md#Java程序使用)
-
 
 ## 七、贡献代码
 
