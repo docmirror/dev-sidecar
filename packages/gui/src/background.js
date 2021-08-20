@@ -43,7 +43,7 @@ function setTray (app) {
   // 设置系统托盘图标
   let icon = '128x128.png'
   if (isMac) {
-    icon = '16x16.png'
+    icon = '16x16-black.png'
   }
   const iconPath = path.join(__dirname, '../extra/icons/', icon)
   const appTray = new Tray(iconPath)
