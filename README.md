@@ -7,7 +7,7 @@
     
       
 
-## 特性
+## 一、 特性
 
 ### 1、 dns优选（解决***污染问题）
 * 根据网络状况智能解析最佳域名ip地址，获取最佳网络速度     
@@ -20,6 +20,7 @@
 * 具备测速机制，当访问失败或超时之后，自动切换到备用站点，使得目标服务高可用
 
 ### 3、 github加速
+* github 直连加速 (通过修改sni实现，感谢 [fastGithub](https://github.com/dotnetcore/FastGithub) 提供的思路)
 * release、source、zip下载加速
 * clone 加速
 * 头像加速
@@ -33,6 +34,7 @@
 > * https://greasyfork.org/scripts/412245  
 > 
 > 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过`加速服务->基本设置->启用脚本`进行关闭）。
+
 
 ### 4、 Stack Overflow 加速
 * 将ajax.google.com代理到加速CDN上     
@@ -52,7 +54,7 @@
 * 本应用及服务端承诺不收集任何信息。介意者请使用安全模式。
 * 建议自建服务端（增强功能页面右上角点击查看自建服务端方法）
 
-## 快速开始
+## 二、快速开始
 支持windows、Mac
 
 ### DevSidecar桌面应用
@@ -62,9 +64,12 @@
 [Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 [Github Release](https://github.com/docmirror/dev-sidecar/releases)  
 
-  Windows: 请选择DevSidecar-x.x.x.exe   
-  Mac: 请选择DevSidecar-x.x.x.dmg
+> Windows: 请选择DevSidecar-x.x.x.exe     
+> Mac: 请选择DevSidecar-x.x.x.dmg  
+> Ubuntu: 请选择DevSidecar-x.x.x.deb   
+> 其他linux: 请选择DevSidecar-x.x.x.AppImage (未做测试，不保证能用) 
 
+> linux安装说明请参考 [linux安装文档](./doc/linux.md) 
 
 #### 2 安装后打开    
 注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
@@ -82,7 +87,7 @@
 去试试打开github   
  
 ---------
-> 第一次访问会去国外的dns服务器上获取ip，会比较慢一点，后面就快了 
+> 第一次访问会去国外的dns服务器上获取ip，会比较慢一点，后面就快了
 ---------
 
 ### 开启前 vs 开启后 
@@ -94,7 +99,7 @@
 |zip 下载 |![](./doc/download-before.png) |![](./doc/download.png)秒下的，实在截不到速度的图    |  
 
 
-## 模式说明
+## 三、模式说明
 
 ### 安全模式
 * 此模式：关闭拦截、关闭增强、开启dns优选、开启测速
@@ -137,7 +142,7 @@
    >2. [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限
 
 
-## api
+## 四、api
 
 ### 拦截配置
 没有配置域名的不会拦截，其他根据配置进行拦截处理
@@ -154,6 +159,10 @@ const intercepts = {
         // success:true,  直接返回成功请求（某些请求不想发出去，可以伪装成功返回）
         redirect: 'download.fastgit.org'
       },
+      '.*':{
+         proxy:'github.com', 
+         sni:'baidu.com' //修改sni，规避***握手拦截
+      }
    },
    'ajax.googleapis.com': {
      '.*': {
@@ -187,7 +196,7 @@ const intercepts = {
 ```
 注意：暂时只支持IPv4的解析
 
-## 问题排查
+## 五、问题排查
 
 ### 1、dev-sidecar的前两个开关没有处于打开状态
 1. 尝试将开关按钮手动打开
@@ -235,20 +244,6 @@ sudo xcodebuild -license
 7. 请确认网络代理设置处于勾选状态    
 正常情况下dev-sidecar在“系统代理”开关打开时，会自动设置代理。
 
- 如何打开查看windows代理设置：    
- * win10: 开始->设置->网络和Internet->最下方代理      
- * win7: 开始->控制面板->网络和Internet->网络和共享中心->左下角Internet选项->连接选项卡->局域网设置      
-
-windows 代理查看      
-![windows](./doc/proxy.png)
-
-mac 代理查看     
-![](./doc/mac-proxy.png)
-
-
-
-
-
 
 ### 3、浏览器打开提示证书不受信任
 
@@ -268,7 +263,7 @@ DevSidecar Warning:
 Error: www.github.com:443, 代理请求超时
 ```
 如果是安全模式，则是因为不稳定导致的，等一会再刷新试试     
-如果是默认模式/增强模式，则是由于访问人数过多，正常现象
+如果是增强模式，则是由于访问人数过多，正常现象
 
 ### 5、查看日志是否有报错
  如果还是不行，请在下方加作者好友，将服务日志发送给作者进行分析             
@@ -279,14 +274,20 @@ Error: www.github.com:443, 代理请求超时
 
 ### 6、某些原本可以打开的网站打不开了
 1、可以尝试关闭pac    
-2、可以将域名加入白名单，设置方式参考：https://github.com/docmirror/dev-sidecar/issues/25
+2、可以将域名加入白名单
 
-### 7、 git push报错
-当git push的数据大于200k时，会报错，目前的方案不太好解决。     
-临时方案：切到安全模式，尝试git push，多试几次就可以了。
+### 7、应用意外关闭导致没有网络了
+应用开启后会自动修改系统代理设置，正常退出会自动关闭系统代理    
+当应用意外关闭时，可能会因为没有将系统代理恢复，从而导致完全无法上网。
 
+ 对于此问题有如下几种解决方案可供选择：   
+ 1、重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）   
+ 2、如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
 
-## 贡献代码
+## 六、在其他程序使用
+* [java程序使用](./doc/other.md#Java程序使用)
+
+## 七、贡献代码
 
 ### 开发调试模式启动
 
@@ -315,24 +316,24 @@ npm run electron:build
 如果你想将你的修改贡献出来，请提交pr
 
 
-## 联系作者
+## 八、联系作者
 
 欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS）      
 
 ![](./doc/contact.png)      
 
 
-## 求star
+## 九、求star
 我的其他项目求star
 * [fast-crud](https://github.com/fast-crud/fast-crud) : 开发crud快如闪电
 * [certd](https://github.com/certd/certd) : 让你的证书永不过期
 
-## 广告
+## 十、广告
 * [腾讯云企业老用户3折服务器](https://curl.qcloud.com/MRY91neQ)
 * [腾讯云新用户大礼包](https://curl.qcloud.com/VQ2ARft2)
 * [阿里云618](https://www.aliyun.com/activity/618/2021?userCode=qya11txb)
 
-## 感谢
+## 十一、感谢
 本项目使用lerna包管理工具   
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)

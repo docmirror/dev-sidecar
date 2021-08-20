@@ -6,7 +6,6 @@ const DnsUtil = require('../../dns/index')
 const log = require('../../../utils/util.log')
 const RequestCounter = require('../../choice/RequestCounter')
 const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
-const OverWallMiddleware = require('../middleware/overwall')
 const speedTest = require('../../speed/index.js')
 const defaultDns = require('dns')
 const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
@@ -54,7 +53,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               if (!reqIncpt.requestIntercept) {
                 continue
               }
-              const goNext = reqIncpt.requestIntercept(context, req, res, ssl, next)
+              const goNext = reqIncpt.requestIntercept(context, req, res, ssl)
               if (goNext) {
                 next()
                 return

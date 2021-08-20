@@ -10,9 +10,9 @@ module.exports = {
     }
   },
   targets: {
-    '*facebook.com': true,
     'github.com': true,
-    '*wikimedia.org': true
+    '*wikimedia.org': true,
+    'v2ex.com': true
   },
   pac: {
     enabled: true,

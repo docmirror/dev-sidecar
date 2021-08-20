@@ -10,8 +10,10 @@ import logger from '../../utils/util.log'
 import appPathUtil from '../../utils/util.apppath'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
+const isLinux = process.platform === 'linux'
 
 function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
+  logger.info('download url', uri)
   progress(request(uri), {
     // throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
     // delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
@@ -47,17 +49,22 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     updateNotAva: '当前为最新版本，无需更新'
   }
   // 本地开发环境，改变app-update.yml地址
-  if (process.env.NODE_ENV === 'development' && !isMac) {
-    autoUpdater.setFeedURL({
-      provider: 'generic',
-      url: 'http://localhost/dev-sidecar/'
-    })
+  if (process.env.NODE_ENV === 'development') {
+    // const publishUrl = process.env.VUE_APP_PUBLISH_URL
+    // autoUpdater.setFeedURL({
+    //   provider: 'generic',
+    //   url: publishUrl
+    // })
     if (isMac) {
-      autoUpdater.updateConfigPath = path.join(__dirname, 'mac/DevSidecar.app/Contents/Resources/app-update.yml')
+      autoUpdater.updateConfigPath = path.join(__dirname, 'mac/dev-sidecar.app/Contents/Resources/app-update.yml')
+    } else if (isLinux) {
+      autoUpdater.updateConfigPath = path.join(__dirname, 'linux-unpacked/resources/app-update.yml')
     } else {
       autoUpdater.updateConfigPath = path.join(__dirname, 'win-unpacked/resources/app-update.yml')
     }
   }
+
+  logger.info('auto updater', autoUpdater.getFeedURL())
   autoUpdater.autoDownload = false
 
   let partPackagePath = null
@@ -96,6 +103,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     if (platform === 'mac') {
       target = path.join(appPath, 'Resources')
     }
+    const length = fs.statSync(partPackagePath)
+    log.info('安装包大小:', length)
 
     log.info('开始解压缩，安装升级包', partPackagePath, target)
 

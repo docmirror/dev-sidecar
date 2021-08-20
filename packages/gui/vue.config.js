@@ -1,6 +1,8 @@
 const path = require('path')
 const webpack = require('webpack')
-
+const publishUrl = process.env.VUE_APP_PUBLISH_URL
+const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
+console.log('publish url', publishUrl)
 module.exports = {
   pages: {
     index: {
@@ -8,7 +10,7 @@ module.exports = {
       title: 'DevSidecar-给开发者的边车辅助工具'
     }
   },
-  configureWebpack: config => {
+  configureWebpack: (config) => {
     const configNew = {
       plugins: [
         new webpack.DefinePlugin({ 'global.GENTLY': true })
@@ -37,6 +39,7 @@ module.exports = {
       builderOptions: {
         afterPack: './pkg/after-pack.js',
         afterAllArtifactBuild: './pkg/after-all-artifact-build.js',
+        // artifactBuildCompleted: './pkg/artifact-build-completed.js',
         // builderOptions: {
         //   publish: ['github']// 此处写入github 就好，不用添加其他内容
         // },
@@ -47,7 +50,7 @@ module.exports = {
           }
         ],
         appId: 'dev-sidecar',
-        productName: 'DevSidecar',
+        productName: 'dev-sidecar',
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: 'DevSidecar-${version}.${ext}',
         copyright: 'Copyright © 2020-2021 Greper',
@@ -58,14 +61,25 @@ module.exports = {
           allowToChangeInstallationDirectory: true
         },
         mac: {
-          icon: 'build/mac/icon.icns'
+          icon: './build/mac/icon.icns',
+          target: [
+            'dmg'
+          ]
         },
         win: {
+          icon: 'build/icons/',
           requestedExecutionLevel: 'requireAdministrator'
         },
+        linux: {
+          icon: 'build/mac/',
+          target: [
+            'deb',
+            'AppImage'
+          ]
+        },
         publish: {
-          provider: 'generic',
-          url: 'http://dev-sidecar.docmirror.cn/update/'
+          provider: publishProvider,
+          url: publishUrl
           // url: 'http://dev-sidecar.docmirror.cn/update/preview/'
         }
       },

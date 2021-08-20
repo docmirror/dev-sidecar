@@ -3,7 +3,7 @@
     autoStart: {
       enabled: true,
     },
-    mode: 'safe',
+    mode: 'default',
   },
   plugin: {
     node: {
@@ -24,8 +24,12 @@
     },
   },
   server: {
-    intercept: {
-      enabled: false,
+    intercepts: {
+      'dev-sidecar.docmirror.cn': {
+        '.*': {
+          proxy: 'dev-sidecar-preview.docmirror.cn',
+        },
+      },
     },
-  },
+  }
 }
