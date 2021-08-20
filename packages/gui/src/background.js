@@ -1,7 +1,7 @@
 'use strict'
 /* global __static */
 import path from 'path'
-import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog } from 'electron'
+import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, powerMonitor } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
 import DevSidecar from '@docmirror/dev-sidecar'
@@ -242,6 +242,12 @@ if (!isFirstInstance) {
     } catch (err) {
       log.info('err', err)
     }
+
+    powerMonitor.on('shutdown', async (e) => {
+      e.preventDefault()
+      log.info('系统关机，恢复代理设置')
+      await quit(app)
+    })
   })
 }
 
@@ -261,7 +267,6 @@ if (isDevelopment) {
     })
   }
 }
-
 // 系统关机和重启时的操作
 process.on('exit', function () {
   log.info('进程结束，退出app')
