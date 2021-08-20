@@ -12,7 +12,8 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "electron:icons": "electron-icon-builder --input=./public/logo/win.png --output=build --flatten",
-    "electron:icons-mac": "electron-icon-builder --input=./public/logo/mac.png --output=build --flatten"
+    "electron:icons-mac": "electron-icon-builder --input=./public/logo/mac.png --output=build --flatten",
+    "electron:icons-black": "electron-icon-builder --input=./public/logo/win-black.png --output=build/black --flatten"
   },
   "homepage": "https://github.com/docmirror/dev-sidecar",
   "author": {
