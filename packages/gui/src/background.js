@@ -100,9 +100,13 @@ function createWindow () {
     if (args.hideWindow) {
       startHideWindow = true
     }
+
     log.info('start args', args)
   }
-  log.info('start hide window', startHideWindow)
+  if (app.getLoginItemSettings().wasOpenedAsHidden) {
+    startHideWindow = true
+  }
+  log.info('start hide window', startHideWindow, app.getLoginItemSettings())
 
   win = new BrowserWindow({
     width: 900,

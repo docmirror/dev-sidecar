@@ -210,6 +210,7 @@ module.exports = {
       },
       mapping: {
         // 'assets.fastgit.org': 'usa',
+        '*.electronjs.org': 'quad9',
         '*amazonaws.com': 'quad9',
         '*githubusercontent.com': 'quad9',
         '*yarnpkg.com': 'quad9',

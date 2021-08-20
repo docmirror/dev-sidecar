@@ -42,7 +42,7 @@ export default {
         } else {
           app.setLoginItemSettings({
             openAtLogin: true,
-            path: ex,
+            openAsHidden: true,
             args: [
               '--hideWindow', '"true"'
             ]
@@ -56,7 +56,7 @@ export default {
         } else {
           app.setLoginItemSettings({
             openAtLogin: false,
-            path: ex,
+            openAsHidden: false,
             args: []
           })
         }
