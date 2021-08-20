@@ -28,7 +28,7 @@ export default {
   install (context) {
     const { ipcMain, dialog, log, app } = context
 
-    const ex = process.execPath
+    const ex = app.getPath('exe')
 
     // 定义事件，渲染进程中直接使用
 
@@ -44,7 +44,7 @@ export default {
             openAtLogin: true,
             path: ex,
             args: [
-              '--process-start-args', '"--hidden"'
+              '--hideWindow', '"true"'
             ]
           })
         }

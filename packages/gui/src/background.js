@@ -34,7 +34,7 @@ function setTray (app) {
       // 系统托盘图标目录
       label: '退出',
       click: () => {
-        console.log('force quit')
+        log.info('force quit')
         forceClose = true
         quit(app)
       }
@@ -100,7 +100,9 @@ function createWindow () {
     if (args.hideWindow) {
       startHideWindow = true
     }
+    log.info('start args', args)
   }
+  log.info('start hide window', startHideWindow)
 
   win = new BrowserWindow({
     width: 900,
@@ -194,7 +196,7 @@ if (!isFirstInstance) {
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
-    console.log('window-all-closed')
+    log.info('window-all-closed')
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
