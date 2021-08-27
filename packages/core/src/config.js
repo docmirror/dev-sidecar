@@ -82,7 +82,7 @@ function doMerge (defObj, newObj) {
 }
 let timer
 const configApi = {
-  startAutoDownloadRemoteConfig () {
+  async startAutoDownloadRemoteConfig () {
     if (timer != null) {
       clearInterval(timer)
     }
@@ -90,7 +90,7 @@ const configApi = {
       await configApi.downloadRemoteConfig()
       configApi.reload()
     }
-    download()
+    await download()
     setInterval(download, 24 * 60 * 60 * 1000) // 1天
   },
   downloadRemoteConfig () {

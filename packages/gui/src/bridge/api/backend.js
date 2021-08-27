@@ -124,6 +124,13 @@ function invoke (api, param) {
   return ret
 }
 
+async function doStart () {
+  // 开启自动下载远程配置
+  await DevSidecar.api.config.startAutoDownloadRemoteConfig()
+  // 启动所有
+  localApi.startup()
+}
+
 export default {
   install ({ win }) {
     // 接收view的方法调用
@@ -150,10 +157,7 @@ export default {
 
     // 合并用户配置
     DevSidecar.api.config.reload()
-    // 开启自动下载远程配置
-    DevSidecar.api.config.startAutoDownloadRemoteConfig()
-    // 启动所有
-    localApi.startup()
+    doStart()
   },
   devSidecar: DevSidecar,
   invoke
