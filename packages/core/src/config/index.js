@@ -72,8 +72,8 @@ module.exports = {
       },
       'github.githubassets.com': {
         '.*': {
-          proxy: 'github.githubassets.com',
-          sni: 'baidu.com'
+          proxy: 'assets.fastgit.org',
+          sni11: 'baidu.com'
         }
       },
       'customer-stories-feed.github.com': {
