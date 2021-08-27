@@ -6,6 +6,7 @@
 ### 1. ubuntu
  * 下载`DevSidecar-x.x.x.deb`
  * 执行命令安装 `dpkg -i DevSidecar-x.x.x.deb`
+ * 去应用列表里面找到dev-sidecar应用，打开即可
 
 ### 2. 其他linux系统（未测试）
 * 下载 `DevSidecar-x.x.x.AppImage`
