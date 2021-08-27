@@ -53,6 +53,7 @@ export default {
     },
     onRemoteConfigEnabledChange () {
       this.saveConfig()
+      this.$message.info('请重启加速服务')
     }
   }
 }

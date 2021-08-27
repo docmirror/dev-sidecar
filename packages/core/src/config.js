@@ -182,6 +182,7 @@ const configApi = {
     lodash.mergeWith(merged, newConfig, customizer)
     _deleteDisabledItem(merged)
     configTarget = merged
+    log.info('加载配置完成')
     return configTarget
   },
   getDefault () {

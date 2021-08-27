@@ -180,6 +180,10 @@ module.exports = {
       }
     },
     whiteList: {
+      'apple.com': true,
+      '*.apple.com': true,
+      'microsoft.com': true,
+      '*.microsoft.com': true,
       'alipay.com': true,
       '*.alipay.com': true,
       'pay.weixin.qq.com': true,
