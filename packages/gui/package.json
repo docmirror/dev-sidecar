@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar-gui",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "private": false,
   "license": "MPL-2.0",
   "main": "background.js",
@@ -12,7 +12,8 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "electron:icons": "electron-icon-builder --input=./public/logo/win.png --output=build --flatten",
-    "electron:icons-mac": "electron-icon-builder --input=./public/logo/mac.png --output=build --flatten"
+    "electron:icons-mac": "electron-icon-builder --input=./public/logo/mac.png --output=build --flatten",
+    "electron:icons-black": "electron-icon-builder --input=./public/logo/win-black.png --output=build/black --flatten"
   },
   "homepage": "https://github.com/docmirror/dev-sidecar",
   "author": {
@@ -20,8 +21,8 @@
     "name": "Greper"
   },
   "dependencies": {
-    "@docmirror/dev-sidecar": "^1.6.0",
-    "@docmirror/mitmproxy": "^1.6.0",
+    "@docmirror/dev-sidecar": "^1.6.1",
+    "@docmirror/mitmproxy": "^1.6.1",
     "adm-zip": "^0.5.5",
     "ant-design-vue": "^1.6.5",
     "compressing": "^1.5.1",

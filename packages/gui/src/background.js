@@ -1,7 +1,7 @@
 'use strict'
 /* global __static */
 import path from 'path'
-import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog } from 'electron'
+import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, powerMonitor } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
 import DevSidecar from '@docmirror/dev-sidecar'
@@ -43,7 +43,7 @@ function setTray (app) {
   // 设置系统托盘图标
   let icon = '128x128.png'
   if (isMac) {
-    icon = '16x16.png'
+    icon = '16x16-black.png'
   }
   const iconPath = path.join(__dirname, '../extra/icons/', icon)
   const appTray = new Tray(iconPath)
@@ -100,9 +100,13 @@ function createWindow () {
     if (args.hideWindow) {
       startHideWindow = true
     }
+
     log.info('start args', args)
   }
-  log.info('start hide window', startHideWindow)
+  if (app.getLoginItemSettings().wasOpenedAsHidden) {
+    startHideWindow = true
+  }
+  log.info('start hide window', startHideWindow, app.getLoginItemSettings())
 
   win = new BrowserWindow({
     width: 900,
@@ -242,6 +246,12 @@ if (!isFirstInstance) {
     } catch (err) {
       log.info('err', err)
     }
+
+    powerMonitor.on('shutdown', async (e) => {
+      e.preventDefault()
+      log.info('系统关机，恢复代理设置')
+      await quit(app)
+    })
   })
 }
 
@@ -261,7 +271,6 @@ if (isDevelopment) {
     })
   }
 }
-
 // 系统关机和重启时的操作
 process.on('exit', function () {
   log.info('进程结束，退出app')
