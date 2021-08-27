@@ -123,7 +123,7 @@
 * 功能上包含特性1/2/3/4/5
 * 由于敏感原因，默认关闭，感兴趣的可以私下交流
 
-## 最佳实践
+## 四、 最佳实践
 
 * 把dev-sidecar一直开着就行了
 * 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）    
@@ -146,7 +146,7 @@
    >2. [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限
 
 
-## 四、api
+## 五、api
 
 ### 拦截配置
 没有配置域名的不会拦截，其他根据配置进行拦截处理
@@ -200,7 +200,7 @@ const intercepts = {
 ```
 注意：暂时只支持IPv4的解析
 
-## 五、问题排查
+## 六、问题排查
 
 ### 1、dev-sidecar的前两个开关没有处于打开状态
 1. 尝试将开关按钮手动打开
@@ -288,10 +288,10 @@ Error: www.github.com:443, 代理请求超时
  1、重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）   
  2、如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
 
-## 六、在其他程序使用
+## 七、在其他程序使用
 * [java程序使用](./doc/other.md#Java程序使用)
 
-## 七、贡献代码
+## 八、贡献代码
 
 ### 开发调试模式启动
 
@@ -309,6 +309,7 @@ cd packages/gui
 npm run electron
 
 ```
+> 如果electron依赖包下载不动，可以开启ds的npm加速
 
 ### 打包成可执行文件
 ```shell
@@ -320,24 +321,24 @@ npm run electron:build
 如果你想将你的修改贡献出来，请提交pr
 
 
-## 八、联系作者
+## 九、联系作者
 
 欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS）      
 
 ![](./doc/contact.png)      
 
 
-## 九、求star
+## 十、求star
 我的其他项目求star
 * [fast-crud](https://github.com/fast-crud/fast-crud) : 开发crud快如闪电
 * [certd](https://github.com/certd/certd) : 让你的证书永不过期
 
-## 十、广告
+## 十一、广告
 * [腾讯云企业老用户3折服务器](https://curl.qcloud.com/MRY91neQ)
 * [腾讯云新用户大礼包](https://curl.qcloud.com/VQ2ARft2)
 * [阿里云618](https://www.aliyun.com/activity/618/2021?userCode=qya11txb)
 
-## 十一、感谢
+## 十二、感谢
 本项目使用lerna包管理工具   
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
