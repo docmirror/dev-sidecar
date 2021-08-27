@@ -122,12 +122,17 @@ const configApi = {
     if (get().app.remoteConfig.enabled !== true) {
       return {}
     }
-    const path = _getRemoteSavePath()
-    if (fs.existsSync()) {
-      const file = fs.readFileSync(path)
+    try {
+      const path = _getRemoteSavePath()
       log.info('读取合并远程配置文件:', path)
-      return JSON5.parse(file.toString())
+      if (fs.existsSync(path)) {
+        const file = fs.readFileSync(path)
+        return JSON5.parse(file.toString())
+      }
+    } catch (e) {
+      log.info('远程配置读取有误', e)
     }
+
     return {}
   },
   /**
