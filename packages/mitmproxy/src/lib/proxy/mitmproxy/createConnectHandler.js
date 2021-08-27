@@ -11,7 +11,10 @@ const sniExtract = require('../tls/sniUtil.js')
 function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
   for (const intercept of sslConnectInterceptors) {
     const ret = intercept(req, cltSocket, head)
-    if (ret) {
+    if (ret === false) {
+      return false
+    }
+    if (ret === true) {
       return true
     }
   }
@@ -43,6 +46,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
         log.error('getServerPromise', e)
       })
     } else {
+      log.info('不拦截请求：', hostname)
       connect(req, cltSocket, head, hostname, srvUrl.port, dnsConfig, sniRegexpMap)
     }
   }
@@ -53,7 +57,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig, sniRegexpMap)
   // log.info('connect:', hostname, port)
   const start = new Date().getTime()
   let isDnsIntercept = null
-  const replaceSni = matchUtil.matchHostname(sniRegexpMap, hostname)
+  // const replaceSni = matchUtil.matchHostname(sniRegexpMap, hostname)
   try {
     const options = {
       port,

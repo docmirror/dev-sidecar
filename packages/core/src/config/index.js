@@ -14,6 +14,10 @@ module.exports = {
     mode: 'default',
     autoStart: {
       enabled: false
+    },
+    remoteConfig: {
+      enabled: true,
+      url: 'https://gitee.com/docmirror/dev-sidecar/raw/master/packages/gui/extra/config_remote.json5'
     }
   },
   server: {

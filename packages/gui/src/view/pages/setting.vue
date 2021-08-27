@@ -12,6 +12,14 @@
           开机自启
         </a-checkbox>
       </a-form-item>
+      <a-form-item label="远程配置" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-checkbox v-model="config.app.remoteConfig.enabled" @change="onRemoteConfigEnabledChange">
+          启用远程配置
+        </a-checkbox>
+      </a-form-item>
+      <a-form-item label="远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-input v-model="config.app.remoteConfig.url"></a-input>
+      </a-form-item>
     </div>
     <template slot="footer">
       <div class="footer-bar">
@@ -41,6 +49,9 @@ export default {
   methods: {
     onAutoStartChange () {
       this.$api.autoStart.enabled(this.config.app.autoStart.enabled)
+      this.saveConfig()
+    },
+    onRemoteConfigEnabledChange () {
       this.saveConfig()
     }
   }

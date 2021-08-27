@@ -128,6 +128,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             }
           }
 
+          // log.info('开始请求:', process.env.NODE_TLS_REJECT_UNAUTHORIZED, rOptions.rejectUnauthorized, rOptions.agent)
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const end = new Date().getTime()
             const cost = end - start

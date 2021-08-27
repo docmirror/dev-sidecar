@@ -41,10 +41,14 @@ module.exports = (config) => {
       const inWhiteList = matchUtil.matchHostname(whiteList, hostname) != null
       if (inWhiteList) {
         log.info('白名单域名，不拦截', hostname)
-        return false
+        return false // 所有都不拦截
       }
       // 配置了拦截的域名，将会被代理
-      return !!matchUtil.matchHostname(intercepts, hostname)
+      const matched = !!matchUtil.matchHostname(intercepts, hostname)
+      if (matched === true) {
+        return matched // 拦截
+      }
+      return null // 由下一个拦截器判断
     },
     createIntercepts: (context) => {
       const rOptions = context.rOptions

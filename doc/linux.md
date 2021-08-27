@@ -13,7 +13,6 @@
 * 设置可执行权限 `sudo chmod +X DevSidecar-x.x.x.AppImage`
 * 双击运行
 
-
 ## 证书安装
 默认模式和增强模式需要系统信任CA证书。   
 由于linux上火狐和chrome都不走系统证书，所以除了安装系统证书之外，还需要给浏览器安装证书

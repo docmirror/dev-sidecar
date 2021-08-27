@@ -1,0 +1,12 @@
+{
+  server: {
+    intercepts: {
+      'github.githubassets.com': {
+        '.*': {
+          proxy: 'assets.fastgit.org',
+          sni11: 'baidu.com'
+        }
+      }
+    },
+  }
+}
