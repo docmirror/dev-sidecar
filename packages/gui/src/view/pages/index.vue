@@ -30,7 +30,7 @@
               默认模式
             </a-radio-button>
           </a-tooltip>
-          <a-tooltip placement="topLeft" title="关闭测速，启用增强，启用拦截（敏感原因，默认禁用，感兴趣的话可以私下交流）">
+          <a-tooltip v-if="setting.overwall" placement="topLeft" title="关闭测速，启用增强，启用拦截（敏感原因，默认禁用）">
             <a-radio-button value="ow">
               增强模式
             </a-radio-button>
@@ -148,7 +148,6 @@ export default {
     await this.reloadConfig()
     this.$set(this, 'status', this.$status)
     this.switchBtns = this.createSwitchBtns()
-    console.log('switchBtns', this.switchBtns)
     this.$set(this, 'update', this.$global.update)
     if (!this.update.autoChecked) {
       this.update.autoChecked = true
@@ -159,7 +158,6 @@ export default {
     })
   },
   mounted () {
-    console.log('index mounted')
   },
   methods: {
     async modeChange (event) {
