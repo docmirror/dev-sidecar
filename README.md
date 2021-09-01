@@ -5,8 +5,6 @@
 <a href='https://gitee.com/docmirror/dev-sidecar'><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
     
-      
-
 ## 一、 特性
 
 ### 1、 dns优选（解决***污染问题）
@@ -45,14 +43,10 @@
 * 官方与淘宝npm registry一键切换,
 * 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
 
-### 6、 增强功能
-* 众所周知的原因，不能说太多，默认关闭，感兴趣的可以私下交流
-* 反正开了这个之后，上面那些dns优选什么的特性好像都不香了
 
 ***安全警告***：
 * 请勿使用来源不明的服务地址，有隐私和账号泄露风险
 * 本应用及服务端承诺不收集任何信息。介意者请使用安全模式。
-* 建议自建服务端（增强功能页面右上角点击查看自建服务端方法）
 
 ## 二、快速开始
 支持windows、Mac
@@ -116,20 +110,13 @@
 
 ### 默认模式
 * 此模式：开启拦截、关闭增强、开启dns优选、开启测速
-* 需要安装证书
+* 需要安装证书，通过修改sni直连访问github
 * 功能上包含特性1/2/3/4。
-
-### 增强模式
-* 此模式：开启拦截、开启增强、开启dns优选、关闭测速
-* 需要安装证书
-* 功能上包含特性1/2/3/4/5
-* 由于敏感原因，默认关闭，感兴趣的可以私下交流
 
 ## 四、 最佳实践
 
 * 把dev-sidecar一直开着就行了
-* 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）    
-* 有时候安全模式打开github也挺快
+* 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）
 
 ### 其他加速
  1. git clone 加速      
