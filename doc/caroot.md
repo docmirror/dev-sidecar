@@ -46,7 +46,7 @@ DevSidecar在第一次启动时会在本地随机生成一份根证书，当有�
 最大的风险在于应用来源以及拦截配置里的替代网站。    
 
 > 对于应用来源风险：    
-> 请勿从未知网站下载DevSidecar应用，认准DevSidecar的官方版本发布地址  
+> 请勿从未知网站下载DevSidecar应用，认准官方版本发布地址  
 > [Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 > [Github Release](https://github.com/docmirror/dev-sidecar/releases)
 
