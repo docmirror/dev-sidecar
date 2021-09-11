@@ -16,6 +16,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
     let proxyReq
 
     const rOptions = commonUtil.getOptionsFormRequest(req, ssl, externalProxy)
+    if (setting && setting.NODE_TLS_REJECT_UNAUTHORIZED) {
+      rOptions.agent.options.rejectUnauthorized = true
+    }
+
     if (rOptions.headers.connection === 'close') {
       req.socket.setKeepAlive(false)
     } else if (rOptions.customSocketId != null) { // for NTLM
@@ -126,11 +130,6 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
                 })
               }
             }
-          }
-
-          // log.info('开始请求:', process.env.NODE_TLS_REJECT_UNAUTHORIZED, rOptions.rejectUnauthorized, rOptions.agent)
-          if (setting && setting.NODE_TLS_REJECT_UNAUTHORIZED) {
-            rOptions.agent.options.rejectUnauthorized = true
           }
 
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {

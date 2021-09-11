@@ -16,6 +16,9 @@
         <a-checkbox v-model="config.app.remoteConfig.enabled" @change="onRemoteConfigEnabledChange">
           启用远程配置
         </a-checkbox>
+        <div>
+          为提升用户体验，
+        </div>
       </a-form-item>
       <a-form-item label="远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input v-model="config.app.remoteConfig.url"></a-input>
