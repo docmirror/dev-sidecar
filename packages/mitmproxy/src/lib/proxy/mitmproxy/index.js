@@ -111,6 +111,7 @@ module.exports = {
         callback(server)
       }
     })
+
     return server
   },
   createCA (caPaths) {

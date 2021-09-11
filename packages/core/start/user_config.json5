@@ -15,7 +15,9 @@
       enabled: true,
     },
     overwall: {
+      enabled: false,
       targets: {
+        '*gagedigital.com': true,
         '*yonsz.net': true,
         '*bootstrapcdn.com': true,
         '*cloudflare.com': true,
@@ -30,6 +32,11 @@
           proxy: 'dev-sidecar-preview.docmirror.cn',
         },
       },
+      'test1111.gagedigital.com': {
+        '.*': {
+          proxy: 'test1.gagedigital.com',
+        },
+      }
     },
   }
 }

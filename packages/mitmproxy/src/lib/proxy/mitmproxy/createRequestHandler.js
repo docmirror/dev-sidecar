@@ -129,6 +129,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           }
 
           // log.info('开始请求:', process.env.NODE_TLS_REJECT_UNAUTHORIZED, rOptions.rejectUnauthorized, rOptions.agent)
+          if (setting && setting.NODE_TLS_REJECT_UNAUTHORIZED) {
+            rOptions.agent.options.rejectUnauthorized = true
+          }
+
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const end = new Date().getTime()
             const cost = end - start
@@ -276,7 +280,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       if (!res.writableEnded) {
         const status = e.status || 500
         res.writeHead(status, { 'Content-Type': 'text/html;charset=UTF8' })
-        res.write(`DevSidecar Warning:<br/> ${e.toString()}`)
+        res.write(`DevSidecar Error:<br/>
+目标网站请求错误：【${e.code}】 ${e.message}<br/>
+目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
+        )
         res.end()
         log.error('request error', e.message)
       }
