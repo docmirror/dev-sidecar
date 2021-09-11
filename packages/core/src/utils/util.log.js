@@ -10,5 +10,5 @@ log4js.configure({
   appenders: { std: { type: 'stdout' }, file: { type: 'file', pattern: 'yyyy-MM-dd', daysToKeep: 3, filename} },
   categories: { default: { appenders: ['file', 'std'], level: level } }
 })
-const logger = log4js.getLogger('server')
+const logger = log4js.getLogger('core')
 module.exports = logger

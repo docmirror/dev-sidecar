@@ -14,6 +14,7 @@ const modules = {
 export default {
   install (context) {
     for (const module in modules) {
+      console.log('install', module)
       modules[module].install(context)
     }
   },

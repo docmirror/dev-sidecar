@@ -1,7 +1,7 @@
 'use strict'
 /* global __static */
 import path from 'path'
-import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, powerMonitor } from 'electron'
+import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, powerMonitor, nativeImage, nativeTheme } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
 import DevSidecar from '@docmirror/dev-sidecar'
@@ -23,7 +23,6 @@ let forceClose = false
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
-
 // 隐藏主窗口，并创建托盘，绑定关闭事件
 function setTray (app) {
   // 用一个 Tray 来表示一个图标,这个图标处于正在运行的系统的通知区
@@ -41,32 +40,43 @@ function setTray (app) {
     }
   ]
   // 设置系统托盘图标
-  let icon = '128x128.png'
+  const iconRootPath = path.join(__dirname, '../extra/icons/tray')
+  let iconPath = path.join(iconRootPath, 'icon.png')
+  const iconWhitePath = path.join(iconRootPath, 'icon-white.png')
+  const iconBlackPath = path.join(iconRootPath, 'icon-black.png')
   if (isMac) {
-    icon = '16x16-black.png'
+    iconPath = nativeTheme.shouldUseDarkColors ? iconWhitePath : iconBlackPath
   }
-  const iconPath = path.join(__dirname, '../extra/icons/', icon)
-  const appTray = new Tray(iconPath)
+
+  const trayIcon = nativeImage.createFromPath(iconPath)
+  const appTray = new Tray(trayIcon)
+
+  // 当桌面主题更新时
+  if (isMac) {
+    nativeTheme.on('updated', () => {
+      console.log('i am changed')
+      if (nativeTheme.shouldUseDarkColors) {
+        console.log('i am dark.')
+        tray.setImage(iconWhitePath)
+      } else {
+        console.log('i am light.')
+        tray.setImage(iconBlackPath)
+        // tray.setPressedImage(iconWhitePath)
+      }
+    })
+  }
 
   // 图标的上下文菜单
   const contextMenu = Menu.buildFromTemplate(trayMenuTemplate)
 
   // 设置托盘悬浮提示
   appTray.setToolTip('DevSidecar-开发者边车辅助工具')
-
   // 单击托盘小图标显示应用
   appTray.on('click', () => {
     // 显示主程序
     win.show()
   })
 
-  // 设置托盘菜单
-  // appTray.setContextMenu(contextMenu)
-
-  // appTray.on('double-click', function () {
-  //   log.info('double click')
-  //   win.show()
-  // })
   appTray.on('right-click', function (event, bounds) {
     setTimeout(function () {
       appTray.popUpContextMenu(contextMenu)
