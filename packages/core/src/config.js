@@ -87,11 +87,15 @@ const configApi = {
       clearInterval(timer)
     }
     const download = async () => {
-      await configApi.downloadRemoteConfig()
-      configApi.reload()
+      try {
+        await configApi.downloadRemoteConfig()
+        configApi.reload()
+      } catch (e) {
+        log.error(e)
+      }
     }
     await download()
-    setInterval(download, 24 * 60 * 60 * 1000) // 1天
+    timer = setInterval(download, 24 * 60 * 60 * 1000) // 1天
   },
   downloadRemoteConfig () {
     if (get().app.remoteConfig.enabled !== true) {
