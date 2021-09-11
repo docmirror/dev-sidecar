@@ -160,12 +160,17 @@ function createWindow () {
       hideWin()
     }
   })
+
+  win.on('session-end', async (e) => {
+    log.info('session-end', e)
+    await quit(app)
+  })
 }
 
 async function beforeQuit () {
   return DevSidecar.api.shutdown()
 }
-async function quit (app, callback) {
+async function quit (app) {
   if (tray) {
     tray.displayBalloon({ title: '正在关闭', content: '关闭中,请稍候。。。' })
   }

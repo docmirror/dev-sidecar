@@ -11,6 +11,7 @@ const log = require('../../../utils/util.log')
 const path = require('path')
 const childProcess = require('child_process')
 const util = require('util')
+const fs = require('fs')
 const _exec = util.promisify(childProcess.exec)
 const _lanIP = [
   'localhost',
@@ -35,35 +36,98 @@ const _lanIP = [
   '192.168.*'
 ]
 
-async function _winUnsetProxy (exec) {
-  // eslint-disable-next-line no-constant-condition
-  if (true) {
-    const proxyPath = getProxyExePath()
-    await execFile(proxyPath, ['set', '1'])
+const logoffScriptPath = 'C:\\WINDOWS\\System32\\GroupPolicy\\User\\Scripts\\scripts.ini'
+
+function buildScriptBody (addHeader = true, index = 0) {
+  const batPath = getClearBatPath()
+  const header = addHeader ? '[Logoff]\r\n' : ''
+  return `${header}${index}CmdLine=${batPath}
+${index}Parameters=`
+}
+
+async function addClearScriptIni () {
+  const batPath = getClearBatPath()
+  let body
+  if (fs.existsSync(logoffScriptPath)) {
+    body = fs.readFileSync(logoffScriptPath)
+    if (body.indexOf(batPath) >= 0) {
+      return
+    }
+    let index = 0
+    // 要加新的
+    if (body.indexOf('[Logoff]') >= 0) {
+      // 如果有logoff了
+      const list = body.trim().split('\n')
+      let lastParameters = -1
+      for (const string of list) {
+        if (string.indexOf('Parameters') >= 0) {
+          lastParameters = parseInt(string.trim().charAt(0))
+        }
+      }
+      index = lastParameters + 1
+      body += '\r\n' + buildScriptBody(false, index)
+    } else {
+      body += '\r\n' + buildScriptBody(true, 0)
+    }
+  } else {
+    body = buildScriptBody(true, 0)
+  }
+  fs.writeFileSync(logoffScriptPath, body)
+}
+
+async function removeClearScriptIni () {
+  if (!fs.existsSync(logoffScriptPath)) {
     return
   }
-  const regKey = new Registry({
-    hive: Registry.HKCU,
-    key: '\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings'
-  })
+  const batPath = getClearBatPath()
+  let body = fs.readFileSync(logoffScriptPath)
+  if (body.indexOf(batPath) === -1) {
+    return
+  }
 
-  await Promise.all([
-    _winAsyncRegSet(regKey, 'ProxyEnable', Registry.REG_DWORD, 0),
-    _winAsyncRegSet(regKey, 'ProxyServer', Registry.REG_SZ, '')
-  ])
-  log.info('代理关闭成功，等待refresh')
-  await exec(['echo "do refresh"', refreshInternetPs], { type: 'ps' })
-  log.info('代理关闭refresh完成')
-  return true
+  // 有就要删除
+  body = body.trim()
+  const list = body.split('\n')
+  let lastParameters = -1
+  for (const string of list) {
+    if (string.indexOf(batPath) >= 0) {
+      lastParameters = parseInt(string.trim().charAt(0))
+    }
+  }
+  body = body.replace(`${lastParameters}CmdLine=${batPath}`, '')
+  body = body.replace(`${lastParameters}Parameters=`, '')
+  body = body.trim()
+  fs.writeFileSync(logoffScriptPath, body)
+}
+
+function getExtraPath () {
+  let extraPath = process.env.DS_EXTRA_PATH
+  log.info('extraPath', extraPath)
+  if (!extraPath) {
+    extraPath = __dirname
+  }
+  return extraPath
 }
 
 function getProxyExePath () {
-  const proxyPath = process.env.DS_SYSPROXY_PATH
-  log.info('proxyPath', proxyPath)
-  if (proxyPath) {
-    return proxyPath
+  const extraPath = getExtraPath()
+  return path.join(extraPath, 'sysproxy.exe')
+}
+
+function getClearBatPath () {
+  const extraPath = getExtraPath()
+  return path.join(extraPath, 'clear.bat')
+}
+
+async function _winUnsetProxy (exec) {
+  // eslint-disable-next-line no-constant-condition
+  const proxyPath = getProxyExePath()
+  await execFile(proxyPath, ['set', '1'])
+  try {
+  //  await removeClearScriptIni()
+  } catch (e) {
+    log.error(e)
   }
-  return path.join(__dirname, './sysproxy.exe')
 }
 
 async function _winSetProxy (exec, ip, port) {
@@ -71,41 +135,15 @@ async function _winSetProxy (exec, ip, port) {
   for (const string of _lanIP) {
     lanIpStr += string + ';'
   }
-  // eslint-disable-next-line no-constant-condition
-  if (true) {
-    const proxyPath = getProxyExePath()
-    await execFile(proxyPath, ['global', `${ip}:${port}`, lanIpStr])
-    return
+  const proxyPath = getProxyExePath()
+  await execFile(proxyPath, ['global', `${ip}:${port}`, lanIpStr])
+  try {
+  //  await addClearScriptIni()
+  } catch (e) {
+    log.error(e)
   }
-  const regKey = new Registry({
-    hive: Registry.HKCU,
-    key: '\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings'
-  })
 
-  // log.info('lanIps:', lanIpStr, ip, port)
-  await Promise.all([
-    _winAsyncRegSet(regKey, 'MigrateProxy', Registry.REG_DWORD, 1),
-    _winAsyncRegSet(regKey, 'ProxyEnable', Registry.REG_DWORD, 1),
-    _winAsyncRegSet(regKey, 'ProxyHttp1.1', Registry.REG_DWORD, 0),
-    _winAsyncRegSet(regKey, 'ProxyServer', Registry.REG_SZ, `${ip}:${port}`),
-    _winAsyncRegSet(regKey, 'ProxyOverride', Registry.REG_SZ, lanIpStr)
-  ])
-  log.info('代理设置成功，等待refresh')
-  await exec(['echo "do refresh"', refreshInternetPs], { type: 'ps' })
-  log.info('代理设置refresh完成')
   return true
-}
-
-function _winAsyncRegSet (regKey, name, type, value) {
-  return new Promise((resolve, reject) => {
-    regKey.set(name, type, value, e => {
-      if (e) {
-        reject(e)
-      } else {
-        resolve()
-      }
-    })
-  })
 }
 
 const executor = {
