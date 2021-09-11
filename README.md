@@ -49,7 +49,7 @@
 * 本应用及服务端承诺不收集任何信息。介意者请使用安全模式。
 
 ## 二、快速开始
-支持windows、Mac
+支持windows、Mac、Linux(Ubuntu)
 
 ### DevSidecar桌面应用
  

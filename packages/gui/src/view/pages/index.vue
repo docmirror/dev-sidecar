@@ -69,7 +69,6 @@
       <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
       <div slot="footer">
         <div class="star" style="padding:10px;">
-
           <div class="donate" @click="donateModal=true"> <a-icon  type="like" theme="outlined" /> 捐赠</div>
           <div class="right">
             <div>如果它解决了你的问题，请不要吝啬你的star哟！ <a-icon style="margin-right:10px;" type="smile" theme="outlined" /></div>
