@@ -9,15 +9,19 @@
     <div v-if="config">
       <a-form-item label="开机自启" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.app.autoStart.enabled" @change="onAutoStartChange">
-          开机自启
+          本应用开机自启
         </a-checkbox>
+        <div class="form-help">
+          windows下建议开启开机自启。<a @click="openExternal('https://gitee.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">更多说明参考</a>
+        </div>
       </a-form-item>
       <a-form-item label="远程配置" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.app.remoteConfig.enabled" @change="onRemoteConfigEnabledChange">
           启用远程配置
         </a-checkbox>
-        <div>
-          为提升用户体验，
+        <div class="form-help">
+          应用启动时会向下面的地址请求配置补丁，无需发布升级包即可获得最新优化后的github访问体验。
+          <br/>如果您觉得远程更新配置有安全风险，请关闭此功能。
         </div>
       </a-form-item>
       <a-form-item label="远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -50,6 +54,9 @@ export default {
   mounted () {
   },
   methods: {
+    openExternal (url) {
+      this.$api.ipc.openExternal(url)
+    },
     onAutoStartChange () {
       this.$api.autoStart.enabled(this.config.app.autoStart.enabled)
       this.saveConfig()

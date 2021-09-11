@@ -30,13 +30,13 @@
           </a-form-item>
           <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-input v-model="config.server.port"/>
-            <div>修改后需要重启应用</div>
+            <div class="form-help">修改后需要重启应用</div>
           </a-form-item>
           <a-form-item label="校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-checkbox v-model="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED">
               NODE_TLS_REJECT_UNAUTHORIZED
             </a-checkbox>
-            <div>开启此项之后，被代理应用关闭SSL校验也问题不大了</div>
+            <div class="form-help">开启此项之后，被代理应用关闭SSL校验也问题不大了</div>
           </a-form-item>
           <a-form-item label="根证书：" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-input-search addon-before="Cert" enter-button="选择" @search="onCrtSelect"
