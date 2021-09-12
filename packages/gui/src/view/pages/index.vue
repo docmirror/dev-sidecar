@@ -8,9 +8,10 @@
             <a-badge :count="_rootCaSetuped?0:1" dot>安装根证书 </a-badge>
           </a-button>
 
-          <a-button style="margin-right:10px" @click="doCheckUpdate(true)" :loading="update.downloading" :title="'当前版本:'+info.version">
+          <a-button style="margin-right:10px" @click="doCheckUpdate(true)" :loading="update.downloading"
+                    :title="'当前版本:'+info.version">
             <a-badge :count="update.newVersion?1:0" dot>
-              <span v-if="update.downloading">{{update.progress}}%</span>{{update.downloading?'新版本下载中':'检查更新'}}
+              <span v-if="update.downloading">{{ update.progress }}%</span>{{ update.downloading ? '新版本下载中' : '检查更新' }}
             </a-badge>
           </a-button>
 
@@ -19,7 +20,7 @@
 
     <div class="box">
       <div class="mode-bar" style="margin:20px;" v-if="config && config.app">
-        <a-radio-group   v-model="config.app.mode"  button-style="solid" @change="modeChange">
+        <a-radio-group v-model="config.app.mode" button-style="solid" @change="modeChange">
           <a-tooltip placement="topLeft" title="启用测速，关闭拦截，关闭增强（功能最弱，不稳定，不需要安装证书，最安全）">
             <a-radio-button value="safe">
               安全模式
@@ -38,7 +39,8 @@
         </a-radio-group>
       </div>
 
-      <div v-if="status" style="margin-top:20px;display: flex; align-items:center;justify-content:space-around;flex-direction: row">
+      <div v-if="status"
+           style="margin-top:20px;display: flex; align-items:center;justify-content:space-around;flex-direction: row">
 
         <div style="text-align: center">
           <div class="big_button">
@@ -55,7 +57,8 @@
 
             <a-form-item v-for=" (item, key) in switchBtns" :key="key" :label="item.label">
               <a-tooltip placement="topLeft" :title="item.tip">
-                <a-switch style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked @change="item.doClick">
+                <a-switch style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked
+                          @change="item.doClick">
                   <a-icon slot="checkedChildren" type="check"/>
                   <a-icon slot="unCheckedChildren" type="close"/>
                 </a-switch>
@@ -66,24 +69,40 @@
       </div>
 
     </div>
-      <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
-      <div slot="footer">
-        <div class="star" style="padding:10px;">
-          <div class="donate" @click="donateModal=true"> <a-icon  type="like" theme="outlined" /> 捐赠</div>
-          <div class="right">
-            <div>如果它解决了你的问题，请不要吝啬你的star哟！ <a-icon style="margin-right:10px;" type="smile" theme="outlined" /></div>
-            <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
-            <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
-          </div>
-        </div>
 
-        <a-modal title="捐赠" v-model="donateModal" width="550px" cancelText="不了" okText="果断支持" @ok="goDonate">
-          <div>* 如果觉得好用，请给我一点鼓励，感谢。</div>
-          <div class="payQrcode">
-            <img height="200px" src="/pay.jpg"/>
-          </div>
-        </a-modal>
+    <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
+    <div slot="footer">
+      <div class="star">
+        <div class="donate">
+          <a-tooltip placement="topLeft" title="彩蛋">
+            <span style="display: block;width:100px;height:50px;" @click="wantOW()"></span>
+          </a-tooltip>
+        </div>
+        <div class="right"></div>
       </div>
+      <div class="star" >
+        <div class="donate" @click="donateModal=true">
+          <a-icon type="like" theme="outlined"/>
+          捐赠
+        </div>
+        <div class="right">
+          <div>如果它解决了你的问题，请不要吝啬你的star哟！
+            <a-icon style="margin-right:10px;" type="smile" theme="outlined"/>
+          </div>
+          <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img
+            src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
+          <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars"
+                                                                                    src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+        </div>
+      </div>
+
+      <a-modal title="捐赠" v-model="donateModal" width="550px" cancelText="不了" okText="果断支持" @ok="goDonate">
+        <div>* 如果觉得好用，请给我一点鼓励，感谢。</div>
+        <div class="payQrcode">
+          <img height="200px" src="/pay.jpg"/>
+        </div>
+      </a-modal>
+    </div>
 
   </ds-container>
 
@@ -93,6 +112,7 @@
 import lodash from 'lodash'
 import setupCa from '../components/setup-ca'
 import DsContainer from '../components/container'
+
 export default {
   name: 'Index',
   components: {
@@ -188,10 +208,10 @@ export default {
     },
     wantOW () {
       this.$success({
-        title: '来找我吧',
+        title: '彩蛋',
         content: (
           <div>
-            敏感原因，我关闭了它，如果你对此功能感兴趣，你可以尝试找一找它，我把打开的方法藏在了源码里（线索提示 // TODO）
+          我把它藏在了源码里，感兴趣的话可以找一找它（线索提示 // TODO）
           </div>
         )
       })
@@ -314,26 +334,31 @@ export default {
 </script>
 <style lang="scss">
 .page_index {
-  .mode-bar{
-    margin:30px;
+  .mode-bar {
+    margin: 30px;
     text-align: center;
   }
+
   .star {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    .donate{
-      cursor:pointer;
+    padding:10px;
+    .donate {
+      cursor: pointer;
     }
-    .right{
+
+    .right {
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
     }
-    >*{
-      margin-right:10px;
+
+    > * {
+      margin-right: 10px;
     }
+
     a {
       height: 21px;
 
@@ -343,11 +368,13 @@ export default {
     }
   }
 }
-.payQrcode{
-  padding:10px;
+
+.payQrcode {
+  padding: 10px;
   display: flex;
   justify-content: space-evenly;
 }
+
 .big_button > button {
   width: 100px;
   height: 100px;
