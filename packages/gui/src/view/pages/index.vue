@@ -72,7 +72,7 @@
 
     <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
     <div slot="footer">
-      <div class="star">
+      <div class="star" v-if="!setting.overwall">
         <div class="donate">
           <a-tooltip placement="topLeft" title="彩蛋">
             <span style="display: block;width:100px;height:50px;" @click="wantOW()"></span>
