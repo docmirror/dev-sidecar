@@ -18,7 +18,8 @@ let win
 // eslint-disable-next-line no-unused-vars
 let tray // 防止被内存清理
 let forceClose = false
-
+DevSidecar.api.config.reload()
+let hideDockWhenWinClose = DevSidecar.api.config.get().app.dock.hideWhenWinClose || false
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -98,7 +99,7 @@ function hideWin () {
       return
     }
     win.hide()
-    if (isMac) {
+    if (isMac && hideDockWhenWinClose) {
       app.dock.hide()
     }
   }
@@ -111,22 +112,14 @@ function showWin () {
   app.dock.show()
 }
 
-function createWindow () {
+function changeAppConfig (config) {
+  if (config.hideDockWhenWinClose != null) {
+    hideDockWhenWinClose = config.hideDockWhenWinClose
+  }
+}
+
+function createWindow (startHideWindow) {
   // Create the browser window.
-
-  let startHideWindow = false
-  if (process.argv) {
-    const args = minimist(process.argv)
-    if (args.hideWindow) {
-      startHideWindow = true
-    }
-
-    log.info('start args', args)
-  }
-  if (app.getLoginItemSettings().wasOpenedAsHidden) {
-    startHideWindow = true
-  }
-  log.info('start hide window', startHideWindow, app.getLoginItemSettings())
 
   win = new BrowserWindow({
     width: 900,
@@ -200,6 +193,21 @@ function setDock () {
 // -------------执行开始---------------
 app.disableHardwareAcceleration() // 禁用gpu
 
+// 开启后是否默认隐藏window
+let startHideWindow = false
+if (process.argv) {
+  const args = minimist(process.argv)
+  if (args.hideWindow) {
+    startHideWindow = true
+  }
+
+  log.info('start args', args)
+}
+if (app.getLoginItemSettings().wasOpenedAsHidden) {
+  startHideWindow = true
+}
+log.info('start hide window', startHideWindow, app.getLoginItemSettings())
+
 // 禁止双开
 const isFirstInstance = app.requestSingleInstanceLock()
 if (!isFirstInstance) {
@@ -236,7 +244,7 @@ if (!isFirstInstance) {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (win == null) {
-      createWindow()
+      createWindow(false)
     } else {
       showWin()
     }
@@ -257,8 +265,8 @@ if (!isFirstInstance) {
       // }
     }
     try {
-      createWindow()
-      const context = { win, app, beforeQuit, quit, ipcMain, dialog, log, api: DevSidecar.api }
+      createWindow(startHideWindow)
+      const context = { win, app, beforeQuit, quit, ipcMain, dialog, log, api: DevSidecar.api, changeAppConfig }
       backend.install(context) // 模块安装
     } catch (err) {
       log.info('err', err)
