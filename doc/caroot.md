@@ -39,16 +39,17 @@ DevSidecar在第一次启动时会在本地随机生成一份根证书，当有�
 ## 二、信任根证书有安全风险吗
 
 1. 根证书是DevSidecar第一次启动时本地随机生成的，除了你这台电脑没人知道这份根证书的内容。
-2. 代理请求目标网站时会校验目标网站的证书（除非关闭了NODE_TLS_REJECT_UNAUTHORIZED）。
+2. 代理请求目标网站时会校验目标网站的证书（除非关闭了`代理校验ssl`）。
 
-> 综上所述，信任根证书没有问题。
-
-最大的风险在于应用来源以及拦截配置里的替代网站。    
+> 所以信任根证书没有问题。    
+> 但如果应用本身来源不明，或者`拦截配置`里的替代网站作恶，则有安全风险。    
 
 > 对于应用来源风险：    
 > 请勿从未知网站下载DevSidecar应用，认准官方版本发布地址  
 > [Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 > [Github Release](https://github.com/docmirror/dev-sidecar/releases)
+> 
+> 或者从源码自行编译安装
 
 > 对于拦截配置里的替代网站风险：   
 > 1. 尽量缩小替代配置的范围

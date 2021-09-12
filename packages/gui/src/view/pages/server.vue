@@ -32,11 +32,17 @@
             <a-input v-model="config.server.port"/>
             <div class="form-help">修改后需要重启应用</div>
           </a-form-item>
-          <a-form-item label="校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-form-item label="全局校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-checkbox v-model="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED">
               NODE_TLS_REJECT_UNAUTHORIZED
             </a-checkbox>
-            <div class="form-help">开启此项之后，被代理应用关闭SSL校验也问题不大了</div>
+            <div class="form-help">高风险操作，没有特殊情况请勿关闭</div>
+          </a-form-item>
+          <a-form-item label="代理校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
+            <a-checkbox v-model="config.server.setting.verifySsl">
+              校验加速目标网站的ssl证书
+            </a-checkbox>
+            <div class="form-help">如果目标网站证书有问题，但你想强行访问，可以临时关闭此项</div>
           </a-form-item>
           <a-form-item label="根证书：" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-input-search addon-before="Cert" enter-button="选择" @search="onCrtSelect"

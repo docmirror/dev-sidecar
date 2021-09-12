@@ -305,7 +305,7 @@ npm run electron
 
 ### 打包成可执行文件
 ```shell
-cd packages/gui
+# 先执行上面的步骤，然后运行如下命令打包成可执行文件
 npm run electron:build
 ```
 

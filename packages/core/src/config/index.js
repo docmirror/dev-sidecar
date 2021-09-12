@@ -25,6 +25,7 @@ module.exports = {
     port: 1181,
     setting: {
       NODE_TLS_REJECT_UNAUTHORIZED: true,
+      verifySsl: true,
       script: {
         enabled: true,
         defaultDir: './extra/scripts/'
