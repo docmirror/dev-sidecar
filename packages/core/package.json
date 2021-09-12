@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "给开发者的加速代理工具",
   "main": "src/index.js",
   "keywords": [
@@ -17,7 +17,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@docmirror/mitmproxy": "^1.6.1",
+    "@docmirror/mitmproxy": "^1.6.2",
     "agentkeepalive": "^2.1.1",
     "babel-preset-es2020": "^1.0.2",
     "charset": "^1.0.0",
