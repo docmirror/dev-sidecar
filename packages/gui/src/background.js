@@ -74,7 +74,7 @@ function setTray () {
   // 单击托盘小图标显示应用
   appTray.on('click', () => {
     // 显示主程序
-    win.show()
+    showWin()
   })
 
   appTray.on('right-click', function (event, bounds) {
@@ -108,7 +108,6 @@ function showWin () {
   if (win) {
     win.show()
   }
-
   app.dock.show()
 }
 
@@ -218,7 +217,7 @@ if (!isFirstInstance) {
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     log.info('new app started', commandLine)
     if (win) {
-      win.show()
+      showWin()
       win.focus()
     }
   })
@@ -239,7 +238,7 @@ if (!isFirstInstance) {
     if (win == null) {
       createWindow()
     } else {
-      win.show()
+      showWin()
     }
   })
 
