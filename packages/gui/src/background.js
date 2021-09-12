@@ -24,7 +24,7 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 // 隐藏主窗口，并创建托盘，绑定关闭事件
-function setTray (app) {
+function setTray () {
   // 用一个 Tray 来表示一个图标,这个图标处于正在运行的系统的通知区
   // 通常被添加到一个 context menu 上.
   // 系统托盘右键菜单
@@ -35,7 +35,7 @@ function setTray (app) {
       click: () => {
         log.info('force quit')
         forceClose = true
-        quit(app)
+        quit()
       }
     }
   ]
@@ -95,10 +95,21 @@ function hideWin () {
   if (win) {
     if (isLinux()) {
       quit(app)
-    } else {
-      win.hide()
+      return
+    }
+    win.hide()
+    if (isMac) {
+      app.dock.hide()
     }
   }
+}
+
+function showWin () {
+  if (win) {
+    win.show()
+  }
+
+  app.dock.show()
 }
 
 function createWindow () {
@@ -163,14 +174,14 @@ function createWindow () {
 
   win.on('session-end', async (e) => {
     log.info('session-end', e)
-    await quit(app)
+    await quit()
   })
 }
 
 async function beforeQuit () {
   return DevSidecar.api.shutdown()
 }
-async function quit (app) {
+async function quit () {
   if (tray) {
     tray.displayBalloon({ title: '正在关闭', content: '关闭中,请稍候。。。' })
   }
@@ -181,8 +192,7 @@ async function quit (app) {
 
 // eslint-disable-next-line no-unused-vars
 function setDock () {
-  const { app } = require('electron')
-  if (process.platform === 'darwin') {
+  if (isMac) {
     app.whenReady().then(() => {
       app.dock.setIcon(path.join(__dirname, '../build/mac/512x512.png'))
     })
@@ -257,7 +267,7 @@ if (!isFirstInstance) {
 
     try {
       // 最小化到托盘
-      tray = setTray(app)
+      tray = setTray()
     } catch (err) {
       log.info('err', err)
     }
@@ -265,7 +275,7 @@ if (!isFirstInstance) {
     powerMonitor.on('shutdown', async (e) => {
       e.preventDefault()
       log.info('系统关机，恢复代理设置')
-      await quit(app)
+      await quit()
     })
   })
 }
@@ -289,5 +299,5 @@ if (isDevelopment) {
 // 系统关机和重启时的操作
 process.on('exit', function () {
   log.info('进程结束，退出app')
-  quit(app)
+  quit()
 })
