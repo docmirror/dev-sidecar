@@ -17,6 +17,7 @@ class SpeedTester {
     this.loadingIps = false
     this.loadingTest = false
 
+    this.testCount = 0
     this.test()
   }
 
@@ -80,9 +81,13 @@ class SpeedTester {
   }
 
   async test () {
-    const newList = await this.getIpListFromDns(this.dnsMap)
-    const newBackupList = [...newList, ...this.backupList]
-    this.backupList = _.unionBy(newBackupList, 'host')
+    if (this.testCount % 10 === 0) {
+      const newList = await this.getIpListFromDns(this.dnsMap)
+      const newBackupList = [...newList, ...this.backupList]
+      this.backupList = _.unionBy(newBackupList, 'host')
+    }
+    this.testCount++
+
     log.info('[speed]', this.hostname, ' ips:', this.backupList)
     await this.testBackups()
     if (config.notify) {
