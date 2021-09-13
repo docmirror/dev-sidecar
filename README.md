@@ -318,7 +318,6 @@ npm run electron:build
 ## 九、联系作者
 
 欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS）      
-
 ![](./doc/contact.png)      
 
 
