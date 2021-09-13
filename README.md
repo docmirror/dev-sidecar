@@ -319,8 +319,8 @@ npm run electron:build
 
 欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS） 
 <div style="display: flex; justify-content:space-around;">
-<img height="300px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/me.png">
-<img height="300px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/qq_group.png">
+<img height="250px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/me.png">
+<img height="250px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/qq_group.png">
 </div>
 
 
