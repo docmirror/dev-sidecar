@@ -317,8 +317,11 @@ npm run electron:build
 
 ## 九、联系作者
 
-欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS）      
-![](./doc/contact.png)      
+欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS） 
+<div style="display: flex; justify-content:space-around;">
+<img height="200px" src="https://github.com/docmirror/dev-sidecar/blob/master/doc/me.png?raw=true">
+<img height="200px" src="https://github.com/docmirror/dev-sidecar/blob/master/doc/qq_group.png?raw=true">
+</div>
 
 
 ## 十、求star
