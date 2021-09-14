@@ -240,7 +240,7 @@ module.exports = {
       },
       speedTest: {
         enabled: true,
-        interval: 300000,
+        interval: 120000,
         hostnameList: ['github.com'],
         dnsProviders: ['usa', 'quad9', 'rubyfish']
       }
