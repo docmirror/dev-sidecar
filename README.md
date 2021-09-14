@@ -317,9 +317,11 @@ npm run electron:build
 
 ## 九、联系作者
 
-欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS）      
-
-![](./doc/contact.png)      
+欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS） 
+<div style="display: flex; justify-content:space-around;">
+<img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/me.png">
+<img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/qq_group.png">
+</div>
 
 
 ## 十、求star
@@ -327,12 +329,7 @@ npm run electron:build
 * [fast-crud](https://github.com/fast-crud/fast-crud) : 开发crud快如闪电
 * [certd](https://github.com/certd/certd) : 让你的证书永不过期
 
-## 十一、广告
-* [腾讯云企业老用户3折服务器](https://curl.qcloud.com/MRY91neQ)
-* [腾讯云新用户大礼包](https://curl.qcloud.com/VQ2ARft2)
-* [阿里云618](https://www.aliyun.com/activity/618/2021?userCode=qya11txb)
-
-## 十二、感谢
+## 十一、感谢
 本项目使用lerna包管理工具   
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
