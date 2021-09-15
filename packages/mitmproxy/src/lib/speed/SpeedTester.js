@@ -81,7 +81,7 @@ class SpeedTester {
   }
 
   async test () {
-    if (this.testCount % 10 <= 3 || this.backupList.length === 0) {
+    if (this.backupList.length === 0 || this.testCount < 10 || this.testCount % 5 === 3) {
       const newList = await this.getIpListFromDns(this.dnsMap)
       const newBackupList = [...newList, ...this.backupList]
       this.backupList = _.unionBy(newBackupList, 'host')
