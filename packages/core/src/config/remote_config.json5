@@ -3,7 +3,9 @@
     intercepts: {
       'github.githubassets.com': {
         '.*': {
-          proxy: 'assets.fastgit.org',
+//          proxy: 'assets.fastgit.org',
+//          sni: null,
+          proxy: 'github.githubassets.com',
           sni: null
         }
       }
