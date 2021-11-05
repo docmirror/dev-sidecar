@@ -91,7 +91,7 @@
  
 
 > ---------重要---------   
-> 注意：windows下由于无法监听electron的关机事件，开着ds情况下直接重启电脑，会导致无法上网，手动启动ds即可，你也可以将ds设置为开机自启。     
+> 注意：由于electron无法监听windows的关机事件，开着ds情况下直接重启电脑，会导致无法上网，手动启动ds即可，你也可以将ds设置为开机自启。     
 > 
 > 关于此问题的更多讨论请前往：    
 > https://gitee.com/docmirror/dev-sidecar/issues/I49OUL
