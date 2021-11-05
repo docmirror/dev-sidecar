@@ -4,6 +4,7 @@
       'github.githubassets.com': {
         '.*': {
           proxy: 'assets.fastgit.org',
+          backup: ['github.githubassets.com'],
           sni: null,
         }
       }
