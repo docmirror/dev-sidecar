@@ -10,7 +10,7 @@ module.exports = {
       for (const bk of interceptOpt.backup) {
         backup.push(bk)
       }
-      const key = interceptOpt.key
+      const key = rOptions.hostname + '/' + interceptOpt.key
       const count = RequestCounter.getOrCreate(key, backup)
       if (count.value == null) {
         count.doRank()
@@ -44,6 +44,7 @@ module.exports = {
     // eslint-disable-next-line no-template-curly-in-string
     proxyTarget = proxyTarget.replace('${host}', rOptions.hostname)
 
+    log.info('拦截【proxy】： original：', rOptions.hostname, '，target：', proxyTarget)
     // const backup = interceptOpt.backup
     const proxy = proxyTarget.indexOf('http') === 0 ? proxyTarget : rOptions.protocol + '//' + proxyTarget
     // eslint-disable-next-line node/no-deprecated-api
@@ -56,9 +57,9 @@ module.exports = {
     if (URL.port == null) {
       rOptions.port = rOptions.protocol === 'https:' ? 443 : 80
     }
-    log.info('proxy:', rOptions.hostname, 'target', proxyTarget)
+
     if (context.requestCount) {
-      log.debug('proxy choice:', JSON.stringify(context.requestCount))
+      log.info('proxy choice:', JSON.stringify(context.requestCount))
     }
 
     if (interceptOpt.sni != null) {
