@@ -58,7 +58,8 @@ module.exports = {
           oneClick: false,
           perMachine: true,
           allowElevation: true,
-          allowToChangeInstallationDirectory: true
+          allowToChangeInstallationDirectory: true,
+          include: './build/installer.nsh'
         },
         mac: {
           icon: './build/mac/icon.icns',
