@@ -82,7 +82,7 @@ module.exports = {
     )
 
     const server = new http.Server()
-    server.listen(port, () => {
+    server.listen(port, '127.0.0.1', () => {
       log.info(`dev-sidecar启动端口: ${port}`)
       server.on('error', (e) => {
         log.error('server error', e)

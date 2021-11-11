@@ -1,7 +1,7 @@
 module.exports = {
   fireError (e) {
     if (process.send) {
-      process.send({ type: 'error', event: e })
+      process.send({ type: 'error', event: e, message: e.message })
     }
   },
   fireStatus (status) {

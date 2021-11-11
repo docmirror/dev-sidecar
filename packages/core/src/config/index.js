@@ -25,7 +25,7 @@ module.exports = {
   },
   server: {
     enabled: true,
-    port: 1181,
+    port: 31181,
     setting: {
       NODE_TLS_REJECT_UNAUTHORIZED: true,
       verifySsl: true,

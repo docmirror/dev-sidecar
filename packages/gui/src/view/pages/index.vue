@@ -31,7 +31,7 @@
               默认模式
             </a-radio-button>
           </a-tooltip>
-          <a-tooltip v-if="setting.overwall" placement="topLeft" title="关闭测速，启用增强，启用拦截（敏感原因，默认禁用）">
+          <a-tooltip v-if="setting.overwall" placement="topLeft" title="一个简单的梯子（敏感原因，默认隐藏，更多信息请点击左侧增强功能菜单）">
             <a-radio-button value="ow">
               增强模式
             </a-radio-button>
