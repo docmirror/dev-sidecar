@@ -148,6 +148,9 @@ const configApi = {
     // 对比默认config的异同
     // configApi.set(newConfig)
     const defConfig = configApi.getDefault()
+    if (get().app.remoteConfig.enabled === true) {
+      doMerge(defConfig, configApi.readRemoteConfig())
+    }
     const saveConfig = doMerge(defConfig, newConfig)
     fs.writeFileSync(_getConfigPath(), JSON5.stringify(saveConfig, null, 2))
     configApi.reload()
