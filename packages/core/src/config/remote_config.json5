@@ -4,7 +4,7 @@
       'github.githubassets.com': {
         '.*': {
           proxy: 'github.githubassets.com',
-          sni: null,
+          sni: 'baidu.com',
         }
       }
     },
