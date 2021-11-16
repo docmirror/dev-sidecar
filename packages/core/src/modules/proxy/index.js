@@ -28,6 +28,12 @@ const ProxyPlugin = function (context) {
         log.error('关闭系统代理失败', err)
         return false
       }
+    },
+
+    async setEnableLoopback () {
+      await shell.enableLoopback()
+      log.info('打开EnableLoopback成功')
+      return true
     }
   }
   return api

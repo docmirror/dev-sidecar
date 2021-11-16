@@ -30,6 +30,7 @@
     "electron-baidu-tongji": "^1.0.5",
     "electron-reload": "^1.5.0",
     "electron-store": "^6.0.1",
+    "electron-sudo": "^4.0.12",
     "electron-updater": "^4.3.5",
     "es-abstract": "^1.17.7",
     "extract-zip": "^2.0.1",

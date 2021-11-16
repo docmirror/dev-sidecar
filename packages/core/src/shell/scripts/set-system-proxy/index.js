@@ -13,6 +13,7 @@ const childProcess = require('child_process')
 const util = require('util')
 const fs = require('fs')
 const _exec = util.promisify(childProcess.exec)
+const extraPath = require('../extra-path/index')
 const _lanIP = [
   'localhost',
   '127.*',
@@ -33,95 +34,13 @@ const _lanIP = [
   '172.29.*',
   '172.30.*',
   '172.31.*',
-  '192.168.*'
+  '192.168.*',
+  '<-loopback>'
 ]
-
-const logoffScriptPath = 'C:\\WINDOWS\\System32\\GroupPolicy\\User\\Scripts\\scripts.ini'
-
-function buildScriptBody (addHeader = true, index = 0) {
-  const batPath = getClearBatPath()
-  const header = addHeader ? '[Logoff]\r\n' : ''
-  return `${header}${index}CmdLine=${batPath}
-${index}Parameters=`
-}
-
-async function addClearScriptIni () {
-  const batPath = getClearBatPath()
-  let body
-  if (fs.existsSync(logoffScriptPath)) {
-    body = fs.readFileSync(logoffScriptPath)
-    if (body.indexOf(batPath) >= 0) {
-      return
-    }
-    let index = 0
-    // 要加新的
-    if (body.indexOf('[Logoff]') >= 0) {
-      // 如果有logoff了
-      const list = body.trim().split('\n')
-      let lastParameters = -1
-      for (const string of list) {
-        if (string.indexOf('Parameters') >= 0) {
-          lastParameters = parseInt(string.trim().charAt(0))
-        }
-      }
-      index = lastParameters + 1
-      body += '\r\n' + buildScriptBody(false, index)
-    } else {
-      body += '\r\n' + buildScriptBody(true, 0)
-    }
-  } else {
-    body = buildScriptBody(true, 0)
-  }
-  fs.writeFileSync(logoffScriptPath, body)
-}
-
-async function removeClearScriptIni () {
-  if (!fs.existsSync(logoffScriptPath)) {
-    return
-  }
-  const batPath = getClearBatPath()
-  let body = fs.readFileSync(logoffScriptPath)
-  if (body.indexOf(batPath) === -1) {
-    return
-  }
-
-  // 有就要删除
-  body = body.trim()
-  const list = body.split('\n')
-  let lastParameters = -1
-  for (const string of list) {
-    if (string.indexOf(batPath) >= 0) {
-      lastParameters = parseInt(string.trim().charAt(0))
-    }
-  }
-  body = body.replace(`${lastParameters}CmdLine=${batPath}`, '')
-  body = body.replace(`${lastParameters}Parameters=`, '')
-  body = body.trim()
-  fs.writeFileSync(logoffScriptPath, body)
-}
-
-function getExtraPath () {
-  let extraPath = process.env.DS_EXTRA_PATH
-  log.info('extraPath', extraPath)
-  if (!extraPath) {
-    extraPath = __dirname
-  }
-  return extraPath
-}
-
-function getProxyExePath () {
-  const extraPath = getExtraPath()
-  return path.join(extraPath, 'sysproxy.exe')
-}
-
-function getClearBatPath () {
-  const extraPath = getExtraPath()
-  return path.join(extraPath, 'clear.bat')
-}
 
 async function _winUnsetProxy (exec) {
   // eslint-disable-next-line no-constant-condition
-  const proxyPath = getProxyExePath()
+  const proxyPath = extraPath.getProxyExePath()
   await execFile(proxyPath, ['set', '1'])
   try {
   //  await removeClearScriptIni()
@@ -135,7 +54,7 @@ async function _winSetProxy (exec, ip, port) {
   for (const string of _lanIP) {
     lanIpStr += string + ';'
   }
-  const proxyPath = getProxyExePath()
+  const proxyPath = extraPath.getProxyExePath()
   await execFile(proxyPath, ['global', `${ip}:${port}`, lanIpStr])
   try {
   //  await addClearScriptIni()

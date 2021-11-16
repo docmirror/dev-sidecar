@@ -86,8 +86,8 @@
           捐赠
         </div>
         <div class="right">
-          <div>如果它解决了你的问题，请不要吝啬你的star哟！
-            <a-icon style="margin-right:10px;" type="smile" theme="outlined"/>
+          <div>如果它解决了你的问题，请不要吝啬你的star哟！点这里
+            <a-icon style="margin-right:10px;" type="arrow-right" theme="outlined"/>
           </div>
           <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img
             src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
