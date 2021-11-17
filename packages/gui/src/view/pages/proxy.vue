@@ -18,7 +18,7 @@
           当前未启动
         </a-tag>
       </a-form-item>
-      <a-form-item label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-item v-if="systemPlatform ==='win'" label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
        <a-button @click="loopbackVisible=true">去设置</a-button>
         <div class="form-help">解决OneNote、微软应用商店、微软邮箱等大部分系统自带应用无法访问网络问题。点击去设置，然后按下图所示操作即可</div>
       </a-form-item>
@@ -62,11 +62,13 @@ export default {
   data () {
     return {
       key: 'proxy',
-      loopbackVisible: false
+      loopbackVisible: false,
+      systemPlatform: ''
     }
   },
-  created () {
-
+  async created () {
+    const platform = await this.$api.info.getSystemPlatform()
+    this.systemPlatform = platform
   },
   mounted () {
   },
