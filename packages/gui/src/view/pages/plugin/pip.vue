@@ -26,21 +26,21 @@
           <div class="form-help">开启ds使用pip命令行时需要勾选此选项，否则会报 wrong version number 异常</div>
           <div class="form-help">注意：当前已打开的命令行在开关系统代理后并不会实时生效，需要重新打开一个新的命令行窗口</div>
         </a-form-item>
-        <a-form-item label="信任仓库域名" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.pip.setting.trustedHost"></a-input>
-          <div>这里配置信任仓库域名，避免出现ssl校验失败错误</div>
-        </a-form-item>
         <a-form-item label="仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group v-model="config.plugin.pip.setting.registry" @change="onSwitchRegistry"
                          default-value="https://pypi.org/simple/" button-style="solid">
             <a-radio-button value="https://pypi.org/simple/">
               原生
             </a-radio-button>
-            <a-radio-button value="http://mirrors.aliyun.com/pypi/simple/">
+            <a-radio-button value="https://mirrors.aliyun.com/pypi/simple/">
               taobao镜像
             </a-radio-button>
           </a-radio-group>
           <div class="form-help">设置后立即生效，即使关闭ds也会继续保持</div>
+        </a-form-item>
+        <a-form-item label="信任仓库域名" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-input v-model="config.plugin.pip.setting.trustedHost"></a-input>
+          <div class="form-help">注意：切换仓库镜像同时会修改pip.ini中的trusted-host配置</div>
         </a-form-item>
       </a-form>
     </div>
@@ -87,8 +87,10 @@ export default {
       this.$message.success('切换成功')
     },
     async setRegistry ({ registry }) {
+      this.config.plugin.pip.setting.registry = registry
+      const domain = registry.substring(registry.indexOf('//') + 2, registry.indexOf('/', 8))
+      this.config.plugin.pip.setting.trustedHost = domain
       await this.apply()
-      await this.$api.plugin.node.setRegistry({ registry })
     }
 
   }
