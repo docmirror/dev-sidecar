@@ -22,7 +22,6 @@ function setupPlugin (key, plugin, context, config) {
   if (pluginStatus) {
     lodash.set(status, key, pluginStatus)
   }
-
   return api
 }
 

@@ -80,7 +80,11 @@ module.exports = {
       },
       'github.githubassets.com': {
         '.*': {
-          proxy: 'assets.fastgit.org'
+          proxy: 'github.githubassets.com',
+          backup: [
+            'assets.fastgit.org'
+          ],
+          sni: 'assets.fastgit.org'
         }
       },
       'customer-stories-feed.github.com': {
@@ -237,8 +241,8 @@ module.exports = {
         '*.vuepress.vuejs.org': 'quad9',
         'gh.docmirror.top': 'quad9',
         '*v2ex.com': 'quad9',
-        '*pypi.org':'quad9',
-        '*jetbrains.com':'quad9'
+        '*pypi.org': 'quad9',
+        '*jetbrains.com': 'quad9'
       },
       speedTest: {
         enabled: true,
