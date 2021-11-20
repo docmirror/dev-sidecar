@@ -22,7 +22,7 @@
         <a-checkbox v-model="config.proxy.setEnv" >
           是否同时修改HTTPS_PROXY环境变量
         </a-checkbox>
-        <div class="form-help">当发现某些应用并没有走加速通道时，可以尝试勾选此选项，并重新开启系统代理开关</div>
+        <div class="form-help">当发现某些应用并没有走加速通道或者加速报错时，可以尝试勾选此选项，并重新开启系统代理开关</div>
         <div class="form-help">注意：当前已打开的命令行并不会实时生效，需要重新打开一个新的命令行窗口</div>
       </a-form-item>
       <a-form-item label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -81,6 +81,9 @@ export default {
   mounted () {
   },
   methods: {
+    async applyAfter () {
+      await this.$api.proxy.restart()
+    },
     async openEnableLoopback () {
       try {
         await this.$api.proxy.setEnableLoopback()

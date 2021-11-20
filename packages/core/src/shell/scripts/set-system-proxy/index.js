@@ -50,9 +50,13 @@ async function _winUnsetProxy (exec, setEnv) {
       hive: Registry.HKCU, // open registry hive HKEY_CURRENT_USER
       key: '\\Environment' // key containing autostart programs
     })
-    regKey.remove('HTTPS_PROXY', async (err) => {
-      log.info('删除环境变量https_proxy', err)
-      await exec('setx DS_REFRESH "1"')
+    regKey.get('HTTPS_PROXY', (err) => {
+      if (!err) {
+        regKey.remove('HTTPS_PROXY', async (err) => {
+          log.info('删除环境变量https_proxy', err)
+          await exec('setx DS_REFRESH "1"')
+        })
+      }
     })
   } catch (e) {
     log.error(e)
