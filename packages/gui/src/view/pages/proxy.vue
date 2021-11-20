@@ -70,11 +70,13 @@ export default {
   data () {
     return {
       key: 'proxy',
-      loopbackVisible: false
+      loopbackVisible: false,
+      systemPlatform: ''
     }
   },
-  created () {
-
+  async created () {
+    const platform = await this.$api.info.getSystemPlatform()
+    this.systemPlatform = platform
   },
   mounted () {
   },

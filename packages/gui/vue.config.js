@@ -63,9 +63,10 @@ module.exports = {
         },
         mac: {
           icon: './build/mac/icon.icns',
-          target: [
-            'dmg'
-          ]
+          target: {
+            arch: 'universal',
+            target: 'dmg'
+          }
         },
         win: {
           icon: 'build/icons/'
