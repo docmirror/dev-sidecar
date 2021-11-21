@@ -37,7 +37,7 @@
             </a-radio-button>
           </a-tooltip>
           <a-tooltip v-else placement="topLeft" title="这个页面有个彩蛋">
-            <a-radio-button disabled="true" value="ow">
+            <a-radio-button :disabled="true" value="ow">
               彩蛋
             </a-radio-button>
           </a-tooltip>

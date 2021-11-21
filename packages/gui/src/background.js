@@ -26,6 +26,8 @@ protocol.registerSchemesAsPrivileged([
 ])
 // 隐藏主窗口，并创建托盘，绑定关闭事件
 function setTray () {
+  // const topMenu = Menu.buildFromTemplate({})
+  // Menu.setApplicationMenu(topMenu)
   // 用一个 Tray 来表示一个图标,这个图标处于正在运行的系统的通知区
   // 通常被添加到一个 context menu 上.
   // 系统托盘右键菜单
@@ -138,6 +140,9 @@ function createWindow (startHideWindow) {
     // eslint-disable-next-line no-undef
     icon: path.join(__static, 'icon.png')
   })
+
+  Menu.setApplicationMenu(null)
+  win.setMenu(null)
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
