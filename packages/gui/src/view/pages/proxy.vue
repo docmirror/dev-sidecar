@@ -27,7 +27,7 @@
       </a-form-item>
       <a-form-item v-if="systemPlatform ==='win'" label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
        <a-button @click="loopbackVisible=true">去设置</a-button>
-        <div class="form-help">解决OneNote、微软应用商店、微软邮箱等系统自带应用开启代理后无法访问网络的问题</div>
+        <div class="form-help">解决OneNote、MicrosoftStore、Outlook等UWP应用开启代理后无法访问网络的问题</div>
       </a-form-item>
     </div>
     <template slot="footer">
@@ -51,7 +51,7 @@
         设置Loopback  <a-button style="float:right;margin-right:10px;" @click="openEnableLoopback()">打开EnableLoopback</a-button>
       </template>
       <div>
-        <div>1、此设置用于解决OneNote、微软应用商店、微软邮箱等系统自带应用在开启代理后无法访问网络的问题。</div>
+        <div>1、此设置用于解决OneNote、MicrosoftStore、Outlook等UWP应用无法访问网络的问题。</div>
         <div>2、点击右上方按钮，打开EnableLoopback，然后按下图所示操作即可</div>
         <div>3、注意：此操作需要<b style="color:red">DevSidecar以管理员身份启动</b>，才能打开下面的EnableLoopback设置界面</div>
         <img style="margin-top:20px;border:1px solid #eee" width="80%" src="loopback.png" />
