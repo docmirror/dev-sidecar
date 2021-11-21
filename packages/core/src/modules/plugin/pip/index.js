@@ -19,7 +19,8 @@ const PipPlugin = function (context) {
       await api.setVariables()
     },
     async getPipEnv () {
-      let ret = await shell.exec(['pip config list'], { type: 'cmd' })
+      const command = config.get().plugin.pip.setting.command
+      let ret = await shell.exec([command + ' config list'], { type: 'cmd' })
       if (ret != null) {
         ret = ret.trim()
         const lines = ret.split('\n')
@@ -41,12 +42,13 @@ const PipPlugin = function (context) {
     },
 
     async setPipEnv (list) {
+      const command = config.get().plugin.pip.setting.command
       const cmds = []
       for (const item of list) {
         if (item.value != null) {
-          cmds.push(`pip config set global.${item.key}  ${item.value}`)
+          cmds.push(`${command} config set global.${item.key}  ${item.value}`)
         } else {
-          cmds.push(`pip config unset  global.${item.key}`)
+          cmds.push(`${command} config unset  global.${item.key}`)
         }
       }
       const ret = await shell.exec(cmds, { type: 'cmd' })
@@ -54,9 +56,10 @@ const PipPlugin = function (context) {
     },
 
     async unsetPipEnv (list) {
+      const command = config.get().plugin.pip.setting.command
       const cmds = []
       for (const item of list) {
-        cmds.push(`pip config unset  global.${item} `)
+        cmds.push(`${command} config unset  global.${item} `)
       }
       const ret = await shell.exec(cmds, { type: 'cmd' })
       return ret

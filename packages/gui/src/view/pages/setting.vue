@@ -15,7 +15,7 @@
           windows下建议开启开机自启。<a @click="openExternal('https://gitee.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">更多说明参考</a>
         </div>
       </a-form-item>
-      <a-form-item label="隐藏Dock图标" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-item v-if="systemPlatform ==='mac'" label="隐藏Dock图标" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.app.dock.hideWhenWinClose" >
           关闭窗口时隐藏Dock图标(仅限Mac)
         </a-checkbox>

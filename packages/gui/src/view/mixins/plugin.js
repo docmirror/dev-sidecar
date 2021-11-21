@@ -11,7 +11,8 @@ export default {
       status: {},
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
-      applyLoading: false
+      applyLoading: false,
+      systemPlatform: ''
     }
   },
   created () {
@@ -26,15 +27,14 @@ export default {
       }
       throw new Error('请设置key')
     },
-    init () {
+    async init () {
       this.status = this.$status
-      return this.$api.config.reload().then(ret => {
-        this.config = ret
-        console.log('config', this.config)
-        if (this.ready) {
-          return this.ready(this.config)
-        }
-      })
+      this.systemPlatform = await this.$api.info.getSystemPlatform()
+      this.config = await this.$api.config.reload()
+      console.log('config', this.config)
+      if (this.ready) {
+        return this.ready(this.config)
+      }
     },
     async apply () {
       this.applyLoading = true
