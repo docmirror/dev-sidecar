@@ -23,7 +23,7 @@
           <a-input v-model="config.plugin.pip.setting.command"></a-input>
           <div class="form-help">如果你的pip命令改成了其他名字（如pip3），可以在此处修改</div>
         </a-form-item>
-        <a-form-item v-if="systemPlatform ==='win'" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item v-if="isWindows()" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.proxy.setEnv" >
             开启系统代理时是否同时修改HTTPS_PROXY环境变量
           </a-checkbox>

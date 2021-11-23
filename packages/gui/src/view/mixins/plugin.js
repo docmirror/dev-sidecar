@@ -29,9 +29,12 @@ export default {
     },
     async init () {
       this.status = this.$status
-      this.systemPlatform = await this.$api.info.getSystemPlatform()
+
       this.config = await this.$api.config.reload()
-      console.log('config', this.config)
+      this.systemPlatform = await this.$api.info.getSystemPlatform()
+      console.log('config', this.config, this.systemPlatform)
+      // eslint-disable-next-line no-debugger
+
       if (this.ready) {
         return this.ready(this.config)
       }
@@ -84,6 +87,15 @@ export default {
         return {}
       }
       return value
+    },
+    isWindows () {
+      return this.systemPlatform === 'windows'
+    },
+    isMac () {
+      return this.systemPlatform === 'mac'
+    },
+    isLinux () {
+      return this.systemPlatform === 'linux'
     }
   }
 }
