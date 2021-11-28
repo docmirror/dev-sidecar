@@ -71,8 +71,10 @@ async function _winSetProxy (exec, ip, port, setEnv) {
   const proxyPath = extraPath.getProxyExePath()
   await execFile(proxyPath, ['global', `${ip}:${port}`, lanIpStr])
 
-  if (setEnv == null) {
+  if (setEnv) {
+    log.info('同时设置 https_proxy')
     try {
+      await exec('echo \'test\'')
       await exec('echo \'test\'')
       await exec(`setx HTTPS_PROXY "http://${ip}:${port}/"`)
       //  await addClearScriptIni()
@@ -94,7 +96,7 @@ const executor = {
     } else {
       // 设置代理
 
-      log.info('设置代理', ip, port)
+      log.info('设置代理', ip, port, setEnv)
       return _winSetProxy(exec, ip, port, setEnv)
     }
   },

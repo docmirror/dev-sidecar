@@ -119,7 +119,9 @@ function showWin () {
   if (win) {
     win.show()
   }
-  app.dock.show()
+  if (app.dock) {
+    app.dock.show()
+  }
 }
 
 function changeAppConfig (config) {
