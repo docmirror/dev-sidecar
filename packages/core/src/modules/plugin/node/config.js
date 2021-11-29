@@ -14,18 +14,18 @@ module.exports = {
     registry: 'https://registry.npmjs.org'// 可以选择切换官方或者淘宝镜像
   },
   // intercepts: {
-  //   'cdn.cypress.io': [{ regexp: '/desktop/.*', proxy: 'http://npm.taobao.org/mirrors/cypress/' }]
+  //   'cdn.cypress.io': [{ regexp: '/desktop/.*', proxy: 'http://npmmirror.com/mirrors/cypress/' }]
   // },
   variables: {
-    phantomjs_cdnurl: 'https://npm.taobao.org/dist/phantomjs',
-    chromedriver_cdnurl: 'https://npm.taobao.org/mirrors/chromedriver',
-    sass_binary_site: 'https://npm.taobao.org/mirrors/node-sass',
-    ELECTRON_MIRROR: 'https://npm.taobao.org/mirrors/electron/',
+    phantomjs_cdnurl: 'https://npmmirror.com/dist/phantomjs',
+    chromedriver_cdnurl: 'https://npmmirror.com/mirrors/chromedriver',
+    sass_binary_site: 'https://npmmirror.com/mirrors/node-sass',
+    ELECTRON_MIRROR: 'https://npmmirror.com/mirrors/electron/',
     // CYPRESS_DOWNLOAD_MIRROR: 'https://cdn.cypress.io',
-    NVM_NODEJS_ORG_MIRROR: 'https://npm.taobao.org/mirrors/node',
-    CHROMEDRIVER_CDNURL: 'https://npm.taobao.org/mirrors/chromedriver',
-    OPERADRIVER: 'https://npm.taobao.org/mirrors/operadriver',
-    ELECTRON_BUILDER_BINARIES_MIRROR: 'https://npm.taobao.org/mirrors/electron-builder-binaries/',
-    PYTHON_MIRROR: 'https://npm.taobao.org/mirrors/python'
+    NVM_NODEJS_ORG_MIRROR: 'https://npmmirror.com/mirrors/node',
+    CHROMEDRIVER_CDNURL: 'https://npmmirror.com/mirrors/chromedriver',
+    OPERADRIVER: 'https://npmmirror.com/mirrors/operadriver',
+    ELECTRON_BUILDER_BINARIES_MIRROR: 'https://npmmirror.com/mirrors/electron-builder-binaries/',
+    PYTHON_MIRROR: 'https://npmmirror.com/mirrors/python'
   }
 }
