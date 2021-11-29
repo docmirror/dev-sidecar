@@ -12,7 +12,8 @@ module.exports = {
   targets: {
     'github.com': true,
     '*wikimedia.org': true,
-    'v2ex.com': true
+    'v2ex.com': true,
+    '*azureedge.net': true
   },
   pac: {
     enabled: true,

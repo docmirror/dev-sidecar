@@ -237,8 +237,9 @@ module.exports = {
         '*.vuepress.vuejs.org': 'quad9',
         'gh.docmirror.top': 'quad9',
         '*v2ex.com': 'quad9',
-        '*pypi.org':'quad9',
-        '*jetbrains.com':'quad9'
+        '*pypi.org': 'quad9',
+        '*jetbrains.com': 'quad9',
+        '*azureedge.net': 'quad9'
       },
       speedTest: {
         enabled: true,
