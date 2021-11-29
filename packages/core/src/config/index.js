@@ -80,7 +80,11 @@ module.exports = {
       },
       'github.githubassets.com': {
         '.*': {
-          proxy: 'assets.fastgit.org'
+          proxy: 'github.githubassets.com',
+          backup: [
+            'assets.fastgit.org'
+          ],
+          sni: 'assets.fastgit.org'
         }
       },
       'customer-stories-feed.github.com': {
@@ -159,7 +163,7 @@ module.exports = {
       'www.googleapis.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
       'lh*.googleusercontent.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
       // mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
-      '*.s3.amazonaws.com': {
+      '*.s3.1amazonaws1.com': {
         '/sqlite3/.*': {
           redirect: 'npm.taobao.org/mirrors'
         }

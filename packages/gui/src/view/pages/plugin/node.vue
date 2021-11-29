@@ -26,27 +26,29 @@
           </a-checkbox>
           npm代理启用后必须关闭
         </a-form-item>
-        <a-form-item label="npm registry" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item label="npm仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group v-model="config.plugin.node.setting.registry" @change="onSwitchRegistry"
                          default-value="https://registry.npmjs.org" button-style="solid">
             <a-radio-button value="https://registry.npmjs.org">
-              npmjs
+              npmjs原生
             </a-radio-button>
             <a-radio-button value="https://registry.npm.taobao.org">
-              taobao
+              taobao镜像
             </a-radio-button>
           </a-radio-group>
+          <div class="form-help">设置后立即生效，即使关闭ds也会继续保持</div>
         </a-form-item>
 
-        <a-form-item label="yarn registry" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item label="yarn仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group v-model="config.plugin.node.setting.yarnRegistry" :default-value="null"  @change="onSwitchYarnRegistry" button-style="solid">
             <a-radio-button :value="null">
-              yarn
+              yarn原生
             </a-radio-button>
             <a-radio-button value="https://registry.npm.taobao.org">
-              taobao
+              taobao镜像
             </a-radio-button>
           </a-radio-group>
+          <div class="form-help">设置后立即生效，即使关闭ds也会继续保持</div>
         </a-form-item>
 
         <a-form-item label="镜像变量设置" :label-col="labelCol" :wrapper-col="wrapperCol">

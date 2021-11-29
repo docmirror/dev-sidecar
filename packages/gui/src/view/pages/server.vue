@@ -79,7 +79,7 @@
               </a-col>
             </a-row>
             <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of whiteList" :key='index'>
-              <a-col :span="14">
+              <a-col :span="19">
                 <a-input :disabled="item.value ===false" v-model="item.key"></a-input>
               </a-col>
               <a-col :span="3">

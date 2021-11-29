@@ -36,6 +36,11 @@
               增强模式
             </a-radio-button>
           </a-tooltip>
+          <a-tooltip v-else placement="topLeft" title="这个页面有个彩蛋">
+            <a-radio-button :disabled="true" value="ow">
+              彩蛋
+            </a-radio-button>
+          </a-tooltip>
         </a-radio-group>
       </div>
 
@@ -72,9 +77,9 @@
 
     <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
     <div slot="footer">
-      <div class="star" v-if="!setting.overwall">
+      <div class="star" v-if="setting && !setting.overwall">
         <div class="donate">
-          <a-tooltip placement="topLeft" title="彩蛋">
+          <a-tooltip placement="topLeft" title="彩蛋，点我">
             <span style="display: block;width:100px;height:50px;" @click="wantOW()"></span>
           </a-tooltip>
         </div>
@@ -163,7 +168,7 @@ export default {
     }
   },
   async created () {
-    this.doCheckRootCa()
+    await this.doCheckRootCa()
     await this.reloadConfig()
     this.$set(this, 'status', this.$status)
     this.switchBtns = this.createSwitchBtns()
@@ -208,7 +213,7 @@ export default {
     },
     wantOW () {
       this.$success({
-        title: '彩蛋',
+        title: '彩蛋（增强模式）',
         content: (
           <div>
           我把它藏在了源码里，感兴趣的话可以找一找它（线索提示 // TODO）
@@ -216,28 +221,27 @@ export default {
         )
       })
     },
-    doCheckRootCa () {
-      this.$api.setting.load().then(setting => {
-        console.log('setting', setting)
-        this.setting = setting
-        if (this.setting.rootCa && (this.setting.rootCa.setuped || this.setting.rootCa.noTip)) {
-          return
+    async doCheckRootCa () {
+      const setting = await this.$api.setting.load()
+      console.log('setting', setting)
+      this.setting = setting
+      if (this.setting.rootCa && (this.setting.rootCa.setuped || this.setting.rootCa.noTip)) {
+        return
+      }
+      this.$confirm({
+        title: '第一次使用，请先安装CA根证书',
+        content: '本应用正常使用，必须安装和信任CA根证书',
+        cancelText: '下次',
+        okText: '去安装',
+        onOk: () => {
+          this.openSetupCa()
+        },
+        onCancel: () => {
+          this.setting.rootCa = this.setting.rootCa || {}
+          //  const rootCa = this.setting.rootCa
+          // rootCa.noTip = true
+          // this.$api.setting.save(this.setting)
         }
-        this.$confirm({
-          title: '第一次使用，请先安装CA根证书',
-          content: '本应用正常使用，必须安装和信任CA根证书',
-          cancelText: '下次',
-          okText: '去安装',
-          onOk: () => {
-            this.openSetupCa()
-          },
-          onCancel: () => {
-            this.setting.rootCa = this.setting.rootCa || {}
-            //  const rootCa = this.setting.rootCa
-            // rootCa.noTip = true
-            // this.$api.setting.save(this.setting)
-          }
-        })
       })
     },
     openSetupCa () {
@@ -265,6 +269,9 @@ export default {
       btns.server = this.createSwitchBtn('server', '代理服务', this.$api.server, status)
       btns.proxy = this.createSwitchBtn('proxy', '系统代理', this.$api.proxy, status)
       lodash.forEach(status.plugin, (item, key) => {
+        if (this.config.plugin[key].statusOff) {
+          return
+        }
         btns[key] = this.createSwitchBtn(key, this.config.plugin[key].name, this.$api.plugin[key], status.plugin, this.config.plugin[key].tip)
       })
       return btns

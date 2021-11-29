@@ -54,7 +54,7 @@ export default {
   },
   data () {
     return {
-      systemPlatform: 'win'
+      systemPlatform: ''
     }
   },
   async created () {

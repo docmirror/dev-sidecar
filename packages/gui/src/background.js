@@ -26,10 +26,20 @@ protocol.registerSchemesAsPrivileged([
 ])
 // 隐藏主窗口，并创建托盘，绑定关闭事件
 function setTray () {
+  // const topMenu = Menu.buildFromTemplate({})
+  // Menu.setApplicationMenu(topMenu)
   // 用一个 Tray 来表示一个图标,这个图标处于正在运行的系统的通知区
   // 通常被添加到一个 context menu 上.
   // 系统托盘右键菜单
   const trayMenuTemplate = [
+
+    {
+      // 系统托盘图标目录
+      label: 'DevTools',
+      click: () => {
+        win.webContents.openDevTools()
+      }
+    },
     {
       // 系统托盘图标目录
       label: '退出',
@@ -109,7 +119,9 @@ function showWin () {
   if (win) {
     win.show()
   }
-  app.dock.show()
+  if (app.dock) {
+    app.dock.show()
+  }
 }
 
 function changeAppConfig (config) {
@@ -128,6 +140,7 @@ function createWindow (startHideWindow) {
     webPreferences: {
       enableRemoteModule: true,
       contextIsolation: false,
+      nativeWindowOpen: true, // ADD THIS
       // preload: path.join(__dirname, 'preload.js'),
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -137,6 +150,9 @@ function createWindow (startHideWindow) {
     // eslint-disable-next-line no-undef
     icon: path.join(__static, 'icon.png')
   })
+
+  Menu.setApplicationMenu(null)
+  win.setMenu(null)
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

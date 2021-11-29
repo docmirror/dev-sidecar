@@ -8,6 +8,9 @@ function matched (hostname, regexpMap) {
   if (ret1) {
     return true
   }
+  if (pacClient == null) {
+    return false
+  }
   const ret = pacClient.FindProxyForURL('https://' + hostname, hostname)
   if (ret && ret.indexOf('PROXY ') === 0) {
     return true
@@ -19,7 +22,7 @@ module.exports = function createOverWallIntercept (overWallConfig) {
   if (!overWallConfig || overWallConfig.enabled !== true) {
     return null
   }
-  if (overWallConfig.pac) {
+  if (overWallConfig.pac && overWallConfig.pac.enabled) {
     // 初始化pac
     pacClient = pac.createPacClient(overWallConfig.pac.pacFileAbsolutePath)
   }

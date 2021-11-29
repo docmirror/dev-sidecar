@@ -325,11 +325,19 @@ npm run electron:build
 
 
 ## 九、联系作者
+欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS）
 
-欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS） 
+1、 加群
 <div style="display: flex; justify-content:space-around;">
-<img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/me.png">
+<img height="280px" src="http://wxgroup.docmirror.cn/weixin/group/dev-sidecar/qrcode.png">
+
 <img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/qq_group.png">
+
+</div>
+
+2、 加作者好友
+<div style="display: flex; justify-content:space-around;">
+<img height="200px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/me.png">
 </div>
 
 
