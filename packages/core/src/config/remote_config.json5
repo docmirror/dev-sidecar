@@ -11,10 +11,18 @@
     dns: {
       mapping: {
         '*jetbrains.com': 'quad9',
+        '*azureedge.net': 'quad9'
       },
       speedTest: {
         interval: 60000,
       },
+    }
+  },
+  plugin: {
+    overwall: {
+      targets: {
+        '*azureedge.net': true
+      }
     }
   }
 }
