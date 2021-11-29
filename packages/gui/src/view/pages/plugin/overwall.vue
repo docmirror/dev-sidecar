@@ -21,6 +21,7 @@
           <a-checkbox v-model="config.plugin.overwall.pac.enabled">
             启用PAC
           </a-checkbox>
+          <div class="form-help">PAC内收录了常见的被封杀的域名，当里面某些域名你不想被拦截时，可以关闭PAC</div>
         </a-form-item>
         <a-form-item label="自定义域名" :label-col="labelCol" :wrapper-col="wrapperCol">
           <div>
@@ -69,7 +70,8 @@
                 <a-button  type="danger" icon="minus" @click="deleteServer(item,index)" />
               </a-col>
             </a-row>
-            <div>您可以在此处配置你自己的服务器地址</div>
+            <div class="form-help">您可以在此处配置你自己的服务器地址</div>
+            <div class="form-help">请勿使用来源不明的服务器地址，有安全风险</div>
           </div>
         </a-form-item>
       </a-form>
