@@ -35,9 +35,9 @@ const _lanIP = [
   '172.29.*',
   '172.30.*',
   '172.31.*',
-  '192.168.*',
-  '<-loopback>'
+  '192.168.*'
 ]
+//   '<-loopback>'
 
 async function _winUnsetProxy (exec, setEnv) {
   // eslint-disable-next-line no-constant-condition

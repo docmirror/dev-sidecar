@@ -128,7 +128,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig, sniRegexpMap)
     })
 
     cltSocket.on('error', (e) => {
-      log.error('cltSocket error', e.message)
+      log.error('cltSocket error', e.message, hostname)
     })
     proxySocket.on('timeout', () => {
       const end = new Date().getTime()
