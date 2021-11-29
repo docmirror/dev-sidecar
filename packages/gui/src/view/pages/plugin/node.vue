@@ -32,7 +32,7 @@
             <a-radio-button value="https://registry.npmjs.org">
               npmjs原生
             </a-radio-button>
-            <a-radio-button value="https://registry.npm.taobao.org">
+            <a-radio-button value="https://registry.npmmirror.com">
               taobao镜像
             </a-radio-button>
           </a-radio-group>
@@ -44,7 +44,7 @@
             <a-radio-button :value="null">
               yarn原生
             </a-radio-button>
-            <a-radio-button value="https://registry.npm.taobao.org">
+            <a-radio-button value="https://registry.npmmirror.com">
               taobao镜像
             </a-radio-button>
           </a-radio-group>
