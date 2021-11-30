@@ -329,7 +329,7 @@ npm run electron:build
 
 1、 加群
 <div style="display: flex; justify-content:space-around;">
-<img height="280px" src="http://wxgroup.docmirror.cn/weixin/group/dev-sidecar/qrcode.png">
+<img style="margin-right:50px" height="230px" src="http://wxgroup.docmirror.cn/weixin/group/dev-sidecar/1qrcode.jpg">
 
 <img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/qq_group.png">
 
