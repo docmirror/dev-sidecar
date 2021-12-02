@@ -35,7 +35,7 @@
       <a-form-item label="远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input v-model="config.app.remoteConfig.url"></a-input>
       </a-form-item>
-      <a-form-item label="关闭策略" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-item v-if="!isLinux()" label="关闭策略" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model="config.app.closeStrategy"
                        default-value="0" button-style="solid">
           <a-radio-button :value="0">

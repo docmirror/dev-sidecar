@@ -186,6 +186,10 @@ function createWindow (startHideWindow) {
       return
     }
     e.preventDefault()
+    if (isLinux()) {
+      quit(app)
+      return
+    }
     const config = DevSidecar.api.config.get()
     const closeStrategy = config.app.closeStrategy
     if (closeStrategy === 0) {

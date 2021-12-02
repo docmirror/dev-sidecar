@@ -33,7 +33,7 @@ function install (app, api) {
       async onOk () {
         console.log('OK')
         if (result.save) {
-          await api.config.save({ app: { closeStrategy: result.closeType } })
+          await api.config.update({ app: { closeStrategy: result.closeType } })
         }
         api.ipc.send('close', { key: 'selected', value: result.closeType })
       },
