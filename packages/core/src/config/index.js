@@ -21,7 +21,8 @@ module.exports = {
     },
     dock: {
       hideWhenWinClose: false
-    }
+    },
+    closeStrategy: 0
   },
   server: {
     enabled: true,

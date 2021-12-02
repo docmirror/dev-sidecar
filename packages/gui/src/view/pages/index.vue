@@ -19,6 +19,7 @@
     </template>
 
     <div class="box">
+      <a-alert message="本应用开启后会修改系统代理，直接重启电脑可能会无法上网，您可以再次启动本应用即可恢复。如您需要卸载，在卸载前请务必右键右下角小图标退出本应用再进行卸载" banner />
       <div class="mode-bar" style="margin:20px;" v-if="config && config.app">
         <a-radio-group v-model="config.app.mode" button-style="solid" @change="modeChange">
           <a-tooltip placement="topLeft" title="启用测速，关闭拦截，关闭增强（功能最弱，不稳定，不需要安装证书，最安全）">
