@@ -173,9 +173,33 @@ function createWindow (startHideWindow) {
     tray = null
   })
 
+  ipcMain.on('close', async (event, message) => {
+    if (message.value === 1) {
+      quit()
+    } else {
+      hideWin()
+    }
+  })
+
   win.on('close', (e) => {
-    if (!forceClose) {
-      e.preventDefault()
+    if (forceClose) {
+      return
+    }
+    e.preventDefault()
+    if (isLinux()) {
+      quit(app)
+      return
+    }
+    const config = DevSidecar.api.config.get()
+    const closeStrategy = config.app.closeStrategy
+    if (closeStrategy === 0) {
+      // 提醒
+      win.webContents.send('close.showTip')
+    } else if (closeStrategy === 1) {
+      // 直接退出
+      quit()
+    } else if (closeStrategy === 2) {
+      // 隐藏窗口
       hideWin()
     }
   })

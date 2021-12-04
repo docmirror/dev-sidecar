@@ -35,6 +35,23 @@
       <a-form-item label="远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input v-model="config.app.remoteConfig.url"></a-input>
       </a-form-item>
+      <a-form-item v-if="!isLinux()" label="关闭策略" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-radio-group v-model="config.app.closeStrategy"
+                       default-value="0" button-style="solid">
+          <a-radio-button :value="0">
+            弹出提示
+          </a-radio-button>
+          <a-radio-button :value="1">
+            直接退出
+          </a-radio-button>
+          <a-radio-button :value="2">
+            最小化到系统托盘
+          </a-radio-button>
+        </a-radio-group>
+        <div class="form-help">
+          点击窗口右上角关闭按钮的效果
+        </div>
+      </a-form-item>
     </div>
     <template slot="footer">
       <div class="footer-bar">

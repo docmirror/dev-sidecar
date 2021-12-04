@@ -172,6 +172,10 @@ const configApi = {
     const config = configApi.get()
     return config || {}
   },
+  update (partConfig) {
+    const newConfig = lodash.merge(configApi.get(), partConfig)
+    configApi.save(newConfig)
+  },
   get,
   set (newConfig) {
     if (newConfig == null) {
