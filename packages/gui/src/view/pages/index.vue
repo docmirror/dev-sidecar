@@ -89,7 +89,7 @@
       <div class="star" >
         <div class="donate" @click="donateModal=true">
           <a-icon type="like" theme="outlined"/>
-          捐赠
+          捐赠（本项目完全免费，用爱发电）
         </div>
         <div class="right">
           <div>如果它解决了你的问题，请不要吝啬你的star哟！点这里
