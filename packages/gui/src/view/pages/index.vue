@@ -103,7 +103,7 @@
       </div>
 
       <a-modal title="捐赠" v-model="donateModal" width="550px" cancelText="不了" okText="果断支持" @ok="goDonate">
-        <div>* 如果觉得好用，请给我一点鼓励，感谢。</div>
+        <div>* 如果觉得好用，可以给予捐赠，开源项目持续发展离不开您的支持，感谢。</div>
         <div class="payQrcode">
           <img height="200px" src="/pay.jpg"/>
         </div>
