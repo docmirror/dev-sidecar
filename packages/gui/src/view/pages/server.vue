@@ -51,18 +51,16 @@
                             v-model="config.server.setting.rootCaFile.keyPath"/>
           </a-form-item>
           <a-form-item label="启用拦截" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-tooltip title="关闭拦截，且关闭功能增强的话，就不需要安装根证书，本应用退化为dns优选，最安全">
               <a-checkbox v-model="config.server.intercept.enabled">
                 启用拦截
               </a-checkbox>
-            </a-tooltip>
+            <div class="form-help">关闭拦截，且关闭功能增强的话，就不需要安装根证书，本应用退化为安全模式</div>
           </a-form-item>
           <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-tooltip title="关闭后，github的clone加速链接复制也将关闭">
               <a-checkbox v-model="config.server.setting.script.enabled">
                 允许插入并运行脚本
               </a-checkbox>
-            </a-tooltip>
+            <div class="form-help">关闭后，github的clone加速链接复制也将关闭</div>
           </a-form-item>
         </a-tab-pane>
         <a-tab-pane tab="拦截设置" key="2">

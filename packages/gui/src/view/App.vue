@@ -1,4 +1,5 @@
 <template>
+  <a-config-provider :locale="locale">
   <div class="ds_layout">
     <a-layout>
       <a-layout-sider theme="light">
@@ -42,16 +43,19 @@
       </a-layout>
     </a-layout>
   </div>
+  </a-config-provider>
 </template>
 
 <script>
 import createMenus from '@/view/router/menu'
+import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 export default {
   name: 'App',
   components: {
   },
   data () {
     return {
+      locale: zhCN,
       info: {},
       menus: undefined
     }

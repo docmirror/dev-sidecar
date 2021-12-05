@@ -14,7 +14,7 @@ function install (app, api) {
     app.$confirm({
       title: '关闭策略',
       content: h => <div>
-        <div>
+        <div style={'margin-top:10px'}>
           <a-radio-group vOn:change={onRadioChange}>
             <a-radio value={1}>
           直接关闭
@@ -24,7 +24,7 @@ function install (app, api) {
             </a-radio>
           </a-radio-group>
         </div>
-        <div>
+        <div style={'margin-top:10px'}>
           <a-checkbox vOn:change={onCheckChange} >
             记住本次选择，不再提示
           < /a-checkbox>
