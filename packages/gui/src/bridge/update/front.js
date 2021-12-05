@@ -76,14 +76,28 @@ function install (app, api) {
       }
     })
   }
+
+  /**
+   * 是否小版本升级
+   * @param version1
+   * @param version2
+   * @returns {Promise<void>}
+   */
+  async function isMiniUpdate (version1, version2) {
+    const version1Prefix = version1.substring(0, version1.lastIndexOf('.'))
+    const version2Prefix = version2.substring(0, version1.lastIndexOf('.'))
+    return version1Prefix === version2Prefix
+  }
   async function downloadNewVersion (value) {
     const platform = await api.shell.getSystemPlatform()
+    const info = await this.$api.info.get()
     console.log('download new version platform', platform)
     if (platform === 'linux') {
       goManualUpdate(app, value)
       return
     }
-    if (value.partPackage) {
+    const usePartPackage = value.partPackage && isMiniUpdate(value.version, info.version)
+    if (usePartPackage) {
       // 有增量更新
       api.update.downloadPart(value)
     } else {
