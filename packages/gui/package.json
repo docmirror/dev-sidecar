@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar-gui",
-  "version": "1.7.2",
+  "version": "1.6.9",
   "private": false,
   "license": "MPL-2.0",
   "main": "background.js",

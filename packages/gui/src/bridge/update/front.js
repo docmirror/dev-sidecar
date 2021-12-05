@@ -83,14 +83,14 @@ function install (app, api) {
    * @param version2
    */
   async function isSupportPartUpdate (value) {
+    const info = await api.info.get()
+    console.log('升级版本:', value.version)
+    console.log('增量更新最小版本:', value.partMiniVersion)
+    console.log('当前版本:', info.version)
     if (!value.partPackage) {
       return false
     }
-    const info = await this.$api.info.get()
-    if (value.partMiniVersion && value.partMiniVersion < info.version) {
-      return true
-    }
-    return false
+    return !!(value.partMiniVersion && value.partMiniVersion < info.version)
   }
 
   async function downloadNewVersion (value) {
