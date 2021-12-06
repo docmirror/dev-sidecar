@@ -1,6 +1,8 @@
 # linux 支持
 `linux`使用说明，目前仅支持`ubuntu_x64（GNOME）`，其他`linux`未测试
 
+> 注意：需要开启[sudo免密支持](https://www.jianshu.com/p/5d02428f313d) 
+
 ## 安装
 
 ### 1. ubuntu
