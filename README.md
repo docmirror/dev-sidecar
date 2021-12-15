@@ -333,6 +333,8 @@ npm run electron:build
 <img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/qq_group.png">
 </div>
 
+微信群二维码如果已过期，请点击 [获取最新群二维码](http://wxgroup.docmirror.cn/weixin/group/dev-sidecar/1qrcode.jpg)
+
 2、 加作者好友
 <div style="display: flex; justify-content:space-around;">
 <img height="200px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/me.png">
