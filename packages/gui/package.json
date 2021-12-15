@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar-gui",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "private": false,
   "license": "MPL-2.0",
   "main": "background.js",
@@ -21,8 +21,8 @@
     "name": "Greper"
   },
   "dependencies": {
-    "@docmirror/dev-sidecar": "^1.7.1",
-    "@docmirror/mitmproxy": "^1.7.1",
+    "@docmirror/dev-sidecar": "^1.7.2",
+    "@docmirror/mitmproxy": "^1.7.2",
     "adm-zip": "^0.5.5",
     "ant-design-vue": "^1.6.5",
     "compressing": "^1.5.1",
@@ -84,5 +84,5 @@
     "not dead"
   ],
   "__npminstall_done": false,
-  "gitHead": "9b027af3ee7e88975a54692ed83096802764a8dc"
+  "gitHead": "30ecf21cb001fb8d821e575d476ca0ffb4ff086e"
 }

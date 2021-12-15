@@ -76,6 +76,23 @@ function install (app, api) {
       }
     })
   }
+
+  /**
+   * 是否小版本升级
+   * @param version1
+   * @param version2
+   */
+  async function isSupportPartUpdate (value) {
+    const info = await api.info.get()
+    console.log('升级版本:', value.version)
+    console.log('增量更新最小版本:', value.partMiniVersion)
+    console.log('当前版本:', info.version)
+    if (!value.partPackage) {
+      return false
+    }
+    return !!(value.partMiniVersion && value.partMiniVersion < info.version)
+  }
+
   async function downloadNewVersion (value) {
     const platform = await api.shell.getSystemPlatform()
     console.log('download new version platform', platform)
@@ -83,7 +100,8 @@ function install (app, api) {
       goManualUpdate(app, value)
       return
     }
-    if (value.partPackage) {
+    const partUpdate = await isSupportPartUpdate(value)
+    if (partUpdate) {
       // 有增量更新
       api.update.downloadPart(value)
     } else {

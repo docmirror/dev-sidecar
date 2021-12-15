@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "给开发者的加速代理工具",
   "main": "src/index.js",
   "keywords": [
@@ -17,7 +17,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@docmirror/mitmproxy": "^1.7.1",
+    "@docmirror/mitmproxy": "^1.7.2",
     "agentkeepalive": "^2.1.1",
     "babel-preset-es2020": "^1.0.2",
     "charset": "^1.0.0",
@@ -78,5 +78,5 @@
     "last 2 versions",
     "not dead"
   ],
-  "gitHead": "9b027af3ee7e88975a54692ed83096802764a8dc"
+  "gitHead": "30ecf21cb001fb8d821e575d476ca0ffb4ff086e"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/mitmproxy",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "",
   "main": "src/index.js",
   "keywords": [
@@ -66,5 +66,5 @@
     "last 2 versions",
     "not dead"
   ],
-  "gitHead": "9b027af3ee7e88975a54692ed83096802764a8dc"
+  "gitHead": "30ecf21cb001fb8d821e575d476ca0ffb4ff086e"
 }

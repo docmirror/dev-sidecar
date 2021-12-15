@@ -37,7 +37,7 @@
               原生
             </a-radio-button>
             <a-radio-button value="https://mirrors.aliyun.com/pypi/simple/">
-              taobao镜像
+              aliyun镜像
             </a-radio-button>
           </a-radio-group>
           <div class="form-help">设置后立即生效，即使关闭ds也会继续保持</div>
