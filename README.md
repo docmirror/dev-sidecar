@@ -291,6 +291,15 @@ Error: www.github.com:443, 代理请求超时
  3、如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启   
 
 
+### 8、卸载应用后上不了网，git请求不了
+1、在系统设置里面，关闭系统代理设置，[手动关闭系统代理设置](./doc/recover.md)   
+2、执行下面的命令关闭git的代理设置
+```shell
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+```
+
+
 ## 七、在其他程序使用
 * [java程序使用](./doc/other.md#Java程序使用)
 
