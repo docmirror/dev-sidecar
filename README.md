@@ -344,11 +344,9 @@ npm run electron:build
 
 1、 加群
 <div style="display: flex; justify-content:space-around;">
-<img style="margin-right:50px" height="230px" src="http://wxgroup.docmirror.cn/weixin/group/dev-sidecar/1qrcode.jpg">
 <img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/qq_group.png">
 </div>
 
-微信群二维码如果已过期，请点击 [获取最新群二维码](http://wxgroup.docmirror.cn/weixin/group/dev-sidecar/1qrcode.jpg)
 
 2、 加作者好友
 <div style="display: flex; justify-content:space-around;">
