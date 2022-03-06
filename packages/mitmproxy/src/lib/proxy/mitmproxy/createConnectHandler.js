@@ -93,40 +93,15 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig, sniRegexpMap)
       cltSocket.write('HTTP/1.1 200 Connection Established\r\n' +
                 'Proxy-agent: dev-sidecar\r\n' +
                 '\r\n')
-
+      log.info('proxy connect start', hostname)
       proxySocket.write(head)
       proxySocket.pipe(cltSocket)
 
       cltSocket.pipe(proxySocket)
-      // let sniReplaced = false
-      // cltSocket.on('data', (chunk) => {
-      //   // if (replaceSni && sniReplaced === false) {
-      //   //   const sniPackage = sniExtract(chunk)
-      //   //   if (sniPackage != null) {
-      //   //     sniReplaced = true
-      //   //     const bytes = Buffer.from(replaceSni)
-      //   //     const start = sniPackage.start
-      //   //     const length = sniPackage.length
-      //   //     for (let i = 0; i < length; i++) {
-      //   //       let char = 97 // a 的ascii
-      //   //       if (bytes.length > i) {
-      //   //         char = bytes[i]
-      //   //       }
-      //   //       chunk[start + i] = char
-      //   //     }
-      //   //   }
-      //   // }
-      //   if (sniReplaced === false) {
-      //     sniReplaced = true
-      //     chunk[chunk.length - 1] = 1
-      //   }
-      //   proxySocket.write(chunk)
-      // })
-      // cltSocket.on('end', () => {
-      //   proxySocket.end()
-      // })
     })
-
+    cltSocket.on('timeout', (e) => {
+      log.error('cltSocket timeout', e.message, hostname)
+    })
     cltSocket.on('error', (e) => {
       log.error('cltSocket error', e.message, hostname)
     })
