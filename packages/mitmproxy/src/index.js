@@ -83,7 +83,7 @@ const api = {
 
     registerProcessListener()
   },
-  async  close () {
+  async close () {
     return new Promise((resolve, reject) => {
       if (server) {
         server.close((err) => {

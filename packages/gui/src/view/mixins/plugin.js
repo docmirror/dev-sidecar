@@ -30,7 +30,8 @@ export default {
     async init () {
       this.status = this.$status
 
-      this.config = await this.$api.config.reload()
+      const config = await this.$api.config.reload()
+      this.$set(this, 'config', config)
       this.systemPlatform = await this.$api.info.getSystemPlatform()
       console.log('config', this.config, this.systemPlatform)
       // eslint-disable-next-line no-debugger

@@ -30,7 +30,7 @@
           </a-form-item>
           <a-form-item label="绑定IP" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-input v-model="config.server.host"/>
-            <div class="form-help">修改后需要重启应用</div>
+            <div class="form-help">你可以设置0.0.0.0，让其他电脑可以使用此代理服务</div>
           </a-form-item>
           <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-input v-model="config.server.port"/>
@@ -246,7 +246,6 @@ export default {
   computed: {
     speedDnsOptions () {
       const options = []
-      console.log('this.config', this.config)
       if (!this.config || !this.config.server || !this.config.server.dns || !this.config.server.dns.providers) {
         return options
       }
