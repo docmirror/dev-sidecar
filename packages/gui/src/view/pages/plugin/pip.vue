@@ -23,13 +23,6 @@
           <a-input v-model="config.plugin.pip.setting.command"></a-input>
           <div class="form-help">如果你的pip命令改成了其他名字（如pip3），可以在此处修改</div>
         </a-form-item>
-        <a-form-item v-if="isWindows()" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.proxy.setEnv" >
-            开启系统代理时是否同时修改HTTPS_PROXY环境变量
-          </a-checkbox>
-          <div class="form-help">开启ds使用pip命令行时需要勾选此选项，否则会报 wrong version number 异常</div>
-          <div class="form-help">注意：当前已打开的命令行在开关系统代理后并不会实时生效，需要重新打开一个新的命令行窗口</div>
-        </a-form-item>
         <a-form-item label="仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group v-model="config.plugin.pip.setting.registry" @change="onSwitchRegistry"
                          default-value="https://pypi.org/simple/" button-style="solid">
