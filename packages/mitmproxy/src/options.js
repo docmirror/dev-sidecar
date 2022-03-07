@@ -27,6 +27,7 @@ module.exports = (config) => {
     middlewares.push(overwallMiddleware)
   }
   const options = {
+    host: serverConfig.host,
     port: serverConfig.port,
     dnsConfig: {
       providers: dnsUtil.initDNS(serverConfig.dns.providers),

@@ -28,6 +28,10 @@
 
             <a-button class="md-mr-10" icon="profile" @click="openLog()">日志</a-button>
           </a-form-item>
+          <a-form-item label="绑定IP" :label-col="labelCol" :wrapper-col="wrapperCol">
+            <a-input v-model="config.server.host"/>
+            <div class="form-help">修改后需要重启应用</div>
+          </a-form-item>
           <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-input v-model="config.server.port"/>
             <div class="form-help">修改后需要重启应用</div>

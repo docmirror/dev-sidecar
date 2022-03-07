@@ -12,6 +12,7 @@ const defaultDns = require('dns')
 const speedTest = require('../../speed/index.js')
 module.exports = {
   createProxy ({
+    host = config.defaultHost,
     port = config.defaultPort,
     caCertPath,
     caKeyPath,
@@ -41,7 +42,6 @@ module.exports = {
     }
 
     port = ~~port
-
     const speedTestConfig = dnsConfig.speedTest
     const dnsMap = dnsConfig.providers
     if (speedTestConfig) {
@@ -82,7 +82,7 @@ module.exports = {
     )
 
     const server = new http.Server()
-    server.listen(port, '127.0.0.1', () => {
+    server.listen(port, host, () => {
       log.info(`dev-sidecar启动端口: ${port}`)
       server.on('error', (e) => {
         log.error('server error', e)
