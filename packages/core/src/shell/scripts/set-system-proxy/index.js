@@ -70,7 +70,7 @@ async function _winSetProxy (exec, ip, port, setEnv) {
   }
   // http=127.0.0.1:8888;https=127.0.0.1:8888 考虑这种方式
   const proxyPath = extraPath.getProxyExePath()
-  await execFile(proxyPath, ['global', `${ip}:${port}`, lanIpStr])
+  await execFile(proxyPath, ['global', `http=${ip}:${port};https=${ip}:${port}`, lanIpStr])
 
   if (setEnv) {
     log.info('同时设置 https_proxy')
