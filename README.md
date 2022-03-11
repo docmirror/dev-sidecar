@@ -4,6 +4,24 @@
     
 <a href='https://gitee.com/docmirror/dev-sidecar'><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+
+
+
+> ------------------------------重要提醒1---------------------------------
+>
+> 注意：由于electron无法监听windows的关机事件，开着ds情况下直接重启电脑，会导致无法上网，你可以手动启动ds即可恢复网络，你也可以将ds设置为开机自启。
+>
+> 关于此问题的更多讨论请前往：    
+> https://gitee.com/docmirror/dev-sidecar/issues/I49OUL     
+> https://github.com/docmirror/dev-sidecar/issues/109
+>
+> ------------------------------重要提醒2---------------------------------
+>
+> 注意：本应用启动会自动修改系统代理，所以会与其他vpn、fq等代理软件有冲突，请务必不要一起使用。     
+> 本应用主要目的在于直连访问github，如果你已经有飞机了，那建议还是不要用这个自行车（ds）了
+>
+>
+
     
 ## 一、 特性
 
@@ -50,20 +68,7 @@
 
 
 
-> ------------------------------重要提示1--------------------------------- 
-> 
-> 注意：由于electron无法监听windows的关机事件，开着ds情况下直接重启电脑，会导致无法上网，你可以手动启动ds即可恢复网络，你也可以将ds设置为开机自启。
->
-> 关于此问题的更多讨论请前往：    
-> https://gitee.com/docmirror/dev-sidecar/issues/I49OUL     
-> https://github.com/docmirror/dev-sidecar/issues/109
->
-> ------------------------------重要提示2---------------------------------
-> 
-> 注意：本应用启动会自动修改系统代理，所以会与其他vpn、fq等代理软件有冲突，请务必不要一起使用。     
-> 本应用主要目的在于直连访问github，如果你已经有飞机了，那建议还是不要用这个自行车（ds）了
-> 
-> 
+
 
 ## 二、快速开始
 支持windows、Mac、Linux(Ubuntu)
