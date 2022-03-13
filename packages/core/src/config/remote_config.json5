@@ -6,6 +6,11 @@
           proxy: 'github.githubassets.com',
           sni: 'baidu.com',
         }
+      },
+      "www.gstatic.com": {
+        "/recaptcha/.*": {
+          "proxy": "www.recaptcha.net"
+        }
       }
     },
     dns: {

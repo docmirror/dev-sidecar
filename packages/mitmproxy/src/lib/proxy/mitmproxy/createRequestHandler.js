@@ -36,8 +36,12 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
     if (interceptors == null) {
       interceptors = []
     }
-    const reqIncpts = interceptors.filter(item => { return item.requestIntercept != null })
-    const resIncpts = interceptors.filter(item => { return item.responseIntercept != null })
+    const reqIncpts = interceptors.filter(item => {
+      return item.requestIntercept != null
+    })
+    const resIncpts = interceptors.filter(item => {
+      return item.responseIntercept != null
+    })
 
     const requestInterceptorPromise = () => {
       return new Promise((resolve, reject) => {
@@ -131,12 +135,20 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             }
           }
 
+          // rOptions.sigalgs = 'RSA-PSS+SHA256:RSA-PSS+SHA512:ECDSA+SHA256'
+          // rOptions.agent.options.sigalgs = rOptions.sigalgs
+          // rOptions.ciphers = 'TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA256:ECDHE-RSA-AES256-SHA256:HIGH'
+          // rOptions.agent.options.ciphers = rOptions.ciphers
+          // console.log('rOptions:', rOptions)
+          // console.log('agent:', rOptions.agent)
+          // console.log('agent.options:', rOptions.agent.options)
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const end = new Date().getTime()
             const cost = end - start
             if (rOptions.protocol === 'https:') {
               log.info('代理请求返回:', url, cost + 'ms')
             }
+            // console.log('request:', proxyReq, proxyReq.socket)
             if (cost > MAX_SLOW_TIME) {
               countSlow(isDnsIntercept, 'to slow  ' + cost + 'ms')
             }
@@ -243,7 +255,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
                 body += append.body
               }
             }
-            InsertScriptMiddleware.responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, { head, body })
+            InsertScriptMiddleware.responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, {
+              head,
+              body
+            })
           } else {
             next()
           }
