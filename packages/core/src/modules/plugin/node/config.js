@@ -17,7 +17,7 @@ module.exports = {
   //   'cdn.cypress.io': [{ regexp: '/desktop/.*', proxy: 'http://npmmirror.com/mirrors/cypress/' }]
   // },
   variables: {
-    phantomjs_cdnurl: 'https://npmmirror.com/dist/phantomjs',
+    phantomjs_cdnurl: 'https://npmmirror.com/mirrors/phantomjs',
     chromedriver_cdnurl: 'https://npmmirror.com/mirrors/chromedriver',
     sass_binary_site: 'https://npmmirror.com/mirrors/node-sass',
     ELECTRON_MIRROR: 'https://npmmirror.com/mirrors/electron/',
