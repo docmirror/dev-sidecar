@@ -67,14 +67,14 @@
 * 本应用及服务端承诺不收集任何信息。介意者请使用安全模式。
 
 
->
-> ***修改sni可以加速Github访问原理***   
-> 1、SNI（Server Name Indication）：是一项允许服务端部署多个域名网站的技术，具体可以去百度一下     
-> 2、主要是在https连接握手时，客户端会先发一个带有域名clientHello，告诉服务器我要访问哪个域名的网站，给我那个域名的证书     
-> 3、这个域名是明文的，GFW检测到这个域名是github.com就会根据ip和端口实施阻断（并没有直接封杀Github的ip地址）    
-> 4、实际上Github的服务器的443端口默认证书就是github.com，即使你给错误的sni或者不给sni，它还是会返回github.com的证书     
-> 5、所以通过修改sni的域名，就可以规避GFW的拦截，加速github的访问
-> 
+
+ ***修改sni可以加速Github访问原理***   
+* 1、SNI（Server Name Indication）：是一项允许服务端部署多个域名网站的技术，具体可以去百度一下     
+* 2、主要是在https连接握手时，客户端会先发一个带有域名clientHello，告诉服务器我要访问哪个域名的网站，给我那个域名的证书     
+* 3、这个域名是明文的，GFW检测到这个域名是github.com就会根据ip和端口实施阻断（并没有直接封杀Github的ip地址）    
+* 4、实际上Github的服务器的443端口默认证书就是github.com，即使你给错误的sni或者不给sni，它还是会返回github.com的证书     
+* 5、所以通过修改sni的域名，就可以规避GFW的拦截，加速github的访问
+ 
 
 
 
