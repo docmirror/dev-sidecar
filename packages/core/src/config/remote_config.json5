@@ -14,7 +14,7 @@
         '*azureedge.net': 'quad9'
       },
       speedTest: {
-        interval: 60000,
+        interval: 300000,
       },
     }
   },
