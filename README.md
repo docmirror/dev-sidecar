@@ -1,11 +1,11 @@
 # dev-sidecar
 开发者边车，命名取自service-mesh的service-sidecar，意为为开发者打辅助的边车工具（以下简称ds）    
 通过本地代理的方式将https请求代理到一些国内的加速通道上
-    
-<a href='https://gitee.com/docmirror/dev-sidecar'><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
+
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+<a href='https://gitee.com/docmirror/dev-sidecar'><img src='./doc/gitee.png' alt='star'/></a>
 
-
+> Gitee上的同步项目已被封禁，此项目将不再更新 [狗头保命]
 
 > ------------------------------重要提醒1---------------------------------
 >
@@ -365,10 +365,7 @@ npm run electron:build
 </div>
 
 
-2、 加作者好友
-<div style="display: flex; justify-content:space-around;">
-<img height="200px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/me.png">
-</div>
+
 
 
 ## 十、求star
