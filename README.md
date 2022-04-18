@@ -1,17 +1,22 @@
 # dev-sidecar
+
+
 开发者边车，命名取自service-mesh的service-sidecar，意为为开发者打辅助的边车工具（以下简称ds）    
 通过本地代理的方式将https请求代理到一些国内的加速通道上
 
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
 <a href='https://gitee.com/docmirror/dev-sidecar'><img src='./doc/gitee.png' alt='star'/></a>
 
+>
 > Gitee上的同步项目已被封禁，此项目将不再更新 【狗头保命】
-> 
+>
 > 我将继续奋战在开源一线，为社区贡献更多更好的开源项目。    
 > 感兴趣的可以关注我的主页 [【github】](https://github.com/greper)  [【gitee】](https://gitee.com/greper)
-> 
+>
 
-> ------------------------------重要提醒1---------------------------------
+
+
+> ------------------------------重要提醒2---------------------------------
 >
 > 注意：由于electron无法监听windows的关机事件，开着ds情况下直接重启电脑，会导致无法上网，你可以手动启动ds即可恢复网络，你也可以将ds设置为开机自启。
 >
@@ -19,7 +24,8 @@
 > https://gitee.com/docmirror/dev-sidecar/issues/I49OUL     
 > https://github.com/docmirror/dev-sidecar/issues/109
 >
-> ------------------------------重要提醒2---------------------------------
+
+> ------------------------------重要提醒3---------------------------------
 >
 > 注意：本应用启动会自动修改系统代理，所以会与其他代理软件有冲突，请务必不要一起使用。     
 > 本应用主要目的在于直连访问github，如果你已经有飞机了，那建议还是不要用这个自行车（ds）了
