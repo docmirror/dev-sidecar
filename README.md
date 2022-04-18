@@ -8,7 +8,7 @@
 <a href='https://gitee.com/docmirror/dev-sidecar'><img src='./doc/gitee.png' alt='star'/></a>
 
 >
-> Gitee上的同步项目已被封禁，此项目将不再更新 【狗头保命】
+> Gitee上的同步项目已被封禁，此项目将不再更新与维护 【狗头保命】
 >
 > 我将继续奋战在开源一线，为社区贡献更多更好的开源项目。    
 > 感兴趣的可以关注我的主页 [【github】](https://github.com/greper)  [【gitee】](https://gitee.com/greper)
