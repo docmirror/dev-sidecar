@@ -362,7 +362,7 @@ npm run electron:build
 
 1、 加群
 <div style="display: flex; justify-content:space-around;">
-<img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/qq_group.png">
+<img height="230px" src="./doc/qq_group.png">
 </div>
 
 
