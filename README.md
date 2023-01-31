@@ -373,6 +373,7 @@ npm run electron:build
 我的其他项目求star
 * [fast-crud](https://github.com/fast-crud/fast-crud) : 开发crud快如闪电
 * [certd](https://github.com/certd/certd) : 让你的证书永不过期
+* [trident-sync](https://github.com/handsfree-work/trident-sync) : 二次开发项目同步升级工具
 
 ## 十一、感谢
 本项目使用lerna包管理工具   
