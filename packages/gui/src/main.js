@@ -7,6 +7,7 @@ import VueRouter from 'vue-router'
 import routes from './view/router'
 import DsContainer from './view/components/container'
 import './view/style/index.scss'
+import './view/style/theme/dark.scss' // 暗色主题
 
 Vue.config.productionTip = false
 Vue.use(antd)
