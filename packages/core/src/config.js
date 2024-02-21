@@ -150,7 +150,7 @@ const configApi = {
   get,
   set (newConfig) {
     if (newConfig == null) {
-      return
+      return configTarget
     }
 
     const merged = lodash.cloneDeep(defConfig)
@@ -161,6 +161,7 @@ const configApi = {
     mergeApi.deleteNullItems(merged)
     configTarget = merged
     log.info('加载配置完成')
+
     return configTarget
   },
   getDefault () {
