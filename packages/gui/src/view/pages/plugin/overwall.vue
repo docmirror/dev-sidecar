@@ -106,7 +106,7 @@ export default {
   },
   methods: {
     async openExternal (url) {
-      this.$api.ipc.openExternal(url)
+      await this.$api.ipc.openExternal(url)
     },
     async applyAfter () {
       if (this.status.server.enabled) {

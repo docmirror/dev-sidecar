@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     async openExternal (url) {
-      this.$api.ipc.openExternal(url)
+      await this.$api.ipc.openExternal(url)
     },
     onAutoStartChange () {
       this.$api.autoStart.enabled(this.config.app.autoStart.enabled)

@@ -334,7 +334,7 @@ export default {
       this.$api.update.checkForUpdate(fromUser)
     },
     async openExternal (url) {
-      this.$api.ipc.openExternal(url)
+      await this.$api.ipc.openExternal(url)
     },
     onShutdownTipClose (e) {
       this.$confirm({
