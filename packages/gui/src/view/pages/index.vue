@@ -95,8 +95,6 @@
           <div>如果它解决了你的问题，请不要吝啬你的star哟！点这里
             <a-icon style="margin-right:10px;" type="arrow-right" theme="outlined"/>
           </div>
-          <a @click="openExternal('https://gitee.com/docmirror/dev-sidecar')"><img
-            src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
           <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars"
                                                                                     src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
         </div>
@@ -335,7 +333,7 @@ export default {
     doCheckUpdate (fromUser = true) {
       this.$api.update.checkForUpdate(fromUser)
     },
-    openExternal (url) {
+    async openExternal (url) {
       this.$api.ipc.openExternal(url)
     },
     onShutdownTipClose (e) {

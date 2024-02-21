@@ -17,6 +17,9 @@
         <a-tag v-else color="red">
           当前未启动
         </a-tag>
+        <div class="form-help">
+          <a @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">卸载与恢复网络说明</a>
+        </div>
       </a-form-item>
       <a-form-item v-if="isWindows()" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.proxy.setEnv" >
@@ -28,6 +31,26 @@
       <a-form-item v-if="isWindows()" label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
        <a-button @click="loopbackVisible=true">去设置</a-button>
         <div class="form-help">解决OneNote、MicrosoftStore、Outlook等UWP应用开启代理后无法访问网络的问题</div>
+      </a-form-item>
+      <a-form-item label="排除地址配置" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <div>
+          <a-row :gutter="10">
+            <a-col :span="22">
+              <span>访问的域名或IP符合下列格式时，将跳过系统代理</span>
+            </a-col>
+            <a-col :span="2">
+              <a-button type="primary" icon="plus" @click="addExcludeIp()" />
+            </a-col>
+          </a-row>
+          <a-row :gutter="10" v-for="(item,index) of getProxyConfig().excludeIpList" :key='index'>
+            <a-col :span="22">
+              <a-input v-model="getProxyConfig().excludeIpList[index]"></a-input>
+            </a-col>
+            <a-col :span="2">
+              <a-button  type="danger" icon="minus" @click="delExcludeIp(item,index)" />
+            </a-col>
+          </a-row>
+        </div>
       </a-form-item>
     </div>
     <template slot="footer">
@@ -78,6 +101,9 @@ export default {
   mounted () {
   },
   methods: {
+    async openExternal (url) {
+      this.$api.ipc.openExternal(url)
+    },
     async applyAfter () {
       await this.$api.proxy.restart()
     },
@@ -91,6 +117,15 @@ export default {
         }
         this.$message.error('打开失败：' + e.message)
       }
+    },
+    getProxyConfig () {
+      return this.config.proxy
+    },
+    addExcludeIp () {
+      this.getProxyConfig().excludeIpList.unshift('')
+    },
+    delExcludeIp (item, index) {
+      this.getProxyConfig().excludeIpList.splice(index, 1)
     }
   }
 }

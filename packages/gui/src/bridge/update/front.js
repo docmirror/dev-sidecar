@@ -63,14 +63,10 @@ function install (app, api) {
         function openGithubUrl () {
           api.ipc.openExternal('https://github.com/docmirror/dev-sidecar/releases')
         }
-        function openGiteeUrl () {
-          api.ipc.openExternal('https://gitee.com/docmirror/dev-sidecar/releases')
-        }
         return <div>
-          <div>请前往github或gitee项目release页面下载新版本手动安装</div>
+          <div>请前往github项目release页面下载新版本手动安装</div>
           <ol>
             <li><a onClick={openGithubUrl}>Github release</a></li>
-            <li><a onClick={openGiteeUrl}>Gitee release</a></li>
           </ol>
         </div>
       }

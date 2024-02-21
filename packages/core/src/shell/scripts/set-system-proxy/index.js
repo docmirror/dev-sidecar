@@ -6,38 +6,10 @@ const Registry = require('winreg')
 
 const execute = Shell.execute
 const execFile = Shell.execFile
-const refreshInternetPs = require('./refresh-internet')
-const PowerShell = require('node-powershell')
 const log = require('../../../utils/util.log')
-const path = require('path')
-const childProcess = require('child_process')
-const util = require('util')
-const fs = require('fs')
-const _exec = util.promisify(childProcess.exec)
 const extraPath = require('../extra-path/index')
-const _lanIP = [
-  'localhost',
-  '127.*',
-  '10.*',
-  '172.16.*',
-  '172.17.*',
-  '172.18.*',
-  '172.19.*',
-  '172.20.*',
-  '172.21.*',
-  '172.22.*',
-  '172.23.*',
-  '172.24.*',
-  '172.25.*',
-  '172.26.*',
-  '172.27.*',
-  '172.28.*',
-  '172.29.*',
-  '172.30.*',
-  '172.31.*',
-  '192.168.*'
-]
-//   '<-loopback>'
+
+let config = null
 
 async function _winUnsetProxy (exec, setEnv) {
   // eslint-disable-next-line no-constant-condition
@@ -59,14 +31,23 @@ async function _winUnsetProxy (exec, setEnv) {
       }
     })
   } catch (e) {
-    log.error(e)
+    log.error('启动系统代理失败:', e)
   }
 }
 
 async function _winSetProxy (exec, ip, port, setEnv) {
+  // 延迟加载config
+  if (config == null) {
+    config = require('../../../config.js')
+  }
+
   let lanIpStr = ''
-  for (const string of _lanIP) {
-    lanIpStr += string + ';'
+  for (const excludeIpPattern of config.get().proxy.excludeIpList) {
+    // 跳过起注释作用的数据
+    if (excludeIpPattern.indexOf('#') >= 0) {
+      continue
+    }
+    lanIpStr += excludeIpPattern + ';'
   }
   // http=127.0.0.1:8888;https=127.0.0.1:8888 考虑这种方式
   const proxyPath = extraPath.getProxyExePath()

@@ -12,7 +12,7 @@
           本应用开机自启
         </a-checkbox>
         <div class="form-help">
-          windows下建议开启开机自启。<a @click="openExternal('https://gitee.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">更多说明参考</a>
+          windows下建议开启开机自启。<a @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">更多说明参考</a>
         </div>
       </a-form-item>
       <a-form-item v-if="systemPlatform ==='mac'" label="隐藏Dock图标" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -93,7 +93,7 @@ export default {
   mounted () {
   },
   methods: {
-    openExternal (url) {
+    async openExternal (url) {
       this.$api.ipc.openExternal(url)
     },
     onAutoStartChange () {

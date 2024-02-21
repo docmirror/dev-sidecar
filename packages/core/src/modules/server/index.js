@@ -69,9 +69,9 @@ const serverApi = {
     serverConfig.plugin = allConfig.plugin
     // fireStatus('ing') // 启动中
     const basePath = serverConfig.setting.userBasePath
-    const runningConfig = path.join(basePath, '/running.json')
-    fs.writeFileSync(runningConfig, JSON5.stringify(serverConfig, null, 2))
-    const serverProcess = fork(mitmproxyPath, [runningConfig])
+    const runningConfigPath = path.join(basePath, '/running.json')
+    fs.writeFileSync(runningConfigPath, JSON5.stringify(serverConfig, null, 2))
+    const serverProcess = fork(mitmproxyPath, [runningConfigPath])
     server = {
       id: serverProcess.pid,
       process: serverProcess,
@@ -106,7 +106,7 @@ const serverApi = {
         event.fire('speed', msg.event)
       }
     })
-    return { port: runningConfig.port }
+    return { port: serverConfig.port }
   },
   async kill () {
     if (server) {

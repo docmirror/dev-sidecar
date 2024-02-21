@@ -26,7 +26,7 @@ export function apiInit (app) {
       },
       invoke,
       send,
-      openExternal (href) {
+      async openExternal (href) {
         shell.openExternal(href)
       },
       openPath (file) {

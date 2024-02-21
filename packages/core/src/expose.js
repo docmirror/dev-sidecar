@@ -83,7 +83,7 @@ async function shutdown () {
   try {
     const plugins = []
     for (const key in plugin) {
-      if (status.plugin[key].enabled && plugin[key].close) {
+      if (status.plugin[key] && status.plugin[key].enabled && plugin[key].close) {
         const close = async () => {
           try {
             await plugin[key].close()
@@ -99,7 +99,7 @@ async function shutdown () {
       await Promise.all(plugins)
     }
   } catch (error) {
-    log.error('插件关闭失败'.error)
+    log.error('插件关闭失败', error)
   }
 
   if (status.proxy.enabled) {

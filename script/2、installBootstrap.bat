@@ -1,0 +1,3 @@
+cd ../
+
+lerna bootstrap

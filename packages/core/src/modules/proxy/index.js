@@ -54,7 +54,108 @@ module.exports = {
     name: '系统代理',
     use: 'local',
     other: [],
-    setEnv: false
+    setEnv: false,
+    excludeIpList: [
+      // region 中国大陆，可直接访问，无需代理
+
+      // 中国大陆域名，大部分可直接访问，无需代理
+      '*.cn',
+      'cn.*',
+
+      // CSDN
+      '*.csdn.net',
+
+      // 百度
+      '*.baidu.com',
+
+      // 腾讯
+      '*.tencent.com',
+      '*.qq.com',
+      '*.weixin.com',
+      '*.wechat.com',
+
+      // 阿里
+      '*.alipay.com',
+      '*.taobao.com',
+      '*.tmall.com',
+      '*.aliyun.com',
+      '*.dingtalk.com', // 不排除会导致钉钉的团队文档打不开（原因未知）
+
+      // Gitee
+      'gitee.com',
+      '*.gitee.com',
+      '*.gitee.io',
+
+      // OSS
+      '*.sonatype.org',
+      // Maven镜像
+      '*.maven.org',
+      // Maven Repository
+      '*.mvnrepository.com',
+      'challenges.cloudflare.com', // 在访问 mvnrepository.com 的人机校验时使用，国内可直接访问，所以不需要代理，代理了反而变慢了。
+
+      // 苹果
+      '*.apple.com',
+      '*.icloud.com',
+
+      // 微软
+      '*.microsoft.com',
+      '*.windows.com',
+      '*.office.com',
+      '*.office.net',
+      '*.live.com',
+      '*.msn.com',
+
+      // WPS
+      '*.wps.com',
+
+      // 奇虎
+      '*.qihoo.com',
+      '*.qihucdn.com',
+      // 360
+      '*.360.com',
+      '*.360safe.com',
+      '*.360buyimg.com',
+      '*.360buy.com',
+
+      // 京东
+      '*.jd.com',
+      '*.jcloud.com',
+      '*.jcloudcs.com',
+      '*.jcloudcache.com',
+      '*.jcloudcdn.com',
+      '*.jcloudlb.com',
+
+      // endregion
+
+      // 本地地址，无需代理
+      'localhost',
+      'localhost.*', // 部分VPN会在host中添加这种格式的域名指向127.0.0.1，所以也排除掉
+      '127.*',
+      'test.*', // 本地开发时，测试用的虚拟域名格式，无需代理
+
+      // 服务器端常用地址，无需代理
+      '10.*',
+      '172.16.*',
+      '172.17.*',
+      '172.18.*',
+      '172.19.*',
+      '172.20.*',
+      '172.21.*',
+      '172.22.*',
+      '172.23.*',
+      '172.24.*',
+      '172.25.*',
+      '172.26.*',
+      '172.27.*',
+      '172.28.*',
+      '172.29.*',
+      '172.30.*',
+      '172.31.*',
+
+      // 局域网地址，无需代理
+      '192.168.*'
+    ]
   },
   status: {
     enabled: false,

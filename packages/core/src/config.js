@@ -6,22 +6,14 @@ const JSON5 = require('json5').default
 const request = require('request')
 const path = require('path')
 const log = require('./utils/util.log')
+const mergeApi = require('./merge.js')
+
 let configTarget = lodash.cloneDeep(defConfig)
 
 function get () {
   return configTarget
 }
 
-function _deleteDisabledItem (target) {
-  lodash.forEach(target, (item, key) => {
-    if (item == null) {
-      delete target[key]
-    }
-    if (lodash.isObject(item)) {
-      _deleteDisabledItem(item)
-    }
-  })
-}
 const getDefaultConfigBasePath = function () {
   return get().server.setting.userBasePath
 }
@@ -40,46 +32,6 @@ function _getConfigPath () {
   return dir + '/config.json5'
 }
 
-function doMerge (defObj, newObj) {
-  if (newObj == null) {
-    return defObj
-  }
-  const defObj2 = { ...defObj }
-  const newObj2 = {}
-  for (const key in newObj) {
-    const newValue = newObj[key]
-    const defValue = defObj[key]
-    if (newValue != null && defValue == null) {
-      newObj2[key] = newValue
-      continue
-    }
-    if (lodash.isEqual(newValue, defValue)) {
-      delete defObj2[key]
-      continue
-    }
-
-    if (lodash.isArray(newValue)) {
-      delete defObj2[key]
-      newObj2[key] = newValue
-      continue
-    }
-    if (lodash.isObject(newValue)) {
-      newObj2[key] = doMerge(defValue, newValue)
-      delete defObj2[key]
-      continue
-    } else {
-      // 基础类型，直接覆盖
-      delete defObj2[key]
-      newObj2[key] = newValue
-      continue
-    }
-  }
-  // defObj 里面剩下的是被删掉的
-  lodash.forEach(defObj2, (defValue, key) => {
-    newObj2[key] = null
-  })
-  return newObj2
-}
 let timer
 const configApi = {
   async startAutoDownloadRemoteConfig () {
@@ -112,7 +64,19 @@ const configApi = {
           return
         }
         if (response && response.statusCode === 200) {
-          fs.writeFileSync(_getRemoteSavePath(), body)
+          // 尝试解析远程配置，如果解析失败，则不保存它
+          let remoteConfig
+          try {
+            remoteConfig = JSON5.parse(body)
+          } catch (e) {
+            log.error('远程配置内容格式不正确:', body)
+            remoteConfig = null
+          }
+
+          if (remoteConfig != null) {
+            fs.writeFileSync(_getRemoteSavePath(), body)
+          }
+
           resolve()
         } else {
           const message = '下载远程配置失败:' + response.message + ',code:' + response.statusCode
@@ -128,13 +92,15 @@ const configApi = {
     }
     try {
       const path = _getRemoteSavePath()
-      log.info('读取合并远程配置文件:', path)
       if (fs.existsSync(path)) {
+        log.info('读取远程配置文件:', path)
         const file = fs.readFileSync(path)
         return JSON5.parse(file.toString())
+      } else {
+        log.warn('远程配置文件不存在:', path)
       }
     } catch (e) {
-      log.info('远程配置读取有误', e)
+      log.warn('远程配置读取失败:', e)
     }
 
     return {}
@@ -142,34 +108,39 @@ const configApi = {
   /**
    * 保存自定义的 config
    * @param newConfig
-   * @param remoteConfig //远程配置
    */
   save (newConfig) {
     // 对比默认config的异同
-    // configApi.set(newConfig)
-    const defConfig = configApi.getDefault()
+    let defConfig = configApi.getDefault()
+
+    // 如果开启了远程配置，则读取远程配置，合并到默认配置中
     if (get().app.remoteConfig.enabled === true) {
-      doMerge(defConfig, configApi.readRemoteConfig())
+      defConfig = mergeApi.doMerge(defConfig, configApi.readRemoteConfig())
     }
-    const saveConfig = doMerge(defConfig, newConfig)
-    fs.writeFileSync(_getConfigPath(), JSON5.stringify(saveConfig, null, 2))
+
+    // 计算新配置与默认配置（启用远程配置时，含远程配置）的差异，并保存到 config.json5 中
+    const diffConfig = mergeApi.doDiff(defConfig, newConfig)
+    fs.writeFileSync(_getConfigPath(), JSON5.stringify(diffConfig, null, 2))
     configApi.reload()
-    return saveConfig
+    return diffConfig
   },
-  doMerge,
+  doMerge: mergeApi.doMerge,
+  doDiff: mergeApi.doDiff,
   /**
-   * 读取后合并配置
+   * 读取 config.json5 后，合并配置
    * @returns {*}
    */
   reload () {
     const path = _getConfigPath()
+    let userConfig
     if (!fs.existsSync(path)) {
-      return configApi.get()
+      userConfig = {}
+    } else {
+      const file = fs.readFileSync(path)
+      userConfig = JSON5.parse(file.toString())
     }
-    const file = fs.readFileSync(path)
-    const userConfig = JSON5.parse(file.toString())
-    configApi.set(userConfig)
-    const config = configApi.get()
+
+    const config = configApi.set(userConfig)
     return config || {}
   },
   update (partConfig) {
@@ -181,17 +152,13 @@ const configApi = {
     if (newConfig == null) {
       return
     }
-    const merged = lodash.cloneDeep(newConfig)
-    const clone = lodash.cloneDeep(defConfig)
-    function customizer (objValue, srcValue) {
-      if (lodash.isArray(objValue)) {
-        return srcValue
-      }
-    }
-    lodash.mergeWith(merged, clone, customizer)
-    lodash.mergeWith(merged, configApi.readRemoteConfig(), customizer)
-    lodash.mergeWith(merged, newConfig, customizer)
-    _deleteDisabledItem(merged)
+
+    const merged = lodash.cloneDeep(defConfig)
+    const remoteConfig = configApi.readRemoteConfig()
+
+    mergeApi.doMerge(merged, remoteConfig)
+    mergeApi.doMerge(merged, newConfig)
+    mergeApi.deleteNullItems(merged)
     configTarget = merged
     log.info('加载配置完成')
     return configTarget
