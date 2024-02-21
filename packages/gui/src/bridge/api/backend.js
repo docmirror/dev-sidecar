@@ -109,7 +109,7 @@ function _getSettingsPath () {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }
-  return dir + '/setting.json5'
+  return dir + '/setting.json'
 }
 
 function invoke (api, param) {
