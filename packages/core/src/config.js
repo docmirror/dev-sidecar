@@ -17,12 +17,12 @@ function get () {
 const getDefaultConfigBasePath = function () {
   return get().server.setting.userBasePath
 }
-function _getRemoteSavePath () {
+function _getRemoteSavePath (prefix = '') {
   const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }
-  return path.join(dir, 'remote_config.json5')
+  return path.join(dir, prefix + 'remote_config.json5')
 }
 function _getConfigPath () {
   const dir = getDefaultConfigBasePath()
@@ -64,6 +64,10 @@ const configApi = {
           return
         }
         if (response && response.statusCode === 200) {
+          const originalRemoteSavePath = _getRemoteSavePath('original_')
+          fs.writeFileSync(originalRemoteSavePath, body)
+          log.info('保存原来的远程配置文件成功:', originalRemoteSavePath)
+
           // 尝试解析远程配置，如果解析失败，则不保存它
           let remoteConfig
           try {
@@ -74,7 +78,9 @@ const configApi = {
           }
 
           if (remoteConfig != null) {
-            fs.writeFileSync(_getRemoteSavePath(), body)
+            const remoteSavePath = _getRemoteSavePath()
+            fs.writeFileSync(remoteSavePath, JSON.stringify(remoteConfig, null, '\t'))
+            log.info('保存远程配置文件成功:', remoteSavePath)
           }
 
           resolve()
@@ -120,7 +126,9 @@ const configApi = {
 
     // 计算新配置与默认配置（启用远程配置时，含远程配置）的差异，并保存到 config.json5 中
     const diffConfig = mergeApi.doDiff(defConfig, newConfig)
-    fs.writeFileSync(_getConfigPath(), JSON5.stringify(diffConfig, null, 2))
+    const configPath = _getConfigPath()
+    fs.writeFileSync(configPath, JSON.stringify(diffConfig, null, '\t'))
+    log.info('保存自定义配置文件成功:', configPath)
     configApi.reload()
     return diffConfig
   },
