@@ -25,7 +25,7 @@ async function _winUnsetProxy (exec, setEnv) {
     regKey.get('HTTPS_PROXY', (err) => {
       if (!err) {
         regKey.remove('HTTPS_PROXY', async (err) => {
-          log.info('删除环境变量https_proxy', err)
+          log.warn('删除环境变量https_proxy失败:', err)
           await exec('setx DS_REFRESH "1"')
         })
       }
@@ -41,17 +41,19 @@ async function _winSetProxy (exec, ip, port, setEnv) {
     config = require('../../../config.js')
   }
 
-  let lanIpStr = ''
-  for (const excludeIpPattern of config.get().proxy.excludeIpList) {
-    // 跳过起注释作用的数据
-    if (excludeIpPattern.indexOf('#') >= 0) {
-      continue
+  let excludeIpStr = ''
+  for (const ip in config.get().proxy.excludeIpList) {
+    if (config.get().proxy.excludeIpList[ip] === true) {
+      excludeIpStr += ip + ';'
     }
-    lanIpStr += excludeIpPattern + ';'
   }
+
   // http=127.0.0.1:8888;https=127.0.0.1:8888 考虑这种方式
   const proxyPath = extraPath.getProxyExePath()
-  await execFile(proxyPath, ['global', `http=http://${ip}:${port};https=http://${ip}:${port}`, lanIpStr])
+  const execFun = 'global'
+  const proxyAddr = `http=http://${ip}:${port};https=http://${ip}:${port}`
+  log.info(`执行“设置系统代理”的命令: ${proxyPath} ${execFun} ${proxyAddr} ${excludeIpStr}`)
+  await execFile(proxyPath, [execFun, proxyAddr, excludeIpStr])
 
   if (setEnv) {
     log.info('同时设置 https_proxy')
@@ -77,8 +79,7 @@ const executor = {
       return _winUnsetProxy(exec, setEnv)
     } else {
       // 设置代理
-
-      log.info('设置代理', ip, port, setEnv)
+      log.info('设置代理:', ip, port, setEnv)
       return _winSetProxy(exec, ip, port, setEnv)
     }
   },

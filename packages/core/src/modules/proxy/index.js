@@ -34,7 +34,7 @@ const ProxyPlugin = function (context) {
         log.info('关闭系统代理成功')
         return true
       } catch (err) {
-        log.error('关闭系统代理失败', err)
+        log.error('关闭系统代理失败:', err)
         return false
       }
     },
@@ -55,107 +55,186 @@ module.exports = {
     use: 'local',
     other: [],
     setEnv: false,
-    excludeIpList: [
-      // region 中国大陆，可直接访问，无需代理
+    excludeIpList: {
+      // region 常用国内可访问域名
 
-      // 中国大陆域名，大部分可直接访问，无需代理
-      '*.cn',
-      'cn.*',
+      // 中国大陆
+      '*.cn': true,
+      'cn.*': true,
+      '*china*': true,
+
+      // 系统之家
+      '*.xitongzhijia.net': true,
 
       // CSDN
-      '*.csdn.net',
+      '*.csdn.net': true,
 
       // 百度
-      '*.baidu.com',
+      '*.baidu.com': true,
+      '*.baiducontent.com': true,
+      '*.bdimg.com': true,
+      '*.bdstatic.com': true,
+      '*.bdydns.com': true,
 
       // 腾讯
-      '*.tencent.com',
-      '*.qq.com',
-      '*.weixin.com',
-      '*.wechat.com',
+      '*.tencent.com': true,
+      '*.qq.com': true,
+      '*.weixin.com': true,
+      '*.weixinbridge.com': true,
+      '*.wechat.com': true,
+      '*.idqqimg.com': true,
+      '*.gtimg.com': true,
+      '*.qpic.com': true,
+      '*.qlogo.com': true,
+      '*.myapp.com': true,
+      '*.myqcloud.com': true,
 
       // 阿里
-      '*.alipay.com',
-      '*.taobao.com',
-      '*.tmall.com',
-      '*.aliyun.com',
-      '*.dingtalk.com', // 不排除会导致钉钉的团队文档打不开（原因未知）
+      '*.aliyun.com': true,
+      '*.alipay.com': true,
+      '*.taobao.com': true,
+      '*.tmall.com': true,
+      '*.alipayobjects.com': true,
+      '*.dingtalk.com': true,
+      '*.mmstat.com': true,
+      '*.alicdn.com': true,
+      '*.hdslb.com': true,
 
       // Gitee
-      'gitee.com',
-      '*.gitee.com',
-      '*.gitee.io',
+      'gitee.com': true,
+      '*.gitee.com': true,
+      '*.gitee.io': true,
+      '*.giteeusercontent.com': true,
+
+      // Mozilla Firefox
+      '*.mozilla.org': true,
+      '*.mozilla.com': true,
+      '*.mozilla.net': true,
+      '*.firefox.com': true,
+      '*.firefox.org': true,
+      '*.mozillademos.org': true,
+      '*.mozillians.org': true,
+      '*.mozillians.net': true,
+      '*.mozillians.com': true,
 
       // OSS
-      '*.sonatype.org',
+      '*.sonatype.org': true,
       // Maven镜像
-      '*.maven.org',
+      '*.maven.org': true,
       // Maven Repository
-      '*.mvnrepository.com',
-      'challenges.cloudflare.com', // 在访问 mvnrepository.com 的人机校验时使用，国内可直接访问，所以不需要代理，代理了反而变慢了。
+      '*.mvnrepository.com': true,
+      'challenges.cloudflare.com': true, // 在访问 mvnrepository.com 的人机校验时使用，国内可直接访问，所以不需要代理，代理了反而变慢了。
 
       // 苹果
-      '*.apple.com',
-      '*.icloud.com',
+      '*.apple.com': true,
+      '*.icloud.com': true,
 
       // 微软
-      '*.microsoft.com',
-      '*.windows.com',
-      '*.office.com',
-      '*.office.net',
-      '*.live.com',
-      '*.msn.com',
+      '*.microsoft.com': true,
+      '*.windows.com': true,
+      '*.office.com': true,
+      '*.office.net': true,
+      '*.live.com': true,
+      '*.msn.com': true,
 
       // WPS
-      '*.wps.com',
+      '*.wps.com': true,
 
       // 奇虎
-      '*.qihoo.com',
-      '*.qihucdn.com',
+      '*.qihoo.com': true,
+      '*.qihucdn.com': true,
       // 360
-      '*.360.com',
-      '*.360safe.com',
-      '*.360buyimg.com',
-      '*.360buy.com',
+      '*.360.com': true,
+      '*.360safe.com': true,
+      '*.360buyimg.com': true,
+      '*.360buy.com': true,
 
       // 京东
-      '*.jd.com',
-      '*.jcloud.com',
-      '*.jcloudcs.com',
-      '*.jcloudcache.com',
-      '*.jcloudcdn.com',
-      '*.jcloudlb.com',
+      '*.jd.com': true,
+      '*.jcloud.com': true,
+      '*.jcloudcs.com': true,
+      '*.jcloudcache.com': true,
+      '*.jcloudcdn.com': true,
+      '*.jcloudlb.com': true,
+
+      // 哔哩哔哩
+      '*.bilibili.com': true,
+      '*.bilivideo.com.com': true,
+      '*.biliapi.net': true,
+
+      // 移动
+      '*.10086.com': true,
+      '*.10086cloud.com': true,
+
+      // 移动：139邮箱
+      '*.139.com': true,
+
+      // 迅雷
+      '*.xunlei.com': true,
+
+      // 网站ICP备案查询
+      '*.icpapi.com': true,
+
+      // AGE动漫
+      '*.agedm.*': true,
+      '*.zhimg.com': true,
+      '*.bdxiguaimg.com': true,
+      '*.toutiaoimg.com': true,
+      '*.bytecdntp.com': true,
+      '*.bytegoofy.com': true,
+      '*.toutiao.com': true,
+      '*.toutiaovod.com': true,
+      '*.aliyuncs.com': true,
+      '*.127.net': true,
+      '43.240.74.134': true,
+
+      // ZzzFun
+      '*.zzzfun.one': true,
+      '*.zzzfun.vip': true,
+
+      // 必应
+      '*.bing.com': true,
+
+      // 我的个人域名
+      '*.easyj.icu': true,
+
+      // 未知公司
+      '*.bcebos.com': true,
+      'icannwiki.org': true,
+      '*.icannwiki.org': true,
+      '*.sectigo.com': true,
+      '*.pingdom.net': true,
 
       // endregion
 
       // 本地地址，无需代理
-      'localhost',
-      'localhost.*', // 部分VPN会在host中添加这种格式的域名指向127.0.0.1，所以也排除掉
-      '127.*',
-      'test.*', // 本地开发时，测试用的虚拟域名格式，无需代理
+      'localhost': true,
+      'localhost.*': true, // 部分VPN会在host中添加这种格式的域名指向127.0.0.1，所以也排除掉
+      '127.*': true,
+      'test.*': true, // 本地开发时，测试用的虚拟域名格式，无需代理
 
       // 服务器端常用地址，无需代理
-      '10.*',
-      '172.16.*',
-      '172.17.*',
-      '172.18.*',
-      '172.19.*',
-      '172.20.*',
-      '172.21.*',
-      '172.22.*',
-      '172.23.*',
-      '172.24.*',
-      '172.25.*',
-      '172.26.*',
-      '172.27.*',
-      '172.28.*',
-      '172.29.*',
-      '172.30.*',
-      '172.31.*',
+      '10.*': true,
+      '172.16.*': true,
+      '172.17.*': true,
+      '172.18.*': true,
+      '172.19.*': true,
+      '172.20.*': true,
+      '172.21.*': true,
+      '172.22.*': true,
+      '172.23.*': true,
+      '172.24.*': true,
+      '172.25.*': true,
+      '172.26.*': true,
+      '172.27.*': true,
+      '172.28.*': true,
+      '172.29.*': true,
+      '172.30.*': true,
+      '172.31.*': true,
 
       // 局域网地址，无需代理
-      '192.168.*'
-    ]
+      '192.168.*': true
+    }
   },
   status: {
     enabled: false,

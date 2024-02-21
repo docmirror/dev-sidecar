@@ -39,15 +39,15 @@
               <span>访问的域名或IP符合下列格式时，将跳过系统代理</span>
             </a-col>
             <a-col :span="2">
-              <a-button type="primary" icon="plus" @click="addExcludeIp()" />
+              <a-button type="primary" icon="plus" @click="addExcludeIp()"/>
             </a-col>
           </a-row>
-          <a-row :gutter="10" v-for="(item,index) of getProxyConfig().excludeIpList" :key='index'>
+          <a-row :gutter="10" v-for="(item,index) of excludeIpList" :key='index'>
             <a-col :span="22">
-              <a-input v-model="getProxyConfig().excludeIpList[index]"></a-input>
+              <a-input :disabled="item.value === false" v-model="item.key"></a-input>
             </a-col>
             <a-col :span="2">
-              <a-button  type="danger" icon="minus" @click="delExcludeIp(item,index)" />
+              <a-button type="danger" icon="minus" @click="delExcludeIp(item,index)"/>
             </a-col>
           </a-row>
         </div>
@@ -77,7 +77,7 @@
         <div>1、此设置用于解决OneNote、MicrosoftStore、Outlook等UWP应用无法访问网络的问题。</div>
         <div>2、点击右上方按钮，打开EnableLoopback，然后按下图所示操作即可</div>
         <div>3、注意：此操作需要<b style="color:red">DevSidecar以管理员身份启动</b>，才能打开下面的EnableLoopback设置界面</div>
-        <img style="margin-top:20px;border:1px solid #eee" width="80%" src="loopback.png" />
+        <img style="margin-top:20px;border:1px solid #eee" width="80%" src="loopback.png"/>
       </div>
 
     </a-drawer>
@@ -93,7 +93,8 @@ export default {
   data () {
     return {
       key: 'proxy',
-      loopbackVisible: false
+      loopbackVisible: false,
+      excludeIpList: []
     }
   },
   async created () {
@@ -102,7 +103,13 @@ export default {
   },
   methods: {
     async openExternal (url) {
-      this.$api.ipc.openExternal(url)
+      await this.$api.ipc.openExternal(url)
+    },
+    ready () {
+      this.initExcludeIpList()
+    },
+    async applyBefore () {
+      this.submitExcludeIpList()
     },
     async applyAfter () {
       await this.$api.proxy.restart()
@@ -121,11 +128,29 @@ export default {
     getProxyConfig () {
       return this.config.proxy
     },
+    initExcludeIpList () {
+      this.excludeIpList = []
+      for (const key in this.config.proxy.excludeIpList) {
+        const value = this.config.proxy.excludeIpList[key]
+        this.excludeIpList.push({
+          key, value
+        })
+      }
+    },
     addExcludeIp () {
-      this.getProxyConfig().excludeIpList.unshift('')
+      this.excludeIpList.unshift({ key: '', value: true })
     },
     delExcludeIp (item, index) {
-      this.getProxyConfig().excludeIpList.splice(index, 1)
+      this.excludeIpList.splice(index, 1)
+    },
+    submitExcludeIpList () {
+      const excludeIpList = {}
+      for (const item of this.excludeIpList) {
+        if (item.key) {
+          excludeIpList[item.key] = item.value
+        }
+      }
+      this.config.proxy.excludeIpList = excludeIpList
     }
   }
 }

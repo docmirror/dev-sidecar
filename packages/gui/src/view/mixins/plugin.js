@@ -41,6 +41,9 @@ export default {
       }
     },
     async apply () {
+      if (this.applyLoading === true) {
+        return
+      }
       this.applyLoading = true
       await this.applyBefore()
       await this.saveConfig()
