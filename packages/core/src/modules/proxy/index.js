@@ -34,7 +34,7 @@ const ProxyPlugin = function (context) {
         log.info('关闭系统代理成功')
         return true
       } catch (err) {
-        log.error('关闭系统代理失败:', err)
+        log.error('关闭系统代理失败', err)
         return false
       }
     },
@@ -208,7 +208,7 @@ module.exports = {
       // endregion
 
       // 本地地址，无需代理
-      'localhost': true,
+      localhost: true,
       'localhost.*': true, // 部分VPN会在host中添加这种格式的域名指向127.0.0.1，所以也排除掉
       '127.*': true,
       'test.*': true, // 本地开发时，测试用的虚拟域名格式，无需代理
