@@ -111,6 +111,25 @@ const configApi = {
 
     return {}
   },
+  readRemoteConfigStr () {
+    if (get().app.remoteConfig.enabled !== true) {
+      return '{}'
+    }
+    try {
+      const path = _getRemoteSavePath()
+      if (fs.existsSync(path)) {
+        log.info('读取远程配置文件内容:', path)
+        const file = fs.readFileSync(path)
+        return file.toString()
+      } else {
+        log.warn('远程配置文件不存在:', path)
+      }
+    } catch (e) {
+      log.warn('远程配置内容读取失败:', e)
+    }
+
+    return '{}'
+  },
   /**
    * 保存自定义的 config
    * @param newConfig
