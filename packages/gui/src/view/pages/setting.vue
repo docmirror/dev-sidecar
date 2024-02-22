@@ -100,9 +100,17 @@ export default {
       this.$api.autoStart.enabled(this.config.app.autoStart.enabled)
       this.saveConfig()
     },
-    onRemoteConfigEnabledChange () {
+    async onRemoteConfigEnabledChange () {
       this.saveConfig()
-      this.$message.info('请重启加速服务')
+      if (this.config.app.remoteConfig.enabled === true) {
+        await this.$api.config.startAutoDownloadRemoteConfig()
+      } else {
+        this.$api.config.reload()
+      }
+      if (this.status.server.enabled || this.status.proxy.enabled) {
+        await this.$api.proxy.restart()
+        this.$api.server.restart()
+      }
     }
   }
 }
