@@ -5,7 +5,6 @@
 通过本地代理的方式将https请求代理到一些国内的加速通道上
 
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
-<a href='https://gitee.com/docmirror/dev-sidecar'><img src='./doc/gitee.png' alt='star'/></a>
 
 >
 > Gitee上的同步项目已被封禁，此项目将不再更新与维护 【狗头保命】
@@ -26,7 +25,6 @@
 > 注意：由于electron无法监听windows的关机事件，开着ds情况下直接重启电脑，会导致无法上网，你可以手动启动ds即可恢复网络，你也可以将ds设置为开机自启。
 >
 > 关于此问题的更多讨论请前往：    
-> https://gitee.com/docmirror/dev-sidecar/issues/I49OUL     
 > https://github.com/docmirror/dev-sidecar/issues/109
 >
 
@@ -40,17 +38,17 @@
     
 ## 一、 特性
 
-### 1、 dns优选（解决***污染问题）
+### 1.1、 dns优选（解决***污染问题）
 * 根据网络状况智能解析最佳域名ip地址，获取最佳网络速度     
 * 解决一些网站和库无法访问或访问速度慢的问题
 * 建议遇到打开比较慢的国外网站，可以优先尝试将该域名添加到dns设置中（注意：被***封杀的无效）      
 
-### 2、 请求拦截
+### 1.2、 请求拦截
 * 拦截打不开的网站，代理到加速镜像站点上去。    
 * 可配置多个镜像站作为备份    
 * 具备测速机制，当访问失败或超时之后，自动切换到备用站点，使得目标服务高可用
 
-### 3、 github加速
+### 1.3、 github加速
 * github 直连加速 (通过修改sni实现，感谢 [fastGithub](https://github.com/dotnetcore/FastGithub) 提供的思路)
 * release、source、zip下载加速
 * clone 加速
@@ -67,11 +65,11 @@
 > 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过`加速服务->基本设置->启用脚本`进行关闭）。
 
 
-### 4、 Stack Overflow 加速
+### 1.4、 Stack Overflow 加速
 * 将ajax.google.com代理到加速CDN上     
 * recaptcha 图片验证码加速
 
-### 5、 npm加速
+### 1.5、 npm加速
 * 支持开启npm代理
 * 官方与淘宝npm registry一键切换,
 * 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
@@ -87,11 +85,10 @@
 ## 二、快速开始
 支持windows、Mac、Linux(Ubuntu)
 
-### DevSidecar桌面应用
+### 2.1、DevSidecar桌面应用
  
-#### 1 下载安装包 
+#### 1）下载安装包 
 * release下载     
-[Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 [Github Release](https://github.com/docmirror/dev-sidecar/releases)  
 
 > Windows: 请选择DevSidecar-x.x.x.exe     
@@ -104,13 +101,13 @@
 > 注意：由于没有买应用证书，所以应用在下载安装时会有“未知发行者”等安全提示，选择保留即可。
 
 
-#### 2 安装后打开    
+#### 2）安装后打开    
 
 > 注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
 ![](./doc/index.png)     
 
-#### 3 安装根证书     
+#### 3）安装根证书     
        
 第一次打开会提示安装证书，根据提示操作即可      
 
@@ -122,12 +119,12 @@
 
 > 火狐浏览器需要[手动安装证书](#3浏览器打开提示证书不受信任) 
 
-#### 4 开始加速吧      
+#### 4）开始加速吧      
 去试试打开github   
  
 
 
-### 开启前 vs 开启后 
+### 2.2、开启前 vs 开启后 
  
 |  | 开启前 | 开启后 |
 | ---- | ---- | ---- |
@@ -138,14 +135,14 @@
 
 ## 三、模式说明
 
-### 安全模式
+### 3.1、安全模式
 * 此模式：关闭拦截、关闭增强、开启dns优选、开启测速
 * 最安全，无需安装证书，可以在浏览器地址栏左侧查看域名证书
 * 功能也最弱，只有特性1，相当于查询github的国外ip，手动改hosts一个意思。
 * github的可访问性不稳定，取决于IP测速，如果有绿色ip存在，就 `有可能` 可以直连访问。
   ![](./doc/speed.png)
 
-### 默认模式
+### 3.2、默认模式
 * 此模式：开启拦截、关闭增强、开启dns优选、开启测速
 * 需要安装证书，通过修改sni直连访问github
 * 功能上包含特性1/2/3/4。
@@ -156,7 +153,8 @@
 * 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被***封杀的无效）
 
 ### 其他加速
- 1. git clone 加速      
+
+#### 1）git clone 加速      
  
  方式1：快捷复制：     
   > 开启脚本支持，然后在复制clone链接下方，即可复制到加速链接    
@@ -167,14 +165,14 @@
   > clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来  
   > 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
 
- 2. github.com的镜像网站(注意：不能登录)   
-   >1. [hub.fastgit.org](https://hub.fastgit.org/) 
-   >2. [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限
+#### 2）github.com的镜像网站(注意：不能登录)   
+   > 1. [hub.fastgit.org](https://hub.fastgit.org/) 
+   > 2. [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限
 
 
 ## 五、api
 
-### 拦截配置
+### 5.1、拦截配置
 没有配置域名的不会拦截，其他根据配置进行拦截处理
 ```js
 const intercepts = {
@@ -210,32 +208,32 @@ const intercepts = {
 }
 ```
 
-### DNS优选配置
+### 5.2、DNS优选配置
 某些域名解析出来的ip会无法访问，（比如api.github.com会被解析到新加坡的ip上，新加坡的服务器在上午挺好，到了晚上就卡死，基本不可用）        
 通过从dns上获取ip列表，切换不同的ip进行尝试，最终会挑选到一个最快的ip
 
 ```js
  dns: {
     mapping: {
-      //
       'api.github.com': 'usa', // "解决push的时候需要输入密码的问题",
       'gist.github.com': 'usa' // 解决gist无法访问的问题
-      "*.githubusercontent.com": "usa" // 解决github头像经常下载不到的问题
+      '*.githubusercontent.com': 'usa' // 解决github头像经常下载不到的问题
     }
-  },
+  }
 ```
 注意：暂时只支持IPv4的解析
 
+
 ## 六、问题排查
 
-### 1、dev-sidecar的前两个开关没有处于打开状态
+### 6.1、dev-sidecar的前两个开关没有处于打开状态
 1. 尝试将开关按钮手动打开
 2. 请尝试右键dev-sidecar图标，点退出。再重新打开
 3. 如果还不行，请将日志发送给作者
    
 如果是mac系统，可能是下面的原因
 
-#### 1.1 Mac系统使用时，首页的系统代理开关无法打开
+#### 1）Mac系统使用时，首页的系统代理开关无法打开
 出现这个问题可能是没有开启系统代理命令的执行权限   
 ```
 networksetup -setwebproxy 'WiFi' 127.0.0.1 1181 
@@ -248,7 +246,7 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 1181
 >系统偏好设置—>安全性与隐私—> 通用—> 高级—> 访问系统范围的偏好设置需要输入管理员密码（取消勾选）
 
 
-### 2、没有加速效果
+### 6.2、没有加速效果
 
 >本应用仅支持https加速，请务必确认你访问的网站地址是https开头的    
 
@@ -268,23 +266,23 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 1181
 正常情况下ds在“系统代理”开关打开时，会自动设置系统代理。
 
 
-### 3、浏览器打开提示证书不受信任
+### 6.3、浏览器打开提示证书不受信任
 
 ![](./doc/crt-error.png)
 一般是证书安装位置不对，重新安装证书后，重启浏览器
 
-#### 3.1 windows: 请确认证书已正确安装在“信任的根证书颁发机构”下    
+#### 1）windows: 请确认证书已正确安装在“信任的根证书颁发机构”下    
 
-#### 3.2 mac: 请确认证书已经被安装并已经设置信任。   
+#### 2）mac: 请确认证书已经被安装并已经设置信任。   
 
-#### 3.3 火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书  
+#### 3）火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书  
 
 >    1、火狐浏览器->选项->隐私与安全->证书->查看证书   
 >    2、证书颁发机构->导入    
 >    3、选择证书文件`C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为`~/.dev-sidecar`目录）    
 >    4、勾选信任由此证书颁发机构来标识网站，确定即可      
 
-### 4. 打开github显示连接超时
+### 6.4、打开github显示连接超时
 ```html
 DevSidecar Warning:
 Error: www.github.com:443, 代理请求超时
@@ -293,18 +291,18 @@ Error: www.github.com:443, 代理请求超时
 2、如果是安全模式，则是因为不稳定导致的，等一会再刷新试试     
 3、如果是增强模式，则是由于访问人数过多，正常现象
 
-### 5、查看日志是否有报错
+### 6.5、查看日志是否有报错
  如果还是不行，请在下方加作者好友，将服务日志发送给作者进行分析             
  日志打开方式：加速服务->右边日志按钮->打开日志文件夹    
 
 ![](./doc/log.png)   
 
 
-### 6、某些原本可以打开的网站打不开了
+### 6.6、某些原本可以打开的网站打不开了
 1、可以尝试关闭pac    
 2、可以将域名加入白名单
 
-### 7、应用意外关闭导致没有网络了
+### 6.7、应用意外关闭导致没有网络了
 应用开启后会自动修改系统代理设置，正常退出会自动关闭系统代理    
 当应用意外关闭时，可能会因为没有将系统代理恢复，从而导致完全无法上网。
 
@@ -314,7 +312,7 @@ Error: www.github.com:443, 代理请求超时
  3、如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启   
 
 
-### 8、卸载应用后上不了网，git请求不了
+### 6.8、卸载应用后上不了网，git请求不了
 如果你在卸载应用前，没有正常退出app，就有可能无法上网。请按如下步骤操作恢复您的网络：
 
 1、关闭系统代理设置，参见：[手动关闭系统代理设置](./doc/recover.md)   
@@ -329,12 +327,33 @@ npm config delete proxy
 npm config delete https-proxy
 ```
 
+
 ## 七、在其他程序使用
 * [java程序使用](./doc/other.md#Java程序使用)
 
+
 ## 八、贡献代码
 
-### 开发调试模式启动
+### 8.1、准备环境
+
+#### 1）安装 `nodejs`
+
+推荐安装 nodejs 16.x版本，其他版本未做测试
+
+#### 2）安装 `lerna` 和 `phantomjs`
+
+运行如下命令即可安装所需依赖：
+> 注：lerna指定为6.x版本，更高版本会导致打包失败（不兼容导致）
+```shell
+npm install cnpm -g --registry=https://registry.npm.taobao.org
+
+cnpm install lerna@6 -g
+
+cnpm install phantomjs -g
+
+```
+
+### 8.2、开发调试模式启动
 
 运行如下命令即可开发模式启动
 ```shell
@@ -342,7 +361,7 @@ git clone https://github.com/docmirror/dev-sidecar
 
 cd dev-sidecar 
 
-npm install lerna -g
+# 注意不要使用 `npm install` 来安装依赖，因为 `lerna bootstrap` 会自动安装依赖
 lerna bootstrap
 
 cd packages/gui
@@ -352,13 +371,13 @@ npm run electron
 ```
 > 如果electron依赖包下载不动，可以开启ds的npm加速
 
-### 打包成可执行文件
+### 8.3、打包成可执行文件
 ```shell
 # 先执行上面的步骤，然后运行如下命令打包成可执行文件
 npm run electron:build
 ```
 
-### 提交pr
+### 8.4、提交pr
 如果你想将你的修改贡献出来，请提交pr
 
 

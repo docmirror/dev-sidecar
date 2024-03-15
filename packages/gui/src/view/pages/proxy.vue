@@ -17,6 +17,9 @@
         <a-tag v-else color="red">
           当前未启动
         </a-tag>
+        <div class="form-help">
+          <a @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">卸载与恢复网络说明</a>
+        </div>
       </a-form-item>
       <a-form-item v-if="isWindows()" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.proxy.setEnv" >
@@ -28,6 +31,26 @@
       <a-form-item v-if="isWindows()" label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
        <a-button @click="loopbackVisible=true">去设置</a-button>
         <div class="form-help">解决OneNote、MicrosoftStore、Outlook等UWP应用开启代理后无法访问网络的问题</div>
+      </a-form-item>
+      <a-form-item label="排除地址配置" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <div>
+          <a-row :gutter="10">
+            <a-col :span="22">
+              <span>访问的域名或IP符合下列格式时，将跳过系统代理</span>
+            </a-col>
+            <a-col :span="2">
+              <a-button type="primary" icon="plus" @click="addExcludeIp()"/>
+            </a-col>
+          </a-row>
+          <a-row :gutter="10" v-for="(item,index) of excludeIpList" :key='index'>
+            <a-col :span="22">
+              <a-input :disabled="item.value === false" v-model="item.key"></a-input>
+            </a-col>
+            <a-col :span="2">
+              <a-button type="danger" icon="minus" @click="delExcludeIp(item,index)"/>
+            </a-col>
+          </a-row>
+        </div>
       </a-form-item>
     </div>
     <template slot="footer">
@@ -54,7 +77,7 @@
         <div>1、此设置用于解决OneNote、MicrosoftStore、Outlook等UWP应用无法访问网络的问题。</div>
         <div>2、点击右上方按钮，打开EnableLoopback，然后按下图所示操作即可</div>
         <div>3、注意：此操作需要<b style="color:red">DevSidecar以管理员身份启动</b>，才能打开下面的EnableLoopback设置界面</div>
-        <img style="margin-top:20px;border:1px solid #eee" width="80%" src="loopback.png" />
+        <img style="margin-top:20px;border:1px solid #eee" width="80%" src="loopback.png"/>
       </div>
 
     </a-drawer>
@@ -70,7 +93,8 @@ export default {
   data () {
     return {
       key: 'proxy',
-      loopbackVisible: false
+      loopbackVisible: false,
+      excludeIpList: []
     }
   },
   async created () {
@@ -78,6 +102,15 @@ export default {
   mounted () {
   },
   methods: {
+    async openExternal (url) {
+      await this.$api.ipc.openExternal(url)
+    },
+    ready () {
+      this.initExcludeIpList()
+    },
+    async applyBefore () {
+      this.submitExcludeIpList()
+    },
     async applyAfter () {
       await this.$api.proxy.restart()
     },
@@ -91,6 +124,33 @@ export default {
         }
         this.$message.error('打开失败：' + e.message)
       }
+    },
+    getProxyConfig () {
+      return this.config.proxy
+    },
+    initExcludeIpList () {
+      this.excludeIpList = []
+      for (const key in this.config.proxy.excludeIpList) {
+        const value = this.config.proxy.excludeIpList[key]
+        this.excludeIpList.push({
+          key, value
+        })
+      }
+    },
+    addExcludeIp () {
+      this.excludeIpList.unshift({ key: '', value: true })
+    },
+    delExcludeIp (item, index) {
+      this.excludeIpList.splice(index, 1)
+    },
+    submitExcludeIpList () {
+      const excludeIpList = {}
+      for (const item of this.excludeIpList) {
+        if (item.key) {
+          excludeIpList[item.key] = item.value
+        }
+      }
+      this.config.proxy.excludeIpList = excludeIpList
     }
   }
 }

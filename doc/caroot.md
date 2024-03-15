@@ -46,7 +46,6 @@ DevSidecar在第一次启动时会在本地随机生成一份根证书，当有�
 
 > 对于应用来源风险：    
 > 请勿从未知网站下载DevSidecar应用，认准官方版本发布地址  
-> [Gitee Release](https://gitee.com/docmirror/dev-sidecar/releases)  
 > [Github Release](https://github.com/docmirror/dev-sidecar/releases)
 > 
 > 或者从源码自行编译安装

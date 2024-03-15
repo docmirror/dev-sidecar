@@ -7,6 +7,7 @@ export default {
   },
   data () {
     return {
+      key: undefined,
       config: undefined,
       status: {},
       labelCol: { span: 4 },
@@ -31,16 +32,19 @@ export default {
       this.status = this.$status
 
       const config = await this.$api.config.reload()
-      this.$set(this, 'config', config)
+      this.setConfig(config)
       this.systemPlatform = await this.$api.info.getSystemPlatform()
-      console.log('config', this.config, this.systemPlatform)
-      // eslint-disable-next-line no-debugger
+
+      this.printConfig()
 
       if (this.ready) {
         return this.ready(this.config)
       }
     },
     async apply () {
+      if (this.applyLoading === true) {
+        return
+      }
       this.applyLoading = true
       await this.applyBefore()
       await this.saveConfig()
@@ -71,8 +75,11 @@ export default {
       })
     },
     saveConfig () {
-      return this.$api.config.save(this.config).then(() => {
+      return this.$api.config.save(this.config).then((ret) => {
         this.$message.info('设置已保存')
+        this.setConfig(ret.allConfig)
+        this.printConfig('after saveConfig(), ')
+        return ret
       })
     },
     getConfig (key) {
@@ -81,6 +88,12 @@ export default {
         return {}
       }
       return value
+    },
+    setConfig (newConfig) {
+      this.$set(this, 'config', newConfig)
+    },
+    printConfig (prefix = '') {
+      console.log(`${prefix}${this.key} page config:`, this.config, this.systemPlatform)
     },
     getStatus (key) {
       const value = lodash.get(this.status, key)

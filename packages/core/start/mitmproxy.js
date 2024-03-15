@@ -3,9 +3,11 @@ const server = require('@docmirror/mitmproxy')
 const JSON5 = require('json5')
 const path = require('path')
 const home = process.env.USER_HOME || process.env.HOME || 'C:/Users/Administrator/'
-let configPath = path.join(home, '.dev-sidecar/running.json')
+let configPath
 if (process.argv && process.argv.length > 3) {
   configPath = process.argv[2]
+} else {
+  configPath = path.join(home, '.dev-sidecar/running.json')
 }
 
 const fs = require('fs')

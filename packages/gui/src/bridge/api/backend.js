@@ -64,7 +64,8 @@ const localApi = {
     },
     save (setting = {}) {
       const settingPath = _getSettingsPath()
-      fs.writeFileSync(settingPath, JSON5.stringify(setting, null, 2))
+      fs.writeFileSync(settingPath, JSON.stringify(setting, null, '\t'))
+      log.info('保存setting配置文件成功', settingPath)
     }
   },
   /**
@@ -108,7 +109,7 @@ function _getSettingsPath () {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }
-  return dir + '/setting.json5'
+  return dir + '/setting.json'
 }
 
 function invoke (api, param) {

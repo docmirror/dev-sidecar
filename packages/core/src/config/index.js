@@ -1,14 +1,18 @@
 const path = require('path')
+
 function getUserBasePath () {
   const userHome = process.env.USERPROFILE || process.env.HOME || '/'
   return path.resolve(userHome, './.dev-sidecar')
 }
+
 function getRootCaCertPath () {
   return getUserBasePath() + '/dev-sidecar.ca.crt'
 }
+
 function getRootCaKeyPath () {
   return getUserBasePath() + '/dev-sidecar.ca.key.pem'
 }
+
 module.exports = {
   app: {
     mode: 'default',
@@ -17,7 +21,7 @@ module.exports = {
     },
     remoteConfig: {
       enabled: true,
-      url: 'https://gitee.com/docmirror/dev-sidecar/raw/master/packages/core/src/config/remote_config.json5'
+      url: 'https://github.com/docmirror/dev-sidecar/raw/master/packages/core/src/config/remote_config.json5'
     },
     dock: {
       hideWhenWinClose: false
@@ -84,22 +88,29 @@ module.exports = {
       'github.githubassets.com': {
         '.*': {
           proxy: 'github.githubassets.com',
-          backup: [
-            'assets.fastgit.org'
-          ],
-          sni: 'assets.fastgit.org'
+          sni: 'baidu.com'
+        }
+      },
+      'camo.githubusercontent.com': {
+        '.*': {
+          proxy: 'camo.githubusercontent.com',
+          sni: 'baidu.com'
+        }
+      },
+      'collector.github.com': {
+        '.*': {
+          proxy: 'collector.github.com',
+          sni: 'baidu.com'
         }
       },
       'customer-stories-feed.github.com': {
         '.*': { proxy: 'customer-stories-feed.fastgit.org' }
       },
-
       'raw.githubusercontent.com': {
         '.*': {
           proxy: 'raw.githubusercontent.com',
           sni: 'baidu.com'
         }
-        // '.*': { proxy: 'raw.fastgit.org' }
       },
       'user-images.githubusercontent.com': {
         '.*': {
@@ -191,18 +202,25 @@ module.exports = {
       }
     },
     whiteList: {
+      '*.cn': true,
+      'cn.*': true,
+      '*china*': true,
+      'dingtalk.com': true,
+      '*.dingtalk.com': true,
       'apple.com': true,
       '*.apple.com': true,
       'microsoft.com': true,
       '*.microsoft.com': true,
       'alipay.com': true,
       '*.alipay.com': true,
-      'pay.weixin.qq.com': true,
-      'www.baidu.com': true
+      'qq.com': true,
+      '*.qq.com': true,
+      'baidu.com': true,
+      '*.baidu.com': true
     },
-    // sniList: {
+    sniList: {
     //   'github.com': 'abaidu.com'
-    // },
+    },
     dns: {
       providers: {
         aliyun: {
@@ -227,20 +245,15 @@ module.exports = {
         }
       },
       mapping: {
-        // 'assets.fastgit.org': 'usa',
+        '*github*.com': 'quad9',
+        '*github.io': 'quad9',
+        '*stackoverflow.com': 'quad9',
         '*.electronjs.org': 'quad9',
         '*amazonaws.com': 'quad9',
-        '*githubusercontent.com': 'quad9',
         '*yarnpkg.com': 'quad9',
         '*cloudfront.net': 'quad9',
         '*cloudflare.com': 'quad9',
-        '*github.io': 'quad9',
         'img.shields.io': 'quad9',
-        '*.githubusercontent.com': 'quad9',
-        '*.githubassets.com': 'quad9',
-        // "解决push的时候需要输入密码的问题",
-        'github.com': 'quad9',
-        '*github.com': 'quad9',
         '*.vuepress.vuejs.org': 'quad9',
         'gh.docmirror.top': 'quad9',
         '*v2ex.com': 'quad9',
@@ -250,7 +263,7 @@ module.exports = {
       },
       speedTest: {
         enabled: true,
-        interval: 60000,
+        interval: 300000,
         hostnameList: ['github.com'],
         dnsProviders: ['usa', 'quad9', 'rubyfish']
       }

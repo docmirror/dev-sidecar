@@ -10,7 +10,7 @@ module.exports = {
     }
   },
   targets: {
-    'github.com': true,
+    '*github*.com': true,
     '*wikimedia.org': true,
     'v2ex.com': true,
     '*azureedge.net': true,
@@ -30,9 +30,12 @@ module.exports = {
     '*telegram.org': true,
     '*amazon.com': true,
     '*googleapis.com': true,
+    '*.google-analytics.com': true,
     '*cloudflareinsights.com': true,
     '*.intlify.dev': true,
-    '*segment.io': true
+    '*segment.io': true,
+    '*.shields.io': true,
+    '*.jsdelivr.net': true
   },
   pac: {
     enabled: true,

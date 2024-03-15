@@ -190,7 +190,7 @@ export default {
     },
     doSave () {
       return api.config.save(this.targetConfig).then(ret => {
-        this.$emit('change', ret)
+        this.$emit('change', ret.diffConfig)
       })
     },
     deleteDnsMapping (item, index) {

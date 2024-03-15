@@ -105,8 +105,8 @@ export default {
   mounted () {
   },
   methods: {
-    openExternal (url) {
-      this.$api.ipc.openExternal(url)
+    async openExternal (url) {
+      await this.$api.ipc.openExternal(url)
     },
     async applyAfter () {
       if (this.status.server.enabled) {
