@@ -3,7 +3,7 @@ const path = require('path')
 
 function getExtraPath () {
   let extraPath = process.env.DS_EXTRA_PATH
-  log.info('extraPath', extraPath)
+  log.info('extraPath:', extraPath)
   if (!extraPath) {
     extraPath = __dirname
   }

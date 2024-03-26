@@ -6,7 +6,7 @@ const NodePlugin = function (context) {
       try {
         await nodeApi.setVariables()
       } catch (err) {
-        log.warn('set variables error', err)
+        log.warn('set variables error:', err)
       }
 
       const ip = '127.0.0.1'

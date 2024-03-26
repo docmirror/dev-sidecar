@@ -24,17 +24,22 @@ module.exports = (config) => {
   if (!overwallConfig.pac.pacFileAbsolutePath) {
     overwallConfig.pac.pacFileAbsolutePath = path.join(setting.rootDir, overwallConfig.pac.pacFilePath)
   }
-  const overwallMiddleware = createOverwallMiddleware(overwallConfig)
+
+  // 插件列表
   const middlewares = []
+
+  // 梯子插件：如果启用了，则添加到插件列表中
+  const overwallMiddleware = createOverwallMiddleware(overwallConfig)
   if (overwallMiddleware) {
     middlewares.push(overwallMiddleware)
   }
+
   const options = {
     host: serverConfig.host,
     port: serverConfig.port,
     dnsConfig: {
       providers: dnsUtil.initDNS(serverConfig.dns.providers),
-      mapping: dnsMapping,
+      mapping: matchUtil.domainMapRegexply(dnsMapping),
       speedTest: config.dns.speedTest
     },
     setting,
@@ -42,13 +47,13 @@ module.exports = (config) => {
     middlewares,
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]
-      const inWhiteList = matchUtil.matchHostname(whiteList, hostname) != null
+      const inWhiteList = matchUtil.matchHostname(whiteList, hostname, 'in whiteList') != null
       if (inWhiteList) {
         log.info('白名单域名，不拦截', hostname)
         return false // 所有都不拦截
       }
       // 配置了拦截的域名，将会被代理
-      const matched = !!matchUtil.matchHostname(intercepts, hostname)
+      const matched = !!matchUtil.matchHostname(intercepts, hostname, 'matched intercepts')
       if (matched === true) {
         return matched // 拦截
       }
@@ -57,7 +62,7 @@ module.exports = (config) => {
     createIntercepts: (context) => {
       const rOptions = context.rOptions
       const hostname = rOptions.hostname
-      const interceptOpts = matchUtil.matchHostname(intercepts, hostname)
+      const interceptOpts = matchUtil.matchHostname(intercepts, hostname, 'get interceptOpts')
       if (!interceptOpts) { // 该域名没有配置拦截器，直接过
         return
       }

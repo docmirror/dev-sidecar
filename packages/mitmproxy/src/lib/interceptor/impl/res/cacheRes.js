@@ -81,7 +81,6 @@ module.exports = {
     }
 
     res.setHeader('Dev-Sidecar-Cache-Response-Interceptor', 'cacheRes:maxAge=' + maxAge)
-    log.info('[cacheRes]', 'maxAge=' + maxAge)
   },
   is (interceptOpt) {
     const maxAge = cacheReq.getMaxAge(interceptOpt)
