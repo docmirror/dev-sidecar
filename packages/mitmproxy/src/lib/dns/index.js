@@ -1,6 +1,8 @@
 const DNSOverTLS = require('./tls.js')
 const DNSOverHTTPS = require('./https.js')
 const DNSOverIpAddress = require('./ipaddress.js')
+const matchUtil = require('../../utils/util.match')
+
 module.exports = {
   initDNS (dnsProviders) {
     const dnsMap = {}
@@ -15,18 +17,7 @@ module.exports = {
     return dnsMap
   },
   hasDnsLookup (dnsConfig, hostname) {
-    let providerName = dnsConfig.mapping[hostname]
-    if (!providerName) {
-      for (const target in dnsConfig.mapping) {
-        if (target.indexOf('*') < 0) {
-          continue
-        }
-        const regexp = target.replace(/\./g, '\\.').replace(/\*/g, '.*')
-        if (hostname.match(regexp)) {
-          providerName = dnsConfig.mapping[target]
-        }
-      }
-    }
+    const providerName = matchUtil.matchHostname(dnsConfig.mapping, hostname, 'get dns providerName')
     if (providerName) {
       return dnsConfig.providers[providerName]
     }
