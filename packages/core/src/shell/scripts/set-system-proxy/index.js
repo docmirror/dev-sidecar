@@ -49,7 +49,10 @@ async function _winSetProxy (exec, ip, port, setEnv) {
   }
 
   const proxyPath = extraPath.getProxyExePath()
-  await execFile(proxyPath, ['global', `http=http://${ip}:${port};https=http://${ip}:${port}`, excludeIpStr])
+  const execFun = 'global'
+  const proxyAddr = `http=http://${ip}:${port};https=http://${ip}:${port}`
+  log.info(`执行“设置系统代理”的程序: ${proxyPath} ${execFun} ${proxyAddr} ......(省略排除IP列表)`)
+  await execFile(proxyPath, [execFun, proxyAddr, excludeIpStr])
 
   if (setEnv) {
     log.info('同时设置 https_proxy')
@@ -71,11 +74,11 @@ const executor = {
     const { ip, port, setEnv } = params
     if (ip == null) {
       // 清空代理
-      log.info('关闭代理')
+      log.info('关闭windows系统代理')
       return _winUnsetProxy(exec, setEnv)
     } else {
       // 设置代理
-      log.info('设置代理:', ip, port, setEnv)
+      log.info('设置windows系统代理:', ip, port, setEnv)
       return _winSetProxy(exec, ip, port, setEnv)
     }
   },

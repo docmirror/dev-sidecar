@@ -34,7 +34,7 @@ const ProxyPlugin = function (context) {
         log.info('关闭系统代理成功')
         return true
       } catch (err) {
-        log.error('关闭系统代理失败', err)
+        log.error('关闭系统代理失败:', err)
         return false
       }
     },

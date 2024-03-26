@@ -29,7 +29,7 @@ function _getConfigPath () {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }
-  return dir + '/config.json'
+  return path.join(dir, 'config.json')
 }
 
 let timer
@@ -43,7 +43,7 @@ const configApi = {
         await configApi.downloadRemoteConfig()
         configApi.reload()
       } catch (e) {
-        log.error(e)
+        log.error('定时下载远程配置并重载配置失败', e)
       }
     }
     await download()
@@ -56,10 +56,10 @@ const configApi = {
     const remoteConfigUrl = get().app.remoteConfig.url
     // eslint-disable-next-line handle-callback-err
     return new Promise((resolve, reject) => {
-      log.info('下载远程配置：', remoteConfigUrl)
+      log.info('开始下载远程配置:', remoteConfigUrl)
       request(remoteConfigUrl, (error, response, body) => {
         if (error) {
-          log.error('下载远程配置失败', error)
+          log.error('下载远程配置失败, error:', error, ', response:', response, ', body:', body)
           reject(error)
           return
         }
@@ -73,7 +73,7 @@ const configApi = {
           try {
             remoteConfig = JSON5.parse(body)
           } catch (e) {
-            log.error('远程配置内容格式不正确:', body)
+            log.error(`远程配置内容格式不正确, url: ${remoteConfigUrl}, body: ${body}`)
             remoteConfig = null
           }
 
@@ -96,8 +96,8 @@ const configApi = {
     if (get().app.remoteConfig.enabled !== true) {
       return {}
     }
+    const path = _getRemoteSavePath()
     try {
-      const path = _getRemoteSavePath()
       if (fs.existsSync(path)) {
         log.info('读取远程配置文件:', path)
         const file = fs.readFileSync(path)
@@ -106,7 +106,7 @@ const configApi = {
         log.warn('远程配置文件不存在:', path)
       }
     } catch (e) {
-      log.warn('远程配置读取失败:', e)
+      log.warn('远程配置读取失败:', path, ', error:', e)
     }
 
     return {}

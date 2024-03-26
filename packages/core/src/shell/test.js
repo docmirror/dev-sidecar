@@ -10,18 +10,18 @@
 //   }
 // )
 
-// var process = require('child_process')
+// const process = require('child_process')
 //
-// var cmd = 'set'
+// const cmd = 'set'
 // process.exec(cmd, function (error, stdout, stderr) {
 //   console.log('error:' + error)
 //   console.log('stdout:' + stdout)
 //   console.log('stderr:' + stderr)
 // })
 
-// var HttpsProxyAgent = require('https-proxy-agent')
-// var proxy = 'http://user:pass@xxx.com:port'
-// var agent = new HttpsProxyAgent(proxy)
+// const HttpsProxyAgent = require('https-proxy-agent')
+// const proxy = 'http://user:pass@xxx.com:port'
+// const agent = new HttpsProxyAgent(proxy)
 // const https = require('https')
 // https.get('https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js', (res) => {
 //   console.log('状态码:', res.statusCode)

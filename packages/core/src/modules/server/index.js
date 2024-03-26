@@ -86,16 +86,16 @@ const serverApi = {
       }
     }
     serverProcess.on('beforeExit', (code) => {
-      log.warn('server process beforeExit', code)
+      log.warn('server process beforeExit, code:', code)
     })
     serverProcess.on('SIGPIPE', (code, signal) => {
-      log.warn('server process SIGPIPE', code, signal)
+      log.warn(`server process SIGPIPE, code: ${code}, signal:`, signal)
     })
     serverProcess.on('exit', (code, signal) => {
-      log.warn('server process exit', code, signal)
+      log.warn(`server process exit, code: ${code}, signal:`, signal)
     })
     serverProcess.on('uncaughtException', (err, origin) => {
-      log.error('server process uncaughtException', err)
+      log.error('server process uncaughtException:', err)
     })
     serverProcess.on('message', function (msg) {
       log.info('收到子进程消息', msg.type, msg.event.key, msg.message)
@@ -130,13 +130,13 @@ const serverApi = {
         // fireStatus('ing')// 关闭中
         server.close((err) => {
           if (err) {
-            log.warn('close error', err, ',', err.code, ',', err.message, ',', err.errno)
+            log.warn('close error:', err)
             if (err.code === 'ERR_SERVER_NOT_RUNNING') {
               log.info('代理服务关闭成功')
               resolve()
               return
             }
-            log.warn('代理服务关闭失败', err)
+            log.warn('代理服务关闭失败:', err)
             reject(err)
           } else {
             log.info('代理服务关闭成功')
