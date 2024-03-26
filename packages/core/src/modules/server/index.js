@@ -67,6 +67,11 @@ const serverApi = {
       }
     }
     serverConfig.plugin = allConfig.plugin
+
+    if (allConfig.proxy && allConfig.proxy.enabled) {
+      serverConfig.proxy = allConfig.proxy
+    }
+
     // fireStatus('ing') // 启动中
     const basePath = serverConfig.setting.userBasePath
     const runningConfigPath = path.join(basePath, '/running.json')
@@ -125,13 +130,13 @@ const serverApi = {
         // fireStatus('ing')// 关闭中
         server.close((err) => {
           if (err) {
-            log.info('close error', err, ',', err.code, ',', err.message, ',', err.errno)
+            log.warn('close error', err, ',', err.code, ',', err.message, ',', err.errno)
             if (err.code === 'ERR_SERVER_NOT_RUNNING') {
               log.info('代理服务关闭成功')
               resolve()
               return
             }
-            log.info('代理服务关闭失败', err)
+            log.warn('代理服务关闭失败', err)
             reject(err)
           } else {
             log.info('代理服务关闭成功')

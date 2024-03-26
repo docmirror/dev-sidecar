@@ -1,5 +1,5 @@
 const contextPath = '/____ds_script____/'
-const monkey = require('../../monkey')
+const monkey = require('../../../monkey')
 const CryptoJs = require('crypto-js')
 function getScript (key, script) {
   const scriptUrl = contextPath + key

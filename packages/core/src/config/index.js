@@ -52,14 +52,14 @@ module.exports = {
     intercepts: {
       'github.com': {
         '/.*/.*/releases/download/': {
-          redirect: 'download.fastgit.org',
+          redirect: 'gh.api.99988866.xyz/https://github.com',
           desc: 'release文件加速下载跳转地址'
         },
         '/.*/.*/archive/': {
-          redirect: 'download.fastgit.org'
+          redirect: 'gh.api.99988866.xyz/https://github.com'
         },
         '/.*/.*/blame/': {
-          redirect: 'hub.fastgit.org'
+          redirect: 'gh.api.99988866.xyz/https://github.com'
         },
         '^/[^/]+/[^/]+(/releases(/.*)?)?$': {
           script: [
@@ -69,15 +69,17 @@ module.exports = {
         },
         '/.*': {
           proxy: 'github.com',
-          // proxy: 'gh.docmirror.top/_proxy',
           desc: '目前禁掉sni就可以直接访问，如果后续github.com的ip被封锁，只能再走proxy模式',
           sni: 'baidu.com'
+        },
+        '/fluidicon.png': {
+          cacheDays: 365,
+          desc: 'Github那只猫的图片，缓存1年'
+        },
+        '^/[^/]+/[^/]+/pull/\\d+/open_with_menu.*$': {
+          cacheDays: 1,
+          desc: 'PR详情页：标题右边那个Code按钮的HTML代理请求地址，感觉上应该可以缓存。暂时先设置为缓存1天'
         }
-        // '/.*/.*/raw11/': {
-        //   replace: '(.+)\\/raw\\/(.+)',
-        //   proxy: 'raw.fastgit.org$1/$2',
-        //   sni: 'baidu.com'
-        // }
       },
       'github-releases.githubusercontent.com': {
         '.*': {
@@ -95,6 +97,10 @@ module.exports = {
         '.*': {
           proxy: 'camo.githubusercontent.com',
           sni: 'baidu.com'
+        },
+        '^[a-zA-Z0-9/]+(\\?.*)?$': {
+          cacheDays: 365,
+          desc: '图片，缓存1年'
         }
       },
       'collector.github.com': {
@@ -116,12 +122,30 @@ module.exports = {
         '.*': {
           proxy: 'user-images.githubusercontent.com',
           sni: 'baidu.com'
+        },
+        '^/.*\\.png(\\?.*)?$': {
+          cacheDays: 365,
+          desc: '用户在PR或issue等内容中上传的图片，缓存1年。注：每张图片都有唯一的ID，不会重复，可以安心缓存'
+        }
+      },
+      'private-user-images.githubusercontent.com': {
+        '.*': {
+          proxy: 'private-user-images.githubusercontent.com',
+          sni: 'baidu.com'
+        },
+        '^/.*\\.png(\\?.*)?$': {
+          cacheDays: 365,
+          desc: '用户在PR或issue等内容中上传的图片，缓存1年。注：每张图片都有唯一的ID，不会重复，可以安心缓存'
         }
       },
       'avatars.githubusercontent.com': {
         '.*': {
           proxy: 'avatars.githubusercontent.com',
           sni: 'baidu.com'
+        },
+        '^/u/\\d+.*$': {
+          cacheDays: 365,
+          desc: '用户头像，缓存1年'
         }
       },
       'api.github.com': {

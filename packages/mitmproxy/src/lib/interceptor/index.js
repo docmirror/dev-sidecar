@@ -1,9 +1,25 @@
-const proxy = require('./impl/proxy')
-const redirect = require('./impl/redirect')
-const abort = require('./impl/abort')
-const success = require('./impl/success')
-const script = require('./impl/script')
-const sni = require('./impl/sni')
-const modules = [proxy, redirect, abort, script, success, sni]
+// request interceptor impls
+const success = require('./impl/req/success')
+const redirect = require('./impl/req/redirect')
+const abort = require('./impl/req/abort')
+
+const cacheReq = require('./impl/req/cacheReq')
+
+const proxy = require('./impl/req/proxy')
+const sni = require('./impl/req/sni')
+
+// response interceptor impls
+const cacheRes = require('./impl/res/cacheRes')
+const script = require('./impl/res/script')
+
+const modules = [
+  // request interceptor impls
+  success, redirect, abort,
+  cacheReq,
+  proxy, sni,
+
+  // response interceptor impls
+  cacheRes, script
+]
 
 module.exports = modules
