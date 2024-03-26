@@ -76,7 +76,7 @@ module.exports = {
           cacheDays: 365,
           desc: 'Github那只猫的图片，缓存1年'
         },
-        '^/[^/]+/[^/]+/pull/\\d+/open_with_menu.*$': {
+        '^(/[^/]+){2}/pull/\\d+/open_with_menu.*$': {
           cacheDays: 7,
           desc: 'PR详情页：标题右边那个Code按钮的HTML代理请求地址，感觉上应该可以缓存。暂时先设置为缓存7天'
         }
