@@ -58,11 +58,6 @@ module.exports = {
     excludeIpList: {
       // region 常用国内可访问域名
 
-      // 中国大陆
-      '*.cn': true,
-      'cn.*': true,
-      '*china*': true,
-
       // 系统之家
       '*.xitongzhijia.net': true,
 
