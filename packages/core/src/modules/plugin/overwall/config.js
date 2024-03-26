@@ -12,7 +12,7 @@ module.exports = {
   targets: {
     '*github*.com': true,
     '*.wikimedia.org': true,
-    '*.v2ex.com': true,
+    'v2ex.com': true,
     '*.azureedge.net': true,
     '*.cloudfront.net': true,
     '*.bing.com': true,
@@ -35,7 +35,10 @@ module.exports = {
     '*.intlify.dev': true,
     '*.segment.io': true,
     '*.shields.io': true,
-    '*.jsdelivr.net': true
+    '*.jsdelivr.net': true,
+    '*.openai.com': true,
+    '*.chatgpt.com': true,
+    '*.oaistatic.com': true
   },
   pac: {
     enabled: true,
