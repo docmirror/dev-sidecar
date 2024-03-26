@@ -24,9 +24,9 @@
     },
     "dns": {
       "mapping": {
-        "*jetbrains.com": "quad9",
-        "*azureedge.net": "quad9",
-        "*stackoverflow.com": "quad9"
+        "*.jetbrains.com": "quad9",
+        "*.azureedge.net": "quad9",
+        "*.stackoverflow.com": "quad9"
       },
       "speedTest": {
         "interval": 300000
@@ -43,7 +43,7 @@
         "*.github.com": true,
         "*github*.com": true,
         "*.wikimedia.org": true,
-        "v2ex.com": true,
+        "*.v2ex.com": true,
         "*.azureedge.net": true,
         "*.cloudfront.net": true,
         "*.bing.com": true,

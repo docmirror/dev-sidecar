@@ -146,7 +146,7 @@ module.exports = {
           sni: 'baidu.com'
         }
       },
-      // 'v2ex.com': {
+      // '*.v2ex.com': {
       //   '.*': {
       //     sni: 'baidu.com'
       //   }
