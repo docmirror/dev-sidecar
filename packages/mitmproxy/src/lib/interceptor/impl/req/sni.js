@@ -3,7 +3,7 @@ module.exports = {
     const { rOptions, log } = context
     if (interceptOpt.sni != null) {
       rOptions.servername = interceptOpt.sni
-      if (rOptions.agent) {
+      if (rOptions.agent && rOptions.agent.options) {
         rOptions.agent.options.rejectUnauthorized = false
       }
       log.info('sni intercept: sni replace servername:', rOptions.hostname, '➜', rOptions.servername)
