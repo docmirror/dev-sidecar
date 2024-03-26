@@ -50,11 +50,6 @@ module.exports = {
       enabled: true
     },
     intercepts: {
-      '*': {
-        '/.*': {
-          options: true
-        }
-      },
       'github.com': {
         '/.*/.*/releases/download/': {
           redirect: 'gh.api.99988866.xyz/https://github.com',
@@ -231,6 +226,9 @@ module.exports = {
       }
     },
     whiteList: {
+      '*.cn': true,
+      'cn.*': true,
+      '*china*': true,
       '*.dingtalk.com': true,
       '*.apple.com': true,
       '*.microsoft.com': true,
