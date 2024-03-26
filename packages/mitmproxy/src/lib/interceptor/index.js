@@ -12,7 +12,7 @@ const sni = require('./impl/req/sni')
 const cacheRes = require('./impl/res/cacheRes')
 const script = require('./impl/res/script')
 
-const modules = [
+module.exports = [
   // request interceptor impls
   success, redirect, abort,
   cacheReq,
@@ -21,5 +21,3 @@ const modules = [
   // response interceptor impls
   cacheRes, script
 ]
-
-module.exports = modules
