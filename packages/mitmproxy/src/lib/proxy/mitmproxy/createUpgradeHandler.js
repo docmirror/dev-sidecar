@@ -8,7 +8,7 @@ const log = require('../../../utils/util.log')
 module.exports = function createUpgradeHandler () {
   // return
   return function upgradeHandler (req, cltSocket, head, ssl) {
-    const clientOptions = util.getOptionsFormRequest(req, ssl)
+    const clientOptions = util.getOptionsFromRequest(req, ssl)
     const proxyReq = (ssl ? https : http).request(clientOptions)
     proxyReq.on('error', (e) => {
       log.error('upgradeHandler', e)

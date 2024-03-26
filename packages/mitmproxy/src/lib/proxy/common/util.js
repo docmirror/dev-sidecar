@@ -19,7 +19,7 @@ let socketId = 0
 
 let httpsOverHttpAgent, httpOverHttpsAgent, httpsOverHttpsAgent
 
-util.getOptionsFormRequest = (req, ssl, externalProxy = null) => {
+util.getOptionsFromRequest = (req, ssl, externalProxy = null) => {
   // eslint-disable-next-line node/no-deprecated-api
   const urlObject = url.parse(req.url)
   const defaultPort = ssl ? 443 : 80

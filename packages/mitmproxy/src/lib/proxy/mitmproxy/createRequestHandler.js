@@ -15,7 +15,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
   return function requestHandler (req, res, ssl) {
     let proxyReq
 
-    const rOptions = commonUtil.getOptionsFormRequest(req, ssl, externalProxy)
+    const rOptions = commonUtil.getOptionsFromRequest(req, ssl, externalProxy)
 
     if (rOptions.agent) {
       rOptions.agent.options.rejectUnauthorized = setting.verifySsl
