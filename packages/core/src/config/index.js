@@ -52,14 +52,14 @@ module.exports = {
     intercepts: {
       'github.com': {
         '/.*/.*/releases/download/': {
-          redirect: 'download.fastgit.org',
+          redirect: 'gh.api.99988866.xyz/https://github.com',
           desc: 'release文件加速下载跳转地址'
         },
         '/.*/.*/archive/': {
-          redirect: 'download.fastgit.org'
+          redirect: 'gh.api.99988866.xyz/https://github.com'
         },
         '/.*/.*/blame/': {
-          redirect: 'hub.fastgit.org'
+          redirect: 'gh.api.99988866.xyz/https://github.com'
         },
         '^/[^/]+/[^/]+(/releases(/.*)?)?$': {
           script: [
@@ -69,15 +69,9 @@ module.exports = {
         },
         '/.*': {
           proxy: 'github.com',
-          // proxy: 'gh.docmirror.top/_proxy',
           desc: '目前禁掉sni就可以直接访问，如果后续github.com的ip被封锁，只能再走proxy模式',
           sni: 'baidu.com'
         }
-        // '/.*/.*/raw11/': {
-        //   replace: '(.+)\\/raw\\/(.+)',
-        //   proxy: 'raw.fastgit.org$1/$2',
-        //   sni: 'baidu.com'
-        // }
       },
       'github-releases.githubusercontent.com': {
         '.*': {
