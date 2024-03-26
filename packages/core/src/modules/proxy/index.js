@@ -63,9 +63,6 @@ module.exports = {
       'cn.*': true,
       '*china*': true,
 
-      // 系统之家
-      '*.xitongzhijia.net': true,
-
       // CSDN
       '*.csdn.net': true,
 
@@ -174,36 +171,6 @@ module.exports = {
 
       // 网站ICP备案查询
       '*.icpapi.com': true,
-
-      // AGE动漫
-      '*.agedm.*': true,
-      '*.zhimg.com': true,
-      '*.bdxiguaimg.com': true,
-      '*.toutiaoimg.com': true,
-      '*.bytecdntp.com': true,
-      '*.bytegoofy.com': true,
-      '*.toutiao.com': true,
-      '*.toutiaovod.com': true,
-      '*.aliyuncs.com': true,
-      '*.127.net': true,
-      '43.240.74.134': true,
-
-      // ZzzFun
-      '*.zzzfun.one': true,
-      '*.zzzfun.vip': true,
-
-      // 必应
-      '*.bing.com': true,
-
-      // 我的个人域名
-      '*.easyj.icu': true,
-
-      // 未知公司
-      '*.bcebos.com': true,
-      'icannwiki.org': true,
-      '*.icannwiki.org': true,
-      '*.sectigo.com': true,
-      '*.pingdom.net': true,
 
       // endregion
 
