@@ -190,9 +190,9 @@ const intercepts = {
         // optionsMaxAge: 2592000, // OPTIONS请求缓存时间，默认：2592000（一个月）
         redirect: 'download.fastgit.org'
       },
-      '.*':{
-         proxy:'github.com', 
-         sni:'baidu.com' //修改sni，规避***握手拦截
+      '.*': {
+         proxy: 'github.com', 
+         sni: 'baidu.com' //修改sni，规避***握手拦截
       }
    },
    'ajax.googleapis.com': {

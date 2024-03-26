@@ -3,19 +3,16 @@
     "intercepts": {
       "github.githubassets.com": {
         ".*": {
-          "proxy": "github.githubassets.com",
           "sni": "baidu.com"
         }
       },
       "camo.githubusercontent.com": {
         ".*": {
-          "proxy": "camo.githubusercontent.com",
           "sni": "baidu.com"
         }
       },
       "collector.github.com": {
         ".*": {
-          "proxy": "collector.github.com",
           "sni": "baidu.com"
         }
       },

@@ -68,7 +68,6 @@ module.exports = {
           desc: 'clone加速复制链接脚本'
         },
         '/.*': {
-          proxy: 'github.com',
           desc: '目前禁掉sni就可以直接访问，如果后续github.com的ip被封锁，只能再走proxy模式',
           sni: 'baidu.com'
         },
@@ -83,19 +82,16 @@ module.exports = {
       },
       'github-releases.githubusercontent.com': {
         '.*': {
-          proxy: 'github-releases.githubusercontent.com',
           sni: 'baidu.com'
         }
       },
       'github.githubassets.com': {
         '.*': {
-          proxy: 'github.githubassets.com',
           sni: 'baidu.com'
         }
       },
       'camo.githubusercontent.com': {
         '.*': {
-          proxy: 'camo.githubusercontent.com',
           sni: 'baidu.com'
         },
         '^[a-zA-Z0-9/]+(\\?.*)?$': {
@@ -105,7 +101,6 @@ module.exports = {
       },
       'collector.github.com': {
         '.*': {
-          proxy: 'collector.github.com',
           sni: 'baidu.com'
         }
       },
@@ -114,23 +109,11 @@ module.exports = {
       },
       'raw.githubusercontent.com': {
         '.*': {
-          proxy: 'raw.githubusercontent.com',
           sni: 'baidu.com'
-        }
-      },
-      'user-images.githubusercontent.com': {
-        '.*': {
-          proxy: 'user-images.githubusercontent.com',
-          sni: 'baidu.com'
-        },
-        '^/.*\\.png(\\?.*)?$': {
-          cacheDays: 365,
-          desc: '用户在PR或issue等内容中上传的图片，缓存1年。注：每张图片都有唯一的ID，不会重复，可以安心缓存'
         }
       },
       'private-user-images.githubusercontent.com': {
         '.*': {
-          proxy: 'private-user-images.githubusercontent.com',
           sni: 'baidu.com'
         },
         '^/.*\\.png(\\?.*)?$': {
@@ -140,7 +123,6 @@ module.exports = {
       },
       'avatars.githubusercontent.com': {
         '.*': {
-          proxy: 'avatars.githubusercontent.com',
           sni: 'baidu.com'
         },
         '^/u/\\d+(\\?.*)?$': {
@@ -154,9 +136,18 @@ module.exports = {
           desc: 'github的访问速度分析上传，没有必要，直接返回成功'
         }
       },
+      'hub.docker.com': {
+        '.*': {
+          sni: 'baidu.com'
+        }
+      },
+      'api.dso.docker.com': {
+        '.*': {
+          sni: 'baidu.com'
+        }
+      },
       // 'v2ex.com': {
       //   '.*': {
-      //     proxy: 'v2ex.com',
       //     sni: 'baidu.com'
       //   }
       // },
@@ -267,7 +258,6 @@ module.exports = {
         '*github*.com': 'quad9',
         '*.github.io': 'quad9',
         '*.docker.com': 'quad9',
-        '*.docker*.com': 'quad9',
         '*.stackoverflow.com': 'quad9',
         '*.electronjs.org': 'quad9',
         '*.amazonaws.com': 'quad9',
