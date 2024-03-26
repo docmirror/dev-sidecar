@@ -17,12 +17,12 @@ function get () {
 const getDefaultConfigBasePath = function () {
   return get().server.setting.userBasePath
 }
-function _getRemoteSavePath (prefix = '', version = '') {
+function _getRemoteSavePath (prefix = '') {
   const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }
-  return path.join(dir, prefix + 'remote_config.json' + version)
+  return path.join(dir, prefix + 'remote_config.json5')
 }
 function _getConfigPath () {
   const dir = getDefaultConfigBasePath()
@@ -64,7 +64,7 @@ const configApi = {
           return
         }
         if (response && response.statusCode === 200) {
-          const originalRemoteSavePath = _getRemoteSavePath('original_', '5')
+          const originalRemoteSavePath = _getRemoteSavePath('original_')
           fs.writeFileSync(originalRemoteSavePath, body)
           log.info('保存原来的远程配置文件成功:', originalRemoteSavePath)
 
