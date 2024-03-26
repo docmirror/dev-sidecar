@@ -17,7 +17,7 @@
       :style="{ height: '100%' }"
     >
       <a-tab-pane tab="拦截设置" key="1"  >
-        <vue-json-editor  style="height:100%;" ref="editor" v-model="targetConfig.intercepts" mode="code" :show-btns="false" :expandedOnStart="true" @json-change="onJsonChange" ></vue-json-editor>
+        <vue-json-editor style="height:100%;" ref="editor" v-model="targetConfig.intercepts" mode="code" :show-btns="false" :expandedOnStart="true" @json-change="onJsonChange" ></vue-json-editor>
       </a-tab-pane>
       <a-tab-pane tab="DNS设置" key="2">
         <div>
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import vueJsonEditor from 'vue-json-editor'
+import vueJsonEditor from 'vue-json-editor-fix-cn'
 import lodash from 'lodash'
 import api from '../api'
 export default {

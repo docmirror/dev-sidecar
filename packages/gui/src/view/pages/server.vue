@@ -217,7 +217,7 @@
 </template>
 
 <script>
-import vueJsonEditor from 'vue-json-editor'
+import vueJsonEditor from 'vue-json-editor-fix-cn'
 import Plugin from '../mixins/plugin'
 import _ from 'lodash'
 
