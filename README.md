@@ -181,13 +181,13 @@ const intercepts = {
      //需要拦截url的正则表达式
      '/.*/.*/releases/download/': {
         //拦截类型
-        // redirect: url,  临时重定向（url会变，一些下载资源可以通过此方式配置）
-        // proxy: url,     代理（url不会变，没有跨域问题）
-        // abort: true,    取消请求（适用于被***封锁的资源，找不到替代，直接取消请求，快速失败，节省时间）
-        // success: true,  直接返回成功请求（某些请求不想发出去，可以伪装成功返回）
-        // cacheDays: 1,   GET请求的使用缓存，单位：天（常用于一些静态资源）
-        // options: true,  OPTIONS请求直接返回成功请求（该功能存在一定风险，请谨慎使用）
-        // optionsMaxAge: 2592000, OPTIONS请求缓存时间，默认：2592000（一个月）
+        // redirect: url,          // 临时重定向（url会变，一些下载资源可以通过此方式配置）
+        // proxy: url,             // 代理（url不会变，没有跨域问题）
+        // abort: true,            // 取消请求（适用于被***封锁的资源，找不到替代，直接取消请求，快速失败，节省时间）
+        // success: true,          // 直接返回成功请求（某些请求不想发出去，可以伪装成功返回）
+        // cacheDays: 1,           // GET请求的使用缓存，单位：天（常用于一些静态资源）
+        // options: true,          // OPTIONS请求直接返回成功请求（该功能存在一定风险，请谨慎使用）
+        // optionsMaxAge: 2592000, // OPTIONS请求缓存时间，默认：2592000（一个月）
         redirect: 'download.fastgit.org'
       },
       '.*':{
