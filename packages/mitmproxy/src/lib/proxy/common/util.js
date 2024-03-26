@@ -40,7 +40,7 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null) => {
   }
 
   delete headers['proxy-connection']
-  let agent = false
+  let agent
   if (!externalProxyUrl) {
     // keepAlive
     if (headers.connection !== 'close') {
@@ -50,6 +50,8 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null) => {
         agent = httpAgent
       }
       headers.connection = 'keep-alive'
+    } else {
+      agent = false
     }
   } else {
     agent = util.getTunnelAgent(protocol === 'https:', externalProxyUrl)

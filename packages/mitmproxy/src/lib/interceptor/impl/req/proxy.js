@@ -64,7 +64,9 @@ module.exports = {
 
     if (interceptOpt.sni != null) {
       rOptions.servername = interceptOpt.sni
-      rOptions.agent.options.rejectUnauthorized = false
+      if (rOptions.agent) {
+        rOptions.agent.options.rejectUnauthorized = false
+      }
     }
     return true
   },
