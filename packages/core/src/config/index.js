@@ -50,7 +50,7 @@ module.exports = {
       enabled: true
     },
     intercepts: {
-      'www.nbgzjk.cn': {
+      '*': {
         '/.*': {
           options: true
         }
