@@ -1,13 +1,13 @@
 module.exports = {
   requestIntercept (context, interceptOpt) {
-    const { rOptions } = context
+    const { rOptions, log } = context
     if (interceptOpt.sni != null) {
       rOptions.servername = interceptOpt.sni
-      console.log('sni replace', rOptions.hostname, rOptions.servername)
+      log.info('sni intercept: sni replace servername:', rOptions.hostname, '➜', rOptions.servername)
     }
     return true
   },
   is (interceptOpt) {
-    return !!interceptOpt.sni
+    return !!interceptOpt.sni && !interceptOpt.proxy // proxy生效时，sni不需要生效，因为proxy中也会使用sni覆盖 rOptions.servername
   }
 }

@@ -2,7 +2,7 @@ const cacheReq = require('../req/cacheReq')
 
 module.exports = {
   responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
-    const { rOptions } = context
+    const { rOptions, log } = context
 
     // 只有GET请求，且响应码为2xx时才进行缓存
     if (rOptions.method !== 'GET' || proxyRes.statusCode < 200 || proxyRes.statusCode >= 300) {
@@ -81,6 +81,7 @@ module.exports = {
     }
 
     res.setHeader('Dev-Sidecar-Cache-Response-Interceptor', 'cacheRes:maxAge=' + maxAge)
+    log.info('[cacheRes]', 'maxAge=' + maxAge)
   },
   is (interceptOpt) {
     const maxAge = cacheReq.getMaxAge(interceptOpt)

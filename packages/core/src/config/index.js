@@ -143,7 +143,7 @@ module.exports = {
           proxy: 'avatars.githubusercontent.com',
           sni: 'baidu.com'
         },
-        '^/u/\\d+.*$': {
+        '^/u/\\d+(\\?.*)?$': {
           cacheDays: 365,
           desc: '用户头像，缓存1年'
         }
