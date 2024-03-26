@@ -4,7 +4,8 @@ const hostMap = matchUtil.domainMapRegexply({
   'aaa.com': true,
   '*bbb.com': true,
   '*.ccc.com': true,
-  '^.{1,3}ddd.com$': true
+  '^.{1,3}ddd.com$': true,
+  '*.cn': true
 })
 
 console.log(hostMap)
@@ -42,3 +43,11 @@ const value43 = matchUtil.matchHostname(hostMap, 'xddd.com', 'test4.3')
 console.log(value41) // undefined
 console.log(value42) // true
 console.log(value43) // true
+
+console.log('test5: *.cn')
+const value51 = matchUtil.matchHostname(hostMap, 'eee.cn', 'test5.1')
+const value52 = matchUtil.matchHostname(hostMap, 'x.eee.cn', 'test5.2')
+const value53 = matchUtil.matchHostname(hostMap, 'aaaa.cnet.com', 'test5.3')
+console.log(value51) // true
+console.log(value52) // true
+console.log(value53) // undefined

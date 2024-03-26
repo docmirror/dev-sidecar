@@ -32,7 +32,7 @@ function domainMapRegexply (hostMap) {
 }
 
 function matchHostname (hostMap, hostname, action) {
-  log.error('matchHostname:', action, hostMap)
+  // log.error('matchHostname:', action, hostMap)
 
   if (hostMap == null) {
     log.warn(`matchHostname: ${action}: '${hostname}' Not-Matched, hostMap is null`)
