@@ -1,7 +1,7 @@
 <template>
   <ds-container>
     <template slot="header">
-      系统代理设置
+      加速服务设置
       <span>
       </span>
     </template>
