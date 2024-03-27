@@ -27,3 +27,8 @@ labels: config issues
 
 ## 请详细描述你的问题：
 
+
+## 如果可以的话，请提供 `{user.home}/.dev-sidecar/running.json` 文件内容：
+```json
+// 请将 'running.json' 文件的内容粘贴在这里。
+```
