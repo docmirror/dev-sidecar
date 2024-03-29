@@ -4,7 +4,7 @@ const log = require('../../../utils/util.log')
 const DnsUtil = require('../../dns/index')
 const localIP = '127.0.0.1'
 const defaultDns = require('dns')
-const matchUtil = require('../../../utils/util.match')
+// const matchUtil = require('../../../utils/util.match')
 const speedTest = require('../../speed/index.js')
 function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
   for (const intercept of sslConnectInterceptors) {
@@ -31,7 +31,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
   }
 
   console.log('sni config', sniConfig)
-  const sniRegexpMap = matchUtil.domainMapRegexply(sniConfig)
+  // const sniRegexpMap = matchUtil.domainMapRegexply(sniConfig)
   return function connectHandler (req, cltSocket, head) {
     // eslint-disable-next-line node/no-deprecated-api
     const srvUrl = url.parse(`https://${req.url}`)
@@ -45,12 +45,12 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
       })
     } else {
       log.info('不拦截请求：', hostname)
-      connect(req, cltSocket, head, hostname, srvUrl.port, dnsConfig, sniRegexpMap)
+      connect(req, cltSocket, head, hostname, srvUrl.port, dnsConfig/*, sniRegexpMap */)
     }
   }
 }
 
-function connect (req, cltSocket, head, hostname, port, dnsConfig, sniRegexpMap) {
+function connect (req, cltSocket, head, hostname, port, dnsConfig/*, sniRegexpMap */) {
   // tunneling https
   // log.info('connect:', hostname, port)
   const start = new Date().getTime()
