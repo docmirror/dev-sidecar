@@ -81,7 +81,7 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null) => {
   }
 
   // 解析host和port
-  const arr = util.parseHostnameAndPort(urlObject.host)
+  const arr = util.parseHostnameAndPort(req.headers.host)
 
   // 初始化options
   const options = {
@@ -93,8 +93,6 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null) => {
     headers: req.headers,
     agent: agent
   }
-
-  log.info('options:', options)
 
   // eslint-disable-next-line node/no-deprecated-api
   if (protocol === 'http:' && externalProxyUrl && (url.parse(externalProxyUrl)).protocol === 'http:') {
