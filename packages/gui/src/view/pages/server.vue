@@ -138,7 +138,6 @@
 <!--              <a-button  type="danger" icon="minus" @click="deleteSniList(item,index)"/>-->
 <!--            </a-col>-->
 <!--          </a-row>-->
-
 <!--        </a-tab-pane>-->
         <a-tab-pane tab="IP测速" key="6">
           <div>
@@ -201,7 +200,6 @@
                 </a-card>
               </a-col>
             </a-row>
-
           </div>
         </a-tab-pane>
       </a-tabs>

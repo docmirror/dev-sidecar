@@ -70,7 +70,7 @@ module.exports = (config) => {
       const matchInterceptsOpts = {}
       for (const regexp in interceptOpts) { // 遍历拦截配置
         const interceptOpt = interceptOpts[regexp]
-        interceptOpt.key = regexp
+        // interceptOpt.key = regexp
         if (regexp !== true && regexp !== 'true') {
           if (!matchUtil.isMatched(rOptions.path, regexp)) {
             continue
