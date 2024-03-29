@@ -90,7 +90,7 @@ module.exports = class FakeServersCenter {
           log.error(e)
         })
         fakeServer.on('listening', () => {
-          const mappingHostNames = tlsUtils.getMappingHostNamesFormCert(certObj.cert)
+          const mappingHostNames = tlsUtils.getMappingHostNamesFromCert(certObj.cert)
           serverPromiseObj.mappingHostNames = mappingHostNames
           resolve(serverObj)
         })

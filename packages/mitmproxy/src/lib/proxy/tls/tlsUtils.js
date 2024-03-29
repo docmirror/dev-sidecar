@@ -230,7 +230,7 @@ utils.isMappingHostName = function (DNSName, hostname) {
   return (new RegExp(reg)).test(hostname)
 }
 
-utils.getMappingHostNamesFormCert = function (cert) {
+utils.getMappingHostNamesFromCert = function (cert) {
   let mappingHostNames = []
   mappingHostNames.push(cert.subject.getField('CN') ? cert.subject.getField('CN').value : '')
   const altNames = cert.getExtension('subjectAltName') ? cert.getExtension('subjectAltName').altNames : []

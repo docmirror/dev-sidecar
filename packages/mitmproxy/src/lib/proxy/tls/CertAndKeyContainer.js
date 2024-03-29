@@ -45,7 +45,7 @@ module.exports = class CertAndKeyContainer {
       const _resolve = (_certObj) => {
         if (once) {
           once = false
-          const mappingHostNames = tlsUtils.getMappingHostNamesFormCert(_certObj.cert)
+          const mappingHostNames = tlsUtils.getMappingHostNamesFromCert(_certObj.cert)
           certPromiseObj.mappingHostNames = mappingHostNames // change
           resolve(_certObj)
         }
