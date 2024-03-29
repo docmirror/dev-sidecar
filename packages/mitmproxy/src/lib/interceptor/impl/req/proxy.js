@@ -50,6 +50,8 @@ module.exports = {
       proxyTarget = proxyConf + uri
     }
 
+    // eslint-disable-next-line
+    // no-template-curly-in-string
     // eslint-disable-next-line no-template-curly-in-string
     proxyTarget = proxyTarget.replace('${host}', rOptions.hostname)
 
