@@ -1,13 +1,17 @@
 module.exports = {
-  requestIntercept (context, interceptOpt) {
+  name: 'sni',
+  priority: 122,
+  requestIntercept (context, interceptOpt, req, res, ssl, next) {
     const { rOptions, log } = context
-    if (interceptOpt.sni != null) {
-      rOptions.servername = interceptOpt.sni
-      if (rOptions.agent && rOptions.agent.options) {
-        rOptions.agent.options.rejectUnauthorized = false
-      }
-      log.info('sni intercept: sni replace servername:', rOptions.hostname, '➜', rOptions.servername)
+
+    rOptions.servername = interceptOpt.sni
+    if (rOptions.agent && rOptions.agent.options) {
+      rOptions.agent.options.rejectUnauthorized = false
     }
+
+    res.setHeader('DS-Interceptor', 'sni: ' + interceptOpt.sni)
+
+    log.info('sni intercept: sni replace servername:', rOptions.hostname, '➜', rOptions.servername)
     return true
   },
   is (interceptOpt) {

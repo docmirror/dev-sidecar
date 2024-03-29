@@ -13,6 +13,8 @@ function getScript (key, script) {
 }
 
 module.exports = {
+  name: 'script',
+  priority: 202,
   responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
     const { rOptions, log, setting } = context
     let keys = interceptOpt.script
@@ -20,20 +22,23 @@ module.exports = {
       keys = [keys]
     }
     try {
-      let tags = getScript('global', monkey.get(setting.script.dirAbsolutePath).global.script)
+      const scripts = monkey.get(setting.script.dirAbsolutePath)
+      let tags = getScript('global', scripts.global.script)
       for (const key of keys) {
-        const script = monkey.get(setting.script.dirAbsolutePath)[key]
+        const script = scripts[key]
         if (script == null) {
           continue
         }
         const scriptTag = getScript(key, script.script)
         tags += '\r\n' + scriptTag
       }
-      log.info('responseIntercept: insert script', rOptions.hostname, rOptions.path)
+      res.setHeader('DS-Script-Interceptor', 'true')
+      log.info('script response intercept: insert script', rOptions.hostname, rOptions.path, ', head:', tags)
       return {
         head: tags
       }
     } catch (err) {
+      res.setHeader('DS-Script-Interceptor', 'error')
       log.error('load monkey script error', err)
     }
   },

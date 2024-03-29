@@ -1,11 +1,14 @@
 const cacheReq = require('../req/cacheReq')
 
 module.exports = {
+  name: 'cacheRes',
+  priority: 201,
   responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
     const { rOptions, log } = context
 
     // 只有GET请求，且响应码为2xx时才进行缓存
     if (rOptions.method !== 'GET' || proxyRes.statusCode < 200 || proxyRes.statusCode >= 300) {
+      // res.setHeader('DS-Cache-Interceptor', `skip: 'method' or 'status' not match`)
       return
     }
 
@@ -48,6 +51,9 @@ module.exports = {
         if (interceptOpt.cacheImmutable !== false && originalHeaders.cacheControl.value.indexOf('immutable') < 0) {
           maxAge = maxAgeMatch[1]
         } else {
+          const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`
+          res.setHeader('DS-Cache-Interceptor', `skip: ${maxAgeMatch[1]} > ${maxAge}`)
+          log.info(`cache response intercept: skip: ${maxAgeMatch[1]} > ${maxAge}, url: ${url}`)
           return
         }
       }
@@ -80,7 +86,7 @@ module.exports = {
       res.setHeader('Expires', replaceHeaders.expires)
     }
 
-    res.setHeader('Dev-Sidecar-Cache-Response-Interceptor', 'cacheRes:maxAge=' + maxAge)
+    res.setHeader('DS-Cache-Response-Interceptor', maxAge)
   },
   is (interceptOpt) {
     const maxAge = cacheReq.getMaxAge(interceptOpt)
