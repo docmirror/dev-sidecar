@@ -351,4 +351,5 @@
             window.dispatchEvent(new Event('locationchange'))
         });
     }
+	console.log('ds_github loaded')
 })();
