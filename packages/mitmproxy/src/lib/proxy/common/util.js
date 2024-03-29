@@ -19,6 +19,29 @@ let socketId = 0
 
 let httpsOverHttpAgent, httpOverHttpsAgent, httpsOverHttpsAgent
 
+util.parseHostnameAndPort = (host, defaultPort) => {
+  let arr = host.match(/^(\[[^\]]+\])(?::(\d+))?$/) // 尝试解析IPv6
+  if (arr) {
+    arr = arr.slice(1)
+    if (arr[1]) {
+      arr[1] = parseInt(arr[1], 10)
+    }
+  } else {
+    arr = host.split(':')
+    if (arr.length > 1) {
+      arr[1] = parseInt(arr[1], 10)
+    }
+  }
+
+  if (defaultPort > 0 && (arr.length === 1 || arr[1] === undefined)) {
+    arr[1] = defaultPort
+  } else if (arr.length === 2 && arr[1] === undefined) {
+    arr.pop()
+  }
+
+  return arr
+}
+
 util.getOptionsFromRequest = (req, ssl, externalProxy = null) => {
   // eslint-disable-next-line node/no-deprecated-api
   const urlObject = url.parse(req.url)
@@ -57,15 +80,21 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null) => {
     agent = util.getTunnelAgent(protocol === 'https:', externalProxyUrl)
   }
 
+  // 解析host和port
+  const arr = util.parseHostnameAndPort(urlObject.host)
+
+  // 初始化options
   const options = {
     protocol: protocol,
-    hostname: req.headers.host.split(':')[0],
+    hostname: arr[0],
     method: req.method,
-    port: req.headers.host.split(':')[1] || defaultPort,
+    port: arr[1] || defaultPort,
     path: urlObject.path,
     headers: req.headers,
     agent: agent
   }
+
+  log.info('options:', options)
 
   // eslint-disable-next-line node/no-deprecated-api
   if (protocol === 'http:' && externalProxyUrl && (url.parse(externalProxyUrl)).protocol === 'http:') {
