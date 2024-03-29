@@ -18,7 +18,7 @@ function matched (hostname, overWallTargetMap) {
     log.info(`matchHostname: matched overwall: '${hostname}' -> '${ret}' in pac.txt`)
     return true
   } else {
-    // log.debug(`matchHostname: matched overwall: Not-Matched '${hostname}' -> '${ret}' in pac.txt`)
+    log.debug(`matchHostname: matched overwall: Not-Matched '${hostname}' -> '${ret}' in pac.txt`)
     return false
   }
 }

@@ -65,7 +65,7 @@ function doDiff (oldObj, newObj) {
 
 function deleteNullItems (target) {
   lodash.forEach(target, (item, key) => {
-    if (item == null) {
+    if (item == null || item === '[delete]') {
       delete target[key]
     }
     if (lodash.isObject(item)) {
