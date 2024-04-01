@@ -1,7 +1,7 @@
 ---
 name: 问题上报
 about: 如果你在使用过程中发现问题，请使用此模板。
-labels: bug
+labels: Bug
 ---
 
 ## Ⅰ. 请说明操作系统及使用的版本号：
@@ -23,7 +23,6 @@ labels: bug
 
 
 ## Ⅴ. 如果可以的话，请提供 `{user.home}/.dev-sidecar/running.json` 文件内容：
+<!-- 请将 'running.json' 文件的内容粘贴在这里，方便我们排查问题是否由配置错误导致。 -->
 ```json
-// 请将 'running.json' 文件的内容粘贴在这里。
 ```
-
