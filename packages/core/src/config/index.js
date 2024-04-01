@@ -124,10 +124,6 @@ module.exports = {
       'private-user-images.githubusercontent.com': {
         '.*': {
           sni: 'baidu.com'
-        },
-        '^/.*\\.png(\\?.*)?$': {
-          cacheDays: 365,
-          desc: '用户在PR或issue等内容中上传的图片，缓存1年。注：每张图片都有唯一的ID，不会重复，可以安心缓存'
         }
       },
       'avatars.githubusercontent.com': {
