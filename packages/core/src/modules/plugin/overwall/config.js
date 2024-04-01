@@ -38,8 +38,7 @@ module.exports = {
     '*.shields.io': true,
     '*.jsdelivr.net': true,
     '*.openai.com': true,
-    '*.chatgpt.com': true,
-    '*.oaistatic.com': true
+    '*.chatgpt.com': true
   },
   pac: {
     enabled: true,
