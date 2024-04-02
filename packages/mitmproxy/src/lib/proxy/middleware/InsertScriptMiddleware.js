@@ -1,9 +1,7 @@
 const through = require('through2')
 const zlib = require('zlib')
-// eslint-disable-next-line no-unused-vars
-const url = require('url')
 
-var httpUtil = {}
+const httpUtil = {}
 httpUtil.getCharset = function (res) {
   const contentType = res.getHeader('content-type')
   const reg = /charset=(.*)/
@@ -14,11 +12,11 @@ httpUtil.getCharset = function (res) {
   return 'utf-8'
 }
 httpUtil.isGzip = function (res) {
-  var contentEncoding = res.headers['content-encoding']
+  const contentEncoding = res.headers['content-encoding']
   return !!(contentEncoding && contentEncoding.toLowerCase() === 'gzip')
 }
 httpUtil.isHtml = function (res) {
-  var contentType = res.headers['content-type']
+  const contentType = res.headers['content-type']
   return (typeof contentType !== 'undefined') && /text\/html|application\/xhtml\+xml/.test(contentType)
 }
 const HEAD = Buffer.from('</head>')
@@ -42,6 +40,7 @@ function chunkByteReplace (_this, chunk, enc, callback, append) {
   _this.push(chunk)
   callback()
 }
+
 function injectScriptIntoHtml (tags, chunk, script) {
   for (const tag of tags) {
     const index = chunk.indexOf(tag)
@@ -71,9 +70,18 @@ module.exports = {
     const filename = urlPath.replace(contextPath, '')
 
     const script = monkey.get(setting.script.defaultDir)[filename]
+    // log.info(`urlPath: ${urlPath}, fileName: ${filename}, script: ${script}`)
 
-    log.info('ds_script', filename, script != null)
-    res.writeHead(200)
+    log.info('ds_script, filename:', filename, ', `script != null` =', script != null)
+    const now = new Date()
+    res.writeHead(200, {
+      'DS-Middleware': 'ds_script',
+      'Content-Type': 'application/javascript; charset=utf-8',
+      'Cache-Control': 'public, max-age=86401, immutable', // 缓存1天
+      'Last-Modified': now.toUTCString(),
+      Expires: new Date(now.getTime() + 86400000).toUTCString(), // 缓存1天
+      Date: new Date().toUTCString()
+    })
     res.write(script.script)
     res.end()
     return true
