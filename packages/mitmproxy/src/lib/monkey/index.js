@@ -9,7 +9,7 @@ function buildScript (sc, content) {
       ' ()=> { \r\n'
   let grantSc = ''
   for (const item of grant) {
-    grantSc += 'const ' + item + ' = window.__ds_global__[\'' + item + '\']\r\n'
+    grantSc += (item.indexOf('.') > 0 ? '' : 'const ') + item + ' = window.__ds_global__[\'' + item + '\']\r\n'
   }
   const tail = ';' + content + '\r\n' +
       '})'
