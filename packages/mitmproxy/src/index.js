@@ -8,7 +8,7 @@ let server
 
 function registerProcessListener () {
   process.on('message', function (msg) {
-    log.info('child get msg: ' + JSON.stringify(msg))
+    log.info('child get msg:', JSON.stringify(msg))
     if (msg.type === 'action') {
       api[msg.event.key](msg.event.params)
     } else if (msg.type === 'speed') {
@@ -27,15 +27,15 @@ function registerProcessListener () {
       //  log.error(err.errno)
       return
     }
-    log.error('uncaughtException:', err)
+    log.error('Process uncaughtException:', err)
   })
 
   process.on('unhandledRejection', (err, p) => {
-    log.info('Unhandled Rejection at: Promise', p, 'err:', err)
+    log.info('Process unhandledRejection at: Promise', p, 'err:', err)
     // application specific logging, throwing an error, or other logic here
   })
   process.on('uncaughtExceptionMonitor', (err, origin) => {
-    log.info('uncaughtExceptionMonitor:', err, origin)
+    log.info('Process uncaughtExceptionMonitor:', err, origin)
   })
   process.on('exit', function (code, signal) {
     log.info('代理服务进程被关闭:', code, signal)
@@ -63,6 +63,7 @@ const api = {
     } else {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
     }
+    // log.info('启动代理服务时的配置:', JSON.stringify(proxyOptions, null, '\t'))
     const newServer = mitmproxy.createProxy(proxyOptions, () => {
       fireStatus(true)
       log.info(`代理服务已启动：${proxyOptions.host}:${proxyOptions.port}`)
@@ -87,21 +88,22 @@ const api = {
     return new Promise((resolve, reject) => {
       if (server) {
         server.close((err) => {
-          if (err) {
-            log.info('close error', err, ',', err.code, ',', err.message, ',', err.errno)
+          if (err && err.code !== 'ERR_SERVER_NOT_RUNNING') {
             if (err.code === 'ERR_SERVER_NOT_RUNNING') {
-              log.info('代理服务关闭成功')
+              log.info('代理服务未运行，无需关闭')
               resolve()
-              return
+            } else {
+              log.error('代理服务关闭失败:', err)
+              reject(err)
             }
-            reject(err)
-          } else {
-            log.info('代理服务关闭成功')
-            resolve()
+            return
           }
+
+          log.info('代理服务关闭成功')
+          resolve()
         })
       } else {
-        log.info('server is null')
+        log.info('server is null, no need to close.')
         fireStatus(false)
         resolve()
       }

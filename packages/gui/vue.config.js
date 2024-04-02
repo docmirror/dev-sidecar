@@ -2,7 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const publishUrl = process.env.VUE_APP_PUBLISH_URL
 const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
-console.log('publish url', publishUrl)
+console.log('Publish url:', publishUrl)
 module.exports = {
   pages: {
     index: {

@@ -1,9 +1,6 @@
-const dnstls = require('dns-over-tls')
 const BaseDNS = require('./base')
 const axios = require('axios')
 const log = require('../../utils/util.log')
-const fs = require('fs')
-const path = require('path')
 module.exports = class DNSOverIpAddress extends BaseDNS {
   async _lookup (hostname) {
     const url = `https://${hostname}.ipaddress.com`

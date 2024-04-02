@@ -80,16 +80,16 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       })
     }
 
-    function countSlow (isDnsIntercept, type) {
+    function countSlow (isDnsIntercept, reason) {
       if (isDnsIntercept) {
         const { dns, ip, hostname } = isDnsIntercept
         dns.count(hostname, ip, true)
-        log.error('记录ip失败次数,用于优选ip：', hostname, ip, type)
+        log.error('记录ip失败次数,用于优选ip：', hostname, ip, reason)
       }
       const counter = context.requestCount
       if (counter != null) {
         counter.count.doCount(counter.value, true)
-        log.error('记录proxy失败次数：', counter.value, type)
+        log.error('记录proxy失败次数：', counter.value, reason)
       }
     }
 
@@ -220,6 +220,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       await requestInterceptorPromise()
 
       if (res.writableEnded) {
+        // log.info('res is writableEnded, return false')
         return false
       }
 
@@ -229,8 +230,8 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       //   // console.log('BODY: ')
       // })
       proxyRes.on('error', (error) => {
-        countSlow(null, 'error:' + error.message)
-        log.error('proxy res error', error)
+        countSlow(null, 'error: ' + error.message)
+        log.error('proxy res error:', error)
       })
 
       const responseInterceptorPromise = new Promise((resolve, reject) => {
@@ -252,11 +253,17 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             let body = ''
             for (const resIncpt of resIncpts) {
               const append = resIncpt.responseIntercept(context, req, res, proxyReq, proxyRes, ssl)
-              if (append && append.head) {
-                head += append.head
+              if (append) {
+                if (append.head) {
+                  head += append.head
+                }
+                if (append.body) {
+                  body += append.body
+                }
               }
-              if (append && append.body) {
-                body += append.body
+              if (res.writableEnded) {
+                next()
+                return
               }
             }
             InsertScriptMiddleware.responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, {
@@ -288,7 +295,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
         })
 
         if (proxyRes.statusCode >= 400) {
-          countSlow(null, 'status return :' + proxyRes.statusCode)
+          countSlow(null, 'Status return: ' + proxyRes.statusCode)
         }
         res.writeHead(proxyRes.statusCode)
         proxyRes.pipe(res)
@@ -302,7 +309,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
 目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
         )
         res.end()
-        log.error('request error', e.message)
+        log.error('Request error:', e)
       }
     })
   }

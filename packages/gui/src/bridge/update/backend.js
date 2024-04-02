@@ -96,7 +96,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     })
   }
 
-  async function updatePart (app, api, value, partPackagePath, quit) {
+  async function updatePart (app, api, value, partPackagePath) {
     const appPath = appPathUtil.getAppRootPath(app)
     const platform = api.shell.getSystemPlatform()
     let target = path.join(appPath, 'resources')
@@ -106,7 +106,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     const length = fs.statSync(partPackagePath)
     log.info('安装包大小:', length)
 
-    log.info('开始解压缩，安装升级包', partPackagePath, target)
+    log.info('开始解压缩，安装升级包:', partPackagePath, target)
 
     try {
       await beforeQuit()
@@ -121,7 +121,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   }
 
   autoUpdater.on('error', function (error) {
-    log.info('autoUpdater error', error)
+    log.warn('autoUpdater error:', error)
     sendUpdateMessage({ key: 'error', value: error, error: error })
     // dialog.showErrorBox('Error: ', error == null ? 'unknown' : (error.stack || error).toString())
   })
@@ -133,7 +133,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     log.info('autoUpdater update-available')
     sendUpdateMessage({ key: 'available', value: info })
   })
-  autoUpdater.on('update-not-available', function (info) {
+  autoUpdater.on('update-not-available', function () {
     log.info('autoUpdater update-not-available')
     sendUpdateMessage({ key: 'notAvailable', value: message.updateNotAva })
   })
@@ -144,7 +144,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   })
   // 更新完成，重启应用
   autoUpdater.on('update-downloaded', function (info) {
-    log.info('download complete', info.version)
+    log.info('download complete, version:', info.version)
     win.webContents.send('update', {
       key: 'downloaded',
       value: info

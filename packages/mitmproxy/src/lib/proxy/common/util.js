@@ -57,7 +57,7 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null) => {
       try {
         externalProxyUrl = externalProxy(req, ssl)
       } catch (e) {
-        log.error('externalProxy', e)
+        log.error('externalProxy error:', e)
       }
     }
   }
@@ -86,8 +86,9 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null) => {
   // 初始化options
   const options = {
     protocol: protocol,
-    hostname: arr[0],
     method: req.method,
+    url: req.url,
+    hostname: arr[0],
     port: arr[1] || defaultPort,
     path: urlObject.path,
     headers: req.headers,
@@ -154,7 +155,7 @@ util.getTunnelAgent = (requestIsSSL, externalProxyUrl) => {
       //             host: hostname,
       //             port: port
       //         }
-      //     });
+      //     })
       // }
       return false
     } else {

@@ -8,11 +8,11 @@ process.on('uncaughtException', function (err) {
     //  console.error(err.errno)
     return
   }
-  log.error('uncaughtException', err)
+  log.error('Process Uncaught Exception:', err)
 })
 
 process.on('unhandledRejection', (reason, p) => {
-  log.error('Unhandled Rejection at: Promise', p, 'reason:', reason)
+  log.error('Process Unhandled Rejection at: Promise:', p, ', reason:', reason)
   // application specific logging, throwing an error, or other logic here
 })
 

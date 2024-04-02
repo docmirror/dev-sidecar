@@ -145,11 +145,11 @@ export default {
     })
     // 注册从core里来的事件，并转发给view
     DevSidecar.api.event.register('status', (event) => {
-      log.info('bridge on status', event)
+      log.info('bridge on status, event:', event)
       win.webContents.send('status', { ...event })
     })
     DevSidecar.api.event.register('error', (event) => {
-      log.error('bridge on error', event)
+      log.error('bridge on error, event:', event)
       win.webContents.send('error.core', event)
     })
     DevSidecar.api.event.register('speed', (event) => {

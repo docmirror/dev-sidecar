@@ -51,10 +51,10 @@ module.exports = function extractSNI (data) {
     } ClientHello;
     */
 
-  var end = data.length
+  let end = data.length
 
   // skip the record header
-  var pos = 5
+  let pos = 5
 
   // skip HandshakeType (you should already have verified this)
   pos += 1
@@ -70,26 +70,26 @@ module.exports = function extractSNI (data) {
 
   // skip SessionID
   if (pos > end - 1) return null
-  var sessionIdLength = data[pos]
+  const sessionIdLength = data[pos]
   pos += 1 + sessionIdLength
 
   // skip CipherSuite
   if (pos > end - 2) return null
-  var cipherSuiteLength = data[pos] << 8 | data[pos + 1]
+  const cipherSuiteLength = data[pos] << 8 | data[pos + 1]
   pos += 2 + cipherSuiteLength
 
   // skip CompressionMethod
   if (pos > end - 1) return null
-  var compressionMethodLength = data[pos]
+  const compressionMethodLength = data[pos]
   pos += 1 + compressionMethodLength
 
   // verify extensions exist
   if (pos > end - 2) return null
-  var extensionsLength = data[pos] << 8 | data[pos + 1]
+  const extensionsLength = data[pos] << 8 | data[pos + 1]
   pos += 2
 
   // verify the extensions fit
-  var extensionsEnd = pos + extensionsLength
+  const extensionsEnd = pos + extensionsLength
   if (extensionsEnd > end) return null
   end = extensionsEnd
 
@@ -124,22 +124,22 @@ module.exports = function extractSNI (data) {
     */
 
   while (pos <= end - 4) {
-    var extensionType = data[pos] << 8 | data[pos + 1]
-    var extensionSize = data[pos + 2] << 8 | data[pos + 3]
+    const extensionType = data[pos] << 8 | data[pos + 1]
+    const extensionSize = data[pos + 2] << 8 | data[pos + 3]
     pos += 4
     if (extensionType === 0) { // ExtensionType was server_name(0)
       // read ServerNameList length
       if (pos > end - 2) return null
-      var nameListLength = data[pos] << 8 | data[pos + 1]
+      const nameListLength = data[pos] << 8 | data[pos + 1]
       pos += 2
 
       // verify we have enough bytes and loop over SeverNameList
-      var n = pos
+      let n = pos
       pos += nameListLength
       if (pos > end) return null
       while (n < pos - 3) {
-        var nameType = data[n]
-        var nameLength = data[n + 1] << 8 | data[n + 2]
+        const nameType = data[n]
+        const nameLength = data[n + 1] << 8 | data[n + 2]
         n += 3
 
         // check if NameType is host_name(0)

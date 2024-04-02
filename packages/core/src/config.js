@@ -17,6 +17,7 @@ function get () {
 const getDefaultConfigBasePath = function () {
   return get().server.setting.userBasePath
 }
+
 function _getRemoteSavePath (prefix = '') {
   const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
@@ -24,6 +25,7 @@ function _getRemoteSavePath (prefix = '') {
   }
   return path.join(dir, prefix + 'remote_config.json5')
 }
+
 function _getConfigPath () {
   const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
@@ -106,7 +108,7 @@ const configApi = {
         log.warn('远程配置文件不存在:', path)
       }
     } catch (e) {
-      log.warn('远程配置读取失败:', path, ', error:', e)
+      log.error('远程配置读取失败:', path, ', error:', e)
     }
 
     return {}
@@ -183,6 +185,7 @@ const configApi = {
   get,
   set (newConfig) {
     if (newConfig == null) {
+      log.warn('newConfig 为空，不做任何操作')
       return configTarget
     }
 

@@ -13,7 +13,7 @@ export default {
             event.sender.send('file-selector', { key: 'selected', value: result.filePaths })
           }
         }).catch(err => {
-          log.error('选择文件失败', err)
+          log.error('选择文件失败:', err)
         })
       }
     })

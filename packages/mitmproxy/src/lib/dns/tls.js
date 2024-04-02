@@ -7,7 +7,7 @@ module.exports = class DNSOverTLS extends BaseDNS {
 
     const answer = answers.find(answer => answer.type === 'A' && answer.class === 'IN')
 
-    log.info('dns lookup：', hostname, answer)
+    log.info('DNS lookup：', hostname, answer)
     if (answer) {
       return answer.data
     }

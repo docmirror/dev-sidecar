@@ -1,6 +1,6 @@
 const http = require('http')
 
-var options = {
+const options = {
   headers: {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
   },
@@ -11,7 +11,7 @@ var options = {
   }
 }
 
-var request = http.get('http://test.target/', options, function (response) {
+const request = http.get('http://test.target/', options, function (response) {
   response.on('data', function (data) {
     process.stdout.write(data)
   })

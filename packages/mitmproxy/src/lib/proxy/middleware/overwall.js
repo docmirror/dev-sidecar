@@ -64,7 +64,7 @@ module.exports = function createOverWallIntercept (overWallConfig) {
           count.doRank()
         }
         if (count.value == null) {
-          log.error('count value is null', count)
+          log.error('`count.value` is null, the count:', count)
         } else {
           count.doCount(count.value)
           proxyServer = count.value

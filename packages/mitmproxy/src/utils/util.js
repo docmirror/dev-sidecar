@@ -1,4 +1,4 @@
-const os = require('os')
+// const os = require('os')
 const log = require('util.log')
 const util = {
   getNodeVersion () {

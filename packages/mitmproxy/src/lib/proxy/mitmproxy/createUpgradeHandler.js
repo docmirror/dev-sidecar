@@ -11,7 +11,7 @@ module.exports = function createUpgradeHandler () {
     const clientOptions = util.getOptionsFromRequest(req, ssl)
     const proxyReq = (ssl ? https : http).request(clientOptions)
     proxyReq.on('error', (e) => {
-      log.error('upgradeHandler', e)
+      log.error('upgradeHandler error:', e)
     })
     proxyReq.on('response', function (res) {
       // if upgrade event isn't going to happen, close the socket
@@ -20,11 +20,11 @@ module.exports = function createUpgradeHandler () {
 
     proxyReq.on('upgrade', function (proxyRes, proxySocket, proxyHead) {
       proxySocket.on('error', (e) => {
-        log.error('on upgrade:', e)
+        log.error('upgrade error:', e)
       })
 
       cltSocket.on('error', function (e) {
-        log.error('upgrade socket ', e)
+        log.error('upgrade socket error:', e)
         proxySocket.end()
       })
 

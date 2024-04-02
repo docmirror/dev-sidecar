@@ -205,7 +205,7 @@ function createWindow (startHideWindow) {
   })
 
   win.on('session-end', async (e) => {
-    log.info('session-end', e)
+    log.info('session-end:', e)
     await quit()
   })
 }
@@ -241,12 +241,12 @@ if (process.argv) {
     startHideWindow = true
   }
 
-  log.info('start args', args)
+  log.info('start args:', args)
 }
 if (app.getLoginItemSettings().wasOpenedAsHidden) {
   startHideWindow = true
 }
-log.info('start hide window', startHideWindow, app.getLoginItemSettings())
+log.info('start hide window:', startHideWindow, app.getLoginItemSettings())
 
 // 禁止双开
 const isFirstInstance = app.requestSingleInstanceLock()
@@ -263,7 +263,7 @@ if (!isFirstInstance) {
     }
   })
   app.on('second-instance', (event, commandLine, workingDirectory) => {
-    log.info('new app started', commandLine)
+    log.info('new app started, command:', commandLine)
     if (win) {
       showWin()
       win.focus()
@@ -309,14 +309,14 @@ if (!isFirstInstance) {
       const context = { win, app, beforeQuit, quit, ipcMain, dialog, log, api: DevSidecar.api, changeAppConfig }
       backend.install(context) // 模块安装
     } catch (err) {
-      log.info('err', err)
+      log.info('error:', err)
     }
 
     try {
       // 最小化到托盘
       tray = setTray()
     } catch (err) {
-      log.info('err', err)
+      log.info('error:', err)
     }
 
     powerMonitor.on('shutdown', async (e) => {

@@ -1,4 +1,3 @@
-const expect = require('chai').expect
 const https = require('https')
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
 function request () {

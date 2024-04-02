@@ -1,4 +1,4 @@
-var expect = require('chai').expect
+const expect = require('chai').expect
 // eslint-disable-next-line no-undef
 describe('test', function () {
   // eslint-disable-next-line no-undef

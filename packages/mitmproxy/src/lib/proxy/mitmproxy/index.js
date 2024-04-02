@@ -1,14 +1,11 @@
 const tlsUtils = require('../tls/tlsUtils')
 const http = require('http')
-const https = require('https')
 const config = require('../common/config')
 const log = require('../../../utils/util.log')
 const createRequestHandler = require('./createRequestHandler')
 const createConnectHandler = require('./createConnectHandler')
 const createFakeServerCenter = require('./createFakeServerCenter')
 const createUpgradeHandler = require('./createUpgradeHandler')
-const DnsUtil = require('../../dns/index')
-const defaultDns = require('dns')
 const speedTest = require('../../speed/index.js')
 module.exports = {
   createProxy ({
@@ -18,7 +15,7 @@ module.exports = {
     caKeyPath,
     sslConnectInterceptor,
     createIntercepts,
-    getCertSocketTimeout = 1 * 1000,
+    getCertSocketTimeout = 1000,
     middlewares = [],
     externalProxy,
     dnsConfig,
@@ -85,7 +82,7 @@ module.exports = {
     server.listen(port, host, () => {
       log.info(`dev-sidecar启动端口: ${port}`)
       server.on('error', (e) => {
-        log.error('server error', e)
+        log.error('server error:', e)
       })
       server.on('request', (req, res) => {
         const ssl = false
@@ -103,7 +100,7 @@ module.exports = {
         upgradeHandler(req, socket, head, ssl)
       })
       server.on('clientError', (err, socket) => {
-        log.error('client error', err)
+        log.error('client error:', err)
         socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
       })
 

@@ -10,12 +10,12 @@ class ChoiceCache {
     return this.cache.get(key)
   }
 
-  getOrCreate (key, backups) {
+  getOrCreate (key, backupList) {
     log.info('get counter:', key)
     let item = this.cache.get(key)
     if (item == null) {
       item = new DynamicChoice(key)
-      item.setBackupList(backups)
+      item.setBackupList(backupList)
       this.cache.set(key, item)
     }
     return item

@@ -23,10 +23,10 @@ module.exports = class FakeServersCenter {
     if (this.queue.length >= this.maxLength) {
       const delServerObj = this.queue.shift()
       try {
-        log.info('超过最大服务数量，删除旧服务', delServerObj)
+        log.info('超过最大服务数量，删除旧服务。delServerObj:', delServerObj)
         delServerObj.serverObj.server.close()
       } catch (e) {
-        log.info(e)
+        log.info('`delServerObj.serverObj.server.close()` error:', e)
       }
     }
     this.queue.push(serverPromiseObj)
@@ -87,7 +87,7 @@ module.exports = class FakeServersCenter {
           this.requestHandler(req, res, ssl)
         })
         fakeServer.on('error', (e) => {
-          log.error(e)
+          log.error('fakeServer error:', e)
         })
         fakeServer.on('listening', () => {
           const mappingHostNames = tlsUtils.getMappingHostNamesFromCert(certObj.cert)
