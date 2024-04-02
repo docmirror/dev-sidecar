@@ -30,7 +30,7 @@
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button class="md-mr-10" icon="sync"   @click="resetDefault()">恢复默认</a-button>
+        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">恢复默认</a-button>
         <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
       </div>
     </template>

@@ -17,32 +17,31 @@
       :style="{ height: '100%' }"
     >
       <a-tab-pane tab="拦截设置" key="1"  >
-        <vue-json-editor style="height:100%;" ref="editor" v-model="targetConfig.intercepts" mode="code" :show-btns="false" :expandedOnStart="true" @json-change="onJsonChange"></vue-json-editor>
+        <vue-json-editor style="height:100%;" ref="editor" v-model="targetConfig.intercepts" mode="code" :show-btns="false" :expandedOnStart="true"></vue-json-editor>
       </a-tab-pane>
       <a-tab-pane tab="DNS设置" key="2">
         <div>
           <div>某些域名有时候需要通过其他DNS服务器获取到的IP才可以访问</div>
           <a-row style="margin-top:10px">
             <a-col>
-              <a-button  type="primary" icon="plus" @click="addDnsMapping()" />
+              <a-button type="primary" icon="plus" @click="addDnsMapping()"/>
             </a-col>
           </a-row>
           <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of dnsMappings" :key = 'index'>
             <a-col :span="14">
-              <a-input :disabled="item.value ===false" v-model="item.key"></a-input>
+              <a-input :disabled="item.value === false" v-model="item.key"></a-input>
             </a-col>
             <a-col :span="5">
-              <a-select :disabled="item.value ===false" v-model="item.value">
+              <a-select :disabled="item.value === false" v-model="item.value">
                 <a-select-option value="usa">USA DNS</a-select-option>
                 <a-select-option value="aliyun">Aliyun DNS</a-select-option>
               </a-select>
             </a-col>
             <a-col :span="3">
-              <a-button v-if="item.value!==false" style="margin-left:10px" type="danger" icon="minus" @click="deleteDnsMapping(item,index)" />
-              <a-button v-if="item.value===false" style="margin-left:10px" type="primary" icon="checked" @click="restoreDefDnsMapping(item,index)" ></a-button>
+              <a-button v-if="item.value !== false" style="margin-left:10px" type="danger" icon="minus" @click="deleteDnsMapping(item,index)"/>
+              <a-button v-if="item.value === false" style="margin-left:10px" type="primary" icon="checked" @click="restoreDefDnsMapping(item,index)" ></a-button>
             </a-col>
           </a-row>
-
         </div>
       </a-tab-pane>
       <a-tab-pane tab="环境变量" key="3">
@@ -51,8 +50,8 @@
           <div>
             <a-form-item label="镜像环境变量" >
               <a-switch  v-model="targetConfig.setting.startup.variables.npm"  default-checked   v-on:click="(checked)=>{targetConfig.setting.startup.variables.npm = checked}">
-                <a-icon slot="checkedChildren" type="check" />
-                <a-icon slot="unCheckedChildren" type="close" />
+                <a-icon slot="checkedChildren" type="check"/>
+                <a-icon slot="unCheckedChildren" type="close"/>
               </a-switch>
               启动后自动检查设置
 
@@ -61,14 +60,14 @@
           </div>
           <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of npmVariables" :key = 'index'>
             <a-col :span="10">
-              <a-input :disabled="item.key ===false" v-model="item.key"></a-input>
+              <a-input :disabled="item.key === false" v-model="item.key"></a-input>
             </a-col>
             <a-col :span="10">
-              <a-input :disabled="item.value ===false" v-model="item.value"></a-input>
+              <a-input :disabled="item.value === false" v-model="item.value"></a-input>
             </a-col>
             <a-col :span="4">
-              <a-icon v-if="item.exists" style="color:green" type="check" />
-              <a-icon v-if="!item.exists" title="还未设置" style="color:red" type="exclamation-circle" />
+              <a-icon v-if="item.exists" style="color:green" type="check"/>
+              <a-icon v-if="!item.exists" title="还未设置" style="color:red" type="exclamation-circle"/>
             </a-col>
           </a-row>
         </div>
@@ -79,15 +78,15 @@
         <a-form style="margin-top: 20px"  :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" >
           <a-form-item label="代理服务" >
             <a-switch  v-model="targetConfig.setting.startup.server"  default-checked   v-on:click="(checked)=>{targetConfig.setting.startup.server = checked}">
-              <a-icon slot="checkedChildren" type="check" />
-              <a-icon slot="unCheckedChildren" type="close" />
+              <a-icon slot="checkedChildren" type="check"/>
+              <a-icon slot="unCheckedChildren" type="close"/>
             </a-switch>
           </a-form-item>
 
           <a-form-item  v-for="(item,key) in targetConfig.setting.startup.proxy" :key="key" :label="key">
             <a-switch  v-model="targetConfig.setting.startup.proxy[key]"  default-checked   v-on:click="(checked)=>{targetConfig.setting.startup.proxy[key] = checked}">
-              <a-icon slot="checkedChildren" type="check" />
-              <a-icon slot="unCheckedChildren" type="close" />
+              <a-icon slot="checkedChildren" type="check"/>
+              <a-icon slot="unCheckedChildren" type="close"/>
             </a-switch>
           </a-form-item>
         </a-form>
@@ -144,8 +143,6 @@ export default {
         this.npmVariables = ret
       })
     },
-    onJsonChange (config) {
-    },
     afterVisibleChange (val) {
       console.log('visible', val)
       if (val === true) {
@@ -200,7 +197,7 @@ export default {
 
     },
     addDnsMapping () {
-      this.dnsMappings.unshift({ key: '', value: 'usa' })
+      this.dnsMappings.unshift({ key: '', value: 'quad9' })
     },
     doSetNpmVariablesNow () {
       this.syncTargetConfig()
@@ -211,7 +208,7 @@ export default {
           this.npmVariables = ret
         })
       }).then(() => {
-        this.$message.info('设置成功')
+        this.$message.success('设置成功')
       })
     },
     addNpmVariable () {

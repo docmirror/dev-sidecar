@@ -12,6 +12,7 @@ export default {
       status: {},
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
+      resetDefaultLoading: false,
       applyLoading: false,
       systemPlatform: ''
     }
@@ -43,7 +44,7 @@ export default {
     },
     async apply () {
       if (this.applyLoading === true) {
-        return
+        return // 防重复提交
       }
       this.applyLoading = true
       await this.applyBefore()
@@ -65,20 +66,22 @@ export default {
         cancelText: '取消',
         okText: '确定',
         onOk: async () => {
+          this.resetDefaultLoading = true
           this.config = await this.$api.config.resetDefault(key)
           if (this.ready) {
             await this.ready(this.config)
           }
           await this.apply()
+          this.resetDefaultLoading = false
         },
         onCancel () {}
       })
     },
     saveConfig () {
       return this.$api.config.save(this.config).then((ret) => {
-        this.$message.info('设置已保存')
+        this.$message.success('设置已保存')
         this.setConfig(ret.allConfig)
-        this.printConfig('after saveConfig(), ')
+        this.printConfig('After saveConfig(), ')
         return ret
       })
     },

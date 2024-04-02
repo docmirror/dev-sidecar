@@ -14,7 +14,7 @@
           >
             <template v-for="(item) of menus">
               <a-sub-menu v-if="item.children && item.children.length>0"   :key="item.path" @titleClick="titleClick(item)">
-                <span slot="title"><a-icon  :type="item.icon?item.icon:'file'" /><span>{{item.title}}</span></span>
+                <span slot="title"><a-icon :type="item.icon?item.icon:'file'"/><span>{{item.title}}</span></span>
                   <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)" >
                     <a-icon  :type="sub.icon?sub.icon:'file'"/> {{ sub.title }}
                   </a-menu-item>
@@ -24,11 +24,8 @@
                 <span class="nav-text">{{ item.title }}</span>
               </a-menu-item>
             </template>
-
           </a-menu>
-
         </div>
-
       </a-layout-sider>
       <a-layout>
 <!--        <a-layout-header>Header</a-layout-header>-->

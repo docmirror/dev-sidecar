@@ -15,8 +15,8 @@
           windows下建议开启开机自启。<a @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">更多说明参考</a>
         </div>
       </a-form-item>
-      <a-form-item v-if="systemPlatform ==='mac'" label="隐藏Dock图标" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.app.dock.hideWhenWinClose" >
+      <a-form-item v-if="systemPlatform === 'mac'" label="隐藏Dock图标" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-checkbox v-model="config.app.dock.hideWhenWinClose">
           关闭窗口时隐藏Dock图标(仅限Mac)
         </a-checkbox>
         <div class="form-help">
@@ -42,7 +42,7 @@
           <br/>如果重载远程配置后发现下载的还是修改前的内容，请稍等片刻再重试。
         </div>
       </a-form-item>
-      <a-form-item  label="首页提示" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-item label="首页提示" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model="config.app.showShutdownTip"
                        default-value="true" button-style="solid">
           <a-radio-button :value="true">
@@ -76,7 +76,7 @@
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button class="md-mr-10" icon="sync"   @click="resetDefault()">恢复默认</a-button>
+        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">恢复默认</a-button>
         <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
       </div>
     </template>
@@ -143,9 +143,9 @@ export default {
 
       if (remoteConfig.old === remoteConfig.new) {
         this.$message.info('远程配置没有变化，不做任何处理。')
-        this.$message.info('如果您确实修改了远程配置，请稍等片刻再重试！')
+        this.$message.warn('如果您确实修改了远程配置，请稍等片刻再重试！')
       } else {
-        this.$message.info('获取到了最新的远程配置，开始重启代理服务和系统代理')
+        this.$message.success('获取到了最新的远程配置，开始重启代理服务和系统代理')
         await this.reloadAndRestart()
       }
 

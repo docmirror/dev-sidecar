@@ -58,10 +58,10 @@
           <div class="form-help">某些库需要自己设置镜像变量，才能下载，比如：electron</div>
           <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of npmVariables" :key='index'>
             <a-col :span="10">
-              <a-input :disabled="item.key ===false" v-model="item.key"></a-input>
+              <a-input :disabled="item.key === false" v-model="item.key"></a-input>
             </a-col>
             <a-col :span="10">
-              <a-input :disabled="item.value ===false" v-model="item.value"></a-input>
+              <a-input :disabled="item.value === false" v-model="item.value"></a-input>
             </a-col>
             <a-col :span="4">
               <a-icon v-if="item.exists&& item.hadSet" title="已设置" style="color:green" type="check"/>
@@ -73,7 +73,7 @@
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button class="md-mr-10" icon="sync"   @click="resetDefault()">恢复默认</a-button>
+        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">恢复默认</a-button>
         <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
       </div>
     </template>

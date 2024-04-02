@@ -3,9 +3,8 @@
     <template slot="header">
       给开发者的辅助工具
       <span>
-
           <a-button style="margin-right:10px" @click="openSetupCa">
-            <a-badge :count="_rootCaSetuped?0:1" dot>安装根证书 </a-badge>
+            <a-badge :count="_rootCaSetuped?0:1" dot>安装根证书</a-badge>
           </a-button>
 
           <a-button style="margin-right:10px" @click="doCheckUpdate(true)" :loading="update.downloading"
@@ -14,7 +13,6 @@
               <span v-if="update.downloading">{{ update.progress }}%</span>{{ update.downloading ? '新版本下载中' : '检查更新' }}
             </a-badge>
           </a-button>
-
       </span>
     </template>
 
@@ -108,7 +106,6 @@
         </div>
       </a-modal>
     </div>
-
   </ds-container>
 
 </template>
@@ -205,7 +202,7 @@ export default {
         this.config.plugin.overwall.enabled = true
       }
       this.$api.config.save(this.config).then(() => {
-        this.$message.info('设置已保存')
+        this.$message.success('设置已保存')
       })
       if (this.status.server.enabled) {
         return this.$api.server.restart()
@@ -231,7 +228,7 @@ export default {
       this.$confirm({
         title: '第一次使用，请先安装CA根证书',
         content: '本应用正常使用，必须安装和信任CA根证书',
-        cancelText: '下次',
+        cancelText: '下次安装',
         okText: '去安装',
         onOk: () => {
           this.openSetupCa()
@@ -252,6 +249,8 @@ export default {
       await this.$api.shell.setupCa({ certPath: this.config.server.setting.rootCaFile.certPath })
       this.setting.rootCa = this.setting.rootCa || {}
       const rootCa = this.setting.rootCa
+
+      // 根证书已安装
       rootCa.setuped = true
       this.$set(this, 'setting', this.setting)
       this.$api.setting.save(this.setting)
