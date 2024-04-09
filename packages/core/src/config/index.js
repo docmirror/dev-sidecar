@@ -78,6 +78,11 @@ module.exports = {
         '^(/[^/]+){2}/pull/\\d+/open_with_menu.*$': {
           cacheDays: 7,
           desc: 'PR详情页：标题右边那个Code按钮的HTML代理请求地址，感觉上应该可以缓存。暂时先设置为缓存7天'
+        },
+        '^(/[^/]+){2,}\\.(jpg|jpeg|png|gif)(\\?.*)?$': {
+          githubSpeedUp: true,
+          cacheDays: 7,
+          desc: '仓库内图片，重定向改为代理，并缓存7天。'
         }
       },
       'github-releases.githubusercontent.com': {
