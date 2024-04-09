@@ -44,7 +44,7 @@ function doProxy (proxyConf, rOptions, req, interceptOpt) {
 
 module.exports = {
   name: 'proxy',
-  priority: 121,
+  priority: 122,
   doProxy,
   requestIntercept (context, interceptOpt, req, res, ssl, next) {
     const { rOptions, log, RequestCounter } = context

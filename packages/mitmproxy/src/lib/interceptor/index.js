@@ -7,10 +7,9 @@ const abort = require('./impl/req/abort')
 
 const cacheReq = require('./impl/req/cacheReq')
 
+const githubSpeedUp = require('./impl/req/githubSpeedUp')
 const proxy = require('./impl/req/proxy')
 const sni = require('./impl/req/sni')
-
-const githubSpeedUp = require('./impl/req/githubSpeedUp')
 
 // response interceptor impls
 const cacheRes = require('./impl/res/cacheRes')
@@ -21,8 +20,7 @@ module.exports = [
   OPTIONS,
   success, redirect, abort,
   cacheReq,
-  proxy, sni,
-  githubSpeedUp,
+  githubSpeedUp, proxy, sni,
 
   // response interceptor impls
   cacheRes, script

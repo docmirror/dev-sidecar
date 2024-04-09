@@ -2,7 +2,7 @@ const proxyApi = require('./proxy')
 
 module.exports = {
   name: 'githubSpeedUp',
-  priority: 131,
+  priority: 121,
   requestIntercept (context, interceptOpt, req, res, ssl, next) {
     const { rOptions, log } = context
 
