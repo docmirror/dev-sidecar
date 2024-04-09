@@ -1,33 +1,13 @@
+const proxyApi = require('./proxy')
+
 module.exports = {
   name: 'redirect',
   priority: 102,
   requestIntercept (context, interceptOpt, req, res, ssl, next, matched) {
     const { rOptions, log } = context
 
-    let redirect
-    if (typeof interceptOpt.redirect === 'string') {
-      if (interceptOpt.redirect.indexOf('http:') === 0 || interceptOpt.redirect.indexOf('https:') === 0) {
-        redirect = interceptOpt.redirect
-      } else {
-        redirect = rOptions.protocol + '//' + interceptOpt.redirect + req.url
-      }
-    } else {
-      redirect = interceptOpt.redirect(req.url)
-    }
-
-    // 替换内容
-    if (redirect.indexOf('${') >= 0) {
-      // eslint-disable-next-line
-      // no-template-curly-in-string
-      // eslint-disable-next-line no-template-curly-in-string
-      redirect = redirect.replace('${host}', rOptions.hostname)
-
-      if (matched) {
-        for (let i = 0; i < matched.length; i++) {
-          redirect = redirect.replace('${m[' + i + ']}', matched[i])
-        }
-      }
-    }
+    // 获取重定向目标地址
+    const redirect = proxyApi.buildTargetUrl(rOptions, interceptOpt.redirect, interceptOpt, matched)
 
     res.writeHead(302, {
       Location: redirect,

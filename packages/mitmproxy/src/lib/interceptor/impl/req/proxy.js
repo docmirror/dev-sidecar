@@ -1,41 +1,62 @@
 const url = require('url')
 const lodash = require('lodash')
 
-function doProxy (proxyConf, rOptions, req, interceptOpt, matched) {
-  // 获取代理目标地址
-  let proxyTarget
+// 替换占位符
+function replacePlaceholder (url, rOptions, matched) {
+  if (url.indexOf('${') >= 0) {
+    // eslint-disable-next-line
+    // no-template-curly-in-string
+    // eslint-disable-next-line no-template-curly-in-string
+    url = url.replace('${host}', rOptions.hostname)
+
+    if (matched && url.indexOf('${') >= 0) {
+      for (let i = 0; i < matched.length; i++) {
+        url = url.replace('${m[' + i + ']}', matched[i] == null ? '' : matched[i])
+      }
+    }
+
+    // 移除多余的占位符
+    if (url.indexOf('${') >= 0) {
+      url = url.replace(/\$\{[^}]+}/g, '')
+    }
+  }
+
+  return url
+}
+
+function buildTargetUrl (rOptions, urlConf, interceptOpt, matched) {
+  let targetUrl
   if (interceptOpt && interceptOpt.replace) {
     const regexp = new RegExp(interceptOpt.replace)
-    proxyTarget = req.url.replace(regexp, proxyConf)
-  } else if (proxyConf.indexOf('http:') === 0 || proxyConf.indexOf('https:') === 0) {
-    proxyTarget = proxyConf
+    targetUrl = rOptions.path.replace(regexp, urlConf)
+  } else if (urlConf.indexOf('http:') === 0 || urlConf.indexOf('https:') === 0) {
+    targetUrl = urlConf
   } else {
-    let uri = req.url
+    let uri = rOptions.path
     if (uri.indexOf('http') === 0) {
       // eslint-disable-next-line node/no-deprecated-api
       const URL = url.parse(uri)
       uri = URL.path
     }
-    proxyTarget = proxyConf + uri
+    targetUrl = urlConf + uri
   }
 
-  // 替换内容
-  if (proxyTarget.indexOf('${') >= 0) {
-    // eslint-disable-next-line
-    // no-template-curly-in-string
-    // eslint-disable-next-line no-template-curly-in-string
-    proxyTarget = proxyTarget.replace('${host}', rOptions.hostname)
+  // 替换占位符
+  targetUrl = replacePlaceholder(targetUrl, rOptions, matched)
 
-    if (matched) {
-      for (let i = 0; i < matched.length; i++) {
-        proxyTarget = proxyTarget.replace('${m[' + i + ']}', matched[i])
-      }
-    }
-  }
+  // 拼接协议
+  targetUrl = targetUrl.indexOf('http:') === 0 || targetUrl.indexOf('https:') === 0 ? targetUrl : rOptions.protocol + '//' + targetUrl
 
-  const proxy = proxyTarget.indexOf('http:') === 0 || proxyTarget.indexOf('https:') === 0 ? proxyTarget : rOptions.protocol + '//' + proxyTarget
+  return targetUrl
+}
+
+function doProxy (proxyConf, rOptions, req, interceptOpt, matched) {
+  // 获取代理目标地址
+  const proxyTarget = buildTargetUrl(rOptions, proxyConf, interceptOpt, matched)
+
+  // 替换rOptions的属性
   // eslint-disable-next-line node/no-deprecated-api
-  const URL = url.parse(proxy)
+  const URL = url.parse(proxyTarget)
   rOptions.origional = lodash.cloneDeep(rOptions) // 备份原始请求参数
   delete rOptions.origional.agent
   delete rOptions.origional.headers
@@ -54,6 +75,9 @@ function doProxy (proxyConf, rOptions, req, interceptOpt, matched) {
 module.exports = {
   name: 'proxy',
   priority: 121,
+  replacePlaceholder,
+  buildTargetUrl,
+  doProxy,
   requestIntercept (context, interceptOpt, req, res, ssl, next, matched) {
     const { rOptions, log, RequestCounter } = context
 
