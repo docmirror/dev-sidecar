@@ -1,7 +1,7 @@
 module.exports = {
   name: 'redirect',
   priority: 102,
-  requestIntercept (context, interceptOpt, req, res, ssl, next) {
+  requestIntercept (context, interceptOpt, req, res, ssl, next, matched) {
     const { rOptions, log } = context
 
     let redirect
@@ -15,10 +15,19 @@ module.exports = {
       redirect = interceptOpt.redirect(req.url)
     }
 
-    // eslint-disable-next-line
-    // no-template-curly-in-string
-    // eslint-disable-next-line no-template-curly-in-string
-    redirect = redirect.replace('${host}', rOptions.hostname)
+    // 替换内容
+    if (redirect.indexOf('${') >= 0) {
+      // eslint-disable-next-line
+      // no-template-curly-in-string
+      // eslint-disable-next-line no-template-curly-in-string
+      redirect = redirect.replace('${host}', rOptions.hostname)
+
+      if (matched) {
+        for (let i = 0; i < matched.length; i++) {
+          redirect = redirect.replace('${m[' + i + ']}', matched[i])
+        }
+      }
+    }
 
     res.writeHead(302, {
       Location: redirect,
