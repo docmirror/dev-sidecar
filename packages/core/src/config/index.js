@@ -79,8 +79,9 @@ module.exports = {
           cacheDays: 7,
           desc: 'PR详情页：标题右边那个Code按钮的HTML代理请求地址，感觉上应该可以缓存。暂时先设置为缓存7天'
         },
-        '^(/[^/]+){2,}\\.(jpg|jpeg|png|gif)(\\?.*)?$': {
-          githubSpeedUp: true,
+        '^((/[^/]+){2,})/raw((/[^/]+)+\\.(jpg|jpeg|png|gif))(\\?.*)?$': {
+          // eslint-disable-next-line no-template-curly-in-string
+          proxy: 'https://raw.githubusercontent.com${m[1]}${m[3]}',
           cacheDays: 7,
           desc: '仓库内图片，重定向改为代理，并缓存7天。'
         }

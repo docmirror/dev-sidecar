@@ -1,7 +1,7 @@
 const url = require('url')
 const lodash = require('lodash')
 
-function doProxy (proxyConf, rOptions, req, interceptOpt) {
+function doProxy (proxyConf, rOptions, req, interceptOpt, matched) {
   // 获取代理目标地址
   let proxyTarget
   if (interceptOpt && interceptOpt.replace) {
@@ -19,10 +19,19 @@ function doProxy (proxyConf, rOptions, req, interceptOpt) {
     proxyTarget = proxyConf + uri
   }
 
-  // eslint-disable-next-line
-  // no-template-curly-in-string
-  // eslint-disable-next-line no-template-curly-in-string
-  proxyTarget = proxyTarget.replace('${host}', rOptions.hostname)
+  // 替换内容
+  if (proxyTarget.indexOf('${') >= 0) {
+    // eslint-disable-next-line
+    // no-template-curly-in-string
+    // eslint-disable-next-line no-template-curly-in-string
+    proxyTarget = proxyTarget.replace('${host}', rOptions.hostname)
+
+    if (matched) {
+      for (let i = 0; i < matched.length; i++) {
+        proxyTarget = proxyTarget.replace('${m[' + i + ']}', matched[i])
+      }
+    }
+  }
 
   const proxy = proxyTarget.indexOf('http:') === 0 || proxyTarget.indexOf('https:') === 0 ? proxyTarget : rOptions.protocol + '//' + proxyTarget
   // eslint-disable-next-line node/no-deprecated-api
@@ -44,9 +53,8 @@ function doProxy (proxyConf, rOptions, req, interceptOpt) {
 
 module.exports = {
   name: 'proxy',
-  priority: 122,
-  doProxy,
-  requestIntercept (context, interceptOpt, req, res, ssl, next) {
+  priority: 121,
+  requestIntercept (context, interceptOpt, req, res, ssl, next, matched) {
     const { rOptions, log, RequestCounter } = context
 
     const originHostname = rOptions.hostname
@@ -77,7 +85,7 @@ module.exports = {
     }
 
     // 替换 rOptions 中的地址，并返回代理目标地址
-    const proxyTarget = doProxy(proxyConf, rOptions, req, interceptOpt)
+    const proxyTarget = doProxy(proxyConf, rOptions, req, interceptOpt, matched)
 
     if (context.requestCount) {
       log.info('proxy choice:', JSON.stringify(context.requestCount))

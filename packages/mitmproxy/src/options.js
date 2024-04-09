@@ -69,14 +69,20 @@ module.exports = (config) => {
       const matchIntercepts = []
       const matchInterceptsOpts = {}
       for (const regexp in interceptOpts) { // 遍历拦截配置
-        const interceptOpt = interceptOpts[regexp]
-        // interceptOpt.key = regexp
+        // 判断是否匹配拦截器
+        let matched
         if (regexp !== true && regexp !== 'true') {
-          if (!matchUtil.isMatched(rOptions.path, regexp)) {
+          matched = matchUtil.isMatched(rOptions.path, regexp)
+          if (matched == null) { // 拦截器匹配失败
             continue
           }
         }
-        log.info(`interceptor matched, regexp: '${regexp}' =>`, JSON.stringify(interceptOpt), ', path:', rOptions.path)
+
+        // 获取拦截器
+        const interceptOpt = interceptOpts[regexp]
+        // interceptOpt.key = regexp
+
+        // log.info(`interceptor matched, regexp: '${regexp}' =>`, JSON.stringify(interceptOpt), ', url:', url)
         for (const impl of interceptorImpls) {
           // 根据拦截配置挑选合适的拦截器来处理
           if (impl.is && impl.is(interceptOpt)) {
@@ -96,12 +102,12 @@ module.exports = (config) => {
             if (impl.requestIntercept) {
               // req拦截器
               interceptor.requestIntercept = (context, req, res, ssl, next) => {
-                return impl.requestIntercept(context, interceptOpt, req, res, ssl, next)
+                return impl.requestIntercept(context, interceptOpt, req, res, ssl, next, matched)
               }
             } else if (impl.responseIntercept) {
               // res拦截器
               interceptor.responseIntercept = (context, req, res, proxyReq, proxyRes, ssl, next) => {
-                return impl.responseIntercept(context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next)
+                return impl.responseIntercept(context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next, matched)
               }
             }
 

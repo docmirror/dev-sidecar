@@ -1,6 +1,6 @@
 module.exports = {
   name: 'sni',
-  priority: 123,
+  priority: 122,
   requestIntercept (context, interceptOpt, req, res, ssl, next) {
     const { rOptions, log } = context
 
