@@ -1,6 +1,8 @@
+const proxyApi = require('./proxy')
+
 module.exports = {
   name: 'githubSpeedUp',
-  priority: 104,
+  priority: 131,
   requestIntercept (context, interceptOpt, req, res, ssl, next) {
     const { rOptions, log } = context
 
@@ -14,15 +16,15 @@ module.exports = {
     // 判断是否为仓库内的图片文件
     const matched = req.url.match('^(/[^/]+){2}/raw(/[^/]+)+\\.(jpg|jpeg|png|gif)(\\?.*)?$')
     if (matched) {
-      const redirect = 'https://raw.githubusercontent.com' + matched[0].replace('/raw/', '/')
+      // 拼接代理地址
+      const proxyConf = 'https://raw.githubusercontent.com' + req.url.replace('/raw/', '/')
 
-      res.writeHead(302, {
-        Location: redirect,
-        'DS-Interceptor': 'githubSpeedUp'
-      })
-      res.end()
+      // 执行代理
+      const proxyTarget = proxyApi.doProxy(proxyConf, rOptions, req)
 
-      log.info('githubSpeedUp intercept:', url)
+      res.setHeader('DS-Interceptor', `githubSpeedUp: proxy -> ${proxyTarget}`)
+
+      log.info(`githubSpeedUp intercept: ${url} -> ${proxyConf}`)
 
       return true
     }
@@ -30,6 +32,6 @@ module.exports = {
     return true // true代表请求结束
   },
   is (interceptOpt) {
-    return true
+    return !!interceptOpt.githubSpeedUp
   }
 }
