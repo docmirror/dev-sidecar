@@ -4,6 +4,7 @@ const OPTIONS = require('./impl/req/OPTIONS.js')
 const success = require('./impl/req/success')
 const redirect = require('./impl/req/redirect')
 const abort = require('./impl/req/abort')
+const githubSpeedUp = require('./impl/req/githubSpeedUp')
 
 const cacheReq = require('./impl/req/cacheReq')
 
@@ -17,7 +18,7 @@ const script = require('./impl/res/script')
 module.exports = [
   // request interceptor impls
   OPTIONS,
-  success, redirect, abort,
+  success, redirect, abort, githubSpeedUp,
   cacheReq,
   proxy, sni,
 
