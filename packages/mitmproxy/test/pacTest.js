@@ -1,4 +1,5 @@
-const pac = require('../src/lib/proxy/middleware/source/pac')
+const pac = require('../src/lib/proxy/middleware/source/pac').createPacClient('../../gui/extra/pac/pac.txt')
+
 const string = pac.FindProxyForURL('https://www.facebook.com', 'www.facebook.com')
 console.log(string)
 
