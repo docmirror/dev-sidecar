@@ -161,6 +161,13 @@ module.exports = {
           sni: 'baidu.com'
         }
       },
+      'login.docker.com': {
+        '/favicon.ico': {
+          proxy: 'hub.docker.com',
+          sni: 'baidu.com',
+          desc: '登录页面的ico，采用hub.docker.com的'
+        }
+      },
       // '*.v2ex.com': {
       //   '.*': {
       //     sni: 'baidu.com'
@@ -173,6 +180,9 @@ module.exports = {
         //   proxy: 'gg.docmirror.top/_yxorp',
         //   desc: '呀，被你发现了，偷偷的用，别声张'
         // }
+      },
+      'www.gstatic.com': {
+        '/recaptcha/.*': { proxy: 'www.recaptcha.net' }
       },
       'ajax.googleapis.com': {
         '.*': {
