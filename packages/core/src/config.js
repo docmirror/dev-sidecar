@@ -66,7 +66,7 @@ const configApi = {
           return
         }
         if (response && response.statusCode === 200) {
-          if (body == null || body.length < 3) {
+          if (body == null || body.length < 2) {
             log.warn('下载远程配置成功，但内容为空:', remoteConfigUrl)
             resolve()
             return
@@ -120,7 +120,7 @@ const configApi = {
         log.warn('远程配置文件不存在:', path)
       }
     } catch (e) {
-      log.error('远程配置读取失败:', path, ', error:', e)
+      log.error('读取远程配置文件失败:', path, ', error:', e)
     }
 
     return {}
@@ -132,14 +132,14 @@ const configApi = {
     try {
       const path = _getRemoteSavePath()
       if (fs.existsSync(path)) {
-        log.info('读取远程配置文件内容:', path)
         const file = fs.readFileSync(path)
+        log.info('读取远程配置文件内容成功:', path)
         return file.toString()
       } else {
         log.warn('远程配置文件不存在:', path)
       }
     } catch (e) {
-      log.warn('远程配置内容读取失败:', e)
+      log.error('读取远程配置文件内容失败:', e)
     }
 
     return '{}'
