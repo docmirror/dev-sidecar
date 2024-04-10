@@ -84,7 +84,6 @@ module.exports = {
       '*.qpic.com': true,
       '*.qlogo.com': true,
       '*.myapp.com': true,
-      '*.myqcloud.com': true,
 
       // 阿里
       '*.aliyun.com': true,
@@ -120,7 +119,6 @@ module.exports = {
       '*.maven.org': true,
       // Maven Repository
       '*.mvnrepository.com': true,
-      'challenges.cloudflare.com': true, // 在访问 mvnrepository.com 的人机校验时使用，国内可直接访问，所以不需要代理，代理了反而变慢了。
 
       // 苹果
       '*.apple.com': true,
@@ -136,6 +134,8 @@ module.exports = {
 
       // WPS
       '*.wps.com': true,
+      '*.wps.net': true,
+      '*.ksord.com': true,
 
       // 奇虎
       '*.qihoo.com': true,
