@@ -161,7 +161,7 @@ const configApi = {
     const diffConfig = mergeApi.doDiff(defConfig, newConfig)
     const configPath = _getConfigPath()
     fs.writeFileSync(configPath, jsonApi.stringify(diffConfig))
-    log.info('保存自定义配置文件成功:', configPath)
+    log.info('保存 config.json 自定义配置文件成功:', configPath)
 
     // 重载配置
     const allConfig = configApi.set(diffConfig)
@@ -203,15 +203,19 @@ const configApi = {
       log.warn('newConfig 为空，不做任何操作')
       return configTarget
     }
-
+    return configApi.load(newConfig)
+  },
+  load (newConfig) {
     const merged = lodash.cloneDeep(defConfig)
     const remoteConfig = configApi.readRemoteConfig()
 
     mergeApi.doMerge(merged, remoteConfig)
-    mergeApi.doMerge(merged, newConfig)
+    if (newConfig != null) {
+      mergeApi.doMerge(merged, newConfig)
+    }
     mergeApi.deleteNullItems(merged)
     configTarget = merged
-    log.info('加载配置完成')
+    log.info('加载及合并远程配置完成')
 
     return configTarget
   },
@@ -220,6 +224,29 @@ const configApi = {
   },
   addDefault (key, defValue) {
     lodash.set(defConfig, key, defValue)
+  },
+  async removeUserConfig () {
+    const configPath = _getConfigPath()
+    if (fs.existsSync(configPath)) {
+      // 读取 config.json 文件内容
+      const fileStr = fs.readFileSync(configPath).toString().replace(/\s/g, '')
+
+      // 判断文件内容是否为空或空配置
+      if (fileStr === '' || fileStr === '{}') {
+        fs.rmSync(configPath)
+        return false // config.json 内容为空，或为空json
+      }
+
+      // 备份用户自定义配置文件
+      fs.renameSync(configPath, configPath + '.bak' + new Date().getTime() + '.json')
+
+      // 重新加载配置
+      configApi.load(null)
+
+      return true // 删除并重新加载配置成功
+    } else {
+      return false // config.json 文件不存在或内容为配置
+    }
   },
   resetDefault (key) {
     if (key) {
