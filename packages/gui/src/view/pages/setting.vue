@@ -76,6 +76,7 @@
     </div>
     <template slot="footer">
       <div class="footer-bar">
+        <a-button :loading="removeUserConfigLoading" class="md-mr-10" icon="sync" @click="restoreFactorySettings()">恢复出厂设置</a-button>
         <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">恢复默认</a-button>
         <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
       </div>
@@ -92,6 +93,7 @@ export default {
   data () {
     return {
       key: 'app',
+      removeUserConfigLoading: false,
       reloadLoading: false
     }
   },
@@ -108,16 +110,6 @@ export default {
       this.$api.autoStart.enabled(this.config.app.autoStart.enabled)
       this.saveConfig()
     },
-    async reloadAndRestart () {
-      this.$api.config.reload()
-      if (this.status.server.enabled || this.status.proxy.enabled) {
-        await this.$api.proxy.restart()
-        await this.$api.server.restart()
-        this.$message.info('代理服务和系统代理重启成功')
-      } else {
-        this.$message.info('代理服务和系统代理未启动，无需重启')
-      }
-    },
     async onRemoteConfigEnabledChange () {
       await this.saveConfig()
       if (this.config.app.remoteConfig.enabled === true) {
@@ -125,11 +117,11 @@ export default {
         this.$message.info('开始下载远程配置')
         await this.$api.config.downloadRemoteConfig()
         this.$message.info('下载远程配置成功，开始重启代理服务和系统代理')
-        await this.reloadAndRestart()
+        await this.reloadConfigAndRestart()
         this.reloadLoading = false
       } else {
-        this.$message.info('开始重启代理服务和系统代理')
-        await this.reloadAndRestart()
+        this.$message.info('远程配置已关闭，开始重启代理服务和系统代理')
+        await this.reloadConfigAndRestart()
       }
     },
     async reloadRemoteConfig () {
@@ -146,10 +138,31 @@ export default {
         this.$message.warn('如果您确实修改了远程配置，请稍等片刻再重试！')
       } else {
         this.$message.success('获取到了最新的远程配置，开始重启代理服务和系统代理')
-        await this.reloadAndRestart()
+        await this.reloadConfigAndRestart()
       }
 
       this.reloadLoading = false
+    },
+    async restoreFactorySettings () {
+      this.$confirm({
+        title: '提示',
+        content: '确定要恢复出厂设置吗？？？？？？？？？？？？——————————————————————警告：该功能将删除您的所有页面的个性化配置，并重载默认配置及远程配置（如果启用了的话），请谨慎操作！！！',
+        cancelText: '取消',
+        okText: '确定',
+        onOk: async () => {
+          this.removeUserConfigLoading = true
+          const result = await this.$api.config.removeUserConfig()
+          if (result) {
+            this.config = await this.$api.config.get()
+            this.$message.success('恢复出厂配置成功，开始重启代理服务和系统代理')
+            await this.reloadConfigAndRestart()
+          } else {
+            this.$message.info('已是出厂配置，无需恢复')
+          }
+          this.removeUserConfigLoading = false
+        },
+        onCancel () {}
+      })
     }
   }
 }
