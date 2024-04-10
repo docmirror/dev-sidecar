@@ -235,7 +235,7 @@ export default {
         },
         onCancel: () => {
           this.setting.rootCa = this.setting.rootCa || {}
-          //  const rootCa = this.setting.rootCa
+          // const rootCa = this.setting.rootCa
           // rootCa.noTip = true
           // this.$api.setting.save(this.setting)
         }
@@ -252,6 +252,13 @@ export default {
 
       // 根证书已安装
       rootCa.setuped = true
+      // 保存安装时间
+      rootCa.setupTime = new Date().getTime()
+      // 保存安装描述
+      rootCa.desc = '根证书已安装'
+      // 删除noTip数据
+      // delete rootCa.noTip
+
       this.$set(this, 'setting', this.setting)
       this.$api.setting.save(this.setting)
     },

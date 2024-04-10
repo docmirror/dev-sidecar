@@ -1,4 +1,5 @@
 const nodeConfig = require('./config')
+const jsonApi = require('../../../json.js')
 const NodePlugin = function (context) {
   const { config, shell, event, log } = context
   const nodeApi = {
@@ -31,7 +32,7 @@ const NodePlugin = function (context) {
       const ret = await shell.exec(['npm config list --json'], { type: 'cmd' })
       if (ret != null) {
         const json = ret.substring(ret.indexOf('{'))
-        return JSON.parse(json)
+        return jsonApi.parse(json)
       }
       return {}
     },

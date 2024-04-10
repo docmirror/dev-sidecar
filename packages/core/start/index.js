@@ -1,6 +1,8 @@
-const JSON5 = require('json5')
+const jsonApi = require('../src/json.js')
 const DevSidecar = require('../index')
 const fs = require('fs')
+const log = require('../src/utils/util.log')
+
 // 启动服务
 const mitmproxyPath = './start/mitmproxy'
 async function startup () {
@@ -10,7 +12,8 @@ async function startup () {
   const configPath = './start/user_config.json5'
   if (fs.existsSync(configPath)) {
     const file = fs.readFileSync(configPath)
-    const userConfig = JSON5.parse(file.toString())
+    const userConfig = jsonApi.parse(file.toString())
+    log.info('读取 user_config.json5 成功:', configPath)
     DevSidecar.api.config.set(userConfig)
   }
 

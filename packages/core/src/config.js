@@ -2,7 +2,7 @@ const fs = require('fs')
 const Shell = require('./shell')
 const lodash = require('lodash')
 const defConfig = require('./config/index.js')
-const JSON5 = require('json5').default
+const jsonApi = require('./json.js')
 const request = require('request')
 const path = require('path')
 const log = require('./utils/util.log')
@@ -66,14 +66,18 @@ const configApi = {
           return
         }
         if (response && response.statusCode === 200) {
-          const originalRemoteSavePath = _getRemoteSavePath('original_')
-          fs.writeFileSync(originalRemoteSavePath, body)
-          log.info('保存原来的远程配置文件成功:', originalRemoteSavePath)
+          if (body == null || body.length < 3) {
+            log.warn('下载远程配置成功，但内容为空:', remoteConfigUrl)
+            resolve()
+            return
+          } else {
+            log.info('下载远程配置成功:', remoteConfigUrl)
+          }
 
           // 尝试解析远程配置，如果解析失败，则不保存它
           let remoteConfig
           try {
-            remoteConfig = JSON5.parse(body)
+            remoteConfig = jsonApi.parse(body)
           } catch (e) {
             log.error(`远程配置内容格式不正确, url: ${remoteConfigUrl}, body: ${body}`)
             remoteConfig = null
@@ -81,14 +85,22 @@ const configApi = {
 
           if (remoteConfig != null) {
             const remoteSavePath = _getRemoteSavePath()
-            fs.writeFileSync(remoteSavePath, JSON.stringify(remoteConfig, null, '\t'))
+            fs.writeFileSync(remoteSavePath, body)
             log.info('保存远程配置文件成功:', remoteSavePath)
+          } else {
+            log.warn('远程配置对象为空:', remoteConfigUrl)
           }
 
           resolve()
         } else {
-          const message = '下载远程配置失败:' + response.message + ',code:' + response.statusCode
-          log.error(message)
+          log.error('下载远程配置失败, response:', response, ', body:', body)
+
+          let message
+          if (response) {
+            message = '下载远程配置失败: ' + response.message + ', code: ' + response.statusCode
+          } else {
+            message = '下载远程配置失败: response: ' + response
+          }
           reject(new Error(message))
         }
       })
@@ -101,9 +113,9 @@ const configApi = {
     const path = _getRemoteSavePath()
     try {
       if (fs.existsSync(path)) {
-        log.info('读取远程配置文件:', path)
         const file = fs.readFileSync(path)
-        return JSON5.parse(file.toString())
+        log.info('读取远程配置文件成功:', path)
+        return jsonApi.parse(file.toString())
       } else {
         log.warn('远程配置文件不存在:', path)
       }
@@ -148,11 +160,11 @@ const configApi = {
     // 计算新配置与默认配置（启用远程配置时，含远程配置）的差异，并保存到 config.json 中
     const diffConfig = mergeApi.doDiff(defConfig, newConfig)
     const configPath = _getConfigPath()
-    fs.writeFileSync(configPath, JSON.stringify(diffConfig, null, '\t'))
+    fs.writeFileSync(configPath, jsonApi.stringify(diffConfig))
     log.info('保存自定义配置文件成功:', configPath)
 
     // 重载配置
-    const allConfig = configApi.reload()
+    const allConfig = configApi.set(diffConfig)
 
     return {
       diffConfig,
@@ -166,13 +178,16 @@ const configApi = {
    * @returns {*}
    */
   reload () {
-    const path = _getConfigPath()
+    const configPath = _getConfigPath()
     let userConfig
-    if (!fs.existsSync(path)) {
+    if (!fs.existsSync(configPath)) {
       userConfig = {}
+      log.info('config.json 文件不存在:', configPath)
     } else {
-      const file = fs.readFileSync(path)
-      userConfig = JSON5.parse(file.toString())
+      const file = fs.readFileSync(configPath)
+      log.info('读取 config.json 成功:', configPath)
+      const fileStr = file.toString()
+      userConfig = fileStr && fileStr.length > 2 ? jsonApi.parse(fileStr) : {}
     }
 
     const config = configApi.set(userConfig)

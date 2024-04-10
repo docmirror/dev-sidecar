@@ -2,15 +2,17 @@ import lodash from 'lodash'
 import DevSidecar from '@docmirror/dev-sidecar'
 import { ipcMain } from 'electron'
 import fs from 'fs'
-import JSON5 from 'json5'
 import path from 'path'
 const pk = require('../../../package.json')
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
 process.env.DS_EXTRA_PATH = path.join(__dirname, '../extra/')
+const jsonApi = require('@docmirror/dev-sidecar/src/json.js')
 const log = require('../../utils/util.log')
+
 const getDefaultConfigBasePath = function () {
   return DevSidecar.api.config.get().server.setting.userBasePath
 }
+
 const localApi = {
   /**
    * 返回所有api列表，供vue来ipc调用
@@ -47,7 +49,12 @@ const localApi = {
       let setting = {}
       if (fs.existsSync(settingPath)) {
         const file = fs.readFileSync(settingPath)
-        setting = JSON5.parse(file.toString())
+        try {
+          setting = jsonApi.parse(file.toString())
+          log.info('读取 setting.json 成功:', settingPath)
+        } catch (e) {
+          log.error('读取 setting.json 失败:', settingPath, ', error:', e)
+        }
         if (setting == null) {
           setting = {}
         }
@@ -57,15 +64,26 @@ const localApi = {
       }
 
       if (setting.installTime == null) {
+        // 设置安装时间
         setting.installTime = new Date().getTime()
+
+        // 初始化 rootCa.setuped
+        if (setting.rootCa == null) {
+          setting.rootCa = {
+            setuped: false,
+            desc: '根证书未安装'
+          }
+        }
+
+        // 保存 setting.json
         localApi.setting.save(setting)
       }
       return setting
     },
     save (setting = {}) {
       const settingPath = _getSettingsPath()
-      fs.writeFileSync(settingPath, JSON.stringify(setting, null, '\t'))
-      log.info('保存setting配置文件成功', settingPath)
+      fs.writeFileSync(settingPath, jsonApi.stringify(setting))
+      log.info('保存 setting.json 配置文件成功:', settingPath)
     }
   },
   /**

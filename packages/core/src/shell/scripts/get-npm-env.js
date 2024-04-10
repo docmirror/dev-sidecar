@@ -2,13 +2,14 @@
  * 获取环境变量
  */
 const Shell = require('../shell')
+const jsonApi = require('../../json')
 const execute = Shell.execute
 const executor = {
   async windows (exec) {
     const ret = await exec(['npm config list --json'], { type: 'cmd' })
     if (ret != null) {
       const json = ret.substring(ret.indexOf('{'))
-      return JSON.parse(json)
+      return jsonApi.parse(json)
     }
     return {}
   },
