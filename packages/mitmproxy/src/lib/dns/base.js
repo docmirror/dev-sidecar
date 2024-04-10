@@ -58,8 +58,7 @@ module.exports = class BaseDNS {
       ipList.push(hostname) // 把原域名加入到统计里去
 
       ipCache.setBackupList(ipList)
-      log.info(`[dns counter]:${hostname}`, ipCache.value, ipList, JSON.stringify(ipCache))
-      log.info(`[DNS] ${hostname} -> ${ipCache.value} (${new Date() - t} ms)`)
+      log.info(`[DNS]: ${hostname} ➜ ${ipCache.value} (${new Date() - t} ms), ipList: ${JSON.stringify(ipList)}, ipCache:`, JSON.stringify(ipCache))
 
       return ipCache.value
     } catch (error) {
