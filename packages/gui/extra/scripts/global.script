@@ -6,4 +6,4 @@ window.__ds_global__={
 	GM_setValue: () => {},
 	GM_notification: () => {}
 }
-console.log('ds_global loaded')
+console.log("ds_global completed")

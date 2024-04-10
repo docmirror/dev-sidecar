@@ -3,20 +3,24 @@ const path = require('path')
 const log = require('../../utils/util.log')
 let scripts
 
-function buildScript (sc, content) {
-  const grant = sc.grant
-  const pre = 'window.addEventListener("load",' +
-      ' ()=> { \r\n'
-  let grantSc = ''
-  for (const item of grant) {
-    grantSc += (item.indexOf('.') > 0 ? '' : 'const ') + item + ' = window.__ds_global__[\'' + item + '\']\r\n'
+function buildScript (sc, content, scriptName) {
+  let grantStr = ''
+  for (const item of sc.grant) {
+    if (grantStr.length > 0) {
+      grantStr += '\r\n'
+    }
+    grantStr += (item.indexOf('.') > 0 ? '' : 'const ') + item + ' = window.__ds_global__[\'' + item + '\']'
   }
-  const tail = ';' + content + '\r\n' +
-      '})'
-  return pre + grantSc + tail
+
+  return 'window.addEventListener("load", ()=> {\r\n' +
+    grantStr + ';\r\n' +
+    content +
+    (scriptName ? `\r\nconsole.log("ds_${scriptName} completed")` : '') +
+    '\r\n})' +
+    (scriptName ? `\r\nconsole.log("ds_${scriptName} loaded")` : '')
 }
 
-function loadScript (content) {
+function loadScript (content, scriptName) {
   // @grant        GM_registerMenuCommand
   // @grant        GM_unregisterMenuCommand
   // @grant        GM_openInTab
@@ -51,7 +55,7 @@ function loadScript (content) {
   }
   const script = arr[start + 1].trim()
 
-  sc.script = buildScript(sc, script)
+  sc.script = buildScript(sc, script, scriptName)
   return sc
 }
 
@@ -71,8 +75,8 @@ const api = {
   },
   load (rootDir) {
     scripts = {}
-    scripts.github = loadScript(readFile(rootDir, 'github.script'))
-    scripts.google = loadScript(readFile(rootDir, 'google.js'))
+    scripts.github = loadScript(readFile(rootDir, 'github.script'), 'github')
+    scripts.google = loadScript(readFile(rootDir, 'google.js'), 'google')
     // scripts.jquery = { script: readFile(rootDir, 'jquery.min.js') }
     scripts.global = { script: readFile(rootDir, 'global.script') }
     return scripts

@@ -472,5 +472,4 @@
 			window.dispatchEvent(new Event('urlchange'))
 		});
 	}
-	console.log('ds_github loaded')
 })();
