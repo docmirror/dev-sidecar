@@ -114,7 +114,6 @@
 import lodash from 'lodash'
 import setupCa from '../components/setup-ca'
 import DsContainer from '../components/container'
-const backend = require('../../bridge/api/backend')
 
 export default {
   name: 'Index',
@@ -245,6 +244,17 @@ export default {
     openSetupCa () {
       this.setupCa.visible = true
     },
+    getDateTimeStr () {
+      const date = new Date() // 创建一个表示当前日期和时间的 Date 对象
+      const year = date.getFullYear() // 获取年份
+      const month = String(date.getMonth() + 1).padStart(2, '0') // 获取月份（注意月份从 0 开始计数）
+      const day = String(date.getDate()).padStart(2, '0') // 获取天数
+      const hours = String(date.getHours()).padStart(2, '0') // 获取小时
+      const minutes = String(date.getMinutes()).padStart(2, '0') // 获取分钟
+      const seconds = String(date.getSeconds()).padStart(2, '0') // 获取秒数
+      const milliseconds = String(date.getMilliseconds()).padStart(3, '0') // 获取毫秒
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`
+    },
     async handleCaSetuped () {
       console.log('this.config.server.setting.rootCaFile.certPath', this.config.server.setting.rootCaFile.certPath)
       await this.$api.shell.setupCa({ certPath: this.config.server.setting.rootCaFile.certPath })
@@ -254,7 +264,7 @@ export default {
       // 根证书已安装
       rootCa.setuped = true
       // 保存安装时间
-      rootCa.setupTime = backend.getDateTimeStr()
+      rootCa.setupTime = this.getDateTimeStr()
       // 保存安装描述
       rootCa.desc = '根证书已安装'
       // 删除noTip数据
