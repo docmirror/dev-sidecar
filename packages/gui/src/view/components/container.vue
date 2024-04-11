@@ -15,7 +15,7 @@ export default {
 </script>
 
 <style lang="scss">
-/* 暗色/黑色主题 */
+/* 暗色主题 */
 $dark-logo: url("/logo/logo-lang-light.svg");
 $dark-bg: #1e1f22; //背景
 $dark-bg-highlight: #333; //高亮块：背景
