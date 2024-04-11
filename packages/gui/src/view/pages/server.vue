@@ -15,57 +15,58 @@
         v-if="config"
       >
         <a-tab-pane tab="基本设置" key="1">
-          <a-form-item label="代理服务:" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-checkbox v-model="config.server.enabled">
-              随应用启动
-            </a-checkbox>
-            <a-tag v-if="status.proxy.enabled" color="green">
-              当前已启动
-            </a-tag>
-            <a-tag v-else color="red">
-              当前未启动
-            </a-tag>
-
-            <a-button class="md-mr-10" icon="profile" @click="openLog()">日志</a-button>
-          </a-form-item>
-          <a-form-item label="绑定IP" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-input v-model="config.server.host"/>
-            <div class="form-help">你可以设置0.0.0.0，让其他电脑可以使用此代理服务</div>
-          </a-form-item>
-          <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-input v-model="config.server.port"/>
-            <div class="form-help">修改后需要重启应用</div>
-          </a-form-item>
-          <a-form-item label="全局校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-checkbox v-model="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED">
-              NODE_TLS_REJECT_UNAUTHORIZED
-            </a-checkbox>
-            <div class="form-help">高风险操作，没有特殊情况请勿关闭</div>
-          </a-form-item>
-          <a-form-item label="代理校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-checkbox v-model="config.server.setting.verifySsl">
-              校验加速目标网站的ssl证书
-            </a-checkbox>
-            <div class="form-help">如果目标网站证书有问题，但你想强行访问，可以临时关闭此项</div>
-          </a-form-item>
-          <a-form-item label="根证书：" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-input-search addon-before="Cert" enter-button="选择" @search="onCrtSelect"
-                            v-model="config.server.setting.rootCaFile.certPath"/>
-            <a-input-search addon-before="Key" enter-button="选择" @search="onKeySelect"
-                            v-model="config.server.setting.rootCaFile.keyPath"/>
-          </a-form-item>
-          <a-form-item label="启用拦截" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-checkbox v-model="config.server.intercept.enabled">
-                启用拦截
+          <div style="padding-right:10px">
+            <a-form-item label="代理服务:" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-checkbox v-model="config.server.enabled">
+                随应用启动
               </a-checkbox>
-            <div class="form-help">关闭拦截，且关闭功能增强的话，就不需要安装根证书，本应用退化为安全模式</div>
-          </a-form-item>
-          <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-checkbox v-model="config.server.setting.script.enabled">
-                允许插入并运行脚本
+              <a-tag v-if="status.proxy.enabled" color="green">
+                当前已启动
+              </a-tag>
+              <a-tag v-else color="red">
+                当前未启动
+              </a-tag>
+              <a-button class="md-mr-10" icon="profile" @click="openLog()">日志</a-button>
+            </a-form-item>
+            <a-form-item label="绑定IP" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input v-model="config.server.host"/>
+              <div class="form-help">你可以设置0.0.0.0，让其他电脑可以使用此代理服务</div>
+            </a-form-item>
+            <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input v-model="config.server.port"/>
+              <div class="form-help">修改后需要重启应用</div>
+            </a-form-item>
+            <a-form-item label="全局校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-checkbox v-model="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED">
+                NODE_TLS_REJECT_UNAUTHORIZED
               </a-checkbox>
-            <div class="form-help">关闭后，github的clone加速链接复制也将关闭</div>
-          </a-form-item>
+              <div class="form-help">高风险操作，没有特殊情况请勿关闭</div>
+            </a-form-item>
+            <a-form-item label="代理校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-checkbox v-model="config.server.setting.verifySsl">
+                校验加速目标网站的ssl证书
+              </a-checkbox>
+              <div class="form-help">如果目标网站证书有问题，但你想强行访问，可以临时关闭此项</div>
+            </a-form-item>
+            <a-form-item label="根证书：" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-search addon-before="Cert" enter-button="选择" @search="onCrtSelect"
+                              v-model="config.server.setting.rootCaFile.certPath"/>
+              <a-input-search addon-before="Key" enter-button="选择" @search="onKeySelect"
+                              v-model="config.server.setting.rootCaFile.keyPath"/>
+            </a-form-item>
+            <a-form-item label="启用拦截" :label-col="labelCol" :wrapper-col="wrapperCol">
+                <a-checkbox v-model="config.server.intercept.enabled">
+                  启用拦截
+                </a-checkbox>
+              <div class="form-help">关闭拦截，且关闭功能增强的话，就不需要安装根证书，本应用退化为安全模式</div>
+            </a-form-item>
+            <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
+                <a-checkbox v-model="config.server.setting.script.enabled">
+                  允许插入并运行脚本
+                </a-checkbox>
+              <div class="form-help">关闭后，github的clone加速链接复制也将关闭</div>
+            </a-form-item>
+          </div>
         </a-tab-pane>
         <a-tab-pane tab="拦截设置" key="2">
           <vue-json-editor style="height:100%;" ref="editor" v-model="config.server.intercepts" mode="code"
@@ -140,7 +141,7 @@
 <!--          </a-row>-->
 <!--        </a-tab-pane>-->
         <a-tab-pane tab="IP测速" key="6">
-          <div>
+          <div style="padding-right: 10px">
             <a-alert type="info" message="对从dns获取到的ip进行测速，使用速度最快的ip进行访问。（对使用增强功能的域名没啥用）"></a-alert>
             <a-form-item label="开启dns测速" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-checkbox v-model="getSpeedTestConfig().enabled">

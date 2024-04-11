@@ -6,7 +6,7 @@ export default {
   async initPre (Vue, api) {
     Vue.prototype.$api = api
     const setting = await api.setting.load()
-    Vue.prototype.$global = { setting }
+    Vue.prototype.$global = { setting, config: await api.config.get() }
     await status.install(api)
   },
   initModules (app, router) {

@@ -10,8 +10,8 @@ export default {
       key: undefined,
       config: undefined,
       status: {},
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 },
+      labelCol: { span: 5 },
+      wrapperCol: { span: 19 },
       resetDefaultLoading: false,
       applyLoading: false,
       systemPlatform: ''
