@@ -1,11 +1,9 @@
 <template>
   <a-config-provider :locale="locale">
-  <div class="ds_layout">
+  <div class="ds_layout" :class="themeClass">
     <a-layout>
-      <a-layout-sider theme="light">
-        <div class="logo" >
-          <img height="60px" src="/logo/logo-lang.svg">
-        </div>
+      <a-layout-sider :theme="theme">
+        <div class="logo"></div>
         <div class="aside">
           <a-menu
             mode="inline"
@@ -13,9 +11,9 @@
             :defaultOpenKeys="['/plugin']"
           >
             <template v-for="(item) of menus">
-              <a-sub-menu v-if="item.children && item.children.length>0"   :key="item.path" @titleClick="titleClick(item)">
+              <a-sub-menu v-if="item.children && item.children.length>0" :key="item.path" @titleClick="titleClick(item)">
                 <span slot="title"><a-icon :type="item.icon?item.icon:'file'"/><span>{{item.title}}</span></span>
-                  <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)" >
+                  <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)">
                     <a-icon  :type="sub.icon?sub.icon:'file'"/> {{ sub.title }}
                   </a-menu-item>
               </a-sub-menu>
@@ -54,13 +52,21 @@ export default {
     return {
       locale: zhCN,
       info: {},
-      menus: undefined
+      menus: undefined,
+      config: undefined
     }
   },
   computed: {
+    themeClass () {
+      return 'theme-' + this.config.app.theme
+    },
+    theme () {
+      return this.config.app.theme
+    }
   },
   created () {
     this.menus = createMenus(this)
+    this.config = this.$global.config
     this.$api.info.get().then(ret => {
       this.info = ret
     })
@@ -112,9 +118,10 @@ body{
     padding:5px;
     border-bottom: #eee solid 1px;
     height:60px;
-    img{
-      height:100%
-    }
+    background-image: url("/logo/logo-lang.svg");
+    background-size: auto 50px;
+    background-repeat: no-repeat;
+    background-position: 5px center;
   }
   .ant-layout-footer{
     padding:10px;

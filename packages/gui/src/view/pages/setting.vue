@@ -42,6 +42,16 @@
           <br/>如果重载远程配置后发现下载的还是修改前的内容，请稍等片刻再重试。
         </div>
       </a-form-item>
+      <a-form-item label="主题设置" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-radio-group v-model="config.app.theme" default-value="light" button-style="solid">
+          <a-radio-button :value="'light'">
+            亮色
+          </a-radio-button>
+          <a-radio-button :value="'dark'">
+            暗色
+          </a-radio-button>
+        </a-radio-group>
+      </a-form-item>
       <a-form-item label="首页提示" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model="config.app.showShutdownTip"
                        default-value="true" button-style="solid">
@@ -94,7 +104,8 @@ export default {
     return {
       key: 'app',
       removeUserConfigLoading: false,
-      reloadLoading: false
+      reloadLoading: false,
+      themeBackup: null
     }
   },
   created () {
@@ -103,6 +114,15 @@ export default {
   mounted () {
   },
   methods: {
+    ready (config) {
+      this.themeBackup = config.app.theme
+    },
+    async applyAfter () {
+      // 判断是否切换了主题
+      if (this.config.app.theme !== this.themeBackup) {
+        window.location.reload()
+      }
+    },
     async openExternal (url) {
       await this.$api.ipc.openExternal(url)
     },
