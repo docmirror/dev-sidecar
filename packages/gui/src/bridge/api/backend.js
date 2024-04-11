@@ -13,6 +13,18 @@ const getDefaultConfigBasePath = function () {
   return DevSidecar.api.config.get().server.setting.userBasePath
 }
 
+const getDateTimeStr = function () {
+  const date = new Date() // 创建一个表示当前日期和时间的 Date 对象
+  const year = date.getFullYear() // 获取年份
+  const month = String(date.getMonth() + 1).padStart(2, '0') // 获取月份（注意月份从 0 开始计数）
+  const day = String(date.getDate()).padStart(2, '0') // 获取天数
+  const hours = String(date.getHours()).padStart(2, '0') // 获取小时
+  const minutes = String(date.getMinutes()).padStart(2, '0') // 获取分钟
+  const seconds = String(date.getSeconds()).padStart(2, '0') // 获取秒数
+  const milliseconds = String(date.getMilliseconds()).padStart(3, '0') // 获取毫秒
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`
+}
+
 const localApi = {
   /**
    * 返回所有api列表，供vue来ipc调用
@@ -65,7 +77,7 @@ const localApi = {
 
       if (setting.installTime == null) {
         // 设置安装时间
-        setting.installTime = new Date().getTime()
+        setting.installTime = getDateTimeStr()
 
         // 初始化 rootCa.setuped
         if (setting.rootCa == null) {
@@ -179,5 +191,6 @@ export default {
     doStart()
   },
   devSidecar: DevSidecar,
-  invoke
+  invoke,
+  getDateTimeStr
 }

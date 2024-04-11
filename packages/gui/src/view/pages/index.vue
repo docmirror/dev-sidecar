@@ -114,6 +114,7 @@
 import lodash from 'lodash'
 import setupCa from '../components/setup-ca'
 import DsContainer from '../components/container'
+const backend = require('../../bridge/api/backend')
 
 export default {
   name: 'Index',
@@ -253,7 +254,7 @@ export default {
       // 根证书已安装
       rootCa.setuped = true
       // 保存安装时间
-      rootCa.setupTime = new Date().getTime()
+      rootCa.setupTime = backend.getDateTimeStr()
       // 保存安装描述
       rootCa.desc = '根证书已安装'
       // 删除noTip数据
