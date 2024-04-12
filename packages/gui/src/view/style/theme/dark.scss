@@ -3,10 +3,9 @@ $dark-logo: url("../../../../public/logo/logo-lang-light.svg");
 $dark-bg: #1e1f22; //背景
 $dark-bg-highlight: #333; //高亮块：背景
 $dark-text: #ddd; //字体颜色
-$dark-menu-selected: #1890ff; //菜单选中：字体颜色
 $dark-bd: #333; //边框和分隔线
-$dark-bd2: #929292; //边框和分隔线
 $dark-btn: #444; //按钮：边框和背景颜色
+$dark-input: #777; //输入框：背景色
 .theme-dark{
   /* 背景色和字体颜色 */
   .ds_layout, .ant-layout,
@@ -51,6 +50,9 @@ $dark-btn: #444; //按钮：边框和背景颜色
   .ant-tabs .ant-tabs-left-content{
     border-color: $dark-bd;
   }
+  .ant-radio-button-wrapper:not(:first-child)::before {
+    background-color: #666;
+  }
 
   /* 左侧 */
   /** 背景色 **/
@@ -71,8 +73,8 @@ $dark-btn: #444; //按钮：边框和背景颜色
   .ant-menu-submenu .ant-menu-submenu-title:hover,
   .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected{
     background: $dark-bg-highlight;
-    color: $dark-menu-selected;
-    span{ color: $dark-menu-selected; }
+    color: #1890ff;
+    span{ color: #1890ff; }
   }
 
   /* 输入框、下拉框 */
@@ -80,7 +82,7 @@ $dark-btn: #444; //按钮：边框和背景颜色
   .ant-input-number-input, .ant-input-number,
   .ant-select-selection,
   .ant-input-group-addon{
-    background: #777;
+    background: $dark-input;
     border-color: #aaa;
     color: $dark-text;
     &:hover, &:focus{
@@ -90,10 +92,10 @@ $dark-btn: #444; //按钮：边框和背景颜色
 
   /* 卡片消息：IP测速 */
   .ant-card{
-    background: #777;
-    border-color: #777;
+    background: $dark-input;
+    border-color: $dark-input;
     .ant-card-head{
-      border-bottom-color: $dark-bd2;
+      border-bottom-color: #929292;
     }
   }
 
