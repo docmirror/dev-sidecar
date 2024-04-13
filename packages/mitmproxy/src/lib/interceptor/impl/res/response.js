@@ -22,9 +22,8 @@ function replaceHeaders (newHeaders, res, proxyRes) {
       const headerKeyLower = headerKey.toLowerCase()
 
       const newHeaderValue = newHeaders[headerKeyLower]
-      if (newHeaderValue) {
+      if (newHeaderValue && newHeaderValue !== proxyRes.rawHeaders[i + 1]) {
         preHeaders[headerKeyLower] = proxyRes.rawHeaders[i + 1] // 先保存原先响应头
-
         proxyRes.rawHeaders[i + 1] = newHeaderValue
         delete newHeaders[headerKeyLower]
       }
@@ -48,6 +47,10 @@ module.exports = {
   replaceHeaders,
   responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
     const { log } = context
+
+    if (proxyRes.statusCode !== 200) {
+      return
+    }
 
     const responseConfig = interceptOpt.response
 
