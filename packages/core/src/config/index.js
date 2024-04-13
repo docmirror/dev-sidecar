@@ -59,9 +59,10 @@ module.exports = {
         '/.*/.*/archive/': {
           redirect: 'gh.api.99988866.xyz/https://github.com'
         },
-        '/.*/.*/blame/': {
-          redirect: 'gh.api.99988866.xyz/https://github.com'
-        },
+        // 以下代理地址不支持该类资源的代理，暂时注释掉
+        // '/.*/.*/blame/': {
+        //   redirect: 'gh.api.99988866.xyz/https://github.com'
+        // },
         '^(/[^/]+){2}([/?].*)?$': {
           script: [
             'github'
