@@ -30,6 +30,10 @@ module.exports = {
       const scripts = monkey.get(setting.script.dirAbsolutePath)
       let tags = '\r\n\t' + getScript('global', scripts.global.script)
       for (const key of keys) {
+        if (key === 'global') {
+          continue
+        }
+
         let scriptTag
 
         if (key.indexOf('/') >= 0) {
