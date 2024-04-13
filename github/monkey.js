@@ -427,7 +427,7 @@ window.addEventListener("load", ()=> {
           backColor = '#161a21'; fontColor = '#97a0aa';
         }
       } else if (document.lastElementChild.dataset.colorMode === 'auto') { // 如果是自动模式
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches || document.lastElementChild.dataset.lightTheme.indexOf('dark') > -1) { // 如果浏览器是夜间模式 或 白天模式是 dark 的情况
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || document.lastElementChild.dataset.lightTheme.indexOf('dark') > -1) { // 如果浏览器是夜间模式 或 白天模式是 dark 的情况
           if (document.lastElementChild.dataset.darkTheme === 'dark_dimmed') {
             backColor = '#272e37'; fontColor = '#768390';
           } else if (document.lastElementChild.dataset.darkTheme.indexOf('light') === -1) { // 排除夜间模式是 light 的情况
