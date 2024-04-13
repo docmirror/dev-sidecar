@@ -65,8 +65,12 @@ const serverApi = {
     }
     serverConfig.plugin = allConfig.plugin
 
-    if (allConfig.proxy && allConfig.proxy.enabled) {
+    if (allConfig.proxy) {
       serverConfig.proxy = allConfig.proxy
+    }
+
+    if (allConfig.app) {
+      serverConfig.app = allConfig.app
     }
 
     // fireStatus('ing') // 启动中
