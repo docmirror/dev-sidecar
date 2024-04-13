@@ -22,7 +22,12 @@ labels: Bug
 3. xxx
 
 
-## Ⅴ. 如果可以的话，请提供 `{user.home}/.dev-sidecar/running.json` 文件内容：
+## Ⅴ. 请提供相关的错误日志，尽可能的详细：（日志文件在 `${user.home}/.dev-sidecar/logs/` 目录下）
+```log
+```
+
+
+## Ⅵ. 如果可以的话，请提供 `${user.home}/.dev-sidecar/running.json` 文件内容：
 <!-- 请将 'running.json' 文件的内容粘贴在这里，方便我们排查问题是否由配置错误导致。 -->
 ```json
 ```
