@@ -83,7 +83,7 @@ module.exports = function createOverWallIntercept (overWallConfig) {
       const proxyTarget = domain + '/' + path + '/' + hostname + req.url
 
       // const backup = interceptOpt.backup
-      const proxy = proxyTarget.indexOf('http') === 0 ? proxyTarget : (rOptions.protocol + '//' + proxyTarget)
+      const proxy = proxyTarget.indexOf('http:') === 0 || proxyTarget.indexOf('https:') === 0 ? proxyTarget : (rOptions.protocol + '//' + proxyTarget)
       // eslint-disable-next-line node/no-deprecated-api
       const URL = url.parse(proxy)
       rOptions.origional = lodash.cloneDeep(rOptions) // 备份原始请求参数
