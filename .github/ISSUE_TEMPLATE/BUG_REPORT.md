@@ -4,6 +4,8 @@ about: 如果你在使用过程中发现问题，请使用此模板。
 labels: Bug
 ---
 
+- [ ] 你是否在现有 [Issues](/docmirror/dev-sidecar/issues) 列表中搜索过相同问题？
+
 ## Ⅰ. 请说明操作系统及DS的版本号：
 1. 操作系统：?
 2. DS版本号：?
