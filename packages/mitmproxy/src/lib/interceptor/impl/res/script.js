@@ -6,10 +6,13 @@ function getScript (key, script) {
 
   const hash = CryptoJs.SHA256(script).toString(CryptoJs.enc.Base64)
   return `
-      <script crossorigin="anonymous" defer="defer"   type="application/javascript" 
-      integrity="sha256-${hash}" 
-      src="${scriptUrl}"></script>
-      `
+      <script src="${scriptUrl}" type="application/javascript" crossorigin="anonymous" defer integrity="sha256-${hash}"></script>
+`
+}
+function getScriptByAbsoluteUrl (scriptUrl) {
+  return `
+      <script src="${scriptUrl}" type="application/javascript" crossorigin="anonymous" defer></script>
+`
 }
 
 module.exports = {
@@ -25,11 +28,18 @@ module.exports = {
       const scripts = monkey.get(setting.script.dirAbsolutePath)
       let tags = getScript('global', scripts.global.script)
       for (const key of keys) {
-        const script = scripts[key]
-        if (script == null) {
-          continue
+        let scriptTag
+
+        if (key.indexOf('http:') === 0 || key.indexOf('https:') === 0) {
+          scriptTag = getScriptByAbsoluteUrl(key)
+        } else {
+          const script = scripts[key]
+          if (script == null) {
+            continue
+          }
+          scriptTag = getScript(key, script.script)
         }
-        const scriptTag = getScript(key, script.script)
+
         tags += '\r\n' + scriptTag
       }
       res.setHeader('DS-Script-Interceptor', 'true')

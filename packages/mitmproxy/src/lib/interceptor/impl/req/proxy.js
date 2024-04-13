@@ -33,7 +33,7 @@ function buildTargetUrl (rOptions, urlConf, interceptOpt, matched) {
     targetUrl = urlConf
   } else {
     let uri = rOptions.path
-    if (uri.indexOf('http') === 0) {
+    if (uri.indexOf('http:') === 0 || uri.indexOf('https:') === 0) {
       // eslint-disable-next-line node/no-deprecated-api
       const URL = url.parse(uri)
       uri = URL.path
