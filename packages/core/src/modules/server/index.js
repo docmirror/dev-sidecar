@@ -65,7 +65,7 @@ const serverApi = {
     }
     serverConfig.plugin = allConfig.plugin
 
-    if (allConfig.proxy) {
+    if (allConfig.proxy && allConfig.proxy.enabled) {
       serverConfig.proxy = allConfig.proxy
     }
 
