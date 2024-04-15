@@ -142,15 +142,24 @@ $dark-input: #777; //输入框：背景色
 
   /* JSON编辑器：应用于拦截设置 */
   .jsoneditor-vue{
-    /* 头部和边框  */
-    div.jsoneditor-menu, div.jsoneditor{
-      background: $dark-bg;
-      border-color: $dark-bd;
+    /*整个编辑框：背景色和边框*/
+    div.jsoneditor{
+      background: $dark-bg-highlight;
+      border: none;
     }
-    /* 内容区域：背景和字体颜色 */
-    .ace_gutter, .ace_scroller{
+    /* 头部菜单栏：边框  */
+    div.jsoneditor-menu{
+      background: $dark-bg-highlight;
+      border-color: $dark-bg-highlight;
+    }
+    /* 内容区域左边：行号 */
+    .ace_gutter{
+      background: #444;
+      .ace_gutter-cell { color: #aaa; }
+    }
+    /* 内容区域右边：JSON内容 */
+    .ace_scroller{
       background: #555;
-      color: #eee;
     }
     /* key的颜色 */
     .ace_variable, .ace_text-layer{
@@ -174,6 +183,17 @@ $dark-input: #777; //输入框：背景色
     .ace_gutter-active-line,
     .ace_marker-layer .ace_active-line{
       background: #838774;
+    }
+    /* 选中行高亮样式 */
+    .ace-jsoneditor {
+      .ace_marker-layer .ace_selection {
+        background: #888;
+      }
+
+      /* 光标颜色 */
+      .ace_cursor {
+        border-left-color: #ddd;
+      }
     }
   }
 }
