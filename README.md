@@ -16,7 +16,7 @@
         "/ds_github_monkey_script.js"
       ],
       "desc": "加载DS仓库中的Github油猴脚本，加速clone和文件下载等。"
-    }
+    },
     "^/ds_github_monkey_script.js$": {
       "proxy": "https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js",
       "response": { "headers": { "content-type": "application/javascript; charset=utf-8" } }
