@@ -6,7 +6,7 @@
 
 ## 各脚本使用（配置）方法：
 
-### Github油猴脚本-拦截配置
+### `/github/monkey.js`: Github油猴脚本-拦截配置
 
 ```json
 {
