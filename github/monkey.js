@@ -1,16 +1,15 @@
-// ==UserScript==
-// @name         Github 增强 - 高速下载
-// @name:en      Github Enhancement - High Speed Download
-// @version      2.5.19
-// @author       X.I.U
-// @description  高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
-// @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
-// @license      GPL-3.0 License
-// @namespace    https://greasyfork.org/scripts/412245
-// @supportURL   https://github.com/XIU2/UserScript
-// @homepageURL  https://github.com/XIU2/UserScript
-// ==/UserScript==
-
+/**
+ * @name         Github 增强 - 高速下载
+ * @name:en      Github Enhancement - High Speed Download
+ * @version      2.5.19
+ * @author       X.I.U
+ * @description  高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
+ * @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
+ * @license      GPL-3.0 License
+ * @namespace    https://greasyfork.org/scripts/412245
+ * @supportURL   https://github.com/XIU2/UserScript
+ * @homepageURL  https://github.com/XIU2/UserScript
+ */
 window.addEventListener("load", ()=> {
   const GM_registerMenuCommand = window.__ds_global__['GM_registerMenuCommand'] || (() => {})
   const GM_unregisterMenuCommand = window.__ds_global__['GM_unregisterMenuCommand']
