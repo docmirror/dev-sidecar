@@ -1,5 +1,5 @@
 ---
-name: 3. 配置问题
+name: 配置问题
 about: 如果你不知道如何配置DS来访问某个网站，请使用这个模板。
 labels: Config Issue
 ---

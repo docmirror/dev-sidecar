@@ -1,5 +1,5 @@
 ---
-name: 2. 样式问题
+name: 样式问题
 about: 如果你发现了一些页面样式问题，请使用此模板。
 labels: Style Issue
 ---

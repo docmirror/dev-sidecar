@@ -1,5 +1,5 @@
 ---
-name: 4. 提新需求
+name: 提新需求
 about: 如果你想提出一个新需求，请使用此模板。
 labels: Feature Request
 ---
