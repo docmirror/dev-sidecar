@@ -187,13 +187,21 @@ $dark-input: #777; //输入框：背景色
     /* 选中行高亮样式 */
     .ace-jsoneditor {
       .ace_marker-layer .ace_selection {
-        background: #888;
+        background: #8b2929; /* 同时应用于当前选中的搜索结果项的背景色，建议与搜索结果边框颜色保持一致 */
       }
 
       /* 光标颜色 */
       .ace_cursor {
         border-left-color: #ddd;
       }
+    }
+    /* 搜索框 */
+    .ace_button, button, .ace_search_field {
+      color: #000;
+    }
+    /* 搜索结果 */
+    .ace-jsoneditor .ace_marker-layer .ace_selected-word {
+      border-color: #8b2929;
     }
   }
 }
