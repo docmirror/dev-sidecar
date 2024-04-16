@@ -2,7 +2,7 @@ const cacheReq = require('../req/cacheReq')
 
 module.exports = {
   name: 'cacheRes',
-  priority: 201,
+  priority: 202,
   responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
     const { rOptions, log } = context
 

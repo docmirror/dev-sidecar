@@ -13,7 +13,7 @@ function getScriptByUrlOrPath (scriptUrlOrPath) {
 
 module.exports = {
   name: 'script',
-  priority: 202,
+  priority: 203,
   responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
     const { rOptions, log, setting } = context
 
