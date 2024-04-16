@@ -65,7 +65,7 @@ module.exports = {
         // },
         '^(/[\\w-.]{1,30}){2,}(\\?.*)?$': {
           script: [
-            'github'
+            'https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js'
           ],
           desc: 'clone加速复制链接脚本'
         },
