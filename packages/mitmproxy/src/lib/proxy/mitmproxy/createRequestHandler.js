@@ -143,9 +143,9 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           // rOptions.agent.options.sigalgs = rOptions.sigalgs
           // rOptions.ciphers = 'TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA256:ECDHE-RSA-AES256-SHA256:HIGH'
           // rOptions.agent.options.ciphers = rOptions.ciphers
-          // console.log('rOptions:', rOptions)
-          // console.log('agent:', rOptions.agent)
-          // console.log('agent.options:', rOptions.agent.options)
+          // log.debug('rOptions:', rOptions.hostname + rOptions.path, '\r\n', rOptions)
+          // log.debug('agent:', rOptions.agent)
+          // log.debug('agent.options:', rOptions.agent.options)
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const end = new Date().getTime()
             const cost = end - start
