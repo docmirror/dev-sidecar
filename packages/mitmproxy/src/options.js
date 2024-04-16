@@ -3,10 +3,103 @@ const dnsUtil = require('./lib/dns')
 const log = require('./utils/util.log')
 const matchUtil = require('./utils/util.match')
 const path = require('path')
+const lodash = require('lodash')
+const SCRIPT_URL_PRE = '/____ds_script_proxy____/'
+const REMOVE = '[remove]'
+
 const createOverwallMiddleware = require('./lib/proxy/middleware/overwall')
 
+// 处理拦截配置：目前，只自动生成了script拦截器所需的辅助配置，降低script拦截器配置绝对地址和相对地址的门槛
+function buildIntercepts (intercepts) {
+  // 为了简化 script 拦截器配置脚本绝对地址，这里特殊处理一下
+  for (const hostnamePattern in intercepts) {
+    const hostnameConfig = intercepts[hostnamePattern]
+
+    const scriptProxy = {}
+    for (const pathPattern in hostnameConfig) {
+      const pathConfig = hostnameConfig[pathPattern]
+      if (typeof pathConfig.script === 'object' && pathConfig.script.length > 0) {
+        for (let i = 0; i < pathConfig.script.length; i++) {
+          const script = pathConfig.script[i]
+          if (script.indexOf('https:') === 0 || script.indexOf('http:') === 0) {
+            // 绝对地址
+            const scriptKey = SCRIPT_URL_PRE + script.replace('.js', '').replace(/\W/g, '') + '.js' // 伪脚本地址：移除 script 中可能存在的特殊字符，并转为相对地址
+            scriptProxy[scriptKey] = script
+            log.info(`替换script配置值：'${pathConfig.script[i]}' -> '${scriptKey}'`)
+            pathConfig.script[i] = scriptKey
+          } else if (script.indexOf('/') === 0) {
+            // 相对地址
+            scriptProxy[script] = script
+          }
+        }
+      }
+    }
+
+    // 自动创建脚本
+    if (!lodash.isEmpty(scriptProxy)) {
+      for (const scriptKey in scriptProxy) {
+        if (scriptKey.indexOf(SCRIPT_URL_PRE) === 0) {
+          // 绝对地址：新增代理配置
+          const scriptUrl = scriptProxy[scriptKey]
+
+          const pathPattern = `^${scriptKey.replace(/\./g, '\\.')}$`
+          if (hostnameConfig[pathPattern]) {
+            continue // 配置已经存在，按自定义配置优先
+          }
+          hostnameConfig[pathPattern] = {
+            proxy: scriptUrl,
+            // 移除部分请求头，避免触发目标站点的拦截策略
+            requestReplace: {
+              headers: {
+                host: REMOVE,
+                referer: REMOVE,
+                cookie: REMOVE
+              }
+            },
+            // 替换和移除部分响应头，避免触发目标站点的阻止脚本加载策略
+            responseReplace: {
+              headers: {
+                'content-type': 'application/javascript; charset=utf-8',
+                'set-cookie': REMOVE,
+                server: REMOVE
+              }
+            },
+            cacheDays: 7,
+            desc: "为伪脚本文件设置代理地址，并设置响应头 `content-type: 'application/javascript; charset=utf-8'`，同时缓存7天。"
+          }
+
+          const obj = {}
+          obj[pathPattern] = hostnameConfig[pathPattern]
+          log.info(`域名 '${hostnamePattern}' 拦截配置中，新增伪脚本地址的代理配置:`, obj)
+        } else {
+          // 相对地址：新增响应头Content-Type替换配置
+          if (hostnameConfig[scriptKey]) {
+            continue // 配置已经存在，按自定义配置优先
+          }
+
+          hostnameConfig[scriptKey] = {
+            responseReplace: {
+              headers: {
+                'content-type': 'application/javascript; charset=utf-8'
+              }
+            },
+            cacheDays: 7,
+            desc: "为脚本设置响应头 `content-type: 'application/javascript; charset=utf-8'`，同时缓存7天。"
+          }
+
+          const obj = {}
+          obj[scriptKey] = hostnameConfig[scriptKey]
+          log.info(`域名 '${hostnamePattern}' 拦截配置中，新增目标脚本地址的响应头替换配置:`, obj)
+        }
+      }
+    }
+  }
+
+  return intercepts
+}
+
 module.exports = (config) => {
-  const intercepts = matchUtil.domainMapRegexply(config.intercepts)
+  const intercepts = matchUtil.domainMapRegexply(buildIntercepts(config.intercepts))
   const whiteList = matchUtil.domainMapRegexply(config.whiteList)
 
   const dnsMapping = config.dns.mapping
