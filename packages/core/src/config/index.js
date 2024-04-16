@@ -63,7 +63,7 @@ module.exports = {
         // '/.*/.*/blame/': {
         //   redirect: 'gh.api.99988866.xyz/https://github.com'
         // },
-        '^(/[\\w-]{1,30}){2,}(\\?.*)?$': {
+        '^(/[\\w-.]{1,30}){2,}(\\?.*)?$': {
           script: [
             'github'
           ],
