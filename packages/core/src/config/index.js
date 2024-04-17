@@ -55,6 +55,13 @@ module.exports = {
         '.*': {
           sni: 'baidu.com'
         },
+        '^(/[\\w-.]+){2,}/?(\\?.*)?$': {
+          script: [
+            'https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js'
+          ],
+          desc: '油猴脚本：高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载、添加 git clone 命令'
+        },
+        // 以下三项暂时先注释掉，因为已经有油猴脚本提供高速下载地址了。
         // '/.*/.*/releases/download/': {
         //   redirect: 'gh.api.99988866.xyz/https://github.com',
         //   desc: 'release文件加速下载跳转地址'
@@ -66,12 +73,6 @@ module.exports = {
         // '/.*/.*/blame/': {
         //   redirect: 'gh.api.99988866.xyz/https://github.com'
         // },
-        '^(/[\\w-.]+){2,}/?(\\?.*)?$': {
-          script: [
-            'https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js'
-          ],
-          desc: '油猴脚本：高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载、添加 git clone 命令'
-        },
         '/fluidicon.png': {
           cacheDays: 365,
           desc: 'Github那只猫的图片，缓存1年'
