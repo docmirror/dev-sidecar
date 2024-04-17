@@ -13,7 +13,7 @@
   "github.com": {
     "^(/[\\w-.]+){2,}/?(\\?.*)?$": {
       "script": [
-        "[/ds_github_monkey_script.js](https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js)"
+        "https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js"
       ],
       "desc": "加载DS仓库中的Github油猴脚本，加速clone和文件下载等。"
     }
