@@ -81,7 +81,7 @@ module.exports = {
             const script = pathConfig.script[i]
             if (script.indexOf('https:') === 0 || script.indexOf('http:') === 0) {
               // 绝对地址
-              const scriptKey = SCRIPT_PROXY_URL_PRE + script.replace('.js', '').replace(/\W/g, '') + '.js' // 伪脚本地址：移除 script 中可能存在的特殊字符，并转为相对地址
+              const scriptKey = SCRIPT_PROXY_URL_PRE + script.replace('.js', '').replace(/[\W_]+/g, '_') + '.js' // 伪脚本地址：移除 script 中可能存在的特殊字符，并转为相对地址
               scriptProxy[scriptKey] = script
               log.info(`替换script配置值：'${pathConfig.script[i]}' -> '${scriptKey}'`)
               pathConfig.script[i] = scriptKey
