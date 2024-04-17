@@ -167,15 +167,15 @@ window.addEventListener("load", ()=> {
             if (target.nodeType !== 1) return
             if (target.tagName === 'DIV' && target.parentElement.id === '__primerPortalRoot__') {
               addDownloadZIP(target);
-              if (addGitClone(target)) return;
-              if (addGitCloneSSH(target)) return;
+              if (addGitClone(target) === false) return;
+              if (addGitCloneSSH(target) === false) return;
             } else if (target.tagName === 'DIV' && target.className.indexOf('Box-sc-') !== -1) {
               if (target.querySelector('input[value^="https:"]')) {
                 addGitCloneClear('.XIU2-GCS');
-                if (addGitClone(target)) return;
+                if (addGitClone(target) === false) return;
               } else if (target.querySelector('input[value^="git@"]')) {
                 addGitCloneClear('.XIU2-GC');
-                if (addGitCloneSSH(target)) return;
+                if (addGitCloneSSH(target) === false) return;
               } else if (target.querySelector('input[value^="gh "]')) {
                 addGitCloneClear('.XIU2-GC, .XIU2-GCS');
               }
@@ -198,7 +198,8 @@ window.addEventListener("load", ()=> {
 
     // Release
     function addRelease() {
-      let html = document.querySelectorAll('.Box-footer'); if (html.length === 0 || location.pathname.indexOf('/releases') === -1) return
+      let html = document.querySelectorAll('.Box-footer');
+      if (html.length === 0 || location.pathname.indexOf('/releases') === -1) return;
       let divDisplay = 'margin-left: -90px;', new_download_url = get_New_download_url();
       if (document.documentElement.clientWidth > 755) {divDisplay = 'margin-top: -3px;margin-left: 8px;display: inherit;';} // 调整小屏幕时的样式
       for (const current of html) {
@@ -260,7 +261,7 @@ window.addEventListener("load", ()=> {
     function addGitClone(target) {
       let html = target.querySelector('input[value^="https:"]');
       if (!html) return;
-      if (!html.nextElementSibling) return true;
+      if (!html.nextElementSibling) return false;
       let href_split = html.value.split(location.host)[1],
           html_parent = '<div style="margin-top: 4px;" class="XIU2-GC ' + html.parentElement.className + '">',
           url = '', _html = '', _gitClone = '';
@@ -286,7 +287,7 @@ window.addEventListener("load", ()=> {
     function addGitCloneSSH(target) {
       let html = target.querySelector('input[value^="git@"]');
       if (!html) return;
-      if (!html.nextElementSibling) return true;
+      if (!html.nextElementSibling) return false;
       let href_split = html.value.split(':')[1],
           html_parent = '<div style="margin-top: 4px;" class="XIU2-GCS ' + html.parentElement.className + '">',
           url = '', _html = '', _gitClone = '';
