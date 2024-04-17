@@ -11,17 +11,11 @@
 ```json
 {
   "github.com": {
-    "^(/[^/]+){2}([/?].*)?$": {
+    "^(/[\\w-.]+){2,}/?(\\?.*)?$": {
       "script": [
-        "/ds_github_monkey_script.js"
+        "[/ds_github_monkey_script.js](https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js)"
       ],
       "desc": "加载DS仓库中的Github油猴脚本，加速clone和文件下载等。"
-    },
-    "^/ds_github_monkey_script.js$": {
-      "proxy": "https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js",
-      "response": { "headers": { "content-type": "application/javascript; charset=utf-8" } },
-      "cacheDays": 7,
-      "desc": "代理到DS仓库中的Github油猴脚本，并设置响应头 `content-type: 'application/javascript; charset=utf-8'`，同时缓存7天。"
     }
   }
 }
