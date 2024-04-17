@@ -128,7 +128,7 @@ module.exports = {
 
             const obj = {}
             obj[pathPattern] = hostnameConfig[pathPattern]
-            log.info(`域名 '${hostnamePattern}' 拦截配置中，新增伪脚本地址的代理配置:`, obj)
+            log.info(`域名 '${hostnamePattern}' 拦截配置中，新增伪脚本地址的代理配置:`, JSON.stringify(obj, null, '\t'))
           } else {
             // 相对地址：新增响应头Content-Type替换配置
             if (hostnameConfig[scriptKey]) {
@@ -147,7 +147,7 @@ module.exports = {
 
             const obj = {}
             obj[scriptKey] = hostnameConfig[scriptKey]
-            log.info(`域名 '${hostnamePattern}' 拦截配置中，新增目标脚本地址的响应头替换配置:`, obj)
+            log.info(`域名 '${hostnamePattern}' 拦截配置中，新增目标脚本地址的响应头替换配置:`, JSON.stringify(obj, null, '\t'))
           }
         }
       }
