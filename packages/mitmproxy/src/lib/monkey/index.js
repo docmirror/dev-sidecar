@@ -36,7 +36,7 @@ function loadScript (content, scriptName) {
   const sc = {
     grant: [],
     match: [],
-    content: ''
+    script: ''
   }
   for (const string of confItemArr) {
     const reg = new RegExp('.*@([^\\s]+)\\s(.+)')
@@ -80,7 +80,8 @@ const api = {
     // scripts.jquery = { script: readFile(rootDir, 'jquery.min.js') }
     scripts.global = { script: readFile(rootDir, 'global.script') }
     return scripts
-  }
+  },
+  loadScript
 }
 
 module.exports = api

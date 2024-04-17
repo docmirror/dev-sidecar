@@ -12,9 +12,9 @@ const proxy = require('./impl/req/proxy')
 const sni = require('./impl/req/sni')
 
 // response interceptor impls
+const responseReplace = require('./impl/res/responseReplace')
 const cacheRes = require('./impl/res/cacheRes')
 const script = require('./impl/res/script')
-const responseReplace = require('./impl/res/responseReplace')
 
 module.exports = [
   // request interceptor impls
