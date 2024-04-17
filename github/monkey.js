@@ -1,7 +1,7 @@
 /**
  * @name            Github 增强 - 高速下载
  * @name:en         Github Enhancement - High Speed Download
- * @version         2.5.19
+ * @version         2.5.20
  * @author          X.I.U
  * @description     高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
  * @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
@@ -9,6 +9,7 @@
  * @namespace       https://greasyfork.org/scripts/412245
  * @supportURL      https://github.com/XIU2/UserScript
  * @homepageURL     https://github.com/XIU2/UserScript
+ * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
 window.addEventListener("load", ()=> {
   const GM_registerMenuCommand = window.__ds_global__['GM_registerMenuCommand'] || (() => {})
@@ -29,7 +30,7 @@ window.addEventListener("load", ()=> {
       ['https://dl.ghpig.top/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [feizhuqwq.com] 提供'],
       //['https://gh.flyinbug.top/gh/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [Mintimate] 提供'], // 错误
       ['https://slink.ltd/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [知了小站] 提供'],
-      ['https://git.xfj0.cn/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [佚名] 提供'],
+      //['https://git.xfj0.cn/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [佚名] 提供'], // 无解析
       ['https://gh.con.sh/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [佚名] 提供'],
       //['https://ghps.cc/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [佚名] 提供'], // 提示 blocked
       //['https://gh-proxy.com/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [佚名] 提供'], // 502
@@ -39,6 +40,7 @@ window.addEventListener("load", ()=> {
       ['https://ghproxy.cc/https://github.com', '美国', '[美国 洛杉矶] - 该公益加速源由 [@yionchiii lau] 提供'],
       ['https://cf.ghproxy.cc/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@yionchiii lau] 提供'],
       ['https://gh.jiasu.in/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@0-RTT] 提供'],
+      ['https://dgithub.xyz', '美国', '[美国 西雅图] - 该公益加速源由 [dgithub.xyz] 提供'],
       //['https://download.fgit.cf', '美国', '[美国 洛杉矶] - 该公益加速源由 [FastGit 群组成员] 提供'], // 被投诉挂了
       ['https://download.nuaa.cf', '美国', '[美国 洛杉矶] - 该公益加速源由 [FastGit 群组成员] 提供'],
       ['https://download.scholar.rr.nu', '美国', '[美国 纽约] - 该公益加速源由 [FastGit 群组成员] 提供'],
@@ -65,6 +67,7 @@ window.addEventListener("load", ()=> {
       //['https://ghproxy.cc/https://github.com', '美国', '[美国 洛杉矶] - 该公益加速源由 [@yionchiii lau] 提供'], // 暂无必要
       //['https://cf.ghproxy.cc/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@yionchiii lau] 提供'], // 暂无必要
       //['https://gh.jiasu.in/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@0-RTT] 提供'], // 暂无必要
+      //['https://dgithub.xyz', '美国', '[美国 西雅图] - 该公益加速源由 [dgithub.xyz] 提供'], // 暂无必要
       //['https://hub.fgit.cf', '美国', '[美国 洛杉矶] - 该公益加速源由 [FastGit 群组成员] 提供'], // 被投诉挂了
       //['https://hub.nuaa.cf', '美国', '[美国 洛杉矶] - 该公益加速源由 [FastGit 群组成员] 提供'], // 暂无必要
       //['https://hub.scholar.rr.nu', '美国', '[美国 纽约] - 该公益加速源由 [FastGit 群组成员] 提供'], // 暂无必要
@@ -93,6 +96,7 @@ window.addEventListener("load", ()=> {
       //['https://ghproxy.cc/https://raw.githubusercontent.com', '美国', '[美国 洛杉矶] - 该公益加速源由 [@yionchiii lau] 提供'], // 暂无必要
       //['https://cf.ghproxy.cc/https://raw.githubusercontent.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@yionchiii lau] 提供'], // 暂无必要
       //['https://gh.jiasu.in/https://raw.githubusercontent.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@0-RTT] 提供'], // 暂无必要
+      //['https://dgithub.xyz', '美国', '[美国 西雅图] - 该公益加速源由 [dgithub.xyz] 提供'], // 暂无必要
       //['https://raw.fgit.cf', '美国', '[美国 洛杉矶] - 该公益加速源由 [FastGit 群组成员] 提供&#10;&#10; - 缓存：无（或时间很短）'], // 被投诉挂了
       //['https://raw.nuaa.cf', '美国', '[美国 洛杉矶] - 该公益加速源由 [FastGit 群组成员] 提供'], // 暂无必要
       //['https://raw.scholar.rr.nu', '美国', '[美国 纽约] - 该公益加速源由 [FastGit 群组成员] 提供'], // 暂无必要
@@ -179,7 +183,7 @@ window.addEventListener("load", ()=> {
           }
         }
       }
-    };
+    }
     const observer = new MutationObserver(callback);
     observer.observe(document, { childList: true, subtree: true });
 
@@ -201,7 +205,7 @@ window.addEventListener("load", ()=> {
         if (current.querySelector('.XIU2-RS')) continue
         current.querySelectorAll('li.Box-row a').forEach(function (_this) {
           let href = _this.href.split(location.host),
-            url = '', _html = `<div class="XIU2-RS" style="${divDisplay}">`;
+              url = '', _html = `<div class="XIU2-RS" style="${divDisplay}">`;
 
           for (let i=0;i<new_download_url.length;i++) {
             if (new_download_url[i][3] !== undefined && url.indexOf('/archive/') !== -1) {
@@ -209,7 +213,6 @@ window.addEventListener("load", ()=> {
             } else {
               url = new_download_url[i][0] + href[1]
             }
-            if (location.host !== 'github.com') url = url.replace(location.host,'github.com')
             _html += `<a style="${style[0]}" class="btn" href="${url}" target="_blank" title="${new_download_url[i][2]}" rel="noreferrer noopener nofollow">${new_download_url[i][1]}</a>`
           }
           _this.parentElement.nextElementSibling.insertAdjacentHTML('beforeend', _html + '</div>');
@@ -223,14 +226,14 @@ window.addEventListener("load", ()=> {
       let html = target.querySelector('ul[class^=List__ListBox-sc-] ul[class^=List__ListBox-sc-]>li:last-child');
       if (!html) return;
       let href_script = document.querySelector('react-partial[partial-name=repos-overview]>script[data-target="react-partial.embeddedData"]'),
-        href_slice = href_script.textContent.slice(href_script.textContent.indexOf('"zipballUrl":"')+14),
-        href = href_slice.slice(0, href_slice.indexOf('"')),
-        url = '', _html = '', new_download_url = get_New_download_url();
+          href_slice = href_script.textContent.slice(href_script.textContent.indexOf('"zipballUrl":"')+14),
+          href = href_slice.slice(0, href_slice.indexOf('"')),
+          url = '', _html = '', new_download_url = get_New_download_url();
 
       // 克隆原 Download ZIP 元素，并定位 <a> <span> 标签
       let html_clone = html.cloneNode(true),
-        html_clone_a = html_clone.querySelector('a[href$=".zip"]'),
-        html_clone_span = html_clone.querySelector('span[id]');
+          html_clone_a = html_clone.querySelector('a[href$=".zip"]'),
+          html_clone_span = html_clone.querySelector('span[id]');
 
       for (let i=0;i<new_download_url.length;i++) {
         if (new_download_url[i][3] === '') continue
@@ -240,8 +243,6 @@ window.addEventListener("load", ()=> {
         } else {
           url = new_download_url[i][0] + href
         }
-        if (location.host !== 'github.com') url = url.replace(location.host,'github.com')
-
         html_clone_a.href = url
         html_clone_a.setAttribute('title', new_download_url[i][2].replaceAll('&#10;','\n'))
         html_clone_span.textContent = 'Download ZIP ' + new_download_url[i][1]
@@ -261,8 +262,8 @@ window.addEventListener("load", ()=> {
       if (!html) return;
       if (!html.nextElementSibling) return true;
       let href_split = html.value.split(location.host)[1],
-        html_parent = '<div style="margin-top: 4px;" class="XIU2-GC ' + html.parentElement.className + '">',
-        url = '', _html = '', _gitClone = '';
+          html_parent = '<div style="margin-top: 4px;" class="XIU2-GC ' + html.parentElement.className + '">',
+          url = '', _html = '', _gitClone = '';
       html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮
       if (GM_getValue('menu_gitClone')) {_gitClone='git clone '; html.value = _gitClone + html.value; html.setAttribute('value', html.value);}
       // 克隆原 Git Clone 元素
@@ -287,8 +288,8 @@ window.addEventListener("load", ()=> {
       if (!html) return;
       if (!html.nextElementSibling) return true;
       let href_split = html.value.split(':')[1],
-        html_parent = '<div style="margin-top: 4px;" class="XIU2-GCS ' + html.parentElement.className + '">',
-        url = '', _html = '', _gitClone = '';
+          html_parent = '<div style="margin-top: 4px;" class="XIU2-GCS ' + html.parentElement.className + '">',
+          url = '', _html = '', _gitClone = '';
       html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮
       if (GM_getValue('menu_gitClone')) {_gitClone='git clone '; html.value = _gitClone + html.value; html.setAttribute('value', html.value);}
       // 克隆原 Git Clone SSH 元素
@@ -308,8 +309,8 @@ window.addEventListener("load", ()=> {
       let html = document.querySelector('a[data-testid="raw-button"]');
       if (!html) return;
       let href = location.href.replace(`https://${location.host}`,''),
-        href2 = href.replace('/blob/','/'),
-        url = '', _html = '';
+          href2 = href.replace('/blob/','/'),
+          url = '', _html = '';
 
       for (let i=1;i<raw_url.length;i++) {
         if ((raw_url[i][0].indexOf('/gh') + 3 === raw_url[i][0].length) && raw_url[i][0].indexOf('cdn.staticaly.com') === -1) {
@@ -334,28 +335,28 @@ window.addEventListener("load", ()=> {
       // 鼠标指向则显示
       var mouseOverHandler = function(evt) {
         let elem = evt.currentTarget,
-          aElm_new = elem.querySelectorAll('.fileDownLink'),
-          aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
+            aElm_new = elem.querySelectorAll('.fileDownLink'),
+            aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
         aElm_new.forEach(el=>{el.style.cssText = 'display: inline'});
         aElm_now.forEach(el=>{el.style.cssText = 'display: none'});
-      };
+      }
 
       // 鼠标离开则隐藏
       var mouseOutHandler = function(evt) {
         let elem = evt.currentTarget,
-          aElm_new = elem.querySelectorAll('.fileDownLink'),
-          aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
+            aElm_new = elem.querySelectorAll('.fileDownLink'),
+            aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
         aElm_new.forEach(el=>{el.style.cssText = 'display: none'});
         aElm_now.forEach(el=>{el.style.cssText = 'display: inline'});
-      };
+      }
 
       // 循环添加
       files.forEach(function(fileElm) {
         let trElm = fileElm.parentNode.parentNode,
-          cntElm_a = trElm.querySelector('[role="rowheader"] > .css-truncate.css-truncate-target.d-block.width-fit > a, .react-directory-truncate>a'),
-          Name = cntElm_a.innerText,
-          href = cntElm_a.getAttribute('href'),
-          href2 = href.replace('/blob/','/'), url, url_name, url_tip;
+            cntElm_a = trElm.querySelector('[role="rowheader"] > .css-truncate.css-truncate-target.d-block.width-fit > a, .react-directory-truncate>a'),
+            Name = cntElm_a.innerText,
+            href = cntElm_a.getAttribute('href'),
+            href2 = href.replace('/blob/','/'), url, url_name, url_tip;
         if ((raw_url[menu_rawFast][0].indexOf('/gh') + 3 === raw_url[menu_rawFast][0].length) && raw_url[menu_rawFast][0].indexOf('cdn.staticaly.com') === -1) {
           url = raw_url[menu_rawFast][0] + href.replace('/blob/','@');
         } else {
@@ -389,20 +390,20 @@ window.addEventListener("load", ()=> {
       // 鼠标指向则显示
       var mouseOverHandler = function(evt) {
         let elem = evt.currentTarget,
-          aElm_new = elem.querySelectorAll('.fileDownLink'),
-          aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
+            aElm_new = elem.querySelectorAll('.fileDownLink'),
+            aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
         aElm_new.forEach(el=>{el.style.cssText = 'display: inline'});
         aElm_now.forEach(el=>{el.style.cssText = 'display: none'});
-      };
+      }
 
       // 鼠标离开则隐藏
       var mouseOutHandler = function(evt) {
         let elem = evt.currentTarget,
-          aElm_new = elem.querySelectorAll('.fileDownLink'),
-          aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
+            aElm_new = elem.querySelectorAll('.fileDownLink'),
+            aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
         aElm_new.forEach(el=>{el.style.cssText = 'display: none'});
         aElm_now.forEach(el=>{el.style.cssText = 'display: inline'});
-      };
+      }
       // 循环添加
       files.forEach(function(fileElm) {
         let trElm = fileElm.parentNode.parentNode;
