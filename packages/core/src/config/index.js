@@ -63,7 +63,7 @@ module.exports = {
         // '/.*/.*/blame/': {
         //   redirect: 'gh.api.99988866.xyz/https://github.com'
         // },
-        '^(/[\\w-.]+){2,}(\\?.*)?$': {
+        '^(/[\\w-.]+){2,}/?(\\?.*)?$': {
           script: [
             'https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js'
           ],
