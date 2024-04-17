@@ -123,9 +123,9 @@
 		'<svg class="octicon octicon-cloud-download" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path d="M9 12h2l-3 3-3-3h2V7h2v5zm3-8c0-.44-.91-3-4.5-3C5.08 1 3 2.92 3 5 1.02 5 0 6.52 0 8c0 1.53 1 3 3 3h3V9.7H3C1.38 9.7 1.3 8.28 1.3 8c0-.17.05-1.7 1.7-1.7h1.3V5c0-1.39 1.56-2.7 3.2-2.7 2.55 0 3.13 1.55 3.2 1.8v1.2H12c.81 0 2.7.22 2.7 2.2 0 2.09-2.25 2.2-2.7 2.2h-2V11h2c2.08 0 4-1.16 4-3.5C16 5.06 14.08 4 12 4z"></path></svg>'
 	], style = ['padding:0 6px; margin-right: -1px; border-radius: 2px; background-color: var(--XIU2-back-Color); border-color: rgba(27, 31, 35, 0.1); font-size: 11px; color: var(--XIU2-font-Color);'];
 
-	if (menu_rawFast == null){menu_rawFast = 1; GM_setValue('xiu2_menu_raw_fast', 1)};
-	if (GM_getValue('menu_rawDownLink') == null){GM_setValue('menu_rawDownLink', true)};
-	if (GM_getValue('menu_gitClone') == null){GM_setValue('menu_gitClone', true)};
+	if (menu_rawFast == null){menu_rawFast = 1; GM_setValue('xiu2_menu_raw_fast', 1)}
+	if (GM_getValue('menu_rawDownLink') == null){GM_setValue('menu_rawDownLink', true)}
+	if (GM_getValue('menu_gitClone') == null){GM_setValue('menu_gitClone', true)}
 	registerMenuCommand();
 	// 注册脚本菜单
 	function registerMenuCommand() {
@@ -134,8 +134,8 @@
 		// 避免在减少 raw 数组后，用户储存的数据大于数组而报错
 		if (menu_rawFast > raw_url.length - 1) menu_rawFast = 0
 		if (GM_getValue('menu_rawDownLink')) menu_rawFast_ID = GM_registerMenuCommand(`${['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'][menu_rawFast]} [ ${raw_url[menu_rawFast][1]} ] 加速源 (☁) - 点击切换`, menu_toggle_raw_fast);
-		menu_rawDownLink_ID = GM_registerMenuCommand(`${GM_getValue('menu_rawDownLink')?'✅':'❌'} 项目列表单文件快捷下载 (☁)`, function(){if (GM_getValue('menu_rawDownLink') == true) {GM_setValue('menu_rawDownLink', false); GM_notification({text: `已关闭 [项目列表单文件快捷下载 (☁)] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_rawDownLink', true); GM_notification({text: `已开启 [项目列表单文件快捷下载 (☁)] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();});
-		menu_gitClone_ID = GM_registerMenuCommand(`${GM_getValue('menu_gitClone')?'✅':'❌'} 添加 git clone 命令`, function(){if (GM_getValue('menu_gitClone') == true) {GM_setValue('menu_gitClone', false); GM_notification({text: `已关闭 [添加 git clone 命令] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_gitClone', true); GM_notification({text: `已开启 [添加 git clone 命令] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();});
+		menu_rawDownLink_ID = GM_registerMenuCommand(`${GM_getValue('menu_rawDownLink')?'✅':'❌'} 项目列表单文件快捷下载 (☁)`, function(){if (GM_getValue('menu_rawDownLink') === true) {GM_setValue('menu_rawDownLink', false); GM_notification({text: `已关闭 [项目列表单文件快捷下载 (☁)] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_rawDownLink', true); GM_notification({text: `已开启 [项目列表单文件快捷下载 (☁)] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();});
+		menu_gitClone_ID = GM_registerMenuCommand(`${GM_getValue('menu_gitClone')?'✅':'❌'} 添加 git clone 命令`, function(){if (GM_getValue('menu_gitClone') === true) {GM_setValue('menu_gitClone', false); GM_notification({text: `已关闭 [添加 git clone 命令] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_gitClone', true); GM_notification({text: `已开启 [添加 git clone 命令] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();});
 		menu_feedBack_ID = GM_registerMenuCommand('💬 反馈 & 建议 [Github]', function () {GM_openInTab('https://github.com/XIU2/UserScript', {active: true,insert: true,setParent: true});GM_openInTab('https://greasyfork.org/zh-CN/scripts/412245/feedback', {active: true,insert: true,setParent: true});});
 	}
 
@@ -148,7 +148,7 @@
 		addRawDownLink(); // 添加新加速源
 		GM_notification({text: "已切换加速源为：" + raw_url[menu_rawFast][1], timeout: 3000}); // 提示消息
 		registerMenuCommand(); // 重新注册脚本菜单
-	};
+	}
 
 	colorMode(); // 适配白天/夜间主题模式
 	setTimeout(addRawFile, 1000); // Raw 加速
@@ -180,15 +180,15 @@
 					if (target.nodeType !== 1) return
 					if (target.tagName === 'DIV' && target.parentElement.id === '__primerPortalRoot__') {
 						addDownloadZIP(target);
-						addGitClone(target);
-						if (addGitCloneSSH(target)) return;
-					} else if (target.tagName === 'DIV' && target.className.indexOf('Box-sc-') != -1) {
+						if (addGitClone(target) === false) return;
+						if (addGitCloneSSH(target) === false) return;
+					} else if (target.tagName === 'DIV' && target.className.indexOf('Box-sc-') !== -1) {
 						if (target.querySelector('input[value^="https:"]')) {
 							addGitCloneClear('.XIU2-GCS');
-							if (addGitClone(target)) return;
+							if (addGitClone(target) === false) return;
 						} else if (target.querySelector('input[value^="git@"]')) {
 							addGitCloneClear('.XIU2-GC');
-							if (addGitCloneSSH(target)) return;
+							if (addGitCloneSSH(target) === false) return;
 						} else if (target.querySelector('input[value^="gh "]')) {
 							addGitCloneClear('.XIU2-GC, .XIU2-GCS');
 						}
@@ -211,9 +211,10 @@
 
 	// Release
 	function addRelease() {
-		let html = document.querySelectorAll('.Box-footer'); if (html.length == 0 || location.pathname.indexOf('/releases') == -1) return
+		let html = document.querySelectorAll('.Box-footer');
+		if (html.length === 0 || location.pathname.indexOf('/releases') === -1) return;
 		let divDisplay = 'margin-left: -90px;', new_download_url = get_New_download_url();
-		if (document.documentElement.clientWidth > 755) {divDisplay = 'margin-top: -3px;margin-left: 8px;display: inherit;';}; // 调整小屏幕时的样式
+		if (document.documentElement.clientWidth > 755) {divDisplay = 'margin-top: -3px;margin-left: 8px;display: inherit;';} // 调整小屏幕时的样式
 		for (const current of html) {
 			if (current.querySelector('.XIU2-RS')) continue
 			current.querySelectorAll('li.Box-row a').forEach(function (_this) {
@@ -273,7 +274,7 @@
 	function addGitClone(target) {
 		let html = target.querySelector('input[value^="https:"]');
 		if (!html) return;
-		if (!html.nextElementSibling) return true;
+		if (!html.nextElementSibling) return false;
 		let href_split = html.value.split(location.host)[1],
 			html_parent = '<div style="margin-top: 4px;" class="XIU2-GC ' + html.parentElement.className + '">',
 			url = '', _html = '', _gitClone = '';
@@ -299,7 +300,7 @@
 	function addGitCloneSSH(target) {
 		let html = target.querySelector('input[value^="git@"]');
 		if (!html) return;
-		if (!html.nextElementSibling) return true;
+		if (!html.nextElementSibling) return false;
 		let href_split = html.value.split(':')[1],
 			html_parent = '<div style="margin-top: 4px;" class="XIU2-GCS ' + html.parentElement.className + '">',
 			url = '', _html = '', _gitClone = '';
@@ -369,7 +370,7 @@
 				cntElm_a = trElm.querySelector('[role="rowheader"] > .css-truncate.css-truncate-target.d-block.width-fit > a, .react-directory-truncate>a'),
 				Name = cntElm_a.innerText,
 				href = cntElm_a.getAttribute('href'),
-				href2 = href.replace('/blob/','/'), url, url_name, url_tip = '';
+				href2 = href.replace('/blob/','/'), url, url_name, url_tip;
 			if ((raw_url[menu_rawFast][0].indexOf('/gh') + 3 === raw_url[menu_rawFast][0].length) && raw_url[menu_rawFast][0].indexOf('cdn.staticaly.com') === -1) {
 				url = raw_url[menu_rawFast][0] + href.replace('/blob/','@');
 			} else {
@@ -440,10 +441,10 @@
 				backColor = '#161a21'; fontColor = '#97a0aa';
 			}
 		} else if (document.lastElementChild.dataset.colorMode === 'auto') { // 如果是自动模式
-			if (window.matchMedia('(prefers-color-scheme: dark)').matches || document.lastElementChild.dataset.lightTheme.indexOf('dark') > -1) { // 如果浏览器是夜间模式 或 白天模式是 dark 的情况
+			if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || document.lastElementChild.dataset.lightTheme.indexOf('dark') > -1) { // 如果浏览器是夜间模式 或 白天模式是 dark 的情况
 				if (document.lastElementChild.dataset.darkTheme === 'dark_dimmed') {
 					backColor = '#272e37'; fontColor = '#768390';
-				} else if (document.lastElementChild.dataset.darkTheme.indexOf('light') == -1) { // 排除夜间模式是 light 的情况
+				} else if (document.lastElementChild.dataset.darkTheme.indexOf('light') === -1) { // 排除夜间模式是 light 的情况
 					backColor = '#161a21'; fontColor = '#97a0aa';
 				}
 			}
