@@ -52,13 +52,16 @@ module.exports = {
     },
     intercepts: {
       'github.com': {
-        '/.*/.*/releases/download/': {
-          redirect: 'gh.api.99988866.xyz/https://github.com',
-          desc: 'release文件加速下载跳转地址'
+        '.*': {
+          sni: 'baidu.com'
         },
-        '/.*/.*/archive/': {
-          redirect: 'gh.api.99988866.xyz/https://github.com'
-        },
+        // '/.*/.*/releases/download/': {
+        //   redirect: 'gh.api.99988866.xyz/https://github.com',
+        //   desc: 'release文件加速下载跳转地址'
+        // },
+        // '/.*/.*/archive/': {
+        //   redirect: 'gh.api.99988866.xyz/https://github.com'
+        // },
         // 以下代理地址不支持该类资源的代理，暂时注释掉
         // '/.*/.*/blame/': {
         //   redirect: 'gh.api.99988866.xyz/https://github.com'
@@ -68,10 +71,6 @@ module.exports = {
             'https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js'
           ],
           desc: '油猴脚本：高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载、添加 git clone 命令'
-        },
-        '.*': {
-          desc: '目前禁掉sni就可以直接访问，如果后续github.com的ip被封锁，只能再走proxy模式',
-          sni: 'baidu.com'
         },
         '/fluidicon.png': {
           cacheDays: 365,
