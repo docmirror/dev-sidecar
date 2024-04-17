@@ -153,7 +153,7 @@ window.addEventListener("load", ()=> {
 
 
     // Github Git Clone/SSH、Release、Download ZIP 改版为动态加载文件列表，因此需要监控网页元素变化
-    const callback = (mutationsList) => {
+    const callback = (mutationsList, observer) => {
       if (location.pathname.indexOf('/releases') > -1) { // Release
         for (const mutation of mutationsList) {
           for (const target of mutation.addedNodes) {
@@ -167,7 +167,7 @@ window.addEventListener("load", ()=> {
             if (target.nodeType !== 1) return
             if (target.tagName === 'DIV' && target.parentElement.id === '__primerPortalRoot__') {
               addDownloadZIP(target);
-              addGitClone(target);
+              if (addGitClone(target)) return;
               if (addGitCloneSSH(target)) return;
             } else if (target.tagName === 'DIV' && target.className.indexOf('Box-sc-') !== -1) {
               if (target.querySelector('input[value^="https:"]')) {
@@ -183,7 +183,7 @@ window.addEventListener("load", ()=> {
           }
         }
       }
-    }
+    };
     const observer = new MutationObserver(callback);
     observer.observe(document, { childList: true, subtree: true });
 
@@ -339,7 +339,7 @@ window.addEventListener("load", ()=> {
             aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
         aElm_new.forEach(el=>{el.style.cssText = 'display: inline'});
         aElm_now.forEach(el=>{el.style.cssText = 'display: none'});
-      }
+      };
 
       // 鼠标离开则隐藏
       var mouseOutHandler = function(evt) {
@@ -348,7 +348,7 @@ window.addEventListener("load", ()=> {
             aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
         aElm_new.forEach(el=>{el.style.cssText = 'display: none'});
         aElm_now.forEach(el=>{el.style.cssText = 'display: inline'});
-      }
+      };
 
       // 循环添加
       files.forEach(function(fileElm) {
@@ -394,7 +394,7 @@ window.addEventListener("load", ()=> {
             aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
         aElm_new.forEach(el=>{el.style.cssText = 'display: inline'});
         aElm_now.forEach(el=>{el.style.cssText = 'display: none'});
-      }
+      };
 
       // 鼠标离开则隐藏
       var mouseOutHandler = function(evt) {
@@ -403,7 +403,7 @@ window.addEventListener("load", ()=> {
             aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
         aElm_new.forEach(el=>{el.style.cssText = 'display: none'});
         aElm_now.forEach(el=>{el.style.cssText = 'display: inline'});
-      }
+      };
       // 循环添加
       files.forEach(function(fileElm) {
         let trElm = fileElm.parentNode.parentNode;
