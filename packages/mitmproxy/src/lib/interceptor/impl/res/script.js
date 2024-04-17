@@ -60,7 +60,11 @@ module.exports = {
         head: tags + '\r\n'
       }
     } catch (err) {
-      res.setHeader('DS-Script-Interceptor', 'error')
+      try {
+        res.setHeader('DS-Script-Interceptor', 'error')
+      } catch (e) {
+        // ignore
+      }
       log.error('load monkey script error', err)
     }
   },

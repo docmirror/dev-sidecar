@@ -64,7 +64,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               if (!reqIncpt.requestIntercept) {
                 continue
               }
-              const goNext = reqIncpt.requestIntercept(context, req, res, ssl)
+              const goNext = reqIncpt.requestIntercept(context, req, res, ssl, next)
               if (goNext) {
                 next()
                 return
@@ -252,7 +252,12 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             let head = ''
             let body = ''
             for (const resIncpt of resIncpts) {
-              const append = resIncpt.responseIntercept(context, req, res, proxyReq, proxyRes, ssl)
+              const append = resIncpt.responseIntercept(context, req, res, proxyReq, proxyRes, ssl, next)
+              // 判断是否已经关闭
+              if (res.writableEnded) {
+                next()
+                return
+              }
               if (append) {
                 if (append.head) {
                   head += append.head
@@ -260,10 +265,8 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
                 if (append.body) {
                   body += append.body
                 }
-              }
-              if (res.writableEnded) {
-                next()
-                return
+              } else if (append === false) {
+                break // 返回false表示终止拦截器，跳出循环
               }
             }
             InsertScriptMiddleware.responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, {
@@ -302,14 +305,19 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       }
     })().catch(e => {
       if (!res.writableEnded) {
-        const status = e.status || 500
-        res.writeHead(status, { 'Content-Type': 'text/html;charset=UTF8' })
-        res.write(`DevSidecar Error:<br/>
+        log.error('Request error:', e)
+
+        try {
+          const status = e.status || 500
+          res.writeHead(status, { 'Content-Type': 'text/html;charset=UTF8' })
+          res.write(`DevSidecar Error:<br/>
 目标网站请求错误：【${e.code}】 ${e.message}<br/>
 目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
-        )
-        res.end()
-        log.error('Request error:', e)
+          )
+          res.end()
+        } catch (e) {
+          // do nothing
+        }
       }
     })
   }
