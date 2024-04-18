@@ -11,14 +11,13 @@
  * @homepageURL     https://github.com/XIU2/UserScript
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
-window.addEventListener("load", ()=> {
-  const GM_registerMenuCommand = window.__ds_global__['GM_registerMenuCommand'] || (() => {})
-  const GM_unregisterMenuCommand = window.__ds_global__['GM_unregisterMenuCommand']
-  const GM_openInTab = window.__ds_global__['GM_openInTab']
-  const GM_getValue = window.__ds_global__['GM_getValue']
-  const GM_setValue = window.__ds_global__['GM_setValue']
-  const GM_notification = window.__ds_global__['GM_notification']
-  window.onurlchange = window.__ds_global__['window.onurlchange'];
+window.addEventListener("load", () => {
+  const GM_registerMenuCommand = () => {}
+  const GM_unregisterMenuCommand = () => {}
+  const GM_openInTab = () => {}
+  const GM_getValue = () => {}
+  const GM_setValue = () => {}
+  const GM_notification = () => {};
   (function() {
     'use strict';
     var backColor = '#ffffff', fontColor = '#888888', menu_rawFast = GM_getValue('xiu2_menu_raw_fast'), menu_rawFast_ID, menu_rawDownLink_ID, menu_gitClone_ID, menu_feedBack_ID;
