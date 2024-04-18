@@ -6,6 +6,8 @@
 
 ## 各脚本使用（配置）方法：
 
+注：如果以下配置中的链接速度太慢，可以从 [Github油猴脚本](https://github.com/docmirror/dev-sidecar/blob/scripts/github/monkey.js) 中找一个高速访问raw资源的加速源，来替换以下配置。
+
 ### `/github/monkey.js`: Github油猴脚本-拦截配置
 
 ```json
