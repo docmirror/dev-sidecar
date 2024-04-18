@@ -206,14 +206,15 @@ const configApi = {
     return configApi.load(newConfig)
   },
   load (newConfig) {
-    const merged = lodash.cloneDeep(defConfig)
-    const remoteConfig = configApi.readRemoteConfig()
+    // 以用户配置作为基准配置，是为了保证用户配置的顺序在前
+    const merged = newConfig != null ? lodash.cloneDeep(newConfig) : {}
 
-    mergeApi.doMerge(merged, remoteConfig)
+    mergeApi.doMerge(merged, defConfig) // 合并默认配置
+    mergeApi.doMerge(merged, configApi.readRemoteConfig()) // 合并远程配置
     if (newConfig != null) {
-      mergeApi.doMerge(merged, newConfig)
+      mergeApi.doMerge(merged, newConfig) // 再合并一次用户配置，使用户配置重新生效
     }
-    mergeApi.deleteNullItems(merged)
+    mergeApi.deleteNullItems(merged) // 删除为null及[delete]的项
     configTarget = merged
     log.info('加载及合并远程配置完成')
 
@@ -225,6 +226,7 @@ const configApi = {
   addDefault (key, defValue) {
     lodash.set(defConfig, key, defValue)
   },
+  // 移除用户配置，用于恢复出厂设置功能
   async removeUserConfig () {
     const configPath = _getConfigPath()
     if (fs.existsSync(configPath)) {
