@@ -1,4 +1,4 @@
-const jsonApi = require('../src/json.js')
+const jsonApi = require('@docmirror/mitmproxy/src/json')
 const DevSidecar = require('../index')
 const fs = require('fs')
 const log = require('../src/utils/util.log')

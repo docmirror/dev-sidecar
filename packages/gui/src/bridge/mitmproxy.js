@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const log = require('../utils/util.log')
 const server = require('@docmirror/mitmproxy')
-const jsonApi = require('@docmirror/dev-sidecar/src/json.js')
+const jsonApi = require('@docmirror/mitmproxy/src/json')
 const configPath = process.argv[2]
 const fs = require('fs')
 const path = require('path')

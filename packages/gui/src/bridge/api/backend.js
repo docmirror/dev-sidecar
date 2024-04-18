@@ -6,7 +6,7 @@ import path from 'path'
 const pk = require('../../../package.json')
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
 process.env.DS_EXTRA_PATH = path.join(__dirname, '../extra/')
-const jsonApi = require('@docmirror/dev-sidecar/src/json.js')
+const jsonApi = require('@docmirror/mitmproxy/src/json')
 const log = require('../../utils/util.log')
 
 const getDefaultConfigBasePath = function () {

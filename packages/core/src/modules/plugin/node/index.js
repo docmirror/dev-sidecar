@@ -1,5 +1,5 @@
 const nodeConfig = require('./config')
-const jsonApi = require('../../../json.js')
+const jsonApi = require('@docmirror/mitmproxy/src/json')
 const NodePlugin = function (context) {
   const { config, shell, event, log } = context
   const nodeApi = {

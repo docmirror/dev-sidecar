@@ -1,5 +1,5 @@
 const server = require('@docmirror/mitmproxy')
-const jsonApi = require('../src/json.js')
+const jsonApi = require('@docmirror/mitmproxy/src/json')
 const path = require('path')
 const home = process.env.USER_HOME || process.env.HOME || 'C:/Users/Administrator/'
 const log = require('../src/utils/util.log')

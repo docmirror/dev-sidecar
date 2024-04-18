@@ -9,5 +9,12 @@ module.exports = {
   },
   stringify (obj) {
     return JSON.stringify(obj, null, '\t')
+  },
+  stringify2 (obj) {
+    try {
+      return JSON5.stringify(obj)
+    } catch (e) {
+      return obj.toString()
+    }
   }
 }

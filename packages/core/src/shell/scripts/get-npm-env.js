@@ -2,7 +2,7 @@
  * 获取环境变量
  */
 const Shell = require('../shell')
-const jsonApi = require('../../json')
+const jsonApi = require('@docmirror/mitmproxy/src/json')
 const execute = Shell.execute
 const executor = {
   async windows (exec) {

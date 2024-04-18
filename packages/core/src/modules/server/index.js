@@ -6,7 +6,7 @@ const fork = require('child_process').fork
 const log = require('../../utils/util.log')
 const fs = require('fs')
 const path = require('path')
-const jsonApi = require('../../json')
+const jsonApi = require('@docmirror/mitmproxy/src/json')
 
 let server = null
 function fireStatus (status) {
