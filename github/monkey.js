@@ -15,22 +15,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	// 配置信息
 	const config = {};
 
-	// 获取配置
-	const GM_getValue = (key) => {
-		return config[key]
-	};
-	// 设置配置
-	const GM_setValue = (key, newValue) => {
-		const oldValue = config[key];
-		config[key] = newValue;
-		return oldValue;
-	};
 	// 注册菜单命令，并返回menuCommandId
 	const GM_registerMenuCommand = (name, callback, accessKey) => {};
 	// 注销菜单命令
 	const GM_unregisterMenuCommand = (menuCommandId) => {};
 	// 在tab中打开url
 	const GM_openInTab = (url, options) => {};
+	// 获取配置
+	const GM_getValue = (key) => config[key];
+	// 设置配置
+	const GM_setValue = (key, value) => { config[key] = value; };
 	// 消息通知
 	const GM_notification = (options) => {};
 
