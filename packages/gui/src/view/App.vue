@@ -32,7 +32,7 @@
         </a-layout-content>
         <a-layout-footer>
           <div class="footer">
-            ©2020-2021 docmirror.cn by Greper  <span>{{info.version}}</span>
+            ©2020-2024 docmirror.cn by Greper, WangLiang  <span>{{info.version}}</span>
           </div>
         </a-layout-footer>
       </a-layout>
