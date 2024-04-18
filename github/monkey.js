@@ -12,12 +12,32 @@
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
 window.addEventListener("load", () => {
-  const GM_registerMenuCommand = () => {}
-  const GM_unregisterMenuCommand = () => {}
-  const GM_openInTab = () => {}
-  const GM_getValue = () => {}
-  const GM_setValue = () => {}
-  const GM_notification = () => {};
+  // 配置信息
+  const config = {
+      "xiu2_menu_raw_fast": null,
+      "menu_rawDownLink": null,
+      "menu_gitClone": null
+  };
+
+  // 获取配置
+  const GM_getValue = (key) => {
+    return config[key]
+  };
+  // 设置配置
+  const GM_setValue = (key, newValue) => {
+    const oldValue = config[key];
+    config[key] = newValue;
+    return oldValue;
+  };
+  // 注册菜单命令，并返回menuCommandId
+  const GM_registerMenuCommand = (name, callback, accessKey) => {};
+  // 注销菜单命令
+  const GM_unregisterMenuCommand = (menuCommandId) => {};
+  // 在tab中打开url
+  const GM_openInTab = (url, options) => {};
+  // 消息通知
+  const GM_notification = (options) => {};
+
   (function() {
     'use strict';
     var backColor = '#ffffff', fontColor = '#888888', menu_rawFast = GM_getValue('xiu2_menu_raw_fast'), menu_rawFast_ID, menu_rawDownLink_ID, menu_gitClone_ID, menu_feedBack_ID;
