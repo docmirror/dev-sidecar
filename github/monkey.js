@@ -11,7 +11,7 @@
  * @homepageURL     https://github.com/XIU2/UserScript
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
   // 配置信息
   const config = {
       "xiu2_menu_raw_fast": null,
