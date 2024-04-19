@@ -21,7 +21,7 @@ module.exports = {
     },
     remoteConfig: {
       enabled: true,
-      url: 'https://github.com/docmirror/dev-sidecar/raw/master/packages/core/src/config/remote_config.json5'
+      url: 'https://gitee.com/wangliang181230/dev-sidecar/raw/docmirror/packages/core/src/config/remote_config.json5'
     },
     theme: 'light', // 主题：light=亮色, dark=暗色
     dock: {
