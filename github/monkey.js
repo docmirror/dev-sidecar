@@ -12,21 +12,25 @@
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
 document.addEventListener("DOMContentLoaded", () => {
-	// 配置信息
-	const config = {};
+	const DS_init = window.__ds_global__['DS_init']
+	if (typeof DS_init === 'function') {
+		console.log("ds_github_monkey_2.5.20: do DS_init")
+		DS_init({"name":"Github 增强 - 高速下载","icon":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACEUExURUxpcRgWFhsYGBgWFhcWFh8WFhoYGBgWFiUlJRcVFRkWFhgVFRgWFhgVFRsWFhgWFigeHhkWFv////////////r6+h4eHv///xcVFfLx8SMhIUNCQpSTk/r6+jY0NCknJ97e3ru7u+fn51BOTsPCwqGgoISDg6empmpoaK2srNDQ0FhXV3eXcCcAAAAXdFJOUwCBIZXMGP70BuRH2Ze/LpIMUunHkpQR34sfygAAAVpJREFUOMt1U+magjAMDAVb5BDU3W25b9T1/d9vaYpQKDs/rF9nSNJkArDA9ezQZ8wPbc8FE6eAiQUsOO1o19JolFibKCdHGHC0IJezOMD5snx/yE+KOYYr42fPSufSZyazqDoseTPw4lGJNOu6LBXVUPBG3lqYAOv/5ZwnNUfUifzBt8gkgfgINmjxOpgqUA147QWNaocLniqq3QsSVbQHNp45N/BAwoYQz9oUJEiE4GMGfoBSMj5gjeWRIMMqleD/CAzUHFqTLyjOA5zjNnwa4UCEZ2YK3khEcBXHjVBtEFeIZ6+NxYbPqWp1DLKV42t6Ujn2ydyiPi9nX0TTNAkVVZ/gozsl6FbrktkwaVvL2TRK0C8Ca7Hck7f5OBT6FFbLATkL2ugV0tm0RLM9fedDvhWstl8Wp9AFDjFX7yOY/lJrv8AkYuz7fuP8dv9izCYH+x3/LBnj9fYPBTpJDNzX+7cAAAAASUVORK5CYII="});
+	} else {
+		console.log("ds_github_2.5.20: has no DS_init")
+	}
 
-	// 注册菜单命令，并返回menuCommandId
-	const GM_registerMenuCommand = (name, callback, accessKey) => {};
-	// 注销菜单命令
-	const GM_unregisterMenuCommand = (menuCommandId) => {};
-	// 在tab中打开url
-	const GM_openInTab = (url, options) => {};
-	// 获取配置
-	const GM_getValue = (key) => config[key];
-	// 设置配置
-	const GM_setValue = (key, value) => { config[key] = value; };
-	// 消息通知
-	const GM_notification = (options) => {};
+	if (!(window.__ds_global__.GM_getValue || (() => true))("ds_enabled", true)) {
+		console.log("ds_github_monkey_2.5.20: disabled")
+		return
+	}
+
+	const GM_registerMenuCommand = window.__ds_global__['GM_registerMenuCommand'] || (() => {});
+	const GM_unregisterMenuCommand = window.__ds_global__['GM_unregisterMenuCommand'] || (() => {});
+	const GM_openInTab = window.__ds_global__['GM_openInTab'] || (() => {});
+	const GM_getValue = window.__ds_global__['GM_getValue'] || (() => {});
+	const GM_setValue = window.__ds_global__['GM_setValue'] || (() => {});
+	const GM_notification = window.__ds_global__['GM_notification'] || (() => {});
 
 	(function() {
 		'use strict';
@@ -139,9 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (menu_feedBack_ID) {GM_unregisterMenuCommand(menu_rawFast_ID); GM_unregisterMenuCommand(menu_rawDownLink_ID); GM_unregisterMenuCommand(menu_gitClone_ID); GM_unregisterMenuCommand(menu_feedBack_ID); menu_rawFast = GM_getValue('xiu2_menu_raw_fast');}
 			// 避免在减少 raw 数组后，用户储存的数据大于数组而报错
 			if (menu_rawFast > raw_url.length - 1) menu_rawFast = 0
-			if (GM_getValue('menu_rawDownLink')) menu_rawFast_ID = GM_registerMenuCommand(`${['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'][menu_rawFast]} [ ${raw_url[menu_rawFast][1]} ] 加速源 (☁) - 点击切换`, menu_toggle_raw_fast);
-			menu_rawDownLink_ID = GM_registerMenuCommand(`${GM_getValue('menu_rawDownLink')?'✅':'❌'} 项目列表单文件快捷下载 (☁)`, function(){if (GM_getValue('menu_rawDownLink') === true) {GM_setValue('menu_rawDownLink', false); GM_notification({text: `已关闭 [项目列表单文件快捷下载 (☁)] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_rawDownLink', true); GM_notification({text: `已开启 [项目列表单文件快捷下载 (☁)] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();});
-			menu_gitClone_ID = GM_registerMenuCommand(`${GM_getValue('menu_gitClone')?'✅':'❌'} 添加 git clone 命令`, function(){if (GM_getValue('menu_gitClone') === true) {GM_setValue('menu_gitClone', false); GM_notification({text: `已关闭 [添加 git clone 命令] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_gitClone', true); GM_notification({text: `已开启 [添加 git clone 命令] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();});
+			menu_rawDownLink_ID = GM_registerMenuCommand(`${GM_getValue('menu_rawDownLink')?'✅':'❌'} 项目列表单文件快捷下载 (☁)`, function(){if (GM_getValue('menu_rawDownLink') === true) {GM_setValue('menu_rawDownLink', false); GM_notification({text: `已关闭 [项目列表单文件快捷下载 (☁)] 功能\n（刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_rawDownLink', true); GM_notification({text: `已开启 [项目列表单文件快捷下载 (☁)] 功能\n（刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();});
+			if (GM_getValue('menu_rawDownLink')) menu_rawFast_ID = GM_registerMenuCommand(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'][menu_rawFast]} [ ${raw_url[menu_rawFast][1]} ] 加速源 (☁) - 点击切换`, menu_toggle_raw_fast);
+			menu_gitClone_ID = GM_registerMenuCommand(`${GM_getValue('menu_gitClone')?'✅':'❌'} 添加 git clone 命令`, function(){if (GM_getValue('menu_gitClone') === true) {GM_setValue('menu_gitClone', false); GM_notification({text: `已关闭 [添加 git clone 命令] 功能`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_gitClone', true); GM_notification({text: `已开启 [添加 git clone 命令] 功能`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();});
 			menu_feedBack_ID = GM_registerMenuCommand('💬 反馈 & 建议 [Github]', function () {GM_openInTab('https://github.com/XIU2/UserScript', {active: true,insert: true,setParent: true});GM_openInTab('https://greasyfork.org/zh-CN/scripts/412245/feedback', {active: true,insert: true,setParent: true});});
 		}
 
@@ -225,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (current.querySelector('.XIU2-RS')) continue
 				current.querySelectorAll('li.Box-row a').forEach(function (_this) {
 					let href = _this.href.split(location.host),
-							url = '', _html = `<div class="XIU2-RS" style="${divDisplay}">`;
+						url = '', _html = `<div class="XIU2-RS" style="${divDisplay}">`;
 
 					for (let i=0;i<new_download_url.length;i++) {
 						if (new_download_url[i][3] !== undefined && url.indexOf('/archive/') !== -1) {
@@ -246,14 +250,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			let html = target.querySelector('ul[class^=List__ListBox-sc-] ul[class^=List__ListBox-sc-]>li:last-child');
 			if (!html) return;
 			let href_script = document.querySelector('react-partial[partial-name=repos-overview]>script[data-target="react-partial.embeddedData"]'),
-					href_slice = href_script.textContent.slice(href_script.textContent.indexOf('"zipballUrl":"')+14),
-					href = href_slice.slice(0, href_slice.indexOf('"')),
-					url = '', _html = '', new_download_url = get_New_download_url();
+				href_slice = href_script.textContent.slice(href_script.textContent.indexOf('"zipballUrl":"')+14),
+				href = href_slice.slice(0, href_slice.indexOf('"')),
+				url = '', _html = '', new_download_url = get_New_download_url();
 
 			// 克隆原 Download ZIP 元素，并定位 <a> <span> 标签
 			let html_clone = html.cloneNode(true),
-					html_clone_a = html_clone.querySelector('a[href$=".zip"]'),
-					html_clone_span = html_clone.querySelector('span[id]');
+				html_clone_a = html_clone.querySelector('a[href$=".zip"]'),
+				html_clone_span = html_clone.querySelector('span[id]');
 
 			for (let i=0;i<new_download_url.length;i++) {
 				if (new_download_url[i][3] === '') continue
@@ -282,8 +286,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!html) return;
 			if (!html.nextElementSibling) return false;
 			let href_split = html.value.split(location.host)[1],
-					html_parent = '<div style="margin-top: 4px;" class="XIU2-GC ' + html.parentElement.className + '">',
-					url = '', _html = '', _gitClone = '';
+				html_parent = '<div style="margin-top: 4px;" class="XIU2-GC ' + html.parentElement.className + '">',
+				url = '', _html = '', _gitClone = '';
 			html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮
 			if (GM_getValue('menu_gitClone')) {_gitClone='git clone '; html.value = _gitClone + html.value; html.setAttribute('value', html.value);}
 			// 克隆原 Git Clone 元素
@@ -308,8 +312,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!html) return;
 			if (!html.nextElementSibling) return false;
 			let href_split = html.value.split(':')[1],
-					html_parent = '<div style="margin-top: 4px;" class="XIU2-GCS ' + html.parentElement.className + '">',
-					url = '', _html = '', _gitClone = '';
+				html_parent = '<div style="margin-top: 4px;" class="XIU2-GCS ' + html.parentElement.className + '">',
+				url = '', _html = '', _gitClone = '';
 			html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮
 			if (GM_getValue('menu_gitClone')) {_gitClone='git clone '; html.value = _gitClone + html.value; html.setAttribute('value', html.value);}
 			// 克隆原 Git Clone SSH 元素
@@ -329,8 +333,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			let html = document.querySelector('a[data-testid="raw-button"]');
 			if (!html) return;
 			let href = location.href.replace(`https://${location.host}`,''),
-					href2 = href.replace('/blob/','/'),
-					url = '', _html = '';
+				href2 = href.replace('/blob/','/'),
+				url = '', _html = '';
 
 			for (let i=1;i<raw_url.length;i++) {
 				if ((raw_url[i][0].indexOf('/gh') + 3 === raw_url[i][0].length) && raw_url[i][0].indexOf('cdn.staticaly.com') === -1) {
@@ -355,8 +359,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			// 鼠标指向则显示
 			var mouseOverHandler = function(evt) {
 				let elem = evt.currentTarget,
-						aElm_new = elem.querySelectorAll('.fileDownLink'),
-						aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
+					aElm_new = elem.querySelectorAll('.fileDownLink'),
+					aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
 				aElm_new.forEach(el=>{el.style.cssText = 'display: inline'});
 				aElm_now.forEach(el=>{el.style.cssText = 'display: none'});
 			};
@@ -364,8 +368,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			// 鼠标离开则隐藏
 			var mouseOutHandler = function(evt) {
 				let elem = evt.currentTarget,
-						aElm_new = elem.querySelectorAll('.fileDownLink'),
-						aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
+					aElm_new = elem.querySelectorAll('.fileDownLink'),
+					aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
 				aElm_new.forEach(el=>{el.style.cssText = 'display: none'});
 				aElm_now.forEach(el=>{el.style.cssText = 'display: inline'});
 			};
@@ -373,10 +377,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			// 循环添加
 			files.forEach(function(fileElm) {
 				let trElm = fileElm.parentNode.parentNode,
-						cntElm_a = trElm.querySelector('[role="rowheader"] > .css-truncate.css-truncate-target.d-block.width-fit > a, .react-directory-truncate>a'),
-						Name = cntElm_a.innerText,
-						href = cntElm_a.getAttribute('href'),
-						href2 = href.replace('/blob/','/'), url, url_name, url_tip;
+					cntElm_a = trElm.querySelector('[role="rowheader"] > .css-truncate.css-truncate-target.d-block.width-fit > a, .react-directory-truncate>a'),
+					Name = cntElm_a.innerText,
+					href = cntElm_a.getAttribute('href'),
+					href2 = href.replace('/blob/','/'), url, url_name, url_tip;
 				if ((raw_url[menu_rawFast][0].indexOf('/gh') + 3 === raw_url[menu_rawFast][0].length) && raw_url[menu_rawFast][0].indexOf('cdn.staticaly.com') === -1) {
 					url = raw_url[menu_rawFast][0] + href.replace('/blob/','@');
 				} else {
@@ -384,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 
 				url_name = raw_url[menu_rawFast][1]; url_tip = raw_url[menu_rawFast][2];
-				fileElm.insertAdjacentHTML('afterend', `<a href="${url}" download="${Name}" target="_blank" rel="noreferrer noopener nofollow" class="fileDownLink" style="display: none;" title="「${url_name}」&#10;&#10;[Alt + 左键] 或 [右键 - 另存为...] 下载文件。&#10;注意：鼠标点击 [☁] 图标，而不是左侧的文件名！&#10;&#10;${url_tip}提示：点击浏览器右上角 Tampermonkey 扩展图标 - [ ${raw_url[menu_rawFast][1]} ] 加速源 (☁) 即可切换。">${svg[0]}</a>`);
+				fileElm.insertAdjacentHTML('afterend', `<a href="${url}" download="${Name}" target="_blank" rel="noreferrer noopener nofollow" class="fileDownLink" style="display: none;" title="「${url_name}」&#10;&#10;左键点击下载文件（注意：鼠标点击 [☁] 图标进行下载，而不是文件名！）&#10;&#10;${url_tip}&#10;&#10;提示：点击页面右侧飘浮着的 TamperMonkey 扩展图标 - [ ${raw_url[menu_rawFast][1]} ] 加速源 (☁) 即可切换。">${svg[0]}</a>`);
 				// 绑定鼠标事件
 				trElm.onmouseover = mouseOverHandler;
 				trElm.onmouseout = mouseOutHandler;
@@ -410,8 +414,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			// 鼠标指向则显示
 			var mouseOverHandler = function(evt) {
 				let elem = evt.currentTarget,
-						aElm_new = elem.querySelectorAll('.fileDownLink'),
-						aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
+					aElm_new = elem.querySelectorAll('.fileDownLink'),
+					aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
 				aElm_new.forEach(el=>{el.style.cssText = 'display: inline'});
 				aElm_now.forEach(el=>{el.style.cssText = 'display: none'});
 			};
@@ -419,8 +423,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			// 鼠标离开则隐藏
 			var mouseOutHandler = function(evt) {
 				let elem = evt.currentTarget,
-						aElm_new = elem.querySelectorAll('.fileDownLink'),
-						aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
+					aElm_new = elem.querySelectorAll('.fileDownLink'),
+					aElm_now = elem.querySelectorAll('svg.octicon.octicon-file, svg.color-fg-muted');
 				aElm_new.forEach(el=>{el.style.cssText = 'display: none'});
 				aElm_now.forEach(el=>{el.style.cssText = 'display: inline'});
 			};
@@ -481,6 +485,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		}
 	})();
-	console.log("ds_github_monkey_2.5.20 completed")
+	console.log("ds_github_monkey_2.5.20: completed")
 })
-console.log("ds_github_monkey_2.5.20 loaded")
+console.log("ds_github_monkey_2.5.20: loaded")
