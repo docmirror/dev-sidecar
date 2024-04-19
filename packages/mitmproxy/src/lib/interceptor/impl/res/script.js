@@ -93,7 +93,7 @@ module.exports = {
       const hostnameConfig = intercepts[hostnamePattern]
 
       const scriptProxy = {}
-      const handleScript = (scriptUrl, name, replaceScriptUrlFun) => {
+      const handleScriptUrl = (scriptUrl, name, replaceScriptUrlFun) => {
         if (scriptUrl.indexOf('https:') === 0 || scriptUrl.indexOf('http:') === 0) {
           // 绝对地址
           const scriptKey = SCRIPT_PROXY_URL_PRE + scriptUrl.replace('.js', '').replace(/[\W_]+/g, '_') + '.js' // 伪脚本地址：移除 script 中可能存在的特殊字符，并转为相对地址
@@ -112,7 +112,7 @@ module.exports = {
         if (typeof pathConfig.script === 'object' && pathConfig.script.length > 0) {
           for (let i = 0; i < pathConfig.script.length; i++) {
             const scriptUrl = pathConfig.script[i]
-            handleScript(scriptUrl, 'script', (scriptKey) => {
+            handleScriptUrl(scriptUrl, 'script', (scriptKey) => {
               pathConfig.script[i] = scriptKey
             })
           }
@@ -120,7 +120,7 @@ module.exports = {
 
         // 处理 tampermonkeyScript 配置
         if (typeof pathConfig.tampermonkeyScript === 'string') {
-          handleScript(pathConfig.tampermonkeyScript, 'tampermonkey', (scriptKey) => {
+          handleScriptUrl(pathConfig.tampermonkeyScript, 'tampermonkey', (scriptKey) => {
             pathConfig.tampermonkeyScript = scriptKey
           })
         }
