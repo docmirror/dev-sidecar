@@ -63,7 +63,11 @@ module.exports = {
       }
 
       // 插入油猴脚本浏览器扩展
-      tags = '\r\n\t' + getScript('tampermonkey', scripts.tampermonkey.script) + tags
+      if (typeof interceptOpt.tampermonkeyScript === 'string') {
+        tags = '\r\n\t' + getScriptByUrlOrPath(interceptOpt.tampermonkeyScript) + tags
+      } else {
+        tags = '\r\n\t' + getScript('tampermonkey', scripts.tampermonkey.script) + tags
+      }
 
       res.setHeader('DS-Script-Interceptor', 'true')
       log.info('script response intercept: insert script', rOptions.hostname, rOptions.path, ', head:', tags)
@@ -89,22 +93,36 @@ module.exports = {
       const hostnameConfig = intercepts[hostnamePattern]
 
       const scriptProxy = {}
+      const handleScript = (scriptUrl, name, replaceScriptUrlFun) => {
+        if (scriptUrl.indexOf('https:') === 0 || scriptUrl.indexOf('http:') === 0) {
+          // 绝对地址
+          const scriptKey = SCRIPT_PROXY_URL_PRE + scriptUrl.replace('.js', '').replace(/[\W_]+/g, '_') + '.js' // 伪脚本地址：移除 script 中可能存在的特殊字符，并转为相对地址
+          scriptProxy[scriptKey] = scriptUrl
+          log.info(`替换${name}配置值：'${scriptUrl}' -> '${scriptKey}'`)
+          if (typeof replaceScriptUrlFun === 'function') replaceScriptUrlFun(scriptKey)
+        } else if (scriptUrl.indexOf('/') === 0) {
+          // 相对地址
+          scriptProxy[scriptUrl] = scriptUrl
+        }
+      }
+
       for (const pathPattern in hostnameConfig) {
         const pathConfig = hostnameConfig[pathPattern]
+        // 处理 script 配置
         if (typeof pathConfig.script === 'object' && pathConfig.script.length > 0) {
           for (let i = 0; i < pathConfig.script.length; i++) {
-            const script = pathConfig.script[i]
-            if (script.indexOf('https:') === 0 || script.indexOf('http:') === 0) {
-              // 绝对地址
-              const scriptKey = SCRIPT_PROXY_URL_PRE + script.replace('.js', '').replace(/[\W_]+/g, '_') + '.js' // 伪脚本地址：移除 script 中可能存在的特殊字符，并转为相对地址
-              scriptProxy[scriptKey] = script
-              log.info(`替换script配置值：'${pathConfig.script[i]}' -> '${scriptKey}'`)
+            const scriptUrl = pathConfig.script[i]
+            handleScript(scriptUrl, 'script', (scriptKey) => {
               pathConfig.script[i] = scriptKey
-            } else if (script.indexOf('/') === 0) {
-              // 相对地址
-              scriptProxy[script] = script
-            }
+            })
           }
+        }
+
+        // 处理 tampermonkeyScript 配置
+        if (typeof pathConfig.tampermonkeyScript === 'string') {
+          handleScript(pathConfig.tampermonkeyScript, 'tampermonkey', (scriptKey) => {
+            pathConfig.tampermonkeyScript = scriptKey
+          })
         }
       }
 
