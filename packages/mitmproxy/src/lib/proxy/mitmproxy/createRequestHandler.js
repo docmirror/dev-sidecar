@@ -194,6 +194,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             reject(new Error('代理请求被取消'))
           })
 
+          // 原始请求的事件监听
           req.on('aborted', function () {
             log.error('请求被取消', rOptions.hostname, rOptions.path)
             proxyReq.abort()
@@ -305,8 +306,6 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       }
     })().catch(e => {
       if (!res.writableEnded) {
-        log.error('Request error:', e)
-
         try {
           const status = e.status || 500
           res.writeHead(status, { 'Content-Type': 'text/html;charset=UTF8' })
@@ -314,10 +313,17 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
 目标网站请求错误：【${e.code}】 ${e.message}<br/>
 目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
           )
+        } catch (e) {
+          // do nothing
+        }
+
+        try {
           res.end()
         } catch (e) {
           // do nothing
         }
+
+        log.error('Request error:', e)
       }
     })
   }
