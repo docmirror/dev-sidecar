@@ -6,6 +6,9 @@ function isMatched (url, regexp) {
 }
 
 function domainRegexply (target) {
+  if (target === '.*') {
+    return '^.*$'
+  }
   return '^' + target.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$'
 }
 
