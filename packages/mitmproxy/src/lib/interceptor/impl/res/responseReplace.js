@@ -68,7 +68,7 @@ module.exports = {
     let actions = ''
 
     // 处理文件下载请求
-    if (responseReplaceConfig.doDownload && rOptions.doDownload) {
+    if (responseReplaceConfig.doDownload || rOptions.doDownload) {
       const filename = (rOptions.path.match('^.*/([^/?]+)/?(\\?.*)?$') || [])[1] || 'UNKNOWN_FILENAME'
       res.setHeader('Content-Disposition', 'attachment; filename=' + filename)
       actions += 'download:' + filename

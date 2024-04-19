@@ -159,6 +159,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             resolve(proxyRes)
           })
 
+          // 代理请求的事件监听
           proxyReq.on('timeout', () => {
             const end = new Date().getTime()
             const cost = end - start
@@ -170,7 +171,6 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             error.status = 408
             reject(error)
           })
-
           proxyReq.on('error', (e) => {
             const end = new Date().getTime()
             const cost = end - start
@@ -178,7 +178,6 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             countSlow(isDnsIntercept, 'error:' + e.message)
             reject(e)
           })
-
           proxyReq.on('aborted', () => {
             const end = new Date().getTime()
             const cost = end - start

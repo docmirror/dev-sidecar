@@ -36,9 +36,10 @@ module.exports = {
     }
 
     // 替换下载文件请求的请求地址（此功能主要是为了方便拦截配置）
-    if (requestReplaceConfig.doDownload && rOptions.path.indexOf('?DS_DOWNLOAD') >= 0) {
+    // 注：要转换为下载请求，需要 responseReplace 拦截器的配合使用。
+    if (requestReplaceConfig.doDownload && rOptions.path.match(/DS_DOWNLOAD/i)) {
       rOptions.doDownload = true
-      rOptions.path = rOptions.path.replace('?DS_DOWNLOAD', '')
+      rOptions.path = rOptions.path.replace(/[?&/]?DS_DOWNLOAD(=[^?&/]+)?$/gi, '')
       actions += (actions ? ',' : '') + 'path:remove-DS_DOWNLOAD'
     }
 
