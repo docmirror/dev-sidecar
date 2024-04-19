@@ -116,6 +116,10 @@ module.exports = {
               pathConfig.script[i] = scriptKey
             })
           }
+        } else if (typeof pathConfig.script === 'string') {
+          handleScriptUrl(pathConfig.script, 'script', (scriptKey) => {
+            pathConfig.script = scriptKey
+          })
         }
 
         // 处理 tampermonkeyScript 配置
