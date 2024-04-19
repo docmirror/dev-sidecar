@@ -56,7 +56,11 @@ module.exports = {
           sni: 'baidu.com'
         },
         '^(/[\\w-.]+){2,}/?(\\?.*)?$': {
+          // 自定义篡改猴插件地址配置
+          tampermonkeyScript: 'https://mirror.ghproxy.com/https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/tampermonkey.js',
+          // 脚本地址配置
           script: [
+            // Github油猴脚本
             'https://mirror.ghproxy.com/https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js'
           ],
           scriptUrlDesc: '上面所使用的脚本地址，使用了高速镜像地址。',
