@@ -35,6 +35,13 @@ module.exports = {
       actions += 'headers'
     }
 
+    // 替换下载文件请求的请求地址（此功能主要是为了方便拦截配置）
+    if (requestReplaceConfig.doDownload && rOptions.path.indexOf('?DS_DOWNLOAD') >= 0) {
+      rOptions.doDownload = true
+      rOptions.path = rOptions.path.replace('?DS_DOWNLOAD', '')
+      actions += (actions ? ',' : '') + 'path:remove-DS_DOWNLOAD'
+    }
+
     res.setHeader('DS-RequestReplace-Interceptor', actions)
   },
   is (interceptOpt) {

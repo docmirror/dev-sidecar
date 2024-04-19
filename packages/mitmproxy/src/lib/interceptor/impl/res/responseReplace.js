@@ -57,18 +57,25 @@ module.exports = {
   priority: 201,
   replaceResponseHeaders,
   responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
-    const { log } = context
+    const { rOptions, log } = context
 
     if (proxyRes.statusCode !== 200) {
       return
     }
 
-    const responseConfig = interceptOpt.responseReplace
+    const responseReplaceConfig = interceptOpt.responseReplace
 
     let actions = ''
 
+    // 处理文件下载请求
+    if (responseReplaceConfig.doDownload && rOptions.doDownload) {
+      const filename = (rOptions.path.match('^.*/([^/?]+)/?(\\?.*)?$') || [])[1] || 'UNKNOWN_FILENAME'
+      res.setHeader('Content-Disposition', 'attachment; filename=' + filename)
+      actions += 'download:' + filename
+    }
+
     // 替换响应头
-    if (replaceResponseHeaders(responseConfig.headers, res, proxyRes)) {
+    if (replaceResponseHeaders(responseReplaceConfig.headers, res, proxyRes)) {
       actions += 'headers'
     }
 
