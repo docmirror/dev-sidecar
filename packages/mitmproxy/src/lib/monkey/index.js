@@ -21,7 +21,7 @@ function buildScript (sc, content, scriptName) {
     icon: sc.icon
   }
   const initStr = `
-const DS_init = window.__ds_global__['DS_init']
+const DS_init = (window.__ds_global__ || {})['DS_init']
 if (typeof DS_init === 'function') {
 \tconsole.log("${scriptKey} do DS_init")
 \tDS_init(${JSON.stringify(options)});
@@ -31,7 +31,7 @@ if (typeof DS_init === 'function') {
 
   // 代码3：判断是否启用了脚本
   const checkEnabledStr = `
-if (!(window.__ds_global__.GM_getValue || (() => true))("ds_enabled", true)) {
+if (!((window.__ds_global__ || {}).GM_getValue || (() => true))("ds_enabled", true)) {
 \tconsole.log("${scriptKey} disabled")
 \treturn
 }`
@@ -44,9 +44,9 @@ if (!(window.__ds_global__.GM_getValue || (() => true))("ds_enabled", true)) {
     }
 
     if (item.indexOf('.') > 0) {
-      grantStr += item + ' = window.__ds_global__[\'' + item + '\'];'
+      grantStr += item + ' = (window.__ds_global__ || {})[\'' + item + '\'];'
     } else {
-      grantStr += 'const ' + item + ' = window.__ds_global__[\'' + item + '\'] || (() => {});'
+      grantStr += 'const ' + item + ' = (window.__ds_global__ || {})[\'' + item + '\'] || (() => {});'
     }
   }
 
