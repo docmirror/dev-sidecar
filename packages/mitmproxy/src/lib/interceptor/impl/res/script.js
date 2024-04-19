@@ -1,5 +1,5 @@
 const monkey = require('../../../monkey')
-const CryptoJs = require('crypto-js')
+// const CryptoJs = require('crypto-js')
 const lodash = require('lodash')
 const log = require('../../../../utils/util.log')
 
@@ -9,9 +9,9 @@ const REMOVE = '[remove]' // 标记需要移除的头信息
 
 function getScript (key, script) {
   const scriptUrl = SCRIPT_URL_PRE + key
-
-  const hash = CryptoJs.SHA256(script).toString(CryptoJs.enc.Base64)
-  return `<script crossorigin="anonymous" defer="defer" type="application/javascript" src="${scriptUrl}" integrity="sha256-${hash}"></script>`
+  // const hash = CryptoJs.SHA256(script).toString(CryptoJs.enc.Base64)
+  // return `<script crossorigin="anonymous" defer="defer" type="application/javascript" src="${scriptUrl}" integrity="sha256-${hash}"></script>`
+  return `<script crossorigin="anonymous" defer="defer" type="application/javascript" src="${scriptUrl}"></script>`
 }
 function getScriptByUrlOrPath (scriptUrlOrPath) {
   return `<script crossorigin="anonymous" defer="defer" type="application/javascript" src="${scriptUrlOrPath}"></script>`
