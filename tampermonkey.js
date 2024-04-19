@@ -35,7 +35,7 @@
 .____ds-icon____{
 	position: fixed;
 	right: 5px;
-	top: 35%;
+	top: 30%;
 	z-index: 9999;
 	width: 36px;
 	height: 36px;
