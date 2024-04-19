@@ -39,7 +39,7 @@
 	z-index: 9999;
 	width: 36px;
 	height: 36px;
-	border-radius: 10px;
+	border-radius: 8px;
 	background-color: #DDD;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -53,7 +53,7 @@
 	z-index: 10000;
 	min-width: 200px;
 	min-height: 35px;
-	border-radius: 10px;
+	border-radius: 8px;
 	background-color: #323231;
 	border: 1px solid #52525E;
 	overflow: hidden;
