@@ -1,4 +1,5 @@
 const lodash = require('lodash')
+const cacheReq = require('../req/cacheReq')
 const REMOVE = '[remove]'
 
 // 替换响应头
@@ -71,16 +72,31 @@ module.exports = {
 
     let actions = ''
 
+    const replaceHeaders = responseReplaceConfig.headers || {}
+
     // 处理文件下载请求
     if (responseReplaceConfig.doDownload || rOptions.doDownload) {
       const filename = (rOptions.path.match('^.*/([^/?]+)/?(\\?.*)?$') || [])[1] || 'UNKNOWN_FILENAME'
-      res.setHeader('Content-Disposition', 'attachment; filename=' + filename)
-      actions += 'download:' + filename
+      // 设置文件下载响应头
+      replaceHeaders['content-disposition'] = `attachment; filename="${encodeURIComponent(filename)}"`
+      // 设置文件类型
+      if (replaceHeaders['content-type'] == null) {
+        replaceHeaders['content-type'] = 'application/octet-stream'
+      }
+      // 如果未手动配置需要缓存，则不允许使用缓存
+      const maxAge = cacheReq.getMaxAge(interceptOpt)
+      if (maxAge == null || maxAge <= 0) {
+        replaceHeaders['cache-control'] = '[remove]'
+        replaceHeaders['last-modified'] = '[remove]'
+        replaceHeaders.expires = '[remove]'
+      }
+
+      actions += (actions ? ',' : '') + 'download:' + filename
     }
 
     // 替换响应头
-    if (replaceResponseHeaders(responseReplaceConfig.headers, res, proxyRes)) {
-      actions += 'headers'
+    if (replaceResponseHeaders(replaceHeaders, res, proxyRes)) {
+      actions += (actions ? ',' : '') + 'headers'
     }
 
     if (actions) {
