@@ -38,7 +38,7 @@ function replaceResponseHeaders (newHeaders, res, proxyRes) {
     // 新增响应头
     for (const headerKey in newHeaders) {
       const headerValue = newHeaders[headerKey]
-      if (!headerValue || headerValue === REMOVE) {
+      if (headerValue == null || headerValue === REMOVE) {
         continue
       }
 
@@ -46,6 +46,9 @@ function replaceResponseHeaders (newHeaders, res, proxyRes) {
       preHeaders[headerKey] = null // 标记原先响应头为null
     }
 
+    if (lodash.isEmpty(preHeaders)) {
+      return null
+    }
     // 返回原先响应头
     return preHeaders
   }

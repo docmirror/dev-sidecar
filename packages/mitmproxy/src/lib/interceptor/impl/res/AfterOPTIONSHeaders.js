@@ -16,10 +16,10 @@ module.exports = {
     }
 
     // 替换响应头
-    responseReplaceApi.replaceResponseHeaders(headers, res, proxyRes)
-
-    res.setHeader('DS-AfterOPTIONSHeaders-Interceptor', true)
-    log.info('AfterOPTIONSHeaders intercept:', JSON.stringify(headers))
+    if (responseReplaceApi.replaceResponseHeaders(headers, res, proxyRes)) {
+      res.setHeader('DS-AfterOPTIONSHeaders-Interceptor', true)
+      log.info('AfterOPTIONSHeaders intercept:', JSON.stringify(headers))
+    }
   },
   is (interceptOpt) {
     return !!interceptOpt.options
