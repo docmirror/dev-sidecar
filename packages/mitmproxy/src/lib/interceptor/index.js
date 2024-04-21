@@ -12,8 +12,10 @@ const proxy = require('./impl/req/proxy')
 const sni = require('./impl/req/sni')
 
 // response interceptor impls
-const responseReplace = require('./impl/res/responseReplace')
+const OPTIONSHeaders = require('./impl/res/AfterOPTIONSHeaders')
 const cacheRes = require('./impl/res/cacheRes')
+const responseReplace = require('./impl/res/responseReplace')
+
 const script = require('./impl/res/script')
 
 module.exports = [
@@ -24,5 +26,6 @@ module.exports = [
   proxy, sni,
 
   // response interceptor impls
-  responseReplace, cacheRes, script
+  OPTIONSHeaders, cacheRes, responseReplace,
+  script
 ]
