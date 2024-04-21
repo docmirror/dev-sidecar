@@ -20,18 +20,19 @@ function replaceResponseHeaders (newHeaders, res, proxyRes) {
 
     // 替换响应头
     for (let i = 0; i < proxyRes.rawHeaders.length; i += 2) {
-      const headerKey = proxyRes.rawHeaders[i]
-      const headerKeyLower = headerKey.toLowerCase()
+      const headerKey = proxyRes.rawHeaders[i].toLowerCase()
 
-      const newHeaderValue = newHeaders[headerKeyLower]
-      if (newHeaderValue && newHeaderValue !== proxyRes.rawHeaders[i + 1]) {
-        preHeaders[headerKeyLower] = proxyRes.rawHeaders[i + 1] // 先保存原先响应头
-        if (newHeaderValue === REMOVE) { // 由于拦截配置中不允许配置null，会被删，所以配置一个[remove]，当作删除响应头的意思
-          proxyRes.rawHeaders[i + 1] = ''
-        } else {
-          proxyRes.rawHeaders[i + 1] = newHeaderValue
+      const newHeaderValue = newHeaders[headerKey]
+      if (newHeaderValue) {
+        if (newHeaderValue !== proxyRes.rawHeaders[i + 1]) {
+          preHeaders[headerKey] = proxyRes.rawHeaders[i + 1] // 先保存原先响应头
+          if (newHeaderValue === REMOVE) { // 由于拦截配置中不允许配置null，会被删，所以配置一个[remove]，当作删除响应头的意思
+            proxyRes.rawHeaders[i + 1] = ''
+          } else {
+            proxyRes.rawHeaders[i + 1] = newHeaderValue
+          }
         }
-        delete newHeaders[headerKeyLower]
+        delete newHeaders[headerKey]
       }
     }
     // 新增响应头
@@ -54,7 +55,7 @@ function replaceResponseHeaders (newHeaders, res, proxyRes) {
 
 module.exports = {
   name: 'responseReplace',
-  priority: 201,
+  priority: 203,
   replaceResponseHeaders,
   responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
     const { rOptions, log } = context
