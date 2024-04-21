@@ -206,17 +206,11 @@ const configApi = {
     return configApi.load(newConfig)
   },
   load (newConfig) {
-    const remoteConfig = configApi.readRemoteConfig()
-
     // 以用户配置作为基准配置，是为了保证用户配置的顺序在前
     const merged = newConfig != null ? lodash.cloneDeep(newConfig) : {}
-    // 先合并一次远程配置是为了让远程配置排序在默认配置之前，用户配置之后
-    if (remoteConfig != null) {
-      mergeApi.doMerge(merged, remoteConfig)
-    }
 
     mergeApi.doMerge(merged, defConfig) // 合并默认配置
-    mergeApi.doMerge(merged, remoteConfig) // 合并远程配置
+    mergeApi.doMerge(merged, configApi.readRemoteConfig()) // 合并远程配置
     if (newConfig != null) {
       mergeApi.doMerge(merged, newConfig) // 再合并一次用户配置，使用户配置重新生效
     }
