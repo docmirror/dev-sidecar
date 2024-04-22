@@ -11,6 +11,7 @@
 'use strict';
 (function () {
 	const PRE = "DS-Tampermonkey:"; // 前缀
+	const MENU_ID_PRE = PRE + "menu-";
 
 	const context = {
 		initialized: false, // 是否已经初始化
@@ -196,15 +197,30 @@
 			const options = typeof options_or_accessKey === "string" ? { accessKey: options_or_accessKey } : options_or_accessKey;
 
 			// 生成菜单ID
-			const menuCmdId = PRE + "menu-" + (++context.menuIndex);
+			let menuCmdId = options.id || "";
+			if (options.id) {
+				if (options.id.indexOf(MENU_ID_PRE) === 0) {
+					menuCmdId = options.id;
+				} else {
+					menuCmdId = MENU_ID_PRE + options.id;
+				}
+			} else {
+				menuCmdId = MENU_ID_PRE + (options.id || ++context.menuIndex);
+			}
 
 			// 创建菜单元素
 			const menuElement = document.createElement('div');
 			menuElement.id = menuCmdId;
 			menuElement.className = "____ds-menu____";
 			menuElement.innerHTML = name;
+			if (options.title) {
+				menuElement.title = typeof options.title === "function" ? options.title() : options.title;
+			}
 			if (callback) {
 				menuElement.onclick = callback;
+			}
+			if (options.accessKey) {
+				// TODO: 快捷键功能待开发，篡改猴官方文档：https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand
 			}
 
 			// 将菜单元素添加到菜单列表div中
@@ -223,6 +239,10 @@
 		},
 		// 删除菜单
 		GM_unregisterMenuCommand: (menuCmdId) => {
+			if (menuCmdId.indexOf(MENU_ID_PRE) !== 0) {
+				menuCmdId = MENU_ID_PRE + menuCmdId;
+			}
+
 			const menuElement = document.getElementById(menuCmdId)
 			if (menuElement) {
 				menuElement.remove();
