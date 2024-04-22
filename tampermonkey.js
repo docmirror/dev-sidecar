@@ -118,6 +118,9 @@
 		// 创建菜单列表div
 		context.menusElement = document.createElement('div');
 		context.menusElement.className = "____ds-menus____";
+		if (options.width > 0) {
+			context.menusElement.style['min-width'] = options.width + "px";
+		}
 		// 将菜单列表div添加到插件div中
 		context.pluginElement.append(context.menusElement);
 
