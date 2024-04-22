@@ -19,7 +19,13 @@
 		pluginElement: null, // 插件div
 		menusElement: null, // 菜单列表div
 		menus: {}, // 菜单集合
-		menuIndex: 0 // 菜单索引，用于生成menuCmdId
+		menuIndex: 0, // 菜单索引，用于生成menuCmdId
+		lastNotification: null // 最后一次通知
+		/*{
+			obj: null, // 通知对象
+			options: null, // 通知选项
+			timeout: null // 通知定时器
+		}*/
 	};
 
 	// 创建插件样式
@@ -323,9 +329,27 @@
 
 			// 显示通知方法
 			const showNotification = () => {
+				// 先关闭上一个通知
+				let lastNotification = context.lastNotification;
+				if (lastNotification) {
+					if (lastNotification.timeout) {
+						clearTimeout(lastNotification.timeout);
+					}
+					lastNotification.obj.close();
+					if (lastNotification.options && typeof lastNotification.options.ondone === "function") lastNotification.options.ondone();
+					context.lastNotification = null;
+				}
+
 				const notification = new Notification(text);
+				lastNotification = {
+					obj: notification,
+					options: options,
+					timeout: null
+				}
+				context.lastNotification = lastNotification;
 				if (options.timeout) {
-					setTimeout(function () {
+					lastNotification.timeout = setTimeout(function () {
+						context.lastNotification = null // 清除最后一个通知
 						notification.close();
 						if (options.ondone) options.ondone(); // 回调
 					}, options.timeout)
