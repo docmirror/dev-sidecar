@@ -15,7 +15,10 @@
   "github.com": {
     "^(/[\\w-.]+){2,}/?(\\?.*)?$": {
       "script": [
-        "https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/github/monkey.js"
+        "https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/GithubEnhanced-High-Speed-Download.user.js"
+          
+        // 或高速镜像地址（镜像地址不止以下这一个，大家可以在 `./GithubEnhanced-High-Speed-Download.user.js` 的 `raw_url` 数组中随便找一个来使用，哪个更快就用哪个。）
+        //"https://mirror.ghproxy.com/https://raw.githubusercontent.com/docmirror/dev-sidecar/scripts/GithubEnhanced-High-Speed-Download.user.js"
       ],
       "desc": "加载DS仓库中的Github油猴脚本，加速clone和文件下载等。"
     }
