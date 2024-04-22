@@ -1,8 +1,9 @@
 /**
- * 当前脚本复制了 `/XIU2/UserScript/GithubEnhanced-High-Speed-Download.user.js` 脚本，并进行了修改和优化，以兼容 `./tampermonkey.js`。
+ * 当前脚本复制了 `https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js`，并进行了修改和优化，以兼容 `./tampermonkey.js`。
+ * 非常感谢 `Github油猴脚本` 的作者 `X.I.U`，提供了如此优秀的脚本。👍
  *
- * @name            Github 增强 - 高速下载
- * @name:en         Github Enhancement - High Speed Download
+ * @name            Github 增强 - 高速下载（Github油猴脚本）
+ * @name:en         Github Enhancement - High Speed Download（Github Greasemonkey Script）
  * @version         2.5.20
  * @author          X.I.U
  * @description     高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
