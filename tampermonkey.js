@@ -197,7 +197,7 @@
 			const options = typeof options_or_accessKey === "string" ? { accessKey: options_or_accessKey } : options_or_accessKey;
 
 			// 生成菜单ID
-			let menuCmdId = options.id || "";
+			let menuCmdId;
 			if (options.id) {
 				if (options.id.indexOf(MENU_ID_PRE) === 0) {
 					menuCmdId = options.id;
@@ -205,7 +205,7 @@
 					menuCmdId = MENU_ID_PRE + options.id;
 				}
 			} else {
-				menuCmdId = MENU_ID_PRE + (options.id || ++context.menuIndex);
+				menuCmdId = MENU_ID_PRE + (++context.menuIndex);
 			}
 
 			// 创建菜单元素
@@ -239,6 +239,10 @@
 		},
 		// 删除菜单
 		GM_unregisterMenuCommand: (menuCmdId) => {
+			if (menuCmdId == null) {
+				return;
+			}
+
 			if (menuCmdId.indexOf(MENU_ID_PRE) !== 0) {
 				menuCmdId = MENU_ID_PRE + menuCmdId;
 			}
