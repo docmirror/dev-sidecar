@@ -72,9 +72,7 @@ function install (app, api) {
         function openGithubUrl () {
           api.ipc.openExternal('https://github.com/docmirror/dev-sidecar/releases')
         }
-        return <div>
-          <div>请前往 <a onClick={openGithubUrl}>github项目release页面</a> 下载新版本手动安装</div>
-        </div>
+        return <div>请前往 <a onClick={openGithubUrl}>github项目release页面</a> 下载新版本手动安装</div>
       }
     })
   }

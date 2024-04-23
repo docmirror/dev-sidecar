@@ -178,7 +178,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   function downloadPart (app, value) {
     const appPath = appPathUtil.getAppRootPath(app)
     const fileDir = path.join(appPath, 'update')
-    log.info('download dir', fileDir)
+    log.info('download dir:', fileDir)
     try {
       fs.accessSync(fileDir, fs.constants.F_OK)
     } catch (e) {
