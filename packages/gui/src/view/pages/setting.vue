@@ -73,6 +73,9 @@
           <a-radio-button :value="false">
             不忽略
           </a-radio-button>
+          <div class="form-help">
+            预发布版本为版本号带有 “Pre-release” 的版本
+          </div>
         </a-radio-group>
       </a-form-item>
       <a-form-item label="首页提示" :label-col="labelCol" :wrapper-col="wrapperCol">
