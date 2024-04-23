@@ -78,7 +78,6 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   // 检查更新
   const releasesApiUrl = 'https://api.github.com/repos/docmirror/dev-sidecar/releases'
   async function checkForUpdatesFromGitHub () {
-    log.info('DevSidecar.api.config.app.skipPreRelease:', DevSidecar.api.config.get().app.skipPreRelease)
     request(releasesApiUrl, { headers: { 'User-Agent': 'DS/' + pkg.version } }, (error, response, body) => {
       try {
         if (error) {
@@ -109,7 +108,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
             return
           }
 
-          log.info('github api返回的release数据：', JSON.stringify(data, null, '\t'))
+          // log.info('github api返回的release数据：', JSON.stringify(data, null, '\t'))
 
           // 检查更新
           for (let i = 0; i < data.length; i++) {
@@ -118,7 +117,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
             if (!versionData.assets || versionData.assets.length === 0) {
               continue // 跳过空版本，即上传过安装包
             }
-            if (DevSidecar.api.config.app.skipPreRelease && versionData.name.indexOf('Pre-release') >= 0) {
+            if (DevSidecar.api.config.get().app.skipPreRelease && versionData.name.indexOf('Pre-release') >= 0) {
               continue // 跳过预发布版本
             }
 
@@ -134,9 +133,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
                 key: 'available',
                 value: {
                   version: versionData.tag_name,
-                  releaseNotes: [
-                    '请查看发布公告：' + versionData.html_url
-                  ]
+                  releaseNotes: '发布公告：' + (versionData.html_url || ('https://github.com/docmirror/dev-sidecar/releases/tag/' + versionData.tag_name))
                 }
               })
             } else {

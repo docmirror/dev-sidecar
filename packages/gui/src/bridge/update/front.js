@@ -68,6 +68,7 @@ function install (app, api) {
       title: '暂不提供自动升级',
       cancelText: '取消',
       okText: '确定',
+      width: 420,
       content: h => {
         function openGithubUrl () {
           api.ipc.openExternal('https://github.com/docmirror/dev-sidecar/releases')
@@ -129,10 +130,11 @@ function install (app, api) {
       title: '发现新版本：' + value.version,
       cancelText: '暂不升级',
       okText: '升级',
+      width: 710,
       content: h => {
         if (value.releaseNotes) {
           if (typeof value.releaseNotes === 'string') {
-            return <div><div>更新内容：</div><div>{value.releaseNotes}</div></div>
+            return <div>{value.releaseNotes}</div>
           } else {
             const notes = []
             for (const note of value.releaseNotes) {
