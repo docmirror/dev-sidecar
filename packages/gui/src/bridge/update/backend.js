@@ -3,17 +3,19 @@ import { autoUpdater } from 'electron-updater'
 import path from 'path'
 import request from 'request'
 import progress from 'request-progress'
-// win是所有窗口的引用
 import fs from 'fs'
 import AdmZip from 'adm-zip'
-import logger from '../../utils/util.log'
+import log from '../../utils/util.log'
 import appPathUtil from '../../utils/util.apppath'
+import pkg from '../../../package.json'
+import DevSidecar from '@docmirror/dev-sidecar'
+
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 
 function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
-  logger.info('download url', uri)
+  log.info('download url', uri)
   progress(request(uri), {
     // throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
     // delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
@@ -21,11 +23,11 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
   })
     .on('progress', function (state) {
       onProgress(state.percent * 100)
-      logger.log('progress', state.percent)
+      log.log('progress', state.percent)
     })
     .on('error', function (err) {
       // Do something with err
-      logger.error('下载升级包失败', err)
+      log.error('下载升级包失败', err)
       onError(err)
     })
     .on('end', function () {
@@ -35,7 +37,11 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
     .pipe(fs.createWriteStream(filePath))
 }
 
-// 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
+/**
+ * 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
+ *
+ * @param win win是所有窗口的引用
+ */
 function updateHandle (app, api, win, beforeQuit, quit, log) {
   // // 更新前，删除本地安装包 ↓
   // const updaterCacheDirName = 'dev-sidecar-updater'
@@ -64,15 +70,115 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     }
   }
 
-  logger.info('auto updater', autoUpdater.getFeedURL())
+  log.info('auto updater', autoUpdater.getFeedURL())
   autoUpdater.autoDownload = false
 
   let partPackagePath = null
 
+  // 检查更新
+  const releasesApiUrl = 'https://api.github.com/repos/docmirror/dev-sidecar/releases'
+  async function checkForUpdatesFromGitHub () {
+    log.info('DevSidecar.api.config.app.skipPreRelease:', DevSidecar.api.config.get().app.skipPreRelease)
+    request(releasesApiUrl, { headers: { 'User-Agent': 'DS/' + pkg.version } }, (error, response, body) => {
+      try {
+        if (error) {
+          log.error('检查更新失败:', error)
+          const errorMsg = '检查更新失败：' + error
+          win.webContents.send('update', { key: 'error', error: errorMsg })
+          return
+        }
+        if (response && response.statusCode === 200) {
+          if (body == null || body.length < 2) {
+            log.warn('检查更新失败，github API返回数据为空:', body)
+            win.webContents.send('update', { key: 'error', error: '检查更新失败，github 返回数据为空' })
+            return
+          }
+
+          // 尝试解析API响应内容
+          let data
+          try {
+            data = JSON.parse(body)
+          } catch (e) {
+            log.error(`检查更新失败，github API返回数据格式不正确, url: ${releasesApiUrl}, body: ${body}`)
+            win.webContents.send('update', { key: 'error', error: '检查更新失败，github API返回数据格式不正确' })
+            return
+          }
+
+          if (typeof data !== 'object' || data.length === undefined) {
+            win.webContents.send('update', { key: 'error', error: '检查更新失败，github API返回数据格式不正确' })
+            return
+          }
+
+          log.info('github api返回的release数据：', JSON.stringify(data, null, '\t'))
+
+          // 检查更新
+          for (let i = 0; i < data.length; i++) {
+            const versionData = data[i]
+
+            if (!versionData.assets || versionData.assets.length === 0) {
+              continue // 跳过空版本，即上传过安装包
+            }
+            if (DevSidecar.api.config.app.skipPreRelease && versionData.name.indexOf('Pre-release') >= 0) {
+              continue // 跳过预发布版本
+            }
+
+            // log.info('最近正式版本数据：', versionData)
+
+            let version = versionData.tag_name
+            if (version.indexOf('v') === 0) {
+              version = version.substring(1)
+            }
+            if (version !== pkg.version) {
+              log.info('检查更新-发现新版本:', version)
+              win.webContents.send('update', {
+                key: 'available',
+                value: {
+                  version: versionData.tag_name,
+                  releaseNotes: [
+                    '请查看发布公告：' + versionData.html_url
+                  ]
+                }
+              })
+            } else {
+              log.info('检查更新-没有新版本，最新版本号为:', version)
+              win.webContents.send('update', { key: 'notAvailable' })
+            }
+
+            return // 只检查最近一个正式版本
+          }
+
+          log.info('检查更新-没有正式版本数据')
+          win.webContents.send('update', { key: 'notAvailable' })
+        } else {
+          log.error('检查更新失败, status:', response.statusCode, ', body:', body)
+
+          let bodyObj
+          try {
+            bodyObj = JSON.parse(body)
+          } catch (e) {
+            bodyObj = null
+          }
+
+          let message
+          if (response) {
+            message = '检查更新失败: ' + (bodyObj && bodyObj.message ? bodyObj.message : response.message) + ', code: ' + response.statusCode
+          } else {
+            message = '检查更新失败: ' + (bodyObj && bodyObj.message ? bodyObj.message : body)
+          }
+          win.webContents.send('update', { key: 'error', error: message })
+        }
+      } catch (e) {
+        log.error('检查更新失败:', e)
+        win.webContents.send('update', { key: 'error', error: '检查更新失败:' + e.message })
+      }
+    })
+  }
+
+  // 下载升级包
   function downloadPart (app, value) {
     const appPath = appPathUtil.getAppRootPath(app)
     const fileDir = path.join(appPath, 'update')
-    logger.info('download dir', fileDir)
+    log.info('download dir', fileDir)
     try {
       fs.accessSync(fileDir, fs.constants.F_OK)
     } catch (e) {
@@ -85,7 +191,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     }, () => {
       // 文件下载完成
       win.webContents.send('update', { key: 'progress', value: 100 })
-      logger.info('升级包下载成功：', filePath)
+      log.info('升级包下载成功：', filePath)
       partPackagePath = filePath
       win.webContents.send('update', {
         key: 'downloaded',
@@ -168,8 +274,11 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
       })
     } else if (arg.key === 'checkForUpdate') {
       // 执行自动更新检查
-      log.info('autoUpdater checkForUpdates')
-      autoUpdater.checkForUpdates()
+      log.info('autoUpdater checkForUpdates:', arg.fromUser)
+
+      // 调用 github API，获取release数据，来检查更新
+      // autoUpdater.checkForUpdates()
+      checkForUpdatesFromGitHub()
     } else if (arg.key === 'downloadUpdate') {
       // 下载新版本
       log.info('autoUpdater downloadUpdate')
@@ -177,7 +286,6 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     } else if (arg.key === 'downloadPart') {
       // 下载增量更新版本
       log.info('autoUpdater downloadPart')
-      // autoUpdater.downloadUpdate()
       downloadPart(app, arg.value)
     }
   })

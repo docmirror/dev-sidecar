@@ -7,10 +7,10 @@
             <a-badge :count="_rootCaSetuped?0:1" dot>安装根证书</a-badge>
           </a-button>
 
-          <a-button style="margin-right:10px" @click="doCheckUpdate(true)" :loading="update.downloading"
+          <a-button style="margin-right:10px" @click="doCheckUpdate(true)" :loading="update.downloading || update.checking"
                     :title="'当前版本:'+info.version">
             <a-badge :count="update.newVersion?1:0" dot>
-              <span v-if="update.downloading">{{ update.progress }}%</span>{{ update.downloading ? '新版本下载中' : '检查更新' }}
+              <span v-if="update.downloading">{{ update.progress }}%</span>{{ update.downloading ? '新版本下载中' : ('检查更新' + (update.checking ? '中' : '')) }}
             </a-badge>
           </a-button>
       </span>
@@ -161,7 +161,7 @@ export default {
       setupCa: {
         visible: false
       },
-      update: { downloading: false, progress: 0, newVersion: false }
+      update: { checking: false, downloading: false, progress: 0, newVersion: false }
     }
   },
   async created () {
@@ -170,8 +170,8 @@ export default {
     this.$set(this, 'status', this.$status)
     this.switchBtns = this.createSwitchBtns()
     this.$set(this, 'update', this.$global.update)
-    if (!this.update.autoChecked) {
-      this.update.autoChecked = true
+    if (!this.update.autoChecked && this.config.app.autoChecked) {
+      this.update.autoChecked = true // 应用启动时，只执行一遍
       this.doCheckUpdate(false)
     }
     this.$api.info.get().then(ret => {
