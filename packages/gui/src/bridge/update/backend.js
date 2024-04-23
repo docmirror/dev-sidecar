@@ -132,7 +132,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
               win.webContents.send('update', {
                 key: 'available',
                 value: {
-                  version: versionData.tag_name,
+                  version,
                   releaseNotes: '发布公告：' + (versionData.html_url || ('https://github.com/docmirror/dev-sidecar/releases/tag/' + versionData.tag_name))
                 }
               })

@@ -134,7 +134,7 @@ function install (app, api) {
     }
     console.log(value)
     app.$confirm({
-      title: '发现新版本：' + value.version,
+      title: '发现新版本：v' + value.version,
       cancelText: '暂不升级',
       okText: '升级',
       width: 710,
@@ -163,24 +163,26 @@ function install (app, api) {
 
   function newUpdateIsReady (value) {
     updateParams.downloading = false
+    console.log(value)
     app.$confirm({
-      title: `新版本(v${value.version})已准备好,是否立即升级?`,
+      title: `新版本(v${value.version})已准备好，是否立即升级?`,
       cancelText: '暂不升级',
       okText: '立即升级',
       content: h => {
-        console.log(value)
         if (value.releaseNotes) {
-          const notes = []
-          for (const note of value.releaseNotes) {
-            notes.push(<li>{note}</li>)
+          if (typeof value.releaseNotes === 'string') {
+            return <div>{value.releaseNotes}</div>
+          } else {
+            const notes = []
+            for (const note of value.releaseNotes) {
+              notes.push(<li>{note}</li>)
+            }
+            return <div><div>更新内容：</div><ol>{notes}</ol></div>
           }
-          return <div><div>更新内容：</div><ol>{notes}</ol></div>
         }
       },
       onOk () {
         api.update.doUpdateNow()
-      },
-      onCancel () {
       }
     })
   }

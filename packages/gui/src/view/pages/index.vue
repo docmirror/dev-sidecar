@@ -171,7 +171,7 @@ export default {
     this.switchBtns = this.createSwitchBtns()
     this.$set(this, 'update', this.$global.update)
     if (!this.update.autoChecked && this.config.app.autoChecked) {
-      this.update.autoChecked = true // 应用启动时，只执行一遍
+      this.update.autoChecked = true // 应用启动时，执行一次
       this.doCheckUpdate(false)
     }
     this.$api.info.get().then(ret => {
