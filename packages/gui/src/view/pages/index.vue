@@ -347,7 +347,7 @@ export default {
     goDonate () {
       this.$message.info('感谢支持')
     },
-    doCheckUpdate (fromUser = true) {
+    doCheckUpdate (fromUser) {
       this.$api.update.checkForUpdate(fromUser)
     },
     async openExternal (url) {
