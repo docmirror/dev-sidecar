@@ -58,7 +58,7 @@
                 <a-checkbox v-model="config.server.intercept.enabled">
                   启用拦截
                 </a-checkbox>
-              <div class="form-help">关闭拦截，且关闭功能增强的话，就不需要安装根证书，本应用退化为安全模式</div>
+              <div class="form-help">关闭拦截，且关闭功能增强的话，就不需要安装根证书，退化为安全模式</div>
             </a-form-item>
             <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
                 <a-checkbox v-model="config.server.setting.script.enabled">
