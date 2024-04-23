@@ -48,6 +48,9 @@ function install (app, api) {
         // 如果检查更新报错了，但刚才成功拿到过一次数据，就拿之前的数据
         foundNewVersion(updateParams.newVersionData)
       } else {
+        if (updateParams.fromUser === false && message.action === 'checkForUpdate') {
+          return // 不是手动检查更新，不提示错误信息，避免打扰
+        }
         const error = message.error
         app.$message.error((error == null ? '未知错误' : (error.stack || error).toString()))
       }
