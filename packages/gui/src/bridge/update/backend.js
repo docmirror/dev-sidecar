@@ -7,6 +7,9 @@ import fs from 'fs'
 import AdmZip from 'adm-zip'
 import log from '../../utils/util.log'
 import appPathUtil from '../../utils/util.apppath'
+import pkg from '../../../package.json'
+import DevSidecar from '@docmirror/dev-sidecar'
+
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
@@ -72,6 +75,104 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
 
   let partPackagePath = null
 
+  // 检查更新
+  const releasesApiUrl = 'https://api.github.com/repos/docmirror/dev-sidecar/releases'
+  async function checkForUpdatesFromGitHub () {
+    request(releasesApiUrl, { headers: { 'User-Agent': 'DS/' + pkg.version } }, (error, response, body) => {
+      try {
+        if (error) {
+          log.error('检查更新失败:', error)
+          const errorMsg = '检查更新失败：' + error
+          win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: errorMsg })
+          return
+        }
+        if (response && response.statusCode === 200) {
+          if (body == null || body.length < 2) {
+            log.warn('检查更新失败，github API返回数据为空:', body)
+            win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新失败，github 返回数据为空' })
+            return
+          }
+
+          // 尝试解析API响应内容
+          let data
+          try {
+            data = JSON.parse(body)
+          } catch (e) {
+            log.error('检查更新失败，github API返回数据格式不正确:', body)
+            win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新失败，github API返回数据格式不正确' })
+            return
+          }
+
+          if (typeof data !== 'object' || data.length === undefined) {
+            log.error('检查更新失败，github API返回数据不是数组:', body)
+            win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新失败，github API返回数据不是数组' })
+            return
+          }
+
+          // log.info('github api返回的release数据：', JSON.stringify(data, null, '\t'))
+
+          // 检查更新
+          for (let i = 0; i < data.length; i++) {
+            const versionData = data[i]
+
+            if (!versionData.assets || versionData.assets.length === 0) {
+              continue // 跳过空版本，即上传过安装包
+            }
+            if (DevSidecar.api.config.get().app.skipPreRelease && versionData.name.indexOf('Pre-release') >= 0) {
+              continue // 跳过预发布版本
+            }
+
+            // log.info('最近正式版本数据：', versionData)
+
+            let version = versionData.tag_name
+            if (version.indexOf('v') === 0) {
+              version = version.substring(1)
+            }
+            if (version !== pkg.version) {
+              log.info('检查更新-发现新版本:', version)
+              win.webContents.send('update', {
+                key: 'available',
+                value: {
+                  version,
+                  releaseNotes: '发布公告：' + (versionData.html_url || ('https://github.com/docmirror/dev-sidecar/releases/tag/' + versionData.tag_name))
+                }
+              })
+            } else {
+              log.info('检查更新-没有新版本，最新版本号为:', version)
+              win.webContents.send('update', { key: 'notAvailable' })
+            }
+
+            return // 只检查最近一个正式版本
+          }
+
+          log.info('检查更新-没有正式版本数据')
+          win.webContents.send('update', { key: 'notAvailable' })
+        } else {
+          log.error('检查更新失败, status:', response.statusCode, ', body:', body)
+
+          let bodyObj
+          try {
+            bodyObj = JSON.parse(body)
+          } catch (e) {
+            bodyObj = null
+          }
+
+          let message
+          if (response) {
+            message = '检查更新失败: ' + (bodyObj && bodyObj.message ? bodyObj.message : response.message) + ', code: ' + response.statusCode
+          } else {
+            message = '检查更新失败: ' + (bodyObj && bodyObj.message ? bodyObj.message : body)
+          }
+          win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: message })
+        }
+      } catch (e) {
+        log.error('检查更新失败:', e)
+        win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新失败:' + e.message })
+      }
+    })
+  }
+
+  // 下载升级包
   function downloadPart (app, value) {
     const appPath = appPathUtil.getAppRootPath(app)
     const fileDir = path.join(appPath, 'update')
@@ -171,8 +272,11 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
       })
     } else if (arg.key === 'checkForUpdate') {
       // 执行自动更新检查
-      log.info('autoUpdater checkForUpdates')
-      autoUpdater.checkForUpdates()
+      log.info('autoUpdater checkForUpdates:', arg.fromUser)
+
+      // 调用 github API，获取release数据，来检查更新
+      // autoUpdater.checkForUpdates()
+      checkForUpdatesFromGitHub()
     } else if (arg.key === 'downloadUpdate') {
       // 下载新版本
       log.info('autoUpdater downloadUpdate')
