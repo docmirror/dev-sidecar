@@ -58,8 +58,5 @@ const Plugin = function (context) {
 module.exports = {
   key: 'git',
   config: pluginConfig,
-  status: {
-    enabled: false
-  },
   plugin: Plugin
 }
