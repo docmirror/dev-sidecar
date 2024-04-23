@@ -65,7 +65,7 @@
           开启自动检查更新后，每次应用启动时会检查一次更新，如有新版本，则会弹出提示。
         </div>
       </a-form-item>
-      <a-form-item v-if="config.app.autoChecked" label="忽略预发布版本" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-item label="忽略预发布版本" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model="config.app.skipPreRelease" default-value="light" button-style="solid">
           <a-radio-button :value="true">
             忽略
