@@ -61,19 +61,26 @@ function install (app, api) {
     updateParams.progress = value
   }
 
+  function openGithubUrl () {
+    api.ipc.openExternal('https://github.com/docmirror/dev-sidecar/releases')
+  }
+
   function goManualUpdate (value) {
     updateParams.newVersion = false
     app.$confirm({
       // title: '暂不支持自动升级',
       title: '暂不提供自动升级',
       cancelText: '取消',
-      okText: '确定',
+      okText: '打开',
       width: 420,
       content: h => {
-        function openGithubUrl () {
-          api.ipc.openExternal('https://github.com/docmirror/dev-sidecar/releases')
-        }
-        return <div>请前往 <a onClick={openGithubUrl}>github项目release页面</a> 下载新版本手动安装</div>
+        return <div>
+          <div>请前往 <a onClick={openGithubUrl}>github项目release页面</a> 下载新版本手动安装</div>
+          <div><a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
+        </div>
+      },
+      onOk () {
+        openGithubUrl()
       }
     })
   }
