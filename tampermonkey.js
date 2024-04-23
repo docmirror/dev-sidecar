@@ -1,7 +1,8 @@
 /**
- * 篡改猴（Tampermonkey）| 油猴（Greasemonkey）浏览器脚本扩展
+ * 当前脚本为仿照的版本，并非篡改猴插件的源码，仅供学习参考。
  *
- * @author         由 WangLiang（王良）仿照的
+ * @name 篡改猴（Tampermonkey）| 油猴（Greasemonkey）浏览器脚本扩展
+ * @author         由 Wang Liang（王良）仿照的
  * @authorHomePage https://wangliang1024.cn
  * @description    篡改猴 (Tampermonkey) 是拥有 超过 1000 万用户 的最流行的浏览器扩展之一。 它适用于 Chrome、Microsoft Edge、Safari、Opera Next 和 Firefox。
  *                 有些人也会把篡改猴(Tampermonkey)称作油猴(Greasemonkey)，尽管后者只是一款仅适用于 Firefox 浏览器的浏览器扩展程序。
@@ -31,8 +32,15 @@
 		}*/
 	};
 
+
+	// 创建插件API
+	const api = {};
+
+
+	//region DS自定义的API
+
 	// 创建插件样式
-	function createPluginStyle (options) {
+	api.createPluginStyle = (options) => {
 		options = options || {};
 
 		// 创建一个新的<style>元素
@@ -110,10 +118,10 @@
 
 		// 将<style>元素添加到<head>中
 		document.head.append(styleElement);
-	}
+	};
 
 	// 创建插件div
-	function createPluginDiv (options) {
+	api.createPluginDiv = (options) => {
 		options = {
 			...{ name: "油猴脚本" },
 			...options
@@ -134,7 +142,7 @@
 		context.pluginElement.append(context.menusElement);
 
 		// 创建开关菜单
-		const enabled = window.__ds_global__.GM_getValue("ds_enabled", true)
+		const enabled = api.GM_getValue("ds_enabled", true)
 		const switchMenuElement = document.createElement('div');
 		const icon = (options.icon ? `<img alt="icon" src="${options.icon}"/>` : " ");
 		switchMenuElement.id = PRE + "menu-0";
@@ -142,18 +150,18 @@
 		switchMenuElement.innerHTML = (enabled ? "✅" : "❌") + icon + options.name;
 		switchMenuElement.title = `点击${enabled ? "关闭" : "开启"}此脚本功能`;
 		switchMenuElement.onclick = function () {
-			let enabled = window.__ds_global__.GM_getValue("ds_enabled", true)
+			let enabled = api.GM_getValue("ds_enabled", true)
 			if (enabled) {
-				hideMenus();
+				api.hideMenus();
 				enabled = false;
 			} else {
-				showMenus();
+				api.showMenus();
 				enabled = true;
 			}
 			switchMenuElement.innerHTML = (enabled ? "✅" : "❌") + icon + options.name;
 			switchMenuElement.title = `点击${enabled ? "关闭" : "开启"}此脚本功能`;
-			window.__ds_global__.GM_setValue("ds_enabled", enabled)
-			window.__ds_global__.GM_notification({
+			api.GM_setValue("ds_enabled", enabled)
+			api.GM_notification({
 				text: `已${enabled ? "开启" : "关闭"} 「${options.name}」 功能\n（刷新网页后生效）`,
 				timeout: 3500
 			});
@@ -167,223 +175,248 @@
 		body.prepend(context.pluginElement);
 	}
 
-	function showMenus () {
+	api.showMenus = () => {
 		for (const menuCmdId in context.menus) {
 			const menuElement = context.menus[menuCmdId].element;
 			menuElement.style.display = "block";
 		}
 	}
 
-	function hideMenus () {
+	// 隐藏菜单
+	api.hideMenus = () => {
 		for (const menuCmdId in context.menus) {
 			const menuElement = context.menus[menuCmdId].element;
 			menuElement.style.display = "none";
 		}
 	}
 
-	window.__ds_global__ = {
-		// 获取上下文
-		getContext: () => {
-			return context;
-		},
-		// 初始化
-		DS_init: (options) => {
-			try {
-				if (context.initialized) return;
-				// 合并默认参数
-				options = {
-					...context.defaultPluginOptions,
-					...options
-				};
-				createPluginStyle(options);
-				createPluginDiv(options);
-				context.initialized = true;
+	// 获取上下文
+	api.getContext = () => {
+		return context;
+	};
 
-				console.log("ds_tampermonkey: initialization completed（篡改猴插件初始化完成，篡改猴图标已显示在页面右侧，鼠标移到上面可展示功能列表！）")
-			} catch (e) {
-				console.error("ds_tampermonkey: initialization failed（篡改猴插件初始化失败）:", e);
-			}
-		},
-		// 注册菜单
-		GM_registerMenuCommand: (name, callback, options_or_accessKey) => {
-			const options = typeof options_or_accessKey === "string" ? { accessKey: options_or_accessKey } : options_or_accessKey;
-
-			// 生成菜单ID
-			let menuCmdId;
-			if (options.id) {
-				if (options.id.indexOf(MENU_ID_PRE) === 0) {
-					menuCmdId = options.id;
-				} else {
-					menuCmdId = MENU_ID_PRE + options.id;
-				}
-			} else {
-				menuCmdId = MENU_ID_PRE + (++context.menuIndex);
-			}
-
-			// 创建菜单元素
-			const menuElement = document.createElement('div');
-			menuElement.id = menuCmdId;
-			menuElement.className = "____ds-menu____";
-			menuElement.innerHTML = name;
-			if (options.title) {
-				menuElement.title = typeof options.title === "function" ? options.title() : options.title;
-			}
-			if (callback) {
-				menuElement.onclick = callback;
-			}
-			if (options.accessKey) {
-				// TODO: 快捷键功能待开发，篡改猴官方文档：https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand
-			}
-
-			// 将菜单元素添加到菜单列表div中
-			context.menusElement.append(menuElement);
-
-			// 将菜单添加到菜单集合中
-			context.menus[menuCmdId] = {
-				name: name,
-				callback: callback,
-				options: options,
-				element: menuElement
+	// 初始化篡改猴操作界面
+	api.DS_init = (options) => {
+		try {
+			if (context.initialized) return;
+			// 合并默认参数
+			options = {
+				...context.defaultPluginOptions,
+				...options
 			};
+			api.createPluginStyle(options);
+			api.createPluginDiv(options);
+			context.initialized = true;
 
-			// 返回菜单ID
-			return menuCmdId;
-		},
-		// 删除菜单
-		GM_unregisterMenuCommand: (menuCmdId) => {
-			if (menuCmdId == null) {
-				return;
-			}
-
-			if (menuCmdId.indexOf(MENU_ID_PRE) !== 0) {
-				menuCmdId = MENU_ID_PRE + menuCmdId;
-			}
-
-			const menuElement = document.getElementById(menuCmdId)
-			if (menuElement) {
-				menuElement.remove();
-			}
-			delete context.menus[menuCmdId];
-		},
-		// 打开新标签
-		GM_openInTab: (url, options_or_loadInBackground) => {
-			// const options = typeof options_or_loadInBackground === "boolean"
-			// 	? { loadInBackground: options_or_loadInBackground }
-			// 	: (options_or_loadInBackground || {});
-
-			window.open(url)
-		},
-		// 获取配置
-		GM_getValue: (key, defaultValue) => {
-			key = PRE + key;
-			const valueStr = localStorage.getItem(key);
-			if (valueStr == null || valueStr === '') {
-				return defaultValue;
-			}
-			try {
-				return JSON.parse(valueStr).v;
-			} catch (e) {
-			}
-			return valueStr;
-		},
-		// 设置配置
-		GM_setValue: (key, value) => {
-			key = PRE + key;
-			localStorage.setItem(key, JSON.stringify({ v: value }));
-		},
-		// 删除设置
-		GM_deleteValue: (key) => {
-			key = PRE + key;
-			localStorage.removeItem(key);
-		},
-		// 通知
-		GM_notification: (details_or_text, ondone_or_title, image, onclick) => {
-			// param1
-			let options = typeof details_or_text === "string" ? { text: details_or_text } : details_or_text;
-			if (typeof options !== "object") {
-				console.error("GM_notification: 无效的参数值：details_or_text = " + details_or_text);
-				return;
-			}
-			// param2
-			if (typeof ondone_or_title === "string") {
-				options.title = ondone_or_title;
-			} else if (typeof ondone_or_title === "function") {
-				options.ondone = ondone_or_title;
-			} else if (ondone_or_title != null) {
-				console.warn("GM_notification: 无效的参数值：ondone_or_title = " + ondone_or_title);
-			}
-			// param3
-			if (typeof image === "string") {
-				options.image = image;
-			} else if (onclick != null) {
-				console.warn("GM_notification: 无效的参数值：image = " + image);
-			}
-			// param4
-			if (typeof onclick === "function") {
-				options.onclick = onclick;
-			} else if (onclick != null) {
-				console.warn("GM_notification: 无效的参数值：onclick = " + onclick);
-			}
-
-			let text = options.text;
-			if (options.title) {
-				text = options.title + ": " + text;
-			}
-
-			// 显示通知方法
-			const showNotification = () => {
-				// 先关闭上一个通知
-				let lastNotification = context.lastNotification;
-				if (lastNotification) {
-					if (lastNotification.timeout) {
-						clearTimeout(lastNotification.timeout);
-					}
-					lastNotification.obj.close();
-					if (lastNotification.options && typeof lastNotification.options.ondone === "function") lastNotification.options.ondone();
-					context.lastNotification = null;
-				}
-
-				const notification = new Notification(text);
-				lastNotification = {
-					obj: notification,
-					options: options,
-					timeout: null
-				}
-				context.lastNotification = lastNotification;
-				if (options.timeout) {
-					lastNotification.timeout = setTimeout(function () {
-						context.lastNotification = null // 清除最后一个通知
-						notification.close();
-						if (options.ondone) options.ondone(); // 回调
-					}, options.timeout)
-				}
-				return notification;
-			};
-			const showAlert = () => {
-				alert(text);
-				if (options.ondone) options.ondone(); // 回调
-			};
-
-			// 检查浏览器是否支持Notification API
-			if (!("Notification" in window)) {
-				showAlert(); // 不支持，直接使用alert显示通知
-			}
-			// 检查用户是否已授予权限
-			else if (Notification.permission === "granted") {
-				// 如果用户已授予权限，我们可以显示通知
-				showNotification();
-			}
-			// 否则，先请求权限
-			else if (Notification.permission !== 'denied') {
-				Notification.requestPermission(function (permission) {
-					if (permission === "granted") {
-						showNotification(); // 用户接受权限，我们可以显示通知
-					} else {
-						showAlert(); // 用户驳回了权限，直接使用alert显示通知
-					}
-				});
-			}
+			console.log("ds_tampermonkey: initialization completed（篡改猴插件初始化完成，篡改猴图标已显示在页面右侧，鼠标移到上面可展示功能列表！）")
+		} catch (e) {
+			console.error("ds_tampermonkey: initialization failed（篡改猴插件初始化失败）:", e);
 		}
+	};
+
+	//endregion DS自定义的API
+
+
+	//region 篡改猴标准API，由DS自定义实现
+
+	// 注册菜单
+	api.GM_registerMenuCommand = (name, callback, options_or_accessKey) => {
+		const options = typeof options_or_accessKey === "string" ? { accessKey: options_or_accessKey } : options_or_accessKey;
+
+		// 生成菜单ID
+		let menuCmdId;
+		if (options.id) {
+			if (options.id.indexOf(MENU_ID_PRE) === 0) {
+				menuCmdId = options.id;
+			} else {
+				menuCmdId = MENU_ID_PRE + options.id;
+			}
+		} else {
+			menuCmdId = MENU_ID_PRE + (++context.menuIndex);
+		}
+
+		// 创建菜单元素
+		const menuElement = document.createElement('div');
+		menuElement.id = menuCmdId;
+		menuElement.className = "____ds-menu____";
+		menuElement.innerHTML = name;
+		if (options.title) {
+			menuElement.title = typeof options.title === "function" ? options.title() : options.title;
+		}
+		if (callback) {
+			menuElement.onclick = callback;
+		}
+		if (options.accessKey) {
+			// TODO: 快捷键功能待开发，篡改猴官方文档：https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand
+		}
+
+		// 将菜单元素添加到菜单列表div中
+		context.menusElement.append(menuElement);
+
+		// 将菜单添加到菜单集合中
+		context.menus[menuCmdId] = {
+			name: name,
+			callback: callback,
+			options: options,
+			element: menuElement
+		};
+
+		// 返回菜单ID
+		return menuCmdId;
+	};
+
+	// 删除菜单
+	api.GM_unregisterMenuCommand = (menuCmdId) => {
+		if (menuCmdId == null) {
+			return;
+		}
+
+		if (menuCmdId.indexOf(MENU_ID_PRE) !== 0) {
+			menuCmdId = MENU_ID_PRE + menuCmdId;
+		}
+
+		const menuElement = document.getElementById(menuCmdId)
+		if (menuElement) {
+			menuElement.remove();
+		}
+		delete context.menus[menuCmdId];
+	};
+
+	// 打开新标签
+	api.GM_openInTab = (url, options_or_loadInBackground) => {
+		// const options = typeof options_or_loadInBackground === "boolean"
+		// 	? { loadInBackground: options_or_loadInBackground }
+		// 	: (options_or_loadInBackground || {});
+
+		window.open(url)
+	};
+
+	// 获取配置
+	api.GM_getValue = (key, defaultValue) => {
+		key = PRE + key;
+		const valueStr = localStorage.getItem(key);
+		if (valueStr == null || valueStr === '') {
+			return defaultValue;
+		}
+		try {
+			return JSON.parse(valueStr).v;
+		} catch (e) {
+		}
+		return valueStr;
+	};
+
+	// 设置配置
+	api.GM_setValue = (key, value) => {
+		key = PRE + key;
+		localStorage.setItem(key, JSON.stringify({ v: value }));
+	};
+
+	// 删除设置
+	api.GM_deleteValue = (key) => {
+		key = PRE + key;
+		localStorage.removeItem(key);
+	};
+
+	// 通知
+	api.GM_notification = (details_or_text, ondone_or_title, image, onclick) => {
+		// param1
+		let options = typeof details_or_text === "string" ? { text: details_or_text } : details_or_text;
+		if (typeof options !== "object") {
+			console.error("GM_notification: 无效的参数值：details_or_text = " + details_or_text);
+			return;
+		}
+		// param2
+		if (typeof ondone_or_title === "string") {
+			options.title = ondone_or_title;
+		} else if (typeof ondone_or_title === "function") {
+			options.ondone = ondone_or_title;
+		} else if (ondone_or_title != null) {
+			console.warn("GM_notification: 无效的参数值：ondone_or_title = " + ondone_or_title);
+		}
+		// param3
+		if (typeof image === "string") {
+			options.image = image;
+		} else if (onclick != null) {
+			console.warn("GM_notification: 无效的参数值：image = " + image);
+		}
+		// param4
+		if (typeof onclick === "function") {
+			options.onclick = onclick;
+		} else if (onclick != null) {
+			console.warn("GM_notification: 无效的参数值：onclick = " + onclick);
+		}
+
+		let text = options.text;
+		if (options.title) {
+			text = options.title + ": " + text;
+		}
+
+		// 显示通知方法
+		const showNotification = () => {
+			// 先关闭上一个通知
+			let lastNotification = context.lastNotification;
+			if (lastNotification) {
+				if (lastNotification.timeout) {
+					clearTimeout(lastNotification.timeout);
+				}
+				lastNotification.obj.close();
+				if (lastNotification.options && typeof lastNotification.options.ondone === "function") lastNotification.options.ondone();
+				context.lastNotification = null;
+			}
+
+			const notification = new Notification(text);
+			lastNotification = {
+				obj: notification,
+				options: options,
+				timeout: null
+			}
+			context.lastNotification = lastNotification;
+			if (options.timeout) {
+				lastNotification.timeout = setTimeout(function () {
+					context.lastNotification = null // 清除最后一个通知
+					notification.close();
+					if (options.ondone) options.ondone(); // 回调
+				}, options.timeout)
+			}
+			return notification;
+		};
+		const showAlert = () => {
+			alert(text);
+			if (options.ondone) options.ondone(); // 回调
+		};
+
+		// 检查浏览器是否支持Notification API
+		if (!("Notification" in window)) {
+			showAlert(); // 不支持，直接使用alert显示通知
+		}
+		// 检查用户是否已授予权限
+		else if (Notification.permission === "granted") {
+			// 如果用户已授予权限，我们可以显示通知
+			showNotification();
+		}
+		// 否则，先请求权限
+		else if (Notification.permission !== 'denied') {
+			Notification.requestPermission(function (permission) {
+				if (permission === "granted") {
+					showNotification(); // 用户接受权限，我们可以显示通知
+				} else {
+					showAlert(); // 用户驳回了权限，直接使用alert显示通知
+				}
+			});
+		}
+	};
+
+	//endregion 篡改猴标准API，由DS自定义实现
+
+
+	// 设置脚本环境
+	window.__ds_global__ = api;
+
+	// 模块化支持
+	if (typeof module !== 'undefined') {
+		module.exports = api;
 	}
+
+	console.log("ds_tampermonkey: completed")
 })();
-console.log("ds_tampermonkey: completed")
+console.log("ds_tampermonkey: loaded")
