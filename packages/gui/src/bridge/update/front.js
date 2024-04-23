@@ -31,6 +31,7 @@ function install (app, api) {
     const type = message.key
     if (type === 'available') {
       updateParams.checking = false
+      updateParams.newVersionData = message.value
       foundNewVersion(message.value)
     } else if (type === 'notAvailable') {
       updateParams.checking = false
@@ -45,8 +46,13 @@ function install (app, api) {
     } else if (type === 'error') {
       updateParams.checking = false
       updateParams.downloading = false
-      const error = message.error
-      app.$message.error((error == null ? '未知错误' : (error.stack || error).toString()))
+      if (message.action === 'checkForUpdate' && updateParams.newVersionData) {
+        // 如果检查更新报错了，但刚才成功拿到过一次数据，就拿之前的数据
+        foundNewVersion(updateParams.newVersionData)
+      } else {
+        const error = message.error
+        app.$message.error((error == null ? '未知错误' : (error.stack || error).toString()))
+      }
     }
   }
 

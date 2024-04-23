@@ -162,11 +162,11 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
           } else {
             message = '检查更新失败: ' + (bodyObj && bodyObj.message ? bodyObj.message : body)
           }
-          win.webContents.send('update', { key: 'error', error: message })
+          win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: message })
         }
       } catch (e) {
         log.error('检查更新失败:', e)
-        win.webContents.send('update', { key: 'error', error: '检查更新失败:' + e.message })
+        win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新失败:' + e.message })
       }
     })
   }
