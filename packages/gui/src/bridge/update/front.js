@@ -129,7 +129,6 @@ function install (app, api) {
       title: '发现新版本：' + value.version,
       cancelText: '暂不升级',
       okText: '升级',
-      width: 600,
       content: h => {
         if (value.releaseNotes) {
           if (typeof value.releaseNotes === 'string') {
