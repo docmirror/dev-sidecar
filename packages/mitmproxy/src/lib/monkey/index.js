@@ -18,6 +18,7 @@ function buildScript (sc, content, scriptName) {
   // 代码2：初始化
   const options = {
     name: sc.name,
+    version: sc.version,
     icon: sc.icon
   }
   const initStr = `
