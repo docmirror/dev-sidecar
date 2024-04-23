@@ -52,6 +52,10 @@ const serverApi = {
       })
     }
 
+    if (allConfig.app) {
+      serverConfig.app = allConfig.app
+    }
+
     if (serverConfig.intercept.enabled === false) {
       // 如果设置为关闭拦截
       serverConfig.intercepts = {}
@@ -67,10 +71,6 @@ const serverApi = {
 
     if (allConfig.proxy && allConfig.proxy.enabled) {
       serverConfig.proxy = allConfig.proxy
-    }
-
-    if (allConfig.app) {
-      serverConfig.app = allConfig.app
     }
 
     // fireStatus('ing') // 启动中
