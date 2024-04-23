@@ -83,13 +83,13 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
         if (error) {
           log.error('检查更新失败:', error)
           const errorMsg = '检查更新失败：' + error
-          win.webContents.send('update', { key: 'error', error: errorMsg })
+          win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: errorMsg })
           return
         }
         if (response && response.statusCode === 200) {
           if (body == null || body.length < 2) {
             log.warn('检查更新失败，github API返回数据为空:', body)
-            win.webContents.send('update', { key: 'error', error: '检查更新失败，github 返回数据为空' })
+            win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新失败，github 返回数据为空' })
             return
           }
 
@@ -98,13 +98,14 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
           try {
             data = JSON.parse(body)
           } catch (e) {
-            log.error(`检查更新失败，github API返回数据格式不正确, url: ${releasesApiUrl}, body: ${body}`)
-            win.webContents.send('update', { key: 'error', error: '检查更新失败，github API返回数据格式不正确' })
+            log.error('检查更新失败，github API返回数据格式不正确:', body)
+            win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新失败，github API返回数据格式不正确' })
             return
           }
 
           if (typeof data !== 'object' || data.length === undefined) {
-            win.webContents.send('update', { key: 'error', error: '检查更新失败，github API返回数据格式不正确' })
+            log.error('检查更新失败，github API返回数据不是数组:', body)
+            win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新失败，github API返回数据不是数组' })
             return
           }
 
