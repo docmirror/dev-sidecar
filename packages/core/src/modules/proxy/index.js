@@ -156,7 +156,7 @@ module.exports = {
 
       // 哔哩哔哩
       '*.bilibili.com': true,
-      '*.bilivideo.com.com': true,
+      '*.bilivideo.com': true,
       '*.biliapi.net': true,
 
       // 移动
