@@ -418,4 +418,3 @@
 
 	console.log("ds_tampermonkey: completed")
 })();
-console.log("ds_tampermonkey: loaded")
