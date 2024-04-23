@@ -3,17 +3,16 @@ import { autoUpdater } from 'electron-updater'
 import path from 'path'
 import request from 'request'
 import progress from 'request-progress'
-// win是所有窗口的引用
 import fs from 'fs'
 import AdmZip from 'adm-zip'
-import logger from '../../utils/util.log'
+import log from '../../utils/util.log'
 import appPathUtil from '../../utils/util.apppath'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 
 function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
-  logger.info('download url', uri)
+  log.info('download url', uri)
   progress(request(uri), {
     // throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
     // delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
@@ -21,11 +20,11 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
   })
     .on('progress', function (state) {
       onProgress(state.percent * 100)
-      logger.log('progress', state.percent)
+      log.log('progress', state.percent)
     })
     .on('error', function (err) {
       // Do something with err
-      logger.error('下载升级包失败', err)
+      log.error('下载升级包失败', err)
       onError(err)
     })
     .on('end', function () {
@@ -35,7 +34,11 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
     .pipe(fs.createWriteStream(filePath))
 }
 
-// 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
+/**
+ * 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
+ *
+ * @param win win是所有窗口的引用
+ */
 function updateHandle (app, api, win, beforeQuit, quit, log) {
   // // 更新前，删除本地安装包 ↓
   // const updaterCacheDirName = 'dev-sidecar-updater'
@@ -64,7 +67,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     }
   }
 
-  logger.info('auto updater', autoUpdater.getFeedURL())
+  log.info('auto updater', autoUpdater.getFeedURL())
   autoUpdater.autoDownload = false
 
   let partPackagePath = null
@@ -72,7 +75,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   function downloadPart (app, value) {
     const appPath = appPathUtil.getAppRootPath(app)
     const fileDir = path.join(appPath, 'update')
-    logger.info('download dir', fileDir)
+    log.info('download dir:', fileDir)
     try {
       fs.accessSync(fileDir, fs.constants.F_OK)
     } catch (e) {
@@ -85,7 +88,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     }, () => {
       // 文件下载完成
       win.webContents.send('update', { key: 'progress', value: 100 })
-      logger.info('升级包下载成功：', filePath)
+      log.info('升级包下载成功：', filePath)
       partPackagePath = filePath
       win.webContents.send('update', {
         key: 'downloaded',
@@ -177,7 +180,6 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     } else if (arg.key === 'downloadPart') {
       // 下载增量更新版本
       log.info('autoUpdater downloadPart')
-      // autoUpdater.downloadUpdate()
       downloadPart(app, arg.value)
     }
   })

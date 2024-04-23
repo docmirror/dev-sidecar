@@ -10,7 +10,7 @@ function install (app, api) {
       if (fromUser != null) {
         updateParams.fromUser = fromUser
       }
-      api.ipc.send('update', { key: 'checkForUpdate' })
+      api.ipc.send('update', { key: 'checkForUpdate', fromUser })
     },
     downloadUpdate () {
       api.ipc.send('update', { key: 'downloadUpdate' })
@@ -38,12 +38,13 @@ function install (app, api) {
     } else if (type === 'progress') {
       progressUpdate(message.value)
     } else if (type === 'error') {
+      updateParams.downloading = false
       const error = message.error
-      app.$message.error('Error: ' + (error == null ? '未知错误' : (error.stack || error).toString()))
+      app.$message.error((error == null ? '未知错误' : (error.stack || error).toString()))
     }
   }
 
-  function noNewVersion (value) {
+  function noNewVersion () {
     updateParams.newVersion = false
     if (updateParams.fromUser) {
       app.$message.info('当前已经是最新版本')
@@ -55,6 +56,7 @@ function install (app, api) {
   }
 
   function goManualUpdate (value) {
+    updateParams.newVersion = false
     app.$confirm({
       title: '暂不支持自动升级',
       cancelText: '取消',
@@ -63,20 +65,14 @@ function install (app, api) {
         function openGithubUrl () {
           api.ipc.openExternal('https://github.com/docmirror/dev-sidecar/releases')
         }
-        return <div>
-          <div>请前往github项目release页面下载新版本手动安装</div>
-          <ol>
-            <li><a onClick={openGithubUrl}>Github release</a></li>
-          </ol>
-        </div>
+        return <div>请前往 <a onClick={openGithubUrl}>github项目release页面</a> 下载新版本手动安装</div>
       }
     })
   }
 
   /**
    * 是否小版本升级
-   * @param version1
-   * @param version2
+   * @param value
    */
   async function isSupportPartUpdate (value) {
     const info = await api.info.get()
@@ -91,9 +87,9 @@ function install (app, api) {
 
   async function downloadNewVersion (value) {
     const platform = await api.shell.getSystemPlatform()
-    console.log('download new version platform', platform)
+    console.log(`download new version: ${JSON.stringify(value)}, platform: ${platform}`)
     if (platform === 'linux') {
-      goManualUpdate(app, value)
+      goManualUpdate(value)
       return
     }
     const partUpdate = await isSupportPartUpdate(value)
@@ -118,18 +114,22 @@ function install (app, api) {
       downloadNewVersion(value)
       return
     }
+    console.log(value)
     app.$confirm({
-      title: '发现新版本',
+      title: '发现新版本：' + value.version,
       cancelText: '暂不升级',
       okText: '升级',
       content: h => {
-        console.log(value)
         if (value.releaseNotes) {
-          const notes = []
-          for (const note of value.releaseNotes) {
-            notes.push(<li>{note}</li>)
+          if (typeof value.releaseNotes === 'string') {
+            return <div><div>更新内容：</div><div>{value.releaseNotes}</div></div>
+          } else {
+            const notes = []
+            for (const note of value.releaseNotes) {
+              notes.push(<li>{note}</li>)
+            }
+            return <div><div>更新内容：</div><ol>{notes}</ol></div>
           }
-          return <div><div>更新内容：</div><ol>{notes}</ol></div>
         }
       },
       onOk () {
