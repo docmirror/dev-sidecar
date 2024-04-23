@@ -10,9 +10,7 @@ function install (app, api) {
       if (fromUser != null) {
         updateParams.fromUser = fromUser
       }
-      if (updateParams.fromUser) {
-        updateParams.checking = true
-      }
+      updateParams.checking = true
       api.ipc.send('update', { key: 'checkForUpdate', fromUser })
     },
     downloadUpdate () {
@@ -77,7 +75,7 @@ function install (app, api) {
       // title: '暂不支持自动升级',
       title: '暂不提供自动升级',
       cancelText: '取消',
-      okText: '打开',
+      okText: '打开链接',
       width: 420,
       content: h => {
         return <div>
