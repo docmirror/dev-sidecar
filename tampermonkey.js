@@ -37,7 +37,10 @@
 	const api = {};
 
 
-	//region DS自定义的API
+	//region DS自定义的API start
+
+	// 获取上下文
+	api.getContext = () => context;
 
 	// 创建插件样式
 	api.createPluginStyle = (options) => {
@@ -175,6 +178,7 @@
 		body.prepend(context.pluginElement);
 	}
 
+	// 显示菜单列表
 	api.showMenus = () => {
 		for (const menuCmdId in context.menus) {
 			const menuElement = context.menus[menuCmdId].element;
@@ -182,18 +186,13 @@
 		}
 	}
 
-	// 隐藏菜单
+	// 隐藏菜单列表
 	api.hideMenus = () => {
 		for (const menuCmdId in context.menus) {
 			const menuElement = context.menus[menuCmdId].element;
 			menuElement.style.display = "none";
 		}
 	}
-
-	// 获取上下文
-	api.getContext = () => {
-		return context;
-	};
 
 	// 初始化篡改猴操作界面
 	api.DS_init = (options) => {
@@ -214,10 +213,10 @@
 		}
 	};
 
-	//endregion DS自定义的API
+	//endregion DS自定义的API end
 
 
-	//region 篡改猴标准API，由DS自定义实现
+	//region 篡改猴标准API，由DS自定义实现 start
 
 	// 注册菜单
 	api.GM_registerMenuCommand = (name, callback, options_or_accessKey) => {
@@ -406,10 +405,10 @@
 		}
 	};
 
-	//endregion 篡改猴标准API，由DS自定义实现
+	//endregion 篡改猴标准API，由DS自定义实现 end
 
 
-	// 设置脚本环境
+	// 设置API
 	window.__ds_global__ = api;
 
 	// 模块化支持
