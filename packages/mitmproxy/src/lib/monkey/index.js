@@ -33,7 +33,7 @@ if (typeof DS_init === 'function') {
   // 代码3：判断是否启用了脚本
   const checkEnabledStr = `
 if (!((window.__ds_global__ || {}).GM_getValue || (() => true))("ds_enabled", true)) {
-\tconsole.log("${scriptKey} disabled")
+\tconsole.log("${scriptKey} tampermonkey disabled")
 \treturn
 }`
 
