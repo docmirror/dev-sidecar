@@ -4,8 +4,8 @@
  *
  * @name            Github 增强 - 高速下载（Github油猴脚本）
  * @name:en         Github Enhancement - High Speed Download（Github Greasemonkey Script）
- * @version         2.5.20.1
- * @since           2024-04-24 17:12
+ * @version         2.5.20.2
+ * @since           2024-04-24 17:27
  * @author          X.I.U
  * @description     高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
  * @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
@@ -15,7 +15,7 @@
  * @homepageURL     https://github.com/XIU2/UserScript
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
-var ds_github_monkey_version = "2.5.20.1";
+var ds_github_monkey_version = "2.5.20.2";
 document.addEventListener("DOMContentLoaded", () => {
 	const DS_init = (window.__ds_global__ || {})['DS_init']
 	if (typeof DS_init === 'function') {
@@ -398,7 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 
 				url_name = raw_url[menu_rawFast][1]; url_tip = raw_url[menu_rawFast][2];
-				fileElm.insertAdjacentHTML('afterend', `<a href="${url}?DS_DOWNLOAD" download="${Name}" target="_blank" rel="noreferrer noopener nofollow" class="fileDownLink" style="display: none;" title="「${url_name}」&#10;&#10;左键点击下载文件（注意：鼠标点击 [☁] 图标进行下载，而不是文件名！）&#10;&#10;${url_tip}&#10;&#10;提示：点击页面右侧飘浮着的 TamperMonkey 扩展图标 - 「${raw_url[menu_rawFast][1]}」 加速源 (☁) 即可切换。">${svg[0]}</a>`);
+				fileElm.insertAdjacentHTML('afterend', `<a href="${url}?DS_DOWNLOAD" download="${Name}" target="_blank" rel="noreferrer noopener nofollow" class="fileDownLink" style="display: none;" title="「${url_name}」&#10;&#10;左键点击下载文件（注意：鼠标点击 [☁] 图标进行下载，而不是文件名！）&#10;&#10;${url_tip}&#10;&#10;提示：点击页面右侧飘浮着的 TamperMonkey 扩展图标中的菜单「 [${raw_url[menu_rawFast][1]}] 加速源 (☁) 」即可切换。">${svg[0]}</a>`);
 				// 绑定鼠标事件
 				trElm.onmouseover = mouseOverHandler;
 				trElm.onmouseout = mouseOutHandler;
