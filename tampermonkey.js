@@ -2,7 +2,7 @@
  * 篡改猴（Tampermonkey）| 油猴（Greasemonkey）浏览器脚本扩展
  *
  * @version        0.1.2
- * @since          2024-04-24 14:49
+ * @since          2024-04-24 14:54
  * @author         王良
  * @authorHomePage https://wangliang1024.cn
  * @remark         当前脚本为仿照的版本，并非篡改猴插件的源码，仅供学习参考。
@@ -216,6 +216,7 @@
 			switchMenuElement.title = `点击${enabled ? "关闭" : "开启"}此脚本功能`;
 			api.GM_setValue("ds_enabled", enabled)
 			api.GM_notification({
+				title: "脚本状态变更通知",
 				text: `已${enabled ? "开启" : "关闭"} 「${options.name}」 功能\n（点击刷新网页后生效）`,
 				timeout: 3500,
 				onclick: () => location.reload()
