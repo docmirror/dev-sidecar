@@ -5,7 +5,7 @@
  * @name            Github 增强 - 高速下载（Github油猴脚本）
  * @name:en         Github Enhancement - High Speed Download（Github Greasemonkey Script）
  * @version         2.5.20
- * @since           2024-04-24 14:49
+ * @since           2024-04-24 15:06
  * @author          X.I.U
  * @description     高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
  * @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
@@ -293,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			let html = target.querySelector('input[value^="https:"]');
 			if (!html) return;
 			if (!html.nextElementSibling) return false;
-			let href_split = html.value.split(location.host)[1],
+			let href_split = html.value.replace(/https:\/\/\w+.\w+\//g, ''),
 				html_parent = '<div style="margin-top: 4px;" class="XIU2-GC ' + html.parentElement.className + '">',
 				url = '', _html = '', _gitClone = '';
 			html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮
