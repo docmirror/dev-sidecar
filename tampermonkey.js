@@ -3,9 +3,10 @@
  *
  * @version        0.1.1
  * @since          2024-04-24 11:13
- * @remark         当前脚本为仿照的版本，并非篡改猴插件的源码，仅供学习参考。
- * @author         由 Wang Liang（王良）仿照的
+ * @author         王良
+ * @author:en      Liang Wang
  * @authorHomePage https://wangliang1024.cn
+ * @remark         当前脚本为仿照的版本，并非篡改猴插件的源码，仅供学习参考。
  * @description    篡改猴 (Tampermonkey) 是拥有 超过 1000 万用户 的最流行的浏览器扩展之一。 它适用于 Chrome、Microsoft Edge、Safari、Opera Next 和 Firefox。
  *                 有些人也会把篡改猴(Tampermonkey)称作油猴(Greasemonkey)，尽管后者只是一款仅适用于 Firefox 浏览器的浏览器扩展程序。
  *                 它允许用户自定义并增强您最喜爱的网页的功能。用户脚本是小型 JavaScript 程序，可用于向网页添加新功能或修改现有功能。使用 篡改猴，您可以轻松在任何网站上创建、管理和运行这些用户脚本。
