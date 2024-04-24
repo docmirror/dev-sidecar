@@ -159,7 +159,7 @@
 	// 创建插件div
 	api.createPluginDiv = (options) => {
 		options = {
-			...{ name: "油猴脚本" },
+			...{ name: "未知名的脚本" },
 			...options
 		}
 
@@ -223,14 +223,14 @@
 	// 隐藏插件
 	api.hidePlugin = () => {
 		if (context.pluginElement) {
-			context.pluginElement.style.display = "none";
+			context.pluginElement.classList.add("____ds-tampermonkey-hide___");
 		}
 	}
 
 	// 显示插件
 	api.showPlugin = () => {
 		if (context.pluginElement) {
-			context.pluginElement.style.display = "block";
+			context.pluginElement.classList.remove("____ds-tampermonkey-hide___");
 		}
 	}
 
