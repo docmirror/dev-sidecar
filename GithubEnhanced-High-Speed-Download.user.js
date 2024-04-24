@@ -4,8 +4,8 @@
  *
  * @name            Github 增强 - 高速下载（Github油猴脚本）
  * @name:en         Github Enhancement - High Speed Download（Github Greasemonkey Script）
- * @version         2.5.20
- * @since           2024-04-24 15:06
+ * @version         2.5.20.1
+ * @since           2024-04-24 17:12
  * @author          X.I.U
  * @description     高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
  * @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
@@ -15,29 +15,31 @@
  * @homepageURL     https://github.com/XIU2/UserScript
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
+var ds_github_monkey_version = "2.5.20.1";
 document.addEventListener("DOMContentLoaded", () => {
 	const DS_init = (window.__ds_global__ || {})['DS_init']
 	if (typeof DS_init === 'function') {
-		console.log("ds_github_monkey_2.5.20: do DS_init")
-		DS_init({
+		const options = {
 			name: "Github 增强 - 高速下载",
 			icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACEUExURUxpcRgWFhsYGBgWFhcWFh8WFhoYGBgWFiUlJRcVFRkWFhgVFRgWFhgVFRsWFhgWFigeHhkWFv////////////r6+h4eHv///xcVFfLx8SMhIUNCQpSTk/r6+jY0NCknJ97e3ru7u+fn51BOTsPCwqGgoISDg6empmpoaK2srNDQ0FhXV3eXcCcAAAAXdFJOUwCBIZXMGP70BuRH2Ze/LpIMUunHkpQR34sfygAAAVpJREFUOMt1U+magjAMDAVb5BDU3W25b9T1/d9vaYpQKDs/rF9nSNJkArDA9ezQZ8wPbc8FE6eAiQUsOO1o19JolFibKCdHGHC0IJezOMD5snx/yE+KOYYr42fPSufSZyazqDoseTPw4lGJNOu6LBXVUPBG3lqYAOv/5ZwnNUfUifzBt8gkgfgINmjxOpgqUA147QWNaocLniqq3QsSVbQHNp45N/BAwoYQz9oUJEiE4GMGfoBSMj5gjeWRIMMqleD/CAzUHFqTLyjOA5zjNnwa4UCEZ2YK3khEcBXHjVBtEFeIZ6+NxYbPqWp1DLKV42t6Ujn2ydyiPi9nX0TTNAkVVZ/gozsl6FbrktkwaVvL2TRK0C8Ca7Hck7f5OBT6FFbLATkL2ugV0tm0RLM9fedDvhWstl8Wp9AFDjFX7yOY/lJrv8AkYuz7fuP8dv9izCYH+x3/LBnj9fYPBTpJDNzX+7cAAAAASUVORK5CYII=",
 			width: 300
-		});
+		}
+		console.log(`ds_github_monkey_${ds_github_monkey_version}: do ds_tampermonkey.DS_init, options:`, options)
+		DS_init(options)
 	} else {
 		console.log("ds_github_2.5.20: has no DS_init")
 	}
 
 	if (!((window.__ds_global__ || {}).GM_getValue || (() => true))("ds_enabled", true)) {
-		console.log("ds_github_monkey_2.5.20: tampermonkey disabled")
+		console.log(`ds_github_monkey_${ds_github_monkey_version}: tampermonkey disabled`)
 		return
 	}
 
-	const GM_registerMenuCommand = (window.__ds_global__ || {})['GM_registerMenuCommand'] || (() => {});
-	const GM_unregisterMenuCommand = (window.__ds_global__ || {})['GM_unregisterMenuCommand'] || (() => {});
-	const GM_openInTab = (window.__ds_global__ || {})['GM_openInTab'] || (() => {});
-	const GM_getValue = (window.__ds_global__ || {})['GM_getValue'] || (() => {});
-	const GM_setValue = (window.__ds_global__ || {})['GM_setValue'] || (() => {});
+	const GM_registerMenuCommand = (window.__ds_global__ || {})['GM_registerMenuCommand'] || (() => {})
+	const GM_unregisterMenuCommand = (window.__ds_global__ || {})['GM_unregisterMenuCommand'] || (() => {})
+	const GM_openInTab = (window.__ds_global__ || {})['GM_openInTab'] || (() => {})
+	const GM_getValue = (window.__ds_global__ || {})['GM_getValue'] || (() => {})
+	const GM_setValue = (window.__ds_global__ || {})['GM_setValue'] || (() => {})
 	const GM_notification = (window.__ds_global__ || {})['GM_notification'] || (() => {});
 
 	(function() {
@@ -151,10 +153,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (menu_feedBack_ID) {GM_unregisterMenuCommand(menu_rawFast_ID); GM_unregisterMenuCommand(menu_rawDownLink_ID); GM_unregisterMenuCommand(menu_gitClone_ID); GM_unregisterMenuCommand(menu_feedBack_ID); menu_rawFast = GM_getValue('xiu2_menu_raw_fast');}
 			// 避免在减少 raw 数组后，用户储存的数据大于数组而报错
 			if (menu_rawFast > raw_url.length - 1) menu_rawFast = 0
-			menu_rawDownLink_ID = GM_registerMenuCommand(`${GM_getValue('menu_rawDownLink')?'✅':'❌'} 项目列表单文件快捷下载 (☁)`, function(){if (GM_getValue('menu_rawDownLink') === true) {GM_setValue('menu_rawDownLink', false); GM_notification({text: `已关闭 [项目列表单文件快捷下载 (☁)] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_rawDownLink', true); GM_notification({text: `已开启 [项目列表单文件快捷下载 (☁)] 功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();}, {title: "点击开关「项目列表单文件快捷下载 (☁)」功能"});
+			menu_rawDownLink_ID = GM_registerMenuCommand(`${GM_getValue('menu_rawDownLink')?'✅':'❌'} 项目列表单文件快捷下载 (☁)`, function(){if (GM_getValue('menu_rawDownLink') === true) {GM_setValue('menu_rawDownLink', false); GM_notification({text: `已关闭「项目列表单文件快捷下载 (☁)」功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_rawDownLink', true); GM_notification({text: `已开启「项目列表单文件快捷下载 (☁)」功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();}, {title: "点击开关「项目列表单文件快捷下载 (☁)」功能"});
 			if (GM_getValue('menu_rawDownLink')) menu_rawFast_ID = GM_registerMenuCommand(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'][menu_rawFast]} [ ${raw_url[menu_rawFast][1]} ] 加速源 (☁) - 点击切换`, menu_toggle_raw_fast, {title: "点击切换「项目列表单文件快捷下载 (☁)」功能的加速源"});
-			menu_gitClone_ID = GM_registerMenuCommand(`${GM_getValue('menu_gitClone')?'✅':'❌'} 添加 git clone 命令`, function(){if (GM_getValue('menu_gitClone') === true) {GM_setValue('menu_gitClone', false); GM_notification({text: `已关闭 [添加 git clone 命令] 功能`, timeout: 3500});} else {GM_setValue('menu_gitClone', true); GM_notification({text: `已开启 [添加 git clone 命令] 功能`, timeout: 3500});}registerMenuCommand();}, {title: "点击开关「添加 git clone 命令」功能"});
-			menu_feedBack_ID = GM_registerMenuCommand('💬 反馈 & 建议 [Github]', function () {GM_openInTab('https://github.com/XIU2/UserScript', {active: true,insert: true,setParent: true});GM_openInTab('https://greasyfork.org/zh-CN/scripts/412245/feedback', {active: true,insert: true,setParent: true});}, {title: "点击前往反馈问题或提出建议"});
+			menu_gitClone_ID = GM_registerMenuCommand(`${GM_getValue('menu_gitClone')?'✅':'❌'} 添加 git clone 命令`, function(){if (GM_getValue('menu_gitClone') === true) {GM_setValue('menu_gitClone', false); GM_notification({text: `已关闭「添加 git clone 命令」功能`, timeout: 3500});} else {GM_setValue('menu_gitClone', true); GM_notification({text: `已开启「添加 git clone 命令」功能`, timeout: 3500});}registerMenuCommand();}, {title: "点击开关「添加 git clone 命令」功能"});
+			menu_feedBack_ID = GM_registerMenuCommand('💬 反馈问题 & 提出建议', function () {GM_openInTab('https://github.com/XIU2/UserScript', {active: true,insert: true,setParent: true});GM_openInTab('https://greasyfork.org/zh-CN/scripts/412245/feedback', {active: true,insert: true,setParent: true});}, {title: "点击前往反馈问题或提出建议"});
 		}
 
 		// 切换加速源
@@ -493,6 +495,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		}
 	})();
-	console.log("ds_github_monkey_2.5.20: completed")
+	console.log(`ds_github_monkey_${ds_github_monkey_version}: completed`)
 })
-console.log("ds_github_monkey_2.5.20: loaded")
+console.log(`ds_github_monkey_${ds_github_monkey_version}: loaded`)
