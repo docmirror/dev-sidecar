@@ -80,7 +80,7 @@
 .___ds-tampermonkey-hide___{
 	width: 0;
 }
-.___ds-menus___ {
+.___ds-menus___{
 	display: none;
 	position: absolute;
 	right: 36px;
@@ -93,13 +93,13 @@
 	border: 1px solid #52525E;
 	overflow: hidden;
 }
-.___ds-tampermonkey___:hover:not(.___ds-tampermonkey-hide___) .___ds-menus___ {
+.___ds-tampermonkey___:hover:not(.___ds-tampermonkey-hide___) .___ds-menus___{
 	display: block;
 }
 .___ds-tampermonkey-hide___ .___ds-menus___{
 	display: none;
 }
-.___ds-menu___ {
+.___ds-menu___{
 	height: 35px;
 	line-height: 35px;
 	padding: 0 10px;
@@ -108,10 +108,10 @@
 	cursor: pointer;
 	margin-left: 26px;
 }
-.___ds-menu___:hover {
+.___ds-menu___:hover{
 	background-color: #855F16;
 }
-.___ds-menu0___ {
+.___ds-menu0___{
 	margin-left: 0;
 	font-size: 16px;
 	font-weight: bold;
