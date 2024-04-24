@@ -2,7 +2,7 @@
  * 篡改猴（Tampermonkey）| 油猴（Greasemonkey）浏览器脚本扩展
  *
  * @version        0.1.2
- * @since          2024-04-24 14:38
+ * @since          2024-04-24 14:43
  * @author         王良
  * @authorHomePage https://wangliang1024.cn
  * @remark         当前脚本为仿照的版本，并非篡改猴插件的源码，仅供学习参考。
@@ -522,9 +522,13 @@
 			context.lastNotification = lastNotification;
 			// 设置通知的各种属性或事件
 			if (options.onclick) {
-				notification.onclick = options.onclick;
+				notification.onclick = () => options.onclick();
 			}
 			notification.onclose = () => {
+				// 清除最后一个通知
+				context.lastNotification = null;
+
+				// 执行回调方法
 				if (typeof options.ondone === "function") {
 					try {
 						options.ondone();
@@ -532,10 +536,10 @@
 						console.error(`ds_tampermonkey_${version}: GM_notification: ondone回调函数执行失败：`, e);
 					}
 				}
-				context.lastNotification = null; // 清除最后一个通知
 			}
 			if (options.timeout) {
-				lastNotification.timeout = setTimeout(notification.close, options.timeout)
+				// 设置定时关闭
+				lastNotification.timeout = setTimeout(() => notification.close(), options.timeout);
 			}
 			return notification;
 		};
