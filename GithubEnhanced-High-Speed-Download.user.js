@@ -293,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			let html = target.querySelector('input[value^="https:"]');
 			if (!html) return;
 			if (!html.nextElementSibling) return false;
-			let href_split = html.value.replace(/https:\/\/\w+.\w+\//g, ''),
+			let href_split = html.value.replace(/https:\/\/\w+.\w+/g, ''),
 				html_parent = '<div style="margin-top: 4px;" class="XIU2-GC ' + html.parentElement.className + '">',
 				url = '', _html = '', _gitClone = '';
 			html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮
