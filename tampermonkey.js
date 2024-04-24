@@ -220,6 +220,16 @@
 		body.prepend(context.pluginElement);
 	}
 
+	// 创建箭头
+	api.createArrow = (options) => {
+		// 创建箭头元素
+		context.arrowElement = document.createElement('div');
+		context.arrowElement.id = PRE + "arrow";
+		context.arrowElement.className = "____ds-arrow___";
+		// 将箭头元素添加到插件div中
+		context.pluginElement.append(context.arrowElement);
+	}
+
 	// 隐藏插件
 	api.hidePlugin = () => {
 		if (context.pluginElement) {
