@@ -2,7 +2,7 @@
  * 篡改猴（Tampermonkey）| 油猴（Greasemonkey）浏览器脚本扩展
  *
  * @version        0.1.1
- * @since          2024-04-24 11:13
+ * @since          2024-04-24 11:22
  * @author         王良
  * @author:en      Liang Wang
  * @authorHomePage https://wangliang1024.cn
@@ -17,7 +17,7 @@
  */
 'use strict';
 (function () {
-	const version = "0.1.0";
+	const version = "0.1.1";
 	const PRE = "DS-Tampermonkey:"; // 前缀
 	const MENU_ID_PRE = PRE + "menu-";
 
