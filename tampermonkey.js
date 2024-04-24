@@ -72,6 +72,9 @@
 	width: 36px;
 	height: 36px;
 	border-radius: 8px;
+	user-select: none;         /* Standard syntax */  
+	-webkit-user-select: none; /* Safari */  
+	-ms-user-select: none;     /* IE 10+/Edge */  
 	background-color: #DDD;
 	background-repeat: no-repeat;
 	background-size: cover;
