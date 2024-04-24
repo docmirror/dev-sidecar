@@ -135,6 +135,10 @@
 	border-top: 7px solid transparent;
 	border-bottom: 7px solid transparent;
 	border-left: 10px solid #665c5c;
+	display: none;
+}
+.___ds-tampermonkey___:hover .___ds-arrow___{
+	display: block;
 }
 .___ds-tampermonkey-hide___ .___ds-arrow___{
 	border-top: 7px solid transparent;
@@ -142,6 +146,7 @@
 	border-right: 10px solid #665c5c;
 	border-left: 0;
 	left: 0;
+	display: block;
 }
 `;
 		// 如果有自定义样式，则添加到 CSS 内容中
