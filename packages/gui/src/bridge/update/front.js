@@ -144,17 +144,31 @@ function install (app, api) {
       title: '发现新版本：v' + value.version,
       cancelText: '暂不升级',
       okText: '升级',
-      width: 710,
+      width: 550,
       content: h => {
         if (value.releaseNotes) {
+          const notes = []
           if (typeof value.releaseNotes === 'string') {
-            return <div>{value.releaseNotes}</div>
+            const releaseNotes = value.releaseNotes.replace(/\r?\n/g, '\n').split('\n')
+            for (const note of releaseNotes) {
+              notes.push(<div>{note}</div>)
+            }
+            return <div>
+              <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
+              <div>更新内容：</div>
+              <div style="max-height:350px;overflow-y:auto">
+                {notes}
+              </div>
+            </div>
           } else {
-            const notes = []
             for (const note of value.releaseNotes) {
               notes.push(<li>{note}</li>)
             }
-            return <div><div>更新内容：</div><ol>{notes}</ol></div>
+            return <div>
+              <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
+              <div>更新内容：</div>
+              <ol>{notes}</ol>
+            </div>
           }
         }
       },
@@ -175,16 +189,31 @@ function install (app, api) {
       title: `新版本(v${value.version})已准备好，是否立即升级?`,
       cancelText: '暂不升级',
       okText: '立即升级',
+      width: 550,
       content: h => {
         if (value.releaseNotes) {
+          const notes = []
           if (typeof value.releaseNotes === 'string') {
-            return <div>{value.releaseNotes}</div>
+            const releaseNotes = value.releaseNotes.replace(/\r?\n/g, '\n').split('\n')
+            for (const note of releaseNotes) {
+              notes.push(<div>{note}</div>)
+            }
+            return <div>
+              <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
+              <div>更新内容：</div>
+              <div style="max-height:350px;overflow-y:auto">
+                {notes}
+              </div>
+            </div>
           } else {
-            const notes = []
             for (const note of value.releaseNotes) {
               notes.push(<li>{note}</li>)
             }
-            return <div><div>更新内容：</div><ol>{notes}</ol></div>
+            return <div>
+              <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
+              <div>更新内容：</div>
+              <ol>{notes}</ol>
+            </div>
           }
         }
       },

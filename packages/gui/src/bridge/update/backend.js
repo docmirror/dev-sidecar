@@ -134,7 +134,9 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
                 key: 'available',
                 value: {
                   version,
-                  releaseNotes: '发布公告：' + (versionData.html_url || ('https://github.com/docmirror/dev-sidecar/releases/tag/' + versionData.tag_name))
+                  releaseNotes: versionData.body
+                    ? (versionData.body.replace(/\r\n/g, '\n').replace(/https:\/\/github.com\/docmirror\/dev-sidecar/g, '').replace(/(?<=(^|\n))[ \t]*[ #]+/g, '') || '无')
+                    : '无'
                 }
               })
             } else {
