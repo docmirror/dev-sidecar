@@ -107,6 +107,9 @@
 .___ds-menu___:hover {
 	background-color: #855F16;
 }
+.___ds-tampermonkey-hide___ .___ds-menu___{
+	display: none;
+}
 .___ds-menu0___ {
 	margin-left: 0;
 	font-size: 16px;
