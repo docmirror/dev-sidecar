@@ -23,10 +23,12 @@
 	const context = {
 		initialized: false, // 是否已经初始化
 		defaultPluginOptions: {}, // 默认插件选项
+		pluginOptions: {}, // 插件选项
 		styleElement: null, // 插件样式元素
-		pluginElement: null, // 插件div元素
-		menusElement: null, // 菜单列表div元素
-		userMenusElement: null, // 用户菜单列表div元素
+		pluginElement: null, // 插件元素
+		arrowElement: null, // 箭头元素
+		menusElement: null, // 菜单列表元素
+		userMenusElement: null, // 用户菜单列表元素
 		menus: {}, // 菜单集合
 		menuIndex: 0, // 菜单索引，用于生成menuCmdId
 		lastNotification: null // 最后一次通知
@@ -63,7 +65,7 @@
 		let cssContent = `
 .____ds-icon____{
 	position: fixed;
-	right: 5px;
+	right: 11px;
 	top: 30%;
 	z-index: 9999;
 	width: 36px;
@@ -112,6 +114,23 @@
 	height: 23px;
 	vertical-align: middle;
 	margin: 0 8px 3px 8px;
+}
+.____ds-arrow____{
+	width: 0;
+	height: 0;
+	position: absolute;
+	top: 10px;
+	left: 37px;
+}
+.____ds-arrow-right____{
+	border-top: 8px solid transparent;
+	border-bottom: 8px solid transparent;
+	border-left: 10px solid #665c5c;
+}
+.____ds-arrow-left____{
+	border-top: 8px solid transparent;
+	border-bottom: 8px solid transparent;
+	border-right: 10px solid #665c5c;
 }
 `;
 		// 如果有自定义样式，则添加到 CSS 内容中
@@ -198,6 +217,20 @@
 		body.prepend(context.pluginElement);
 	}
 
+	// 隐藏插件
+	api.hidePlugin = () => {
+		if (context.pluginElement) {
+			context.pluginElement.style.display = "none";
+		}
+	}
+
+	// 显示插件
+	api.showPlugin = () => {
+		if (context.pluginElement) {
+			context.pluginElement.style.display = "block";
+		}
+	}
+
 	// 显示用户菜单列表
 	api.showUserMenus = () => {
 		if (context.userMenusElement) {
@@ -215,14 +248,23 @@
 	// 初始化篡改猴操作界面
 	api.DS_init = (options) => {
 		try {
+			// 如果已经初始化过，则直接返回
 			if (context.initialized) return;
+
 			// 合并默认参数
 			options = {
 				...context.defaultPluginOptions,
 				...options
 			};
+
+			// 创建样式元素
 			api.createPluginStyle(options);
+			// 创建插件div
 			api.createPluginDiv(options);
+			// 保存参数
+			context.pluginOptions = options;
+
+			// 初始化完成
 			context.initialized = true;
 
 			console.log(`ds_tampermonkey_${version}: initialization completed（篡改猴插件初始化完成，篡改猴图标已显示在页面右侧，鼠标移到上面可展示功能列表！）`)
