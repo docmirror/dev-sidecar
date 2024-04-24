@@ -16,6 +16,7 @@
  */
 'use strict';
 (function () {
+	const version = "0.1.0";
 	const PRE = "DS-Tampermonkey:"; // 前缀
 	const MENU_ID_PRE = PRE + "menu-";
 
@@ -224,9 +225,9 @@
 			api.createPluginDiv(options);
 			context.initialized = true;
 
-			console.log("ds_tampermonkey: initialization completed（篡改猴插件初始化完成，篡改猴图标已显示在页面右侧，鼠标移到上面可展示功能列表！）")
+			console.log(`ds_tampermonkey_${version}: initialization completed（篡改猴插件初始化完成，篡改猴图标已显示在页面右侧，鼠标移到上面可展示功能列表！）`)
 		} catch (e) {
-			console.error("ds_tampermonkey: initialization failed（篡改猴插件初始化失败）:", e);
+			console.error(`ds_tampermonkey_${version}: initialization failed（篡改猴插件初始化失败）:`, e);
 		}
 	};
 
@@ -355,7 +356,7 @@
 		// param1
 		let options = typeof details_or_text === "string" ? { text: details_or_text } : details_or_text;
 		if (typeof options !== "object") {
-			console.error("GM_notification: 无效的参数值：details_or_text = " + details_or_text);
+			console.error(`ds_tampermonkey_${version}: GM_notification: 无效的参数值：details_or_text = ` + details_or_text);
 			return;
 		}
 		// param2
@@ -364,19 +365,19 @@
 		} else if (typeof ondone_or_title === "function") {
 			options.ondone = ondone_or_title;
 		} else if (ondone_or_title != null) {
-			console.warn("GM_notification: 无效的参数值：ondone_or_title = " + ondone_or_title);
+			console.warn(`ds_tampermonkey_${version}: GM_notification: 无效的参数值：ondone_or_title = ` + ondone_or_title);
 		}
 		// param3
 		if (typeof image === "string") {
 			options.image = image;
 		} else if (onclick != null) {
-			console.warn("GM_notification: 无效的参数值：image = " + image);
+			console.warn(`ds_tampermonkey_${version}: GM_notification: 无效的参数值：image = ` + image);
 		}
 		// param4
 		if (typeof onclick === "function") {
 			options.onclick = onclick;
 		} else if (onclick != null) {
-			console.warn("GM_notification: 无效的参数值：onclick = " + onclick);
+			console.warn(`ds_tampermonkey_${version}: GM_notification: 无效的参数值：onclick = ` + onclick);
 		}
 
 		let text = options.text;
@@ -450,5 +451,5 @@
 		module.exports = api;
 	}
 
-	console.log("ds_tampermonkey: completed")
+	console.log(`ds_tampermonkey_${version}: completed`)
 })();
