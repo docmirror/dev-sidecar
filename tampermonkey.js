@@ -1,7 +1,7 @@
 /**
- * 当前脚本为仿照的版本，并非篡改猴插件的源码，仅供学习参考。
+ * 篡改猴（Tampermonkey）| 油猴（Greasemonkey）浏览器脚本扩展
  *
- * @name 篡改猴（Tampermonkey）| 油猴（Greasemonkey）浏览器脚本扩展
+ * @remark         当前脚本为仿照的版本，并非篡改猴插件的源码，仅供学习参考。
  * @author         由 Wang Liang（王良）仿照的
  * @authorHomePage https://wangliang1024.cn
  * @description    篡改猴 (Tampermonkey) 是拥有 超过 1000 万用户 的最流行的浏览器扩展之一。 它适用于 Chrome、Microsoft Edge、Safari、Opera Next 和 Firefox。
@@ -20,16 +20,20 @@
 	const context = {
 		initialized: false, // 是否已经初始化
 		defaultPluginOptions: {}, // 默认插件选项
-		pluginElement: null, // 插件div
-		menusElement: null, // 菜单列表div
+		styleElement: null, // 插件样式元素
+		pluginElement: null, // 插件div元素
+		menusElement: null, // 菜单列表div元素
+		userMenusElement: null, // 用户菜单列表div元素
 		menus: {}, // 菜单集合
 		menuIndex: 0, // 菜单索引，用于生成menuCmdId
 		lastNotification: null // 最后一次通知
-		/*{
-			obj: null, // 通知对象
+		/* 最后一次通知的对象结构如下：
+		{
+			obj: null, // 通知对象，类型：Notification
 			options: null, // 通知选项
 			timeout: null // 通知定时器
-		}*/
+		}
+		*/
 	};
 
 
@@ -48,6 +52,7 @@
 
 		// 创建一个新的<style>元素
 		const styleElement = document.createElement('style');
+		styleElement.id = PRE + "plugin-style";
 		// 设置<style>元素的type属性
 		styleElement.type = 'text/css';
 
@@ -121,6 +126,9 @@
 
 		// 将<style>元素添加到<head>中
 		document.head.append(styleElement);
+
+		// 将<style>元素保存在上下文中
+		context.styleElement = styleElement;
 	};
 
 	// 创建插件div
@@ -132,11 +140,13 @@
 
 		// 创建插件div
 		context.pluginElement = document.createElement('div');
+		context.pluginElement.id = PRE + "plugin";
 		context.pluginElement.title = "油猴脚本" + (options.name ? "：" + options.name : "");
 		context.pluginElement.className = "____ds-icon____";
 
 		// 创建菜单列表div
 		context.menusElement = document.createElement('div');
+		context.menusElement.id = PRE + "menus";
 		context.menusElement.className = "____ds-menus____";
 		if (options.width > 0) {
 			context.menusElement.style['min-width'] = options.width + "px";
@@ -155,10 +165,10 @@
 		switchMenuElement.onclick = function () {
 			let enabled = api.GM_getValue("ds_enabled", true)
 			if (enabled) {
-				api.hideMenus();
+				api.hideUserMenus();
 				enabled = false;
 			} else {
-				api.showMenus();
+				api.showUserMenus();
 				enabled = true;
 			}
 			switchMenuElement.innerHTML = (enabled ? "✅" : "❌") + icon + options.name;
@@ -172,25 +182,30 @@
 		// 将开关菜单添加到菜单列表div中
 		context.menusElement.append(switchMenuElement);
 
+		// 创建用户菜单列表div
+		context.userMenusElement = document.createElement('div');
+		context.userMenusElement.id = PRE + "user-menus";
+		context.userMenusElement.className = "____ds-user-menus____";
+		// 将用户菜单div添加到菜单div中
+		context.menusElement.append(context.userMenusElement);
+
 		// 获取body元素
 		const body = document.getElementsByTagName('body')[0];
 		// 将插件div添加到body中
 		body.prepend(context.pluginElement);
 	}
 
-	// 显示菜单列表
-	api.showMenus = () => {
-		for (const menuCmdId in context.menus) {
-			const menuElement = context.menus[menuCmdId].element;
-			menuElement.style.display = "block";
+	// 显示用户菜单列表
+	api.showUserMenus = () => {
+		if (context.userMenusElement) {
+			context.userMenusElement.style.display = "block";
 		}
 	}
 
-	// 隐藏菜单列表
-	api.hideMenus = () => {
-		for (const menuCmdId in context.menus) {
-			const menuElement = context.menus[menuCmdId].element;
-			menuElement.style.display = "none";
+	// 隐藏用户菜单列表
+	api.hideUserMenus = () => {
+		if (context.userMenusElement) {
+			context.userMenusElement.style.display = "none";
 		}
 	}
 
@@ -225,10 +240,18 @@
 		// 生成菜单ID
 		let menuCmdId;
 		if (options.id) {
-			if (options.id.indexOf(MENU_ID_PRE) === 0) {
-				menuCmdId = options.id;
-			} else {
-				menuCmdId = MENU_ID_PRE + options.id;
+			if (typeof options.id !== "string") {
+				options.id = options.id.toString();
+			}
+
+			menuCmdId = (options.id.indexOf(MENU_ID_PRE) === 0 ? '' : MENU_ID_PRE) + options.id;
+
+			// 如果是数字ID，为了避免与自增ID索引冲突，将数字ID赋值给自增ID索引
+			if (options.id.match("^\\d+$")) {
+				const numberId = parseInt(options.id);
+				if (numberId > context.menuIndex) {
+					context.menuIndex = numberId;
+				}
 			}
 		} else {
 			menuCmdId = MENU_ID_PRE + (++context.menuIndex);
@@ -250,7 +273,7 @@
 		}
 
 		// 将菜单元素添加到菜单列表div中
-		context.menusElement.append(menuElement);
+		context.userMenusElement.append(menuElement);
 
 		// 将菜单添加到菜单集合中
 		context.menus[menuCmdId] = {
@@ -270,15 +293,24 @@
 			return;
 		}
 
+		if (typeof menuCmdId !== "string") {
+			menuCmdId = menuCmdId.toString();
+		}
+
 		if (menuCmdId.indexOf(MENU_ID_PRE) !== 0) {
 			menuCmdId = MENU_ID_PRE + menuCmdId;
 		}
 
-		const menuElement = document.getElementById(menuCmdId)
-		if (menuElement) {
-			menuElement.remove();
+		const menu = context.menus[menuCmdId];
+		if (menu) {
+			menu.element.remove();
+			delete context.menus[menuCmdId];
+		} else {
+			const menuElement = document.getElementById(menuCmdId)
+			if (menuElement) {
+				menuElement.remove();
+			}
 		}
-		delete context.menus[menuCmdId];
 	};
 
 	// 打开新标签

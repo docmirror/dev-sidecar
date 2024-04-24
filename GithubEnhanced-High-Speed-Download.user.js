@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	if (!((window.__ds_global__ || {}).GM_getValue || (() => true))("ds_enabled", true)) {
-		console.log("ds_github_monkey_2.5.20: disabled")
+		console.log("ds_github_monkey_2.5.20: tampermonkey disabled")
 		return
 	}
 
