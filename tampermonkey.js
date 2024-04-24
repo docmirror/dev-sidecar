@@ -233,14 +233,14 @@
 	// 隐藏插件
 	api.hidePlugin = () => {
 		if (context.pluginElement) {
-			context.pluginElement.classList.add("____ds-tampermonkey-hide___");
+			context.pluginElement.classList.add("____ds-tampermonkey-hide____");
 		}
 	}
 
 	// 显示插件
 	api.showPlugin = () => {
 		if (context.pluginElement) {
-			context.pluginElement.classList.remove("____ds-tampermonkey-hide___");
+			context.pluginElement.classList.remove("____ds-tampermonkey-hide____");
 		}
 	}
 
