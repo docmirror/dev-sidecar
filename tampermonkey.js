@@ -66,7 +66,7 @@
 		let cssContent = `
 .___ds-tampermonkey___{
 	position: fixed;
-	right: 11px;
+	right: 10px;
 	top: 30%;
 	z-index: 9999;
 	width: 36px;
@@ -130,7 +130,7 @@
 	height: 0;
 	position: absolute;
 	top: 11px;
-	left: 37px;
+	left: 36px;
 	cursor: pointer;
 	border-top: 7px solid transparent;
 	border-bottom: 7px solid transparent;
