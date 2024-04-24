@@ -126,16 +126,16 @@
 	width: 0;
 	height: 0;
 	position: absolute;
-	top: 10px;
+	top: 11px;
 	left: 37px;
 	cursor: pointer;
-	border-top: 8px solid transparent;
-	border-bottom: 8px solid transparent;
+	border-top: 7px solid transparent;
+	border-bottom: 7px solid transparent;
 	border-left: 10px solid #665c5c;
 }
 .___ds-tampermonkey-hide___ .___ds-arrow___{
-	border-top: 8px solid transparent;
-	border-bottom: 8px solid transparent;
+	border-top: 7px solid transparent;
+	border-bottom: 7px solid transparent;
 	border-right: 10px solid #665c5c;
 	border-left: 0;
 	left: 0;
