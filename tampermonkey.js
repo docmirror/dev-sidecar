@@ -96,6 +96,9 @@
 .___ds-tampermonkey___:hover .___ds-menus___ {
 	display: block;
 }
+.___ds-tampermonkey-hide___ .___ds-menus___{
+	display: none;
+}
 .___ds-menu___ {
 	height: 35px;
 	line-height: 35px;
@@ -107,9 +110,6 @@
 }
 .___ds-menu___:hover {
 	background-color: #855F16;
-}
-.___ds-tampermonkey-hide___ .___ds-menu___{
-	display: none;
 }
 .___ds-menu0___ {
 	margin-left: 0;
