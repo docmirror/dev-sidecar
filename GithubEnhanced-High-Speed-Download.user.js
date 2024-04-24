@@ -4,8 +4,8 @@
  *
  * @name            Github 增强 - 高速下载（Github油猴脚本）
  * @name:en         Github Enhancement - High Speed Download（Github Greasemonkey Script）
- * @version         2.5.20.2
- * @since           2024-04-24 17:27
+ * @version         2.5.20.3
+ * @since           2024-04-24 17:38
  * @author          X.I.U
  * @description     高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
  * @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
@@ -15,7 +15,7 @@
  * @homepageURL     https://github.com/XIU2/UserScript
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
-var ds_github_monkey_version = "2.5.20.2";
+var ds_github_monkey_version = "2.5.20.3";
 document.addEventListener("DOMContentLoaded", () => {
 	const DS_init = (window.__ds_global__ || {})['DS_init']
 	if (typeof DS_init === 'function') {
@@ -304,12 +304,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			let html_clone = html.cloneNode(true);
 			for (let i=0;i<clone_url.length;i++) {
 				if (clone_url[i][0] === 'https://gitclone.com') {
-					url = _gitClone + clone_url[i][0] + '/github.com' + href_split
+					url = clone_url[i][0] + '/github.com' + href_split
 				} else {
-					url = _gitClone + clone_url[i][0] + href_split
+					url = clone_url[i][0] + href_split
 				}
-				html_clone.title = `加速源：${clone_url[i][1]} （点击可直接复制）\n${clone_url[i][2].replaceAll('&#10;','\n')}`
-				html_clone.setAttribute('value', url)
+				html_clone.title = `${url}\n加速源：${clone_url[i][1]} （点击可直接复制）\n${clone_url[i][2].replaceAll('&#10;','\n')}`
+				html_clone.setAttribute('value', _gitClone + url)
 				_html += html_parent + html_clone.outerHTML + '</div>'
 			}
 			html.parentElement.insertAdjacentHTML('afterend', _html);
@@ -329,9 +329,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			// 克隆原 Git Clone SSH 元素
 			let html_clone = html.cloneNode(true);
 			for (let i=0;i<clone_ssh_url.length;i++) {
-				url = _gitClone + clone_ssh_url[i][0] + href_split
-				html_clone.title = `加速源：${clone_ssh_url[i][1]} （点击可直接复制）\n${clone_ssh_url[i][2].replaceAll('&#10;','\n')}`
-				html_clone.setAttribute('value', url)
+				url = clone_ssh_url[i][0] + href_split
+				html_clone.title = `${url}\n加速源：${clone_ssh_url[i][1]} （点击可直接复制）\n${clone_ssh_url[i][2].replaceAll('&#10;','\n')}`
+				html_clone.setAttribute('value', _gitClone + url)
 				_html += html_parent + html_clone.outerHTML + '</div>'
 			}
 			html.parentElement.insertAdjacentHTML('afterend', _html);
