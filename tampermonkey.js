@@ -1,8 +1,8 @@
 /**
  * 篡改猴（Tampermonkey）| 油猴（Greasemonkey）浏览器脚本扩展
  *
- * @version        0.1.2
- * @since          2024-04-24 14:54
+ * @version        0.1.3
+ * @since          2024-04-24 15:26
  * @author         王良
  * @authorHomePage https://wangliang1024.cn
  * @remark         当前脚本为仿照的版本，并非篡改猴插件的源码，仅供学习参考。
@@ -32,7 +32,7 @@
 		userMenusElement: null, // 用户菜单列表元素
 		menus: {}, // 菜单集合
 		menuIndex: 0, // 菜单索引，用于生成menuCmdId
-		lastNotification: null // 最后一次通知
+		lastNotification: null, // 最后一次通知
 		/* 最后一次通知的对象结构如下：
 		{
 			obj: null, // 通知对象，类型：Notification
@@ -45,6 +45,11 @@
 
 	// 创建插件API
 	const api = {};
+
+	// 监听页面关闭事件，用于关闭对应的通知
+	window.addEventListener('beforeunload', function(event) {
+		api.closeLastNotification();
+	});
 
 
 	//region DS自定义的API start
@@ -332,6 +337,20 @@
 		}
 	};
 
+	// 关闭上一个通知
+	api.closeLastNotification = () => {
+		let lastNotification = context.lastNotification;
+		if (lastNotification) {
+			context.lastNotification = null;
+			lastNotification.timeout && clearTimeout(lastNotification.timeout);
+			try {
+				lastNotification.obj && lastNotification.obj.close();
+			} catch (e) {
+				console.error(`ds_tampermonkey_${version}: GM_notification: 关闭上一个通知失败:`, e);
+			}
+		}
+	};
+
 	//endregion DS自定义的API end
 
 
@@ -484,16 +503,7 @@
 		// 显示通知方法
 		const showNotification = () => {
 			// 先关闭上一个通知
-			let lastNotification = context.lastNotification;
-			if (lastNotification) {
-				context.lastNotification = null;
-				lastNotification.timeout && clearTimeout(lastNotification.timeout);
-				try {
-					lastNotification.obj && lastNotification.obj.close();
-				} catch (e) {
-					console.error(`ds_tampermonkey_${version}: GM_notification: 关闭上一个通知失败:`, e);
-				}
-			}
+			api.closeLastNotification();
 
 			// 获取标题和文本
 			let text = options.text;
@@ -516,7 +526,7 @@
 			// 创建通知
 			const notification = new Notification(title, notificationOptions);
 			// 将通知对象保存到context中
-			lastNotification = {
+			const lastNotification = {
 				obj: notification,
 				options: options,
 				timeout: null
