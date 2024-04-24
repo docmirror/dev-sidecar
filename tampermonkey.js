@@ -239,10 +239,10 @@
 		// 绑定点击事件
 		context.arrowElement.onclick = () => {
 			if (__ds_global__.getContext().pluginElement.classList.contains("___ds-tampermonkey-hide___")) {
-				__ds_global__.getContext().pluginElement.classList.remove("___ds-tampermonkey-hide___");
+				api.showPlugin();
 				api.initArrowTitle(false);
 			} else {
-				__ds_global__.getContext().pluginElement.classList.add("___ds-tampermonkey-hide___");
+				api.hidePlugin();
 				api.initArrowTitle(true);
 			}
 		}
@@ -266,16 +266,16 @@
 	api.hidePlugin = () => {
 		if (context.pluginElement) {
 			context.pluginElement.classList.add("___ds-tampermonkey-hide___");
-			api.GM_setValue("ds_hide", true);
 		}
+		api.GM_setValue("ds_hide", true);
 	}
 
 	// 显示插件
 	api.showPlugin = () => {
 		if (context.pluginElement) {
 			context.pluginElement.classList.remove("___ds-tampermonkey-hide___");
-			api.GM_deleteValue("ds_hide");
 		}
+		api.GM_deleteValue("ds_hide");
 	}
 
 	// 显示用户菜单列表
