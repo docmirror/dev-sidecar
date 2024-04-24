@@ -93,7 +93,7 @@
 	border: 1px solid #52525E;
 	overflow: hidden;
 }
-.___ds-tampermonkey___:hover .___ds-menus___ {
+.___ds-tampermonkey___:hover:not(.___ds-tampermonkey-hide___) .___ds-menus___ {
 	display: block;
 }
 .___ds-tampermonkey-hide___ .___ds-menus___{
@@ -171,7 +171,7 @@
 		// 创建插件div
 		context.pluginElement = document.createElement('div');
 		context.pluginElement.id = PRE + "plugin";
-		context.pluginElement.title = "油猴脚本" + (options.name ? "：" + options.name : "");
+		context.pluginElement.title = "油猴插件" + (options.name ? "：" + options.name : "");
 		context.pluginElement.className = "___ds-tampermonkey___";
 		if (api.GM_getValue("ds_hide")) {
 			context.pluginElement.classList.add("___ds-tampermonkey-hide___");
@@ -256,9 +256,9 @@
 		}
 
 		if (isHidden) {
-			context.arrowElement.title = "点击展示";
+			context.arrowElement.title = "点击展示「油猴插件」的操作界面";
 		} else {
-			context.arrowElement.title = "点击隐藏";
+			context.arrowElement.title = "点击隐藏「油猴插件」的操作界面";
 		}
 	}
 
