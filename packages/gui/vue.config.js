@@ -53,7 +53,7 @@ module.exports = {
         productName: 'dev-sidecar',
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: 'DevSidecar-${version}.${ext}',
-        copyright: 'Copyright © 2020-2024 docmirror.cn by Greper, WangLiang',
+        copyright: 'Copyright © 2020-2024 Greper, WangLiang',
         nsis: {
           oneClick: false,
           perMachine: true,
