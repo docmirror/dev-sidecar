@@ -14,6 +14,9 @@ import DevSidecar from '@docmirror/dev-sidecar'
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 
+const curVersion = pkg.version
+const isPreRelease = curVersion.includes('-')
+
 function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
   log.info('download url', uri)
   progress(request(uri), {
@@ -78,7 +81,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   // 检查更新
   const releasesApiUrl = 'https://api.github.com/repos/docmirror/dev-sidecar/releases'
   async function checkForUpdatesFromGitHub () {
-    request(releasesApiUrl, { headers: { 'User-Agent': 'DS/' + pkg.version } }, (error, response, body) => {
+    request(releasesApiUrl, { headers: { 'User-Agent': 'DS/' + curVersion } }, (error, response, body) => {
       try {
         if (error) {
           log.error('检查更新失败:', error)
@@ -118,17 +121,17 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
             if (!versionData.assets || versionData.assets.length === 0) {
               continue // 跳过空版本，即上传过安装包
             }
-            if (DevSidecar.api.config.get().app.skipPreRelease && versionData.name.indexOf('Pre-release') >= 0) {
+            if (!isPreRelease && DevSidecar.api.config.get().app.skipPreRelease && versionData.name.includes('-')) {
               continue // 跳过预发布版本
             }
 
             // log.info('最近正式版本数据：', versionData)
 
-            let version = versionData.tag_name
+            let version = versionData.name
             if (version.indexOf('v') === 0) {
               version = version.substring(1)
             }
-            if (version !== pkg.version) {
+            if (version !== curVersion) {
               log.info('检查更新-发现新版本:', version)
               win.webContents.send('update', {
                 key: 'available',
