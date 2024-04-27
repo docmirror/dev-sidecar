@@ -63,6 +63,10 @@ module.exports = {
       'cn.*': true,
       '*china*': true,
 
+      // Github加速源：以下加速源代理后反而出现问题，从系统代理中排除掉
+      '*.kkgithub.com': true,
+      '*.ghproxy.*': true,
+
       // CSDN
       '*.csdn.net': true,
 
