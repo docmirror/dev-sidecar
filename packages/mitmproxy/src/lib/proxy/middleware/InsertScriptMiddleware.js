@@ -124,7 +124,12 @@ module.exports = {
       return
     }
     const urlPath = rOptions.path
-    const filename = urlPath.replace(contextPath, '')
+    let filename = urlPath.replace(contextPath, '')
+
+    // 重命名过，向下兼容
+    if (filename === 'global') {
+      filename = 'tampermonkey'
+    }
 
     const script = monkey.get(setting.script.defaultDir)[filename]
     // log.info(`urlPath: ${urlPath}, fileName: ${filename}, script: ${script}`)
