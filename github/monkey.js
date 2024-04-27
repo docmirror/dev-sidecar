@@ -4,8 +4,8 @@
  *
  * @name            Github 增强 - 高速下载（Github油猴脚本）
  * @name:en         Github Enhancement - High Speed Download（Github Greasemonkey Script）
- * @version         2.5.20_3
- * @since           2024-04-24 17:38
+ * @version         2.5.21_1
+ * @since           2024-04-27 23:48
  * @author          X.I.U
  * @description     高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
  * @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
@@ -15,7 +15,7 @@
  * @homepageURL     https://github.com/XIU2/UserScript
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
-var ds_github_monkey_version = "2.5.20_3";
+const ds_github_monkey_version = "2.5.21_1";
 document.addEventListener("DOMContentLoaded", () => {
 	const DS_init = (window.__ds_global__ || {})['DS_init']
 	if (typeof DS_init === 'function') {
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		'use strict';
 		var backColor = '#ffffff', fontColor = '#888888', menu_rawFast = GM_getValue('xiu2_menu_raw_fast'), menu_rawFast_ID, menu_rawDownLink_ID, menu_gitClone_ID, menu_feedBack_ID;
 		const download_url_us = [
-			['https://gh.h233.eu.org/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@X.I.U/XIU2] 提供'],
+			//['https://gh.h233.eu.org/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@X.I.U/XIU2] 提供'],
 			//['https://gh.api.99988866.xyz/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [hunshcn/gh-proxy] 提供'], // 官方演示站用的人太多了
 			['https://gh.ddlc.top/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@mtr-static-official] 提供'],
 			//['https://gh2.yanqishui.work/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@HongjieCN] 提供'], // 解析错误
@@ -75,13 +75,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			//['https://download.fastgit.org', '德国', '[德国] - 该公益加速源由 [FastGit] 提供&#10;&#10;提示：希望大家尽量多使用前面的美国节点（每次随机 4 个来负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~', 'https://archive.fastgit.org'], // 证书过期
 			['https://mirror.ghproxy.com/https://github.com', '韩国', '[日本、韩国、德国等]（CDN 不固定） - 该公益加速源由 [ghproxy] 提供&#10;&#10;提示：希望大家尽量多使用前面的美国节点（每次随机 负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~'],
 			['https://ghproxy.net/https://github.com', '日本', '[日本 大阪] - 该公益加速源由 [ghproxy] 提供&#10;&#10;提示：希望大家尽量多使用前面的美国节点（每次随机 负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~'],
-			//['https://kkgithub.com', '香港', '[中国香港、日本、新加坡等] - 该公益加速源由 [help.kkgithub.com] 提供&#10;&#10;提示：希望大家尽量多使用前面的美国节点（每次随机 4 个来负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~'],
+			['https://kkgithub.com', '香港', '[中国香港、日本、新加坡等] - 该公益加速源由 [help.kkgithub.com] 提供&#10;&#10;提示：希望大家尽量多使用前面的美国节点（每次随机 4 个来负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~'],
 			//['https://download.incept.pw', '香港', '[中国香港] - 该公益加速源由 [FastGit 群组成员] 提供&#10;&#10;提示：希望大家尽量多使用前面的美国节点（每次随机 4 个来负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~'] // ERR_SSL_PROTOCOL_ERROR
 		];
 
 		const clone_url = [
 			['https://gitclone.com', '国内', '[中国 国内] - 该公益加速源由 [GitClone] 提供&#10;&#10; - 缓存：有&#10; - 首次比较慢，缓存后较快'],
-			//['https://kkgithub.com', '香港', '[中国香港、日本、新加坡等] - 该公益加速源由 [help.kkgithub.com] 提供&#10;&#10; - 缓存：无（或时间很短）'],
+			['https://kkgithub.com', '香港', '[中国香港、日本、新加坡等] - 该公益加速源由 [help.kkgithub.com] 提供&#10;&#10; - 缓存：无（或时间很短）'],
 			['https://hub.incept.pw', '香港', '[中国香港、美国] - 该公益加速源由 [FastGit 群组成员] 提供'],
 			['https://mirror.ghproxy.com/https://github.com', '韩国', '[日本、韩国、德国等]（CDN 不固定） - 该公益加速源由 [ghproxy] 提供&#10;&#10; - 缓存：无（或时间很短）'],
 			//['https://gh-proxy.com/https://github.com', '韩国', '[韩国] - 该公益加速源由 [ghproxy] 提供&#10;&#10; - 缓存：无（或时间很短）'],
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const raw_url = [
 			['https://raw.githubusercontent.com', 'Github 原生', '[日本 东京]'],
-			//['https://raw.kkgithub.com', '香港', '[中国香港、日本、新加坡等] - 该公益加速源由 [help.kkgithub.com] 提供&#10;&#10; - 缓存：无（或时间很短）'],
+			['https://raw.kkgithub.com', '香港', '[中国香港、日本、新加坡等] - 该公益加速源由 [help.kkgithub.com] 提供&#10;&#10; - 缓存：无（或时间很短）'],
 			['https://mirror.ghproxy.com/https://raw.githubusercontent.com', '韩国', '[日本、韩国、德国等]（CDN 不固定） - 该公益加速源由 [ghproxy] 提供&#10;&#10; - 缓存：无（或时间很短）'],
 			//['https://gh-proxy.com/https://raw.githubusercontent.com', '韩国 2', '[韩国] - 该公益加速源由 [ghproxy] 提供&#10;&#10; - 缓存：无（或时间很短）'],
 			['https://ghproxy.net/https://raw.githubusercontent.com', '日本 1', '[日本 大阪] - 该公益加速源由 [ghproxy] 提供&#10;&#10; - 缓存：无（或时间很短）'],
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			['https://fastraw.ixnic.net', '日本 3', '[日本 大阪] - 该公益加速源由 [FastGit 群组成员] 提供&#10;&#10; - 缓存：无（或时间很短）'],
 			//['https://gcore.jsdelivr.net/gh', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [JSDelivr CDN] 提供&#10;&#10; - 缓存：有&#10; - 不支持大小超过 50 MB 的文件&#10; - 不支持版本号格式的分支名（如 v1.2.3）'], // 变成 美国 Cloudflare CDN 了
 			['https://cdn.jsdelivr.us/gh', '其他 1', '[韩国、美国、马来西亚、罗马尼亚等]（CDN 不固定） - 该公益加速源由 [@ayao] 提供&#10;&#10; - 缓存：有'],
-			['https://jsdelivr.b-cdn.net/gh', '其他 2', '[中国香港、台湾、日本、新加坡等]（CDN 不固定） - 该公益加速源由 [@rttwyjz] 提供&#10;&#10; - 缓存：有'],
+			//['https://jsdelivr.b-cdn.net/gh', '其他 2', '[中国香港、台湾、日本、新加坡等]（CDN 不固定） - 该公益加速源由 [@rttwyjz] 提供&#10;&#10; - 缓存：有'],
 			['https://github.moeyy.xyz/https://raw.githubusercontent.com', '其他 3', '[新加坡、中国香港、日本等]（CDN 不固定）&#10;&#10; - 缓存：无（或时间很短）'],
 			['https://raw.cachefly.998111.xyz', '其他 4', '[新加坡、日本、印度等]（Anycast CDN 不固定） - 该公益加速源由 [@XxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxX0] 提供&#10;&#10; - 缓存：有（约 12 小时）'],
 			//['https://raw.incept.pw', '香港', '[中国香港、美国] - 该公益加速源由 [FastGit 群组成员] 提供&#10;&#10; - 缓存：无（或时间很短）'], // ERR_SSL_PROTOCOL_ERROR
@@ -143,9 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			'<svg class="octicon octicon-cloud-download" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path d="M9 12h2l-3 3-3-3h2V7h2v5zm3-8c0-.44-.91-3-4.5-3C5.08 1 3 2.92 3 5 1.02 5 0 6.52 0 8c0 1.53 1 3 3 3h3V9.7H3C1.38 9.7 1.3 8.28 1.3 8c0-.17.05-1.7 1.7-1.7h1.3V5c0-1.39 1.56-2.7 3.2-2.7 2.55 0 3.13 1.55 3.2 1.8v1.2H12c.81 0 2.7.22 2.7 2.2 0 2.09-2.25 2.2-2.7 2.2h-2V11h2c2.08 0 4-1.16 4-3.5C16 5.06 14.08 4 12 4z"></path></svg>'
 		], style = ['padding:0 6px; margin-right: -1px; border-radius: 2px; background-color: var(--XIU2-back-Color); border-color: rgba(27, 31, 35, 0.1); font-size: 11px; color: var(--XIU2-font-Color);'];
 
-		if (menu_rawFast == null){menu_rawFast = 1; GM_setValue('xiu2_menu_raw_fast', 1)}
-		if (GM_getValue('menu_rawDownLink') == null){GM_setValue('menu_rawDownLink', true)}
-		if (GM_getValue('menu_gitClone') == null){GM_setValue('menu_gitClone', true)}
+		if (menu_rawFast == null){menu_rawFast = 1; GM_setValue('xiu2_menu_raw_fast', 1)};
+		if (GM_getValue('menu_rawDownLink') == null){GM_setValue('menu_rawDownLink', true)};
+		if (GM_getValue('menu_gitClone') == null){GM_setValue('menu_gitClone', true)};
 		registerMenuCommand();
 		// 注册脚本菜单
 		function registerMenuCommand() {
@@ -153,10 +153,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (menu_feedBack_ID) {GM_unregisterMenuCommand(menu_rawFast_ID); GM_unregisterMenuCommand(menu_rawDownLink_ID); GM_unregisterMenuCommand(menu_gitClone_ID); GM_unregisterMenuCommand(menu_feedBack_ID); menu_rawFast = GM_getValue('xiu2_menu_raw_fast');}
 			// 避免在减少 raw 数组后，用户储存的数据大于数组而报错
 			if (menu_rawFast > raw_url.length - 1) menu_rawFast = 0
-			menu_rawDownLink_ID = GM_registerMenuCommand(`${GM_getValue('menu_rawDownLink')?'✅':'❌'} 项目列表单文件快捷下载 (☁)`, function(){if (GM_getValue('menu_rawDownLink') === true) {GM_setValue('menu_rawDownLink', false); GM_notification({text: `已关闭「项目列表单文件快捷下载 (☁)」功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_rawDownLink', true); GM_notification({text: `已开启「项目列表单文件快捷下载 (☁)」功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();}, {title: "点击开关「项目列表单文件快捷下载 (☁)」功能"});
+			menu_rawDownLink_ID = GM_registerMenuCommand(`${GM_getValue('menu_rawDownLink')?'✅':'❌'} 项目列表单文件快捷下载 (☁)`, function(){if (GM_getValue('menu_rawDownLink') == true) {GM_setValue('menu_rawDownLink', false); GM_notification({text: `已关闭「项目列表单文件快捷下载 (☁)」功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});} else {GM_setValue('menu_rawDownLink', true); GM_notification({text: `已开启「项目列表单文件快捷下载 (☁)」功能\n（点击刷新网页后生效）`, timeout: 3500, onclick: function(){location.reload();}});}registerMenuCommand();}, {title: "点击开关「项目列表单文件快捷下载 (☁)」功能"});
 			if (GM_getValue('menu_rawDownLink')) menu_rawFast_ID = GM_registerMenuCommand(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'][menu_rawFast]} [ ${raw_url[menu_rawFast][1]} ] 加速源 (☁) - 点击切换`, menu_toggle_raw_fast, {title: "点击切换「项目列表单文件快捷下载 (☁)」功能的加速源"});
-			menu_gitClone_ID = GM_registerMenuCommand(`${GM_getValue('menu_gitClone')?'✅':'❌'} 添加 git clone 命令`, function(){if (GM_getValue('menu_gitClone') === true) {GM_setValue('menu_gitClone', false); GM_notification({text: `已关闭「添加 git clone 命令」功能`, timeout: 3500});} else {GM_setValue('menu_gitClone', true); GM_notification({text: `已开启「添加 git clone 命令」功能`, timeout: 3500});}registerMenuCommand();}, {title: "点击开关「添加 git clone 命令」功能"});
-			menu_feedBack_ID = GM_registerMenuCommand('💬 反馈问题 & 功能建议', function () {GM_openInTab('https://github.com/XIU2/UserScript/issues/new', {active: true,insert: true,setParent: true});GM_openInTab('https://greasyfork.org/zh-CN/scripts/412245/feedback', {active: true,insert: true,setParent: true});}, {title: "点击前往反馈问题或提出建议"});
+			menu_gitClone_ID = GM_registerMenuCommand(`${GM_getValue('menu_gitClone')?'✅':'❌'} 添加 git clone 命令`, function(){if (GM_getValue('menu_gitClone') == true) {GM_setValue('menu_gitClone', false); GM_notification({text: `已关闭「添加 git clone 命令」功能`, timeout: 3500});} else {GM_setValue('menu_gitClone', true); GM_notification({text: `已开启「添加 git clone 命令」功能`, timeout: 3500});}registerMenuCommand();}, {title: "点击开关「添加 git clone 命令」功能"});
+			menu_feedBack_ID = GM_registerMenuCommand('💬 反馈问题 & 功能建议', function () {GM_openInTab('https://github.com/XIU2/UserScript', {active: true,insert: true,setParent: true});GM_openInTab('https://greasyfork.org/zh-CN/scripts/412245/feedback', {active: true,insert: true,setParent: true});}, {title: "点击前往反馈问题或提出建议"});
 		}
 
 		// 切换加速源
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			addRawDownLink(); // 添加新加速源
 			GM_notification({text: "已切换加速源为：" + raw_url[menu_rawFast][1], timeout: 3000}); // 提示消息
 			registerMenuCommand(); // 重新注册脚本菜单
-		}
+		};
 
 		colorMode(); // 适配白天/夜间主题模式
 		setTimeout(addRawFile, 1000); // Raw 加速
@@ -231,10 +231,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Release
 		function addRelease() {
-			let html = document.querySelectorAll('.Box-footer');
-			if (html.length === 0 || location.pathname.indexOf('/releases') === -1) return;
+			let html = document.querySelectorAll('.Box-footer'); if (html.length == 0 || location.pathname.indexOf('/releases') == -1) return
 			let divDisplay = 'margin-left: -90px;', new_download_url = get_New_download_url();
-			if (document.documentElement.clientWidth > 755) {divDisplay = 'margin-top: -3px;margin-left: 8px;display: inherit;';} // 调整小屏幕时的样式
+			if (document.documentElement.clientWidth > 755) {divDisplay = 'margin-top: -3px;margin-left: 8px;display: inherit;';}; // 调整小屏幕时的样式
 			for (const current of html) {
 				if (current.querySelector('.XIU2-RS')) continue
 				current.querySelectorAll('li.Box-row a').forEach(function (_this) {
@@ -257,8 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Download ZIP
 		function addDownloadZIP(target) {
-			let html = target.querySelector('ul[class^=List__ListBox-sc-] ul[class^=List__ListBox-sc-]>li:last-child');
-			if (!html) return;
+			let html = target.querySelector('ul[class^=List__ListBox-sc-] ul[class^=List__ListBox-sc-]>li:last-child');if (!html) return
 			let href_script = document.querySelector('react-partial[partial-name=repos-overview]>script[data-target="react-partial.embeddedData"]'),
 				href_slice = href_script.textContent.slice(href_script.textContent.indexOf('"zipballUrl":"')+14),
 				href = href_slice.slice(0, href_slice.indexOf('"')),
@@ -292,13 +290,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Git Clone
 		function addGitClone(target) {
-			let html = target.querySelector('input[value^="https:"]');
-			if (!html) return;
+			let html = target.querySelector('input[value^="https:"]');if (!html) return
 			if (!html.nextElementSibling) return false;
-			let href_split = html.value.replace(/https:\/\/\w+.\w+/g, ''),
+			let href_split = html.value.split(location.host)[1],
 				html_parent = '<div style="margin-top: 4px;" class="XIU2-GC ' + html.parentElement.className + '">',
 				url = '', _html = '', _gitClone = '';
-			html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮
+			html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮（考虑到能直接点击复制，就不再重复实现复制按钮事件了）
 			if (GM_getValue('menu_gitClone')) {_gitClone='git clone '; html.value = _gitClone + html.value; html.setAttribute('value', html.value);}
 			// 克隆原 Git Clone 元素
 			let html_clone = html.cloneNode(true);
@@ -308,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				} else {
 					url = clone_url[i][0] + href_split
 				}
-				html_clone.title = `${url}\n加速源：${clone_url[i][1]} （点击可直接复制）\n${clone_url[i][2].replaceAll('&#10;','\n')}`
+				html_clone.title = `${url}\n\n${clone_url[i][2].replaceAll('&#10;','\n')}\n\n提示：点击文字可直接复制`
 				html_clone.setAttribute('value', _gitClone + url)
 				_html += html_parent + html_clone.outerHTML + '</div>'
 			}
@@ -318,19 +315,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Git Clone SSH
 		function addGitCloneSSH(target) {
-			let html = target.querySelector('input[value^="git@"]');
-			if (!html) return;
+			let html = target.querySelector('input[value^="git@"]');if (!html) return
 			if (!html.nextElementSibling) return false;
 			let href_split = html.value.split(':')[1],
 				html_parent = '<div style="margin-top: 4px;" class="XIU2-GCS ' + html.parentElement.className + '">',
 				url = '', _html = '', _gitClone = '';
-			html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮
+			html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮（考虑到能直接点击复制，就不再重复实现复制按钮事件了）
 			if (GM_getValue('menu_gitClone')) {_gitClone='git clone '; html.value = _gitClone + html.value; html.setAttribute('value', html.value);}
 			// 克隆原 Git Clone SSH 元素
 			let html_clone = html.cloneNode(true);
 			for (let i=0;i<clone_ssh_url.length;i++) {
 				url = clone_ssh_url[i][0] + href_split
-				html_clone.title = `${url}\n加速源：${clone_ssh_url[i][1]} （点击可直接复制）\n${clone_ssh_url[i][2].replaceAll('&#10;','\n')}`
+				html_clone.title = `${url}\n\n${clone_ssh_url[i][2].replaceAll('&#10;','\n')}\n\n提示：点击文字可直接复制`
 				html_clone.setAttribute('value', _gitClone + url)
 				_html += html_parent + html_clone.outerHTML + '</div>'
 			}
@@ -340,8 +336,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Raw
 		function addRawFile() {
-			let html = document.querySelector('a[data-testid="raw-button"]');
-			if (!html) return;
+			let html = document.querySelector('a[data-testid="raw-button"]');if (!html) return
 			let href = location.href.replace(`https://${location.host}`,''),
 				href2 = href.replace('/blob/','/'),
 				url = '', _html = '';
@@ -390,15 +385,14 @@ document.addEventListener("DOMContentLoaded", () => {
 					cntElm_a = trElm.querySelector('[role="rowheader"] > .css-truncate.css-truncate-target.d-block.width-fit > a, .react-directory-truncate>a'),
 					Name = cntElm_a.innerText,
 					href = cntElm_a.getAttribute('href'),
-					href2 = href.replace('/blob/','/'), url, url_name, url_tip;
+					href2 = href.replace('/blob/','/'), url = '';
 				if ((raw_url[menu_rawFast][0].indexOf('/gh') + 3 === raw_url[menu_rawFast][0].length) && raw_url[menu_rawFast][0].indexOf('cdn.staticaly.com') === -1) {
 					url = raw_url[menu_rawFast][0] + href.replace('/blob/','@');
 				} else {
 					url = raw_url[menu_rawFast][0] + href2;
 				}
 
-				url_name = raw_url[menu_rawFast][1]; url_tip = raw_url[menu_rawFast][2];
-				fileElm.insertAdjacentHTML('afterend', `<a href="${url}?DS_DOWNLOAD" download="${Name}" target="_blank" rel="noreferrer noopener nofollow" class="fileDownLink" style="display: none;" title="「${url_name}」&#10;&#10;左键点击下载文件（注意：鼠标点击 [☁] 图标进行下载，而不是文件名！）&#10;&#10;${url_tip}&#10;&#10;提示：点击页面右侧飘浮着的 TamperMonkey 扩展图标中的菜单「 [${raw_url[menu_rawFast][1]}] 加速源 (☁) 」即可切换。">${svg[0]}</a>`);
+				fileElm.insertAdjacentHTML('afterend', `<a href="${url}?DS_DOWNLOAD" download="${Name}" target="_blank" rel="noreferrer noopener nofollow" class="fileDownLink" style="display: none;" title="「${raw_url[menu_rawFast][1]}」&#10;&#10;左键点击下载文件（注意：鼠标点击 [☁] 图标进行下载，而不是文件名！）&#10;&#10;${raw_url[menu_rawFast][2]}&#10;&#10;提示：点击页面右侧飘浮着的 TamperMonkey 扩展图标中的菜单「 [${raw_url[menu_rawFast][1]}] 加速源 (☁) 」即可切换。">${svg[0]}</a>`);
 				// 绑定鼠标事件
 				trElm.onmouseover = mouseOverHandler;
 				trElm.onmouseout = mouseOutHandler;
@@ -461,10 +455,10 @@ document.addEventListener("DOMContentLoaded", () => {
 					backColor = '#161a21'; fontColor = '#97a0aa';
 				}
 			} else if (document.lastElementChild.dataset.colorMode === 'auto') { // 如果是自动模式
-				if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || document.lastElementChild.dataset.lightTheme.indexOf('dark') > -1) { // 如果浏览器是夜间模式 或 白天模式是 dark 的情况
+				if (window.matchMedia('(prefers-color-scheme: dark)').matches || document.lastElementChild.dataset.lightTheme.indexOf('dark') > -1) { // 如果浏览器是夜间模式 或 白天模式是 dark 的情况
 					if (document.lastElementChild.dataset.darkTheme === 'dark_dimmed') {
 						backColor = '#272e37'; fontColor = '#768390';
-					} else if (document.lastElementChild.dataset.darkTheme.indexOf('light') === -1) { // 排除夜间模式是 light 的情况
+					} else if (document.lastElementChild.dataset.darkTheme.indexOf('light') == -1) { // 排除夜间模式是 light 的情况
 						backColor = '#161a21'; fontColor = '#97a0aa';
 					}
 				}
