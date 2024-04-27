@@ -231,8 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Release
 		function addRelease() {
-			let html = document.querySelectorAll('.Box-footer');
-			if (html.length === 0 || location.pathname.indexOf('/releases') === -1) return;
+			let html = document.querySelectorAll('.Box-footer'); if (html.length == 0 || location.pathname.indexOf('/releases') == -1) return
 			let divDisplay = 'margin-left: -90px;', new_download_url = get_New_download_url();
 			if (document.documentElement.clientWidth > 755) {divDisplay = 'margin-top: -3px;margin-left: 8px;display: inherit;';}; // 调整小屏幕时的样式
 			for (const current of html) {
@@ -257,8 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Download ZIP
 		function addDownloadZIP(target) {
-			let html = target.querySelector('ul[class^=List__ListBox-sc-] ul[class^=List__ListBox-sc-]>li:last-child');
-			if (!html) return;
+			let html = target.querySelector('ul[class^=List__ListBox-sc-] ul[class^=List__ListBox-sc-]>li:last-child');if (!html) return
 			let href_script = document.querySelector('react-partial[partial-name=repos-overview]>script[data-target="react-partial.embeddedData"]'),
 				href_slice = href_script.textContent.slice(href_script.textContent.indexOf('"zipballUrl":"')+14),
 				href = href_slice.slice(0, href_slice.indexOf('"')),
@@ -387,15 +385,14 @@ document.addEventListener("DOMContentLoaded", () => {
 					cntElm_a = trElm.querySelector('[role="rowheader"] > .css-truncate.css-truncate-target.d-block.width-fit > a, .react-directory-truncate>a'),
 					Name = cntElm_a.innerText,
 					href = cntElm_a.getAttribute('href'),
-					href2 = href.replace('/blob/','/'), url, url_name, url_tip;
+					href2 = href.replace('/blob/','/'), url = '';
 				if ((raw_url[menu_rawFast][0].indexOf('/gh') + 3 === raw_url[menu_rawFast][0].length) && raw_url[menu_rawFast][0].indexOf('cdn.staticaly.com') === -1) {
 					url = raw_url[menu_rawFast][0] + href.replace('/blob/','@');
 				} else {
 					url = raw_url[menu_rawFast][0] + href2;
 				}
 
-				url_name = raw_url[menu_rawFast][1]; url_tip = raw_url[menu_rawFast][2];
-				fileElm.insertAdjacentHTML('afterend', `<a href="${url}?DS_DOWNLOAD" download="${Name}" target="_blank" rel="noreferrer noopener nofollow" class="fileDownLink" style="display: none;" title="「${url_name}」&#10;&#10;左键点击下载文件（注意：鼠标点击 [☁] 图标进行下载，而不是文件名！）&#10;&#10;${url_tip}&#10;&#10;提示：点击页面右侧飘浮着的 TamperMonkey 扩展图标中的菜单「 [${raw_url[menu_rawFast][1]}] 加速源 (☁) 」即可切换。">${svg[0]}</a>`);
+				fileElm.insertAdjacentHTML('afterend', `<a href="${url}?DS_DOWNLOAD" download="${Name}" target="_blank" rel="noreferrer noopener nofollow" class="fileDownLink" style="display: none;" title="「${raw_url[menu_rawFast][1]}」&#10;&#10;左键点击下载文件（注意：鼠标点击 [☁] 图标进行下载，而不是文件名！）&#10;&#10;${raw_url[menu_rawFast][2]}&#10;&#10;提示：点击页面右侧飘浮着的 TamperMonkey 扩展图标中的菜单「 [${raw_url[menu_rawFast][1]}] 加速源 (☁) 」即可切换。">${svg[0]}</a>`);
 				// 绑定鼠标事件
 				trElm.onmouseover = mouseOverHandler;
 				trElm.onmouseout = mouseOutHandler;
@@ -458,7 +455,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					backColor = '#161a21'; fontColor = '#97a0aa';
 				}
 			} else if (document.lastElementChild.dataset.colorMode === 'auto') { // 如果是自动模式
-				if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || document.lastElementChild.dataset.lightTheme.indexOf('dark') > -1) { // 如果浏览器是夜间模式 或 白天模式是 dark 的情况
+				if (window.matchMedia('(prefers-color-scheme: dark)').matches || document.lastElementChild.dataset.lightTheme.indexOf('dark') > -1) { // 如果浏览器是夜间模式 或 白天模式是 dark 的情况
 					if (document.lastElementChild.dataset.darkTheme === 'dark_dimmed') {
 						backColor = '#272e37'; fontColor = '#768390';
 					} else if (document.lastElementChild.dataset.darkTheme.indexOf('light') == -1) { // 排除夜间模式是 light 的情况
