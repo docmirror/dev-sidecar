@@ -14,7 +14,7 @@ import DevSidecar from '@docmirror/dev-sidecar'
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 
-const curVersion = pkg.version
+const curVersion = pkg.version + '-myself'
 const isPreRelease = curVersion.includes('-')
 
 function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
