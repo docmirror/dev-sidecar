@@ -40,6 +40,66 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
     .pipe(fs.createWriteStream(filePath))
 }
 
+function parseVersion (version) {
+  const matched = version.match(/^v?(\d+\.\d+\.\d+)(.*)$/)
+  const versionArr = matched[1].split('.')
+  return {
+    major: parseInt(versionArr[0]),
+    minor: parseInt(versionArr[1]),
+    patch: parseInt(versionArr[2]),
+    suffix: matched[2]
+  }
+}
+
+/**
+ * 比较版本号
+ *
+ * @param version     线上版本号
+ * @param curVersion  当前版本号
+ * @returns {boolean} 比较线上版本号是否为更新版本，1=是|0=相等|-1=否|-99=出现异常，比较结果未知
+ */
+function isNewVersion (version, curVersion) {
+  if (version === curVersion) {
+    return 0
+  }
+
+  try {
+    const versionObj = parseVersion(version)
+    const curVersionObj = parseVersion(curVersion)
+    if (versionObj.major > curVersionObj.major) {
+      return 1 // 大版本号更大，为更新版本
+    }
+
+    if (curVersionObj.major === versionObj.major) {
+      if (versionObj.minor > curVersionObj.minor) {
+        return 1 // 中版本号更大，为更新版本
+      }
+
+      if (curVersionObj.minor === versionObj.minor) {
+        if (versionObj.patch > curVersionObj.patch) {
+          return 1 // 小版本号更大，为更新版本
+        }
+
+        if (versionObj.patch === curVersionObj.patch) {
+          if (versionObj.suffix && curVersionObj.suffix) {
+            // 当两个后缀版本号都存在时，直接比较后缀版本号字符串的大小
+            if (versionObj.suffix > curVersionObj.suffix) {
+              return 1
+            }
+          } else if (!versionObj.suffix && curVersionObj.suffix) {
+            // 线上版本号没有后缀版本号，说明为正式版本，为更新版本
+            return 1
+          }
+        }
+      }
+    }
+  } catch (e) {
+    log.error(`比对版本失败，当前版本号：${curVersion}，比对版本号：${version}, error:`, e)
+    return -99
+  }
+  return -1
+}
+
 /**
  * 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
  *
@@ -119,7 +179,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
             const versionData = data[i]
 
             if (!versionData.assets || versionData.assets.length === 0) {
-              continue // 跳过空版本，即上传过安装包
+              continue // 跳过空版本，即未上传过安装包
             }
             if (!isPreRelease && DevSidecar.api.config.get().app.skipPreRelease && versionData.name.includes('-')) {
               continue // 跳过预发布版本
@@ -127,12 +187,15 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
 
             // log.info('最近正式版本数据：', versionData)
 
+            // 获取版本号
             let version = versionData.name
             if (version.indexOf('v') === 0) {
               version = version.substring(1)
             }
-            if (version !== curVersion) {
-              log.info('检查更新-发现新版本:', version)
+
+            // 比对版本号，是否为新版本
+            if (isNewVersion(version, curVersion) > 0) {
+              log.info(`检查更新：发现新版本 '${version}'，当前版本号为 '${curVersion}'`)
               win.webContents.send('update', {
                 key: 'available',
                 value: {
@@ -143,11 +206,11 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
                 }
               })
             } else {
-              log.info('检查更新-没有新版本，最新版本号为:', version)
+              log.info(`检查更新：没有新版本，最近发布的版本号为 '${version}'，而当前版本号为 '${curVersion}'`)
               win.webContents.send('update', { key: 'notAvailable' })
             }
 
-            return // 只检查最近一个正式版本
+            return // 只检查最近一个版本
           }
 
           log.info('检查更新-没有正式版本数据')
