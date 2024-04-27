@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		'use strict';
 		var backColor = '#ffffff', fontColor = '#888888', menu_rawFast = GM_getValue('xiu2_menu_raw_fast'), menu_rawFast_ID, menu_rawDownLink_ID, menu_gitClone_ID, menu_feedBack_ID;
 		const download_url_us = [
-			['https://gh.h233.eu.org/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@X.I.U/XIU2] 提供'],
+			//['https://gh.h233.eu.org/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@X.I.U/XIU2] 提供'],
 			//['https://gh.api.99988866.xyz/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [hunshcn/gh-proxy] 提供'], // 官方演示站用的人太多了
 			['https://gh.ddlc.top/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@mtr-static-official] 提供'],
 			//['https://gh2.yanqishui.work/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@HongjieCN] 提供'], // 解析错误
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			['https://fastraw.ixnic.net', '日本 3', '[日本 大阪] - 该公益加速源由 [FastGit 群组成员] 提供&#10;&#10; - 缓存：无（或时间很短）'],
 			//['https://gcore.jsdelivr.net/gh', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [JSDelivr CDN] 提供&#10;&#10; - 缓存：有&#10; - 不支持大小超过 50 MB 的文件&#10; - 不支持版本号格式的分支名（如 v1.2.3）'], // 变成 美国 Cloudflare CDN 了
 			['https://cdn.jsdelivr.us/gh', '其他 1', '[韩国、美国、马来西亚、罗马尼亚等]（CDN 不固定） - 该公益加速源由 [@ayao] 提供&#10;&#10; - 缓存：有'],
-			['https://jsdelivr.b-cdn.net/gh', '其他 2', '[中国香港、台湾、日本、新加坡等]（CDN 不固定） - 该公益加速源由 [@rttwyjz] 提供&#10;&#10; - 缓存：有'],
+			//['https://jsdelivr.b-cdn.net/gh', '其他 2', '[中国香港、台湾、日本、新加坡等]（CDN 不固定） - 该公益加速源由 [@rttwyjz] 提供&#10;&#10; - 缓存：有'],
 			['https://github.moeyy.xyz/https://raw.githubusercontent.com', '其他 3', '[新加坡、中国香港、日本等]（CDN 不固定）&#10;&#10; - 缓存：无（或时间很短）'],
 			['https://raw.cachefly.998111.xyz', '其他 4', '[新加坡、日本、印度等]（Anycast CDN 不固定） - 该公益加速源由 [@XxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxX0] 提供&#10;&#10; - 缓存：有（约 12 小时）'],
 			//['https://raw.incept.pw', '香港', '[中国香港、美国] - 该公益加速源由 [FastGit 群组成员] 提供&#10;&#10; - 缓存：无（或时间很短）'], // ERR_SSL_PROTOCOL_ERROR
