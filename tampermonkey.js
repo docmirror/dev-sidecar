@@ -2,7 +2,7 @@
  * 篡改猴（Tampermonkey）| 油猴（Greasemonkey）浏览器脚本扩展
  *
  * @version        0.1.5
- * @since          2024-04-28 10:16
+ * @since          2024-04-28 10:26
  * @author         王良
  * @authorHomePage https://wangliang1024.cn
  * @remark         当前脚本为仿照的版本，并非篡改猴插件的源码，仅供学习参考。
