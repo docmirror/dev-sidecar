@@ -293,7 +293,7 @@
 		} else {
 			title = "点击隐藏「油猴插件」的操作界面";
 		}
-		context.arrowElement.title = title + "\n\nCtrl+Alt+H：完全隐藏油猴插件\nCtrl+Alt+S：显示油猴插件"
+		context.arrowElement.title = title + "\n\n快捷键：\nCtrl+Alt+H：完全隐藏油猴插件\nCtrl+Alt+S：显示油猴插件"
 	}
 
 	// 隐藏插件
