@@ -109,7 +109,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
 
         function onFree () {
           const url = `${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
-          const start = new Date().getTime()
+          const start = new Date()
           log.info('代理请求:', url, rOptions.method, rOptions.servername ? ', sni: ' + rOptions.servername : '')
           let isDnsIntercept
           if (dnsConfig) {
@@ -147,8 +147,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           // log.debug('agent:', rOptions.agent)
           // log.debug('agent.options:', rOptions.agent.options)
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
-            const end = new Date().getTime()
-            const cost = end - start
+            const cost = new Date() - start
             if (rOptions.protocol === 'https:') {
               log.info('代理请求返回:', url, cost + 'ms')
             }
@@ -161,8 +160,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
 
           // 代理请求的事件监听
           proxyReq.on('timeout', () => {
-            const end = new Date().getTime()
-            const cost = end - start
+            const cost = new Date() - start
             log.error('代理请求超时', rOptions.protocol, rOptions.hostname, rOptions.path, cost + 'ms')
             countSlow(isDnsIntercept, 'to slow  ' + cost + 'ms')
             proxyReq.end()
@@ -172,15 +170,13 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             reject(error)
           })
           proxyReq.on('error', (e) => {
-            const end = new Date().getTime()
-            const cost = end - start
+            const cost = new Date() - start
             log.error('代理请求错误', e.code, e.message, rOptions.hostname, rOptions.path, cost + 'ms')
             countSlow(isDnsIntercept, 'error:' + e.message)
             reject(e)
           })
           proxyReq.on('aborted', () => {
-            const end = new Date().getTime()
-            const cost = end - start
+            const cost = new Date() - start
             log.error('代理请求被取消', rOptions.hostname, rOptions.path, cost + 'ms')
 
             if (cost > MAX_SLOW_TIME) {

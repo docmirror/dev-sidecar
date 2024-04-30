@@ -50,7 +50,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
 function connect (req, cltSocket, head, hostname, port, dnsConfig/* , sniRegexpMap */) {
   // tunneling https
   // log.info('connect:', hostname, port)
-  const start = new Date().getTime()
+  const start = new Date()
   let isDnsIntercept = null
   const hostport = `${hostname}:${port}`
   // const replaceSni = matchUtil.matchHostname(sniRegexpMap, hostname, 'sni')
@@ -102,13 +102,13 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig/* , sniRegexpM
       log.error(`cltSocket error:   ${hostport}, errorMsg: ${e.message}`)
     })
     proxySocket.on('timeout', () => {
-      const end = new Date().getTime()
-      log.info('代理socket timeout：', hostname, port, (end - start) + 'ms')
+      const cost = new Date() - start
+      log.info('代理socket timeout：', hostname, port, cost + 'ms')
     })
     proxySocket.on('error', (e) => {
       // 连接失败，可能被GFW拦截，或者服务端拥挤
-      const end = new Date().getTime()
-      log.error('代理连接失败：', e.message, hostname, port, (end - start) + 'ms')
+      const cost = new Date() - start
+      log.error('代理连接失败：', e.message, hostname, port, cost + 'ms')
       cltSocket.destroy()
       if (isDnsIntercept) {
         const { dns, ip, hostname } = isDnsIntercept
