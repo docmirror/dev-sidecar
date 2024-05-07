@@ -30,7 +30,7 @@
       </template>
       <template v-else>
         1、点击右上角“点此去安装按钮”，打开证书<br/>
-        2、然后按如下图步骤将根证书添加到<b style="color:red">信任的根证书颁发机构</b><br/>
+        2、然后按如下图步骤将根证书添加到<b style="color:red">信任的根证书颁发机构</b>
       </template>
     </div>
     <img width="100%" :src="setupImage"/>

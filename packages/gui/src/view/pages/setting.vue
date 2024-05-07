@@ -28,8 +28,8 @@
           启用远程配置
         </a-checkbox>
         <div class="form-help">
-          应用启动时会向下面的地址请求配置补丁，获得最新的优化后的github访问体验。
-          <br/>如果您觉得远程更新配置有安全风险，请关闭此功能。
+          应用启动时会向下面的地址请求配置补丁，获得最新的优化后的github访问体验。<br/>
+          如果您觉得远程更新配置有安全风险，请关闭此功能。
         </div>
       </a-form-item>
       <a-form-item label="远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -38,8 +38,8 @@
       <a-form-item label="重载远程配置" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-button :disabled="config.app.remoteConfig.enabled === false" :loading="reloadLoading" icon="sync" @click="reloadRemoteConfig()">重载远程配置</a-button>
         <div class="form-help">
-          注意，部分远程配置文件所在站点，修改内容后可能需要等待一段时间才能生效。
-          <br/>如果重载远程配置后发现下载的还是修改前的内容，请稍等片刻再重试。
+          注意，部分远程配置文件所在站点，修改内容后可能需要等待一段时间才能生效。<br/>
+          如果重载远程配置后发现下载的还是修改前的内容，请稍等片刻再重试。
         </div>
       </a-form-item>
       <a-form-item label="主题设置" :label-col="labelCol" :wrapper-col="wrapperCol">
