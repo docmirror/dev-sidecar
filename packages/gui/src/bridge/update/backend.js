@@ -56,7 +56,7 @@ function parseVersion (version) {
  *
  * @param version     线上版本号
  * @param curVersion  当前版本号
- * @returns {boolean} 比较线上版本号是否为更新版本，1=是|0=相等|-1=否|-99=出现异常，比较结果未知
+ * @returns {number} 比较线上版本号是否为更新版本，1=是|0=相等|-1=否|-99=出现异常，比较结果未知
  */
 function isNewVersion (version, curVersion) {
   if (version === curVersion) {
@@ -72,23 +72,23 @@ function isNewVersion (version, curVersion) {
 
     if (curVersionObj.major === versionObj.major) {
       if (versionObj.minor > curVersionObj.minor) {
-        return 1 // 中版本号更大，为更新版本
+        return 2 // 中版本号更大，为更新版本
       }
 
       if (curVersionObj.minor === versionObj.minor) {
         if (versionObj.patch > curVersionObj.patch) {
-          return 1 // 小版本号更大，为更新版本
+          return 3 // 小版本号更大，为更新版本
         }
 
         if (versionObj.patch === curVersionObj.patch) {
           if (versionObj.suffix && curVersionObj.suffix) {
             // 当两个后缀版本号都存在时，直接比较后缀版本号字符串的大小
             if (versionObj.suffix > curVersionObj.suffix) {
-              return 1
+              return 41
             }
           } else if (!versionObj.suffix && curVersionObj.suffix) {
             // 线上版本号没有后缀版本号，说明为正式版本，为更新版本
-            return 1
+            return 42
           }
         }
       }
@@ -194,7 +194,9 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
             }
 
             // 比对版本号，是否为新版本
-            if (isNewVersion(version, curVersion) > 0) {
+            const isNew = isNewVersion(version, curVersion)
+            log.info(`版本比对结果：isNewVersion('${version}', '${curVersion}') = ${isNew}`)
+            if (isNew > 0) {
               log.info(`检查更新：发现新版本 '${version}'，当前版本号为 '${curVersion}'`)
               win.webContents.send('update', {
                 key: 'available',
