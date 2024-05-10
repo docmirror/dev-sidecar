@@ -26,6 +26,7 @@ jobs:
 
     - name: Build
       run: |
+        pwd
         cd packages/gui
         npm run electron:build
 
