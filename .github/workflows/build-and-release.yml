@@ -19,12 +19,14 @@ jobs:
       shell: pwsh
       run: |
         npm install -g lerna@6
+        npm install phantomjs -g
 
     - name: Build
       shell: pwsh
       run: |
         pwd
         ls
+        npm install
         lerna bootstrap
         cd packages/gui
         pwd
