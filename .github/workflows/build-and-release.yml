@@ -20,7 +20,9 @@ jobs:
         npm install -g lerna@6
 
     - name: Lerna Bootstrap
-      run: lerna bootstrap
+      run: 
+        pwd
+        lerna bootstrap
 
     - name: Build
       run: |
