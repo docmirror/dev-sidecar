@@ -24,8 +24,6 @@ jobs:
         pwd
         ls
         npm install
-        lerna bootstrap 
-        pwd
         cd packages/gui
         pwd
         npm run electron:build
