@@ -28,6 +28,7 @@ jobs:
       run: |
         pwd
         cd packages/gui
+        pwd
         npm run electron:build
 
     - name: 创建 Release
