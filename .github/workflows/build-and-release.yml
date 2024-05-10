@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build-and-release:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
@@ -16,14 +16,16 @@ jobs:
         node-version: '16'
 
     - name: 安装 Lerna and PhantomJS
+      shell: pwsh
       run: |
         npm install -g lerna@6
 
     - name: Build
+      shell: pwsh
       run: |
         pwd
         ls
-        npm install
+        lerna bootstrap
         cd packages/gui
         pwd
         npm run electron:build
