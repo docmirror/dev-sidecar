@@ -23,7 +23,8 @@ jobs:
       run: |
         pwd
         ls
-        lerna bootstrap --use-workspaces
+        npm install
+        lerna bootstrap 
         pwd
         cd packages/gui
         pwd
