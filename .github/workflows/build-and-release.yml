@@ -18,7 +18,6 @@ jobs:
     - name: 安装 Lerna and PhantomJS
       run: |
         npm install -g lerna
-        npm install -g phantomjs
 
     - name: Lerna Bootstrap
       run: lerna bootstrap
