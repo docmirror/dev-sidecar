@@ -22,6 +22,7 @@ jobs:
     - name: Build
       run: |
         pwd
+        ls
         lerna bootstrap
         pwd
         cd packages/gui
