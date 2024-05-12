@@ -325,7 +325,7 @@ module.exports = {
         enabled: true,
         interval: 300000,
         hostnameList: ['github.com'],
-        dnsProviders: ['usa', 'quad9', 'rubyfish']
+        dnsProviders: ['safe360', 'cloudflare', 'rubyfish']
       }
     }
   },

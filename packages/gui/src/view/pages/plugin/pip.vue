@@ -32,6 +32,12 @@
             <a-radio-button value="https://mirrors.aliyun.com/pypi/simple/">
               aliyun镜像
             </a-radio-button>
+            <a-radio-button value="https://mirrors.bfsu.edu.cn/pypi/web/simple">
+              北京外国语大学镜像
+            </a-radio-button>
+            <a-radio-button value="https://mirror.nju.edu.cn/pypi/web/simple">
+              南京大学镜像
+            </a-radio-button>
           </a-radio-group>
           <div class="form-help">设置后立即生效，即使关闭ds也会继续保持</div>
         </a-form-item>
