@@ -24,6 +24,11 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
       // 返回预设的IP地址集
       return ['20.27.177.116', '20.205.243.168', '20.200.245.245']
     }
+    if (hostname === 'collector.github.com') {
+      log.info('域名collector.github.com已根据AdGuard DNS filter规则拦截')
+      // 返回预设的IP地址集
+      return ['0.0.0.0']
+    }
     if (hostname === 'hub.docker.com') {
       log.info('域名hub.docker.com使用内置IP集')
       // 返回预设的IP地址集
