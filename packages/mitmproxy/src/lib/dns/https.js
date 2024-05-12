@@ -5,12 +5,12 @@ const log = require('../../utils/util.log')
 const dohQueryAsync = promisify(doh.query)
 
 module.exports = class DNSOverHTTPS extends BaseDNS {
-  constructor(dnsServer) {
+  constructor (dnsServer) {
     super()
     this.dnsServer = dnsServer
   }
 
-  async _lookup(hostname) {
+  async _lookup (hostname) {
     // 直接判断域名是否为example.com
     if (hostname === 'github.com') {
       log.info('域名github.com使用内置IP集')
