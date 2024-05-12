@@ -19,10 +19,15 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
       // 20.27.177.113日本(三网平均延时88MS(三网优秀)) 20.205.243.166新加坡(三网平均延时96MS(电信联通106.5平均延时，移动平均77MS)) 20.200.245.247韩国(三网平均108ms(移动平均120ms))
     }
     // 直接判断域名是否为example.com
-    if (hostname === 'github.com') {
-      log.info('域名github.com使用内置IP集')
+    if (hostname === 'api.github.com') {
+      log.info('域名api.github.com使用内置IP集')
       // 返回预设的IP地址集
       return ['20.27.177.116', '20.205.243.168', '20.200.245.245']
+    }
+    if (hostname === 'hub.docker.com') {
+      log.info('域名hub.docker.com使用内置IP集')
+      // 返回预设的IP地址集
+      return ['54.156.140.159', '52.44.227.212', '44.221.37.199']
     }
     try {
       const result = await dohQueryAsync({ url: this.dnsServer }, [{ type: 'A', name: hostname }])
