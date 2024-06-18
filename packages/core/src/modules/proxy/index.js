@@ -176,6 +176,9 @@ module.exports = {
       // 网站ICP备案查询
       '*.icpapi.com': true,
 
+      // cloudflare
+      'challenges.cloudflare.com': true,
+
       // endregion
 
       // 本地地址，无需代理
