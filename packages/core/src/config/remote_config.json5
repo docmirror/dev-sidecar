@@ -39,7 +39,7 @@
       "objects-origin.githubusercontent.com": true,
 
       // cloudflare：排除以下域名，cloudflare的人机校验会更快，成功率更高。
-      'challenges.cloudflare.com': true
+      "challenges.cloudflare.com": true
     }
   },
   "plugin": {
