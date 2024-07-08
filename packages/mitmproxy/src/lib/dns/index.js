@@ -4,7 +4,7 @@ const DNSOverIpAddress = require('./ipaddress.js')
 const matchUtil = require('../../utils/util.match')
 
 module.exports = {
-  initDNS (dnsProviders) {
+  initDNS (dnsProviders, preSetIpList) {
     const dnsMap = {}
     for (const provider in dnsProviders) {
       const conf = dnsProviders[provider]
@@ -12,7 +12,7 @@ module.exports = {
         dnsMap[provider] = new DNSOverIpAddress(conf.server)
         continue
       }
-      dnsMap[provider] = conf.type === 'https' ? new DNSOverHTTPS(conf.server) : new DNSOverTLS(conf.server)
+      dnsMap[provider] = conf.type === 'https' ? new DNSOverHTTPS(conf.server, preSetIpList) : new DNSOverTLS(conf.server)
     }
     return dnsMap
   },

@@ -48,7 +48,7 @@ module.exports = (config) => {
     host: serverConfig.host,
     port: serverConfig.port,
     dnsConfig: {
-      providers: dnsUtil.initDNS(serverConfig.dns.providers),
+      providers: dnsUtil.initDNS(serverConfig.dns.providers, matchUtil.domainMapRegexply(config.preSetIpList)),
       mapping: matchUtil.domainMapRegexply(dnsMapping),
       speedTest: config.dns.speedTest
     },

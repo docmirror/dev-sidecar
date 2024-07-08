@@ -89,7 +89,12 @@
               </a-col>
             </a-row>
         </a-tab-pane>
-        <a-tab-pane tab="DNS设置" key="4">
+        <a-tab-pane tab="IP预设置" key="4">
+          <div>说明：IP预设置功能，需要与 `DNS设置` 或 `IP测速` 功能一起使用才会生效。</div>
+          <vue-json-editor style="height:100%;margin-top:10px;" ref="editor" v-model="config.server.preSetIpList" mode="code"
+                           :show-btns="false" :expandedOnStart="true"></vue-json-editor>
+        </a-tab-pane>
+        <a-tab-pane tab="DNS设置" key="5">
           <div>
             <a-row style="margin-top:10px">
               <a-col span="19">
@@ -118,7 +123,7 @@
             </a-row>
           </div>
         </a-tab-pane>
-<!--        <a-tab-pane tab="SNI" key="5">-->
+<!--        <a-tab-pane tab="SNI" key="6">-->
 <!--          <a-row style="margin-top:10px">-->
 <!--            <a-col span="19">-->
 <!--              <div>这里配置哪些域名要修改sni</div>-->
@@ -139,7 +144,7 @@
 <!--            </a-col>-->
 <!--          </a-row>-->
 <!--        </a-tab-pane>-->
-        <a-tab-pane tab="IP测速" key="6">
+        <a-tab-pane tab="IP测速" key="7">
           <div style="padding-right: 10px">
             <a-alert type="info" message="对从dns获取到的ip进行测速，使用速度最快的ip进行访问。（对使用增强功能的域名没啥用）"></a-alert>
             <a-form-item label="开启dns测速" :label-col="labelCol" :wrapper-col="wrapperCol">
