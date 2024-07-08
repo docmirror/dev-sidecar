@@ -176,6 +176,12 @@ module.exports = {
       // 网站ICP备案查询
       '*.icpapi.com': true,
 
+      // Github文件上传所使用的域名，被DS代理会导致文件上传经常失败，从系统代理中排除掉
+      'objects-origin.githubusercontent.com': true,
+
+      // cloudflare：排除以下域名，cloudflare的人机校验会更快，成功率更高。
+      'challenges.cloudflare.com': true,
+
       // endregion
 
       // 本地地址，无需代理
