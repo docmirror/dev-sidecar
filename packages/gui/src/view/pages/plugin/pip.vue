@@ -21,7 +21,7 @@
 <!--        </a-form-item>-->
         <a-form-item label="pip命令名" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-input v-model="config.plugin.pip.setting.command"></a-input>
-          <div class="form-help">如果你的pip命令改成了其他名字（如pip3），可以在此处修改</div>
+          <div class="form-help">如果你的pip命令改成了其他名字（如pip3），或者想设置绿色版pip程序路径，可在此处修改</div>
         </a-form-item>
         <a-form-item label="仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group v-model="config.plugin.pip.setting.registry" @change="onSwitchRegistry"

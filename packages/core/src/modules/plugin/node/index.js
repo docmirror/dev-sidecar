@@ -29,7 +29,9 @@ const NodePlugin = function (context) {
       nodeApi.setVariables()
     },
     async getNpmEnv () {
-      const ret = await shell.exec(['npm config list --json'], { type: 'cmd' })
+      const command = config.get().plugin.node.setting.command || 'npm'
+
+      const ret = await shell.exec([`${command} config list --json`], { type: 'cmd' })
       if (ret != null) {
         const json = ret.substring(ret.indexOf('{'))
         return jsonApi.parse(json)
@@ -38,25 +40,27 @@ const NodePlugin = function (context) {
     },
 
     async setNpmEnv (list) {
+      const command = config.get().plugin.node.setting.command || 'npm'
+
       const cmds = []
       for (const item of list) {
         if (item.value != null) {
-          cmds.push(`npm config set ${item.key}  ${item.value}`)
+          cmds.push(`${command} config set ${item.key}  ${item.value}`)
         } else {
-          cmds.push(`npm config delete ${item.key}`)
+          cmds.push(`${command} config delete ${item.key}`)
         }
       }
-      const ret = await shell.exec(cmds, { type: 'cmd' })
-      return ret
+      return await shell.exec(cmds, { type: 'cmd' })
     },
 
     async unsetNpmEnv (list) {
+      const command = config.get().plugin.node.setting.command || 'npm'
+
       const cmds = []
       for (const item of list) {
-        cmds.push(`npm config delete ${item} `)
+        cmds.push(`${command} config delete ${item} `)
       }
-      const ret = await shell.exec(cmds, { type: 'cmd' })
-      return ret
+      return await shell.exec(cmds, { type: 'cmd' })
     },
 
     async setYarnEnv (list) {
@@ -69,8 +73,7 @@ const NodePlugin = function (context) {
           cmds.push(`yarn config delete ${item.key}`)
         }
       }
-      const ret = await shell.exec(cmds, { type: 'cmd' })
-      return ret
+      return await shell.exec(cmds, { type: 'cmd' })
     },
 
     async unsetYarnEnv (list) {
@@ -78,8 +81,7 @@ const NodePlugin = function (context) {
       for (const item of list) {
         cmds.push(`yarn config delete ${item} `)
       }
-      const ret = await shell.exec(cmds, { type: 'cmd' })
-      return ret
+      return await shell.exec(cmds, { type: 'cmd' })
     },
 
     async getVariables () {
@@ -119,9 +121,11 @@ const NodePlugin = function (context) {
     },
 
     async setProxy (ip, port) {
+      const command = config.get().plugin.node.setting.command || 'npm'
+
       const cmds = [
-        `npm config set proxy=http://${ip}:${port}`,
-        `npm config set https-proxy=http://${ip}:${port}`
+        `${command} config set proxy=http://${ip}:${port}`,
+        `${command} config set https-proxy=http://${ip}:${port}`
       ]
 
       const env = []
@@ -135,19 +139,19 @@ const NodePlugin = function (context) {
       const nodeConfig = config.get().plugin.node
       const rootCaCertFile = config.get().server.setting.rootCaFile.certPath
       if (nodeConfig.setting['strict-ssl']) {
-        cmds.push('npm config set strict-ssl false')
+        cmds.push(`${command} config set strict-ssl false`)
       }
       if (nodeConfig.setting.cafile) {
-        cmds.push(`npm config set cafile "${rootCaCertFile}"`)
+        cmds.push(`${command} config set cafile "${rootCaCertFile}"`)
       }
 
       if (nodeConfig.setting.NODE_EXTRA_CA_CERTS) {
-        cmds.push(`npm config set NODE_EXTRA_CA_CERTS "${rootCaCertFile}"`)
+        cmds.push(`${command} config set NODE_EXTRA_CA_CERTS "${rootCaCertFile}"`)
         env.push({ key: 'NODE_EXTRA_CA_CERTS', value: rootCaCertFile })
       }
 
       if (nodeConfig.setting.NODE_TLS_REJECT_UNAUTHORIZED) {
-        cmds.push('npm config set NODE_TLS_REJECT_UNAUTHORIZED 0')
+        cmds.push(`${command} config set NODE_TLS_REJECT_UNAUTHORIZED 0`)
         env.push({ key: 'NODE_TLS_REJECT_UNAUTHORIZED', value: '0' })
       }
 
@@ -162,11 +166,13 @@ const NodePlugin = function (context) {
     },
 
     async unsetProxy () {
+      const command = config.get().plugin.node.setting.command || 'npm'
+
       const cmds = [
-        'npm config  delete proxy',
-        'npm config  delete https-proxy',
-        'npm config  delete NODE_EXTRA_CA_CERTS',
-        'npm config  delete strict-ssl'
+        `${command} config  delete proxy`,
+        `${command} config  delete https-proxy`,
+        `${command} config  delete NODE_EXTRA_CA_CERTS`,
+        `${command} config  delete strict-ssl`
       ]
       const ret = await shell.exec(cmds, { type: 'cmd' })
       event.fire('status', { key: 'plugin.node.enabled', value: false })
