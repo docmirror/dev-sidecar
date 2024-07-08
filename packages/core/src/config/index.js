@@ -281,7 +281,7 @@ module.exports = {
           server: 'https://dns.alidns.com/dns-query',
           cacheSize: 1000
         },
-        usa: {
+        cloudflare: {
           type: 'https',
           server: 'https://1.1.1.1/dns-query',
           cacheSize: 1000
@@ -289,6 +289,11 @@ module.exports = {
         quad9: {
           type: 'https',
           server: 'https://9.9.9.9/dns-query',
+          cacheSize: 1000
+        },
+        safe360: {
+          type: 'https',
+          server: 'https://doh.360.cn/dns-query',
           cacheSize: 1000
         },
         rubyfish: {
@@ -320,7 +325,7 @@ module.exports = {
         enabled: true,
         interval: 300000,
         hostnameList: ['github.com'],
-        dnsProviders: ['usa', 'quad9', 'rubyfish']
+        dnsProviders: ['safe360', 'cloudflare', 'rubyfish']
       }
     }
   },
