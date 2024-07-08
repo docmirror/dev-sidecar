@@ -8,7 +8,7 @@ const dnsMap = dns.initDNS({
   //   server: 'ipaddress',
   //   cacheSize: 1000
   // },
-  usa: {
+  cloudflare: {
     type: 'https',
     server: 'https://1.1.1.1/dns-query',
     cacheSize: 1000

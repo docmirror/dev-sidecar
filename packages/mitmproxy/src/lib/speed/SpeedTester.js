@@ -63,7 +63,7 @@ class SpeedTester {
       const one = this.getFromOneDns(dns).then(ipList => {
         if (ipList) {
           for (const ip of ipList) {
-            ips[ip] = { dns: dnsKey }
+            ips[ip] = { dns: ipList.isPreSet === true ? '预设IP' : dnsKey }
           }
         }
       })

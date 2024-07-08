@@ -218,9 +218,9 @@ const intercepts = {
 ```js
  dns: {
     mapping: {
-      'api.github.com': 'usa', // "解决push的时候需要输入密码的问题",
-      'gist.github.com': 'usa' // 解决gist无法访问的问题
-      '*.githubusercontent.com': 'usa' // 解决github头像经常下载不到的问题
+      'api.github.com': 'cloudflare', // "解决push的时候需要输入密码的问题",
+      'gist.github.com': 'cloudflare' // 解决gist无法访问的问题
+      '*.githubusercontent.com': 'cloudflare' // 解决github头像经常下载不到的问题
     }
   }
 ```
