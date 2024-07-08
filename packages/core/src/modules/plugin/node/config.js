@@ -6,6 +6,7 @@ module.exports = {
     variables: true
   },
   setting: {
+    command: 'npm',
     'strict-ssl': true,
     cafile: false,
     NODE_EXTRA_CA_CERTS: false,

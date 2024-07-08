@@ -20,6 +20,10 @@
             当前未启动
           </a-tag>
         </a-form-item>
+        <a-form-item label="npm命令名" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-input v-model="config.plugin.node.setting.command"></a-input>
+          <div class="form-help">如果你的npm命令改成了其他名字，或者想设置绿色版npm程序路径，可在此处修改</div>
+        </a-form-item>
         <a-form-item label="SSL校验" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.node.setting['strict-ssl']">
             关闭strict-ssl
