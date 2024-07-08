@@ -7,7 +7,6 @@
     </template>
 
     <div style="height: 100%" class="json-wrapper">
-
       <a-tabs
         default-active-key="1"
         tab-position="left"
@@ -194,7 +193,7 @@
                     <a-icon v-if="item.alive.length>0" type="check"/>
                     <a-icon v-else type="info-circle"/>
                   </a>
-                  <a-tag style="margin:2px;" v-for="(element,index) of item.backupList"
+                  <a-tag style="margin:2px;" v-for="(element,index) of item.backupList" :title="element.dns"
                          :color="element.time?'green':'red'" :key='index'>{{ element.host }}
                     {{ element.time }}{{ element.time ? 'ms' : '' }}
                   </a-tag>
@@ -230,8 +229,8 @@ export default {
       key: 'server',
       dnsMappings: [],
       speedTestList: [],
-      whiteList: [],
-      sniList: []
+      whiteList: []
+      // sniList: []
     }
   },
   created () {
@@ -270,7 +269,7 @@ export default {
     ready () {
       this.initDnsMapping()
       this.initWhiteList()
-      this.initSniList()
+      // this.initSniList()
       if (this.config.server.dns.speedTest.dnsProviders) {
         this.speedDns = this.config.server.dns.speedTest.dnsProviders
       }
@@ -278,7 +277,7 @@ export default {
     async applyBefore () {
       this.submitDnsMapping()
       this.submitWhiteList()
-      this.submitSniList()
+      // this.submitSniList()
     },
     async applyAfter () {
       if (this.status.server.enabled) {
@@ -343,34 +342,34 @@ export default {
       this.whiteList.unshift({ key: '', value: true })
     },
 
-    // sniList
-    initSniList () {
-      this.sniList = []
-      for (const key in this.config.server.sniList) {
-        const value = this.config.server.sniList[key]
-        this.sniList.push({
-          key, value
-        })
-      }
-    },
-    submitSniList () {
-      const sniList = {}
-      for (const item of this.sniList) {
-        if (item.key) {
-          sniList[item.key] = item.value
-        }
-      }
-      this.config.server.sniList = sniList
-    },
-    deleteSniList (item, index) {
-      this.sniList.splice(index, 1)
-    },
-    restoreDefSniList (item, index) {
-
-    },
-    addSniList () {
-      this.sniList.unshift({ key: '', value: true })
-    },
+    // // sniList
+    // initSniList () {
+    //   this.sniList = []
+    //   for (const key in this.config.server.sniList) {
+    //     const value = this.config.server.sniList[key]
+    //     this.sniList.push({
+    //       key, value
+    //     })
+    //   }
+    // },
+    // submitSniList () {
+    //   const sniList = {}
+    //   for (const item of this.sniList) {
+    //     if (item.key) {
+    //       sniList[item.key] = item.value
+    //     }
+    //   }
+    //   this.config.server.sniList = sniList
+    // },
+    // deleteSniList (item, index) {
+    //   this.sniList.splice(index, 1)
+    // },
+    // restoreDefSniList (item, index) {
+    //
+    // },
+    // addSniList () {
+    //   this.sniList.unshift({ key: '', value: true })
+    // },
 
     async openLog () {
       const dir = await this.$api.info.getConfigDir()

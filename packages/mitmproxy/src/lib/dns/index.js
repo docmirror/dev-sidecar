@@ -17,7 +17,13 @@ module.exports = {
     return dnsMap
   },
   hasDnsLookup (dnsConfig, hostname) {
-    const providerName = matchUtil.matchHostname(dnsConfig.mapping, hostname, 'get dns providerName')
+    let providerName = matchUtil.matchHostname(dnsConfig.mapping, hostname, 'get dns providerName')
+
+    // usa已重命名为cloudflare，以下为向下兼容处理
+    if (providerName === 'usa') {
+      providerName = 'cloudflare'
+    }
+
     if (providerName) {
       return dnsConfig.providers[providerName]
     }

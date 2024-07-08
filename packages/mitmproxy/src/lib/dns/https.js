@@ -54,6 +54,7 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
       return ['54.156.140.159', '52.44.227.212', '44.221.37.199']
     }
 
+    // 未预设当前域名的IP列表，则从dns服务器获取
     try {
       const result = await dohQueryAsync({ url: this.dnsServer }, [{ type: 'A', name: hostname }])
       if (result.answers.length === 0) {
