@@ -24,14 +24,17 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
   async _lookup (hostname) {
     // 获取当前域名的预设IP列表
     let hostnamePreSetIpList = matchUtil.matchHostname(this.preSetIpList, hostname, 'matched preSetIpList')
-    if (hostnamePreSetIpList) {
+    if (hostnamePreSetIpList && (hostnamePreSetIpList.length > 0 || hostnamePreSetIpList.length === undefined)) {
       if (hostnamePreSetIpList.length > 0) {
         hostnamePreSetIpList = hostnamePreSetIpList.slice()
       } else {
         hostnamePreSetIpList = mapToList(hostnamePreSetIpList)
       }
-      hostnamePreSetIpList.isPreSet = true
-      return hostnamePreSetIpList
+
+      if (hostnamePreSetIpList.length > 0) {
+        hostnamePreSetIpList.isPreSet = true
+        return hostnamePreSetIpList
+      }
     }
 
     // 未预设当前域名的IP列表，则从dns服务器获取
