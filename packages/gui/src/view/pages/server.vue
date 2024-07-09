@@ -12,6 +12,7 @@
         tab-position="left"
         :style="{ height: '100%' }"
         v-if="config"
+        @change="handleTabChange"
       >
         <a-tab-pane tab="基本设置" key="1">
           <div style="padding-right:10px">
@@ -416,6 +417,16 @@ export default {
       return setInterval(() => {
         this.reloadAllSpeedTester()
       }, 5000)
+    },
+    async handleTabChange (key) {
+      if (key !== '2' && key !== '4') {
+        return
+      }
+
+      // 规避 vue-json-editor 内容只填充输入框一半的问题
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'))
+      }, 10)
     }
   }
 }
