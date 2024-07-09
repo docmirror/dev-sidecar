@@ -91,7 +91,7 @@
         </a-tab-pane>
         <a-tab-pane tab="IP预设置" key="4">
           <div>说明：IP预设置功能，需要与 `DNS设置` 或 `IP测速` 功能一起使用才会生效。</div>
-          <vue-json-editor style="height:100%;margin-top:10px;" ref="editor" v-model="config.server.preSetIpList" mode="code"
+          <vue-json-editor style="height:94%;margin-top:10px;" ref="editor" v-model="config.server.preSetIpList" mode="code"
                            :show-btns="false" :expandedOnStart="true"></vue-json-editor>
         </a-tab-pane>
         <a-tab-pane tab="DNS设置" key="5">
