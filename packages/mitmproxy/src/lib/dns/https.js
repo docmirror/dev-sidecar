@@ -5,6 +5,15 @@ const log = require('../../utils/util.log')
 const dohQueryAsync = promisify(doh.query)
 const matchUtil = require('../../utils/util.match')
 
+function mapToList (ipMap) {
+  const ipList = []
+  for (const key in ipMap) {
+    if (!ipMap[key]) continue
+    ipList.push(ipMap[key])
+  }
+  return ipList
+}
+
 module.exports = class DNSOverHTTPS extends BaseDNS {
   constructor (dnsServer, preSetIpList) {
     super()
@@ -14,8 +23,13 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
 
   async _lookup (hostname) {
     // 获取当前域名的预设IP列表
-    const hostnamePreSetIpList = matchUtil.matchHostname(this.preSetIpList, hostname, 'matched preSetIpList')
-    if (hostnamePreSetIpList && hostnamePreSetIpList.length > 0) {
+    let hostnamePreSetIpList = matchUtil.matchHostname(this.preSetIpList, hostname, 'matched preSetIpList')
+    if (hostnamePreSetIpList) {
+      if (hostnamePreSetIpList.length > 0) {
+        hostnamePreSetIpList = hostnamePreSetIpList.slice()
+      } else {
+        hostnamePreSetIpList = mapToList(hostnamePreSetIpList)
+      }
       hostnamePreSetIpList.isPreSet = true
       return hostnamePreSetIpList
     }
