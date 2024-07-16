@@ -83,7 +83,7 @@ module.exports = {
         },
         '^(/[^/]+){2}/pull/\\d+/open_with_menu.*$': {
           cacheDays: 7,
-          desc: 'PR详情页：标题右边那个Code按钮的HTML代理请求地址，感觉上应该可以缓存。暂时先设置为缓存7天'
+          desc: 'PR详情页：标题右边那个Code按钮的HTML代码请求地址，感觉上应该可以缓存。暂时先设置为缓存7天'
         },
         '^((/[^/]+){2,})/raw((/[^/]+)+\\.(jpg|jpeg|png|gif))(\\?.*)?$': {
           // eslint-disable-next-line no-template-curly-in-string
