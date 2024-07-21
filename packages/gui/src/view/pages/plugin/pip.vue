@@ -38,6 +38,9 @@
             <a-radio-button value="https://mirror.nju.edu.cn/pypi/web/simple">
               南京大学镜像
             </a-radio-button>
+            <a-radio-button value="https://pypi.tuna.tsinghua.edu.cn/simple">
+              清华大学镜像
+            </a-radio-button>
           </a-radio-group>
           <div class="form-help">设置后立即生效，即使关闭ds也会继续保持</div>
         </a-form-item>
