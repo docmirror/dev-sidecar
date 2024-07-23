@@ -38,7 +38,7 @@
             <a-radio-button value="https://mirror.nju.edu.cn/pypi/web/simple/">
               南京大学镜像
             </a-radio-button>
-            <a-radio-button value="ttps://pypi.tuna.tsinghua.edu.cn/simple/">
+            <a-radio-button value="https://pypi.tuna.tsinghua.edu.cn/simple/">
               清华大学镜像
             </a-radio-button>
             <a-radio-button value="https://mirror.baidu.com/pypi/simple/">
