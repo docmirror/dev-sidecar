@@ -336,10 +336,7 @@ module.exports = {
       '*.microsoft.com': true,
       '*.alipay.com': true,
       '*.qq.com': true,
-      '*.baidu.com': true,
-      'www.deepl.com': true,
-      "ssh.github.com": true,
-      '*.so.com': true
+      '*.baidu.com': true
     },
     sniList: {
     //   'github.com': 'abaidu.com'
