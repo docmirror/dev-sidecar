@@ -98,6 +98,16 @@ module.exports = {
       '*.edu.cn': true,
       '*.icourse163.org': true,
 
+      // 中国政府
+      '*.gov.cn': true,
+
+      // 学习通
+      '*.xuexitong.com': true,
+      '*.chaoxing.com': true,
+
+      // 中国银行
+      '*.bankofchina.com': true,
+
       // 360 so
       '*.so.com': true,
 
@@ -150,8 +160,10 @@ module.exports = {
 
       // OSS
       '*.sonatype.org': true,
+      
       // Maven镜像
       '*.maven.org': true,
+
       // Maven Repository
       '*.mvnrepository.com': true,
 
@@ -175,6 +187,7 @@ module.exports = {
       // 奇虎
       '*.qihoo.com': true,
       '*.qihucdn.com': true,
+
       // 360
       '*.360.com': true,
       '*.360safe.com': true,
@@ -188,6 +201,15 @@ module.exports = {
       '*.jcloudcache.com': true,
       '*.jcloudcdn.com': true,
       '*.jcloudlb.com': true,
+
+      // bing
+      '*.bing.com': true,
+
+      // orcid
+      '*.orcid.org': true,
+
+      // mihoyo
+      '*.mihoyo.com': true,
 
       // 哔哩哔哩
       '*.bilibili.com': true,
