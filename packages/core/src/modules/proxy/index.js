@@ -76,6 +76,28 @@ module.exports = {
       // CSDN
       '*.csdn.net': true,
 
+      // 知乎
+      '*.zhihu.com': true,
+
+      // 简书
+      '*.jianshu.com': true,
+
+      // 博客园
+      '*.cnblogs.com': true,
+
+      // 网易
+      '*.163.com': true,
+
+      // 新浪
+      '*.sina.com': true,
+
+      // 搜狐
+      '*.sohu.com': true,
+
+      // 中国大学
+      '*.edu.cn': true,
+      '*.icourse163.org': true,
+
       // 360 so
       '*.so.com': true,
 
