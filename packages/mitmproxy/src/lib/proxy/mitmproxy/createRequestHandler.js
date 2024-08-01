@@ -66,7 +66,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               }
               const goNext = reqIncpt.requestIntercept(context, req, res, ssl, next)
               if (goNext) {
-                next()
+                if (goNext !== 'no-next') next()
                 return
               }
             }
@@ -215,7 +215,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
     (async () => {
       await requestInterceptorPromise()
 
-      if (res.writableEnded) {
+      if (res.writableEnded || res.waitingToWrite) {
         // log.info('res is writableEnded, return false')
         return false
       }
