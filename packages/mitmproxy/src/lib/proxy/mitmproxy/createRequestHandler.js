@@ -215,7 +215,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
     (async () => {
       await requestInterceptorPromise()
 
-      if (res.writableEnded || res.waitingToWrite) {
+      if (res.writableEnded) {
         // log.info('res is writableEnded, return false')
         return false
       }
