@@ -66,7 +66,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               }
               const goNext = reqIncpt.requestIntercept(context, req, res, ssl, next)
               if (goNext) {
-                next()
+                if (goNext !== 'no-next') next()
                 return
               }
             }

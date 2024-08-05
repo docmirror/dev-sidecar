@@ -32,11 +32,32 @@
             <a-radio-button value="https://mirrors.aliyun.com/pypi/simple/">
               aliyun镜像
             </a-radio-button>
-            <a-radio-button value="https://mirrors.bfsu.edu.cn/pypi/web/simple">
+            <a-radio-button value="https://mirrors.bfsu.edu.cn/pypi/web/simple/">
               北京外国语大学镜像
             </a-radio-button>
-            <a-radio-button value="https://mirror.nju.edu.cn/pypi/web/simple">
+            <a-radio-button value="https://mirror.nju.edu.cn/pypi/web/simple/">
               南京大学镜像
+            </a-radio-button>
+            <a-radio-button value="https://pypi.tuna.tsinghua.edu.cn/simple/">
+              清华大学镜像
+            </a-radio-button>
+            <a-radio-button value="https://mirror.baidu.com/pypi/simple/">
+              百度镜像
+            </a-radio-button>
+            <a-radio-button value="https://pypi.mirrors.ustc.edu.cn/simple/">
+              中科大镜像
+            </a-radio-button>
+            <a-radio-button value="http://pypi.douban.com/simple/">
+              豆瓣镜像
+            </a-radio-button>
+            <a-radio-button value="http://mirrors.sohu.com/Python/">
+              搜狐镜像
+            </a-radio-button>
+            <a-radio-button value="https://pypi.hustunique.com/">
+              华中科大镜像
+            </a-radio-button>
+            <a-radio-button value="http://pypi.sdutlinux.org/">
+              山东理工大学镜像
             </a-radio-button>
           </a-radio-group>
           <div class="form-help">设置后立即生效，即使关闭ds也会继续保持</div>
