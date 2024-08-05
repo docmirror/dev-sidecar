@@ -67,8 +67,9 @@ module.exports = {
       '*.kkgithub.com': true,
       '*.ghproxy.*': true,
 
-      // Github ssh
-      'ssh.github.com': true,
+      // Github相关的
+      "ssh.github.com": true,
+      "uploads.github.com": true,
 
       // DeepL
       'www.deepl.com': true,
