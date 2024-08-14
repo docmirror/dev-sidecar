@@ -23,7 +23,7 @@ module.exports = {
       enabled: true,
       url: 'https://gitee.com/wangliang181230/dev-sidecar/raw/docmirror/packages/core/src/config/remote_config.json5'
     },
-    theme: 'light', // 主题：light=亮色, dark=暗色
+    theme: 'dark', // 主题：light=亮色, dark=暗色
     autoChecked: true, // 是否自动检查更新
     skipPreRelease: true, // 是否忽略预发布版本
     dock: {
