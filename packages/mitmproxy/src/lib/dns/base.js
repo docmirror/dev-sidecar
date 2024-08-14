@@ -15,11 +15,12 @@ class IpCache extends DynamicChoice {
   }
 
   /**
-   * 获取到新的ipList
-   * @param ipList
+   * 设置新的ipList
+   *
+   * @param newBackupList
    */
-  setBackupList (ipList) {
-    super.setBackupList(ipList)
+  setBackupList (newBackupList) {
+    super.setBackupList(newBackupList)
     this.lookupCount++
   }
 }

@@ -11,6 +11,7 @@
         <a-checkbox v-model="config.app.autoStart.enabled" @change="onAutoStartChange">
           本应用开机自启
         </a-checkbox>
+        <a-button class="md-mr-10" icon="profile" @click="openLog()">日志</a-button>
         <div class="form-help">
           windows下建议开启开机自启。<a @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">更多说明参考</a>
         </div>
@@ -142,6 +143,10 @@ export default {
   methods: {
     ready (config) {
       this.themeBackup = config.app.theme
+    },
+    async openLog () {
+      const dir = await this.$api.info.getConfigDir()
+      this.$api.ipc.openPath(dir + '/logs/')
     },
     async applyAfter () {
       // 判断是否切换了主题
