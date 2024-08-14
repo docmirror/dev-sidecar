@@ -57,10 +57,9 @@
           </div>
         </div>
         <div :span="12">
-          <a-form style="margin-top:20px" :label-col="{ span: 12 }" :wrapper-col="{ span: 12 }">
-
+          <a-form style="margin-top:20px" :label-col="{ span: 15 }" :wrapper-col="{ span: 9 }">
             <a-form-item v-for=" (item, key) in switchBtns" :key="key" :label="item.label">
-              <a-tooltip placement="topLeft" :title="item.tip">
+              <a-tooltip placement="topLeft">
                 <a-switch style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked
                           @change="item.doClick">
                   <a-icon slot="checkedChildren" type="check"/>
