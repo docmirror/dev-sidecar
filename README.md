@@ -239,7 +239,7 @@ const intercepts = {
 #### 1）Mac系统使用时，首页的系统代理开关无法打开
 出现这个问题可能是没有开启系统代理命令的执行权限   
 ```
-networksetup -setwebproxy 'WiFi' 127.0.0.1 1181 
+networksetup -setwebproxy 'WiFi' 127.0.0.1 31181 
 #看是否有如下错误提示
 ** Error: Command requires admin privileges.
 ```

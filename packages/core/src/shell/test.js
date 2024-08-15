@@ -38,7 +38,7 @@ const request = require('request')
 const fs = require('fs')
 request({
   url: 'https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
-  proxy: 'http://127.0.0.1:1181',
+  proxy: 'http://127.0.0.1:31181',
   ca: fs.readFileSync('C:/Users/Administrator/.dev-sidecar/dev-sidecar.ca.crt')
 // eslint-disable-next-line handle-callback-err
 }, (err, res, body) => {

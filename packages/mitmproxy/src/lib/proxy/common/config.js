@@ -7,7 +7,7 @@ config.caKeyFileName = 'dev-sidecar.ca.key.pem'
 
 config.defaultHost = '127.0.0.1'
 
-config.defaultPort = 1181
+config.defaultPort = 31181
 
 config.caName = 'DevSidecar - This certificate is generated locally'
 

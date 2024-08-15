@@ -28,13 +28,13 @@
 //     const https = require('https')
 //     const fs = require('fs')
 //     process.env.NODE_EXTRA_CA_CERTS = 'C:\\Users\\Administrator\\.dev-sidecar\\dev-sidecar.ca.crt'
-//     process.env.GLOBAL_AGENT_HTTP_PROXY = "http://127.0.0.1:1181"
-//     process.env.GLOBAL_AGENT_HTTPS_PROXY = "http://127.0.0.1:1181"
+//     process.env.GLOBAL_AGENT_HTTP_PROXY = "http://127.0.0.1:31181"
+//     process.env.GLOBAL_AGENT_HTTPS_PROXY = "http://127.0.0.1:31181"
 //     fs.readFileSync(process.env.NODE_EXTRA_CA_CERTS)
 //
 //     const options = {
 //         agent : new https.Agent({
-//             proxy: "http://127.0.0.1:1181"
+//             proxy: "http://127.0.0.1:31181"
 //         })
 //     }
 //     console.log('options', options)
@@ -55,7 +55,7 @@ function testRequest(){
     // process.env.NODE_EXTRA_CA_CERTS='C:\\Users\\Administrator\\.dev-sidecar\\dev-sidecar.ca.crt'
     console.log(process.env.NODE_EXTRA_CA_CERTS)
     const request = require("request").defaults({
-        proxy: "http://127.0.0.1:1181"
+        proxy: "http://127.0.0.1:31181"
     })
     request("https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js",(error, response, body)=>{
         if(error){
