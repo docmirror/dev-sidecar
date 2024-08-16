@@ -69,7 +69,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig/* , sniRegexpM
           if (tester) {
             const aliveIpObj = tester.pickFastAliveIpObj()
             if (aliveIpObj) {
-              log.info(`----- connect: ${hostname}:${port}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host} -----`)
+              log.info(`----- connect: ${hostport}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host} -----`)
               callback(null, aliveIpObj.host, 4)
               return
             }
@@ -77,10 +77,10 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig/* , sniRegexpM
           dns.lookup(hostname).then(ip => {
             isDnsIntercept = { dns, hostname, ip }
             if (ip !== hostname) {
-              log.info(`---- connect: ${hostname}:${port}, use ip from dns '${dns.name}': ${ip} ----`)
+              log.info(`---- connect: ${hostport}, use ip from dns '${dns.name}': ${ip} ----`)
               callback(null, ip, 4)
             } else {
-              log.info(`----- connect: ${hostname}:${port}, use hostname: ${hostname} -----`)
+              log.info(`----- connect: ${hostport}, use hostname: ${hostname} -----`)
               defaultDns.lookup(hostname, options, callback)
             }
           })
