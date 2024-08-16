@@ -144,21 +144,18 @@ function install (app, api) {
       title: '发现新版本：v' + value.version,
       cancelText: '暂不升级',
       okText: '升级',
-      width: 550,
+      width: 650,
       content: h => {
         if (value.releaseNotes) {
           const notes = []
           if (typeof value.releaseNotes === 'string') {
-            const releaseNotes = value.releaseNotes.replace(/\r?\n/g, '\n').split('\n')
-            for (const note of releaseNotes) {
-              notes.push(<div>{note}</div>)
-            }
+            const releaseNotes = value.releaseNotes.replace(/\r\n/g, '\n')
             return <div>
               <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
               <div>更新内容：</div>
-              <div style="max-height:350px;overflow-y:auto">
-                {notes}
-              </div>
+              <pre style="max-height:350px;font-family:auto">
+                {releaseNotes}
+              </pre>
             </div>
           } else {
             for (const note of value.releaseNotes) {
@@ -194,16 +191,13 @@ function install (app, api) {
         if (value.releaseNotes) {
           const notes = []
           if (typeof value.releaseNotes === 'string') {
-            const releaseNotes = value.releaseNotes.replace(/\r?\n/g, '\n').split('\n')
-            for (const note of releaseNotes) {
-              notes.push(<div>{note}</div>)
-            }
+            const releaseNotes = value.releaseNotes.replace(/\r\n/g, '\n')
             return <div>
               <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
               <div>更新内容：</div>
-              <div style="max-height:350px;overflow-y:auto">
-                {notes}
-              </div>
+              <pre style="max-height:350px;font-family:auto">
+                {releaseNotes}
+              </pre>
             </div>
           } else {
             for (const note of value.releaseNotes) {

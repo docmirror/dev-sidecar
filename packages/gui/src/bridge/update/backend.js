@@ -203,7 +203,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
                 value: {
                   version,
                   releaseNotes: versionData.body
-                    ? (versionData.body.replace(/\r\n/g, '\n').replace(/https:\/\/github.com\/docmirror\/dev-sidecar/g, '').replace(/(?<=(^|\n))[ \t]*[ #]+/g, '') || '无')
+                    ? (versionData.body.replace(/\r\n/g, '\n').replace(/https:\/\/github.com\/docmirror\/dev-sidecar/g, '').replace(/(?<=(^|\n))[ \t]*[ #]*#\s*/g, '') || '无')
                     : '无'
                 }
               })
