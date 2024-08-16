@@ -63,7 +63,7 @@ module.exports = class FakeServersCenter {
           SNICallback: (hostname, done) => {
             (async () => {
               const certObj = await this.certAndKeyContainer.getCertPromise(hostname, port)
-              log.info('sni callback:', hostname)
+              log.info(`sni callback: ${hostname}:${port}`)
               done(null, tls.createSecureContext({
                 key: pki.privateKeyToPem(certObj.key),
                 cert: pki.certificateToPem(certObj.cert)

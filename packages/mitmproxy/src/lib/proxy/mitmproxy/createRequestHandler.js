@@ -118,17 +118,17 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               rOptions.lookup = (hostname, options, callback) => {
                 const tester = speedTest.getSpeedTester(hostname)
                 if (tester) {
-                  const ip = tester.pickFastAliveIp()
-                  if (ip) {
-                    log.info(`----- hostname: ${hostname}, use alive ip: ${ip} -----`)
-                    callback(null, ip, 4)
+                  const aliveIpObj = tester.pickFastAliveIpObj()
+                  if (aliveIpObj) {
+                    log.info(`----- request url: ${url}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host} -----`)
+                    callback(null, aliveIpObj.host, 4)
                     return
                   }
                 }
                 dns.lookup(hostname).then(ip => {
                   isDnsIntercept = { dns, hostname, ip }
                   if (ip !== hostname) {
-                    log.info(`---- request url: ${url}, use ip: ${ip} ----`)
+                    log.info(`---- request url: ${url}, use ip from dns '${dns.name}': ${ip} ----`)
                     callback(null, ip, 4)
                   } else {
                     log.info(`---- request url: ${url}, use hostname: ${hostname} ----`)

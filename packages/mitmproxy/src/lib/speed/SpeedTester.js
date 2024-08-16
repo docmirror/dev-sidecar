@@ -21,13 +21,13 @@ class SpeedTester {
     this.test()
   }
 
-  pickFastAliveIp () {
+  pickFastAliveIpObj () {
     this.touch()
     if (this.alive.length === 0) {
-      this.test()
+      this.test() // 异步
       return null
     }
-    return this.alive[0].host
+    return this.alive[0]
   }
 
   touch () {

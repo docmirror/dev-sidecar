@@ -34,6 +34,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
     // eslint-disable-next-line node/no-deprecated-api
     const { hostname, port } = url.parse(`https://${req.url}`)
     if (isSslConnect(sslConnectInterceptors, req, cltSocket, head)) {
+      // 需要拦截，代替目标服务器，让客户端连接DS在本地启动的代理服务
       fakeServerCenter.getServerPromise(hostname, port).then((serverObj) => {
         log.info('--- fakeServer connect', hostname)
         connect(req, cltSocket, head, localIP, serverObj.port)
@@ -41,7 +42,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
         log.error('getServerPromise', e)
       })
     } else {
-      log.info('不拦截请求：', hostname)
+      log.info(`未匹配到任何 sslConnectInterceptors，不拦截请求，直接连接目标服务器: ${hostname}:${port}`)
       connect(req, cltSocket, head, hostname, port, dnsConfig/*, sniRegexpMap */)
     }
   }
@@ -66,19 +67,20 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig/* , sniRegexpM
         options.lookup = (hostname, options, callback) => {
           const tester = speedTest.getSpeedTester(hostname)
           if (tester) {
-            const ip = tester.pickFastAliveIp()
-            if (ip) {
-              log.info(`-----${hostname} use alive ip:${ip}-----`)
-              callback(null, ip, 4)
+            const aliveIpObj = tester.pickFastAliveIpObj()
+            if (aliveIpObj) {
+              log.info(`----- connect: ${hostname}:${port}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host} -----`)
+              callback(null, aliveIpObj.host, 4)
               return
             }
           }
           dns.lookup(hostname).then(ip => {
             isDnsIntercept = { dns, hostname, ip }
             if (ip !== hostname) {
-              log.info(`-----${hostname} use ip:${ip}-----`)
+              log.info(`---- connect: ${hostname}:${port}, use ip from dns '${dns.name}': ${ip} ----`)
               callback(null, ip, 4)
             } else {
+              log.info(`----- connect: ${hostname}:${port}, use hostname: ${hostname} -----`)
               defaultDns.lookup(hostname, options, callback)
             }
           })
