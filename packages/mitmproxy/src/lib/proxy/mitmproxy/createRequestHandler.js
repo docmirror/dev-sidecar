@@ -120,7 +120,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
                 if (tester) {
                   const ip = tester.pickFastAliveIp()
                   if (ip) {
-                    log.info(`-----${hostname} use alive ip:${ip}-----`)
+                    log.info(`----- hostname: ${hostname}, use alive ip: ${ip} -----`)
                     callback(null, ip, 4)
                     return
                   }
@@ -128,10 +128,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
                 dns.lookup(hostname).then(ip => {
                   isDnsIntercept = { dns, hostname, ip }
                   if (ip !== hostname) {
-                    log.info(`----request url :${url},use ip :${ip}----`)
+                    log.info(`---- request url: ${url}, use ip: ${ip} ----`)
                     callback(null, ip, 4)
                   } else {
-                    log.info(`request url :${url},use hostname :${hostname}`)
+                    log.info(`---- request url: ${url}, use hostname: ${hostname} ----`)
                     defaultDns.lookup(hostname, options, callback)
                   }
                 })
