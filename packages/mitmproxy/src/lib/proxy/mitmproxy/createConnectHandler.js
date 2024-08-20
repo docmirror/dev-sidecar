@@ -3,9 +3,8 @@ const url = require('url')
 const log = require('../../../utils/util.log')
 const DnsUtil = require('../../dns/index')
 const localIP = '127.0.0.1'
-const defaultDns = require('dns')
-// const matchUtil = require('../../../utils/util.match')
-const speedTest = require('../../speed/index.js')
+const dnsLookup = require('./dnsLookup')
+
 function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
   for (const intercept of sslConnectInterceptors) {
     const ret = intercept(req, cltSocket, head)
@@ -36,10 +35,10 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
     if (isSslConnect(sslConnectInterceptors, req, cltSocket, head)) {
       // 需要拦截，代替目标服务器，让客户端连接DS在本地启动的代理服务
       fakeServerCenter.getServerPromise(hostname, port).then((serverObj) => {
-        log.info('--- fakeServer connect', hostname)
+        log.info(`----- fakeServer connect: ${localIP}:${serverObj.port} ➜ ${req.url} -----`)
         connect(req, cltSocket, head, localIP, serverObj.port)
       }, (e) => {
-        log.error('getServerPromise', e)
+        log.error(`----- fakeServer getServerPromise error: ${hostname}:${port}, error:`, e)
       })
     } else {
       log.info(`未匹配到任何 sslConnectInterceptors，不拦截请求，直接连接目标服务器: ${hostname}:${port}`)
@@ -52,7 +51,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig/* , sniRegexpM
   // tunneling https
   // log.info('connect:', hostname, port)
   const start = new Date()
-  let isDnsIntercept = null
+  const isDnsIntercept = {}
   const hostport = `${hostname}:${port}`
   // const replaceSni = matchUtil.matchHostname(sniRegexpMap, hostname, 'sni')
   try {
@@ -61,30 +60,10 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig/* , sniRegexpM
       host: hostname,
       connectTimeout: 10000
     }
-    if (dnsConfig) {
+    if (dnsConfig && dnsConfig.providers) {
       const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
       if (dns) {
-        options.lookup = (hostname, options, callback) => {
-          const tester = speedTest.getSpeedTester(hostname)
-          if (tester) {
-            const aliveIpObj = tester.pickFastAliveIpObj()
-            if (aliveIpObj) {
-              log.info(`----- connect: ${hostport}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host} -----`)
-              callback(null, aliveIpObj.host, 4)
-              return
-            }
-          }
-          dns.lookup(hostname).then(ip => {
-            isDnsIntercept = { dns, hostname, ip }
-            if (ip !== hostname) {
-              log.info(`---- connect: ${hostport}, use ip from dns '${dns.name}': ${ip} ----`)
-              callback(null, ip, 4)
-            } else {
-              log.info(`----- connect: ${hostport}, use hostname: ${hostname} -----`)
-              defaultDns.lookup(hostname, options, callback)
-            }
-          })
-        }
+        options.lookup = dnsLookup.createLookupFunc(dns, 'connect', hostport, isDnsIntercept)
       }
     }
     const proxySocket = net.connect(options, () => {
@@ -105,17 +84,29 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig/* , sniRegexpM
     })
     proxySocket.on('timeout', () => {
       const cost = new Date() - start
-      log.info('代理socket timeout：', hostname, port, cost + 'ms')
+      const errorMsg = `代理连接超时: ${hostport}, cost: ${cost} ms`
+      log.error(errorMsg)
+
+      cltSocket.destroy()
+
+      if (isDnsIntercept && isDnsIntercept.dns && isDnsIntercept.ip !== isDnsIntercept.hostname) {
+        const { dns, ip, hostname } = isDnsIntercept
+        dns.count(hostname, ip, true)
+        log.error(`记录ip失败次数，用于优选ip！ hostname: ${hostname}, ip: ${ip}, reason: ${errorMsg}, dns: ${dns.name}`)
+      }
     })
     proxySocket.on('error', (e) => {
       // 连接失败，可能被GFW拦截，或者服务端拥挤
       const cost = new Date() - start
-      log.error('代理连接失败：', e.message, hostname, port, cost + 'ms')
+      const errorMsg = `代理连接失败: ${hostport}, cost: ${cost} ms, errorMsg: ${e.message}`
+      log.error(errorMsg)
+
       cltSocket.destroy()
-      if (isDnsIntercept) {
+
+      if (isDnsIntercept && isDnsIntercept.dns && isDnsIntercept.ip !== isDnsIntercept.hostname) {
         const { dns, ip, hostname } = isDnsIntercept
         dns.count(hostname, ip, true)
-        log.error('记录ip失败次数,用于优选ip：', hostname, ip)
+        log.error(`记录ip失败次数，用于优选ip！ hostname: ${hostname}, ip: ${ip}, reason: ${errorMsg}, dns: ${dns.name}`)
       }
     })
     return proxySocket
