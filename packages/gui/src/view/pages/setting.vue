@@ -74,14 +74,13 @@
           <a-radio-button :value="false">
             不忽略
           </a-radio-button>
-          <div class="form-help">
-            预发布版本号为带有 “-” 的版本。注：该配置只对当前版本为正式版本时有效。
-          </div>
         </a-radio-group>
+        <div class="form-help">
+          预发布版本号为带有 “-” 的版本。注：该配置只对当前版本为正式版本时有效。
+        </div>
       </a-form-item>
       <a-form-item label="首页提示" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.showShutdownTip"
-                       default-value="true" button-style="solid">
+        <a-radio-group v-model="config.app.showShutdownTip" default-value="true" button-style="solid">
           <a-radio-button :value="true">
             显示
           </a-radio-button>
@@ -94,8 +93,7 @@
         </div>
       </a-form-item>
       <a-form-item v-if="!isLinux()" label="关闭策略" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.closeStrategy"
-                       default-value="0" button-style="solid">
+        <a-radio-group v-model="config.app.closeStrategy" default-value="0" button-style="solid">
           <a-radio-button :value="0">
             弹出提示
           </a-radio-button>
