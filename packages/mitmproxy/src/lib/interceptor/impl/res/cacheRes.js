@@ -8,7 +8,7 @@ module.exports = {
 
     // 只有GET请求，且响应码为2xx时才进行缓存
     if (rOptions.method !== 'GET' || proxyRes.statusCode < 200 || proxyRes.statusCode >= 300) {
-      // res.setHeader('DS-Cache-Interceptor', `skip: 'method' or 'status' not match`)
+      // res.setHeader('DS-Cache-Response-Interceptor', `skip: 'method' or 'status' not match`)
       return
     }
 
@@ -52,7 +52,7 @@ module.exports = {
           maxAge = maxAgeMatch[1]
         } else {
           const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`
-          res.setHeader('DS-Cache-Interceptor', `skip: ${maxAgeMatch[1]} > ${maxAge}`)
+          res.setHeader('DS-Cache-Response-Interceptor', `skip: ${maxAgeMatch[1]} > ${maxAge}`)
           log.info(`cache response intercept: skip: ${maxAgeMatch[1]} > ${maxAge}, url: ${url}`)
           return
         }
