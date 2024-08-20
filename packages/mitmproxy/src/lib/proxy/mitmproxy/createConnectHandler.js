@@ -88,6 +88,12 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig/* , sniRegexpM
       log.error(errorMsg)
 
       cltSocket.destroy()
+
+      if (isDnsIntercept && isDnsIntercept.dns && isDnsIntercept.ip !== isDnsIntercept.hostname) {
+        const { dns, ip, hostname } = isDnsIntercept
+        dns.count(hostname, ip, true)
+        log.error(`记录ip失败次数，用于优选ip！ hostname: ${hostname}, ip: ${ip}, reason: ${errorMsg}, dns: ${dns.name}`)
+      }
     })
     proxySocket.on('error', (e) => {
       // 连接失败，可能被GFW拦截，或者服务端拥挤
