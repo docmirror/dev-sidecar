@@ -44,8 +44,8 @@
         </a-form-item>
 
         <a-form-item label="yarn仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-radio-group v-model="config.plugin.node.setting.yarnRegistry" :default-value="null"  @change="onSwitchYarnRegistry" button-style="solid">
-            <a-radio-button :value="null">
+          <a-radio-group v-model="config.plugin.node.setting.yarnRegistry" :default-value="'null'" @change="onSwitchYarnRegistry" button-style="solid">
+            <a-radio-button :value="'null'">
               yarn原生
             </a-radio-button>
             <a-radio-button value="https://registry.npmmirror.com">

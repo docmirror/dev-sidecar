@@ -44,7 +44,7 @@ const NodePlugin = function (context) {
 
       const cmds = []
       for (const item of list) {
-        if (item.value != null) {
+        if (item.value != null && item.value.length > 0 && item.value !== 'null') {
           cmds.push(`${command} config set ${item.key}  ${item.value}`)
         } else {
           cmds.push(`${command} config delete ${item.key}`)
@@ -67,7 +67,7 @@ const NodePlugin = function (context) {
       const cmds = []
       log.debug('yarn set:', JSON.stringify(list))
       for (const item of list) {
-        if (item.value != null) {
+        if (item.value != null && item.value.length > 0 && item.value !== 'null') {
           cmds.push(`yarn config set ${item.key}  ${item.value}`)
         } else {
           cmds.push(`yarn config delete ${item.key}`)
