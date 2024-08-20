@@ -88,12 +88,14 @@ module.exports = {
         '^((/[^/]+){2,})/raw((/[^/]+)+\\.(jpg|jpeg|png|gif))(\\?.*)?$': {
           // eslint-disable-next-line no-template-curly-in-string
           proxy: 'https://raw.githubusercontent.com${m[1]}${m[3]}',
+          sni: 'baidu.com',
           cacheDays: 7,
           desc: '仓库内图片，重定向改为代理，并缓存7天。'
         },
         '^((/[^/]+){2,})/raw((/[^/]+)+\\.js)(\\?.*)?$': {
           // eslint-disable-next-line no-template-curly-in-string
           proxy: 'https://raw.githubusercontent.com${m[1]}${m[3]}',
+          sni: 'baidu.com',
           responseReplace: { headers: { 'content-type': 'application/javascript; charset=utf-8' } },
           desc: '仓库内脚本，重定向改为代理，并设置响应头Content-Type。作用：方便script拦截器直接使用，避免引起跨域问题和脚本内容限制问题。'
         }
