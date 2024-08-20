@@ -137,6 +137,8 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             const cost = new Date() - start
             if (rOptions.protocol === 'https:') {
               log.info(`代理请求返回: ${url}, cost: ${cost} ms`)
+            } else {
+              log.info(`请求返回: ${url}, cost: ${cost} ms`)
             }
             // console.log('request:', proxyReq, proxyReq.socket)
 
