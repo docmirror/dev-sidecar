@@ -21,7 +21,10 @@ module.exports = {
     },
     remoteConfig: {
       enabled: true,
-      url: 'https://gitee.com/wangliang181230/dev-sidecar/raw/docmirror/packages/core/src/config/remote_config.json5'
+      // 共享远程配置地址
+      url: 'https://gitee.com/wangliang181230/dev-sidecar/raw/docmirror/packages/core/src/config/remote_config.json5',
+      // 个人远程配置地址
+      personalUrl: ''
     },
     theme: 'dark', // 主题：light=亮色, dark=暗色
     autoChecked: true, // 是否自动检查更新
