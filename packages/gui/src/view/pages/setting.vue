@@ -160,8 +160,10 @@ export default {
         if (this.config.app.remoteConfig.url !== this.urlBackup || this.config.app.remoteConfig.personalUrl !== this.personalUrlBackup) {
           await this.$api.config.downloadRemoteConfig()
           await this.reloadConfigAndRestart()
+          setTimeout(window.location.reload, 1000)
+        } else {
+          window.location.reload()
         }
-        window.location.reload()
       }
     },
     async openExternal (url) {
