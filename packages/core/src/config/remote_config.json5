@@ -1,6 +1,14 @@
 {
   "server": {
     "intercepts": {
+      "github.com": {
+        "^((/[^/]+){2,})/raw((/[^/]+)+\\.(jpg|jpeg|png|gif))(\\?.*)?$": {
+          "sni": "baidu.com" // proxy拦截器不会使用 .* 中的sni配置，故补充此配置
+        },
+        "^((/[^/]+){2,})/raw((/[^/]+)+\\.js)(\\?.*)?$": {
+          "sni": "baidu.com" // proxy拦截器不会使用 .* 中的sni配置，故补充此配置
+        }
+      },
       "github.githubassets.com": {
         ".*": {
           "sni": "baidu.com"
