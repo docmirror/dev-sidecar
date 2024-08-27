@@ -30,6 +30,9 @@
         }
       }
     },
+    "preSetIpList": {
+      "hub.docker.com": null // 1.8.2版本中，该域名的预设IP有问题，现在远程配置中删除
+    },
     "dns": {
       "mapping": {
         "*.jetbrains.com": "quad9",
