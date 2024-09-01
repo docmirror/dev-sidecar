@@ -146,7 +146,7 @@
 <!--          </a-row>-->
 <!--        </a-tab-pane>-->
         <a-tab-pane tab="IP测速" key="7">
-          <div style="padding-right: 10px">
+          <div class="ip-tester" style="padding-right: 10px">
             <a-alert type="info" message="对从dns获取到的ip进行测速，使用速度最快的ip进行访问。（对使用增强功能的域名没啥用）"></a-alert>
             <a-form-item label="开启dns测速" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-checkbox v-model="getSpeedTestConfig().enabled">
@@ -200,8 +200,8 @@
                     <a-icon v-else type="info-circle"/>
                   </a>
                   <a-tag style="margin:2px;" v-for="(element,index) of item.backupList" :title="element.dns"
-                         :color="element.time?'green':'red'" :key='index'>{{ element.host }}
-                    {{ element.time }}{{ element.time ? 'ms' : '' }}
+                         :color="element.time?'green':'red'" :key='index'>
+                    {{ element.host }} {{ element.time }}{{ element.time ? 'ms' : '' }} {{ element.dns }}
                   </a-tag>
                 </a-card>
               </a-col>
