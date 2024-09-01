@@ -111,7 +111,18 @@ class SpeedTester {
       _.merge(item, ret)
       aliveList.push({ ...ret, ...item })
       aliveList.sort((a, b) => a.time - b.time)
-      this.backupList.sort((a, b) => a.time - b.time)
+      this.backupList.sort((a, b) => {
+        if (a.time === b.time) {
+          return 0
+        }
+        if (a.time == null) {
+          return 1
+        }
+        if (b.time == null) {
+          return -1
+        }
+        return a.time - b.time
+      })
     } catch (e) {
       if (e.message !== 'timeout') {
         log.warn('[speed] test error:  ', this.hostname, `➜ ${item.host}:${item.port} from DNS '${item.dns}'`, ', errorMsg:', e.message)

@@ -200,8 +200,8 @@
                     <a-icon v-else type="info-circle"/>
                   </a>
                   <a-tag style="margin:2px;" v-for="(element,index) of item.backupList" :title="element.dns"
-                         :color="element.time?'green':'red'" :key='index'>{{ element.host }}
-                    {{ element.time }}{{ element.time ? 'ms' : '' }}
+                         :color="element.time?'green':'red'" :key='index'>
+                    {{ element.host }} {{ element.time }}{{ element.time ? 'ms' : '' }} {{ element.dns }}
                   </a-tag>
                 </a-card>
               </a-col>
