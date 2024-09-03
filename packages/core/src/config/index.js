@@ -6,11 +6,11 @@ function getUserBasePath () {
 }
 
 function getRootCaCertPath () {
-  return getUserBasePath() + '/dev-sidecar.ca.crt'
+  return path.join(getUserBasePath(), '/dev-sidecar.ca.crt')
 }
 
 function getRootCaKeyPath () {
-  return getUserBasePath() + '/dev-sidecar.ca.key.pem'
+  return path.join(getUserBasePath(), '/dev-sidecar.ca.key.pem')
 }
 
 module.exports = {

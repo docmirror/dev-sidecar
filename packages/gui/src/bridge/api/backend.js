@@ -138,8 +138,16 @@ function _getSettingsPath () {
   const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
+  } else {
+    // 兼容1.7.3及以下版本的配置文件处理逻辑
+    const newFilePath = path.join(dir, '/setting.json')
+    const oldFilePath = path.join(dir, '/setting.json5')
+    if (!fs.existsSync(newFilePath) && fs.existsSync(oldFilePath)) {
+      return oldFilePath // 如果新文件不存在，且旧文件存在，则返回旧文件路径
+    }
+    return newFilePath
   }
-  return dir + '/setting.json'
+  return path.join(dir, '/setting.json')
 }
 
 function invoke (api, param) {
