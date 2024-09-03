@@ -23,15 +23,23 @@ function _getRemoteSavePath (suffix = '') {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
   }
-  return path.join(dir, `remote_config${suffix}.json5`)
+  return path.join(dir, `/remote_config${suffix}.json5`)
 }
 
 function _getConfigPath () {
   const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
+  } else {
+    // 兼容1.7.3及以下版本的配置文件处理逻辑
+    const newFilePath = path.join(dir, '/config.json')
+    const oldFilePath = path.join(dir, '/config.json5')
+    if (!fs.existsSync(newFilePath) && fs.existsSync(oldFilePath)) {
+      return oldFilePath // 如果新文件不存在，且旧文件存在，则返回旧文件路径
+    }
+    return newFilePath
   }
-  return path.join(dir, 'config.json')
+  return path.join(dir, '/config.json')
 }
 
 let timer
