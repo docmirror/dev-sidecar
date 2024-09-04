@@ -33,10 +33,10 @@
         <a-form-item label="npm仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group v-model="config.plugin.node.setting.registry" @change="onSwitchRegistry"
                          default-value="https://registry.npmjs.org" button-style="solid">
-            <a-radio-button value="https://registry.npmjs.org">
+            <a-radio-button value="https://registry.npmjs.org" title="https://registry.npmjs.org">
               npmjs原生
             </a-radio-button>
-            <a-radio-button value="https://registry.npmmirror.com">
+            <a-radio-button value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
               taobao镜像
             </a-radio-button>
           </a-radio-group>
@@ -45,10 +45,10 @@
 
         <a-form-item label="yarn仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group v-model="config.plugin.node.setting.yarnRegistry" :default-value="'null'" @change="onSwitchYarnRegistry" button-style="solid">
-            <a-radio-button :value="'null'">
+            <a-radio-button :value="'null'" title="https://registry.yarnpkg.com">
               yarn原生
             </a-radio-button>
-            <a-radio-button value="https://registry.npmmirror.com">
+            <a-radio-button value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
               taobao镜像
             </a-radio-button>
           </a-radio-group>

@@ -26,37 +26,37 @@
         <a-form-item label="仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group v-model="config.plugin.pip.setting.registry" @change="onSwitchRegistry"
                          default-value="https://pypi.org/simple/" button-style="solid">
-            <a-radio-button value="https://pypi.org/simple/">
+            <a-radio-button value="https://pypi.org/simple/" title="https://pypi.org/simple/">
               原生
             </a-radio-button>
-            <a-radio-button value="https://mirrors.aliyun.com/pypi/simple/">
+            <a-radio-button value="https://mirrors.aliyun.com/pypi/simple/" title="https://mirrors.aliyun.com/pypi/simple/">
               aliyun镜像
             </a-radio-button>
-            <a-radio-button value="https://mirrors.bfsu.edu.cn/pypi/web/simple/">
+            <a-radio-button value="https://mirrors.bfsu.edu.cn/pypi/web/simple/" title="https://mirrors.bfsu.edu.cn/pypi/web/simple/">
               北京外国语大学镜像
             </a-radio-button>
-            <a-radio-button value="https://mirror.nju.edu.cn/pypi/web/simple/">
+            <a-radio-button value="https://mirror.nju.edu.cn/pypi/web/simple/" title="https://mirror.nju.edu.cn/pypi/web/simple/">
               南京大学镜像
             </a-radio-button>
-            <a-radio-button value="https://pypi.tuna.tsinghua.edu.cn/simple/">
+            <a-radio-button value="https://pypi.tuna.tsinghua.edu.cn/simple/" title="https://pypi.tuna.tsinghua.edu.cn/simple/">
               清华大学镜像
             </a-radio-button>
-            <a-radio-button value="https://mirror.baidu.com/pypi/simple/">
+            <a-radio-button value="https://mirror.baidu.com/pypi/simple/" title="https://mirror.baidu.com/pypi/simple/">
               百度镜像
             </a-radio-button>
-            <a-radio-button value="https://pypi.mirrors.ustc.edu.cn/simple/">
+            <a-radio-button value="https://pypi.mirrors.ustc.edu.cn/simple/" title="https://pypi.mirrors.ustc.edu.cn/simple/">
               中科大镜像
             </a-radio-button>
-            <a-radio-button value="http://pypi.douban.com/simple/">
+            <a-radio-button value="http://pypi.douban.com/simple/" title="http://pypi.douban.com/simple/">
               豆瓣镜像
             </a-radio-button>
-            <a-radio-button value="http://mirrors.sohu.com/Python/">
+            <a-radio-button value="http://mirrors.sohu.com/Python/" title="http://mirrors.sohu.com/Python/">
               搜狐镜像
             </a-radio-button>
-            <a-radio-button value="https://pypi.hustunique.com/">
+            <a-radio-button value="https://pypi.hustunique.com/" title="https://pypi.hustunique.com/">
               华中科大镜像
             </a-radio-button>
-            <a-radio-button value="http://pypi.sdutlinux.org/">
+            <a-radio-button value="http://pypi.sdutlinux.org/" title="http://pypi.sdutlinux.org/">
               山东理工大学镜像
             </a-radio-button>
           </a-radio-group>

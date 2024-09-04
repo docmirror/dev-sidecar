@@ -49,10 +49,10 @@
       </a-form-item>
       <a-form-item label="主题设置" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model="config.app.theme" default-value="light" button-style="solid">
-          <a-radio-button :value="'light'">
+          <a-radio-button :value="'light'" title="light">
             亮色
           </a-radio-button>
-          <a-radio-button :value="'dark'">
+          <a-radio-button :value="'dark'" title="dark">
             暗色
           </a-radio-button>
         </a-radio-group>
