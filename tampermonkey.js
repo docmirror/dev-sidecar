@@ -636,15 +636,15 @@
 		// 设置info
 		if (typeof info === "function") {
 			callback = info;
-			info = null;
+			info = {};
 		} else if (typeof info === "string") {
 			info = { type: info };
 		} else if (typeof info !== "object") {
-			info = null;
+			info = {};
 		}
 
 		try {
-			if (info != null && typeof info.mimetype === "string") {
+			if (typeof info.mimetype === "string") {
 				const blob = new Blob([data], { type: info.mimetype });
 				const data = [new ClipboardItem({ [info.mimetype]: blob })];
 				await navigator.clipboard.write(data);
@@ -665,10 +665,12 @@
 			}
 
 			// 提示设置成功
-			api.GM_notification({
-				text: '内容复制成功，请使用 Ctrl+V 粘贴内容吧！',
-				timeout: 3500
-			});
+			if (info.notification !== false) {
+				api.GM_notification({
+					text: '内容复制成功，请使用 Ctrl+V 粘贴内容吧！',
+					timeout: 3500
+				});
+			}
 		} catch (e) {
 			console.error(`ds_tampermonkey_${version}: GM_setClipboard: 写入剪贴板失败：`, e);
 			return;
