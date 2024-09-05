@@ -274,23 +274,26 @@ const configApi = {
     const configPath = _getConfigPath()
     if (fs.existsSync(configPath)) {
       // 读取 config.json 文件内容
-      const fileStr = fs.readFileSync(configPath).toString().replace(/\s/g, '')
+      const fileOriginalStr = fs.readFileSync(configPath).toString()
 
       // 判断文件内容是否为空或空配置
-      if (fileStr === '' || fileStr === '{}') {
-        fs.rmSync(configPath)
+      const fileStr = fileOriginalStr.replace(/\s/g, '')
+      if (fileStr.length < 5) {
+        fs.writeFileSync(configPath, '{}')
         return false // config.json 内容为空，或为空json
       }
 
       // 备份用户自定义配置文件
-      fs.renameSync(configPath, configPath + '.bak' + new Date().getTime() + '.json')
+      fs.writeFileSync(`${configPath}.${Date.now()}.bak.json`, fileOriginalStr)
+      // 原配置文件内容设为空
+      fs.writeFileSync(configPath, '{}')
 
       // 重新加载配置
       configApi.load(null)
 
       return true // 删除并重新加载配置成功
     } else {
-      return false // config.json 文件不存在或内容为配置
+      return false // config.json 文件不存在
     }
   },
   resetDefault (key) {

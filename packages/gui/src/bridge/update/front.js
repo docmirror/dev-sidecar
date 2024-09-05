@@ -144,7 +144,7 @@ function install (app, api) {
       title: '发现新版本：v' + value.version,
       cancelText: '暂不升级',
       okText: '升级',
-      width: 650,
+      width: 700,
       content: h => {
         if (value.releaseNotes) {
           const notes = []
@@ -152,7 +152,7 @@ function install (app, api) {
             const releaseNotes = value.releaseNotes.replace(/\r\n/g, '\n')
             return <div>
               <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
-              <div>更新内容：</div>
+              <hr/>
               <pre style="max-height:350px;font-family:auto">
                 {releaseNotes}
               </pre>
@@ -186,7 +186,7 @@ function install (app, api) {
       title: `新版本(v${value.version})已准备好，是否立即升级?`,
       cancelText: '暂不升级',
       okText: '立即升级',
-      width: 550,
+      width: 700,
       content: h => {
         if (value.releaseNotes) {
           const notes = []
@@ -194,7 +194,7 @@ function install (app, api) {
             const releaseNotes = value.releaseNotes.replace(/\r\n/g, '\n')
             return <div>
               <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
-              <div>更新内容：</div>
+              <hr/>
               <pre style="max-height:350px;font-family:auto">
                 {releaseNotes}
               </pre>

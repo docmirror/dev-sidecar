@@ -24,6 +24,7 @@
           修改后需要重启应用
         </div>
       </a-form-item>
+      <hr/>
       <a-form-item label="远程配置" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.app.remoteConfig.enabled" @change="onRemoteConfigEnabledChange">
           启用远程配置
@@ -47,6 +48,7 @@
           如果重载远程配置后发现下载的还是修改前的内容，请稍等片刻再重试。
         </div>
       </a-form-item>
+      <hr/>
       <a-form-item label="主题设置" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model="config.app.theme" default-value="light" button-style="solid">
           <a-radio-button :value="'light'" title="light">
@@ -86,6 +88,7 @@
           点击窗口右上角关闭按钮的效果
         </div>
       </a-form-item>
+      <hr/>
       <a-form-item label="自动检查更新" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model="config.app.autoChecked" default-value="light" button-style="solid">
           <a-radio-button :value="true">
@@ -216,8 +219,26 @@ export default {
     },
     async restoreFactorySettings () {
       this.$confirm({
-        title: '提示',
-        content: '确定要恢复出厂设置吗？？？？？？？？？？？？——————————————————————警告：该功能将删除您的所有页面的个性化配置，并重载默认配置及远程配置（如果启用了的话），请谨慎操作！！！',
+        title: '确定要恢复出厂设置吗？',
+        width: 540,
+        content: h =>
+          <div class="restore-factory-settings">
+            <hr/>
+            <p>
+              <h3>操作警告：</h3>
+              <div>
+                该功能将备份您的所有页面的个性化配置，并重载<span>默认配置</span>及<span>远程配置</span>，请谨慎操作！！！
+              </div>
+            </p>
+            <hr/>
+            <p>
+              <h3>找回个性化配置方法：</h3>
+              <div>
+                备份文件路径：<span>~/.dev-sidecar/config.json.时间戳.bak.json</span><br/>
+                将该备份文件重命名为<span>config.json</span>，再重启软件即可恢复配置。
+              </div>
+            </p>
+          </div>,
         cancelText: '取消',
         okText: '确定',
         onOk: async () => {
@@ -225,10 +246,10 @@ export default {
           const result = await this.$api.config.removeUserConfig()
           if (result) {
             this.config = await this.$api.config.get()
-            this.$message.success('恢复出厂配置成功，开始重启代理服务和系统代理')
+            this.$message.success('恢复出厂设置成功，开始重启代理服务和系统代理')
             await this.reloadConfigAndRestart()
           } else {
-            this.$message.info('已是出厂配置，无需恢复')
+            this.$message.info('已是出厂设置，无需恢复')
           }
           this.removeUserConfigLoading = false
         },
