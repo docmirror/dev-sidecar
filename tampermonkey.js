@@ -47,7 +47,7 @@
 	const api = {};
 
 	// 监听页面关闭事件，用于关闭最后一个通知
-	window.addEventListener('beforeunload', function(event) {
+	window.addEventListener("beforeunload", function (event) {
 		api.closeLastNotification();
 	});
 
@@ -62,10 +62,10 @@
 		options = options || {};
 
 		// 创建一个新的<style>元素
-		const styleElement = document.createElement('style');
+		const styleElement = document.createElement("style");
 		styleElement.id = PRE + "plugin-style";
 		// 设置<style>元素的type属性
-		styleElement.type = 'text/css';
+		styleElement.type = "text/css";
 
 		// 设置<style>元素的内容
 		let cssContent = `
@@ -185,7 +185,7 @@
 		}
 
 		// 创建插件div
-		context.pluginElement = document.createElement('div');
+		context.pluginElement = document.createElement("div");
 		context.pluginElement.id = PRE + "plugin";
 		context.pluginElement.title = "油猴插件" + (options.name ? "：" + options.name : "");
 		context.pluginElement.className = "___ds-tampermonkey___";
@@ -197,7 +197,7 @@
 			api.hidePlugin(); // 完全隐藏插件
 		}
 		// 绑定键盘事件，用于完全隐藏插件以及显示菜单
-		window.addEventListener('keyup', function(event) {
+		window.addEventListener("keyup", function (event) {
 			if (event.ctrlKey && event.altKey && !event.shiftKey) {
 				if (event.key === 'h' || event.key === 'H') {
 					api.hidePlugin();
@@ -208,18 +208,18 @@
 		});
 
 		// 创建菜单列表div
-		context.menusElement = document.createElement('div');
+		context.menusElement = document.createElement("div");
 		context.menusElement.id = PRE + "menus";
 		context.menusElement.className = "___ds-menus___";
 		if (options.width > 0) {
-			context.menusElement.style['min-width'] = options.width + "px";
+			context.menusElement.style["min-width"] = options.width + "px";
 		}
 		// 将菜单列表div添加到插件div中
 		context.pluginElement.append(context.menusElement);
 
 		// 创建开关菜单
 		const enabled = api.GM_getValue("ds_enabled", true)
-		const switchMenuElement = document.createElement('div');
+		const switchMenuElement = document.createElement("div");
 		const icon = (options.icon ? `<img alt="icon" src="${options.icon}"/>` : " ");
 		switchMenuElement.id = PRE + "menu-0";
 		switchMenuElement.className = "___ds-menu___ ___ds-menu0___";
@@ -248,14 +248,14 @@
 		context.menusElement.append(switchMenuElement);
 
 		// 创建用户菜单列表div
-		context.userMenusElement = document.createElement('div');
+		context.userMenusElement = document.createElement("div");
 		context.userMenusElement.id = PRE + "user-menus";
 		context.userMenusElement.className = "___ds-user-menus___";
 		// 将用户菜单div添加到菜单div中
 		context.menusElement.append(context.userMenusElement);
 
 		// 获取body元素
-		const body = document.getElementsByTagName('body')[0];
+		const body = document.getElementsByTagName("body")[0];
 		// 将插件div添加到body中
 		body.prepend(context.pluginElement);
 	}
@@ -263,7 +263,7 @@
 	// 创建箭头
 	api.createArrow = (options) => {
 		// 创建箭头元素
-		context.arrowElement = document.createElement('div');
+		context.arrowElement = document.createElement("div");
 		context.arrowElement.id = PRE + "arrow";
 		context.arrowElement.className = "___ds-arrow___";
 		// 初始化title
@@ -409,7 +409,7 @@
 		}
 
 		// 创建菜单元素
-		const menuElement = document.createElement('div');
+		const menuElement = document.createElement("div");
 		menuElement.id = menuCmdId;
 		menuElement.className = "___ds-menu___";
 		menuElement.innerHTML = name;
@@ -615,7 +615,7 @@
 			showNotification();
 		}
 		// 否则，先请求权限
-		else if (Notification.permission !== 'denied') {
+		else if (Notification.permission !== "denied") {
 			Notification.requestPermission(function (permission) {
 				if (permission === "granted") {
 					showNotification(); // 用户接受权限，我们可以显示通知
@@ -643,12 +643,38 @@
 			info = {};
 		}
 
+		const doCallback = async () => {
+			// 提示设置成功
+			if (info.notification !== false) {
+				api.GM_notification({
+					text: "内容复制成功，请使用 Ctrl+V 粘贴内容吧！",
+					timeout: 3500
+				});
+			}
+
+			// 设置剪切板成功，执行回调方法
+			if (typeof callback === "function") {
+				try {
+					callback();
+				} catch (e) {
+					console.error(`ds_tampermonkey_${version}: GM_setClipboard: 回滚方法执行失败：`, e);
+				}
+			}
+		};
+
 		try {
 			const mimeType = info.mimetype;
-			if (typeof mimeType === "string") {
-				const blob = new Blob([data], { type: mimeType });
-				const clipboardItem = [new ClipboardItem({ [mimeType]: blob })];
-				await navigator.clipboard.write(clipboardItem);
+			if (typeof mimeType === "string" && mimeType.length > 0) {
+				const dataArr = typeof data === "object" && data.length >= 0 ? data : [data];
+				const blob = new Blob(dataArr, { type: mimeType });
+				const clipboardItem = new ClipboardItem({ [mimeType]: blob });
+				navigator.clipboard.write([clipboardItem])
+					.then(() => {
+						doCallback();
+					})
+					.catch(e => {
+						console.error(`ds_tampermonkey_${version}: GM_setClipboard: 写入剪贴板失败：`, e);
+					});
 			} else {
 				// data转换为string类型
 				if (typeof data === "object") {
@@ -662,28 +688,16 @@
 					return;
 				}
 
-				await navigator.clipboard.writeText(data);
-			}
-
-			// 提示设置成功
-			if (info.notification !== false) {
-				api.GM_notification({
-					text: '内容复制成功，请使用 Ctrl+V 粘贴内容吧！',
-					timeout: 3500
-				});
+				navigator.clipboard.writeText(data)
+					.then(() => {
+						doCallback();
+					})
+					.catch(e => {
+						console.error(`ds_tampermonkey_${version}: GM_setClipboard: 写入剪贴板失败：`, e);
+					});
 			}
 		} catch (e) {
 			console.error(`ds_tampermonkey_${version}: GM_setClipboard: 写入剪贴板失败：`, e);
-			return;
-		}
-
-		// 设置剪切板成功，执行回调方法
-		if (typeof callback === "function") {
-			try {
-				callback();
-			} catch (e) {
-				console.error(`ds_tampermonkey_${version}: GM_setClipboard: 回滚方法执行失败：`, e);
-			}
 		}
 	}
 
@@ -694,7 +708,7 @@
 	window.__ds_global__ = api;
 
 	// 模块化支持
-	if (typeof module !== 'undefined') {
+	if (typeof module !== "undefined") {
 		module.exports = api;
 	}
 
