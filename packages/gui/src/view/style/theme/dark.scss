@@ -7,6 +7,10 @@ $dark-bd: #333; //边框和分隔线
 $dark-btn: #444; //按钮：边框和背景颜色
 $dark-input: #777; //输入框：背景色
 .theme-dark{
+  hr {
+    border-color: #444;
+  }
+
   /* 背景色和字体颜色 */
   .ds_layout, .ant-layout,
   .ds-container, .ds-container .container-header,
