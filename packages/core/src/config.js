@@ -84,11 +84,13 @@ const configApi = {
     return new Promise((resolve, reject) => {
       log.info('开始下载远程配置:', remoteConfigUrl)
 
-      const headers = {}
+      const headers = {
+        'Cache-Control': 'no-cache' // 禁止使用缓存
+      }
       if (remoteConfigUrl.startsWith('https://raw.githubusercontent.com/')) {
         headers['Server-Name'] = 'baidu.com'
       }
-      request(remoteConfigUrl, headers, (error, response, body) => {
+      request(remoteConfigUrl, { headers }, (error, response, body) => {
         if (error) {
           log.error('下载远程配置失败, error:', error, ', response:', response, ', body:', body)
           reject(error)
