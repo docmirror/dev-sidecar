@@ -647,6 +647,7 @@
 			// 提示设置成功
 			if (info.notification !== false) {
 				api.GM_notification({
+					title: info.notificationTitle,
 					text: info.notification || "内容复制成功，请使用 Ctrl+V 粘贴内容吧！",
 					timeout: 2000
 				});
