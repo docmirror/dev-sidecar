@@ -359,7 +359,7 @@
 			// 初始化完成
 			context.initialized = true;
 
-			console.info(`ds_tampermonkey_${version}: initialization completed（篡改猴插件初始化完成，篡改猴图标已显示在页面右侧，鼠标移到上面可展示功能列表！）`)
+			console.log(`ds_tampermonkey_${version}: initialization completed（篡改猴插件初始化完成，篡改猴图标已显示在页面右侧，鼠标移到上面可展示功能列表！）`)
 		} catch (e) {
 			console.error(`ds_tampermonkey_${version}: initialization failed（篡改猴插件初始化失败）:`, e);
 		}
@@ -697,5 +697,5 @@
 		module.exports = api;
 	}
 
-	console.info(`ds_tampermonkey_${version}: completed`)
+	console.log(`ds_tampermonkey_${version}: completed`)
 })();
