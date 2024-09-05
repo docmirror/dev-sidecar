@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			html.parentElement.insertAdjacentHTML('afterend', _html);
 			if (html.parentElement.parentElement.className.indexOf('XIU2-GCP') === -1){
 				html.parentElement.parentElement.classList.add('XIU2-GCP')
-				html.parentElement.parentElement.addEventListener('click', (e)=>{if (e.target.tagName === 'INPUT') {GM_setClipboard(e.target.value);}})
+				html.parentElement.parentElement.addEventListener('click', (e)=>{if (e.target.tagName === 'INPUT') {GM_setClipboard(e.target.value, {notification:'clone命令已复制成功'});}})
 			}
 		}
 
@@ -353,7 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			html.parentElement.insertAdjacentHTML('afterend', _html);
 			if (html.parentElement.parentElement.className.indexOf('XIU2-GCP') === -1){
 				html.parentElement.parentElement.classList.add('XIU2-GCP')
-				html.parentElement.parentElement.addEventListener('click', (e)=>{if (e.target.tagName === 'INPUT') {GM_setClipboard(e.target.value);}})
+				html.parentElement.parentElement.addEventListener('click', (e)=>{if (e.target.tagName === 'INPUT') {GM_setClipboard(e.target.value, {notification:'clone命令已复制成功'});}})
 			}
 		}
 
