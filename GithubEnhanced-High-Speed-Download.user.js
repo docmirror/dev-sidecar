@@ -4,8 +4,8 @@
  *
  * @name            Github 增强 - 高速下载（Github油猴脚本）
  * @name:en         Github Enhancement - High Speed Download（Github Greasemonkey Script）
- * @version         2.6.3_1
- * @since           2024-09-05 14:44
+ * @version         2.6.3_2
+ * @since           2024-09-05 15:51
  * @author          X.I.U
  * @description     高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
  * @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
@@ -16,7 +16,7 @@
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
 const github_monkey_version = "2.6.3";
-const ds_github_monkey_version = github_monkey_version + "_1";
+const ds_github_monkey_version = github_monkey_version + "_2";
 document.addEventListener("DOMContentLoaded", () => {
 	const DS_init = (window.__ds_global__ || {})['DS_init']
 	if (typeof DS_init === 'function') {
@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const GM_getValue = (window.__ds_global__ || {})['GM_getValue'] || (() => {})
 	const GM_setValue = (window.__ds_global__ || {})['GM_setValue'] || (() => {})
 	const GM_notification = (window.__ds_global__ || {})['GM_notification'] || (() => {});
+	const GM_setClipboard = (window.__ds_global__ || {})['GM_setClipboard'] || (() => {});
 
 	(function() {
 		'use strict';
