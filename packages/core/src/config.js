@@ -84,11 +84,18 @@ const configApi = {
     return new Promise((resolve, reject) => {
       log.info('开始下载远程配置:', remoteConfigUrl)
 
-      const headers = {}
+      const headers = {
+        'Cache-Control': 'no-cache' // 禁止使用缓存
+      }
       if (remoteConfigUrl.startsWith('https://raw.githubusercontent.com/')) {
         headers['Server-Name'] = 'baidu.com'
       }
-      request(remoteConfigUrl, headers, (error, response, body) => {
+
+      const options = {
+        url: remoteConfigUrl,
+        headers
+      }
+      request(options, (error, response, body) => {
         if (error) {
           log.error('下载远程配置失败, error:', error, ', response:', response, ', body:', body)
           reject(error)
@@ -272,23 +279,26 @@ const configApi = {
     const configPath = _getConfigPath()
     if (fs.existsSync(configPath)) {
       // 读取 config.json 文件内容
-      const fileStr = fs.readFileSync(configPath).toString().replace(/\s/g, '')
+      const fileOriginalStr = fs.readFileSync(configPath).toString()
 
       // 判断文件内容是否为空或空配置
-      if (fileStr === '' || fileStr === '{}') {
-        fs.rmSync(configPath)
+      const fileStr = fileOriginalStr.replace(/\s/g, '')
+      if (fileStr.length < 5) {
+        fs.writeFileSync(configPath, '{}')
         return false // config.json 内容为空，或为空json
       }
 
       // 备份用户自定义配置文件
-      fs.renameSync(configPath, configPath + '.bak' + new Date().getTime() + '.json')
+      fs.writeFileSync(`${configPath}.${Date.now()}.bak.json`, fileOriginalStr)
+      // 原配置文件内容设为空
+      fs.writeFileSync(configPath, '{}')
 
       // 重新加载配置
       configApi.load(null)
 
       return true // 删除并重新加载配置成功
     } else {
-      return false // config.json 文件不存在或内容为配置
+      return false // config.json 文件不存在
     }
   },
   resetDefault (key) {
