@@ -220,7 +220,7 @@ export default {
     async restoreFactorySettings () {
       this.$confirm({
         title: '确定要恢复出厂设置吗？',
-        width: 540,
+        width: 610,
         content: h =>
           <div class="restore-factory-settings">
             <hr/>
@@ -232,10 +232,10 @@ export default {
             </p>
             <hr/>
             <p>
-              <h3>找回个性化配置方法：</h3>
+              <h3>找回个性化配置的方法：</h3>
               <div>
-                备份文件路径：<span>~/.dev-sidecar/config.json.时间戳.bak.json</span><br/>
-                将该备份文件重命名为<span>config.json</span>，再重启软件即可恢复配置。
+                1. 找到备份文件，路径：<span>~/.dev-sidecar/config.json.时间戳.bak.json</span><br/>
+                2. 将该备份文件重命名为<span>config.json</span>，再重启软件即可恢复个性化配置。
               </div>
             </p>
           </div>,
