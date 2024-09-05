@@ -90,12 +90,7 @@ const configApi = {
       if (remoteConfigUrl.startsWith('https://raw.githubusercontent.com/')) {
         headers['Server-Name'] = 'baidu.com'
       }
-
-      const options = {
-        url: remoteConfigUrl,
-        headers
-      }
-      request(options, (error, response, body) => {
+      request(remoteConfigUrl, { headers }, (error, response, body) => {
         if (error) {
           log.error('下载远程配置失败, error:', error, ', response:', response, ', body:', body)
           reject(error)

@@ -140,15 +140,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
 
   // 检查更新
   const releasesApiUrl = 'https://api.github.com/repos/docmirror/dev-sidecar/releases'
-  const options = {
-    url: releasesApiUrl,
-    headers: {
-      'User-Agent': `DS/${curVersion}`,
-      'Server-Name': 'baidu.com'
-    }
-  }
   async function checkForUpdatesFromGitHub () {
-    request(options, (error, response, body) => {
+    request(releasesApiUrl, { headers: { 'User-Agent': 'DS/' + curVersion, 'Server-Name': 'baidu.com' } }, (error, response, body) => {
       try {
         if (error) {
           log.error('检查更新失败:', error)
