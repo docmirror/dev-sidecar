@@ -644,10 +644,11 @@
 		}
 
 		try {
-			if (typeof info.mimetype === "string") {
-				const blob = new Blob([data], { type: info.mimetype });
-				const data = [new ClipboardItem({ [info.mimetype]: blob })];
-				await navigator.clipboard.write(data);
+			const mimeType = info.mimetype;
+			if (typeof mimeType === "string") {
+				const blob = new Blob([data], { type: mimeType });
+				const clipboardItem = [new ClipboardItem({ [mimeType]: blob })];
+				await navigator.clipboard.write(clipboardItem);
 			} else {
 				// data转换为string类型
 				if (typeof data === "object") {
