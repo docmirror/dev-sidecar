@@ -64,7 +64,10 @@
         </a-form-item>
         <a-form-item label="信任仓库域名" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-input v-model="config.plugin.pip.setting.trustedHost"></a-input>
-          <div class="form-help">注意：切换仓库镜像同时会修改pip.ini中的trusted-host配置</div>
+          <div class="form-help">
+            使用以上域名安装包时，不会进行SSL证书验证，多个域名用空格隔开<br/>
+            注意：切换仓库镜像同时会修改pip.ini中的trusted-host配置，即使关闭ds也会继续保持
+          </div>
         </a-form-item>
       </a-form>
     </div>
@@ -101,6 +104,7 @@ export default {
     ready () {
     },
     async applyBefore () {
+      this.config.plugin.pip.setting.trustedHost = this.config.plugin.pip.setting.trustedHost.replaceAll(/[,，。+\s]+/g, ' ').trim()
     },
     async applyAfter () {
       await this.$api.plugin.pip.start()
