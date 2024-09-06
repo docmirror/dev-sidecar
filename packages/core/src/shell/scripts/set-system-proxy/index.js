@@ -98,16 +98,18 @@ const executor = {
       const setProxyCmd = [
         'gsettings set org.gnome.system.proxy mode manual',
         'gsettings set org.gnome.system.proxy.https enabled true',
-        `gsettings set org.gnome.system.proxy.https port ${port}`,
-        `gsettings set org.gnome.system.proxy.https host ${ip}`
+        `gsettings set org.gnome.system.proxy.https host ${ip}`,
+        `gsettings set org.gnome.system.proxy.https port ${port}`
       ]
       // http
       if (config.get().proxy.proxyHttp) {
         setProxyCmd[setProxyCmd.length] = 'gsettings set org.gnome.system.proxy.http enabled true'
-        setProxyCmd[setProxyCmd.length] = `gsettings set org.gnome.system.proxy.http port ${port}`
         setProxyCmd[setProxyCmd.length] = `gsettings set org.gnome.system.proxy.http host ${ip}`
+        setProxyCmd[setProxyCmd.length] = `gsettings set org.gnome.system.proxy.http port ${port}`
       } else {
         setProxyCmd[setProxyCmd.length] = 'gsettings set org.gnome.system.proxy.http enabled false'
+        setProxyCmd[setProxyCmd.length] = "gsettings set org.gnome.system.proxy.http host ''"
+        setProxyCmd[setProxyCmd.length] = 'gsettings set org.gnome.system.proxy.http port 0'
       }
       // ignore-hosts
       // setProxyCmd[setProxyCmd.length] = `gsettings set org.gnome.system.proxy ignore-hosts "${local}"`
