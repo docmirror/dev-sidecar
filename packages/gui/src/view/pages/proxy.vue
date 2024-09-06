@@ -26,7 +26,8 @@
           是否代理HTTP请求
         </a-checkbox>
         <div class="form-help">
-          勾选时，同时代理HTTP和HTTPS请求；不勾选时，只代理HTTPS请求
+          勾选时，同时代理HTTP和HTTPS请求；不勾选时，只代理HTTPS请求<br/>
+          提示：仅为了加速访问github网站的用户，建议不勾选。
         </div>
       </a-form-item>
       <a-form-item v-if="isWindows()" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
