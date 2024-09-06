@@ -50,7 +50,11 @@ async function _winSetProxy (exec, ip, port, setEnv) {
 
   const proxyPath = extraPath.getProxyExePath()
   const execFun = 'global'
-  const proxyAddr = `http=http://${ip}:${port};https=http://${ip}:${port}`
+  let proxyAddr = `https=http://${ip}:${port}`
+  if (config.get().proxy.proxyHttp !== false) {
+    proxyAddr = `http=http://${ip}:${port};` + proxyAddr
+  }
+
   log.info(`执行“设置系统代理”的程序: ${proxyPath} ${execFun} ${proxyAddr} ......(省略排除IP列表)`)
   await execFile(proxyPath, [execFun, proxyAddr, excludeIpStr])
 

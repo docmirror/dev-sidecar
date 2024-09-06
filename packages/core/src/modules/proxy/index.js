@@ -54,6 +54,7 @@ module.exports = {
     name: '系统代理',
     use: 'local',
     other: [],
+    proxyHttp: true,
     setEnv: false,
     excludeIpList: {
       // region 常用国内可访问域名

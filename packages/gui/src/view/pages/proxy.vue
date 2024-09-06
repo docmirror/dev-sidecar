@@ -21,6 +21,14 @@
           <a @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">卸载与恢复网络说明</a>
         </div>
       </a-form-item>
+      <a-form-item label="代理HTTP请求" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-checkbox v-model="config.proxy.proxyHttp" >
+          是否代理HTTP请求
+        </a-checkbox>
+        <div class="form-help">
+          勾选时，同时代理HTTP和HTTPS请求；不勾选时，只代理HTTPS请求
+        </div>
+      </a-form-item>
       <a-form-item v-if="isWindows()" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.proxy.setEnv" >
           是否同时修改HTTPS_PROXY环境变量（不好用，不建议勾选）
