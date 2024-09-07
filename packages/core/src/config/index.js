@@ -26,6 +26,7 @@ module.exports = {
       // 个人远程配置地址
       personalUrl: ''
     },
+    startOpenWindow: true, // 启动时是否隐藏window，true=打开，false=隐藏
     theme: 'dark', // 主题：light=亮色, dark=暗色
     autoChecked: true, // 是否自动检查更新
     skipPreRelease: true, // 是否忽略预发布版本

@@ -88,6 +88,19 @@
           点击窗口右上角关闭按钮的效果
         </div>
       </a-form-item>
+      <a-form-item label="启动时打开窗口" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-radio-group v-model="config.app.startOpenWindow" default-value="true" button-style="solid">
+          <a-radio-button :value="true">
+            打开窗口
+          </a-radio-button>
+          <a-radio-button :value="false">
+            隐藏窗口
+          </a-radio-button>
+        </a-radio-group>
+        <div class="form-help">
+          启动软件时，是否打开窗口。提示：如果设置为隐藏窗口，可点击系统托盘小图标打开窗口。
+        </div>
+      </a-form-item>
       <hr/>
       <a-form-item label="自动检查更新" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model="config.app.autoChecked" default-value="light" button-style="solid">
