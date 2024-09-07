@@ -96,8 +96,7 @@
                            :show-btns="false" :expandedOnStart="true"></vue-json-editor>
         </a-tab-pane>
         <a-tab-pane tab="DNS服务管理" key="5">
-          <div>说明：IP预设置功能，需要与 `DNS设置` 或 `IP测速` 功能一起使用才会生效。</div>
-          <vue-json-editor style="height:94%;margin-top:10px;" ref="editor" v-model="config.server.dns.providers" mode="code"
+          <vue-json-editor style="height:100%;" ref="editor" v-model="config.server.dns.providers" mode="code"
                            :show-btns="false" :expandedOnStart="true"></vue-json-editor>
         </a-tab-pane>
         <a-tab-pane tab="DNS设置" key="6">
