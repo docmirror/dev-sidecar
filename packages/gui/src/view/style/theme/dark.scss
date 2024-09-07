@@ -8,7 +8,7 @@ $dark-btn: #444; //按钮：边框和背景颜色
 $dark-input: #777; //输入框：背景色
 .theme-dark{
   hr {
-    border-color: #444;
+    border-color: $dark-bd;
   }
 
   /* 背景色和字体颜色 */
