@@ -89,7 +89,7 @@
         </div>
       </a-form-item>
       <a-form-item label="启动时打开窗口" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.startOpenWindow" default-value="true" button-style="solid">
+        <a-radio-group v-model="config.app.startShowWindow" default-value="true" button-style="solid">
           <a-radio-button :value="true">
             打开窗口
           </a-radio-button>
