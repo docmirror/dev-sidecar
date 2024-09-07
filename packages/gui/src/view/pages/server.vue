@@ -95,7 +95,12 @@
           <vue-json-editor style="height:94%;margin-top:10px;" ref="editor" v-model="config.server.preSetIpList" mode="code"
                            :show-btns="false" :expandedOnStart="true"></vue-json-editor>
         </a-tab-pane>
-        <a-tab-pane tab="DNS设置" key="5">
+        <a-tab-pane tab="DNS服务管理" key="5">
+          <div>说明：IP预设置功能，需要与 `DNS设置` 或 `IP测速` 功能一起使用才会生效。</div>
+          <vue-json-editor style="height:94%;margin-top:10px;" ref="editor" v-model="config.server.dns.providers" mode="code"
+                           :show-btns="false" :expandedOnStart="true"></vue-json-editor>
+        </a-tab-pane>
+        <a-tab-pane tab="DNS设置" key="6">
           <div>
             <a-row style="margin-top:10px">
               <a-col span="19">
@@ -117,34 +122,12 @@
                 </a-select>
               </a-col>
               <a-col :span="3">
-                <a-button v-if="item.value !== false" type="danger" icon="minus" @click="deleteDnsMapping(item,index)"/>
-                <a-button v-if="item.value === false" type="primary" icon="checked"
-                          @click="restoreDefDnsMapping(item,index)"></a-button>
+                <a-button v-if="item.value !== false" type="danger"  icon="minus"   @click="deleteDnsMapping(item,index)"/>
+                <a-button v-if="item.value === false" type="primary" icon="checked" @click="restoreDefDnsMapping(item,index)"/>
               </a-col>
             </a-row>
           </div>
         </a-tab-pane>
-<!--        <a-tab-pane tab="SNI" key="6">-->
-<!--          <a-row style="margin-top:10px">-->
-<!--            <a-col span="19">-->
-<!--              <div>这里配置哪些域名要修改sni</div>-->
-<!--            </a-col>-->
-<!--            <a-col span="3">-->
-<!--              <a-button style="margin-left:8px" type="primary" icon="plus" @click="addSniList()"/>-->
-<!--            </a-col>-->
-<!--          </a-row>-->
-<!--          <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of sniList" :key='index'>-->
-<!--            <a-col :span="14">-->
-<!--              <a-input  v-model="item.key"></a-input>-->
-<!--            </a-col>-->
-<!--            <a-col :span="5">-->
-<!--              <a-input  v-model="item.value"></a-input>-->
-<!--            </a-col>-->
-<!--            <a-col :span="3">-->
-<!--              <a-button  type="danger" icon="minus" @click="deleteSniList(item,index)"/>-->
-<!--            </a-col>-->
-<!--          </a-row>-->
-<!--        </a-tab-pane>-->
         <a-tab-pane tab="IP测速" key="7">
           <div class="ip-tester" style="padding-right: 10px">
             <a-alert type="info" message="对从dns获取到的ip进行测速，使用速度最快的ip进行访问。（对使用增强功能的域名没啥用）"></a-alert>
@@ -341,47 +324,13 @@ export default {
     deleteWhiteList (item, index) {
       this.whiteList.splice(index, 1)
     },
-    restoreDefWhiteList (item, index) {
-
-    },
     addWhiteList () {
       this.whiteList.unshift({ key: '', value: true })
     },
-
-    // // sniList
-    // initSniList () {
-    //   this.sniList = []
-    //   for (const key in this.config.server.sniList) {
-    //     const value = this.config.server.sniList[key]
-    //     this.sniList.push({
-    //       key, value
-    //     })
-    //   }
-    // },
-    // submitSniList () {
-    //   const sniList = {}
-    //   for (const item of this.sniList) {
-    //     if (item.key) {
-    //       sniList[item.key] = item.value
-    //     }
-    //   }
-    //   this.config.server.sniList = sniList
-    // },
-    // deleteSniList (item, index) {
-    //   this.sniList.splice(index, 1)
-    // },
-    // restoreDefSniList (item, index) {
-    //
-    // },
-    // addSniList () {
-    //   this.sniList.unshift({ key: '', value: true })
-    // },
-
     async openLog () {
       const dir = await this.$api.info.getConfigDir()
       this.$api.ipc.openPath(dir + '/logs/')
     },
-
     getSpeedTestConfig () {
       return this.config.server.dns.speedTest
     },
@@ -419,7 +368,7 @@ export default {
       }, 5000)
     },
     async handleTabChange (key) {
-      if (key !== '2' && key !== '4') {
+      if (key !== '2' && key !== '4' && key !== '5') {
         return
       }
 
