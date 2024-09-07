@@ -37,7 +37,11 @@ function setTray () {
       // 系统托盘图标目录
       label: 'DevTools',
       click: () => {
-        win.webContents.openDevTools()
+        try {
+          win.webContents.openDevTools()
+        } catch (e) {
+          log.error('win.webContents.openDevTools() error:', e)
+        }
       }
     },
     {
@@ -234,17 +238,20 @@ function setDock () {
 app.disableHardwareAcceleration() // 禁用gpu
 
 // 开启后是否默认隐藏window
-let startHideWindow = false
-if (process.argv) {
-  const args = minimist(process.argv)
-  if (args.hideWindow) {
-    startHideWindow = true
-  }
-
-  log.info('start args:', args)
-}
+let startHideWindow = !DevSidecar.api.config.get().app.startOpenWindow
 if (app.getLoginItemSettings().wasOpenedAsHidden) {
   startHideWindow = true
+} else if (process.argv) {
+  const args = minimist(process.argv)
+  log.info('start args:', args)
+
+  // 通过启动参数，判断是否隐藏窗口
+  const hideWindowArg = args.hideWindow + ''
+  if (hideWindowArg === 'true' || hideWindowArg === '1') {
+    startHideWindow = true
+  } else if (hideWindowArg === 'false' || hideWindowArg === '0') {
+    startHideWindow = false
+  }
 }
 log.info('start hide window:', startHideWindow, app.getLoginItemSettings())
 
