@@ -136,10 +136,10 @@ function changeAppConfig (config) {
 
 function createWindow (startHideWindow) {
   // Create the browser window.
-
+  const windowSize = DevSidecar.api.config.get().app.windowSize || {}
   win = new BrowserWindow({
-    width: 900,
-    height: 750,
+    width: windowSize.width || 900,
+    height: windowSize.height || 750,
     title: 'DevSidecar',
     webPreferences: {
       enableRemoteModule: true,
