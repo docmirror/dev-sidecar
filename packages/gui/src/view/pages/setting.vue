@@ -102,8 +102,8 @@
         </div>
       </a-form-item>
       <a-form-item label="启动时窗口大小" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number v-model="config.app.windowSize.width" :min="600" :max="2400"/>&nbsp;×
-        <a-input-number v-model="config.app.windowSize.height" :min="500" :max="2000"/>
+        <a-input-number v-model="config.app.windowSize.width" :step="50" :min="600" :max="2400"/>&nbsp;×
+        <a-input-number v-model="config.app.windowSize.height" :step="50" :min="500" :max="2000"/>
       </a-form-item>
       <hr/>
       <a-form-item label="自动检查更新" :label-col="labelCol" :wrapper-col="wrapperCol">
