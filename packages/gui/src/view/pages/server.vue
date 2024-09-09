@@ -33,7 +33,7 @@
               <div class="form-help">你可以设置0.0.0.0，让其他电脑可以使用此代理服务</div>
             </a-form-item>
             <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input v-model="config.server.port"/>
+              <a-input-number v-model="config.server.port" :min="0" :max="65535"/>
               <div class="form-help">修改后需要重启应用</div>
             </a-form-item>
             <a-form-item label="全局校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
