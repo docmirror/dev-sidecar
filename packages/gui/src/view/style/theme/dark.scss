@@ -57,6 +57,9 @@ $dark-input: #777; //输入框：背景色
   .ant-radio-button-wrapper:not(:first-child)::before {
     background-color: #666;
   }
+  .ant-divider {
+    background: $dark-bd;
+  }
 
   /* 左侧 */
   /** 背景色 **/

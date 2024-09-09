@@ -81,7 +81,7 @@
                 <a-button style="margin-left:8px" type="primary" icon="plus" @click="addWhiteList()"/>
               </a-col>
             </a-row>
-            <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of whiteList" :key='index'>
+            <a-row :gutter="10" style="margin-top: 5px" v-for="(item,index) of whiteList" :key='index'>
               <a-col :span="19">
                 <a-input :disabled="item.value === false" v-model="item.key"></a-input>
               </a-col>
@@ -109,7 +109,7 @@
                 <a-button style="margin-left:8px" type="primary" icon="plus" @click="addDnsMapping()"/>
               </a-col>
             </a-row>
-            <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of dnsMappings" :key='index'>
+            <a-row :gutter="10" style="margin-top: 5px" v-for="(item,index) of dnsMappings" :key='index'>
               <a-col :span="14">
                 <a-input :disabled="item.value === false" v-model="item.key"></a-input>
               </a-col>

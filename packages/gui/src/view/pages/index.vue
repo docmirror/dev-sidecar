@@ -419,6 +419,6 @@ export default {
 }
 
 div.ant-form-item {
-  margin-bottom: 10px;
+  margin-bottom: 9px;
 }
 </style>
