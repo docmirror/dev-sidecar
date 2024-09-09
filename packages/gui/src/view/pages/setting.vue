@@ -101,9 +101,9 @@
           启动软件时，是否打开窗口。提示：如果设置为隐藏窗口，可点击系统托盘小图标打开窗口。
         </div>
       </a-form-item>
-      <a-form-item label="启动时窗口尺寸" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number v-model="config.app.windowSize.width" :min="600" :max="3000"/>&nbsp;*
-        <a-input-number v-model="config.app.windowSize.height" :min="400" :max="2000"/>
+      <a-form-item label="启动时窗口大小" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-input-number v-model="config.app.windowSize.width" :min="600" :max="2400"/>&nbsp;*
+        <a-input-number v-model="config.app.windowSize.height" :min="500" :max="2000"/>
       </a-form-item>
       <hr/>
       <a-form-item label="自动检查更新" :label-col="labelCol" :wrapper-col="wrapperCol">
