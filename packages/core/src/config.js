@@ -245,14 +245,27 @@ const configApi = {
     // 以用户配置作为基准配置，是为了保证用户配置的顺序在前
     const merged = newConfig != null ? lodash.cloneDeep(newConfig) : {}
 
-    mergeApi.doMerge(merged, defConfig) // 合并默认配置
     if (get().app.remoteConfig.enabled === true) {
+      let personalRemoteConfig = null
+      let shareRemoteConfig = null
+
+      if (get().app.remoteConfig.personalUrl) {
+        personalRemoteConfig = configApi.readRemoteConfig('_personal')
+        mergeApi.doMerge(merged, personalRemoteConfig) // 先合并一次个人远程配置，使配置顺序在前
+      }
       if (get().app.remoteConfig.url) {
-        mergeApi.doMerge(merged, configApi.readRemoteConfig()) // 合并共享远程配置
+        shareRemoteConfig = configApi.readRemoteConfig()
+        mergeApi.doMerge(merged, shareRemoteConfig) // 先合并一次共享远程配置，使配置顺序在前
+      }
+      mergeApi.doMerge(merged, defConfig) // 合并默认配置，顺序排在最后
+      if (get().app.remoteConfig.url) {
+        mergeApi.doMerge(merged, shareRemoteConfig) // 再合并一次共享远程配置，使配置生效
       }
       if (get().app.remoteConfig.personalUrl) {
-        mergeApi.doMerge(merged, configApi.readRemoteConfig('_personal')) // 合并个人远程配置
+        mergeApi.doMerge(merged, personalRemoteConfig) // 再合并一次个人远程配置，使配置生效
       }
+    } else {
+      mergeApi.doMerge(merged, defConfig) // 合并默认配置
     }
     if (newConfig != null) {
       mergeApi.doMerge(merged, newConfig) // 再合并一次用户配置，使用户配置重新生效
