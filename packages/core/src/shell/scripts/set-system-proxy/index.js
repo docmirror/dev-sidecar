@@ -10,6 +10,11 @@ const log = require('../../../utils/util.log')
 const extraPath = require('../extra-path/index')
 
 let config = null
+function loadConfig () {
+  if (config == null) {
+    config = require('../../../config.js')
+  }
+}
 
 async function _winUnsetProxy (exec, setEnv) {
   // eslint-disable-next-line no-constant-condition
@@ -37,9 +42,7 @@ async function _winUnsetProxy (exec, setEnv) {
 
 async function _winSetProxy (exec, ip, port, setEnv) {
   // 延迟加载config
-  if (config == null) {
-    config = require('../../../config.js')
-  }
+  loadConfig()
 
   let excludeIpStr = ''
   for (const ip in config.get().proxy.excludeIpList) {
@@ -92,6 +95,9 @@ const executor = {
   async linux (exec, params = {}) {
     const { ip, port } = params
     if (ip != null) {
+      // 延迟加载config
+      loadConfig()
+
       // const local = 'localhost, 127.0.0.0/8, ::1'
 
       // https
@@ -141,6 +147,9 @@ const executor = {
       // `
       // await exec(removeEnv)
     } else {
+      // 延迟加载config
+      loadConfig()
+
       // https
       await exec(`networksetup -setsecurewebproxy '${wifiAdaptor}' ${ip} ${port}`)
       // http
