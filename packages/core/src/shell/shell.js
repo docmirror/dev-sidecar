@@ -66,7 +66,7 @@ class WindowsSystemShell extends SystemShell {
         compose += ' && ' + cmd
       }
       // compose += '&& exit'
-      const ret = await childExec(compose)
+      const ret = await childExec(compose, args)
       // log.info('cmd complete:', compose)
       return ret
     }
@@ -79,7 +79,9 @@ function _childExec (composeCmds, options = {}) {
     log.info('shell:', composeCmds)
     childProcess.exec(composeCmds, options, function (error, stdout, stderr) {
       if (error) {
-        log.error('cmd 命令执行错误：', composeCmds, stderr)
+        if (options.printErrorLog !== false) {
+          log.error('cmd 命令执行错误：\n==============================\ncommands:', composeCmds, '\n   error:', error, '\n  stdout:', stdout, '\n  stderr:', stderr, '\n==============================')
+        }
         reject(new Error(stderr))
       } else {
         // log.info('cmd 命令完成：', stdout)
@@ -91,7 +93,7 @@ function _childExec (composeCmds, options = {}) {
   })
 }
 
-function childExec (composeCmds) {
+function childExec (composeCmds, options = {}) {
   return new Promise((resolve, reject) => {
     const encoding = 'cp936'
     const binaryEncoding = 'binary'
@@ -102,7 +104,9 @@ function childExec (composeCmds) {
       if (error) {
         // console.log('------', decoder.decode(stderr))
         const message = iconv.decode(Buffer.from(stderr, binaryEncoding), encoding)
-        log.error('cmd 命令执行错误：', composeCmds, message)
+        if (options.printErrorLog !== false) {
+          log.error('cmd 命令执行错误：\n------------------------------\ncommands:', composeCmds, '\n message:', message, '\n   error:', error, '\n  stdout:', stdout, '\n  stderr:', stderr, '\n------------------------------')
+        }
         reject(new Error(message))
       } else {
         // log.info('cmd 命令完成：', stdout)

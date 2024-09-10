@@ -109,16 +109,16 @@ const executor = {
       ]
       // http
       if (config.get().proxy.proxyHttp) {
-        setProxyCmd[setProxyCmd.length] = 'gsettings set org.gnome.system.proxy.http enabled true'
-        setProxyCmd[setProxyCmd.length] = `gsettings set org.gnome.system.proxy.http host ${ip}`
-        setProxyCmd[setProxyCmd.length] = `gsettings set org.gnome.system.proxy.http port ${port}`
+        setProxyCmd.push('gsettings set org.gnome.system.proxy.http enabled true')
+        setProxyCmd.push(`gsettings set org.gnome.system.proxy.http host ${ip}`)
+        setProxyCmd.push(`gsettings set org.gnome.system.proxy.http port ${port}`)
       } else {
-        setProxyCmd[setProxyCmd.length] = 'gsettings set org.gnome.system.proxy.http enabled false'
-        setProxyCmd[setProxyCmd.length] = "gsettings set org.gnome.system.proxy.http host ''"
-        setProxyCmd[setProxyCmd.length] = 'gsettings set org.gnome.system.proxy.http port 0'
+        setProxyCmd.push('gsettings set org.gnome.system.proxy.http enabled false')
+        setProxyCmd.push("gsettings set org.gnome.system.proxy.http host ''")
+        setProxyCmd.push('gsettings set org.gnome.system.proxy.http port 0')
       }
       // ignore-hosts
-      // setProxyCmd[setProxyCmd.length] = `gsettings set org.gnome.system.proxy ignore-hosts "${local}"`
+      // setProxyCmd.push(`gsettings set org.gnome.system.proxy ignore-hosts "${local}"`)
 
       await exec(setProxyCmd)
     } else {
