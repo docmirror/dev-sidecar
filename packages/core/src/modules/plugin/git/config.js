@@ -5,8 +5,9 @@ module.exports = {
   setting: {
     sslVerify: true, // Git.exe 是否关闭sslVerify，true=关闭 false=开启
     noProxyUrls: {
-      'https://gitee.com': true,
-      'https://e.coding.net': true
+      'https://gitee.com': true, // 码云
+      'https://e.coding.net': true, // Coding（腾讯云）
+      'https://codeup.aliyun.com': true // 云效 Codeup (阿里云)
     }
   }
 }
