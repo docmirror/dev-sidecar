@@ -68,7 +68,7 @@
               <a-input v-model="item.value" :title="item.value" :readonly="true"></a-input>
             </a-col>
             <a-col :span="4">
-              <a-icon v-if="item.exists&& item.hadSet" title="已设置" style="color:green" type="check"/>
+              <a-icon v-if="item.exists && item.hadSet" title="已设置" style="color:green" type="check"/>
               <a-icon v-else title="还未设置" style="color:red" type="exclamation-circle"/>
             </a-col>
           </a-row>
