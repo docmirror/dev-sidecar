@@ -5,8 +5,8 @@ module.exports = {
   setting: {
     sslVerify: true, // Git.exe 是否关闭sslVerify，true=关闭 false=开启
     noProxyUrls: {
-      'https://gitee.com/': true,
-      'https://e.coding.net/': true
+      'https://gitee.com': true,
+      'https://e.coding.net': true
     }
   }
 }
