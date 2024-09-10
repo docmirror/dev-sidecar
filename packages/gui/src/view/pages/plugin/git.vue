@@ -20,14 +20,6 @@
             当前未启动
           </a-tag>
         </a-form-item>
-        <a-form-item label="代理HTTP请求" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.git.setting.proxyHttp">
-            是否代理HTTP请求
-          </a-checkbox>
-          <div class="form-help">
-            勾选时，同时代理HTTP和HTTPS请求；不勾选时，只代理HTTPS请求
-          </div>
-        </a-form-item>
         <a-form-item label="SSL校验" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.git.setting.sslVerify">
             关闭sslVerify

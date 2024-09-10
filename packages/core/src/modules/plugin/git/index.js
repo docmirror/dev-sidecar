@@ -23,28 +23,15 @@ const Plugin = function (context) {
     },
 
     async setProxy (ip, port) {
-      // 代理https
-      const ret = await shell.exec([`git config --global https.proxy http://${ip}:${port} `], { type: 'cmd' })
-
-      try {
-        if (config.get().plugin.git.setting.proxyHttp === true) {
-          // 代理http
-          await shell.exec([`git config --global http.proxy http://${ip}:${port} `], { type: 'cmd', printErrorLog: false })
-        } else {
-          // 尝试取消代理http
-          await shell.exec(['git config --global --unset http.proxy '], { type: 'cmd', printErrorLog: false })
-        }
-      } catch (ignore) {
-      }
-
-      // 恢复ssl验证
+      const cmds = [
+        `git config --global http.proxy  http://${ip}:${port} `,
+        `git config --global https.proxy http://${ip}:${port} `
+      ]
       if (config.get().plugin.git.setting.sslVerify === true) {
-        try {
-          await shell.exec(['git config --global http.sslVerify false '], { type: 'cmd', printErrorLog: false })
-        } catch (ignore) {
-        }
+        cmds.push('git config --global http.sslVerify false ')
       }
 
+      const ret = await shell.exec(cmds, { type: 'cmd' })
       event.fire('status', { key: 'plugin.git.enabled', value: true })
       log.info('开启【Git】代理成功')
 
@@ -52,23 +39,14 @@ const Plugin = function (context) {
     },
 
     async unsetProxy () {
-      // 取消代理https
-      const ret = await shell.exec(['git config --global --unset https.proxy '], { type: 'cmd' })
-
-      // 尝试取消代理http
-      try {
-        await shell.exec(['git config --global --unset http.proxy '], { type: 'cmd', printErrorLog: false })
-      } catch (ignore) {
-      }
-
-      // 恢复ssl验证
+      const cmds = [
+        'git config --global --unset https.proxy ',
+        'git config --global --unset http.proxy '
+      ]
       if (config.get().plugin.git.setting.sslVerify === true) {
-        try {
-          await shell.exec(['git config --global   http.sslVerify true '], { type: 'cmd', printErrorLog: false })
-        } catch (ignore) {
-        }
+        cmds.push('git config --global   http.sslVerify true ')
       }
-
+      const ret = await shell.exec(cmds, { type: 'cmd' })
       event.fire('status', { key: 'plugin.git.enabled', value: false })
       log.info('关闭【Git】代理成功')
       return ret
