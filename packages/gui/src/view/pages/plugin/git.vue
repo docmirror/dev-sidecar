@@ -26,6 +26,26 @@
           </a-checkbox>
           安装Git时未选择使用系统证书管理服务时必须关闭
         </a-form-item>
+        <a-form-item label="排除仓库地址" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <div>
+            <a-row :gutter="10">
+              <a-col :span="22">
+                <span>Git.exe将不代理以下仓库；可以是站点地址、组/机构地址、单项目地址等</span>
+              </a-col>
+              <a-col :span="2">
+                <a-button type="primary" icon="plus" @click="addNoProxyUrl()"/>
+              </a-col>
+            </a-row>
+            <a-row :gutter="10" v-for="(item,index) of noProxyUrls" :key='index'>
+              <a-col :span="22">
+                <a-input :disabled="item.value === false" v-model="item.key"></a-input>
+              </a-col>
+              <a-col :span="2">
+                <a-button type="danger" icon="minus" @click="delNoProxyUrl(item,index)"/>
+              </a-col>
+            </a-row>
+          </div>
+        </a-form-item>
       </a-form>
     </div>
     <template slot="footer">
@@ -46,7 +66,9 @@ export default {
   mixins: [Plugin],
   data () {
     return {
-      key: 'plugin.git'
+      key: 'plugin.git',
+      noProxyUrls: [],
+      needRestart: false
     }
   },
   created () {
@@ -56,6 +78,45 @@ export default {
   },
   methods: {
     ready () {
+      this.initNoProxyUrls()
+    },
+    async applyBefore () {
+      if (this.status.plugin.git.enabled) {
+        await this.$api.plugin.git.close()
+        this.needRestart = true
+      } else {
+        this.needRestart = false
+      }
+      this.submitNoProxyUrls()
+    },
+    async applyAfter () {
+      if (this.needRestart) {
+        await this.$api.plugin.git.start()
+      }
+    },
+    initNoProxyUrls () {
+      this.noProxyUrls = []
+      for (const key in this.config.plugin.git.setting.noProxyUrls) {
+        const value = this.config.plugin.git.setting.noProxyUrls[key]
+        this.noProxyUrls.push({
+          key, value
+        })
+      }
+    },
+    addNoProxyUrl () {
+      this.noProxyUrls.unshift({ key: '', value: true })
+    },
+    delNoProxyUrl (item, index) {
+      this.noProxyUrls.splice(index, 1)
+    },
+    submitNoProxyUrls () {
+      const noProxyUrls = {}
+      for (const item of this.noProxyUrls) {
+        if (item.key) {
+          noProxyUrls[item.key] = item.value
+        }
+      }
+      this.config.plugin.git.setting.noProxyUrls = noProxyUrls
     }
   }
 }
