@@ -30,7 +30,7 @@
           <div>
             <a-row :gutter="10">
               <a-col :span="22">
-                <span>Git.exe将不代理以下仓库；可以是站点地址、组/机构地址、单项目地址等</span>
+                <span>Git.exe将不代理以下仓库；可以是根地址、组织/机构地址、完整地址</span>
               </a-col>
               <a-col :span="2">
                 <a-button type="primary" icon="plus" @click="addNoProxyUrl()"/>
