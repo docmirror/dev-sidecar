@@ -31,7 +31,7 @@ module.exports = (serverConfig) => {
   }
 
   const overWallConfig = serverConfig.plugin.overwall
-  if (overWallConfig.pac) {
+  if (overWallConfig.pac && overWallConfig.pac.enabled) {
     const pacConfig = overWallConfig.pac
 
     // 自动更新 pac.txt

@@ -80,7 +80,7 @@ function savePacFile (pacTxt) {
 // 异步下载 pac.txt ，避免影响代理服务的启动速度
 async function downloadPacAsync (pacConfig) {
   const remotePacFileUrl = pacConfig.pacFileUpdateUrl
-  log.info('开始下载远程 pac.txt from:', remotePacFileUrl)
+  log.info('开始下载远程 pac.txt 文件:', remotePacFileUrl)
   request(remotePacFileUrl, (error, response, body) => {
     if (error) {
       log.error('下载远程 pac.txt 文件失败, error:', error, ', response:', response, ', body:', body)
