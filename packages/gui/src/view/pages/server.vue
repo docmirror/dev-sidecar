@@ -36,6 +36,14 @@
               <a-input-number v-model="config.server.port" :min="0" :max="65535"/>
               <div class="form-help">修改后需要重启应用</div>
             </a-form-item>
+            <hr/>
+            <a-form-item label="请求超时时间" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-number v-model="config.server.setting.timeout" :step="1000" :min="1000"/> ms，对应 timeout 属性
+            </a-form-item>
+            <a-form-item label="连接超时时间" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-number v-model="config.server.setting.keepAliveTimeout" :step="1000" :min="1000"/> ms，对应 keepAliveTimeout 属性
+            </a-form-item>
+            <hr/>
             <a-form-item label="全局校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-checkbox v-model="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED">
                 NODE_TLS_REJECT_UNAUTHORIZED
@@ -54,6 +62,7 @@
               <a-input-search addon-before="Key" enter-button="选择" @search="onKeySelect"
                               v-model="config.server.setting.rootCaFile.keyPath"/>
             </a-form-item>
+            <hr/>
             <a-form-item label="启用拦截" :label-col="labelCol" :wrapper-col="wrapperCol">
                 <a-checkbox v-model="config.server.intercept.enabled">
                   启用拦截
@@ -136,8 +145,7 @@
               </a-checkbox>
             </a-form-item>
             <a-form-item label="自动测试间隔" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number id="inputNumber" v-model="getSpeedTestConfig().interval" :step="1000" :min="1"/>
-              ms
+              <a-input-number id="inputNumber" v-model="getSpeedTestConfig().interval" :step="1000" :min="1"/> ms
             </a-form-item>
             <div>使用以下dns获取ip进行测速</div>
             <a-row style="margin-top:10px">

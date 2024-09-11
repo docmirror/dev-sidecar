@@ -44,6 +44,8 @@ module.exports = {
     setting: {
       NODE_TLS_REJECT_UNAUTHORIZED: true,
       verifySsl: true,
+      timeout: 20000, // 代理请求超时时间
+      keepAliveTimeout: 30000, // socket连接的超时时间
       script: {
         enabled: true,
         defaultDir: './extra/scripts/'

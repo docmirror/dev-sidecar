@@ -15,9 +15,49 @@ const httpAgent = new Agent({
   timeout: 20000,
   keepAliveTimeout: 30000 // free socket keepalive for 30 seconds
 })
+const httpsAgentCache = {}
+const httpAgentCache = {}
+
 let socketId = 0
 
 let httpsOverHttpAgent, httpOverHttpsAgent, httpsOverHttpsAgent
+
+function createHttpsAgent (serverSetting) {
+  const key = (serverSetting.timeout || 20000) + '-' + (serverSetting.keepAliveTimeout || 30000)
+  if (!httpsAgentCache[key]) {
+    httpsAgentCache[key] = new HttpsAgent({
+      keepAlive: true,
+      timeout: serverSetting.timeout || 20000,
+      keepAliveTimeout: serverSetting.keepAliveTimeout || 30000,
+      rejectUnauthorized: false
+    })
+  }
+  return httpsAgentCache[key]
+}
+
+function createHttpAgent (serverSetting) {
+  const key = (serverSetting.timeout || 20000) + '-' + (serverSetting.keepAliveTimeout || 30000)
+  if (!httpAgentCache[key]) {
+    httpAgentCache[key] = new Agent({
+      keepAlive: true,
+      timeout: serverSetting.timeout || 20000,
+      keepAliveTimeout: serverSetting.keepAliveTimeout || 30000
+    })
+  }
+  return httpAgentCache[key]
+}
+
+function createAgent (protocol, serverSetting) {
+  if (protocol === 'https:') {
+    return !serverSetting || (serverSetting.timeout === 20000 && serverSetting.keepAliveTimeout === 30000)
+      ? httpsAgent
+      : createHttpsAgent(serverSetting)
+  } else {
+    return !serverSetting || (serverSetting.timeout === 20000 && serverSetting.keepAliveTimeout === 30000)
+      ? httpAgent
+      : createHttpAgent(serverSetting)
+  }
+}
 
 util.parseHostnameAndPort = (host, defaultPort) => {
   let arr = host.match(/^(\[[^\]]+\])(?::(\d+))?$/) // 尝试解析IPv6
@@ -42,7 +82,7 @@ util.parseHostnameAndPort = (host, defaultPort) => {
   return arr
 }
 
-util.getOptionsFromRequest = (req, ssl, externalProxy = null) => {
+util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting) => {
   // eslint-disable-next-line node/no-deprecated-api
   const urlObject = url.parse(req.url)
   const defaultPort = ssl ? 443 : 80
@@ -67,11 +107,7 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null) => {
   if (!externalProxyUrl) {
     // keepAlive
     if (headers.connection !== 'close') {
-      if (protocol === 'https:') {
-        agent = httpsAgent
-      } else {
-        agent = httpAgent
-      }
+      agent = createAgent(protocol, serverSetting)
       headers.connection = 'keep-alive'
     } else {
       agent = false
