@@ -3,9 +3,10 @@ const dnsUtil = require('./lib/dns')
 const log = require('./utils/util.log')
 const matchUtil = require('./utils/util.match')
 const path = require('path')
+const fs = require('fs')
 const scriptInterceptor = require('./lib/interceptor/impl/res/script')
 
-const createOverwallMiddleware = require('./lib/proxy/middleware/overwall')
+const { getTmpPacFilePath, downloadPacAsync, createOverwallMiddleware } = require('./lib/proxy/middleware/overwall')
 
 // 处理拦截配置
 function buildIntercepts (intercepts) {
@@ -15,12 +16,11 @@ function buildIntercepts (intercepts) {
   return intercepts
 }
 
-module.exports = (config) => {
-  const intercepts = matchUtil.domainMapRegexply(buildIntercepts(config.intercepts))
-  const whiteList = matchUtil.domainMapRegexply(config.whiteList)
+module.exports = (serverConfig) => {
+  const intercepts = matchUtil.domainMapRegexply(buildIntercepts(serverConfig.intercepts))
+  const whiteList = matchUtil.domainMapRegexply(serverConfig.whiteList)
 
-  const dnsMapping = config.dns.mapping
-  const serverConfig = config
+  const dnsMapping = serverConfig.dns.mapping
   const setting = serverConfig.setting
 
   if (!setting.script.dirAbsolutePath) {
@@ -30,16 +30,35 @@ module.exports = (config) => {
     setting.verifySsl = true
   }
 
-  const overwallConfig = serverConfig.plugin.overwall
-  if (!overwallConfig.pac.pacFileAbsolutePath) {
-    overwallConfig.pac.pacFileAbsolutePath = path.join(setting.rootDir, overwallConfig.pac.pacFilePath)
+  const overWallConfig = serverConfig.plugin.overwall
+  if (overWallConfig.pac && overWallConfig.pac.enabled) {
+    const pacConfig = overWallConfig.pac
+
+    // 自动更新 pac.txt
+    if (!pacConfig.pacFileAbsolutePath && pacConfig.autoUpdate) {
+      // 异步下载远程 pac.txt 文件，并保存到本地；下载成功后，需要重启代理服务才会生效
+      downloadPacAsync(pacConfig)
+    }
+
+    // 优先使用本地已下载的 pac.txt 文件
+    if (!pacConfig.pacFileAbsolutePath && fs.existsSync(getTmpPacFilePath())) {
+      pacConfig.pacFileAbsolutePath = getTmpPacFilePath()
+      log.info('读取已下载的 pac.txt 文件:', pacConfig.pacFileAbsolutePath)
+    }
+
+    if (!pacConfig.pacFileAbsolutePath) {
+      pacConfig.pacFileAbsolutePath = path.join(setting.rootDir, pacConfig.pacFilePath)
+      if (pacConfig.autoUpdate) {
+        log.warn('远程 pac.txt 文件下载失败或还在下载中，现使用内置 pac.txt 文件:', pacConfig.pacFileAbsolutePath)
+      }
+    }
   }
 
   // 插件列表
   const middlewares = []
 
   // 梯子插件：如果启用了，则添加到插件列表中
-  const overwallMiddleware = createOverwallMiddleware(overwallConfig)
+  const overwallMiddleware = createOverwallMiddleware(overWallConfig)
   if (overwallMiddleware) {
     middlewares.push(overwallMiddleware)
   }
@@ -48,9 +67,9 @@ module.exports = (config) => {
     host: serverConfig.host,
     port: serverConfig.port,
     dnsConfig: {
-      providers: dnsUtil.initDNS(serverConfig.dns.providers, matchUtil.domainMapRegexply(config.preSetIpList)),
+      providers: dnsUtil.initDNS(serverConfig.dns.providers, matchUtil.domainMapRegexply(serverConfig.preSetIpList)),
       mapping: matchUtil.domainMapRegexply(dnsMapping),
-      speedTest: config.dns.speedTest
+      speedTest: serverConfig.dns.speedTest
     },
     setting,
     sniConfig: serverConfig.sniList,

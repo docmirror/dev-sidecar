@@ -19,12 +19,29 @@
             声明：仅供技术学习与探讨！
           </div>
         </a-form-item>
+        <hr/>
         <a-form-item label="PAC" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.overwall.pac.enabled">
             启用PAC
           </a-checkbox>
           <div class="form-help">PAC内收录了常见的被封杀的域名，当里面某些域名你不想被拦截时，可以关闭PAC</div>
         </a-form-item>
+        <a-form-item label="自动更新PAC" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-checkbox v-model="config.plugin.overwall.pac.autoUpdate">
+            是否自动更新PAC
+          </a-checkbox>
+          <div class="form-help">
+            开启自动更新后，启动代理服务时，将会异步从下面的远程地址下载PAC文件到本地。<br/>
+            注：只要下载成功后，即使关闭自动更新功能，也会优先读取最近下载的PAC文件！
+          </div>
+        </a-form-item>
+        <a-form-item label="远程PAC文件地址" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-input v-model="config.plugin.overwall.pac.pacFileUpdateUrl"/>
+          <div class="form-help">
+            远程PAC文件内容可以是 base64 编码格式，也可以是未经过编码的
+          </div>
+        </a-form-item>
+        <hr/>
         <a-form-item label="自定义域名" :label-col="labelCol" :wrapper-col="wrapperCol">
           <div>
             <a-row :gutter="10" style="">
