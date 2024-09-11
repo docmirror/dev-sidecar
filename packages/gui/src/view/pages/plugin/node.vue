@@ -62,10 +62,10 @@
           <div class="form-help">某些库需要自己设置镜像变量，才能下载，比如：electron</div>
           <a-row :gutter="10" style="margin-top: 5px" v-for="(item,index) of npmVariables" :key='index'>
             <a-col :span="10">
-              <a-input v-model="item.key" :title="item.key" :readonly="true"></a-input>
+              <a-input v-model="item.key" :title="item.key" readOnly></a-input>
             </a-col>
             <a-col :span="10">
-              <a-input v-model="item.value" :title="item.value" :readonly="true"></a-input>
+              <a-input v-model="item.value" :title="item.value" readOnly></a-input>
             </a-col>
             <a-col :span="4">
               <a-icon v-if="item.exists && item.hadSet" title="已设置" style="color:green" type="check"/>

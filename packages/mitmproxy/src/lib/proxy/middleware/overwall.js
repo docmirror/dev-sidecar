@@ -1,8 +1,12 @@
 const url = require('url')
+const request = require('request')
 const lodash = require('lodash')
 const pac = require('./source/pac')
 const matchUtil = require('../../../utils/util.match')
 const log = require('../../../utils/util.log')
+const path = require('path')
+const fs = require('fs')
+const { Buffer } = require('buffer')
 let pacClient = null
 
 function matched (hostname, overWallTargetMap) {
@@ -23,7 +27,61 @@ function matched (hostname, overWallTargetMap) {
   }
 }
 
-module.exports = function createOverWallIntercept (overWallConfig) {
+function getUserBasePath () {
+  const userHome = process.env.USERPROFILE || process.env.HOME || '/'
+  return path.resolve(userHome, './.dev-sidecar')
+}
+
+// 下载的 pac.txt 文件保存路径
+function getTmpPacFilePath () {
+  return path.join(getUserBasePath(), '/pac.txt')
+}
+
+// 保存 pac 内容到 `~/pac.txt` 文件中
+function savePacFile (pacTxt) {
+  const pacFilePath = getTmpPacFilePath()
+  fs.writeFileSync(pacFilePath, pacTxt)
+  log.info('保存 pac.txt 文件成功:', pacFilePath)
+  return pacFilePath
+}
+
+// 异步下载 pac.txt ，避免影响代理服务的启动速度
+async function downloadPacAsync (pacConfig) {
+  const remotePacFileUrl = pacConfig.pacFileUpdateUrl
+  log.info('开始下载远程 pac.txt from:', remotePacFileUrl)
+  request(remotePacFileUrl, (error, response, body) => {
+    if (error) {
+      log.error('下载远程 pac.txt 文件失败, error:', error, ', response:', response, ', body:', body)
+      return
+    }
+    if (response && response.statusCode === 200) {
+      if (body == null || body.length < 100) {
+        log.warn('下载远程 pac.txt 文件成功，但内容为空或内容太短，判断为无效的 pax.txt 文件:', remotePacFileUrl, ', body:', body)
+        return
+      } else {
+        log.info('下载远程 pac.txt 文件成功:', remotePacFileUrl)
+      }
+
+      // 尝试解析Base64（注：https://gitlab.com/gfwlist/gfwlist/raw/master/gfwlist.txt 下载下来的是Base64格式）
+      let pacTxt = body
+      try {
+        pacTxt = Buffer.from(pacTxt, 'base64').toString('utf8')
+      } catch (e) {
+        if (pacTxt.indexOf('||') < 0) { // TODO: 待优化，需要判断下载的 pac.txt 文件内容是否正确，目前暂时先简单判断一下
+          log.error(`远程 pac.txt 文件内容即不是base64格式，也不是要求的格式，url: ${remotePacFileUrl}，body: ${body}`)
+          return
+        }
+      }
+
+      // 保存到本地
+      savePacFile(pacTxt)
+    } else {
+      log.error('下载远程 pac.txt 文件失败, response:', response, ', body:', body)
+    }
+  })
+}
+
+function createOverwallMiddleware (overWallConfig) {
   if (!overWallConfig || overWallConfig.enabled !== true) {
     return null
   }
@@ -108,4 +166,10 @@ module.exports = function createOverWallIntercept (overWallConfig) {
       return true
     }
   }
+}
+
+module.exports = {
+  getTmpPacFilePath,
+  downloadPacAsync,
+  createOverwallMiddleware
 }
