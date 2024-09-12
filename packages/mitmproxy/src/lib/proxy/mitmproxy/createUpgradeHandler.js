@@ -5,10 +5,10 @@ const log = require('../../../utils/util.log')
 // copy from node-http-proxy.  ^_^
 
 // create connectHandler function
-module.exports = function createUpgradeHandler () {
+module.exports = function createUpgradeHandler (serverSetting) {
   // return
   return function upgradeHandler (req, cltSocket, head, ssl) {
-    const clientOptions = util.getOptionsFromRequest(req, ssl)
+    const clientOptions = util.getOptionsFromRequest(req, ssl, null, serverSetting)
     const proxyReq = (ssl ? https : http).request(clientOptions)
     proxyReq.on('error', (e) => {
       log.error('upgradeHandler error:', e)

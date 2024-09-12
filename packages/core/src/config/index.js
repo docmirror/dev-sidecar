@@ -52,6 +52,18 @@ module.exports = {
       rootCaFile: {
         certPath: getRootCaCertPath(),
         keyPath: getRootCaKeyPath()
+      },
+
+      // 默认超时时间配置
+      defaultTimeout: 20000, // 请求超时时间
+      defaultKeepAliveTimeout: 30000, // 连接超时时间
+
+      // 指定域名超时时间配置
+      timeoutMapping: {
+        'github.com': {
+          timeout: 20000,
+          keepAliveTimeout: 30000
+        }
       }
     },
     intercept: {

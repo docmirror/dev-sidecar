@@ -60,7 +60,7 @@ module.exports = {
       setting
     )
 
-    const upgradeHandler = createUpgradeHandler()
+    const upgradeHandler = createUpgradeHandler(setting)
 
     const fakeServersCenter = createFakeServerCenter({
       caCertPath,
