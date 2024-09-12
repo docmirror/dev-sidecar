@@ -109,7 +109,7 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting) => 
     // keepAlive
     if (headers.connection !== 'close') {
       const timeoutConfig = getTimeoutConfig(hostname, serverSetting)
-      // log.info(`get timeoutConfig: hostname: ${hostname}, timeoutConfig:`, timeoutConfig)
+      // log.info(`get timeoutConfig '${hostname}':`, timeoutConfig)
       agent = createAgent(protocol, timeoutConfig)
       headers.connection = 'keep-alive'
     } else {
