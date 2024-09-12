@@ -80,7 +80,7 @@
               请求：<a-input-number v-model="config.server.setting.defaultTimeout" :step="1000" :min="1000"/> ms，对应 timeout 属性<br/>
               连接：<a-input-number v-model="config.server.setting.defaultKeepAliveTimeout" :step="1000" :min="1000"/> ms，对应 keepAliveTimeout 属性
             </a-form-item>
-            <hr/>
+            <hr style="margin-bottom:15px"/>
             <div>这里指定域名的超时时间：<span class="form-help">（以下github的配置为示例，预计将在 1.8.7 版本删除）</span></div>
             <vue-json-editor style="flex-grow:1;min-height:300px;margin-top:10px" ref="editor" v-model="config.server.setting.timeoutMapping" mode="code"
                              :show-btns="false" :expandedOnStart="true"></vue-json-editor>
