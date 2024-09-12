@@ -171,7 +171,7 @@
                 <a-button style="margin-left:10px" type="primary" icon="plus" @click="addSpeedHostname()"/>
               </a-col>
             </a-row>
-            <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of getSpeedTestConfig().hostnameList"
+            <a-row :gutter="10" style="margin-top: 5px" v-for="(item,index) of getSpeedTestConfig().hostnameList"
                    :key='index'>
               <a-col :span="21">
                 <a-input v-model="getSpeedTestConfig().hostnameList[index]"/>
