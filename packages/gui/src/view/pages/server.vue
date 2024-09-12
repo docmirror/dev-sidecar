@@ -37,13 +37,6 @@
               <div class="form-help">修改后需要重启应用</div>
             </a-form-item>
             <hr/>
-            <a-form-item label="请求超时时间" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number v-model="config.server.setting.timeout" :step="1000" :min="1000"/> ms，对应 timeout 属性
-            </a-form-item>
-            <a-form-item label="连接超时时间" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number v-model="config.server.setting.keepAliveTimeout" :step="1000" :min="1000"/> ms，对应 keepAliveTimeout 属性
-            </a-form-item>
-            <hr/>
             <a-form-item label="全局校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-checkbox v-model="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED">
                 NODE_TLS_REJECT_UNAUTHORIZED
@@ -81,7 +74,19 @@
           <vue-json-editor style="height:100%;" ref="editor" v-model="config.server.intercepts" mode="code"
                            :show-btns="false" :expandedOnStart="true"></vue-json-editor>
         </a-tab-pane>
-        <a-tab-pane tab="域名白名单" key="3">
+        <a-tab-pane tab="超时时间设置" key="3">
+          <div style="height:100%;display:flex;flex-direction:column;padding-right:10px">
+            <a-form-item label="默认超时时间" :label-col="labelCol" :wrapper-col="wrapperCol">
+              请求：<a-input-number v-model="config.server.setting.defaultTimeout" :step="1000" :min="1000"/> ms，对应 timeout 属性<br/>
+              连接：<a-input-number v-model="config.server.setting.defaultKeepAliveTimeout" :step="1000" :min="1000"/> ms，对应 keepAliveTimeout 属性
+            </a-form-item>
+            <hr/>
+            <div>这里指定域名的超时时间：<span class="form-help">（以下github的配置为示例，预计将在 1.8.7 版本删除）</span></div>
+            <vue-json-editor style="flex-grow:1;min-height:300px;margin-top:10px" ref="editor" v-model="config.server.setting.timeoutMapping" mode="code"
+                             :show-btns="false" :expandedOnStart="true"></vue-json-editor>
+          </div>
+        </a-tab-pane>
+        <a-tab-pane tab="域名白名单" key="4">
             <a-row style="margin-top:10px">
               <a-col span="19">
                 <div>这里配置哪些域名不需要通过代理</div>
@@ -99,16 +104,18 @@
               </a-col>
             </a-row>
         </a-tab-pane>
-        <a-tab-pane tab="IP预设置" key="4">
-          <div>注意：IP预设置功能，需要与 `DNS设置` 或 `IP测速` 功能一起使用才会生效。</div>
-          <vue-json-editor style="height:94%;margin-top:10px;" ref="editor" v-model="config.server.preSetIpList" mode="code"
-                           :show-btns="false" :expandedOnStart="true"></vue-json-editor>
+        <a-tab-pane tab="IP预设置" key="5">
+          <div style="height:100%;display:flex;flex-direction:column">
+            <div>注意：IP预设置功能，需要与 `DNS设置` 或 `IP测速` 功能一起使用才会生效。</div>
+            <vue-json-editor style="flex-grow:1;min-height:300px;margin-top:10px;" ref="editor" v-model="config.server.preSetIpList" mode="code"
+                             :show-btns="false" :expandedOnStart="true"></vue-json-editor>
+          </div>
         </a-tab-pane>
-        <a-tab-pane tab="DNS服务管理" key="5">
+        <a-tab-pane tab="DNS服务管理" key="6">
           <vue-json-editor style="height:100%;" ref="editor" v-model="config.server.dns.providers" mode="code"
                            :show-btns="false" :expandedOnStart="true"></vue-json-editor>
         </a-tab-pane>
-        <a-tab-pane tab="DNS设置" key="6">
+        <a-tab-pane tab="DNS设置" key="7">
           <div>
             <a-row style="margin-top:10px">
               <a-col span="19">
@@ -136,7 +143,7 @@
             </a-row>
           </div>
         </a-tab-pane>
-        <a-tab-pane tab="IP测速" key="7">
+        <a-tab-pane tab="IP测速" key="8">
           <div class="ip-tester" style="padding-right: 10px">
             <a-alert type="info" message="对从dns获取到的ip进行测速，使用速度最快的ip进行访问。（对使用增强功能的域名没啥用）"></a-alert>
             <a-form-item label="开启dns测速" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -375,7 +382,7 @@ export default {
       }, 5000)
     },
     async handleTabChange (key) {
-      if (key !== '2' && key !== '4' && key !== '5') {
+      if (key !== '2' && key !== '3' && key !== '5' && key !== '6') {
         return
       }
 

@@ -3,18 +3,9 @@ const Agent = require('./ProxyHttpAgent')
 const HttpsAgent = require('./ProxyHttpsAgent')
 const tunnelAgent = require('tunnel-agent')
 const log = require('../../../utils/util.log')
+const matchUtil = require('../../../utils/util.match')
 const util = exports
-const httpsAgent = new HttpsAgent({
-  keepAlive: true,
-  timeout: 20000,
-  keepAliveTimeout: 30000, // free socket keepalive for 30 seconds
-  rejectUnauthorized: false
-})
-const httpAgent = new Agent({
-  keepAlive: true,
-  timeout: 20000,
-  keepAliveTimeout: 30000 // free socket keepalive for 30 seconds
-})
+
 const httpsAgentCache = {}
 const httpAgentCache = {}
 
@@ -22,41 +13,46 @@ let socketId = 0
 
 let httpsOverHttpAgent, httpOverHttpsAgent, httpsOverHttpsAgent
 
-function createHttpsAgent (serverSetting) {
-  const key = (serverSetting.timeout || 20000) + '-' + (serverSetting.keepAliveTimeout || 30000)
+function getTimeoutConfig (hostname, serverSetting) {
+  const timeoutMapping = serverSetting.timeoutMapping
+
+  const timeoutConfig = matchUtil.matchHostname(timeoutMapping, hostname, 'get timeoutConfig') || {}
+
+  return {
+    timeout: timeoutConfig.timeout || serverSetting.defaultTimeout || 20000,
+    keepAliveTimeout: timeoutConfig.keepAliveTimeout || serverSetting.defaultKeepAliveTimeout || 30000
+  }
+}
+
+function createHttpsAgent (timeoutConfig) {
+  const key = timeoutConfig.timeout + '-' + timeoutConfig.keepAliveTimeout
   if (!httpsAgentCache[key]) {
     httpsAgentCache[key] = new HttpsAgent({
       keepAlive: true,
-      timeout: serverSetting.timeout || 20000,
-      keepAliveTimeout: serverSetting.keepAliveTimeout || 30000,
+      timeout: timeoutConfig.timeout,
+      keepAliveTimeout: timeoutConfig.keepAliveTimeout,
       rejectUnauthorized: false
     })
   }
   return httpsAgentCache[key]
 }
 
-function createHttpAgent (serverSetting) {
-  const key = (serverSetting.timeout || 20000) + '-' + (serverSetting.keepAliveTimeout || 30000)
+function createHttpAgent (timeoutConfig) {
+  const key = timeoutConfig.timeout + '-' + timeoutConfig.keepAliveTimeout
   if (!httpAgentCache[key]) {
     httpAgentCache[key] = new Agent({
       keepAlive: true,
-      timeout: serverSetting.timeout || 20000,
-      keepAliveTimeout: serverSetting.keepAliveTimeout || 30000
+      timeout: timeoutConfig.timeout,
+      keepAliveTimeout: timeoutConfig.keepAliveTimeout
     })
   }
   return httpAgentCache[key]
 }
 
-function createAgent (protocol, serverSetting) {
-  if (protocol === 'https:') {
-    return !serverSetting || (serverSetting.timeout === 20000 && serverSetting.keepAliveTimeout === 30000)
-      ? httpsAgent
-      : createHttpsAgent(serverSetting)
-  } else {
-    return !serverSetting || (serverSetting.timeout === 20000 && serverSetting.keepAliveTimeout === 30000)
-      ? httpAgent
-      : createHttpAgent(serverSetting)
-  }
+function createAgent (protocol, timeoutConfig) {
+  return protocol === 'https:'
+    ? createHttpsAgent(timeoutConfig)
+    : createHttpAgent(timeoutConfig)
 }
 
 util.parseHostnameAndPort = (host, defaultPort) => {
@@ -102,12 +98,19 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting) => 
     }
   }
 
+  // 解析host和port
+  const arr = util.parseHostnameAndPort(req.headers.host)
+  const hostname = arr[0]
+  const port = arr[1] || defaultPort
+
   delete headers['proxy-connection']
   let agent
   if (!externalProxyUrl) {
     // keepAlive
     if (headers.connection !== 'close') {
-      agent = createAgent(protocol, serverSetting)
+      const timeoutConfig = getTimeoutConfig(hostname, serverSetting)
+      // log.info(`get timeoutConfig: hostname: ${hostname}, timeoutConfig:`, timeoutConfig)
+      agent = createAgent(protocol, timeoutConfig)
       headers.connection = 'keep-alive'
     } else {
       agent = false
@@ -116,19 +119,16 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting) => 
     agent = util.getTunnelAgent(protocol === 'https:', externalProxyUrl)
   }
 
-  // 解析host和port
-  const arr = util.parseHostnameAndPort(req.headers.host)
-
   // 初始化options
   const options = {
-    protocol: protocol,
+    protocol,
     method: req.method,
     url: req.url,
-    hostname: arr[0],
-    port: arr[1] || defaultPort,
+    hostname,
+    port,
     path: urlObject.path,
     headers: req.headers,
-    agent: agent
+    agent
   }
 
   // eslint-disable-next-line node/no-deprecated-api

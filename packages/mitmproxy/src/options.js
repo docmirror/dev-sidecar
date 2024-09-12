@@ -19,6 +19,7 @@ function buildIntercepts (intercepts) {
 module.exports = (serverConfig) => {
   const intercepts = matchUtil.domainMapRegexply(buildIntercepts(serverConfig.intercepts))
   const whiteList = matchUtil.domainMapRegexply(serverConfig.whiteList)
+  const timeoutMapping = matchUtil.domainMapRegexply(serverConfig.setting.timeoutMapping)
 
   const dnsMapping = serverConfig.dns.mapping
   const setting = serverConfig.setting
@@ -29,6 +30,7 @@ module.exports = (serverConfig) => {
   if (setting.verifySsl !== false) {
     setting.verifySsl = true
   }
+  setting.timeoutMapping = timeoutMapping
 
   const overWallConfig = serverConfig.plugin.overwall
   if (overWallConfig.pac && overWallConfig.pac.enabled) {
