@@ -323,6 +323,7 @@ Error: www.github.com:443, 代理请求超时
 ```shell
 git config --global --unset http.proxy
 git config --global --unset https.proxy
+git config --global --unset http.sslVerify
 ```
 3、执行下面的命令关闭npm的代理设置(如果你开启过npm加速的开关)
 ```shell
