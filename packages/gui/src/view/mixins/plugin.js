@@ -107,11 +107,17 @@ export default {
       this.setConfig(config)
     },
     async reloadConfigAndRestart () {
+      if (this.$api.plugin.git.isEnabled()) {
+        await this.$api.plugin.git.close()
+      }
       await this.reloadConfig()
       this.printConfig('After reloadConfigAndRestart(), ')
       if (this.status.server.enabled || this.status.proxy.enabled) {
         await this.$api.proxy.restart()
         await this.$api.server.restart()
+        if (this.$api.plugin.git.isEnabled()) {
+          await this.$api.plugin.git.start()
+        }
         this.$message.success('代理服务和系统代理重启成功')
       } else {
         this.$message.info('代理服务和系统代理未启动，无需重启')

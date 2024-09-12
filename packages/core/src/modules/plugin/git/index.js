@@ -18,6 +18,10 @@ const Plugin = function (context) {
       await pluginApi.start()
     },
 
+    isEnabled () {
+      return config.get().plugin.git.enabled
+    },
+
     async save (newConfig) {
 
     },
