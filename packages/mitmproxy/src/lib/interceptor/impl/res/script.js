@@ -28,6 +28,12 @@ module.exports = {
       return
     }
 
+    // 如果没有响应头 'content-type'，或其值不是 'text/html'，则不处理
+    if (!proxyRes.headers['content-type'] || proxyRes.headers['content-type'].indexOf('text/html') < 0) {
+      res.setHeader('DS-Script-Interceptor', 'Not text/html')
+      return
+    }
+
     let keys = interceptOpt.script
     if (typeof keys === 'string') {
       keys = [keys]
@@ -70,7 +76,7 @@ module.exports = {
       }
 
       res.setHeader('DS-Script-Interceptor', 'true')
-      log.info('script response intercept: insert script', rOptions.hostname, rOptions.path, ', head:', tags)
+      log.info(`script response intercept: insert script ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`, ', head:', tags)
       return {
         head: tags + '\r\n'
       }
