@@ -65,11 +65,14 @@ module.exports = (serverConfig) => {
     middlewares.push(overwallMiddleware)
   }
 
+  const preSetIpList = matchUtil.domainMapRegexply(serverConfig.preSetIpList)
+
   const options = {
     host: serverConfig.host,
     port: serverConfig.port,
     dnsConfig: {
-      providers: dnsUtil.initDNS(serverConfig.dns.providers, matchUtil.domainMapRegexply(serverConfig.preSetIpList)),
+      preSetIpList,
+      providers: dnsUtil.initDNS(serverConfig.dns.providers, preSetIpList),
       mapping: matchUtil.domainMapRegexply(dnsMapping),
       speedTest: serverConfig.dns.speedTest
     },
