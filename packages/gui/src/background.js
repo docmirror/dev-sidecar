@@ -65,7 +65,6 @@ function setTray () {
   // 通常被添加到一个 context menu 上.
   // 系统托盘右键菜单
   const trayMenuTemplate = [
-
     {
       // 系统托盘图标目录
       label: 'DevTools (F12)',
