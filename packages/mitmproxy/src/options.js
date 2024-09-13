@@ -127,7 +127,7 @@ module.exports = (serverConfig) => {
             // 如果存在同名拦截器，则order值越大，优先级越高
             const matchedInterceptOpt = matchInterceptsOpts[impl.name]
             if (matchedInterceptOpt) {
-              if (matchedInterceptOpt.order >= interceptOpt.order) {
+              if (matchedInterceptOpt.order >= (interceptOpt.order || 0)) {
                 log.warn(`duplicate interceptor: ${impl.name}, hostname: ${rOptions.hostname}`)
                 continue
               }
