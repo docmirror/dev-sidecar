@@ -68,7 +68,7 @@ function setTray () {
 
     {
       // 系统托盘图标目录
-      label: 'DevTools',
+      label: 'DevTools (F12)',
       click: switchDevTools
     },
     {
