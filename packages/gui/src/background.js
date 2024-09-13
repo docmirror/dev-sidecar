@@ -25,13 +25,10 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
-let devToolsStatus = false
-
 function openDevTools () {
   try {
     log.debug('尝试打开 `开发者工具`')
     win.webContents.openDevTools()
-    devToolsStatus = true
     log.debug('打开 `开发者工具` 成功')
   } catch (e) {
     log.error('打开 `开发者工具` 失败:', e)
@@ -42,7 +39,6 @@ function closeDevTools () {
   try {
     log.debug('尝试关闭 `开发者工具`')
     win.webContents.closeDevTools()
-    devToolsStatus = false
     log.debug('关闭 `开发者工具` 成功')
   } catch (e) {
     log.error('关闭 `开发者工具` 失败:', e)
@@ -50,7 +46,10 @@ function closeDevTools () {
 }
 
 function switchDevTools () {
-  if (devToolsStatus) {
+  if (!win || !win.webContents) {
+    return
+  }
+  if (win.webContents.isDevToolsOpened()) {
     closeDevTools()
   } else {
     openDevTools()
