@@ -12,7 +12,7 @@ let pacClient = null
 function matched (hostname, overWallTargetMap) {
   const ret1 = matchUtil.matchHostname(overWallTargetMap, hostname, 'matched overwall')
   if (ret1) {
-    return true
+    return 'overwall config'
   }
   if (pacClient == null) {
     return false
@@ -20,7 +20,7 @@ function matched (hostname, overWallTargetMap) {
   const ret = pacClient.FindProxyForURL('https://' + hostname, hostname)
   if (ret && ret.indexOf('PROXY ') === 0) {
     log.info(`matchHostname: matched overwall: '${hostname}' -> '${ret}' in pac.txt`)
-    return true
+    return 'overwall pac'
   } else {
     log.debug(`matchHostname: matched overwall: Not-Matched '${hostname}' -> '${ret}' in pac.txt`)
     return false
@@ -153,7 +153,8 @@ function createOverwallMiddleware (overWallConfig) {
         return
       }
       const hostname = rOptions.hostname
-      if (!matched(hostname, overWallTargetMap)) {
+      const matchedResult = matched(hostname, overWallTargetMap)
+      if (!matchedResult) {
         return
       }
       const cacheKey = '__over_wall_proxy__'
@@ -204,6 +205,8 @@ function createOverwallMiddleware (overWallConfig) {
       if (context.requestCount) {
         log.debug('OverWall choice:', JSON.stringify(context.requestCount))
       }
+
+      res.setHeader('DS-Overwall', matchedResult)
 
       return true
     }
