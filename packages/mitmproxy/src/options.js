@@ -116,6 +116,8 @@ module.exports = (serverConfig) => {
         const interceptOpt = interceptOpts[regexp]
         // interceptOpt.key = regexp
 
+        log.debug(`拦截器匹配path成功：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}, regexp: ${regexp}, interceptOpt:`, interceptOpt)
+
         // log.info(`interceptor matched, regexp: '${regexp}' =>`, JSON.stringify(interceptOpt), ', url:', url)
         for (const impl of interceptorImpls) {
           // 根据拦截配置挑选合适的拦截器来处理
