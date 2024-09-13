@@ -40,7 +40,7 @@
               taobao镜像
             </a-radio-button>
           </a-radio-group>
-          <div class="form-help">设置后立即生效，即使关闭ds也会继续保持</div>
+          <div class="form-help">设置后立即生效，即使关闭 ds 也会继续保持</div>
         </a-form-item>
 
         <a-form-item label="yarn仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -52,14 +52,14 @@
               taobao镜像
             </a-radio-button>
           </a-radio-group>
-          <div class="form-help">设置后立即生效，即使关闭ds也会继续保持</div>
+          <div class="form-help">设置后立即生效，即使关闭 ds 也会继续保持</div>
         </a-form-item>
 
         <a-form-item label="镜像变量设置" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.node.startup.variables">
             自动设置，启动npm加速开关时将会设置如下环境变量
           </a-checkbox>
-          <div class="form-help">某些库需要自己设置镜像变量，才能下载，比如：electron</div>
+          <div class="form-help">某些库需要自己设置镜像变量，才能下载，比如：<code>electron</code></div>
           <a-row :gutter="10" style="margin-top: 2px" v-for="(item,index) of npmVariables" :key='index'>
             <a-col :span="10">
               <a-input v-model="item.key" :title="item.key" readOnly></a-input>

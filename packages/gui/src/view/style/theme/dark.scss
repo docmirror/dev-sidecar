@@ -22,10 +22,11 @@ $dark-input: #777; //输入框：背景色
     color: $dark-text;
   }
   .form-help {
-    color: #999
+    color: #a1a1a1;
   }
-  .tip {
-    color: #999;
+  code {
+    color: #bbb;
+    background-color: #333;
   }
 
   /* 高亮块：背景色和字体颜色 */

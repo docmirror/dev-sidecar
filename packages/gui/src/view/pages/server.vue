@@ -30,7 +30,7 @@
             </a-form-item>
             <a-form-item label="绑定IP" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-input v-model="config.server.host"/>
-              <div class="form-help">你可以设置0.0.0.0，让其他电脑可以使用此代理服务</div>
+              <div class="form-help">你可以设置为<code>0.0.0.0</code>，让其他电脑可以使用此代理服务</div>
             </a-form-item>
             <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-input-number v-model="config.server.port" :min="0" :max="65535"/>
@@ -60,13 +60,13 @@
                 <a-checkbox v-model="config.server.intercept.enabled">
                   启用拦截
                 </a-checkbox>
-              <div class="form-help">关闭拦截，且关闭功能增强的话，就不需要安装根证书，退化为安全模式</div>
+              <div class="form-help">关闭拦截，且关闭功能增强时，就不需要安装根证书，退化为安全模式</div>
             </a-form-item>
             <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
                 <a-checkbox v-model="config.server.setting.script.enabled">
                   允许插入并运行脚本
                 </a-checkbox>
-              <div class="form-help">关闭后，github的clone加速链接复制也将关闭</div>
+              <div class="form-help">关闭后，<code>Github油猴脚本</code>也将关闭</div>
             </a-form-item>
           </div>
         </a-tab-pane>
@@ -77,11 +77,11 @@
         <a-tab-pane tab="超时时间设置" key="3">
           <div style="height:100%;display:flex;flex-direction:column;padding-right:10px">
             <a-form-item label="默认超时时间" :label-col="labelCol" :wrapper-col="wrapperCol">
-              请求：<a-input-number v-model="config.server.setting.defaultTimeout" :step="1000" :min="1000"/> ms，对应<span class="tip">timeout</span>属性<br/>
-              连接：<a-input-number v-model="config.server.setting.defaultKeepAliveTimeout" :step="1000" :min="1000"/> ms，对应<span class="tip">keepAliveTimeout</span>属性
+              请求：<a-input-number v-model="config.server.setting.defaultTimeout" :step="1000" :min="1000"/> ms，对应<code>timeout</code>配置<br/>
+              连接：<a-input-number v-model="config.server.setting.defaultKeepAliveTimeout" :step="1000" :min="1000"/> ms，对应<code>keepAliveTimeout</code>配置
             </a-form-item>
             <hr style="margin-bottom:15px"/>
-            <div>这里指定域名的超时时间：<span class="form-help">（以下github的配置为示例，预计将在 1.8.7 版本删除）</span></div>
+            <div>这里指定域名的超时时间：<span class="form-help">（域名配置可使用通配符或正则）</span></div>
             <vue-json-editor style="flex-grow:1;min-height:300px;margin-top:10px" ref="editor" v-model="config.server.setting.timeoutMapping" mode="code"
                              :show-btns="false" :expandedOnStart="true"></vue-json-editor>
           </div>
@@ -106,7 +106,10 @@
         </a-tab-pane>
         <a-tab-pane tab="IP预设置" key="5">
           <div style="height:100%;display:flex;flex-direction:column">
-            <div>提示：<span class="tip">IP预设置</span>功能，优先级高于 <span class="tip">DNS设置</span>；域名配置可使用通配符或正则</div>
+            <div>
+              提示：<code>IP预设置</code>功能，优先级高于 <code>DNS设置</code>
+              <span class="form-help">（域名配置可使用通配符或正则）</span>
+            </div>
             <vue-json-editor style="flex-grow:1;min-height:300px;margin-top:10px;" ref="editor" v-model="config.server.preSetIpList" mode="code"
                              :show-btns="false" :expandedOnStart="true"></vue-json-editor>
           </div>
@@ -145,8 +148,8 @@
         </a-tab-pane>
         <a-tab-pane tab="IP测速" key="8">
           <div class="ip-tester" style="padding-right: 10px">
-            <a-alert type="info" message="对从dns获取到的ip进行测速，使用速度最快的ip进行访问。（对使用增强功能的域名没啥用）"></a-alert>
-            <a-form-item label="开启dns测速" :label-col="labelCol" :wrapper-col="wrapperCol">
+            <a-alert type="info" message="对从DNS获取到的IP进行测速，使用速度最快的IP进行访问（注意：对使用了增强功能的域名没啥用）"></a-alert>
+            <a-form-item label="开启DNS测速" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-checkbox v-model="getSpeedTestConfig().enabled">
                 启用
               </a-checkbox>
@@ -154,7 +157,7 @@
             <a-form-item label="自动测试间隔" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-input-number id="inputNumber" v-model="getSpeedTestConfig().interval" :step="1000" :min="1"/> ms
             </a-form-item>
-            <div>使用以下dns获取ip进行测速</div>
+            <div>使用以下DNS获取IP进行测速</div>
             <a-row style="margin-top:10px">
               <a-col span="24">
                 <a-checkbox-group

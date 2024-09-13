@@ -47,22 +47,30 @@ ol{
 .form-help{
   font-size:12px;
   line-height: 15px;
-  color: #aaa;
+  color: #a1a1a1;
 
   i{
     font-family: "Microsoft YaHei", serif;
     font-style: normal;
     font-weight: bold;
   }
+
+  code {
+    padding: 0 .4em;
+  }
 }
 
-.tip {
-  color: #aaa;
-  font-family: "Microsoft YaHei", serif;
+code {
+  font-size: 85%;
   font-style: normal;
-  font-weight: bold;
-  margin-left: 3px;
-  margin-right: 3px;
+  border-radius: 6px;
+  color: #888;
+  background-color: #f1f1f1;
+  margin-left: .2em;
+  margin-right: .2em;
+  padding: .2em .4em;
+  white-space: break-spaces;
+  display: inline-block;
 }
 
 .ace_search_form .ace_searchbtn{

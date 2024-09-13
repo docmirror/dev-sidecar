@@ -26,13 +26,13 @@
           是否代理HTTP请求
         </a-checkbox>
         <div class="form-help">
-          勾选时，同时代理HTTP和HTTPS请求；不勾选时，只代理HTTPS请求<br/>
-          提示：仅为了加速访问github网站的用户，建议不勾选。
+          勾选时，同时代理<code>HTTP</code>和<code>HTTPS</code>请求；不勾选时，只代理<code>HTTPS</code>请求<br/>
+          提示：仅为了加速访问<code>Github网站</code>的用户，建议不勾选。
         </div>
       </a-form-item>
       <a-form-item v-if="isWindows()" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.proxy.setEnv" >
-          是否同时修改HTTPS_PROXY环境变量（不好用，不建议勾选）
+          是否同时修改<code>HTTPS_PROXY</code>环境变量（不好用，不建议勾选）
         </a-checkbox>
         <div class="form-help">
           当发现某些应用并没有走加速通道或加速报错时，可尝试勾选此选项，并重新开启系统代理开关<br/>
@@ -41,13 +41,13 @@
       </a-form-item>
       <a-form-item v-if="isWindows()" label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
        <a-button @click="loopbackVisible=true">去设置</a-button>
-        <div class="form-help">解决OneNote、MicrosoftStore、Outlook等UWP应用开启代理后无法访问网络的问题</div>
+        <div class="form-help">解决<code>OneNote</code>、<code>MicrosoftStore</code>、<code>Outlook</code>等<code>UWP应用</code>开启代理后无法访问网络的问题</div>
       </a-form-item>
       <a-form-item label="排除地址配置" :label-col="labelCol" :wrapper-col="wrapperCol">
         <div>
           <a-row :gutter="10">
             <a-col :span="22">
-              <span>访问的域名或IP符合下列格式时，将跳过系统代理</span>
+              <span>访问的域名或IP符合下列配置时，将跳过系统代理</span>
             </a-col>
             <a-col :span="2">
               <a-button type="primary" icon="plus" @click="addExcludeIp()"/>

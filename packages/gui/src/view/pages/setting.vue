@@ -129,7 +129,7 @@
           </a-radio-button>
         </a-radio-group>
         <div class="form-help">
-          预发布版本号为带有 “-” 的版本。注：该配置只对当前版本为正式版本时有效。
+          预发布版本号为带有 “<code>-</code>” 的版本。注：该配置只对当前版本为正式版本时有效。
         </div>
       </a-form-item>
     </div>
