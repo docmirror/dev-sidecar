@@ -29,10 +29,10 @@ let devToolsStatus = false
 
 function openDevTools () {
   try {
-    log.info('尝试打开 `开发者工具`')
+    log.debug('尝试打开 `开发者工具`')
     win.webContents.openDevTools()
     devToolsStatus = true
-    log.info('打开 `开发者工具` 成功')
+    log.debug('打开 `开发者工具` 成功')
   } catch (e) {
     log.error('打开 `开发者工具` 失败:', e)
   }
@@ -40,10 +40,10 @@ function openDevTools () {
 
 function closeDevTools () {
   try {
-    log.info('尝试关闭 `开发者工具`')
+    log.debug('尝试关闭 `开发者工具`')
     win.webContents.closeDevTools()
     devToolsStatus = false
-    log.info('关闭 `开发者工具` 成功')
+    log.debug('关闭 `开发者工具` 成功')
   } catch (e) {
     log.error('关闭 `开发者工具` 失败:', e)
   }
