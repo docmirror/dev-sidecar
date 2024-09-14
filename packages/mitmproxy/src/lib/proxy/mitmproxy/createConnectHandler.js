@@ -62,7 +62,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig) {
     if (dnsConfig && dnsConfig.providers) {
       const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
       if (dns) {
-        options.lookup = dnsLookup.createLookupFunc(dns, 'connect', hostport, isDnsIntercept)
+        options.lookup = dnsLookup.createLookupFunc(null, dns, 'connect', hostport, isDnsIntercept)
       }
     }
     const proxySocket = net.connect(options, () => {

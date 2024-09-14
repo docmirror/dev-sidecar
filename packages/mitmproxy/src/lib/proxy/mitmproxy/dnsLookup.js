@@ -3,7 +3,7 @@ const log = require('../../../utils/util.log')
 const defaultDns = require('dns')
 
 module.exports = {
-  createLookupFunc: function (dns, action, target, isDnsIntercept) {
+  createLookupFunc: function (res, dns, action, target, isDnsIntercept) {
     target = target ? (', target: ' + target) : ''
 
     return (hostname, options, callback) => {
@@ -12,6 +12,7 @@ module.exports = {
         const aliveIpObj = tester.pickFastAliveIpObj()
         if (aliveIpObj) {
           log.info(`----- ${action}: ${hostname}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host}${target} -----`)
+          if (res) res.setHeader('DS-Lookup', `IpTester: ${aliveIpObj.host}(${aliveIpObj.dns})`)
           callback(null, aliveIpObj.host, 4)
           return
         } else {
@@ -41,6 +42,7 @@ module.exports = {
           }
           if (isTestFailedIp === false) {
             log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.name}': ${ip}${target} -----`)
+            if (res) res.setHeader('DS-Lookup', `DNS: ${ip.host}(${dns.name})`)
             callback(null, ip, 4)
             return
           } else {

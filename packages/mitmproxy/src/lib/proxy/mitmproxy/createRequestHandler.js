@@ -122,7 +122,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               }
             }
             if (dns) {
-              rOptions.lookup = dnsLookup.createLookupFunc(dns, 'request url', url, isDnsIntercept)
+              rOptions.lookup = dnsLookup.createLookupFunc(res, dns, 'request url', url, isDnsIntercept)
             }
           }
 
