@@ -12,7 +12,7 @@ module.exports = {
         const aliveIpObj = tester.pickFastAliveIpObj()
         if (aliveIpObj) {
           log.info(`----- ${action}: ${hostname}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host}${target} -----`)
-          if (res) res.setHeader('DS-DNS-Lookup', `"IpTester: ${aliveIpObj.host}(${aliveIpObj.dns})"`)
+          if (res) res.setHeader('DS-DNS-Lookup', `IpTester: ${aliveIpObj.host} ${aliveIpObj.dns === '预设IP' ? 'PreSet' : aliveIpObj.dns}`)
           callback(null, aliveIpObj.host, 4)
           return
         } else {
@@ -42,7 +42,7 @@ module.exports = {
           }
           if (isTestFailedIp === false) {
             log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.name}': ${ip}${target} -----`)
-            if (res) res.setHeader('DS-DNS-Lookup', `"DNS: ${ip}(${dns.name})"`)
+            if (res) res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.name === '预设IP' ? 'PreSet' : dns.name}`)
             callback(null, ip, 4)
             return
           } else {
