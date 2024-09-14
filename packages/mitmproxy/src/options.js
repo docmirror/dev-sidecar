@@ -4,6 +4,7 @@ const log = require('./utils/util.log')
 const matchUtil = require('./utils/util.match')
 const path = require('path')
 const fs = require('fs')
+const lodash = require('lodash')
 const scriptInterceptor = require('./lib/interceptor/impl/res/script')
 
 const { getTmpPacFilePath, downloadPacAsync, createOverwallMiddleware } = require('./lib/proxy/middleware/overwall')
@@ -14,6 +15,25 @@ function buildIntercepts (intercepts) {
   scriptInterceptor.handleScriptInterceptConfig(intercepts)
 
   return intercepts
+}
+
+// 从拦截器配置中，获取exclusions字段，返回数组类型
+function getExclusionArray (exclusions) {
+  let ret = null
+  if (Array.isArray(exclusions)) {
+    if (exclusions.length > 0) {
+      ret = exclusions
+    }
+  } else if (lodash.isObject(exclusions)) {
+    ret = []
+    for (const exclusion in exclusions) {
+      ret.push(exclusion)
+    }
+    if (ret.length === 0) {
+      return null
+    }
+  }
+  return ret
 }
 
 module.exports = (serverConfig) => {
@@ -118,13 +138,20 @@ module.exports = (serverConfig) => {
 
         // 添加exclusions字段，用于排除某些路径
         // @since 1.8.5
-        if (Array.isArray(interceptOpt.exclusions) && interceptOpt.exclusions.length > 0) {
+        if (interceptOpt.exclusions) {
           let isExcluded = false
-          for (const exclusion of interceptOpt.exclusions) {
-            if (matchUtil.isMatched(rOptions.path, exclusion)) {
-              log.debug(`拦截器配置排除了path：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}, exclusion: '${exclusion}', interceptOpt:`, interceptOpt)
-              isExcluded = true
+          try {
+            const exclusions = getExclusionArray(interceptOpt.exclusions)
+            if (exclusions) {
+              for (const exclusion of exclusions) {
+                if (matchUtil.isMatched(rOptions.path, exclusion)) {
+                  log.debug(`拦截器配置排除了path：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}, exclusion: '${exclusion}', interceptOpt:`, interceptOpt)
+                  isExcluded = true
+                }
+              }
             }
+          } catch (e) {
+            log.error(`判断拦截器是否排除当前path时出现异常, path: ${rOptions.path}, interceptOpt:`, interceptOpt, ', error:', e)
           }
           if (isExcluded) {
             continue
