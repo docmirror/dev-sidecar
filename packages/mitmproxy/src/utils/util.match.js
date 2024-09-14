@@ -151,7 +151,7 @@ function matchHostnameAll (hostMap, hostname, action) {
     // 正则表达式匹配
     if (hostname.match(regexp)) {
       value = hostMap[target]
-      log.info(`matchHostname-one: ${action}: '${hostname}' -> '${target}': ${JSON.stringify(value)}`)
+      log.debug(`matchHostname-one: ${action}: '${hostname}' -> '${target}': ${JSON.stringify(value)}`)
       values = merge(values, value)
     }
   }
@@ -160,19 +160,19 @@ function matchHostnameAll (hostMap, hostname, action) {
   // 优先级：2
   value = hostMap.origin['*' + hostname]
   if (value) {
-    log.info(`matchHostname-one: ${action}: '${hostname}' -> '*${hostname}': ${JSON.stringify(value)}`)
+    log.debug(`matchHostname-one: ${action}: '${hostname}' -> '*${hostname}': ${JSON.stringify(value)}`)
     values = merge(values, value)
   }
   // 优先级：3
   value = hostMap.origin['*.' + hostname]
   if (value) {
-    log.info(`matchHostname-one: ${action}: '${hostname}' -> '*.${hostname}': ${JSON.stringify(value)}`)
+    log.debug(`matchHostname-one: ${action}: '${hostname}' -> '*.${hostname}': ${JSON.stringify(value)}`)
     values = merge(values, value)
   }
   // 优先级：4，最高（注：优先级高的配置，可以覆盖优先级低的配置，甚至有空配置时，可以移除已有配置）
   value = hostMap.origin[hostname]
   if (value) {
-    log.info(`matchHostname-one: ${action}: '${hostname}' -> '${hostname}': ${JSON.stringify(value)}`)
+    log.debug(`matchHostname-one: ${action}: '${hostname}' -> '${hostname}': ${JSON.stringify(value)}`)
     values = merge(values, value)
   }
 
