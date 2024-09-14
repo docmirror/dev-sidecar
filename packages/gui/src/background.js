@@ -186,7 +186,9 @@ function createWindow (startHideWindow) {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) openDevTools()
+    if (!process.env.IS_TEST) {
+      setTimeout(openDevTools, 2000)
+    }
   } else {
     createProtocol('app')
     // Load the index.html when not in development
