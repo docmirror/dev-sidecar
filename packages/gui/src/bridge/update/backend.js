@@ -30,7 +30,7 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
     })
     .on('error', function (err) {
       // Do something with err
-      log.error('下载升级包失败', err)
+      log.error('下载升级包失败:', err)
       onError(err)
     })
     .on('end', function () {

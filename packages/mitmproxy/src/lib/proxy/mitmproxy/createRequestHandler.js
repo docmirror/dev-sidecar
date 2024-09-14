@@ -16,6 +16,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
     let proxyReq
 
     const rOptions = commonUtil.getOptionsFromRequest(req, ssl, externalProxy, setting)
+    const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
 
     if (rOptions.agent) {
       rOptions.agent.options.rejectUnauthorized = setting.verifySsl
@@ -108,7 +109,6 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
         onFree()
 
         function onFree () {
-          const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
           const start = new Date()
           log.info('发起代理请求:', url, (rOptions.servername ? ', sni: ' + rOptions.servername : ''))
 
@@ -225,7 +225,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       // })
       proxyRes.on('error', (error) => {
         countSlow(null, 'error: ' + error.message)
-        log.error('proxy res error:', error)
+        log.error(`proxy res error: ${url}, error:`, error)
       })
 
       const responseInterceptorPromise = new Promise((resolve, reject) => {
@@ -331,7 +331,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
         }
         // endregion
 
-        log.error('Request error:', e)
+        log.error(`Request error: ${url}, error:`, e)
       }
     })
   }
