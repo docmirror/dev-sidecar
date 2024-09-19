@@ -113,28 +113,28 @@ jobs:
 
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.exe"
         uses: actions/upload-artifact@v3
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' && matrix.os == 'windows-latest' }}
+        if: ${{ matrix.os == 'windows-latest' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.exe
           name: "DevSidecar-${{ steps.package-info.outputs.version }}.exe"
           if-no-files-found: error
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.deb"
         uses: actions/upload-artifact@v3
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' && matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.deb
           name: "DevSidecar-${{ steps.package-info.outputs.version }}.deb"
           if-no-files-found: error
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.AppImage"
         uses: actions/upload-artifact@v3
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' && matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
           name: "DevSidecar-${{ steps.package-info.outputs.version }}.AppImage"
           if-no-files-found: error
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.dmg "
         uses: actions/upload-artifact@v3
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' && (matrix.os == 'macos-11' || matrix.os == 'macos-12' || matrix.os == 'macos-13' || matrix.os == 'macos-latest') }}
+        if: ${{ (matrix.os == 'macos-11' || matrix.os == 'macos-12' || matrix.os == 'macos-13' || matrix.os == 'macos-latest') }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
           name: "DevSidecar-${{ steps.package-info.outputs.version }}.dmg"
