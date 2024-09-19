@@ -96,8 +96,6 @@ jobs:
           echo "cd packages/gui";
           echo "--------------------";
           cd packages/gui;
-
-          echo "======================================================================";
           dir || ls -lah;
 
           echo "======================================================================";
@@ -106,10 +104,16 @@ jobs:
           npm run electron:build;
 
           echo "======================================================================";
+          echo "cd dist_electron";
+          echo "--------------------";
           cd dist_electron;
           dir || ls -lah;
 
+          echo "======================================================================";
+          echo "cd ../../../";
+          echo "--------------------";
           cd ../../../;
+          dir || ls -lah;
 
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.exe"
         uses: actions/upload-artifact@v3
@@ -189,5 +193,5 @@ jobs:
           GHR_PATH: release/
           GITHUB_TOKEN: ${{ github.token }}
           GHR_REPLACE: true
-          GHR_TITLE: ${{ github.ref_name }}
+          GHR_TITLE: ${{ steps.package-info.outputs.version }}
           GHR_DRAFT: true
