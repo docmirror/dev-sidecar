@@ -2,7 +2,8 @@ name: "Build And Upload"
 
 on:
   release:
-    types: [ created ]
+    types:
+      - created
 
 jobs:
   # job 1
