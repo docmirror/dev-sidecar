@@ -48,66 +48,66 @@ jobs:
       - name: "npm install lerna/yarn"
         run: |
           echo "======================================================================";
-          dir || ls;
+          ls -lah || dir;
 
           echo "======================================================================";
           echo "npm install lerna@${{ matrix.lerna }} -g";
-          echo "----------";
+          echo "--------------------";
           npm install lerna@${{ matrix.lerna }} -g;
 
           echo "======================================================================";
           echo "npm install yarn";
-          echo "----------";
+          echo "--------------------";
           npm install yarn;
 
       - name: "npm -v | lerna -v | yarn -v"
         run: |
           echo "======================================================================";
           echo "lerna -v";
-          echo "----------";
+          echo "--------------------";
           lerna -v;
 
           echo "======================================================================";
           echo "npm -v";
-          echo "----------";
+          echo "--------------------";
           npm -v;
 
           echo "======================================================================";
           echo "yarn -v";
-          echo "----------";
+          echo "--------------------";
           yarn -v;
 
       - name: "lerna bootstrap"
         run: |
           echo "======================================================================";
-          dir || ls;
+          ls -lah || dir;
 
           echo "======================================================================";
           echo "lerna bootstrap --npm-client=yarn";
-          echo "----------";
+          echo "--------------------";
           lerna bootstrap --npm-client=yarn;
 
       - name: "npm run electron:build"
         run: |
           echo "======================================================================";
-          dir || ls;
+          ls -lah || dir;
 
           echo "======================================================================";
           echo "cd packages/gui";
-          echo "----------";
+          echo "--------------------";
           cd packages/gui;
 
           echo "======================================================================";
-          dir || ls;
+          ls -lah || dir;
 
           echo "======================================================================";
           echo "npm run electron:build";
-          echo "----------";
+          echo "--------------------";
           npm run electron:build;
 
           echo "======================================================================";
           cd dist_electron;
-          dir || ls;
+          ls -lah || dir;
 
           cd ../../../;
 
@@ -155,7 +155,7 @@ jobs:
         with:
           path: ./packages/mitmproxy
 
-      - name: "Make './release' dir"
+      - name: "Make 'release' dir"
         run: mkdir release
 
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.exe"
