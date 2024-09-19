@@ -6,7 +6,6 @@ on:
       - created
       - published
       - unpublished
-      - created
       - edited
       - deleted
       - prereleased
