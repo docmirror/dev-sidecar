@@ -4,7 +4,7 @@
   "license": "MPL-2.0",
   "author": "Greper",
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "^6.6.2"
   },
   "dependencies": {
   }
