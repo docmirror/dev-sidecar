@@ -189,5 +189,5 @@ jobs:
           GHR_PATH: release/
           GITHUB_TOKEN: ${{ github.token }}
           GHR_REPLACE: true
-          GHR_TITLE: ${{ steps.package-info.outputs.version }}
+          GHR_TITLE: ${{ github.ref_name }}
           GHR_DRAFT: true
