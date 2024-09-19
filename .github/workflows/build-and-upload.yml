@@ -41,9 +41,9 @@ jobs:
       - name: "Print"
         run: |
           echo "version = ${{ steps.package-info.outputs.version }}";
-          echo "github.event.release.upload_url = ${{ github.event.release.upload_url }}";
-          echo "ref = ${{ github.event.ref }}";
-          echo "tags = ${{ github.tags }}";
+          echo "github.ref_type = ${{ github.ref_type }}";
+          echo "github.ref = ${{ github.ref }}";
+          echo "github.ref_name = ${{ github.ref_name }}";
 
       - name: "npm install lerna/yarn"
         run: |
