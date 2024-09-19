@@ -134,7 +134,7 @@ jobs:
           if-no-files-found: error
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.dmg "
         uses: actions/upload-artifact@v3
-        if: ${{ (matrix.os == 'macos-11' || matrix.os == 'macos-12' || matrix.os == 'macos-13' || matrix.os == 'macos-latest') }}
+        if: ${{ matrix.os == 'macos-11' || matrix.os == 'macos-12' || matrix.os == 'macos-13' || matrix.os == 'macos-latest' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
           name: "DevSidecar-${{ steps.package-info.outputs.version }}.dmg"
