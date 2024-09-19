@@ -1,15 +1,8 @@
 name: "Build And Upload"
 
 on:
-  release:
-    types:
-      - created
-      - published
-      - unpublished
-      - edited
-      - deleted
-      - prereleased
-      - released
+  push:
+    tags: [ "*" ]
 
 jobs:
   # job 1
@@ -30,24 +23,21 @@ jobs:
           6
         ]
     steps:
-      # step 1.1
-      - uses: actions/checkout@v4.1.7
+      - name: "Checkout"
+        uses: actions/checkout@v4.1.7
 
-      # step 1.2
       - name: "Setup Node.js environment"
         uses: actions/setup-node@v4.0.3
         with:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
 
-      # step 1.3
       - name: "Get package info"
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
         with:
           path: ./packages/mitmproxy
 
-      # step 1.4
       - name: "Print"
         run: |
           echo "version = ${{ steps.package-info.outputs.version }}";
@@ -55,7 +45,6 @@ jobs:
           echo "ref = ${{ github.event.ref }}";
           echo "tags = ${{ github.tags }}";
 
-      # step 1.5
       - name: "npm install lerna/yarn"
         run: |
           echo "======================================================================";
@@ -71,7 +60,6 @@ jobs:
           echo "----------";
           npm install yarn;
 
-      # step 1.6
       - name: "npm -v | lerna -v | yarn -v"
         run: |
           echo "======================================================================";
@@ -89,7 +77,6 @@ jobs:
           echo "----------";
           yarn -v;
 
-      # step 1.7
       - name: "lerna bootstrap"
         run: |
           echo "======================================================================";
@@ -100,7 +87,6 @@ jobs:
           echo "----------";
           lerna bootstrap --npm-client=yarn;
 
-      # step 1.8
       - name: "npm run electron:build"
         run: |
           echo "======================================================================";
@@ -125,49 +111,83 @@ jobs:
 
           cd ../../../;
 
-      # step 1.9
-      # -----------------------------------------
-      # step 1.9.1
-      - name: "Upload Asset DevSidecar.exe"
-        uses: actions/upload-release-asset@v1
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.exe"
+        uses: actions/upload-artifact@v3
         if: ${{ github.event_name == 'release' && github.event.action == 'created' && matrix.os == 'windows-latest' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.exe
-          asset_name: "DevSidecar-${{ steps.package-info.outputs.version }}.exe"
-          asset_content_type: application/x-msdownload
-      # step 1.9.2
-      - name: "Upload Asset DevSidecar.deb"
-        uses: actions/upload-release-asset@v1
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.exe
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}.exe"
+          if-no-files-found: error
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.deb"
+        uses: actions/upload-artifact@v3
         if: ${{ github.event_name == 'release' && github.event.action == 'created' && matrix.os == 'ubuntu-latest' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.deb
-          asset_name: "DevSidecar-${{ steps.package-info.outputs.version }}.deb"
-          asset_content_type: application/x-msdownload
-      # step 1.9.3
-      - name: "Upload Asset DevSidecar.AppImage"
-        uses: actions/upload-release-asset@v1
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.deb
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}.deb"
+          if-no-files-found: error
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.AppImage"
+        uses: actions/upload-artifact@v3
         if: ${{ github.event_name == 'release' && github.event.action == 'created' && matrix.os == 'ubuntu-latest' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
-          asset_name: "DevSidecar-${{ steps.package-info.outputs.version }}.AppImage"
-          asset_content_type: application/x-msdownload
-      # step 1.9.4
-      - name: "Upload Asset DevSidecar.dmg "
-        uses: actions/upload-release-asset@v1
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}.AppImage"
+          if-no-files-found: error
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.dmg "
+        uses: actions/upload-artifact@v3
         if: ${{ github.event_name == 'release' && github.event.action == 'created' && (matrix.os == 'macos-11' || matrix.os == 'macos-12' || matrix.os == 'macos-13' || matrix.os == 'macos-latest') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
-          asset_name: "DevSidecar-${{ steps.package-info.outputs.version }}.dmg"
-          asset_content_type: application/x-msdownload
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}.dmg"
+          if-no-files-found: error
+
+  # job 2
+  download-and-release:
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-upload
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4.1.7
+
+      - name: "Get package info"
+        id: package-info
+        uses: luizfelipelaviola/get-package-info@v1
+        with:
+          path: ./packages/mitmproxy
+
+      - name: "Make './release' dir"
+        run: mkdir release
+
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.exe"
+        uses: actions/download-artifact@v3
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}.exe
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.deb"
+        uses: actions/download-artifact@v3
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}.deb
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.AppImage"
+        uses: actions/download-artifact@v3
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.dmg"
+        uses: actions/download-artifact@v3
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}.dmg
+          path: release
+
+      - name: "Print"
+        run: |
+          ls -lah release;
+
+      - name: "Create a draft release"
+        uses: fnkr/github-action-ghr@ghr-options
+        env:
+          GHR_PATH: release/
+          GITHUB_TOKEN: ${{ github.token }}
+          GHR_REPLACE: true
+          GHR_TITLE: ${{ steps.package-info.outputs.version }}
+          GHR_DRAFT: true
