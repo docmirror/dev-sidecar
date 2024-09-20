@@ -349,7 +349,7 @@ npm config delete https-proxy
 运行如下命令即可安装所需依赖：
 > 注：lerna指定为6.x版本，更高版本会导致打包失败（不兼容导致）
 ```shell
- npm install -g cnpm --registry=https://registry.npmmirror.com
+npm install -g cnpm --registry=https://registry.npmmirror.com
 
 cnpm install lerna@6 -g
 
