@@ -2,7 +2,10 @@ name: "Build And Release"
 
 on:
   push:
-    tags: [ "*" ]
+    branches:
+      - master
+    tags:
+     - "*"
 
 jobs:
   # job 1
@@ -45,28 +48,20 @@ jobs:
           echo "github.ref = ${{ github.ref }}";
           echo "github.ref_name = ${{ github.ref_name }}";
 
-      - name: "npm install lerna/yarn"
+      - name: "npm install lerna/yarn -g"
         run: |
-          echo "======================================================================";
-          dir || ls -lah;
-
           echo "======================================================================";
           echo "npm install lerna@${{ matrix.lerna }} -g";
           echo "--------------------";
           npm install lerna@${{ matrix.lerna }} -g;
 
           echo "======================================================================";
-          echo "npm install yarn";
+          echo "npm install yarn -g";
           echo "--------------------";
-          npm install yarn;
+          npm install yarn -g;
 
-      - name: "npm -v | lerna -v | yarn -v"
+      - name: "npm -v | yarn -v | lerna -v"
         run: |
-          echo "======================================================================";
-          echo "lerna -v";
-          echo "--------------------";
-          lerna -v;
-
           echo "======================================================================";
           echo "npm -v";
           echo "--------------------";
@@ -76,6 +71,11 @@ jobs:
           echo "yarn -v";
           echo "--------------------";
           yarn -v;
+
+          echo "======================================================================";
+          echo "lerna -v";
+          echo "--------------------";
+          lerna -v;
 
       - name: "lerna bootstrap"
         run: |
@@ -89,9 +89,6 @@ jobs:
 
       - name: "npm run electron:build"
         run: |
-          echo "======================================================================";
-          dir || ls -lah;
-
           echo "======================================================================";
           echo "cd packages/gui";
           echo "--------------------";
@@ -116,28 +113,28 @@ jobs:
           dir || ls -lah;
 
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.exe"
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows-latest' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.exe
           name: "DevSidecar-${{ steps.package-info.outputs.version }}.exe"
           if-no-files-found: error
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.deb"
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.deb
           name: "DevSidecar-${{ steps.package-info.outputs.version }}.deb"
           if-no-files-found: error
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.AppImage"
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
           name: "DevSidecar-${{ steps.package-info.outputs.version }}.AppImage"
           if-no-files-found: error
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.dmg "
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'macos-11' || matrix.os == 'macos-12' || matrix.os == 'macos-13' || matrix.os == 'macos-latest' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
@@ -163,35 +160,36 @@ jobs:
         run: mkdir release
 
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.exe"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}.exe
           path: release
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.deb"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}.deb
           path: release
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.AppImage"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
           path: release
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.dmg"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}.dmg
           path: release
 
-      - name: "Print"
+      - name: "Print files from 'release' dir"
         run: |
           ls -lah release;
 
       - name: "Create a draft release"
         uses: fnkr/github-action-ghr@ghr-options
+        if: ${{ github.ref_type == 'tag' }}
         env:
-          GHR_PATH: release/
           GITHUB_TOKEN: ${{ github.token }}
+          GHR_PATH: release/
+          GHR_TITLE: ${{ github.ref_name }}
           GHR_REPLACE: true
-          GHR_TITLE: ${{ steps.package-info.outputs.version }}
           GHR_DRAFT: true

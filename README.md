@@ -367,7 +367,7 @@ cd dev-sidecar
 # 注意不要使用 `npm install` 来安装依赖，因为 `lerna bootstrap` 会自动安装依赖
 lerna bootstrap
 # 如果 `lerna bootstrap` 有报错，可以尝试执行如下两行命令，用yarn替换掉npm：
-#cnpm install yarn
+#cnpm install yarn -g
 #lerna bootstrap --npm-client=yarn
 
 # 运行DevSidecar
