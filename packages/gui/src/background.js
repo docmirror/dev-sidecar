@@ -1,7 +1,7 @@
 'use strict'
 /* global __static */
 import path from 'path'
-import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, powerMonitor, nativeImage, nativeTheme } from 'electron'
+import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, powerMonitor, nativeImage, nativeTheme, globalShortcut } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
 import DevSidecar from '@docmirror/dev-sidecar'
@@ -15,6 +15,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
+let winIsHidden = false
 // eslint-disable-next-line no-unused-vars
 let tray // 防止被内存清理
 let forceClose = false
@@ -141,6 +142,7 @@ function hideWin () {
     if (isMac && hideDockWhenWinClose) {
       app.dock.hide()
     }
+    winIsHidden = true
   }
 }
 
@@ -150,6 +152,15 @@ function showWin () {
   }
   if (app.dock) {
     app.dock.show()
+  }
+  winIsHidden = false
+}
+
+function switchWin () {
+  if (winIsHidden) {
+    showWin()
+  } else {
+    hideWin()
   }
 }
 
@@ -179,6 +190,7 @@ function createWindow (startHideWindow) {
     // eslint-disable-next-line no-undef
     icon: path.join(__static, 'icon.png')
   })
+  winIsHidden = !!startHideWindow
 
   Menu.setApplicationMenu(null)
   win.setMenu(null)
@@ -261,13 +273,20 @@ async function quit () {
   app.quit()
 }
 
-// eslint-disable-next-line no-unused-vars
-function setDock () {
+function initApp () {
   if (isMac) {
     app.whenReady().then(() => {
       app.dock.setIcon(path.join(__dirname, '../build/mac/512x512.png'))
     })
   }
+
+  // 全局监听快捷键，用于 显示/隐藏 窗口
+  app.whenReady().then(() => {
+    globalShortcut.unregisterAll()
+    if (DevSidecar.api.config.get().app.showHideShortcut) {
+      globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, switchWin)
+    }
+  })
 }
 // -------------执行开始---------------
 app.disableHardwareAcceleration() // 禁用gpu
@@ -332,7 +351,7 @@ if (!isFirstInstance) {
     }
   })
 
-  // setDock()
+  // initApp()
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
@@ -369,7 +388,7 @@ if (!isFirstInstance) {
   })
 }
 
-setDock()
+initApp()
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
