@@ -27,6 +27,7 @@ module.exports = {
       personalUrl: ''
     },
     startShowWindow: true, // 启动时是否打开窗口：true=打开窗口, false=隐藏窗口
+    showHideShortcut: 'Alt+S', // 显示/隐藏窗口快捷键
     windowSize: { width: 900, height: 750 }, // 启动时，窗口的尺寸
     theme: 'dark', // 主题：light=亮色, dark=暗色
     autoChecked: true, // 是否自动检查更新

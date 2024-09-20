@@ -88,6 +88,13 @@
           点击窗口右上角关闭按钮的效果
         </div>
       </a-form-item>
+      <hr/>
+      <a-form-item label="打开窗口快捷键" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-input v-model="config.app.showHideShortcut"></a-input>
+        <div class="form-help">
+          当前版本，修改快捷键后，需重启 ds 才会生效
+        </div>
+      </a-form-item>
       <a-form-item label="启动时打开窗口" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model="config.app.startShowWindow" default-value="true" button-style="solid">
           <a-radio-button :value="true">
