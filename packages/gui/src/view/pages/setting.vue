@@ -92,7 +92,7 @@
       <a-form-item label="打开窗口快捷键" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input v-model="config.app.showHideShortcut"></a-input>
         <div class="form-help">
-          当前版本，需重启软件才生效
+          当前版本，修改快捷键后，需重启 ds 才会生效
         </div>
       </a-form-item>
       <a-form-item label="启动时打开窗口" :label-col="labelCol" :wrapper-col="wrapperCol">
