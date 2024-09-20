@@ -10,20 +10,14 @@ on:
 jobs:
   # job 1
   build-and-upload:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
       matrix:
         os: [
-          windows-latest,
-          ubuntu-latest,
-          macos-latest
-        ]
-        node: [
-          16
-        ]
-        lerna: [
-          6
+          windows,
+          ubuntu,
+          macos
         ]
     steps:
       - name: "Checkout"
@@ -32,7 +26,7 @@ jobs:
       - name: "Setup Node.js environment"
         uses: actions/setup-node@v4.0.3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 16
           registry-url: https://npm.pkg.github.com/
 
       - name: "Get package info"
@@ -51,9 +45,9 @@ jobs:
       - name: "npm install lerna/yarn -g"
         run: |
           echo "======================================================================";
-          echo "npm install lerna@${{ matrix.lerna }} -g";
+          echo "npm install lerna@6 -g";
           echo "--------------------";
-          npm install lerna@${{ matrix.lerna }} -g;
+          npm install lerna@6 -g;
 
           echo "======================================================================";
           echo "npm install yarn -g";
