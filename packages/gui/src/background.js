@@ -255,7 +255,7 @@ function createWindow (startHideWindow) {
   // 监听键盘事件
   win.webContents.on('before-input-event', (event, input) => {
     // 按 F12，打开/关闭 开发者工具
-    if (input.key === 'F12' && input.type === 'keyUp') {
+    if (input.key === 'F12' && input.type === 'keyUp' && !input.control && !input.alt && !input.shift && !input.meta) {
       switchDevTools()
     }
   })

@@ -182,15 +182,27 @@ export default {
       this.$api.ipc.openPath(dir + '/logs/')
     },
     getEventKey (event) {
+      // 忽略以下键
       switch (event.key) {
         case 'Control':
         case 'Alt':
         case 'Shift':
         case 'Meta': // Window键
-          return '' // Ctrl、Alt、Shift、Meta 不作为键值
+        case 'Escape':
+        case 'Backspace':
+        case 'Tab':
+        case 'CapsLock':
+        case 'NumLock':
+        case 'Enter':
+        case 'ArrowUp':
+        case 'ArrowDown':
+        case 'ArrowLeft':
+        case 'ArrowRight':
+          return ''
       }
 
       switch (event.code) {
+        // F1 ~ F12
         case 'F1': return 'F1'
         case 'F2': return 'F2'
         case 'F3': return 'F3'
@@ -204,7 +216,8 @@ export default {
         case 'F11': return 'F11'
         case 'F12': return 'F12'
 
-        case 'Backquote': return '`'
+        // 0 ~ 9
+        case 'Digit0': return '0'
         case 'Digit1': return '1'
         case 'Digit2': return '2'
         case 'Digit3': return '3'
@@ -214,27 +227,17 @@ export default {
         case 'Digit7': return '7'
         case 'Digit8': return '8'
         case 'Digit9': return '9'
-        case 'Digit0': return '0'
+
+        case 'Backquote': return '`'
         case 'Minus': return '-'
         case 'Equal': return '='
-        case 'Backspace': return 'Backspace'
-
-        case 'Escape': return 'Esc'
-        case 'Tab': return 'Tab'
-        case 'CapsLock': return 'CapsLock'
         case 'Space': return 'Space'
-
-        case 'ArrowUp': return 'ArrowUp'
-        case 'ArrowDown': return 'ArrowDown'
-        case 'ArrowLeft': return 'ArrowLeft'
-        case 'ArrowRight': return 'ArrowRight'
 
         case 'BracketLeft': return '['
         case 'BracketRight': return ']'
         case 'Backslash': return '\\'
         case 'Semicolon': return ';'
         case 'Quote': return '\''
-        case 'Enter': return 'Enter'
         case 'Comma': return ','
         case 'Period': return '.'
         case 'Slash': return '/'
@@ -247,37 +250,39 @@ export default {
         case 'PageDown': return 'PageDown'
 
         // 小键盘
-        case 'NumLock': return 'NumLock'
-        case 'Numpad1': return 'Numpad1'
-        case 'Numpad2': return 'Numpad2'
-        case 'Numpad3': return 'Numpad3'
-        case 'Numpad4': return 'Numpad4'
-        case 'Numpad5': return 'Numpad5'
-        case 'Numpad6': return 'Numpad6'
-        case 'Numpad7': return 'Numpad7'
-        case 'Numpad8': return 'Numpad8'
-        case 'Numpad9': return 'Numpad9'
-        case 'Numpad0': return 'Numpad0'
-        case 'NumpadDivide': return 'NumpadDivide' // /
-        case 'NumpadMultiply': return 'NumpadMultiply' // *
-        case 'NumpadDecimal': return 'NumpadDecimal' // .
-        case 'NumpadSubtract': return 'NumpadSubtract' // -
-        case 'NumpadAdd': return 'NumpadAdd' // +
-        case 'NumpadEnter': return 'NumpadEnter' // 回车
+        case 'Numpad1': return 'Num1'
+        case 'Numpad2': return 'Num2'
+        case 'Numpad3': return 'Num3'
+        case 'Numpad4': return 'Num4'
+        case 'Numpad5': return 'Num5'
+        case 'Numpad6': return 'Num6'
+        case 'Numpad7': return 'Num7'
+        case 'Numpad8': return 'Num8'
+        case 'Numpad9': return 'Num9'
+        case 'Numpad0': return 'Num0'
+
+        // 不支持监听以下几个键，返回空
+        case 'NumpadDivide': // return 'Num/'
+        case 'NumpadMultiply': // return 'Num*'
+        case 'NumpadDecimal': // return 'Num.'
+        case 'NumpadSubtract': // return 'Num-'
+        case 'NumpadAdd': // return 'Num+'
+          return ''
       }
 
+      // 字母
       if (event.code.startsWith('Key') && event.code.length === 4) {
         return event.key.toUpperCase()
       }
 
       console.error(`未能识别的按键：key=${event.key}, code=${event.code}, keyCode=${event.keyCode}`)
-
       return ''
     },
     shortcutChange () {
       this.config.app.showHideShortcut = ''
     },
     shortcutKeyDown (event) {
+      // console.info(`code=${event.code}, key=${event.key}, keyCode=${event.keyCode}`)
       if (event.type !== 'keydown') {
         return
       }
@@ -289,9 +294,9 @@ export default {
       }
 
       // 判断 Ctrl、Alt、Shift按钮是否已按下
-      let shortcut = event.ctrlKey ? 'Ctrl+' : ''
-      if (event.altKey) shortcut += 'Alt+'
-      if (event.shiftKey) shortcut += 'Shift+'
+      let shortcut = event.ctrlKey ? 'Ctrl + ' : ''
+      if (event.altKey) shortcut += 'Alt + '
+      if (event.shiftKey) shortcut += 'Shift + '
       if (shortcut === '') {
         this.config.app.showHideShortcut = ''
         return
