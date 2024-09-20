@@ -42,7 +42,7 @@ jobs:
           echo "github.ref = ${{ github.ref }}";
           echo "github.ref_name = ${{ github.ref_name }}";
 
-      - name: "npm install lerna/yarn -g"
+      - name: "npm install lerna@6/yarn -g"
         run: |
           echo "======================================================================";
           echo "npm install lerna@6 -g";
