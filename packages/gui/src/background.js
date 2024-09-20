@@ -285,8 +285,13 @@ function initApp () {
     globalShortcut.unregisterAll()
     if (DevSidecar.api.config.get().app.showHideShortcut) {
       globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, () => {
-        if (winIsHidden) {
-          showWin()
+        if (winIsHidden || !win.isFocused()) {
+          if (!win.isFocused()) {
+            win.focus()
+          }
+          if (winIsHidden) {
+            showWin()
+          }
         } else {
           // linux，快捷键不关闭窗口
           if (!isLinux()) {
