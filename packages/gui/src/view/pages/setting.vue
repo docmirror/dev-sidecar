@@ -90,7 +90,7 @@
       </a-form-item>
       <hr/>
       <a-form-item label="打开窗口快捷键" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.app.showHideShortcut"></a-input>
+        <a-input v-model="config.app.showHideShortcut" @change="shortcutChange" @keydown="shortcutKeyDown"></a-input>
         <div class="form-help">
           当前版本，修改快捷键后，需重启 ds 才会生效
         </div>
@@ -180,6 +180,127 @@ export default {
     async openLog () {
       const dir = await this.$api.info.getConfigDir()
       this.$api.ipc.openPath(dir + '/logs/')
+    },
+    getEventKey (event) {
+      switch (event.key) {
+        case 'Control':
+        case 'Alt':
+        case 'Shift':
+        case 'Meta': // Window键
+          return '' // Ctrl、Alt、Shift、Meta 不作为键值
+      }
+
+      switch (event.code) {
+        case 'F1': return 'F1'
+        case 'F2': return 'F2'
+        case 'F3': return 'F3'
+        case 'F4': return 'F4'
+        case 'F5': return 'F5'
+        case 'F6': return 'F6'
+        case 'F7': return 'F7'
+        case 'F8': return 'F8'
+        case 'F9': return 'F9'
+        case 'F10': return 'F10'
+        case 'F11': return 'F11'
+        case 'F12': return 'F12'
+
+        case 'Backquote': return '`'
+        case 'Digit1': return '1'
+        case 'Digit2': return '2'
+        case 'Digit3': return '3'
+        case 'Digit4': return '4'
+        case 'Digit5': return '5'
+        case 'Digit6': return '6'
+        case 'Digit7': return '7'
+        case 'Digit8': return '8'
+        case 'Digit9': return '9'
+        case 'Digit0': return '0'
+        case 'Minus': return '-'
+        case 'Equal': return '='
+        case 'Backspace': return 'Backspace'
+
+        case 'Escape': return 'Esc'
+        case 'Tab': return 'Tab'
+        case 'CapsLock': return 'CapsLock'
+        case 'Space': return 'Space'
+
+        case 'ArrowUp': return 'ArrowUp'
+        case 'ArrowDown': return 'ArrowDown'
+        case 'ArrowLeft': return 'ArrowLeft'
+        case 'ArrowRight': return 'ArrowRight'
+
+        case 'BracketLeft': return '['
+        case 'BracketRight': return ']'
+        case 'Backslash': return '\\'
+        case 'Semicolon': return ';'
+        case 'Quote': return '\''
+        case 'Enter': return 'Enter'
+        case 'Comma': return ','
+        case 'Period': return '.'
+        case 'Slash': return '/'
+
+        case 'Insert': return 'Insert'
+        case 'Delete': return 'Delete'
+        case 'Home': return 'Home'
+        case 'End': return 'End'
+        case 'PageUp': return 'PageUp'
+        case 'PageDown': return 'PageDown'
+
+        // 小键盘
+        case 'NumLock': return 'NumLock'
+        case 'Numpad1': return 'Numpad1'
+        case 'Numpad2': return 'Numpad2'
+        case 'Numpad3': return 'Numpad3'
+        case 'Numpad4': return 'Numpad4'
+        case 'Numpad5': return 'Numpad5'
+        case 'Numpad6': return 'Numpad6'
+        case 'Numpad7': return 'Numpad7'
+        case 'Numpad8': return 'Numpad8'
+        case 'Numpad9': return 'Numpad9'
+        case 'Numpad0': return 'Numpad0'
+        case 'NumpadDivide': return 'NumpadDivide' // /
+        case 'NumpadMultiply': return 'NumpadMultiply' // *
+        case 'NumpadDecimal': return 'NumpadDecimal' // .
+        case 'NumpadSubtract': return 'NumpadSubtract' // -
+        case 'NumpadAdd': return 'NumpadAdd' // +
+        case 'NumpadEnter': return 'NumpadEnter' // 回车
+      }
+
+      if (event.code.startsWith('Key') && event.code.length === 4) {
+        return event.key.toUpperCase()
+      }
+
+      console.error(`未能识别的按键：key=${event.key}, code=${event.code}, keyCode=${event.keyCode}`)
+
+      return ''
+    },
+    shortcutChange () {
+      this.config.app.showHideShortcut = ''
+    },
+    shortcutKeyDown (event) {
+      if (event.type !== 'keydown') {
+        return
+      }
+
+      const key = this.getEventKey(event)
+      if (!key) {
+        this.config.app.showHideShortcut = ''
+        return
+      }
+
+      // 判断 Ctrl、Alt、Shift按钮是否已按下
+      let shortcut = event.ctrlKey ? 'Ctrl+' : ''
+      if (event.altKey) shortcut += 'Alt+'
+      if (event.shiftKey) shortcut += 'Shift+'
+      if (shortcut === '') {
+        this.config.app.showHideShortcut = ''
+        return
+      }
+
+      // 拼接键值
+      shortcut += key
+
+      this.config.app.showHideShortcut = shortcut
     },
     async applyAfter () {
       let reloadLazy = 10
