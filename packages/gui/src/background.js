@@ -281,24 +281,34 @@ function initApp () {
   }
 
   // 全局监听快捷键，用于 显示/隐藏 窗口
-  app.whenReady().then(() => {
+  app.whenReady().then(async () => {
     globalShortcut.unregisterAll()
     if (DevSidecar.api.config.get().app.showHideShortcut) {
-      globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, () => {
-        if (winIsHidden || !win.isFocused()) {
-          if (!win.isFocused()) {
-            win.focus()
+      try {
+        const registerSuccess = globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, () => {
+          if (winIsHidden || !win.isFocused()) {
+            if (!win.isFocused()) {
+              win.focus()
+            }
+            if (winIsHidden) {
+              showWin()
+            }
+          } else {
+            // linux，快捷键不关闭窗口
+            if (!isLinux()) {
+              hideWin()
+            }
           }
-          if (winIsHidden) {
-            showWin()
-          }
+        })
+
+        if (registerSuccess) {
+          log.info('注册快捷键成功:', DevSidecar.api.config.get().app.showHideShortcut)
         } else {
-          // linux，快捷键不关闭窗口
-          if (!isLinux()) {
-            hideWin()
-          }
+          log.error('注册快捷键失败:', DevSidecar.api.config.get().app.showHideShortcut)
         }
-      })
+      } catch (e) {
+        log.error('注册快捷键异常:', DevSidecar.api.config.get().app.showHideShortcut, ', error:', e)
+      }
     }
   })
 }
