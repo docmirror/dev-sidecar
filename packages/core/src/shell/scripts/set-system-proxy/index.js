@@ -36,7 +36,7 @@ async function _winUnsetProxy (exec, setEnv) {
       }
     })
   } catch (e) {
-    log.error('启动系统代理失败:', e)
+    log.error('关闭系统代理失败:', e)
   }
 }
 
@@ -82,19 +82,17 @@ async function _winSetProxy (exec, ip, port, setEnv) {
 const executor = {
   async windows (exec, params = {}) {
     const { ip, port, setEnv } = params
-    if (ip == null) {
-      // 清空代理
-      log.info('关闭windows系统代理')
-      return _winUnsetProxy(exec, setEnv)
-    } else {
-      // 设置代理
+    if (ip != null) { // 设置代理
       log.info('设置windows系统代理:', ip, port, setEnv)
       return _winSetProxy(exec, ip, port, setEnv)
+    } else { // 关闭代理
+      log.info('关闭windows系统代理')
+      return _winUnsetProxy(exec, setEnv)
     }
   },
   async linux (exec, params = {}) {
     const { ip, port } = params
-    if (ip != null) {
+    if (ip != null) { // 设置代理
       // 延迟加载config
       loadConfig()
 
@@ -103,17 +101,14 @@ const executor = {
       // https
       const setProxyCmd = [
         'gsettings set org.gnome.system.proxy mode manual',
-        'gsettings set org.gnome.system.proxy.https enabled true',
         `gsettings set org.gnome.system.proxy.https host ${ip}`,
         `gsettings set org.gnome.system.proxy.https port ${port}`
       ]
       // http
       if (config.get().proxy.proxyHttp) {
-        setProxyCmd.push('gsettings set org.gnome.system.proxy.http enabled true')
         setProxyCmd.push(`gsettings set org.gnome.system.proxy.http host ${ip}`)
         setProxyCmd.push(`gsettings set org.gnome.system.proxy.http port ${port}`)
       } else {
-        setProxyCmd.push('gsettings set org.gnome.system.proxy.http enabled false')
         setProxyCmd.push("gsettings set org.gnome.system.proxy.http host ''")
         setProxyCmd.push('gsettings set org.gnome.system.proxy.http port 0')
       }
@@ -121,7 +116,7 @@ const executor = {
       // setProxyCmd.push(`gsettings set org.gnome.system.proxy ignore-hosts "${local}"`)
 
       await exec(setProxyCmd)
-    } else {
+    } else { // 关闭代理
       const setProxyCmd = [
         'gsettings set org.gnome.system.proxy mode none'
       ]
@@ -134,19 +129,7 @@ const executor = {
     wifiAdaptor = wifiAdaptor.trim()
     wifiAdaptor = wifiAdaptor.substring(wifiAdaptor.indexOf(' ')).trim()
     const { ip, port } = params
-    if (ip == null) {
-      // https
-      await exec(`networksetup -setsecurewebproxystate '${wifiAdaptor}' off`)
-      // http
-      await exec(`networksetup -setwebproxystate '${wifiAdaptor}' off`)
-
-      // const removeEnv = `
-      // sed -ie '/export http_proxy/d' ~/.zshrc
-      // sed -ie '/export https_proxy/d' ~/.zshrc
-      // source ~/.zshrc
-      // `
-      // await exec(removeEnv)
-    } else {
+    if (ip != null) { // 设置代理
       // 延迟加载config
       loadConfig()
 
@@ -166,6 +149,18 @@ const executor = {
       // source ~/.zshrc
       //       `
       //       await exec(setEnv)
+    } else { // 关闭代理
+      // https
+      await exec(`networksetup -setsecurewebproxystate '${wifiAdaptor}' off`)
+      // http
+      await exec(`networksetup -setwebproxystate '${wifiAdaptor}' off`)
+
+      // const removeEnv = `
+      // sed -ie '/export http_proxy/d' ~/.zshrc
+      // sed -ie '/export https_proxy/d' ~/.zshrc
+      // source ~/.zshrc
+      // `
+      // await exec(removeEnv)
     }
   }
 }

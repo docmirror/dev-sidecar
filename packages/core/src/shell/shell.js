@@ -80,7 +80,7 @@ function _childExec (composeCmds, options = {}) {
     childProcess.exec(composeCmds, options, function (error, stdout, stderr) {
       if (error) {
         if (options.printErrorLog !== false) {
-          log.error('cmd 命令执行错误：\n==============================\ncommands:', composeCmds, '\n   error:', error, '\n  stdout:', stdout, '\n  stderr:', stderr, '\n==============================')
+          log.error('cmd 命令执行错误：\n===>\ncommands:', composeCmds, '\n   error:', error, '\n  stdout:', stdout, '\n  stderr:', stderr, '\n<===')
         }
         reject(new Error(stderr))
       } else {
