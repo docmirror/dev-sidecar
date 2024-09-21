@@ -1,12 +1,12 @@
-name: "Test Node"
+name: "Test And Upload"
 
 on:
   push:
     branches:
-      - test
+      - master
 
 jobs:
-  test-node:
+  test-and-upload:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
@@ -18,12 +18,7 @@ jobs:
         ]
         node: [
           16,
-          17,
-          18,
-          19,
-          20,
-          21,
-          22
+          17
         ]
     steps:
       - name: "Checkout"
@@ -113,7 +108,7 @@ jobs:
           cd ../../../;
           dir || ls -lah;
 
-      - name: "npm run electron:build"
+      - name: "npm run electron:build for node17"
         if: ${{ matrix.node != '16' }}
         env:
           NODE_OPTIONS: --openssl-legacy-provider
