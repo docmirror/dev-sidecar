@@ -1,4 +1,4 @@
-name: "Test"
+name: "Test Node"
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - test
 
 jobs:
-  test-node-lerna:
+  test-node:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
@@ -24,11 +24,6 @@ jobs:
           20,
           21,
           22
-        ]
-        lerna: [
-          6,
-          7,
-          8
         ]
     steps:
       - name: "Checkout"
@@ -56,9 +51,9 @@ jobs:
       - name: "npm install -g lerna@6/yarn"
         run: |
           echo "======================================================================";
-          echo "npm install -g lerna@${{ matrix.lerna }}";
+          echo "npm install -g lerna@6";
           echo "--------------------";
-          npm install -g lerna@${{ matrix.lerna }};
+          npm install -g lerna@6;
 
           echo "======================================================================";
           echo "npm install -g yarn";
@@ -117,31 +112,31 @@ jobs:
           cd ../../../;
           dir || ls -lah;
 
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.exe - Windows"
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.exe - Windows"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.exe
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.exe"
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.exe"
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.deb - Ubuntu"
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.deb - Ubuntu"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.deb
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.deb"
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.deb"
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.AppImage - Ubuntu"
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.AppImage - Ubuntu"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.AppImage"
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.AppImage"
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.dmg - Mac"
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.dmg - Mac"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'macos' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.dmg"
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.dmg"
           if-no-files-found: error
