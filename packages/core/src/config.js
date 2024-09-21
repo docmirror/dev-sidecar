@@ -85,7 +85,8 @@ const configApi = {
       log.info('开始下载远程配置:', remoteConfigUrl)
 
       const headers = {
-        'Cache-Control': 'no-cache' // 禁止使用缓存
+        'Cache-Control': 'no-cache', // 禁止使用缓存
+        Pragma: 'no-cache' // 禁止使用缓存
       }
       if (remoteConfigUrl.startsWith('https://raw.githubusercontent.com/')) {
         headers['Server-Name'] = 'baidu.com'
