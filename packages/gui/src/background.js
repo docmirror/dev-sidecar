@@ -135,7 +135,7 @@ function isLinux () {
 function hideWin () {
   if (win) {
     if (isLinux()) {
-      quit(app)
+      quit()
       return
     }
     win.hide()
@@ -154,14 +154,6 @@ function showWin () {
     app.dock.show()
   }
   winIsHidden = false
-}
-
-function switchWin () {
-  if (winIsHidden) {
-    showWin()
-  } else {
-    hideWin()
-  }
 }
 
 function changeAppConfig (config) {
@@ -230,7 +222,7 @@ function createWindow (startHideWindow) {
     }
     e.preventDefault()
     if (isLinux()) {
-      quit(app)
+      quit()
       return
     }
     const config = DevSidecar.api.config.get()
@@ -265,6 +257,9 @@ async function beforeQuit () {
   return DevSidecar.api.shutdown()
 }
 async function quit () {
+  globalShortcut.unregisterAll()
+  log.info('注销所有快捷键成功')
+
   if (tray) {
     tray.displayBalloon({ title: '正在关闭', content: '关闭中,请稍候。。。' })
   }
@@ -283,7 +278,9 @@ function initApp () {
   // 全局监听快捷键，用于 显示/隐藏 窗口
   app.whenReady().then(async () => {
     globalShortcut.unregisterAll()
-    if (DevSidecar.api.config.get().app.showHideShortcut) {
+    const showHideShortcut = DevSidecar.api.config.get().app.showHideShortcut
+    log.info('先注销所有快捷键，再根据配置设置一个全局快捷键:', showHideShortcut)
+    if (showHideShortcut && showHideShortcut !== '无' && showHideShortcut.length > 1) {
       try {
         const registerSuccess = globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, () => {
           if (winIsHidden || !win.isFocused()) {
@@ -344,7 +341,10 @@ if (!isFirstInstance) {
   app.on('before-quit', async (event) => {
     log.info('before-quit')
     if (process.platform === 'darwin') {
-      quit(app)
+      quit()
+    } else {
+      globalShortcut.unregisterAll()
+      log.info('注销所有快捷键成功')
     }
   })
   app.on('second-instance', (event, commandLine, workingDirectory) => {
@@ -361,7 +361,10 @@ if (!isFirstInstance) {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
-      quit(app)
+      quit()
+    } else {
+      globalShortcut.unregisterAll()
+      log.info('注销所有快捷键成功')
     }
   })
 
@@ -419,12 +422,12 @@ if (isDevelopment) {
   if (process.platform === 'win32') {
     process.on('message', (data) => {
       if (data === 'graceful-exit') {
-        quit(app)
+        quit()
       }
     })
   } else {
     process.on('SIGINT', () => {
-      quit(app)
+      quit()
     })
   }
 }

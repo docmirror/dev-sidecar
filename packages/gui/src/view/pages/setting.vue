@@ -279,7 +279,7 @@ export default {
       return ''
     },
     shortcutChange () {
-      this.config.app.showHideShortcut = ''
+      this.config.app.showHideShortcut = '无'
     },
     shortcutKeyDown (event) {
       // console.info(`code=${event.code}, key=${event.key}, keyCode=${event.keyCode}`)
@@ -289,16 +289,19 @@ export default {
 
       const key = this.getEventKey(event)
       if (!key) {
-        this.config.app.showHideShortcut = ''
+        this.config.app.showHideShortcut = '无'
         return
       }
 
-      // 判断 Ctrl、Alt、Shift按钮是否已按下
+      // 判断 Ctrl、Alt、Shift、Window 按钮是否已按下，如果已按下，则拼接键值
       let shortcut = event.ctrlKey ? 'Ctrl + ' : ''
       if (event.altKey) shortcut += 'Alt + '
       if (event.shiftKey) shortcut += 'Shift + '
-      if (shortcut === '') {
-        this.config.app.showHideShortcut = ''
+      if (event.metaKey) shortcut += 'Meta + '
+
+      // 如果以上按钮都没有按下，并且当前键不是F1~F11，则直接返回（注：F12已经是打开DevTools的快捷键了）
+      if (shortcut === '' && !key.match(/^F([1-9]|1[01])$/g)) {
+        this.config.app.showHideShortcut = '无'
         return
       }
 
