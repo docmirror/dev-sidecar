@@ -88,6 +88,8 @@ jobs:
           lerna bootstrap --npm-client=yarn;
 
       - name: "npm run electron:build"
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
         run: |
           echo "======================================================================";
           echo "cd packages/gui";
