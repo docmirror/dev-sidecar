@@ -36,9 +36,7 @@ module.exports = {
     '*.intlify.dev': true,
     '*.segment.io': true,
     '*.shields.io': true,
-    '*.jsdelivr.net': true,
-    '*.openai.com': true,
-    '*.chatgpt.com': true
+    '*.jsdelivr.net': true
   },
   pac: {
     enabled: true,
