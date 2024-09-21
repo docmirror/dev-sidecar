@@ -6,7 +6,7 @@ on:
       - test
 
 jobs:
-  build-and-upload:
+  test-node-lerna:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
@@ -121,27 +121,27 @@ jobs:
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.exe
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.exe
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.exe"
           if-no-files-found: error
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.deb - Ubuntu"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.deb
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.deb
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.deb"
           if-no-files-found: error
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.AppImage - Ubuntu"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.AppImage
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.AppImage"
           if-no-files-found: error
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.dmg - Mac"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'macos' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.dmg
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-lerna${{ matrix.lerna }}.dmg"
           if-no-files-found: error
