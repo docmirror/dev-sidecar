@@ -1,9 +1,9 @@
-name: "Build And Release"
+name: "Build And Upload"
 
 on:
   push:
-    tags:
-     - "*"
+    branches:
+      - master
 
 jobs:
   # job 1
@@ -175,13 +175,3 @@ jobs:
       - name: "Print files from 'release' dir"
         run: |
           ls -lah release;
-
-      - name: "Create a draft release"
-        uses: fnkr/github-action-ghr@ghr-options
-        if: ${{ github.ref_type == 'tag' }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          GHR_PATH: release/
-          GHR_TITLE: ${{ github.ref_name }}
-          GHR_REPLACE: true
-          GHR_DRAFT: true
