@@ -257,9 +257,6 @@ async function beforeQuit () {
   return DevSidecar.api.shutdown()
 }
 async function quit () {
-  globalShortcut.unregisterAll()
-  log.info('注销所有快捷键成功')
-
   if (tray) {
     tray.displayBalloon({ title: '正在关闭', content: '关闭中,请稍候。。。' })
   }
@@ -277,9 +274,7 @@ function initApp () {
 
   // 全局监听快捷键，用于 显示/隐藏 窗口
   app.whenReady().then(async () => {
-    globalShortcut.unregisterAll()
     const showHideShortcut = DevSidecar.api.config.get().app.showHideShortcut
-    log.info('先注销所有快捷键，再根据配置设置一个全局快捷键:', showHideShortcut)
     if (showHideShortcut && showHideShortcut !== '无' && showHideShortcut.length > 1) {
       try {
         const registerSuccess = globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, () => {
@@ -342,11 +337,12 @@ if (!isFirstInstance) {
     log.info('before-quit')
     if (process.platform === 'darwin') {
       quit()
-    } else {
-      globalShortcut.unregisterAll()
-      log.info('注销所有快捷键成功')
     }
   })
+  app.on('will-quit', () => {
+    globalShortcut.unregisterAll();
+    log.info('应用关闭，注销所有快捷键')
+  });
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     log.info('new app started, command:', commandLine)
     if (win) {
@@ -362,9 +358,6 @@ if (!isFirstInstance) {
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
       quit()
-    } else {
-      globalShortcut.unregisterAll()
-      log.info('注销所有快捷键成功')
     }
   })
 
