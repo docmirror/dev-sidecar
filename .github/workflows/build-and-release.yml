@@ -2,8 +2,8 @@ name: "Build And Release"
 
 on:
   push:
-    tags:
-     - "*"
+    branches:
+      - test
 
 jobs:
   # job 1
@@ -178,7 +178,6 @@ jobs:
 
       - name: "Create a draft release"
         uses: fnkr/github-action-ghr@ghr-options
-        if: ${{ github.ref_type == 'tag' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GHR_PATH: release/
