@@ -36,7 +36,7 @@
           </div>
         </a-form-item>
         <a-form-item label="远程PAC文件地址" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.overwall.pac.pacFileUpdateUrl"/>
+          <a-input v-model="config.plugin.overwall.pac.pacFileUpdateUrl" :title="config.plugin.overwall.pac.pacFileUpdateUrl"/>
           <div class="form-help">
             远程PAC文件内容可以是<code>base64</code>编码格式，也可以是未经过编码的
           </div>

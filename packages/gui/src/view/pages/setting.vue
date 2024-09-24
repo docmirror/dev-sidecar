@@ -36,10 +36,10 @@
         </div>
       </a-form-item>
       <a-form-item label="共享远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.app.remoteConfig.url"></a-input>
+        <a-input v-model="config.app.remoteConfig.url" :title="config.app.remoteConfig.url"></a-input>
       </a-form-item>
       <a-form-item label="个人远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.app.remoteConfig.personalUrl"></a-input>
+        <a-input v-model="config.app.remoteConfig.personalUrl" :title="config.app.remoteConfig.personalUrl"></a-input>
       </a-form-item>
       <a-form-item label="重载远程配置" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-button :disabled="config.app.remoteConfig.enabled === false" :loading="reloadLoading" icon="sync" @click="reloadRemoteConfig()">重载远程配置</a-button>

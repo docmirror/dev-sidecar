@@ -49,11 +49,13 @@
               </a-checkbox>
               <div class="form-help">如果目标网站证书有问题，但你想强行访问，可以临时关闭此项</div>
             </a-form-item>
-            <a-form-item label="根证书：" :label-col="labelCol" :wrapper-col="wrapperCol">
+            <a-form-item label="根证书" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-input-search addon-before="Cert" enter-button="选择" @search="onCrtSelect"
-                              v-model="config.server.setting.rootCaFile.certPath"/>
+                              v-model="config.server.setting.rootCaFile.certPath"
+                              :title="config.server.setting.rootCaFile.certPath"/>
               <a-input-search addon-before="Key" enter-button="选择" @search="onKeySelect"
-                              v-model="config.server.setting.rootCaFile.keyPath"/>
+                              v-model="config.server.setting.rootCaFile.keyPath"
+                              :title="config.server.setting.rootCaFile.keyPath"/>
             </a-form-item>
             <hr/>
             <a-form-item label="启用拦截" :label-col="labelCol" :wrapper-col="wrapperCol">
