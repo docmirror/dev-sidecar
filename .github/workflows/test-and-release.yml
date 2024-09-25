@@ -1,4 +1,4 @@
-name: "Build And Release"
+name: "Test And Release"
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   # job 1
-  build-and-upload:
+  test-and-upload:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
