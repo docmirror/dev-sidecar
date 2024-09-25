@@ -1,13 +1,13 @@
-name: "Test And Release"
+name: "Build And Release"
 
 on:
   push:
-    branches:
-      - test
+    tags:
+     - "*"
 
 jobs:
   # job 1
-  test-and-upload:
+  build-and-upload:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
@@ -170,7 +170,7 @@ jobs:
   download-and-release:
     runs-on: ubuntu-latest
     needs:
-      - test-and-upload
+      - build-and-upload
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4.1.7
@@ -245,7 +245,7 @@ jobs:
           ls -lah release;
 
       - name: "Create a draft release"
-        uses: wangliang181230/github-action-ghr@master
+        uses: fnkr/github-action-ghr@ghr-options
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GHR_PATH: release/
