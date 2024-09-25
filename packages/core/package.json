@@ -47,7 +47,7 @@
     "winreg": "^1.2.4"
   },
   "devDependencies": {
-    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-eslint": "^4.5.0",
     "@vue/eslint-config-standard": "^5.1.2",
     "babel-eslint": "^10.1.0",
     "chai": "^4.3.4",
