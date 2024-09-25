@@ -388,9 +388,9 @@ npm run electron:build
 
 
 ## 九、联系作者
-欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS）
+欢迎bug反馈，需求建议，技术交流等
 
-1、 加群
+1、 加群（请备注dev-sidecar，或简称DS）
 - QQ 1群：[390691483](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=v-T8bQM_DGhUSl4mqZJjKVm_1UtMzozL&authKey=n8wkpinS7tORlhSfJ%2FBe%2BQLbXq7h2KCn8nV6K7OExYKtDdks660%2FnrwcYIPsAnRg&noverify=0&group_code=390691483)，人数：487 / 500
 - QQ 2群：[667666069](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=n4nksr4sji93vZtD5e8YEHRT6qbh6VyQ&authKey=XKBZnzmoiJrAFyOT4V%2BCrgX5c13ds59b84g%2FVRhXAIQd%2FlAiilsuwDRGWJct%2B570&noverify=0&group_code=667666069)，人数：441 / 500
 - QQ 3群：419807815，人数：500 / 500（满）
