@@ -90,8 +90,9 @@
       </a-form-item>
       <hr/>
       <a-form-item label="打开窗口快捷键" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.app.showHideShortcut" @change="shortcutChange" @keydown="shortcutKeyDown"></a-input>
+        <a-input v-model="config.app.showHideShortcut" @change="shortcutChange" @keydown="shortcutKeyDown" @keyup="shortcutKeyUp"></a-input>
         <div class="form-help">
+          部分快捷键已被占用：F5=刷新页面，F12=开发者工具（DevTools）<br/>
           当前版本，修改快捷键后，需重启 ds 才会生效
         </div>
       </a-form-item>
@@ -278,10 +279,24 @@ export default {
       console.error(`未能识别的按键：key=${event.key}, code=${event.code}, keyCode=${event.keyCode}`)
       return ''
     },
+    async disableBeforeInputEvent () {
+      clearTimeout(window.enableBeforeInputEventTimeout)
+      window.config.disableBeforeInputEvent = true
+      window.enableBeforeInputEventTimeout = setTimeout(function () {
+        window.config.disableBeforeInputEvent = false
+      }, 2000)
+    },
     shortcutChange () {
       this.config.app.showHideShortcut = '无'
     },
+    shortcutKeyUp (event) {
+      event.preventDefault()
+      this.disableBeforeInputEvent()
+    },
     shortcutKeyDown (event) {
+      event.preventDefault()
+      this.disableBeforeInputEvent()
+
       // console.info(`code=${event.code}, key=${event.key}, keyCode=${event.keyCode}`)
       if (event.type !== 'keydown') {
         return
@@ -299,8 +314,8 @@ export default {
       if (event.shiftKey) shortcut += 'Shift + '
       if (event.metaKey) shortcut += 'Meta + '
 
-      // 如果以上按钮都没有按下，并且当前键不是F1~F11，则直接返回（注：F12已经是打开DevTools的快捷键了）
-      if (shortcut === '' && !key.match(/^F([1-9]|1[01])$/g)) {
+      // 如果以上按钮都没有按下，并且当前键不是F1~F4、F6~F11时，则直接返回（注：F5已经是刷新页面快捷键、F12已经是打开DevTools的快捷键了）
+      if (shortcut === '' && !key.match(/^F([12346789]|1[01])$/g)) {
         this.config.app.showHideShortcut = '无'
         return
       }

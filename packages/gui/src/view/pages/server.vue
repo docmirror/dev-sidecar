@@ -91,7 +91,7 @@
         <a-tab-pane tab="域名白名单" key="4">
             <a-row style="margin-top:10px">
               <a-col span="19">
-                <div>这里配置哪些域名不需要通过代理</div>
+                <div>这里配置的域名不会通过代理</div>
               </a-col>
               <a-col span="3">
                 <a-button style="margin-left:8px" type="primary" icon="plus" @click="addWhiteList()"/>
