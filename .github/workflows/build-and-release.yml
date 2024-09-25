@@ -17,6 +17,10 @@ jobs:
           ubuntu,
           macos
         ]
+        node: [
+          16,
+          17
+        ]
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4.1.7
@@ -24,7 +28,7 @@ jobs:
       - name: "Setup Node.js environment"
         uses: actions/setup-node@v4.0.3
         with:
-          node-version: 16
+          node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
 
       - name: "Get package info"
@@ -79,7 +83,8 @@ jobs:
           echo "--------------------";
           lerna bootstrap --npm-client=yarn;
 
-      - name: "npm run electron:build"
+      - name: "npm run electron:build for node16"
+        if: ${{ matrix.node == '16' }}
         run: |
           echo "======================================================================";
           echo "cd packages/gui";
@@ -104,33 +109,61 @@ jobs:
           cd ../../../;
           dir || ls -lah;
 
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.exe - Windows"
+      - name: "npm run electron:build for node17"
+        if: ${{ matrix.node != '16' }}
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: |
+          echo "======================================================================";
+          echo "cd packages/gui";
+          echo "--------------------";
+          cd packages/gui;
+          dir || ls -lah;
+
+          echo "======================================================================";
+          echo "npm run electron:build";
+          echo "--------------------";
+          npm run electron:build;
+
+          echo "======================================================================";
+          echo "cd dist_electron";
+          echo "--------------------";
+          cd dist_electron;
+          dir || ls -lah;
+
+          echo "======================================================================";
+          echo "cd ../../../";
+          echo "--------------------";
+          cd ../../../;
+          dir || ls -lah;
+
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.exe - Windows"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.exe
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}.exe"
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.exe"
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.deb - Ubuntu"
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.deb - Ubuntu"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.deb
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}.deb"
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.deb"
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.AppImage - Ubuntu"
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.AppImage - Ubuntu"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}.AppImage"
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.AppImage"
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}.dmg - Mac"
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.dmg - Mac"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'macos' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}.dmg"
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.dmg"
           if-no-files-found: error
 
   # job 2
@@ -151,25 +184,45 @@ jobs:
       - name: "Make 'release' dir"
         run: mkdir release
 
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.exe - Windows"
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.exe - Windows"
         uses: actions/download-artifact@v4.1.8
         with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.exe
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.exe
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.deb - Ubuntu"
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.exe - Windows"
         uses: actions/download-artifact@v4.1.8
         with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.deb
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.exe
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.AppImage - Ubuntu"
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.deb - Ubuntu"
         uses: actions/download-artifact@v4.1.8
         with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.deb
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}.dmg - Mac"
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.deb - Ubuntu"
         uses: actions/download-artifact@v4.1.8
         with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.dmg
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.deb
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.AppImage - Ubuntu"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.AppImage
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.AppImage - Ubuntu"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.AppImage
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.dmg - Mac"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.dmg
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.dmg - Mac"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.dmg
           path: release
 
       - name: "Print files from 'release' dir"

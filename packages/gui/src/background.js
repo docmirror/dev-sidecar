@@ -118,7 +118,7 @@ function setTray () {
     showWin()
   })
 
-  appTray.on('right-click', function (event, bounds) {
+  appTray.on('right-click', function () {
     setTimeout(function () {
       appTray.popUpContextMenu(contextMenu)
     }, 200)
@@ -203,7 +203,7 @@ function createWindow (startHideWindow) {
     hideWin()
   }
 
-  win.on('closed', async (e) => {
+  win.on('closed', async () => {
     win = null
     tray = null
   })
@@ -244,12 +244,39 @@ function createWindow (startHideWindow) {
     await quit()
   })
 
+  const shortcut = (event, input) => {
+    // 按 F12，打开/关闭 开发者工具
+    if (input.key === 'F12') {
+      // 阻止默认的按键事件行为
+      event.preventDefault()
+      // 切换开发者工具显示状态
+      switchDevTools()
+      // eslint-disable-next-line brace-style
+    }
+    // 按 F5，刷新页面
+    else if (input.key === 'F5') {
+      // 阻止默认的按键事件行为
+      event.preventDefault()
+      // 刷新页面
+      win.webContents.reload()
+    }
+  }
+
   // 监听键盘事件
   win.webContents.on('before-input-event', (event, input) => {
-    // 按 F12，打开/关闭 开发者工具
-    if (input.key === 'F12' && input.type === 'keyUp' && !input.control && !input.alt && !input.shift && !input.meta) {
-      switchDevTools()
+    if (input.type !== 'keyUp' || input.control || input.alt || input.shift || input.meta) {
+      return
     }
+    win.webContents.executeJavaScript('config')
+      .then((value) => {
+        console.info('window.config:', value)
+        if (!value || (value.disableBeforeInputEvent !== true && value.disableBeforeInputEvent !== 'true')) {
+          shortcut(event, input)
+        }
+      })
+      .catch(() => {
+        shortcut(event, input)
+      })
   })
 }
 
@@ -333,17 +360,17 @@ if (!isFirstInstance) {
     app.quit()
   }, 1000)
 } else {
-  app.on('before-quit', async (event) => {
+  app.on('before-quit', async () => {
     log.info('before-quit')
     if (process.platform === 'darwin') {
       quit()
     }
   })
   app.on('will-quit', () => {
-    globalShortcut.unregisterAll();
+    globalShortcut.unregisterAll()
     log.info('应用关闭，注销所有快捷键')
-  });
-  app.on('second-instance', (event, commandLine, workingDirectory) => {
+  })
+  app.on('second-instance', (event, commandLine) => {
     log.info('new app started, command:', commandLine)
     if (win) {
       showWin()

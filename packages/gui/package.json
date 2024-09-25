@@ -42,17 +42,16 @@
     "sass": "^1.27.1",
     "sass-loader": "^10.0.4",
     "vue": "^2.6.11",
-    "vue-json-editor": "^1.4.2",
     "vue-json-editor-fix-cn": "^1.4.3",
     "vue-router": "^3.4.8"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-plugin-babel": "^4.5.0",
+    "@vue/cli-plugin-eslint": "^4.5.0",
+    "@vue/cli-service": "^4.5.0",
     "@vue/eslint-config-standard": "^5.1.2",
     "babel-eslint": "^10.1.0",
-    "electron": "17.1.0",
+    "electron": "^17.4.11",
     "electron-devtools-installer": "^3.1.0",
     "electron-icon-builder": "^2.0.1",
     "electron-builder": "^23.0.3",
@@ -63,7 +62,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.2.2",
     "json5-loader": "^4.0.1",
-    "vue-cli-plugin-electron-builder": "~2.1.1",
+    "vue-cli-plugin-electron-builder": "^2.1.1",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
