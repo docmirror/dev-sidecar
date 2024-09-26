@@ -228,8 +228,8 @@ function createWindow (startHideWindow) {
     const config = DevSidecar.api.config.get()
     const closeStrategy = config.app.closeStrategy
     if (closeStrategy === 0) {
-      // 提醒
-      win.webContents.send('close.showTip')
+      // 弹窗提示，选择关闭策略
+      win.webContents.send('close.showTip', closeStrategy)
     } else if (closeStrategy === 1) {
       // 直接退出
       quit()
@@ -269,7 +269,7 @@ function createWindow (startHideWindow) {
     }
     win.webContents.executeJavaScript('config')
       .then((value) => {
-        console.info('window.config:', value)
+        console.info('window.config:', value, ', key:', input.key)
         if (!value || (value.disableBeforeInputEvent !== true && value.disableBeforeInputEvent !== 'true')) {
           shortcut(event, input)
         }
@@ -277,6 +277,14 @@ function createWindow (startHideWindow) {
       .catch(() => {
         shortcut(event, input)
       })
+  })
+
+  // 监听渲染进程发送过来的消息
+  win.webContents.on('ipc-message', (event, channel, message) => {
+    console.info(arguments)
+    if (channel === 'change-showHideShortcut') {
+      registerShowHideShortcut(message)
+    }
   })
 }
 
@@ -292,6 +300,37 @@ async function quit () {
   app.quit()
 }
 
+function registerShowHideShortcut (showHideShortcut) {
+  globalShortcut.unregisterAll()
+  if (showHideShortcut && showHideShortcut !== '无' && showHideShortcut.length > 1) {
+    try {
+      const registerSuccess = globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, () => {
+        if (winIsHidden || !win.isFocused()) {
+          if (!win.isFocused()) {
+            win.focus()
+          }
+          if (winIsHidden) {
+            showWin()
+          }
+        } else {
+          // linux，快捷键不关闭窗口
+          if (!isLinux()) {
+            hideWin()
+          }
+        }
+      })
+
+      if (registerSuccess) {
+        log.info('注册快捷键成功:', DevSidecar.api.config.get().app.showHideShortcut)
+      } else {
+        log.error('注册快捷键失败:', DevSidecar.api.config.get().app.showHideShortcut)
+      }
+    } catch (e) {
+      log.error('注册快捷键异常:', DevSidecar.api.config.get().app.showHideShortcut, ', error:', e)
+    }
+  }
+}
+
 function initApp () {
   if (isMac) {
     app.whenReady().then(() => {
@@ -301,36 +340,10 @@ function initApp () {
 
   // 全局监听快捷键，用于 显示/隐藏 窗口
   app.whenReady().then(async () => {
-    const showHideShortcut = DevSidecar.api.config.get().app.showHideShortcut
-    if (showHideShortcut && showHideShortcut !== '无' && showHideShortcut.length > 1) {
-      try {
-        const registerSuccess = globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, () => {
-          if (winIsHidden || !win.isFocused()) {
-            if (!win.isFocused()) {
-              win.focus()
-            }
-            if (winIsHidden) {
-              showWin()
-            }
-          } else {
-            // linux，快捷键不关闭窗口
-            if (!isLinux()) {
-              hideWin()
-            }
-          }
-        })
-
-        if (registerSuccess) {
-          log.info('注册快捷键成功:', DevSidecar.api.config.get().app.showHideShortcut)
-        } else {
-          log.error('注册快捷键失败:', DevSidecar.api.config.get().app.showHideShortcut)
-        }
-      } catch (e) {
-        log.error('注册快捷键异常:', DevSidecar.api.config.get().app.showHideShortcut, ', error:', e)
-      }
-    }
+    registerShowHideShortcut(DevSidecar.api.config.get().app.showHideShortcut)
   })
 }
+
 // -------------执行开始---------------
 app.disableHardwareAcceleration() // 禁用gpu
 

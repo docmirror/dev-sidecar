@@ -92,8 +92,7 @@
       <a-form-item label="打开窗口快捷键" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input v-model="config.app.showHideShortcut" @change="shortcutChange" @keydown="shortcutKeyDown" @keyup="shortcutKeyUp"></a-input>
         <div class="form-help">
-          部分快捷键已被占用：F5=刷新页面，F12=开发者工具（DevTools）<br/>
-          当前版本，修改快捷键后，需重启 ds 才会生效
+          部分快捷键已被占用：F5=刷新页面，F12=开发者工具（DevTools）
         </div>
       </a-form-item>
       <a-form-item label="启动时打开窗口" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -154,6 +153,8 @@
 
 <script>
 import Plugin from '../mixins/plugin'
+import { ipcRenderer } from 'electron'
+
 export default {
   name: 'Setting',
   mixins: [Plugin],
@@ -325,6 +326,11 @@ export default {
 
       this.config.app.showHideShortcut = shortcut
     },
+    async applyBefore () {
+      if (!this.config.app.showHideShortcut) {
+        this.config.app.showHideShortcut = '无'
+      }
+    },
     async applyAfter () {
       let reloadLazy = 10
 
@@ -339,6 +345,9 @@ export default {
       if (this.config.app.theme !== this.themeBackup) {
         setTimeout(() => window.location.reload(), reloadLazy)
       }
+
+      // 变更 “打开窗口快捷键”
+      ipcRenderer.send('change-showHideShortcut', this.config.app.showHideShortcut)
     },
     async openExternal (url) {
       await this.$api.ipc.openExternal(url)
