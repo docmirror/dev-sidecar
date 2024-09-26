@@ -75,7 +75,7 @@
 
     <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
     <div slot="footer">
-      <div class="star" v-if="setting && !setting.overwall">
+      <div class="star" v-if="!setting.overwall">
         <div class="donate">
           <a-tooltip placement="topLeft" title="彩蛋，点我">
             <span style="display: block;width:100px;height:50px;" @click="wantOW()"></span>
@@ -83,7 +83,7 @@
         </div>
         <div class="right"></div>
       </div>
-      <div class="star" >
+      <div class="star" v-if="setting.development == null || !setting.development">
         <div class="donate" @click="donateModal=true">
           <a-icon type="like" theme="outlined"/>
           捐赠
@@ -97,7 +97,7 @@
         </div>
       </div>
 
-      <a-modal title="捐赠" v-model="donateModal" width="550px" cancelText="不了" okText="果断支持" @ok="goDonate">
+      <a-modal title="捐赠" v-if="setting.development == null || !setting.development" v-model="donateModal" width="550px" cancelText="不了" okText="果断支持" @ok="goDonate">
         <div>* 本应用完全免费，如果觉得好用，可以给予捐赠。</div>
         <div>* 开源项目持续发展离不开您的支持，感谢</div>
         <div class="payQrcode">
@@ -122,7 +122,7 @@ export default {
   },
   computed: {
     _rootCaSetuped () {
-      if (this.setting && this.setting.rootCa) {
+      if (this.setting.rootCa) {
         return this.setting.rootCa.setuped === true
       }
       return false
@@ -147,7 +147,7 @@ export default {
       },
       info: {},
       newVersionDownloading: false,
-      setting: undefined,
+      setting: {},
       server: {
         key: '代理服务',
         loading: false,
@@ -220,7 +220,7 @@ export default {
     async doCheckRootCa () {
       const setting = await this.$api.setting.load()
       console.log('setting', setting)
-      this.setting = setting
+      this.setting = setting || {}
       if (this.setting.rootCa && (this.setting.rootCa.setuped || this.setting.rootCa.noTip)) {
         return
       }
