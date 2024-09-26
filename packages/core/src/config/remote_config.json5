@@ -1,89 +1,113 @@
 {
-  "server": {
-    "intercepts": {
-      "github.com": {
-        "^((/[^/]+){2,})/raw((/[^/]+)+\\.(jpg|jpeg|png|gif))(\\?.*)?$": {
-          "sni": "baidu.com" // proxy拦截器不会使用 .* 中的sni配置，故补充此配置
-        },
-        "^((/[^/]+){2,})/raw((/[^/]+)+\\.js)(\\?.*)?$": {
-          "sni": "baidu.com" // proxy拦截器不会使用 .* 中的sni配置，故补充此配置
-        }
-      },
-      "github.githubassets.com": {
-        ".*": {
-          "sni": "baidu.com"
-        }
-      },
-      "camo.githubusercontent.com": {
-        ".*": {
-          "sni": "baidu.com"
-        }
-      },
-      "collector.github.com": {
-        ".*": {
-          "sni": "baidu.com"
-        }
-      },
-      "www.gstatic.com": {
-        "/recaptcha/.*": {
-          "proxy": "www.recaptcha.net"
-        }
-      }
-    },
-    "preSetIpList": {
-      "hub.docker.com": null // 1.8.2版本中，该域名的预设IP有问题，现在远程配置中删除
-    },
-    "dns": {
-      "mapping": {
-        "*.jetbrains.com": "quad9",
-        "*.azureedge.net": "quad9",
-        "*.stackoverflow.com": "quad9"
-      },
-      "speedTest": {
-        "interval": 300000
-      }
-    }
-  },
-  "proxy": {
-    "excludeIpList": {
-      // Github文件上传所使用的域名，被DS代理会导致文件上传经常失败，从系统代理中排除掉
-      "objects-origin.githubusercontent.com": true,
+	"server": {
+		"intercepts": {
+			"github.com": {
+				"^(/[\\w-.]+){2,}/?(\\?.*)?$": {
+					"tampermonkeyScript": "https://gitee.com/wangliang181230/dev-sidecar/raw/scripts/tampermonkey.js",
+					"script": "https://gitee.com/wangliang181230/dev-sidecar/raw/scripts/GithubEnhanced-High-Speed-Download.user.js"
+				},
+				"^((/[^/]+){2,})/raw((/[^/]+)+\\.(jpg|jpeg|png|gif))(\\?.*)?$": {
+					"sni": "baidu.com" // proxy拦截器不会使用 .* 中的sni配置，故补充此配置
+				},
+				"^((/[^/]+){2,})/raw((/[^/]+)+\\.js)(\\?.*)?$": {
+					"sni": "baidu.com" // proxy拦截器不会使用 .* 中的sni配置，故补充此配置
+				}
+			},
+			"github.githubassets.com": {
+				".*": {
+					"sni": "baidu.com"
+				}
+			},
+			"camo.githubusercontent.com": {
+				".*": {
+					"sni": "baidu.com"
+				}
+			},
+			"collector.github.com": {
+				".*": {
+					"sni": "baidu.com"
+				}
+			},
+			"www.gstatic.com": {
+				"/recaptcha/.*": {
+					"proxy": "www.recaptcha.net"
+				}
+			}
+		},
+		"preSetIpList": {
+			"hub.docker.com": null // 1.8.2版本中，该域名的预设IP有问题，现在远程配置中删除
+		},
+		"dns": {
+			"mapping": {
+				"*.jetbrains.com": "quad9",
+				"*.azureedge.net": "quad9",
+				"*.stackoverflow.com": "quad9"
+			},
+			"speedTest": {
+				"interval": 300000
+			}
+		}
+	},
+	"proxy": {
+		"excludeIpList": {
+			// Github文件上传所使用的域名，被DS代理会导致文件上传经常失败，从系统代理中排除掉
+			"objects-origin.githubusercontent.com": true,
+			// Github通过Actions上传的文件，下载时所需的域名，从系统代理中排除掉，否则下载会失败
+			"*.windows.net": true,
 
-      // cloudflare：排除以下域名，cloudflare的人机校验会更快，成功率更高。
-      "challenges.cloudflare.com": true
-    }
-  },
-  "plugin": {
-    "overwall": {
-      "targets": {
-        "*.github.com": true,
-        "*github*.com": true,
-        "*.wikimedia.org": true,
-        "*.v2ex.com": true,
-        "*.azureedge.net": true,
-        "*.cloudfront.net": true,
-        "*.bing.com": true,
-        "*.discourse-cdn.com": true,
-        "*.gravatar.com": true,
-        "*.docker.com": true,
-        "*.vueuse.org": true,
-        "*.elastic.co": true,
-        "*.optimizely.com": true,
-        "*.stackpathcdn.com": true,
-        "*.fastly.net": true,
-        "*.cloudflare.com": true,
-        "*.233v2.com": true,
-        "*.v2fly.org": true,
-        "*.telegram.org": true,
-        "*.amazon.com": true,
-        "*.googleapis.com": true,
-        "*.google-analytics.com": true,
-        "*.cloudflareinsights.com": true,
-        "*.intlify.dev": true,
-        "*.segment.io": true,
-        "*.shields.io": true,
-        "*.jsdelivr.net": true
-      }
-    }
-  }
+			// cloudflare：排除以下域名，cloudflare的人机校验会更快，成功率更高。
+			"*.cloudflare.com": true,
+			"*.cloudflare-cn.com": true,
+
+			"*kaspersky*.com": true,
+			"*.upd.kaspersky.com": true,
+
+			"*.github.io": true,
+
+			"*.sandboxie-plus.com": true
+		}
+	},
+	"plugin": {
+		"overwall": {
+			"targets": {
+				"*.github.com": true,
+				"*github*.com": true,
+				"*.nodejs.org": true,
+				"*.npmjs.com": true,
+				"*.wikimedia.org": true,
+				"*.v2ex.com": true,
+				"*.azureedge.net": true,
+				"*.cloudfront.net": true,
+				"*.bing.com": true,
+				"*.discourse-cdn.com": true,
+				"*.gravatar.com": true,
+				"*.docker.com": true,
+				"*.vueuse.org": true,
+				"*.elastic.co": true,
+				"*.optimizely.com": true,
+				"*.stackpathcdn.com": true,
+				"*.fastly.net": true,
+				"*.cloudflare.com": true,
+				"*.233v2.com": true,
+				"*.v2fly.org": true,
+				"*.telegram.org": true,
+				"*.amazon.com": true,
+				"*.googleapis.com": true,
+				"*.google-analytics.com": true,
+				"*.cloudflareinsights.com": true,
+				"*.intlify.dev": true,
+				"*.segment.io": true,
+				"*.shields.io": true,
+				"*.jsdelivr.net": true,
+
+				// ChatGPT
+				"*.oaiusercontent.com": true, // 在ChatGPT中生成文件并下载所需的域名
+
+				// Pixiv相关
+				"*.pixiv.org": true,
+				"*.fanbox.cc": true,
+				"*.onesignal.com": true // pixiv站点，会加载该域名下的js脚本
+			}
+		}
+	}
 }
