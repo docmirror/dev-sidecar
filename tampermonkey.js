@@ -389,7 +389,7 @@
 
 	// 注册菜单
 	api.GM_registerMenuCommand = (name, callback, options_or_accessKey) => {
-		const options = typeof options_or_accessKey === "string" ? { accessKey: options_or_accessKey } : options_or_accessKey;
+		const options = typeof options_or_accessKey === "string" ? { accessKey: options_or_accessKey } : (options_or_accessKey || {});
 
 		// 生成菜单ID
 		let menuCmdId;
