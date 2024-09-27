@@ -44,20 +44,24 @@
         <div class="form-help">解决<code>OneNote</code>、<code>MicrosoftStore</code>、<code>Outlook</code>等<code>UWP应用</code>开启代理后无法访问网络的问题</div>
       </a-form-item>
       <hr/>
-      <a-form-item label="排除中国域名" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.excludeChinaDomainAllowList" >
-          是否排除中国域名白名单
+      <a-form-item label="排除国内域名" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-checkbox v-model="config.proxy.excludeDomesticDomainAllowList" >
+          是否排除国内域名白名单
         </a-checkbox>
       </a-form-item>
-      <a-form-item label="自动更新中国域名" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.excludeChinaDomainAllowList" >
-          自动下载远程中国域名文件。未开启自动更新时，将使用内置中国域名文件
+      <a-form-item label="自动更新国内域名" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-checkbox v-model="config.proxy.autoUpdateDomesticDomainAllowList" >
+          是否自动更新国内域名
         </a-checkbox>
-      </a-form-item>
-      <a-form-item label="远程中国域名文件" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.proxy.remoteChinaDomainAllowListFileUrl" :title="config.proxy.remoteChinaDomainAllowListFileUrl"></a-input>
         <div class="form-help">
-          远程中国域名白名单文件内容可以是<code>base64</code>编码格式，也可以是未经过编码的
+          开启自动更新后，启动代理服务时，将会异步从下面的远程地址下载PAC文件到本地。<br/>
+          注：只要下载成功后，即使关闭自动更新功能，也会优先读取最近下载的PAC文件！
+        </div>
+      </a-form-item>
+      <a-form-item label="远程国内域名文件" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-input v-model="config.proxy.remoteDomesticDomainAllowListFileUrl" :title="config.proxy.remoteDomesticDomainAllowListFileUrl"></a-input>
+        <div class="form-help">
+          远程国内域名白名单文件内容可以是<code>base64</code>编码格式，也可以是未经过编码的
         </div>
       </a-form-item>
       <a-form-item label="排除地址配置" :label-col="labelCol" :wrapper-col="wrapperCol">
