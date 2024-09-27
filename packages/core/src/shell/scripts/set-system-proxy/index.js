@@ -22,7 +22,7 @@ async function _winUnsetProxy (exec, setEnv) {
   await execFile(proxyPath, ['set', '1'])
 
   try {
-    await exec('echo \'test\'')
+    await exec('echo \'删除环境变量 HTTPS_PROXY、HTTP_PROXY\'')
     const regKey = new Registry({ // new operator is optional
       hive: Registry.HKCU, // open registry hive HKEY_CURRENT_USER
       key: '\\Environment' // key containing autostart programs
@@ -30,13 +30,20 @@ async function _winUnsetProxy (exec, setEnv) {
     regKey.get('HTTPS_PROXY', (err) => {
       if (!err) {
         regKey.remove('HTTPS_PROXY', async (err) => {
-          log.warn('删除环境变量https_proxy失败:', err)
+          log.warn('删除环境变量 HTTPS_PROXY 失败:', err)
           await exec('setx DS_REFRESH "1"')
         })
       }
     })
+    regKey.get('HTTP_PROXY', (err) => {
+      if (!err) {
+        regKey.remove('HTTP_PROXY', async (err) => {
+          log.warn('删除环境变量 HTTP_PROXY 失败:', err)
+        })
+      }
+    })
   } catch (e) {
-    log.error('关闭系统代理失败:', e)
+    log.error('删除环境变量 HTTPS_PROXY、HTTP_PROXY 失败:', e)
   }
 }
 
@@ -65,14 +72,19 @@ async function _winSetProxy (exec, ip, port, setEnv) {
   await execFile(proxyPath, [execFun, proxyAddr, excludeIpStr])
 
   if (setEnv) {
-    log.info('同时设置 https_proxy')
+    log.info(`开启系统代理的同时设置环境变量：HTTPS_PROXY = "http://${ip}:${port}/"`)
+    if (config.get().proxy.proxyHttp) {
+      log.info(`开启系统代理的同时设置环境变量：HTTP_PROXY = "http://${ip}:${port}/"`)
+    }
     try {
-      await exec('echo \'test\'')
-      await exec('echo \'test\'')
+      await exec('echo \'设置环境变量 HTTPS_PROXY、HTTP_PROXY\'')
       await exec(`setx HTTPS_PROXY "http://${ip}:${port}/"`)
+      if (config.get().proxy.proxyHttp) {
+        await exec(`setx HTTP_PROXY "http://${ip}:${port}/"`)
+      }
       //  await addClearScriptIni()
     } catch (e) {
-      log.error(e)
+      log.error('设置环境变量 HTTPS_PROXY、HTTP_PROXY 失败:', e)
     }
   }
 
