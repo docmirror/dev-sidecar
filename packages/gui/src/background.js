@@ -204,6 +204,7 @@ function createWindow (startHideWindow) {
   }
 
   win.on('closed', async () => {
+    log.info('win closed:', arguments)
     win = null
     tray = null
   })
@@ -217,6 +218,7 @@ function createWindow (startHideWindow) {
   })
 
   win.on('close', (e) => {
+    log.info('win close:', arguments)
     if (forceClose) {
       return
     }
@@ -240,7 +242,7 @@ function createWindow (startHideWindow) {
   })
 
   win.on('session-end', async (e) => {
-    log.info('session-end:', e)
+    log.info('win session-end:', arguments)
     await quit()
   })
 
@@ -281,7 +283,7 @@ function createWindow (startHideWindow) {
 
   // 监听渲染进程发送过来的消息
   win.webContents.on('ipc-message', (event, channel, message) => {
-    console.info(arguments)
+    console.info('win ipc-message:', arguments)
     if (channel === 'change-showHideShortcut') {
       registerShowHideShortcut(message)
     }
@@ -380,8 +382,8 @@ if (!isFirstInstance) {
     }
   })
   app.on('will-quit', () => {
-    globalShortcut.unregisterAll()
     log.info('应用关闭，注销所有快捷键')
+    globalShortcut.unregisterAll()
   })
   app.on('second-instance', (event, commandLine) => {
     log.info('new app started, command:', commandLine)
