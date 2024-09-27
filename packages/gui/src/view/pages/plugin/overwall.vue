@@ -32,7 +32,7 @@
           </a-checkbox>
           <div class="form-help">
             开启自动更新后，启动代理服务时，将会异步从下面的远程地址下载PAC文件到本地。<br/>
-            注：只要下载成功后，即使关闭自动更新功能，也会优先读取最近下载的PAC文件！
+            注：只要下载成功后，即使关闭自动更新功能，也会优先读取最近下载的文件！
           </div>
         </a-form-item>
         <a-form-item label="远程PAC文件地址" :label-col="labelCol" :wrapper-col="wrapperCol">
