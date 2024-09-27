@@ -38,7 +38,7 @@ function getTmpPacFilePath () {
 }
 
 function loadPacLastModifiedTime (pacTxt) {
-  const matched = pacTxt.match(/(?<=! Last Modified: )[^\r\n]+/g)
+  const matched = pacTxt.match(/(?<=! Last Modified: )[^\n]+/g)
   if (matched && matched.length > 0) {
     try {
       return new Date(matched[0])
@@ -107,12 +107,9 @@ async function downloadPacAsync (pacConfig) {
       // 尝试解析Base64（注：https://gitlab.com/gfwlist/gfwlist/raw/master/gfwlist.txt 下载下来的是Base64格式）
       let pacTxt = body
       try {
-        if (pacTxt.indexOf('!---------------------EOF') < 0) {
-          pacTxt = Buffer.from(pacTxt, 'base64').toString('utf8')
-          // log.debug('解析 base64 后的 pax:', pacTxt)
-        }
+        pacTxt = Buffer.from(pacTxt, 'base64').toString('utf8')
       } catch (e) {
-        if (pacTxt.indexOf('!---------------------EOF') < 0) {
+        if (pacTxt.indexOf('||') < 0) { // TODO: 待优化，需要判断下载的 pac.txt 文件内容是否正确，目前暂时先简单判断一下
           log.error(`远程 pac.txt 文件内容即不是base64格式，也不是要求的格式，url: ${remotePacFileUrl}，body: ${body}`)
           return
         }

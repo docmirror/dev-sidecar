@@ -56,15 +56,6 @@ module.exports = {
     other: [],
     proxyHttp: false, // false=只代理HTTPS请求   true=同时代理HTTP和HTTPS请求
     setEnv: false,
-
-    // 排除中国域名 所需配置
-    excludeChinaDomainAllowList: true, // 是否排除中国域名，默认：需要排除
-    autoUpdateChinaDomainAllowList: true, // 是否自动更新中国域名
-    remoteChinaDomainAllowListFileUrl: 'https://raw.githubusercontent.com/pluwen/china-domain-allowlist/refs/heads/main/allow-list.sorl',
-    chinaDomainAllowListFileAbsolutePath: null, // 自定义 china-domain-allowlist.txt 文件位置，可以是本地文件路径
-    chinaDomainAllowListFilePath: './extra/proxy/china-domain-allowlist.txt', // 内置中国域名文件
-
-    // 自定义系统代理排除列表
     excludeIpList: {
       // region 常用国内可访问域名
 
