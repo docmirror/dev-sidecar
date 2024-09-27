@@ -57,7 +57,7 @@
       <a-form-item label="远程中国域名文件" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input v-model="config.proxy.remoteChinaDomainAllowListFileUrl" :title="config.proxy.remoteChinaDomainAllowListFileUrl"></a-input>
         <div class="form-help">
-          配置的地址需要是定期更新的地址，否则自动更新也就没有意义。
+          远程中国域名白名单文件内容可以是<code>base64</code>编码格式，也可以是未经过编码的
         </div>
       </a-form-item>
       <a-form-item label="排除地址配置" :label-col="labelCol" :wrapper-col="wrapperCol">
