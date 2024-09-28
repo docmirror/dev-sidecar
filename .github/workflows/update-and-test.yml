@@ -38,7 +38,7 @@ jobs:
 
       - name: "Update dependencies"
         run: |
-          cd ../packages/core;
+          cd packages/core;
           ncu -u;
           cd ../gui;
           ncu -u;
