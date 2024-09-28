@@ -23,8 +23,7 @@ jobs:
           19,
           20,
           21,
-          22,
-          23
+          22
         ]
     steps:
       - name: "Checkout"
