@@ -103,7 +103,7 @@ module.exports = (serverConfig) => {
       const hostname = req.url.split(':')[0]
       const inWhiteList = matchUtil.matchHostname(whiteList, hostname, 'in whiteList') != null
       if (inWhiteList) {
-        log.info('为白名单域名，不拦截:', hostname)
+        log.info(`为白名单域名，不拦截: ${hostname}, headers:`, req.headers)
         return false // 所有都不拦截
       }
       // 配置了拦截的域名，将会被代理
@@ -124,12 +124,9 @@ module.exports = (serverConfig) => {
       const matchInterceptsOpts = {}
       for (const regexp in interceptOpts) { // 遍历拦截配置
         // 判断是否匹配拦截器
-        let matched
-        if (regexp !== true && regexp !== 'true') {
-          matched = matchUtil.isMatched(rOptions.path, regexp)
-          if (matched == null) { // 拦截器匹配失败
-            continue
-          }
+        const matched = matchUtil.isMatched(rOptions.path, regexp)
+        if (matched == null) { // 拦截器匹配失败
+          continue
         }
 
         // 获取拦截器
