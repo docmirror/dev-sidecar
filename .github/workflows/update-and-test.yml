@@ -38,6 +38,7 @@ jobs:
 
       - name: "Update dependencies"
         run: |
+          npm install -g npm-check-updates;
           cd packages/core;
           ncu -u;
           cd ../gui;
