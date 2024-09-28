@@ -124,12 +124,9 @@ module.exports = (serverConfig) => {
       const matchInterceptsOpts = {}
       for (const regexp in interceptOpts) { // 遍历拦截配置
         // 判断是否匹配拦截器
-        let matched
-        if (regexp !== true && regexp !== 'true') {
-          matched = matchUtil.isMatched(rOptions.path, regexp)
-          if (matched == null) { // 拦截器匹配失败
-            continue
-          }
+        const matched = matchUtil.isMatched(rOptions.path, regexp)
+        if (matched == null) { // 拦截器匹配失败
+          continue
         }
 
         // 获取拦截器
