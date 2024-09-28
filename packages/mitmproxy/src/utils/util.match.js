@@ -2,8 +2,8 @@ const lodash = require('lodash')
 const log = require('./util.log')
 
 function isMatched (url, regexp) {
-  if (regexp === true || regexp === 'true') {
-    return true
+  if (regexp === true || regexp === 'true' || regexp === '*' || regexp === '.*') {
+    return url
   }
 
   try {
