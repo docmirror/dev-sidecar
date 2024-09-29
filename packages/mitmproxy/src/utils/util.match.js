@@ -2,7 +2,7 @@ const lodash = require('lodash')
 const log = require('./util.log')
 
 function isMatched (url, regexp) {
-  if (regexp === true || regexp === 'true' || regexp === '*' || regexp === '.*') {
+  if (regexp === '.*' || regexp === '*' || regexp === 'true' || regexp === true) {
     return url
   }
 
@@ -19,7 +19,7 @@ function isMatched (url, regexp) {
 }
 
 function domainRegexply (target) {
-  if (target === '.*' || target === '*' || target === 'true') {
+  if (target === '.*' || target === '*' || target === 'true' || target === true) {
     return '^.*$'
   }
   return '^' + target.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$'

@@ -18,12 +18,6 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
     const rOptions = commonUtil.getOptionsFromRequest(req, ssl, externalProxy, setting)
     let url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
 
-    if (rOptions.agent) {
-      rOptions.agent.options.rejectUnauthorized = setting.verifySsl
-    } else if (rOptions.agent !== false) {
-      log.error('rOptions.agent 的值有问题:', rOptions)
-    }
-
     if (rOptions.headers.connection === 'close') {
       req.socket.setKeepAlive(false)
     } else if (rOptions.customSocketId != null) { // for NTLM
