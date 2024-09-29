@@ -124,7 +124,7 @@ module.exports = {
         rOptions.agent = rOptions.agent.unVerifySslAgent
         unVerifySsl = true
       }
-      res.setHeader('DS-Interceptor', `proxy: ${proxyTarget}, sni: ${interceptOpt.sni}`, (unVerifySsl ? ', unVerifySsl' : ''))
+      res.setHeader('DS-Interceptor', `proxy: ${proxyTarget}, sni: ${interceptOpt.sni}${unVerifySsl ? ', unVerifySsl' : ''}`)
       log.info('proxy intercept: hostname:', originHostname, ', target：', proxyTarget, ', sni replace servername:', rOptions.servername, (unVerifySsl ? ', unVerifySsl' : ''))
     } else {
       res.setHeader('DS-Interceptor', `proxy: ${proxyTarget}`)
