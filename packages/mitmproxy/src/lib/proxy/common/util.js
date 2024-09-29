@@ -57,7 +57,7 @@ function createHttpAgent (timeoutConfig) {
       timeout: timeoutConfig.timeout,
       keepAliveTimeout: timeoutConfig.keepAliveTimeout
     })
-    log.info('创建 HttpsAgent 成功, timeoutConfig:', timeoutConfig)
+    log.info('创建 HttpAgent 成功, timeoutConfig:', timeoutConfig)
   }
   return httpAgentCache[key]
 }
