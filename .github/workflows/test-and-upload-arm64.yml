@@ -1,12 +1,12 @@
-name: "Test And Upload"
+name: "Test And Upload ARM64"
 
 on:
   push:
     branches:
-      - master
+      - test
 
 jobs:
-  test-and-upload:
+  test-and-upload-arm64:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
@@ -28,6 +28,7 @@ jobs:
         uses: actions/setup-node@v4.0.3
         with:
           node-version: ${{ matrix.node }}
+          architecture: arm64
           registry-url: https://npm.pkg.github.com/
 
       - name: "Get package info"
