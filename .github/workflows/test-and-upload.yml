@@ -28,6 +28,7 @@ jobs:
         uses: actions/setup-node@v4.0.3
         with:
           node-version: ${{ matrix.node }}
+          architecture: arm64
           registry-url: https://npm.pkg.github.com/
 
       - name: "Get package info"
