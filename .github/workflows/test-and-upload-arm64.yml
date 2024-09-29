@@ -286,6 +286,7 @@ jobs:
 
           echo "======================================================================";
           echo "cd dist_electron";
+          echo "mv DevSidecar-${{ steps.package-info.outputs.version }}.dmg DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-arm64.dmg";
           echo "--------------------";
           cd dist_electron;
           mv DevSidecar-${{ steps.package-info.outputs.version }}.dmg DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}-arm64.dmg
