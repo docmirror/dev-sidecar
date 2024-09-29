@@ -1,0 +1,182 @@
+name: "Update And Test"
+
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  test-and-upload:
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [
+          windows,
+          ubuntu,
+          macos
+        ]
+        node: [
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22
+        ]
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4.1.7
+
+      - name: "Setup Node.js environment"
+        uses: actions/setup-node@v4.0.3
+        with:
+          node-version: ${{ matrix.node }}
+          registry-url: https://npm.pkg.github.com/
+
+      - name: "Update dependencies"
+        run: |
+          npm install -g npm-check-updates;
+          cd packages/core;
+          ncu -u;
+          cd ../gui;
+          ncu -u;
+          cd ../mitmproxy;
+          ncu -u;
+          cd ../../;
+
+      - name: "Get package info"
+        id: package-info
+        uses: luizfelipelaviola/get-package-info@v1
+        with:
+          path: ./packages/mitmproxy
+
+      - name: "Print"
+        run: |
+          echo "version = ${{ steps.package-info.outputs.version }}";
+          echo "github.ref_type = ${{ github.ref_type }}";
+          echo "github.ref = ${{ github.ref }}";
+          echo "github.ref_name = ${{ github.ref_name }}";
+
+      - name: "npm install -g lerna@6/yarn"
+        run: |
+          echo "======================================================================";
+          echo "npm install -g lerna@6";
+          echo "--------------------";
+          npm install -g lerna@6;
+
+          echo "======================================================================";
+          echo "npm install -g yarn";
+          echo "--------------------";
+          npm install -g yarn;
+
+      - name: "npm -v | yarn -v | lerna -v"
+        run: |
+          echo "======================================================================";
+          echo "npm -v";
+          echo "--------------------";
+          npm -v;
+
+          echo "======================================================================";
+          echo "yarn -v";
+          echo "--------------------";
+          yarn -v;
+
+          echo "======================================================================";
+          echo "lerna -v";
+          echo "--------------------";
+          lerna -v;
+
+      - name: "lerna bootstrap"
+        run: |
+          echo "======================================================================";
+          dir || ls -lah;
+
+          echo "======================================================================";
+          echo "lerna bootstrap --npm-client=yarn";
+          echo "--------------------";
+          lerna bootstrap --npm-client=yarn;
+
+      - name: "npm run electron:build for node16"
+        if: ${{ matrix.node == '16' }}
+        run: |
+          echo "======================================================================";
+          echo "cd packages/gui";
+          echo "--------------------";
+          cd packages/gui;
+          dir || ls -lah;
+
+          echo "======================================================================";
+          echo "npm run electron:build";
+          echo "--------------------";
+          npm run electron:build;
+
+          echo "======================================================================";
+          echo "cd dist_electron";
+          echo "--------------------";
+          cd dist_electron;
+          dir || ls -lah;
+
+          echo "======================================================================";
+          echo "cd ../../../";
+          echo "--------------------";
+          cd ../../../;
+          dir || ls -lah;
+
+      - name: "npm run electron:build for node${{ matrix.node }}"
+        if: ${{ matrix.node != '16' }}
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: |
+          echo "======================================================================";
+          echo "cd packages/gui";
+          echo "--------------------";
+          cd packages/gui;
+          dir || ls -lah;
+
+          echo "======================================================================";
+          echo "npm run electron:build";
+          echo "--------------------";
+          npm run electron:build;
+
+          echo "======================================================================";
+          echo "cd dist_electron";
+          echo "--------------------";
+          cd dist_electron;
+          dir || ls -lah;
+
+          echo "======================================================================";
+          echo "cd ../../../";
+          echo "--------------------";
+          cd ../../../;
+          dir || ls -lah;
+
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.exe - Windows"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'windows' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.exe
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.exe"
+          if-no-files-found: error
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.deb - Ubuntu"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.deb
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.deb"
+          if-no-files-found: error
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.AppImage - Ubuntu"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.AppImage"
+          if-no-files-found: error
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.dmg - Mac"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'macos' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.dmg"
+          if-no-files-found: error
