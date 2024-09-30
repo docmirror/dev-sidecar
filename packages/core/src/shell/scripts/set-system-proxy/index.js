@@ -306,13 +306,13 @@ const executor = {
         await exec(`networksetup -setwebproxystate '${wifiAdaptor}' off`)
       }
 
-      //       const setEnv = `cat <<ENDOF >>  ~/.zshrc
+      // const setEnv = `cat <<ENDOF >>  ~/.zshrc
       // export http_proxy="http://${ip}:${port}"
       // export https_proxy="http://${ip}:${port}"
       // ENDOF
       // source ~/.zshrc
-      //       `
-      //       await exec(setEnv)
+      // `
+      // await exec(setEnv)
     } else { // 关闭代理
       // https
       await exec(`networksetup -setsecurewebproxystate '${wifiAdaptor}' off`)

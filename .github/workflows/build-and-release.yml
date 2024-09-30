@@ -3,7 +3,7 @@ name: "Build And Release"
 on:
   push:
     tags:
-     - "*"
+      - "*"
 
 jobs:
   # job 1
