@@ -32,20 +32,22 @@
       </a-form-item>
 
       <!-- 以下功能仅windows支持，mac和linux暂不支持 -->
-      <div v-if="isWindows()">
-        <a-form-item label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.proxy.setEnv" >
-            是否同时修改<code>HTTPS_PROXY</code>环境变量（不好用，不建议勾选）
-          </a-checkbox>
-          <div class="form-help">
-            当发现某些应用并没有走加速通道或加速报错时，可尝试勾选此选项，并重新开启系统代理开关<br/>
-            注意：当前已打开的命令行并不会实时生效，需要重新打开一个新的命令行窗口
-          </div>
-        </a-form-item>
-        <a-form-item label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
-         <a-button @click="loopbackVisible=true">去设置</a-button>
-          <div class="form-help">解决<code>OneNote</code>、<code>MicrosoftStore</code>、<code>Outlook</code>等<code>UWP应用</code>开启代理后无法访问网络的问题</div>
-        </a-form-item>
+      <a-form-item v-if="isWindows()" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-checkbox v-model="config.proxy.setEnv" >
+          是否同时修改<code>HTTPS_PROXY</code>环境变量（不好用，不建议勾选）
+        </a-checkbox>
+        <div class="form-help">
+          当发现某些应用并没有走加速通道或加速报错时，可尝试勾选此选项，并重新开启系统代理开关<br/>
+          注意：当前已打开的命令行并不会实时生效，需要重新打开一个新的命令行窗口
+        </div>
+      </a-form-item>
+      <a-form-item v-if="isWindows()" label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
+       <a-button @click="loopbackVisible=true">去设置</a-button>
+        <div class="form-help">解决<code>OneNote</code>、<code>MicrosoftStore</code>、<code>Outlook</code>等<code>UWP应用</code>开启代理后无法访问网络的问题</div>
+      </a-form-item>
+
+      <!-- 以下功能仅windows和macos支持，linux暂不支持 -->
+      <div v-if="isWindows() || isMac()">
         <hr/>
         <a-form-item label="排除国内域名" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.proxy.excludeDomesticDomainAllowList" >

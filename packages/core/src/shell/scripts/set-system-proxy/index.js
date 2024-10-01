@@ -181,14 +181,11 @@ function getDomesticDomainAllowList () {
   }
 }
 
-async function _winSetProxy (exec, ip, port, setEnv) {
-  // 延迟加载config
-  loadConfig()
-
+function getProxyExcludeIpStr (split) {
   let excludeIpStr = ''
   for (const ip in config.get().proxy.excludeIpList) {
     if (config.get().proxy.excludeIpList[ip] === true) {
-      excludeIpStr += ip + ';'
+      excludeIpStr += ip + split
     }
   }
 
@@ -197,7 +194,7 @@ async function _winSetProxy (exec, ip, port, setEnv) {
     try {
       let domesticDomainAllowList = getDomesticDomainAllowList()
       if (domesticDomainAllowList) {
-        domesticDomainAllowList = (domesticDomainAllowList + '\n').replaceAll(/[\r\n]+/g, '\n').replaceAll(/[^\n]*[^*.a-zA-Z\d-\n]+[^\n]*\r?\n/g, '').replaceAll(/\s*\n+\s*/g, ';')
+        domesticDomainAllowList = (domesticDomainAllowList + '\n').replaceAll(/[\r\n]+/g, '\n').replaceAll(/[^\n]*[^*.a-zA-Z\d-\n]+[^\n]*\r?\n/g, '').trim().replaceAll(/\s*\n+\s*/g, split)
         if (domesticDomainAllowList) {
           excludeIpStr += domesticDomainAllowList
           log.info('系统代理排除列表拼接国内域名')
@@ -210,6 +207,15 @@ async function _winSetProxy (exec, ip, port, setEnv) {
     }
   }
 
+  log.debug('系统代理排除域名（excludeIpStr）:', excludeIpStr)
+
+  return excludeIpStr
+}
+
+async function _winSetProxy (exec, ip, port, setEnv) {
+  // 延迟加载config
+  loadConfig()
+
   const proxyPath = extraPath.getProxyExePath()
   const execFun = 'global'
 
@@ -220,6 +226,9 @@ async function _winSetProxy (exec, ip, port, setEnv) {
     proxyAddr = `http=http://${ip}:${port};` + proxyAddr
   }
 
+  // 读取排除域名
+  const excludeIpStr = getProxyExcludeIpStr(';')
+  // 设置代理，同时设置排除域名
   log.info(`执行“设置系统代理”的程序: ${proxyPath} ${execFun} ${proxyAddr} ......(省略排除IP列表)`)
   await execFile(proxyPath, [execFun, proxyAddr, excludeIpStr])
 
@@ -298,13 +307,17 @@ const executor = {
       loadConfig()
 
       // https
-      await exec(`networksetup -setsecurewebproxy '${wifiAdaptor}' ${ip} ${port}`)
+      await exec(`networksetup -setsecurewebproxy "${wifiAdaptor}" ${ip} ${port}`)
       // http
       if (config.get().proxy.proxyHttp) {
-        await exec(`networksetup -setwebproxy '${wifiAdaptor}' ${ip} ${port}`)
+        await exec(`networksetup -setwebproxy "${wifiAdaptor}" ${ip} ${port}`)
       } else {
-        await exec(`networksetup -setwebproxystate '${wifiAdaptor}' off`)
+        await exec(`networksetup -setwebproxystate "${wifiAdaptor}" off`)
       }
+
+      // 设置排除域名
+      const excludeIpStr = getProxyExcludeIpStr('" "')
+      await exec(`networksetup -setproxybypassdomains "${wifiAdaptor}" "${excludeIpStr}"`)
 
       // const setEnv = `cat <<ENDOF >>  ~/.zshrc
       // export http_proxy="http://${ip}:${port}"
@@ -315,9 +328,9 @@ const executor = {
       // await exec(setEnv)
     } else { // 关闭代理
       // https
-      await exec(`networksetup -setsecurewebproxystate '${wifiAdaptor}' off`)
+      await exec(`networksetup -setsecurewebproxystate "${wifiAdaptor}" off`)
       // http
-      await exec(`networksetup -setwebproxystate '${wifiAdaptor}' off`)
+      await exec(`networksetup -setwebproxystate "${wifiAdaptor}" off`)
 
       // const removeEnv = `
       // sed -ie '/export http_proxy/d' ~/.zshrc
