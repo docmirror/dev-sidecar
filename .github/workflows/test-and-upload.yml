@@ -164,3 +164,90 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.dmg"
           if-no-files-found: error
+
+  # job 2
+  download-and-release:
+    runs-on: ubuntu-latest
+    needs:
+      - test-and-upload
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4.1.7
+
+      - name: "Get package info"
+        id: package-info
+        uses: luizfelipelaviola/get-package-info@v1
+        with:
+          path: ./packages/mitmproxy
+
+      - name: "Make 'release' dir"
+        run: mkdir release
+
+      # Download artifacts with node16
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.exe - Windows"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.exe
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.deb - Ubuntu"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.deb
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.AppImage - Ubuntu"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.AppImage
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.dmg - Mac"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.dmg
+          path: release
+      - name: "Rename 'release/DevSidecar-${{ steps.package-info.outputs.version }}.*' to 'release/DevSidecar-${{ steps.package-info.outputs.version }}-node16.*'"
+        run: |
+          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.exe      release/DevSidecar-${{ steps.package-info.outputs.version }}-node16.exe;
+          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.deb      release/DevSidecar-${{ steps.package-info.outputs.version }}-node16.deb;
+          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage release/DevSidecar-${{ steps.package-info.outputs.version }}-node16.AppImage;
+          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.dmg      release/DevSidecar-${{ steps.package-info.outputs.version }}-node16.dmg;
+
+      # Download artifacts with node17
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.exe - Windows"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.exe
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.deb - Ubuntu"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.deb
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.AppImage - Ubuntu"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.AppImage
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.dmg - Mac"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.dmg
+          path: release
+      - name: "Rename 'release/DevSidecar-${{ steps.package-info.outputs.version }}.*' to 'release/DevSidecar-${{ steps.package-info.outputs.version }}-node17.*'"
+        run: |
+          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.exe      release/DevSidecar-${{ steps.package-info.outputs.version }}-node17.exe;
+          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.deb      release/DevSidecar-${{ steps.package-info.outputs.version }}-node17.deb;
+          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage release/DevSidecar-${{ steps.package-info.outputs.version }}-node17.AppImage;
+          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.dmg      release/DevSidecar-${{ steps.package-info.outputs.version }}-node17.dmg;
+
+      - name: "Print files from 'release' dir"
+        run: |
+          ls -lah release;
+
+      - name: "Create a draft release"
+        uses: fnkr/github-action-ghr@ghr-options
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GHR_PATH: release/
+          GHR_TITLE: ${{ github.ref_name }}
+          GHR_REPLACE: true
+          GHR_DRAFT: true
