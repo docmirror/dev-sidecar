@@ -244,7 +244,7 @@ jobs:
           ls -lah release;
 
       - name: "Create a draft release"
-        uses: fnkr/github-action-ghr@ghr-options
+        uses: wangliang181230/github-action-ghr@master
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GHR_PATH: release/
