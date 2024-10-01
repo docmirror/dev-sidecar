@@ -61,7 +61,7 @@ async function downloadDomesticDomainAllowListAsync () {
   log.info('开始下载远程 domestic-domain-allowlist.txt 文件:', remoteFileUrl)
   request(remoteFileUrl, (error, response, body) => {
     if (error) {
-      log.error('下载远程 domestic-domain-allowlist.txt 文件失败, error:', error, ', response:', response, ', body:', body)
+      log.error(`下载远程 domestic-domain-allowlist.txt 文件失败: ${remoteFileUrl}, error:`, error, ', response:', response, ', body:', body)
       return
     }
     if (response && response.statusCode === 200) {
@@ -88,7 +88,7 @@ async function downloadDomesticDomainAllowListAsync () {
       // 保存到本地
       saveDomesticDomainAllowListFile(fileTxt)
     } else {
-      log.error('下载远程 domestic-domain-allowlist.txt 文件失败, response:', response, ', body:', body)
+      log.error(`下载远程 domestic-domain-allowlist.txt 文件失败: ${remoteFileUrl}, response:`, response, ', body:', body)
     }
   })
 }
