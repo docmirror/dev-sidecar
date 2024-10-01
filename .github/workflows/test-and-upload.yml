@@ -168,6 +168,7 @@ jobs:
 
   # job 2
   download-and-release:
+    if: ${{ github.ref_name == 'release' }}
     runs-on: ubuntu-latest
     needs:
       - test-and-upload
