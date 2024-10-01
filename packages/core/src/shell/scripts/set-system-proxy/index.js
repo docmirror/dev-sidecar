@@ -269,8 +269,6 @@ const executor = {
       // 延迟加载config
       loadConfig()
 
-      // const local = 'localhost, 127.0.0.0/8, ::1'
-
       // https
       const setProxyCmd = [
         'gsettings set org.gnome.system.proxy mode manual',
@@ -285,8 +283,10 @@ const executor = {
         setProxyCmd.push("gsettings set org.gnome.system.proxy.http host ''")
         setProxyCmd.push('gsettings set org.gnome.system.proxy.http port 0')
       }
-      // ignore-hosts
-      // setProxyCmd.push(`gsettings set org.gnome.system.proxy ignore-hosts "${local}"`)
+
+      // 设置排除域名（ignore-hosts）
+      const excludeIpStr = getProxyExcludeIpStr("', '")
+      setProxyCmd.push(`gsettings set org.gnome.system.proxy ignore-hosts "['${excludeIpStr}']"`)
 
       await exec(setProxyCmd)
     } else { // 关闭代理
