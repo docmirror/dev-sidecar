@@ -1,5 +1,5 @@
+const log = require('./utils/util.log')
 let JSON5 = require('json5')
-const log = require('util/util.log')
 if (JSON5.default) {
   JSON5 = JSON5.default
 }
