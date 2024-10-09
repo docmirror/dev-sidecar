@@ -8,6 +8,7 @@ function createPacClient (pacFilePath) {
   function readFile (location) {
     try {
       log.info('pac root dir:', path.resolve('./'))
+      log.info('pac location:', location)
       const filePath = path.resolve(location)
       log.info('read pac path:', filePath)
       return fs.readFileSync(location).toString()

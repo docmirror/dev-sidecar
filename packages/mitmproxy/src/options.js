@@ -69,7 +69,9 @@ module.exports = (serverConfig) => {
     }
 
     if (!pacConfig.pacFileAbsolutePath) {
+      log.info('setting.rootDir:', setting.rootDir)
       pacConfig.pacFileAbsolutePath = path.join(setting.rootDir, pacConfig.pacFilePath)
+      log.info('读取内置的 pac.txt 文件:', pacConfig.pacFileAbsolutePath)
       if (pacConfig.autoUpdate) {
         log.warn('远程 pac.txt 文件下载失败或还在下载中，现使用内置 pac.txt 文件:', pacConfig.pacFileAbsolutePath)
       }

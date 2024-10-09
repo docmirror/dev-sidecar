@@ -166,7 +166,8 @@ function getDomesticDomainAllowList () {
       log.info('读取已下载的 domestic-domain-allowlist.txt 文件:', fileAbsolutePath)
     } else {
       // 如果临时文件不存在，则使用内置文件
-      fileAbsolutePath = path.join(__dirname, '../../gui/', config.get().proxy.domesticDomainAllowListFilePath)
+      log.info('__dirname:', __dirname)
+      fileAbsolutePath = path.join(__dirname, '../', config.get().proxy.domesticDomainAllowListFilePath)
       log.info('读取内置的 domestic-domain-allowlist.txt 文件:', fileAbsolutePath)
     }
   } else {
@@ -176,7 +177,7 @@ function getDomesticDomainAllowList () {
   try {
     return fs.readFileSync(fileAbsolutePath).toString()
   } catch (e) {
-    log.error('读取 domestic-domain-allowlist.txt 文件失败:', fileAbsolutePath)
+    log.error(`读取 domestic-domain-allowlist.txt 文件失败: ${fileAbsolutePath}, error:`, e)
     return null
   }
 }
