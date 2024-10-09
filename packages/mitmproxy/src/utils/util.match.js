@@ -3,7 +3,7 @@ const log = require('./util.log')
 
 function isMatched (url, regexp) {
   if (regexp === '.*' || regexp === '*' || regexp === 'true' || regexp === true) {
-    return url
+    return [url]
   }
 
   try {
@@ -14,7 +14,7 @@ function isMatched (url, regexp) {
     return url.match(urlRegexp)
   } catch (e) {
     log.error('匹配串有问题:', regexp)
-    return false
+    return null
   }
 }
 
