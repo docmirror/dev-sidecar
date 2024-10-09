@@ -87,7 +87,7 @@ class SpeedTester {
     this.backupList = _.unionBy(newBackupList, 'host')
     this.testCount++
 
-    log.info('[speed]', this.hostname, '➜ ips:', this.backupList)
+    log.info('[speed]', this.hostname, '➜ ip-list:', this.backupList)
     await this.testBackups()
     if (config.notify) {
       config.notify({ key: 'test' })
