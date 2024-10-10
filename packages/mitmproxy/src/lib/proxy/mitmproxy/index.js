@@ -81,27 +81,48 @@ module.exports = {
     const server = new http.Server()
     server.listen(port, host, () => {
       log.info(`dev-sidecar启动端口: ${host}:${port}`)
-      server.on('error', (e) => {
-        log.error('server error:', e)
+      server.on('error', (err) => {
+        log.error('server error:', err)
       })
       server.on('request', (req, res) => {
         const ssl = false
-        // log.info('request,', req.hostname)
+        log.debug('【server request】req:', req)
         requestHandler(req, res, ssl)
       })
       // tunneling for https
       server.on('connect', (req, cltSocket, head) => {
-        // log.info('connect,', req.url)
+        log.debug('【server connect】req:', req, ', socket:', cltSocket, ', head:', head)
         connectHandler(req, cltSocket, head)
       })
       // TODO: handler WebSocket
-      server.on('upgrade', function (req, socket, head) {
+      server.on('upgrade', function (req, cltSocket, head) {
         const ssl = false
-        upgradeHandler(req, socket, head, ssl)
+        log.debug('【server upgrade】req:', req)
+        upgradeHandler(req, cltSocket, head, ssl)
       })
-      server.on('clientError', (err, socket) => {
-        log.error('client error:', err)
-        socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
+      server.on('clientError', (err, cltSocket) => {
+        log.error('【server clientError】error:', err, ', socket:', cltSocket)
+        cltSocket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
+      })
+
+      // 其他事件：仅记录debug日志
+      server.on('close', () => {
+        log.debug('【server close】')
+      })
+      server.on('connection', (cltSocket) => {
+        log.debug('【server connection】socket:', cltSocket)
+      })
+      server.on('listening', () => {
+        log.debug('【server listening】')
+      })
+      server.on('checkContinue', (req, res) => {
+        log.debug('【server checkContinue】req:', req, ', res:', res)
+      })
+      server.on('checkExpectation', (req, res) => {
+        log.debug('【server checkExpectation】req:', req, ', res:', res)
+      })
+      server.on('dropRequest', (req, cltSocket) => {
+        log.debug('【server checkExpectation】req:', req, ', socket:', cltSocket)
       })
 
       if (callback) {
