@@ -118,11 +118,6 @@ module.exports = {
           desc: '仓库内脚本，重定向改为代理，并设置响应头Content-Type。作用：方便script拦截器直接使用，避免引起跨域问题和脚本内容限制问题。'
         }
       },
-      '*.github.com': {
-        '.*': {
-          sni: 'baidu.com'
-        }
-      },
       'github-releases.githubusercontent.com': {
         '.*': {
           sni: 'baidu.com'
@@ -138,6 +133,11 @@ module.exports = {
           cacheDays: 365,
           desc: '图片，缓存1年'
         },
+        '.*': {
+          sni: 'baidu.com'
+        }
+      },
+      'collector.github.com': {
         '.*': {
           sni: 'baidu.com'
         }
@@ -181,6 +181,9 @@ module.exports = {
         '^/_private/browser/stats$': {
           success: true,
           desc: 'github的访问速度分析上传，没有必要，直接返回成功'
+        },
+        '.*': {
+          sni: 'baidu.com'
         }
       },
       '*.docker.com': {
