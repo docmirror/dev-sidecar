@@ -226,6 +226,10 @@ utils.isBrowserRequest = function (userAgent) {
 //  /^[^.]+\.a\.com$/.test('c.a.com')
 //
 utils.isMappingHostName = function (DNSName, hostname) {
+  if (DNSName === hostname) {
+    return true
+  }
+
   let reg = DNSName.replace(/\./g, '\\.').replace(/\*/g, '[^.]+')
   reg = '^' + reg + '$'
   return (new RegExp(reg)).test(hostname)

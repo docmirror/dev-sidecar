@@ -3,6 +3,7 @@ const forge = require('node-forge')
 const FakeServersCenter = require('../tls/FakeServersCenter')
 const log = require('../../../utils/util.log')
 module.exports = function createFakeServerCenter ({
+  maxLength,
   caCertPath,
   caKeyPath,
   requestHandler,
@@ -26,7 +27,7 @@ module.exports = function createFakeServerCenter ({
   return new FakeServersCenter({
     caCert,
     caKey,
-    maxLength: 100,
+    maxLength,
     requestHandler,
     upgradeHandler,
     getCertSocketTimeout

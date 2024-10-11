@@ -11,6 +11,7 @@ module.exports = {
   createProxy ({
     host = config.defaultHost,
     port = config.defaultPort,
+    maxLength = config.defaultMaxLength,
     caCertPath,
     caKeyPath,
     sslConnectInterceptor,
@@ -63,6 +64,7 @@ module.exports = {
     const upgradeHandler = createUpgradeHandler(setting)
 
     const fakeServersCenter = createFakeServerCenter({
+      maxLength,
       caCertPath,
       caKeyPath,
       requestHandler,
@@ -81,49 +83,51 @@ module.exports = {
     const server = new http.Server()
     server.listen(port, host, () => {
       log.info(`dev-sidecar启动端口: ${host}:${port}`)
-      server.on('error', (err) => {
-        log.error('server error:', err)
-      })
       server.on('request', (req, res) => {
         const ssl = false
-        log.debug('【server request】req:', req)
+        log.debug('【server request】\r\n----- req -----\r\n', req, '\r\n----- res -----\r\n', res)
         requestHandler(req, res, ssl)
       })
       // tunneling for https
       server.on('connect', (req, cltSocket, head) => {
-        log.debug('【server connect】req:', req, ', socket:', cltSocket, ', head:', head)
+        log.debug('【server connect】\r\n----- req -----\r\n', req, '\r\n----- cltSocket -----\r\n', cltSocket, '\r\n----- head -----\r\n', head)
         connectHandler(req, cltSocket, head)
       })
       // TODO: handler WebSocket
       server.on('upgrade', function (req, cltSocket, head) {
         const ssl = false
-        log.debug('【server upgrade】req:', req)
+        log.debug('【server upgrade】\r\n----- req -----\r\n', req)
         upgradeHandler(req, cltSocket, head, ssl)
       })
+      server.on('error', (err) => {
+        log.error('【server error】\r\n----- error -----\r\n', err)
+      })
       server.on('clientError', (err, cltSocket) => {
-        log.error('【server clientError】error:', err, ', socket:', cltSocket)
+        log.error('【server clientError】\r\n----- error -----\r\n', err, '\r\n----- cltSocket -----\r\n', cltSocket)
         cltSocket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
       })
 
       // 其他事件：仅记录debug日志
-      server.on('close', () => {
-        log.debug('【server close】')
-      })
-      server.on('connection', (cltSocket) => {
-        log.debug('【server connection】socket:', cltSocket)
-      })
-      server.on('listening', () => {
-        log.debug('【server listening】')
-      })
-      server.on('checkContinue', (req, res) => {
-        log.debug('【server checkContinue】req:', req, ', res:', res)
-      })
-      server.on('checkExpectation', (req, res) => {
-        log.debug('【server checkExpectation】req:', req, ', res:', res)
-      })
-      server.on('dropRequest', (req, cltSocket) => {
-        log.debug('【server checkExpectation】req:', req, ', socket:', cltSocket)
-      })
+      if (process.env.NODE_ENV === 'development') {
+        server.on('close', () => {
+          log.debug('【server close】no arguments...')
+        })
+        server.on('connection', (cltSocket) => {
+          log.debug('【server connection】\r\n----- cltSocket -----\r\n', cltSocket)
+        })
+        server.on('listening', () => {
+          log.debug('【server listening】no arguments...')
+        })
+        server.on('checkContinue', (req, res) => {
+          log.debug('【server checkContinue】\r\n----- req -----\r\n', req, '\r\n----- res -----\r\n', res)
+        })
+        server.on('checkExpectation', (req, res) => {
+          log.debug('【server checkExpectation】\r\n----- req -----\r\n', req, '\r\n----- res -----\r\n', res)
+        })
+        server.on('dropRequest', (req, cltSocket) => {
+          log.debug('【server checkExpectation】\r\n----- req -----\r\n', req, '\r\n----- cltSocket -----\r\n', cltSocket)
+        })
+      }
 
       if (callback) {
         callback(server)
