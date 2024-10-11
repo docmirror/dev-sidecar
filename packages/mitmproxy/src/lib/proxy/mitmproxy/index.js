@@ -103,7 +103,8 @@ module.exports = {
         log.error('【server error】\r\n----- error -----\r\n', err)
       })
       server.on('clientError', (err, cltSocket) => {
-        log.error('【server clientError】\r\n----- error -----\r\n', err, '\r\n----- cltSocket -----\r\n', cltSocket)
+        // log.error('【server clientError】\r\n----- error -----\r\n', err, '\r\n----- cltSocket -----\r\n', cltSocket)
+        log.error('【server clientError】\r\n', err)
         cltSocket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
       })
 
