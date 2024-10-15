@@ -3,7 +3,7 @@
  *
  * @version        0.1.8
  * @since          2024-09-27 14:24
- * @author         王良
+ * @author         王良 / wangliang181230
  * @authorHomePage https://wangliang1024.cn
  * @remark         当前脚本为仿照的版本，并非篡改猴插件的源码，仅供学习参考。
  * @description    篡改猴 (Tampermonkey) 是拥有 超过 1000 万用户 的最流行的浏览器扩展之一。 它适用于 Chrome、Microsoft Edge、Safari、Opera Next 和 Firefox。
