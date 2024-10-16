@@ -6,6 +6,16 @@ const pki = forge.pki
 // const colors = require('colors')
 const tls = require('tls')
 const log = require('../../../utils/util.log')
+
+function arraysHaveSameElements (arr1, arr2) {
+  if (arr1.length !== arr2.length) {
+    return false
+  }
+  const sortedArr1 = [...arr1].sort()
+  const sortedArr2 = [...arr2].sort()
+  return sortedArr1.every((value, index) => value === sortedArr2[index])
+}
+
 module.exports = class FakeServersCenter {
   constructor ({ maxLength = 256, requestHandler, upgradeHandler, caCert, caKey, getCertSocketTimeout }) {
     this.queue = []
@@ -36,17 +46,20 @@ module.exports = class FakeServersCenter {
   getServerPromise (hostname, port) {
     for (let i = 0; i < this.queue.length; i++) {
       const serverPromiseObj = this.queue[i]
-      const mappingHostNames = serverPromiseObj.mappingHostNames
-      for (let j = 0; j < mappingHostNames.length; j++) {
-        const DNSName = mappingHostNames[j]
-        if (tlsUtils.isMappingHostName(DNSName, hostname)) {
-          this.reRankServer(i)
-          return serverPromiseObj.promise
+      if (serverPromiseObj.port === port) {
+        const mappingHostNames = serverPromiseObj.mappingHostNames
+        for (let j = 0; j < mappingHostNames.length; j++) {
+          const DNSName = mappingHostNames[j]
+          if (tlsUtils.isMappingHostName(DNSName, hostname)) {
+            this.reRankServer(i)
+            return serverPromiseObj.promise
+          }
         }
       }
     }
 
     const serverPromiseObj = {
+      port,
       mappingHostNames: [hostname] // temporary hostname
     }
 
@@ -75,7 +88,7 @@ module.exports = class FakeServersCenter {
           cert,
           key,
           server: fakeServer,
-          port: 0 // if prot === 0 ,should listen server's `listening` event.
+          port: 0 // if port === 0 ,should listen server's `listening` event.
         }
         serverPromiseObj.serverObj = serverObj
 
@@ -88,14 +101,27 @@ module.exports = class FakeServersCenter {
           log.debug(`【fakeServer request - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
           this.requestHandler(req, res, ssl)
         })
+        let once = true
         fakeServer.on('listening', () => {
           log.debug(`【fakeServer listening - ${hostname}:${port}】no arguments...`)
-          serverPromiseObj.mappingHostNames = tlsUtils.getMappingHostNamesFromCert(certObj.cert)
+          if (cert && once) {
+            once = false
+            let newMappingHostNames = tlsUtils.getMappingHostNamesFromCert(cert)
+            newMappingHostNames = [...new Set(newMappingHostNames)]
+            if (!arraysHaveSameElements(serverPromiseObj.mappingHostNames, newMappingHostNames)) {
+              log.info(`【fakeServer listening - ${hostname}:${port}】Reset mappingHostNames: `, serverPromiseObj.mappingHostNames, '变更为', newMappingHostNames)
+              serverPromiseObj.mappingHostNames = newMappingHostNames
+            }
+          }
           resolve(serverObj)
         })
         fakeServer.on('upgrade', (req, socket, head) => {
           const ssl = true
-          log.debug(`【fakeServer upgrade - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- socket -----\r\n', socket, '\r\n----- head -----\r\n', head)
+          if (process.env.NODE_ENV === 'development') {
+            log.debug(`【fakeServer upgrade - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- socket -----\r\n', socket, '\r\n----- head -----\r\n', head)
+          } else {
+            log.info(`【fakeServer upgrade - ${hostname}:${port}】`, req.url)
+          }
           this.upgradeHandler(req, socket, head, ssl)
         })
 
