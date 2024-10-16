@@ -48,7 +48,7 @@ module.exports = class FakeServersCenter {
   getServerPromise (hostname, port, ssl, manualCompatibleConfig) {
     if (port === 443 || port === 80) {
       ssl = port === 443
-    } else {
+    } else if (ssl) {
       // 兼容程序：1
       const compatibleConfig = compatible.getConnectCompatibleConfig(hostname, port, manualCompatibleConfig)
       if (compatibleConfig && compatibleConfig.ssl != null) {
