@@ -8,15 +8,16 @@ const log = require('../../../utils/util.log')
 const RequestCounter = require('../../choice/RequestCounter')
 const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
 const dnsLookup = require('./dnsLookup')
+const compatible = require('../compatible/compatible')
 const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
 
 // create requestHandler function
-module.exports = function createRequestHandler (createIntercepts, middlewares, externalProxy, dnsConfig, setting) {
+module.exports = function createRequestHandler (createIntercepts, middlewares, externalProxy, dnsConfig, setting, compatibleConfig) {
   // return
   return function requestHandler (req, res, ssl) {
     let proxyReq
 
-    const rOptions = commonUtil.getOptionsFromRequest(req, ssl, externalProxy, setting)
+    const rOptions = commonUtil.getOptionsFromRequest(req, ssl, externalProxy, setting, compatibleConfig)
     let url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
 
     if (rOptions.headers.connection === 'close') {
@@ -130,6 +131,19 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           // log.debug('agent:', rOptions.agent)
           // log.debug('agent.options:', rOptions.agent.options)
           res.setHeader('DS-Proxy-Request', rOptions.hostname)
+
+          // 兼容程序：2
+          if (rOptions.agent) {
+            const compatibleConfig = compatible.getRequestCompatibleConfig(rOptions, rOptions.compatibleConfig)
+            if (compatibleConfig && compatibleConfig.rejectUnauthorized != null && rOptions.agent.options.rejectUnauthorized !== compatibleConfig.rejectUnauthorized) {
+              if (compatibleConfig.rejectUnauthorized === false && rOptions.agent.unVerifySslAgent) {
+                log.info(`【兼容程序】${rOptions.hostname}:${rOptions.port}: 设置 'rOptions.agent.options.rejectUnauthorized = ${compatibleConfig.rejectUnauthorized}'`)
+                rOptions.agent = rOptions.agent.unVerifySslAgent
+                res.setHeader('DS-Compatible', 'unVerifySsl')
+              }
+            }
+          }
+
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const cost = new Date() - start
             if (rOptions.protocol === 'https:') {
@@ -163,6 +177,11 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             log.error(`代理请求错误: ${url}, cost: ${cost} ms, error:`, e, ', rOptions:', jsonApi.stringify2(rOptions))
             countSlow(isDnsIntercept, '代理请求错误: ' + e.message)
             reject(e)
+
+            // 兼容程序：2
+            if (e.code === 'DEPTH_ZERO_SELF_SIGNED_CERT') {
+              compatible.setRequestRejectUnauthorized(rOptions, false)
+            }
           })
           proxyReq.on('aborted', () => {
             const cost = new Date() - start
