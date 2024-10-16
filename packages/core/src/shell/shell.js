@@ -80,7 +80,7 @@ function _childExec (composeCmds, options = {}) {
     childProcess.exec(composeCmds, options, function (error, stdout, stderr) {
       if (error) {
         if (options.printErrorLog !== false) {
-          log.error('cmd 命令执行错误：\n===>\ncommands:', composeCmds, '\n   error:', error, '\n  stdout:', stdout, '\n  stderr:', stderr, '\n<===')
+          log.error('cmd 命令执行错误：\n===>\ncommands:', composeCmds, '\n   error:', error, '\n<===')
         }
         reject(new Error(stderr))
       } else {
@@ -105,7 +105,7 @@ function childExec (composeCmds, options = {}) {
         // console.log('------', decoder.decode(stderr))
         const message = iconv.decode(Buffer.from(stderr, binaryEncoding), encoding)
         if (options.printErrorLog !== false) {
-          log.error('cmd 命令执行错误：\n------------------------------\ncommands:', composeCmds, '\n message:', message, '\n   error:', error, '\n  stdout:', stdout, '\n  stderr:', stderr, '\n------------------------------')
+          log.error('cmd 命令执行错误：\n------------------------------\ncommands:', composeCmds, '\n message:', message, '\n   error:', error, '\n------------------------------')
         }
         reject(new Error(message))
       } else {
@@ -154,15 +154,20 @@ async function execute (executor, args) {
 
 async function execFile (file, args, options) {
   return new Promise((resolve, reject) => {
-    _execFile(file, args, options, (err, stdout) => {
-      if (err) {
-        log.error('文件执行出错：', file, err)
-        reject(err)
-        return
-      }
-      log.debug('执行成功：', stdout)
-      resolve(stdout)
-    })
+    try {
+      _execFile(file, args, options, (err, stdout) => {
+        if (err) {
+          log.error('文件执行出错：', file, err)
+          reject(err)
+          return
+        }
+        log.debug('文件执行成功：', file)
+        resolve(stdout)
+      })
+    } catch (e) {
+      log.error('文件执行出错：', file, e)
+      reject(e)
+    }
   })
 }
 
