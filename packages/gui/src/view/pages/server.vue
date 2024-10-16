@@ -238,7 +238,6 @@ export default {
       dnsMappings: [],
       speedTestList: [],
       whiteList: []
-      // sniList: []
     }
   },
   created () {
@@ -277,7 +276,6 @@ export default {
     ready () {
       this.initDnsMapping()
       this.initWhiteList()
-      // this.initSniList()
       if (this.config.server.dns.speedTest.dnsProviders) {
         this.speedDns = this.config.server.dns.speedTest.dnsProviders
       }
@@ -285,7 +283,6 @@ export default {
     async applyBefore () {
       this.submitDnsMapping()
       this.submitWhiteList()
-      // this.submitSniList()
     },
     async applyAfter () {
       if (this.status.server.enabled) {

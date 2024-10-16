@@ -17,7 +17,7 @@ function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
 }
 
 // create connectHandler function
-module.exports = function createConnectHandler (sslConnectInterceptor, middlewares, fakeServerCenter, dnsConfig, sniConfig) {
+module.exports = function createConnectHandler (sslConnectInterceptor, middlewares, fakeServerCenter, dnsConfig) {
   // return
   const sslConnectInterceptors = []
   sslConnectInterceptors.push(sslConnectInterceptor)
@@ -27,11 +27,11 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
     }
   }
 
-  // log.info('sni config:', sniConfig)
-  // const sniRegexpMap = matchUtil.domainMapRegexply(sniConfig)
   return function connectHandler (req, cltSocket, head) {
     // eslint-disable-next-line node/no-deprecated-api
-    const { hostname, port } = url.parse(`https://${req.url}`)
+    let { hostname, port } = url.parse(`https://${req.url}`)
+    port = parseInt(port)
+
     if (isSslConnect(sslConnectInterceptors, req, cltSocket, head)) {
       // 需要拦截，代替目标服务器，让客户端连接DS在本地启动的代理服务
       fakeServerCenter.getServerPromise(hostname, port).then((serverObj) => {

@@ -20,8 +20,7 @@ module.exports = {
     middlewares = [],
     externalProxy,
     dnsConfig,
-    setting,
-    sniConfig
+    setting
   }, callback) {
     // Don't reject unauthorized
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
@@ -76,8 +75,7 @@ module.exports = {
       sslConnectInterceptor,
       middlewares,
       fakeServersCenter,
-      dnsConfig,
-      sniConfig
+      dnsConfig
     )
 
     const server = new http.Server()
