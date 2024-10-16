@@ -20,7 +20,8 @@ module.exports = {
     middlewares = [],
     externalProxy,
     dnsConfig,
-    setting
+    setting,
+    compatibleConfig
   }, callback) {
     // Don't reject unauthorized
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
@@ -57,7 +58,8 @@ module.exports = {
       middlewares,
       externalProxy,
       dnsConfig,
-      setting
+      setting,
+      compatibleConfig
     )
 
     const upgradeHandler = createUpgradeHandler(setting)
@@ -75,65 +77,75 @@ module.exports = {
       sslConnectInterceptor,
       middlewares,
       fakeServersCenter,
-      dnsConfig
+      dnsConfig,
+      compatibleConfig
     )
 
-    const server = new http.Server()
-    server.listen(port, host, () => {
-      log.info(`dev-sidecar启动端口: ${host}:${port}`)
-      server.on('request', (req, res) => {
-        const ssl = false
-        log.debug('【server request】\r\n----- req -----\r\n', req, '\r\n----- res -----\r\n', res)
-        requestHandler(req, res, ssl)
-      })
-      // tunneling for https
-      server.on('connect', (req, cltSocket, head) => {
-        log.debug('【server connect】\r\n----- req -----\r\n', req, '\r\n----- cltSocket -----\r\n', cltSocket, '\r\n----- head -----\r\n', head)
-        connectHandler(req, cltSocket, head)
-      })
-      // TODO: handler WebSocket
-      server.on('upgrade', function (req, cltSocket, head) {
-        const ssl = false
-        log.debug('【server upgrade】\r\n----- req -----\r\n', req)
-        upgradeHandler(req, cltSocket, head, ssl)
-      })
-      server.on('error', (err) => {
-        log.error('【server error】\r\n----- error -----\r\n', err)
-      })
-      server.on('clientError', (err, cltSocket) => {
-        // log.error('【server clientError】\r\n----- error -----\r\n', err, '\r\n----- cltSocket -----\r\n', cltSocket)
-        log.error('【server clientError】\r\n', err)
-        cltSocket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
-      })
+    // 创建监听方法，用于监听 http 和 https 两个端口
+    const serverListen = (server, ssl, port, host) => {
+      server.listen(port, host, () => {
+        log.info(`dev-sidecar启动 ${ssl ? 'https' : 'http'} 端口: ${host}:${port}`)
+        server.on('request', (req, res) => {
+          log.debug(`【server request, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
+          requestHandler(req, res, ssl)
+        })
+        // tunneling for https
+        server.on('connect', (req, cltSocket, head) => {
+          log.debug(`【server connect, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- cltSocket -----\r\n', cltSocket, '\r\n----- head -----\r\n', head)
+          connectHandler(req, cltSocket, head, ssl)
+        })
+        // TODO: handler WebSocket
+        server.on('upgrade', function (req, cltSocket, head) {
+          log.debug(`【server upgrade, ssl: ${ssl}】\r\n----- req -----\r\n`, req)
+          upgradeHandler(req, cltSocket, head, ssl)
+        })
+        server.on('error', (err) => {
+          log.error(`【server error, ssl: ${ssl}】\r\n----- error -----\r\n`, err)
+        })
+        server.on('clientError', (err, cltSocket) => {
+          // log.error(`【server clientError, ssl: ${ssl}】\r\n----- error -----\r\n`, err, '\r\n----- cltSocket -----\r\n', cltSocket)
+          log.error(`【server clientError, ssl: ${ssl}】socket.localPort = ${cltSocket.localPort}\r\n`, err)
+          cltSocket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
+        })
 
-      // 其他事件：仅记录debug日志
-      if (process.env.NODE_ENV === 'development') {
-        server.on('close', () => {
-          log.debug('【server close】no arguments...')
-        })
-        server.on('connection', (cltSocket) => {
-          log.debug('【server connection】\r\n----- cltSocket -----\r\n', cltSocket)
-        })
-        server.on('listening', () => {
-          log.debug('【server listening】no arguments...')
-        })
-        server.on('checkContinue', (req, res) => {
-          log.debug('【server checkContinue】\r\n----- req -----\r\n', req, '\r\n----- res -----\r\n', res)
-        })
-        server.on('checkExpectation', (req, res) => {
-          log.debug('【server checkExpectation】\r\n----- req -----\r\n', req, '\r\n----- res -----\r\n', res)
-        })
-        server.on('dropRequest', (req, cltSocket) => {
-          log.debug('【server checkExpectation】\r\n----- req -----\r\n', req, '\r\n----- cltSocket -----\r\n', cltSocket)
-        })
-      }
+        // 其他事件：仅记录debug日志
+        if (process.env.NODE_ENV === 'development') {
+          server.on('close', () => {
+            log.debug(`【server close, ssl: ${ssl}】no arguments...`)
+          })
+          server.on('connection', (cltSocket) => {
+            log.debug(`【server connection, ssl: ${ssl}】\r\n----- cltSocket -----\r\n`, cltSocket)
+          })
+          server.on('listening', () => {
+            log.debug(`【server listening, ssl: ${ssl}】no arguments...`)
+          })
+          server.on('checkContinue', (req, res) => {
+            log.debug(`【server checkContinue, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
+          })
+          server.on('checkExpectation', (req, res) => {
+            log.debug(`【server checkExpectation, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
+          })
+          server.on('dropRequest', (req, cltSocket) => {
+            log.debug(`【server checkExpectation, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- cltSocket -----\r\n', cltSocket)
+          })
+        }
 
-      if (callback) {
-        callback(server)
-      }
-    })
+        if (callback) {
+          callback(server, port, host, ssl)
+        }
+      })
+    }
 
-    return server
+    const httpsServer = new http.Server()
+    const httpServer = new http.Server()
+
+    // `http端口` 比 `https端口` 要小1
+    const httpsPort = port
+    const httpPort = port - 1
+    serverListen(httpsServer, true, httpsPort, host)
+    serverListen(httpServer, false, httpPort, host)
+
+    return [httpsServer, httpServer]
   },
   createCA (caPaths) {
     return tlsUtils.initCA(caPaths)

@@ -4,7 +4,7 @@ const proxyConfig = require('./lib/proxy/common/config')
 const log = require('./utils/util.log')
 const { fireError, fireStatus } = require('./utils/util.process')
 const speedTest = require('./lib/speed/index.js')
-let server
+let servers = []
 
 function registerProcessListener () {
   process.on('message', function (msg) {
@@ -64,44 +64,51 @@ const api = {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
     }
     // log.info('启动代理服务时的配置:', JSON.stringify(proxyOptions, null, '\t'))
-    const newServer = mitmproxy.createProxy(proxyOptions, () => {
+    const newServers = mitmproxy.createProxy(proxyOptions, (server, port, host, ssl) => {
       fireStatus(true)
-      log.info(`代理服务已启动：${proxyOptions.host}:${proxyOptions.port}`)
+      log.info(`代理服务已启动：${host}:${port}, ssl: ${ssl}`)
     })
-    newServer.on('close', () => {
-      log.info('server will closed ')
-      if (server === newServer) {
-        server = null
-        fireStatus(false)
-      }
-    })
-    newServer.on('error', (e) => {
-      log.info('server error', e)
-      // newServer = null
-      fireError(e)
-    })
-    server = newServer
+    for (const newServer of newServers) {
+      newServer.on('close', () => {
+        log.info('server will closed ')
+        if (servers.includes(newServer)) {
+          servers = servers.filter(item => item !== newServer)
+          if (servers.length === 0) {
+            fireStatus(false)
+          }
+        }
+      })
+      newServer.on('error', (e) => {
+        log.info('server error', e)
+        // newServer = null
+        fireError(e)
+      })
+    }
+    servers = newServers
 
     registerProcessListener()
   },
   async close () {
     return new Promise((resolve, reject) => {
-      if (server) {
-        server.close((err) => {
-          if (err && err.code !== 'ERR_SERVER_NOT_RUNNING') {
-            if (err.code === 'ERR_SERVER_NOT_RUNNING') {
-              log.info('代理服务未运行，无需关闭')
-              resolve()
-            } else {
-              log.error('代理服务关闭失败:', err)
-              reject(err)
+      if (servers && servers.length > 0) {
+        for (const server of servers) {
+          server.close((err) => {
+            if (err && err.code !== 'ERR_SERVER_NOT_RUNNING') {
+              if (err.code === 'ERR_SERVER_NOT_RUNNING') {
+                log.info('代理服务未运行，无需关闭')
+                resolve()
+              } else {
+                log.error('代理服务关闭失败:', err)
+                reject(err)
+              }
+              return
             }
-            return
-          }
 
-          log.info('代理服务关闭成功')
-          resolve()
-        })
+            log.info('代理服务关闭成功')
+            resolve()
+          })
+        }
+        servers = []
       } else {
         log.info('server is null, no need to close.')
         fireStatus(false)

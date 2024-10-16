@@ -224,7 +224,7 @@ async function _winSetProxy (exec, ip, port, setEnv) {
   let proxyAddr = `https=http://${ip}:${port}`
   // http
   if (config.get().proxy.proxyHttp) {
-    proxyAddr = `http=http://${ip}:${port};` + proxyAddr
+    proxyAddr = `http=http://${ip}:${port - 1};` + proxyAddr
   }
 
   // 读取排除域名
@@ -234,16 +234,18 @@ async function _winSetProxy (exec, ip, port, setEnv) {
   await execFile(proxyPath, [execFun, proxyAddr, excludeIpStr])
 
   if (setEnv) {
-    log.info(`开启系统代理的同时设置环境变量：HTTPS_PROXY = "http://${ip}:${port}/"`)
-    if (config.get().proxy.proxyHttp) {
-      log.info(`开启系统代理的同时设置环境变量：HTTP_PROXY = "http://${ip}:${port}/"`)
-    }
+    // 设置全局代理所需的环境变量
     try {
-      await exec('echo \'设置环境变量 HTTPS_PROXY、HTTP_PROXY\'')
+      await exec(`echo '设置环境变量 HTTPS_PROXY${config.get().proxy.proxyHttp ? '、HTTP_PROXY' : ''}'`)
+
+      log.info(`开启系统代理的同时设置环境变量：HTTPS_PROXY = "http://${ip}:${port}/"`)
       await exec(`setx HTTPS_PROXY "http://${ip}:${port}/"`)
+
       if (config.get().proxy.proxyHttp) {
-        await exec(`setx HTTP_PROXY "http://${ip}:${port}/"`)
+        log.info(`开启系统代理的同时设置环境变量：HTTP_PROXY = "http://${ip}:${port - 1}/"`)
+        await exec(`setx HTTP_PROXY "http://${ip}:${port - 1}/"`)
       }
+
       //  await addClearScriptIni()
     } catch (e) {
       log.error('设置环境变量 HTTPS_PROXY、HTTP_PROXY 失败:', e)
@@ -279,7 +281,7 @@ const executor = {
       // http
       if (config.get().proxy.proxyHttp) {
         setProxyCmd.push(`gsettings set org.gnome.system.proxy.http host ${ip}`)
-        setProxyCmd.push(`gsettings set org.gnome.system.proxy.http port ${port}`)
+        setProxyCmd.push(`gsettings set org.gnome.system.proxy.http port ${port - 1}`)
       } else {
         setProxyCmd.push("gsettings set org.gnome.system.proxy.http host ''")
         setProxyCmd.push('gsettings set org.gnome.system.proxy.http port 0')
@@ -311,7 +313,7 @@ const executor = {
       await exec(`networksetup -setsecurewebproxy "${wifiAdaptor}" ${ip} ${port}`)
       // http
       if (config.get().proxy.proxyHttp) {
-        await exec(`networksetup -setwebproxy "${wifiAdaptor}" ${ip} ${port}`)
+        await exec(`networksetup -setwebproxy "${wifiAdaptor}" ${ip} ${port - 1}`)
       } else {
         await exec(`networksetup -setwebproxystate "${wifiAdaptor}" off`)
       }
