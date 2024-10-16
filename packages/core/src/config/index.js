@@ -67,6 +67,25 @@ module.exports = {
         }
       }
     },
+    compatible: {
+      // **** 自定义兼容配置 **** //
+      // connect阶段所需的兼容性配置
+      connect: {
+        // 参考配置（无path）
+        // 'xxx.xxx.xxx.xxx:443': {
+        //   ssl: false
+        // }
+      },
+      // request阶段所需的兼容性配置
+      request: {
+        // 参考配置（配置方式同 `拦截配置`）
+        // 'xxx.xxx.xxx.xxx:443': {
+        //   '.*': {
+        //     rejectUnauthorized: false
+        //   }
+        // }
+      }
+    },
     intercept: {
       enabled: true
     },

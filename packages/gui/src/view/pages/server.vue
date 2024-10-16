@@ -106,7 +106,16 @@
               </a-col>
             </a-row>
         </a-tab-pane>
-        <a-tab-pane tab="IP预设置" key="5">
+        <a-tab-pane tab="兼容程序" key="5">
+          <div style="height:100%;display:flex;flex-direction:column">
+            <div>
+              说明：<code>兼容程序</code>会自动根据错误信息进行兼容性调整，并将兼容设置保存在 <code>~/.dev-sidecar/automaticCompatibleConfig.json</code> 文件中。但并不是所有的兼容设置都是正确的，所以需要通过以下配置来覆盖错误的兼容设置。
+            </div>
+            <vue-json-editor style="flex-grow:1;min-height:300px;margin-top:10px;" ref="editor" v-model="config.server.compatible" mode="code"
+                             :show-btns="false" :expandedOnStart="true"></vue-json-editor>
+          </div>
+        </a-tab-pane>
+        <a-tab-pane tab="IP预设置" key="6">
           <div style="height:100%;display:flex;flex-direction:column">
             <div>
               提示：<code>IP预设置</code>功能，优先级高于 <code>DNS设置</code>
@@ -116,11 +125,11 @@
                              :show-btns="false" :expandedOnStart="true"></vue-json-editor>
           </div>
         </a-tab-pane>
-        <a-tab-pane tab="DNS服务管理" key="6">
+        <a-tab-pane tab="DNS服务管理" key="7">
           <vue-json-editor style="height:100%" ref="editor" v-model="config.server.dns.providers" mode="code"
                            :show-btns="false" :expandedOnStart="true"></vue-json-editor>
         </a-tab-pane>
-        <a-tab-pane tab="DNS设置" key="7">
+        <a-tab-pane tab="DNS设置" key="8">
           <div>
             <a-row style="margin-top:10px">
               <a-col span="19">
@@ -148,7 +157,7 @@
             </a-row>
           </div>
         </a-tab-pane>
-        <a-tab-pane tab="IP测速" key="8">
+        <a-tab-pane tab="IP测速" key="9">
           <div class="ip-tester" style="padding-right: 10px">
             <a-alert type="info" message="对从DNS获取到的IP进行测速，使用速度最快的IP进行访问（注意：对使用了增强功能的域名没啥用）"></a-alert>
             <a-form-item label="开启DNS测速" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -384,7 +393,7 @@ export default {
       }, 5000)
     },
     async handleTabChange (key) {
-      if (key !== '2' && key !== '3' && key !== '5' && key !== '6') {
+      if (key !== '2' && key !== '3' && key !== '5' && key !== '6' && key !== '7') {
         return
       }
 

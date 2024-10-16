@@ -99,6 +99,10 @@ module.exports = (serverConfig) => {
       speedTest: serverConfig.dns.speedTest
     },
     setting,
+    compatibleConfig: {
+      connect: serverConfig.compatible ? matchUtil.domainMapRegexply(serverConfig.compatible.connect) : {},
+      request: serverConfig.compatible ? matchUtil.domainMapRegexply(serverConfig.compatible.request) : {}
+    },
     middlewares,
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]

@@ -98,7 +98,7 @@ util.parseHostnameAndPort = (host, defaultPort) => {
   return arr
 }
 
-util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting) => {
+util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, compatibleConfig = null) => {
   // eslint-disable-next-line node/no-deprecated-api
   const urlObject = url.parse(req.url)
   const defaultPort = ssl ? 443 : 80
@@ -148,7 +148,8 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting) => 
     port,
     path: urlObject.path,
     headers: req.headers,
-    agent
+    agent,
+    compatibleConfig
   }
 
   // eslint-disable-next-line node/no-deprecated-api
