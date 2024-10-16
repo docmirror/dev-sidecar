@@ -313,6 +313,7 @@ export default {
         console.log('this status', this.status)
         return ret
       } catch (err) {
+        btn.loading = false // 有时候记录日志会卡死，先设置为false
         console.log('api invoke error:', err)
       } finally {
         btn.loading = false

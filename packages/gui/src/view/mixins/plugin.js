@@ -44,10 +44,13 @@ export default {
         return // 防重复提交
       }
       this.applyLoading = true
-      await this.applyBefore()
-      await this.saveConfig()
-      await this.applyAfter()
-      this.applyLoading = false
+      try {
+        await this.applyBefore()
+        await this.saveConfig()
+        await this.applyAfter()
+      } finally {
+        this.applyLoading = false
+      }
     },
     async applyBefore () {
 
@@ -64,12 +67,15 @@ export default {
         okText: '确定',
         onOk: async () => {
           this.resetDefaultLoading = true
-          this.config = await this.$api.config.resetDefault(key)
-          if (this.ready) {
-            await this.ready(this.config)
+          try {
+            this.config = await this.$api.config.resetDefault(key)
+            if (this.ready) {
+              await this.ready(this.config)
+            }
+            await this.apply()
+          } finally {
+            this.resetDefaultLoading = false
           }
-          await this.apply()
-          this.resetDefaultLoading = false
         },
         onCancel () {}
       })
