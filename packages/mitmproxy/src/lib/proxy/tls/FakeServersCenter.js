@@ -49,7 +49,7 @@ module.exports = class FakeServersCenter {
     if (port === 443 || port === 80) {
       ssl = port === 443
     } else if (ssl) {
-      // 兼容程序：1
+      // 自动兼容程序：1
       const compatibleConfig = compatible.getConnectCompatibleConfig(hostname, port, manualCompatibleConfig)
       if (compatibleConfig && compatibleConfig.ssl != null) {
         ssl = compatibleConfig.ssl
@@ -154,14 +154,14 @@ module.exports = class FakeServersCenter {
           // log.error(`【fakeServer clientError - ${hostname}:${port}】\r\n----- error -----\r\n`, err, '\r\n----- socket -----\r\n', socket)
           log.error(`【fakeServer clientError - ${hostname}:${port}】\r\n`, err)
 
-          // 兼容程序：1
+          // 自动兼容程序：1
           if (port !== 443 && port !== 80) {
             if (ssl === true && err.code.indexOf('ERR_SSL_') === 0) {
               compatible.setConnectSsl(hostname, port, false)
-              log.error(`兼容程序：SSL异常，现设置为禁用ssl: ${hostname}:${port}, ssl = false`)
+              log.error(`自动兼容程序：SSL异常，现设置为禁用ssl: ${hostname}:${port}, ssl = false`)
             } else if (ssl === false && err.code === 'HPE_INVALID_METHOD') {
               compatible.setConnectSsl(hostname, port, true)
-              log.error(`兼容程序：${err.code}，现设置为启用ssl: ${hostname}:${port}, ssl = true`)
+              log.error(`自动兼容程序：${err.code}，现设置为启用ssl: ${hostname}:${port}, ssl = true`)
             }
           }
         })

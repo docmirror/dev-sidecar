@@ -1,5 +1,5 @@
 /**
- * 兼容程序自适应生成配置
+ * 自动兼容程序自适应生成配置
  * 此脚本会针对各种兼容性问题，为对应域名生成相应的兼容性配置，并将自适应配置写入到 `~/.dev-sidecar/automaticCompatibleConfig.json` 文件中。
  * 当然，也有可能会生成错误的配置，导致无法兼容，这时候可以通过 `config.server.compatible` 配置项，来覆盖这里生成的配置，达到主动适配的效果。
  *
@@ -110,7 +110,7 @@ module.exports = {
     // 配置保存到文件
     if (autoSave) _saveConfigToFile()
 
-    log.info(`【兼容程序】${hostname}:${port}: 设置 connect.ssl = ${ssl}`)
+    log.info(`【自动兼容程序】${hostname}:${port}: 设置 connect.ssl = ${ssl}`)
   },
 
   // --------------------------------------------------------------------------------------------------------------------------
@@ -140,6 +140,6 @@ module.exports = {
     // 配置保存到文件
     if (autoSave) _saveConfigToFile()
 
-    log.info(`【兼容程序】${rOptions.hostname}:${rOptions.port}: 设置 request.rejectUnauthorized = ${rejectUnauthorized}`)
+    log.info(`【自动兼容程序】${rOptions.hostname}:${rOptions.port}: 设置 request.rejectUnauthorized = ${rejectUnauthorized}`)
   }
 }

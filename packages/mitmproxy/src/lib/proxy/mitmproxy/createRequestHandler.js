@@ -132,12 +132,12 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           // log.debug('agent.options:', rOptions.agent.options)
           res.setHeader('DS-Proxy-Request', rOptions.hostname)
 
-          // 兼容程序：2
+          // 自动兼容程序：2
           if (rOptions.agent) {
             const compatibleConfig = compatible.getRequestCompatibleConfig(rOptions, rOptions.compatibleConfig)
             if (compatibleConfig && compatibleConfig.rejectUnauthorized != null && rOptions.agent.options.rejectUnauthorized !== compatibleConfig.rejectUnauthorized) {
               if (compatibleConfig.rejectUnauthorized === false && rOptions.agent.unVerifySslAgent) {
-                log.info(`【兼容程序】${rOptions.hostname}:${rOptions.port}: 设置 'rOptions.agent.options.rejectUnauthorized = ${compatibleConfig.rejectUnauthorized}'`)
+                log.info(`【自动兼容程序】${rOptions.hostname}:${rOptions.port}: 设置 'rOptions.agent.options.rejectUnauthorized = ${compatibleConfig.rejectUnauthorized}'`)
                 rOptions.agent = rOptions.agent.unVerifySslAgent
                 res.setHeader('DS-Compatible', 'unVerifySsl')
               }
@@ -178,7 +178,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             countSlow(isDnsIntercept, '代理请求错误: ' + e.message)
             reject(e)
 
-            // 兼容程序：2
+            // 自动兼容程序：2
             if (e.code === 'DEPTH_ZERO_SELF_SIGNED_CERT') {
               compatible.setRequestRejectUnauthorized(rOptions, false)
             }

@@ -106,10 +106,10 @@
               </a-col>
             </a-row>
         </a-tab-pane>
-        <a-tab-pane tab="兼容程序" key="5">
+        <a-tab-pane tab="自动兼容程序" key="5">
           <div style="height:100%;display:flex;flex-direction:column">
             <div>
-              说明：<code>兼容程序</code>会自动根据错误信息进行兼容性调整，并将兼容设置保存在 <code>~/.dev-sidecar/automaticCompatibleConfig.json</code> 文件中。但并不是所有的兼容设置都是正确的，所以需要通过以下配置来覆盖错误的兼容设置。
+              说明：<code>自动兼容程序</code>会自动根据错误信息进行兼容性调整，并将兼容设置保存在 <code>~/.dev-sidecar/automaticCompatibleConfig.json</code> 文件中。但并不是所有的兼容设置都是正确的，所以需要通过以下配置来覆盖错误的兼容设置。
             </div>
             <vue-json-editor style="flex-grow:1;min-height:300px;margin-top:10px;" ref="editor" v-model="config.server.compatible" mode="code"
                              :show-btns="false" :expandedOnStart="true"></vue-json-editor>
