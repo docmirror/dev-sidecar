@@ -1,7 +1,8 @@
 'use strict'
 /* global __static */
 import path from 'path'
-import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, powerMonitor, nativeImage, nativeTheme, globalShortcut } from 'electron'
+import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, nativeImage, nativeTheme, globalShortcut } from 'electron'
+import { powerMonitor } from './background/powerMonitor'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
 import DevSidecar from '@docmirror/dev-sidecar'

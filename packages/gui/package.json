@@ -43,7 +43,8 @@
     "sass-loader": "^10.0.4",
     "vue": "^2.6.11",
     "vue-json-editor-fix-cn": "^1.4.3",
-    "vue-router": "^3.4.8"
+    "vue-router": "^3.4.8",
+    "@natmri/platform-napi": "0.0.8"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.0",
