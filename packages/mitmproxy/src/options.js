@@ -6,6 +6,7 @@ const path = require('path')
 const fs = require('fs')
 const lodash = require('lodash')
 const scriptInterceptor = require('./lib/interceptor/impl/res/script')
+const jsonApi = require('./json')
 
 const { getTmpPacFilePath, downloadPacAsync, createOverwallMiddleware } = require('./lib/proxy/middleware/overwall')
 
@@ -110,7 +111,7 @@ module.exports = (serverConfig) => {
       // 配置了白名单的域名，将跳过代理
       const inWhiteList = matchUtil.matchHostname(whiteList, hostname, 'in whiteList') != null
       if (inWhiteList) {
-        log.info(`为白名单域名，不拦截: ${hostname}, headers:`, req.headers)
+        log.info(`为白名单域名，不拦截: ${hostname}, headers:`, jsonApi.stringify2(req.headers))
         return false // 不拦截
       }
 

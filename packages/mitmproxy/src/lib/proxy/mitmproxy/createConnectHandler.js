@@ -4,6 +4,7 @@ const log = require('../../../utils/util.log')
 const DnsUtil = require('../../dns/index')
 const localIP = '127.0.0.1'
 const dnsLookup = require('./dnsLookup')
+const jsonApi = require('../../../json')
 
 function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
   for (const intercept of sslConnectInterceptors) {
@@ -44,7 +45,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
         log.error(`----- fakeServer getServerPromise error: ${hostname}:${port}, error:`, e)
       })
     } else {
-      log.info(`未匹配到任何 sslConnectInterceptors，不拦截请求，直接连接目标服务器: ${hostname}:${port}, headers:`, req.headers)
+      log.info(`不拦截请求，直连目标服务器: ${hostname}:${port}, headers:`, jsonApi.stringify2(req.headers))
       connect(req, cltSocket, head, hostname, port, dnsConfig, true)
     }
   }
