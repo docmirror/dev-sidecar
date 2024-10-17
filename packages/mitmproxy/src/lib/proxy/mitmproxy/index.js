@@ -82,21 +82,26 @@ module.exports = {
     )
 
     // 创建监听方法，用于监听 http 和 https 两个端口
+    const printDebugLog = false && process.env.NODE_ENV === 'development' // 开发过程中，如有需要可以将此参数临时改为true，打印所有事件的日志
     const serverListen = (server, ssl, port, host) => {
       server.listen(port, host, () => {
         log.info(`dev-sidecar启动 ${ssl ? 'https' : 'http'} 端口: ${host}:${port}`)
         server.on('request', (req, res) => {
-          log.debug(`【server request, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
+          if (printDebugLog) log.debug(`【server request, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
           requestHandler(req, res, ssl)
         })
         // tunneling for https
         server.on('connect', (req, cltSocket, head) => {
-          log.debug(`【server connect, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- cltSocket -----\r\n', cltSocket, '\r\n----- head -----\r\n', head)
+          if (printDebugLog) log.debug(`【server connect, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- cltSocket -----\r\n', cltSocket, '\r\n----- head -----\r\n', head)
           connectHandler(req, cltSocket, head, ssl)
         })
         // TODO: handler WebSocket
         server.on('upgrade', function (req, cltSocket, head) {
-          log.debug(`【server upgrade, ssl: ${ssl}】\r\n----- req -----\r\n`, req)
+          if (printDebugLog) {
+            log.debug(`【server upgrade, ssl: ${ssl}】\r\n----- req -----\r\n`, req)
+          } else {
+            log.info(`【server upgrade, ssl: ${ssl}】`, req.url)
+          }
           upgradeHandler(req, cltSocket, head, ssl)
         })
         server.on('error', (err) => {
@@ -109,7 +114,7 @@ module.exports = {
         })
 
         // 其他事件：仅记录debug日志
-        if (process.env.NODE_ENV === 'development') {
+        if (printDebugLog) {
           server.on('close', () => {
             log.debug(`【server close, ssl: ${ssl}】no arguments...`)
           })

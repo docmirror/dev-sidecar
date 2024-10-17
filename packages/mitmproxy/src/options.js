@@ -106,16 +106,21 @@ module.exports = (serverConfig) => {
     middlewares,
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]
+
+      // 配置了白名单的域名，将跳过代理
       const inWhiteList = matchUtil.matchHostname(whiteList, hostname, 'in whiteList') != null
       if (inWhiteList) {
         log.info(`为白名单域名，不拦截: ${hostname}, headers:`, req.headers)
-        return false // 所有都不拦截
+        return false // 不拦截
       }
+
       // 配置了拦截的域名，将会被代理
-      const matched = !!matchUtil.matchHostname(intercepts, hostname, 'matched intercepts')
-      if (matched === true) {
-        return matched // 拦截
+      const matched = matchUtil.matchHostname(intercepts, hostname, 'matched intercepts')
+      if ((!!matched) === true) {
+        log.debug(`拦截器拦截：${req.url}, matched:`, matched)
+        return true // 拦截
       }
+
       return null // 未匹配到任何拦截配置，由下一个拦截器判断
     },
     createIntercepts: (context) => {

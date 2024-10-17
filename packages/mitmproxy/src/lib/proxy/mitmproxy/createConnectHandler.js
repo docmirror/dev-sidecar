@@ -8,6 +8,7 @@ const dnsLookup = require('./dnsLookup')
 function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
   for (const intercept of sslConnectInterceptors) {
     const ret = intercept(req, cltSocket, head)
+    log.debug(`拦截判断结果：${ret}, url: ${req.url}, intercept:`, intercept)
     if (ret === false || ret === true) {
       return ret
     }

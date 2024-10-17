@@ -115,17 +115,18 @@ module.exports = class FakeServersCenter {
         }
         serverPromiseObj.serverObj = serverObj
 
+        const printDebugLog = false && process.env.NODE_ENV === 'development' // 开发过程中，如有需要可以将此参数临时改为true，打印所有事件的日志
         fakeServer.listen(0, () => {
           const address = fakeServer.address()
           serverObj.port = address.port
         })
         fakeServer.on('request', (req, res) => {
-          log.debug(`【fakeServer request - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
+          if (printDebugLog) log.debug(`【fakeServer request - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
           this.requestHandler(req, res, ssl)
         })
         let once = true
         fakeServer.on('listening', () => {
-          log.debug(`【fakeServer listening - ${hostname}:${port}】no arguments...`)
+          if (printDebugLog) log.debug(`【fakeServer listening - ${hostname}:${port}】no arguments...`)
           if (cert && once) {
             once = false
             let newMappingHostNames = tlsUtils.getMappingHostNamesFromCert(cert)
@@ -138,7 +139,7 @@ module.exports = class FakeServersCenter {
           resolve(serverObj)
         })
         fakeServer.on('upgrade', (req, socket, head) => {
-          if (process.env.NODE_ENV === 'development') {
+          if (printDebugLog) {
             log.debug(`【fakeServer upgrade - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- socket -----\r\n', socket, '\r\n----- head -----\r\n', head)
           } else {
             log.info(`【fakeServer upgrade - ${hostname}:${port}】`, req.url)
@@ -176,7 +177,7 @@ module.exports = class FakeServersCenter {
         }
 
         // 其他监听事件，只打印debug日志
-        if (process.env.NODE_ENV === 'development') {
+        if (printDebugLog) {
           if (ssl) {
             fakeServer.on('keylog', (line, tlsSocket) => {
               log.debug(`【fakeServer keylog - ${hostname}:${port}】\r\n----- line -----\r\n`, line, '\r\n----- tlsSocket -----\r\n', tlsSocket)

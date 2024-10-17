@@ -77,25 +77,15 @@ function matchHostname (hostMap, hostname, action) {
   }
 
   // 通配符匹配 或 正则表达式匹配
-  for (const target in hostMap) {
-    if (target === 'origin') {
+  for (const regexp in hostMap) {
+    if (regexp === 'origin') {
       continue
     }
 
-    // if (target.indexOf('*') < 0 && target[0] !== '^') {
-    //   continue // 不是通配符匹配串，也不是正则表达式，跳过
-    // }
-
-    // 如果是通配符匹配串，转换为正则表达式
-    let regexp = target
-    // if (target[0] !== '^') {
-    //   regexp = domainRegexply(regexp)
-    // }
-
     // 正则表达式匹配
     if (hostname.match(regexp)) {
-      value = hostMap[target]
-      log.info(`matchHostname: ${action}: '${hostname}' -> '${target}': ${JSON.stringify(value)}`)
+      value = hostMap[regexp]
+      log.info(`matchHostname: ${action}: '${hostname}' -> { "${regexp}": ${JSON.stringify(value)} }`)
       return value
     }
   }
