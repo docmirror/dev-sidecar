@@ -1,6 +1,6 @@
 [SwitchyOmega Conditions]
 ; Require: SwitchyOmega >= 2.3.2
-; Update Date: 2024/09/26
+; Update Date: 2024/10/14
 ; Author: Pluwen
 ; Usage: https://github.com/FelisCatus/SwitchyOmega/wiki/RuleListUsage
 
@@ -19,6 +19,7 @@
 *.0daydown.com
 *.0o0.ooo
 *.10010.com
+*.10086cloud.com
 *.114la.com
 *.114yygh.com
 *.115.com
@@ -54,6 +55,7 @@
 *.360buyimg.com
 *.360doc.com
 *.360in.com
+*.360safe.com
 *.36kr.com
 *.39.net
 *.3dmgame.com
@@ -140,6 +142,7 @@
 *.ant.design
 *.antfin-inc.com
 *.antfin.com
+*.antpcdn.com
 *.anw.red
 *.anyway.fm
 *.anzhi.com
@@ -203,6 +206,7 @@
 *.biliapi.net
 *.bilibili.com
 *.bilibili.tv
+*.bilicomic.com
 *.biligame.com
 *.biligame.net
 *.bilivideo.com
@@ -404,6 +408,7 @@
 *.frdic.com
 *.freebuf.com
 *.freeziti.com
+*.fromgeek.com
 *.futu5.com
 *.futunn.com
 *.fydeos.com
@@ -551,6 +556,7 @@
 *.jdkindle.com
 *.jdpay.com
 *.jetbrains.com
+*.jfdaily.com
 *.jfrft.com
 *.jhdec.com
 *.jianguoyun.com
@@ -637,6 +643,7 @@
 *.lecloud.com
 *.leetcode-cn.com
 *.lemicp.com
+*.lenovo.net
 *.lenovomobile.com
 *.letv.com
 *.letvimg.com
@@ -841,6 +848,7 @@
 *.qhimg.com
 *.qhmsg.com
 *.qhres.com
+*.qianxin.com
 *.qichacha.com
 *.qidian.com
 *.qihucdn.com
@@ -899,6 +907,7 @@
 *.sc115.com
 *.sciencedirect.com
 *.sciencemag.org
+*.scofd.com
 *.scomper.me
 *.sdbeta.com
 *.sdo.com
@@ -958,7 +967,6 @@
 *.steamcn.com
 *.steamcontent.com
 *.steamdb.info
-*.steamstatic.com
 *.subhd.tv
 *.sui.com
 *.suning.com
