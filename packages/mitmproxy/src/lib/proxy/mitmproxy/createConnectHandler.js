@@ -70,10 +70,11 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
       }
     }
     const proxySocket = net.connect(options, () => {
+      if (!isDirect) log.info('Proxy connect start:', hostport)
+
       cltSocket.write('HTTP/1.1 200 Connection Established\r\n' +
                 'Proxy-agent: dev-sidecar\r\n' +
                 '\r\n')
-      log.info(`Proxy connect start: ${isDirect ? '直连' : ''} ${hostport}`)
       proxySocket.write(head)
       proxySocket.pipe(cltSocket)
 
