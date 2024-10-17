@@ -15,7 +15,7 @@ function matched (hostname, overWallTargetMap) {
     return 'overwall config'
   }
   if (pacClient == null) {
-    return false
+    return null
   }
   const ret = pacClient.FindProxyForURL('https://' + hostname, hostname)
   if (ret && ret.indexOf('PROXY ') === 0) {
@@ -23,7 +23,7 @@ function matched (hostname, overWallTargetMap) {
     return 'overwall pac'
   } else {
     log.debug(`matchHostname: matched overwall: Not-Matched '${hostname}' -> '${ret}' in pac.txt`)
-    return false
+    return null
   }
 }
 
@@ -148,7 +148,11 @@ function createOverwallMiddleware (overWallConfig) {
   return {
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]
-      return matched(hostname, overWallTargetMap)
+      const ret = matched(hostname, overWallTargetMap)
+      if (ret == null) {
+        return null // 返回 null，由下一个拦截器校验
+      }
+      return true // 拦截
     },
     requestIntercept (context, req, res, ssl, next) {
       const { rOptions, log, RequestCounter } = context
@@ -157,7 +161,7 @@ function createOverwallMiddleware (overWallConfig) {
       }
       const hostname = rOptions.hostname
       const matchedResult = matched(hostname, overWallTargetMap)
-      if (!matchedResult) {
+      if (matchedResult == null) {
         return
       }
       const cacheKey = '__over_wall_proxy__'
