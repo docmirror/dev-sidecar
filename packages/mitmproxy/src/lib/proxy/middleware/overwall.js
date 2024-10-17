@@ -152,6 +152,9 @@ function createOverwallMiddleware (overWallConfig) {
       if (ret == null) {
         return null // 返回 null，由下一个拦截器校验
       }
+      if (ret === false) {
+        return false // 不拦截，预留这个判断，避免以后修改 matched 方法的代码出BUG
+      }
       return true // 拦截
     },
     requestIntercept (context, req, res, ssl, next) {
@@ -161,7 +164,7 @@ function createOverwallMiddleware (overWallConfig) {
       }
       const hostname = rOptions.hostname
       const matchedResult = matched(hostname, overWallTargetMap)
-      if (matchedResult == null) {
+      if (matchedResult == null || matchedResult === false) {
         return
       }
       const cacheKey = '__over_wall_proxy__'
