@@ -57,7 +57,7 @@ function _loadFromFile (defaultConfig) {
   let config
   if (!fs.existsSync(configPath)) {
     config = defaultConfig
-    log.info('automaticCompatibleConfig.json 文件不存在，使用默认配置:', configPath)
+    log.info(`本地未保存过 ${configPath} 文件，使用默认配置`)
   } else {
     const file = fs.readFileSync(configPath)
     log.info('读取 automaticCompatibleConfig.json 成功:', configPath)
