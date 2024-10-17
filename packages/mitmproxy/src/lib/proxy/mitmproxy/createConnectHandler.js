@@ -45,12 +45,12 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
       })
     } else {
       log.info(`未匹配到任何 sslConnectInterceptors，不拦截请求，直接连接目标服务器: ${hostname}:${port}, headers:`, req.headers)
-      connect(req, cltSocket, head, hostname, port, dnsConfig)
+      connect(req, cltSocket, head, hostname, port, dnsConfig, true)
     }
   }
 }
 
-function connect (req, cltSocket, head, hostname, port, dnsConfig) {
+function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDirect = false) {
   // tunneling https
   // log.info('connect:', hostname, port)
   const start = new Date()
@@ -72,7 +72,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig) {
       cltSocket.write('HTTP/1.1 200 Connection Established\r\n' +
                 'Proxy-agent: dev-sidecar\r\n' +
                 '\r\n')
-      log.info('Proxy connect start:', hostport)
+      log.info(`Proxy connect start: ${isDirect ? '直连' : ''} ${hostport}`)
       proxySocket.write(head)
       proxySocket.pipe(cltSocket)
 
