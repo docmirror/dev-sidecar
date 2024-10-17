@@ -3,7 +3,7 @@
   "version": "1.8.6",
   "private": false,
   "license": "MPL-2.0",
-  "main": "background.js",
+  "main": "index.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
