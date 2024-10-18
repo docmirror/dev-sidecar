@@ -187,6 +187,10 @@ function createWindow (startHideWindow) {
 
   Menu.setApplicationMenu(null)
   win.setMenu(null)
+  // !!IMPORTANT
+  if(process.platform === 'win32') {
+    powerMonitor.setupMainWindow(win)
+  }
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -444,7 +448,8 @@ if (!isFirstInstance) {
     }
 
     powerMonitor.on('shutdown', async (e) => {
-      e.preventDefault()
+      if(process.platform !== 'win32')
+        e.preventDefault()
       log.info('系统关机，恢复代理设置')
       await quit()
     })

@@ -1,9 +1,23 @@
-import { powerMonitor as _powerMonitor } from 'electron/main'
-import { createShutdownBlocker, destroyShutdownBlocker } from '@natmri/platform-napi'
+import { powerMonitor as _powerMonitor, BrowserWindow } from 'electron'
+import { setMainWindowHandle, insertWndProcHook, removeWndProcHook, acquireShutdownBlock, releaseShutdownBlock } from '@natmri/platform-napi'
 
 class PowerMonitor {
-  _listeners = []
-  _shutdownCallback = null
+  constructor() {
+    this.setup = false
+    this._listeners = []
+    this._shutdownCallback = null
+  }
+
+  /**
+   *
+   * @param {BrowserWindow} window
+   */
+  setupMainWindow(window) {
+    if(!this.setup) {
+      setMainWindowHandle(window.getNativeWindowHandle().readBigInt64LE())
+      this.setup = true
+    }
+  }
 
   addListener(event, listener) {
     return this.on(event, listener)
@@ -17,7 +31,8 @@ class PowerMonitor {
     if(event === 'shutdown' && process.platform === 'win32') {
       this._listeners = []
       if(this._shutdownCallback) {
-        destroyShutdownBlocker()
+        removeWndProcHook()
+        releaseShutdownBlock()
         this._shutdownCallback = null
       }
     } else {
@@ -30,9 +45,10 @@ class PowerMonitor {
       if(!this._shutdownCallback) {
         this._shutdownCallback = async () => {
           await Promise.all(this._listeners.map((fn) => fn()))
-          destroyShutdownBlocker()
+          releaseShutdownBlock()
         }
-        createShutdownBlocker("正在停止 DevSidecar 代理", this._shutdownCallback)
+        insertWndProcHook(this._shutdownCallback)
+        acquireShutdownBlock("正在停止 DevSidecar 代理")
       }
       this._listeners.push(listener)
     } else {
@@ -50,7 +66,7 @@ class PowerMonitor {
 
   once(event, listener) {
     if(event === 'shutdown' && process.platform === 'win32') {
-
+      return this.on(event, listener)
     } else {
       return _powerMonitor.once(event, listener)
     }
