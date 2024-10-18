@@ -367,15 +367,20 @@ git clone https://github.com/docmirror/dev-sidecar
 cd dev-sidecar
 
 # 注意不要使用 `npm install` 来安装依赖，因为 `lerna bootstrap` 会自动安装依赖
-lerna bootstrap
+# lerna bootstrap
 # 如果 `lerna bootstrap` 有报错，可以尝试执行如下两行命令，用yarn替换掉npm：
-#cnpm install -g yarn
-#lerna bootstrap --npm-client=yarn
+# 感觉yarn的速度会更快
+cnpm install -g yarn
+lerna bootstrap --npm-client=yarn
 
 # 运行DevSidecar
 cd packages/gui
 npm run electron
 
+# 修改.yarnrc文件设置，切换镜像源
+registry=https://registry.npmmirror.com/
+electron_mirror=https://npmmirror.com/mirrors/electron/
+electron_builder_binaries_mirror=https://npmmirror.com/mirrors/electron-builder-binaries/
 ```
 > 如果electron依赖包下载不动，可以开启ds的npm加速
 
