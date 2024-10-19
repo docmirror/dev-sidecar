@@ -1,5 +1,5 @@
 import { powerMonitor as _powerMonitor, BrowserWindow } from 'electron'
-import { setMainWindowHandle, insertWndProcHook, removeWndProcHook, acquireShutdownBlock, releaseShutdownBlock } from '@natmri/platform-napi'
+import { setMainWindowHandle, insertWndProcHook, removeWndProcHook, releaseShutdownBlock, acquireShutdownBlock } from '@natmri/platform-napi';
 
 class PowerMonitor {
   constructor() {

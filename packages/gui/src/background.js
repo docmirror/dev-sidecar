@@ -8,6 +8,8 @@ import backend from './bridge/backend'
 import DevSidecar from '@docmirror/dev-sidecar'
 import log from './utils/util.log'
 import minimist from 'minimist'
+
+const isWindows = process.platform === 'win32'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
@@ -188,7 +190,7 @@ function createWindow (startHideWindow) {
   Menu.setApplicationMenu(null)
   win.setMenu(null)
   // !!IMPORTANT
-  if(process.platform === 'win32') {
+  if(isWindows) {
     powerMonitor.setupMainWindow(win)
   }
 
@@ -448,7 +450,7 @@ if (!isFirstInstance) {
     }
 
     powerMonitor.on('shutdown', async (e) => {
-      if(process.platform !== 'win32')
+      if(e)
         e.preventDefault()
       log.info('系统关机，恢复代理设置')
       await quit()

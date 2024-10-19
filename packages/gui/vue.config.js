@@ -82,8 +82,8 @@ module.exports = {
           }
         },
         win: {
-          icon: 'build/icons/'
-          // requestedExecutionLevel: 'highestAvailable' // 加了这个无法开机自启
+          icon: 'build/icons/',
+          requestedExecutionLevel: 'highestAvailable' // 加了这个无法开机自启
         },
         linux: {
           icon: 'build/mac/',
