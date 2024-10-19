@@ -33,6 +33,14 @@ module.exports = {
   pluginOptions: {
     electronBuilder: {
       externals: [
+        '@mihomo-party/sysproxy',
+        '@mihomo-party/sysproxy-win32-ia32-msvc',
+        '@mihomo-party/sysproxy-win32-x64-msvc',
+        '@mihomo-party/sysproxy-win32-arm64-msvc',
+        '@mihomo-party/sysproxy-linux-x64-gnu',
+        '@mihomo-party/sysproxy-linux-arm64-gnu',
+        '@mihomo-party/sysproxy-darwin-x64',
+        '@mihomo-party/sysproxy-darwin-arm64',
         '@natmri/platform-napi',
         "@natmri/platform-napi-win32-x64-msvc",
         "@natmri/platform-napi-darwin-x64",
@@ -82,8 +90,8 @@ module.exports = {
           }
         },
         win: {
-          icon: 'build/icons/',
-          requestedExecutionLevel: 'highestAvailable' // 加了这个无法开机自启
+          icon: 'build/icons/'
+          // requestedExecutionLevel: 'highestAvailable' // 加了这个无法开机自启
         },
         linux: {
           icon: 'build/mac/',

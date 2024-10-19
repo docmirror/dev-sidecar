@@ -453,6 +453,10 @@ if (!isFirstInstance) {
       if(e)
         e.preventDefault()
       log.info('系统关机，恢复代理设置')
+      if(isWindows) {
+        const Sysproxy = require('@mihomo-party/sysproxy')
+        Sysproxy.triggerManualProxy(false, "", 0, "")
+      }
       await quit()
     })
   })
