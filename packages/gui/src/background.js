@@ -1,12 +1,15 @@
 'use strict'
 /* global __static */
 import path from 'path'
-import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, powerMonitor, nativeImage, nativeTheme, globalShortcut } from 'electron'
+import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, nativeImage, nativeTheme, globalShortcut } from 'electron'
+import { powerMonitor } from './background/powerMonitor'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
 import DevSidecar from '@docmirror/dev-sidecar'
 import log from './utils/util.log'
 import minimist from 'minimist'
+
+const isWindows = process.platform === 'win32'
 // eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
@@ -186,6 +189,11 @@ function createWindow (startHideWindow) {
 
   Menu.setApplicationMenu(null)
   win.setMenu(null)
+
+  // !!IMPORTANT
+  if (isWindows) {
+    powerMonitor.setupMainWindow(win)
+  }
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -443,8 +451,14 @@ if (!isFirstInstance) {
     }
 
     powerMonitor.on('shutdown', async (e) => {
-      e.preventDefault()
+      if (e) {
+        e.preventDefault()
+      }
       log.info('系统关机，恢复代理设置')
+      if (isWindows) {
+        const Sysproxy = require('@mihomo-party/sysproxy')
+        Sysproxy.triggerManualProxy(false, '', 0, '')
+      }
       await quit()
     })
   })
