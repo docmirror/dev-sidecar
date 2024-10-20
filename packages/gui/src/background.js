@@ -189,8 +189,9 @@ function createWindow (startHideWindow) {
 
   Menu.setApplicationMenu(null)
   win.setMenu(null)
+
   // !!IMPORTANT
-  if(isWindows) {
+  if (isWindows) {
     powerMonitor.setupMainWindow(win)
   }
 
@@ -450,12 +451,13 @@ if (!isFirstInstance) {
     }
 
     powerMonitor.on('shutdown', async (e) => {
-      if(e)
+      if (e) {
         e.preventDefault()
+      }
       log.info('系统关机，恢复代理设置')
-      if(isWindows) {
+      if (isWindows) {
         const Sysproxy = require('@mihomo-party/sysproxy')
-        Sysproxy.triggerManualProxy(false, "", 0, "")
+        Sysproxy.triggerManualProxy(false, '', 0, '')
       }
       await quit()
     })
