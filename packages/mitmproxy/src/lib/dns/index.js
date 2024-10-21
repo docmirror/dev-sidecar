@@ -20,6 +20,7 @@ module.exports = {
 
       // 设置DNS名称到name属性中
       dnsMap[provider].name = provider
+      dnsMap[provider].type = conf.type
     }
     return dnsMap
   },
@@ -27,17 +28,20 @@ module.exports = {
     let providerName = matchUtil.matchHostname(dnsConfig.mapping, hostname, 'get dns providerName')
 
     // usa已重命名为cloudflare，以下为向下兼容处理
-    if (providerName === 'usa') {
+    if (providerName === 'usa' && dnsConfig.providers[providerName] == null) {
       providerName = 'cloudflare'
     }
 
     // 如果为空，尝试从预设IP中匹配，如果配置过预设IP，则随便
-    if (providerName == null) {
+    if (providerName == null || dnsConfig.providers[providerName] == null) {
       const hostnamePreSetIpList = matchUtil.matchHostname(dnsConfig.preSetIpList, hostname, 'matched preSetIpList')
       if (hostnamePreSetIpList) {
         for (const name in dnsConfig.providers) {
-          log.debug(`当前域名未配置过DNS，但配置了预设IP，现返回DNS '${name}' 作为预设IP的使用工具，hostname: ${hostname}, preSetIpList:`, hostnamePreSetIpList)
-          return dnsConfig.providers[name]
+          const provider = dnsConfig.providers[name]
+          if (provider.type === 'https') {
+            log.debug(`当前域名未配置过DNS，但配置了预设IP，现返回DNS '${name}' 作为预设IP的使用工具，hostname: ${hostname}, preSetIpList:`, hostnamePreSetIpList)
+            return dnsConfig.providers[name]
+          }
         }
       }
     }

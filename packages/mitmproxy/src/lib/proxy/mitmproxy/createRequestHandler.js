@@ -120,6 +120,9 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             }
             if (dns) {
               rOptions.lookup = dnsLookup.createLookupFunc(res, dns, 'request url', url, isDnsIntercept)
+              log.debug(`域名 ${rOptions.hostname} DNS: ${dns.name}`)
+            } else {
+              log.debug(`域名 ${rOptions.hostname} 在dns中未配置`)
             }
           }
 
