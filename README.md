@@ -14,8 +14,8 @@
 >
 ## 打个广告
 >
-> https://ai.handsfree.work
-> 我的ChatGPT，开发者必备，无需fanQ，快速，稳定，价格良心，100问仅需1元，按需扣费，余额永久有效，大家可以试试
+> https://github.com/certd/certd
+> 我的开源证书管理工具项目，全自动申请和部署证书，有需求的可以去试试，帮忙点个star
 
 
 
