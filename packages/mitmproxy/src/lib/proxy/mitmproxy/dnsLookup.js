@@ -8,7 +8,7 @@ module.exports = {
 
     return (hostname, options, callback) => {
       const tester = speedTest.getSpeedTester(hostname)
-      if (tester && tester.ready) {
+      if (tester) {
         const aliveIpObj = tester.pickFastAliveIpObj()
         if (aliveIpObj) {
           log.info(`----- ${action}: ${hostname}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host}${target} -----`)

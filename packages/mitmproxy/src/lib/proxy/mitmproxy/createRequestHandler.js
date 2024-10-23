@@ -121,9 +121,12 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             if (dns) {
               rOptions.lookup = dnsLookup.createLookupFunc(res, dns, 'request url', url, isDnsIntercept)
               log.debug(`域名 ${rOptions.hostname} DNS: ${dns.name}`)
+              res.setHeader('DS-DNS', dns.name)
             } else {
-              log.debug(`域名 ${rOptions.hostname} 在dns中未配置`)
+              log.info(`域名 ${rOptions.hostname} 在DNS中未配置`)
             }
+          } else {
+            log.info(`域名 ${rOptions.hostname} DNS配置不存在`)
           }
 
           // rOptions.sigalgs = 'RSA-PSS+SHA256:RSA-PSS+SHA512:ECDSA+SHA256'
