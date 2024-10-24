@@ -148,14 +148,7 @@ function createOverwallMiddleware (overWallConfig) {
   return {
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]
-      const ret = matched(hostname, overWallTargetMap)
-      if (ret == null) {
-        return null // 返回 null，由下一个拦截器校验
-      }
-      if (ret === false) {
-        return false // 不拦截，预留这个判断，避免以后修改 matched 方法的代码出BUG
-      }
-      return true // 拦截
+      return matched(hostname, overWallTargetMap)
     },
     requestIntercept (context, req, res, ssl, next) {
       const { rOptions, log, RequestCounter } = context
@@ -164,7 +157,7 @@ function createOverwallMiddleware (overWallConfig) {
       }
       const hostname = rOptions.hostname
       const matchedResult = matched(hostname, overWallTargetMap)
-      if (matchedResult == null || matchedResult === false) {
+      if (matchedResult == null || matchedResult === false || matchedResult === 'false') {
         return
       }
       const cacheKey = '__over_wall_proxy__'
