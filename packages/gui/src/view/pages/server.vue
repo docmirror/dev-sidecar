@@ -260,7 +260,7 @@ export default {
       if (!this.config || !this.config.server || !this.config.server.dns || !this.config.server.dns.providers) {
         return options
       }
-      _.forEach(this.config.server.dns.providers, (dnsConf, key) => {
+      _.forEach(this.config.server.dns.providers, (dnsConfig, key) => {
         options.push({
           value: key,
           label: key

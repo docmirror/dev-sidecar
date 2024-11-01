@@ -110,10 +110,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           log.info('发起代理请求:', url, (rOptions.servername ? ', sni: ' + rOptions.servername : ''), ', headers:', jsonApi.stringify2(rOptions.headers))
 
           const isDnsIntercept = {}
-          if (dnsConfig && dnsConfig.providers) {
+          if (dnsConfig && dnsConfig.dnsMap) {
             let dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.hostname)
             if (!dns && rOptions.servername) {
-              dns = dnsConfig.providers.quad9
+              dns = dnsConfig.dnsMap.quad9
               if (dns) {
                 log.info(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}, 必须使用dns，现默认使用 'quad9' DNS.`)
               }

@@ -41,7 +41,7 @@ module.exports = {
 
     port = ~~port
     const speedTestConfig = dnsConfig.speedTest
-    const dnsMap = dnsConfig.providers
+    const dnsMap = dnsConfig.dnsMap
     if (speedTestConfig) {
       const dnsProviders = speedTestConfig.dnsProviders
       const map = {}
