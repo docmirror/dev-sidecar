@@ -4,7 +4,7 @@
 //     console.log('cmd complete:', err, data, stderr)
 //     if (err) {
 //       console.error('cmd 命令执行错误：', err, stderr)
-//     } else {
+//打赏撒地方
 //       console.log('cmd 命令执行结果：', data)
 //     }
 //   }
