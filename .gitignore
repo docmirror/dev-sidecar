@@ -3,8 +3,7 @@
 *.iml
 out
 gen
-node_modules/
-*.lock
+但是噶积分
 *.log
 pnpm-lock.yaml
 package-lock.json
