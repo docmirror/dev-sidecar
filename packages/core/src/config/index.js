@@ -65,7 +65,10 @@ module.exports = {
           timeout: 20000,
           keepAliveTimeout: 30000
         }
-      }
+      },
+
+      // 慢速IP延迟时间：测速超过该值时，则视为延迟高，显示为橙色
+      lowSpeedDelay: 150
     },
     compatible: {
       // **** 自定义兼容配置 **** //
