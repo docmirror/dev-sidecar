@@ -166,8 +166,11 @@
               </a-checkbox>
             </a-form-item>
             <a-form-item label="自动测试间隔" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number id="inputNumber" v-model="getSpeedTestConfig().interval" :step="1000" :min="1"/> ms
+              <a-input-number v-model="getSpeedTestConfig().interval" :step="1000" :min="1"/> ms
             </a-form-item>
+            <!--<a-form-item label="慢速IP阈值" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-number v-model="config.server.setting.lowSpeedDelay" :step="10" :min="100"/> ms
+            </a-form-item>-->
             <div>使用以下DNS获取IP进行测速</div>
             <a-row style="margin-top:10px">
               <a-col span="24">
