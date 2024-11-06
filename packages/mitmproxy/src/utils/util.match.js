@@ -61,17 +61,17 @@ function matchHostname (hostMap, hostname, action) {
 
   // 域名快速匹配：直接匹配 或者 两种前缀通配符匹配
   let value = hostMap.origin[hostname]
-  if (value) {
+  if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "${hostname}": ${JSON.stringify(value)} }`)
     return value // 快速匹配成功
   }
   value = hostMap.origin['*' + hostname]
-  if (value) {
+  if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "*${hostname}": ${JSON.stringify(value)} }`)
     return value // 快速匹配成功
   }
   value = hostMap.origin['*.' + hostname]
-  if (value) {
+  if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "*.${hostname}": ${JSON.stringify(value)} }`)
     return value // 快速匹配成功
   }

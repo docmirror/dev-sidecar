@@ -15,7 +15,7 @@ function matched (hostname, overWallTargetMap) {
   if (ret1) {
     return 'in config'
   } else if (ret1 === false || ret1 === 'false') {
-    log.info(`域名 ${hostname} 的overwall配置为 false，跳过增强功能，即使它在 pac.txt 里`)
+    log.debug(`域名 ${hostname} 的overwall配置为 false，跳过增强功能，即使它在 pac.txt 里`)
     return null
   }
 

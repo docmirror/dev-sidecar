@@ -24,7 +24,7 @@
           <a-checkbox v-model="config.plugin.overwall.pac.enabled">
             启用PAC
           </a-checkbox>
-          <div class="form-help">PAC内收录了常见的被封杀的域名，当里面某些域名你不想被拦截时，可以关闭PAC</div>
+          <div class="form-help">PAC内收录了常见的被封杀的域名<br/>当里面某些域名你不想被拦截时，你可以配置这些域名为<code>禁用</code>，也可以关闭PAC</div>
         </a-form-item>
         <a-form-item label="自动更新PAC" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.overwall.pac.autoUpdate">
@@ -46,15 +46,22 @@
           <div>
             <a-row :gutter="10" style="">
               <a-col :span="22">
-                <span>PAC没有拦截到的域名，可以在此处定义</span>
+                <span>PAC没有拦截到的域名，可以在此处定义；配置为<code>禁用</code>时，将不使用梯子</span>
               </a-col>
               <a-col :span="2">
                 <a-button type="primary" icon="plus" @click="addTarget()"/>
               </a-col>
             </a-row>
             <a-row :gutter="10" v-for="(item,index) of targets" :key="index">
-              <a-col :span="22">
+              <a-col :span="18">
                 <a-input v-model="item.key"></a-input>
+              </a-col>
+              <a-col :span="4">
+                <a-select v-model="item.value" style="width:100%">
+                  <a-select-option v-for="(item) of overwallOptions" :key="item.value" :value="item.value">
+                    {{ item.label }}
+                  </a-select-option>
+                </a-select>
               </a-col>
               <a-col :span="2">
                 <a-button type="danger" icon="minus" @click="deleteTarget(item,index)"/>
@@ -116,7 +123,17 @@ export default {
     return {
       key: 'plugin.overwall',
       targets: undefined,
-      servers: undefined
+      servers: undefined,
+      overwallOptions: [
+        {
+          value: true,
+          label: '启用'
+        },
+        {
+          value: false,
+          label: '禁用'
+        }
+      ]
     }
   },
   created () {
