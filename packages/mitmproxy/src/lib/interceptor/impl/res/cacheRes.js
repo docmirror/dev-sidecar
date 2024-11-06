@@ -6,10 +6,25 @@ module.exports = {
   responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
     const { rOptions, log } = context
 
-    // 只有GET请求，且响应码为 2xx 或 3xx 时才进行缓存
-    const minStatusCode = interceptOpt.cacheMinStatusCode || 200
-    const maxStatusCode = interceptOpt.cacheMaxStatusCode || 303
-    if (rOptions.method !== 'GET' || proxyRes.statusCode < minStatusCode || proxyRes.statusCode > maxStatusCode) {
+    // 只有GET请求
+    if (rOptions.method !== 'GET') {
+      return
+    }
+
+    // 判断当前响应码是否不使用缓存
+    if (interceptOpt.cacheExcludeStatusCodeList && interceptOpt.cacheExcludeStatusCodeList[proxyRes.statusCode + '']) {
+      return
+    }
+
+    // 响应码为 200~303 时才进行缓存（可通过以下两个参数调整范围）
+    let minStatusCode = interceptOpt.cacheMinStatusCode || 200
+    let maxStatusCode = interceptOpt.cacheMaxStatusCode || 303
+    if (minStatusCode > maxStatusCode) {
+      const temp = minStatusCode
+      minStatusCode = maxStatusCode
+      maxStatusCode = temp
+    }
+    if (proxyRes.statusCode < minStatusCode || proxyRes.statusCode > maxStatusCode) {
       // res.setHeader('DS-Cache-Response-Interceptor', `skip: 'method' or 'status' not match`)
       return
     }
