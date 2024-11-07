@@ -26,11 +26,11 @@ function domainRegexply (target) {
 }
 
 function domainMapRegexply (hostMap) {
+  if (hostMap == null) {
+    return { origin: {} }
+  }
   const regexpMap = {}
   const origin = {} // 用于快速匹配，见matchHostname、matchHostnameAll方法
-  if (hostMap == null) {
-    return regexpMap
-  }
   lodash.each(hostMap, (value, domain) => {
     if (domain.indexOf('*') >= 0 || domain[0] === '^') {
       const regDomain = domain[0] !== '^' ? domainRegexply(domain) : domain
@@ -61,17 +61,17 @@ function matchHostname (hostMap, hostname, action) {
 
   // 域名快速匹配：直接匹配 或者 两种前缀通配符匹配
   let value = hostMap.origin[hostname]
-  if (value) {
+  if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "${hostname}": ${JSON.stringify(value)} }`)
     return value // 快速匹配成功
   }
   value = hostMap.origin['*' + hostname]
-  if (value) {
+  if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "*${hostname}": ${JSON.stringify(value)} }`)
     return value // 快速匹配成功
   }
   value = hostMap.origin['*.' + hostname]
-  if (value) {
+  if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "*.${hostname}": ${JSON.stringify(value)} }`)
     return value // 快速匹配成功
   }
@@ -127,8 +127,8 @@ function matchHostnameAll (hostMap, hostname, action) {
   let value
 
   // 通配符匹配 或 正则表达式匹配（优先级：1，最低）
-  for (const target in hostMap) {
-    if (target === 'origin') {
+  for (const regexp in hostMap) {
+    if (regexp === 'origin') {
       continue
     }
 
@@ -136,16 +136,10 @@ function matchHostnameAll (hostMap, hostname, action) {
     //   continue // 不是通配符匹配串，也不是正则表达式，跳过
     // }
 
-    // 如果是通配符匹配串，转换为正则表达式
-    let regexp = target
-    // if (target[0] !== '^') {
-    //   regexp = domainRegexply(regexp)
-    // }
-
     // 正则表达式匹配
     if (hostname.match(regexp)) {
-      value = hostMap[target]
-      log.debug(`matchHostname-one: ${action}: '${hostname}' -> { "${target}": ${JSON.stringify(value)} }`)
+      value = hostMap[regexp]
+      log.debug(`matchHostname-one: ${action}: '${hostname}' -> { "${regexp}": ${JSON.stringify(value)} }`)
       values = merge(values, value)
     }
   }

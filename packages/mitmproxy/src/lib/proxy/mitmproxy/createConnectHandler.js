@@ -9,11 +9,11 @@ const jsonApi = require('../../../json')
 function isSslConnect (sslConnectInterceptors, req, cltSocket, head) {
   for (const intercept of sslConnectInterceptors) {
     const ret = intercept(req, cltSocket, head)
-    log.debug(`拦截判断结果：${ret}, url: ${req.url}, intercept:`, intercept)
-    if (ret === false || ret === true) {
-      return ret
+    log.debug('当前拦截器返回结果：', ret, `, url: ${req.url}, intercept:`, intercept)
+    if (ret == null) {
+      continue
     }
-    // continue
+    return !(ret === false || ret === 'false')
   }
   return false
 }
@@ -58,19 +58,64 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
   const isDnsIntercept = {}
   const hostport = `${hostname}:${port}`
   try {
+    // 客户端的连接事件监听
+    cltSocket.on('timeout', (e) => {
+      log.error(`cltSocket timeout: ${hostport}, errorMsg: ${e.message}`)
+    })
+    cltSocket.on('error', (e) => {
+      log.error(`cltSocket error:   ${hostport}, errorMsg: ${e.message}`)
+    })
+    // 开发过程中，如有需要可以将此参数临时改为true，打印所有事件的日志
+    const printDebugLog = false && process.env.NODE_ENV === 'development'
+    if (printDebugLog) {
+      cltSocket.on('close', (hadError) => {
+        log.debug('【cltSocket close】', hadError)
+      })
+      cltSocket.on('connect', () => {
+        log.debug('【cltSocket connect】')
+      })
+      cltSocket.on('connectionAttempt', (ip, port, family) => {
+        log.debug(`【cltSocket connectionAttempt】${ip}:${port}, family:`, family)
+      })
+      cltSocket.on('connectionAttemptFailed', (ip, port, family) => {
+        log.debug(`【cltSocket connectionAttemptFailed】${ip}:${port}, family:`, family)
+      })
+      cltSocket.on('connectionAttemptTimeout', (ip, port, family) => {
+        log.debug(`【cltSocket connectionAttemptTimeout】${ip}:${port}, family:`, family)
+      })
+      cltSocket.on('data', (data) => {
+        log.debug('【cltSocket data】')
+      })
+      cltSocket.on('drain', () => {
+        log.debug('【cltSocket drain】')
+      })
+      cltSocket.on('end', () => {
+        log.debug('【cltSocket end】')
+      })
+      // cltSocket.on('lookup', (err, address, family, host) => {
+      // })
+      cltSocket.on('ready', () => {
+        log.debug('【cltSocket ready】')
+      })
+    }
+
+    // ---------------------------------------------------------------------------------------------------
+
     const options = {
       port,
       host: hostname,
       connectTimeout: 10000
     }
-    if (dnsConfig && dnsConfig.providers) {
+    if (dnsConfig && dnsConfig.dnsMap) {
       const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
       if (dns) {
         options.lookup = dnsLookup.createLookupFunc(null, dns, 'connect', hostport, isDnsIntercept)
       }
     }
+    // 代理连接事件监听
     const proxySocket = net.connect(options, () => {
       if (!isDirect) log.info('Proxy connect start:', hostport)
+      else log.debug('Direct connect start:', hostport)
 
       cltSocket.write('HTTP/1.1 200 Connection Established\r\n' +
                 'Proxy-agent: dev-sidecar\r\n' +
@@ -80,15 +125,9 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
 
       cltSocket.pipe(proxySocket)
     })
-    cltSocket.on('timeout', (e) => {
-      log.error(`cltSocket timeout: ${hostport}, errorMsg: ${e.message}`)
-    })
-    cltSocket.on('error', (e) => {
-      log.error(`cltSocket error:   ${hostport}, errorMsg: ${e.message}`)
-    })
     proxySocket.on('timeout', () => {
       const cost = new Date() - start
-      const errorMsg = `代理连接超时: ${hostport}, cost: ${cost} ms`
+      const errorMsg = `${isDirect ? '直连' : '代理连接'}超时: ${hostport}, cost: ${cost} ms`
       log.error(errorMsg)
 
       cltSocket.destroy()
@@ -102,8 +141,8 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
     proxySocket.on('error', (e) => {
       // 连接失败，可能被GFW拦截，或者服务端拥挤
       const cost = new Date() - start
-      const errorMsg = `代理连接失败: ${hostport}, cost: ${cost} ms, errorMsg: ${e.message}`
-      log.error(errorMsg)
+      const errorMsg = `${isDirect ? '直连' : '代理连接'}失败: ${hostport}, cost: ${cost} ms, errorMsg: ${e.message}`
+      log.error(`${errorMsg}\r\n`, e)
 
       cltSocket.destroy()
 
@@ -113,8 +152,41 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
         log.error(`记录ip失败次数，用于优选ip！ hostname: ${hostname}, ip: ${ip}, reason: ${errorMsg}, dns: ${dns.name}`)
       }
     })
+
+    if (printDebugLog) {
+      proxySocket.on('close', (hadError) => {
+        log.debug('【proxySocket close】', hadError)
+      })
+      proxySocket.on('connect', () => {
+        log.debug('【proxySocket connect】')
+      })
+      proxySocket.on('connectionAttempt', (ip, port, family) => {
+        log.debug(`【proxySocket connectionAttempt】${ip}:${port}, family:`, family)
+      })
+      proxySocket.on('connectionAttemptFailed', (ip, port, family) => {
+        log.debug(`【proxySocket connectionAttemptFailed】${ip}:${port}, family:`, family)
+      })
+      proxySocket.on('connectionAttemptTimeout', (ip, port, family) => {
+        log.debug(`【proxySocket connectionAttemptTimeout】${ip}:${port}, family:`, family)
+      })
+      proxySocket.on('data', (data) => {
+        log.debug('【proxySocket data】')
+      })
+      proxySocket.on('drain', () => {
+        log.debug('【proxySocket drain】')
+      })
+      proxySocket.on('end', () => {
+        log.debug('【proxySocket end】')
+      })
+      // proxySocket.on('lookup', (err, address, family, host) => {
+      // })
+      proxySocket.on('ready', () => {
+        log.debug('【proxySocket ready】')
+      })
+    }
+
     return proxySocket
   } catch (e) {
-    log.error(`Proxy connect error: ${hostport}, exception:`, e)
+    log.error(`${isDirect ? '直连' : '代理连接'}错误: ${hostport}, error:`, e)
   }
 }

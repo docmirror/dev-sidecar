@@ -122,6 +122,12 @@ $dark-input: #777; //输入框：背景色
     border-color: #505f5f;
     color: #90cb9f;
   }
+  /* 标签：警告 */
+  .ant-tag-orange{
+    background: #5a5750;
+    border-color: #5a5750;
+    color: #cfa572;
+  }
 
   /* 按钮 */
   .ant-btn:not(.ant-btn-danger, .ant-btn-primary){

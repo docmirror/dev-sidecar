@@ -32,6 +32,27 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
+      externals: [
+        '@mihomo-party/sysproxy',
+        '@mihomo-party/sysproxy-win32-ia32-msvc',
+        '@mihomo-party/sysproxy-win32-x64-msvc',
+        '@mihomo-party/sysproxy-win32-arm64-msvc',
+        '@mihomo-party/sysproxy-linux-x64-gnu',
+        '@mihomo-party/sysproxy-linux-arm64-gnu',
+        '@mihomo-party/sysproxy-darwin-x64',
+        '@mihomo-party/sysproxy-darwin-arm64',
+        '@natmri/platform-napi',
+        "@natmri/platform-napi-win32-x64-msvc",
+        "@natmri/platform-napi-darwin-x64",
+        "@natmri/platform-napi-linux-x64-gnu",
+        "@natmri/platform-napi-darwin-arm64",
+        "@natmri/platform-napi-linux-arm64-gnu",
+        "@natmri/platform-napi-linux-arm64-musl",
+        "@natmri/platform-napi-win32-arm64-msvc",
+        "@natmri/platform-napi-linux-arm-gnueabihf",
+        "@natmri/platform-napi-linux-x64-musl",
+        "@natmri/platform-napi-win32-ia32-msvc"
+      ],
       nodeIntegration: true,
       // Provide an array of files that, when changed, will recompile the main process and restart Electron
       // Your main process file will be added by default

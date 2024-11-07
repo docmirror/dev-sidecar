@@ -1,6 +1,6 @@
 [SwitchyOmega Conditions]
 ; Require: SwitchyOmega >= 2.3.2
-; Update Date: 2024/10/14
+; Update Date: 2024/11/07
 ; Author: Pluwen
 ; Usage: https://github.com/FelisCatus/SwitchyOmega/wiki/RuleListUsage
 
@@ -236,6 +236,8 @@
 *.ccb.com
 *.ccgslb.com
 *.ccgslb.net
+*.cckefu.net
+*.cckefu3.com
 *.cctv.com
 *.cctvpic.com
 *.cdn-apple.com
@@ -333,6 +335,7 @@
 *.dmzj.com
 *.dns.com
 *.dnspao.com
+*.doc88.com
 *.docer.com
 *.docin.com
 *.docschina.org
@@ -395,6 +398,8 @@
 *.fiio.com
 *.fir.im
 *.firefox.com
+*.fj12379.com
+*.fjdzyz.com
 *.fjgdwl.com
 *.fjhxbank.com
 *.fliggy.com
@@ -471,6 +476,7 @@
 *.homestyler.com
 *.hommk.com
 *.hongxiu.com
+*.honor.com
 *.hostbuf.com
 *.hostker.com
 *.hotmail.com
@@ -838,6 +844,7 @@
 *.pterclub.com
 *.pythonclub.org
 *.qbox.me
+*.qcc.com
 *.qcloud.com
 *.qcloudcdn.com
 *.qcwgg.com
@@ -883,6 +890,7 @@
 *.redacted.ch
 *.renren.com
 *.renrenche.com
+*.renrendoc.com
 *.researchgate.net
 *.rework.tools
 *.rkecloud.com
@@ -966,7 +974,6 @@
 *.staticfile.org
 *.steamcn.com
 *.steamcontent.com
-*.steamdb.info
 *.subhd.tv
 *.sui.com
 *.suning.com

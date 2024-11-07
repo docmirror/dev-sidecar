@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/mitmproxy",
-  "version": "1.8.8",
+  "version": "1.8.9",
   "description": "",
   "main": "src/index.js",
   "keywords": [

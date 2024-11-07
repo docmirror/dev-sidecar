@@ -166,8 +166,11 @@
               </a-checkbox>
             </a-form-item>
             <a-form-item label="自动测试间隔" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number id="inputNumber" v-model="getSpeedTestConfig().interval" :step="1000" :min="1"/> ms
+              <a-input-number v-model="getSpeedTestConfig().interval" :step="1000" :min="1"/> ms
             </a-form-item>
+            <!--<a-form-item label="慢速IP阈值" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-number v-model="config.server.setting.lowSpeedDelay" :step="10" :min="100"/> ms
+            </a-form-item>-->
             <div>使用以下DNS获取IP进行测速</div>
             <a-row style="margin-top:10px">
               <a-col span="24">
@@ -211,7 +214,7 @@
                     <a-icon v-else type="info-circle"/>
                   </a>
                   <a-tag style="margin:2px;" v-for="(element,index) of item.backupList" :title="element.dns"
-                         :color="element.time?'green':'red'" :key='index'>
+                         :color="element.time?(element.time>config.server.setting.lowSpeedDelay?'orange':'green'):'red'" :key='index'>
                     {{ element.host }} {{ element.time }}{{ element.time ? 'ms' : '' }} {{ element.dns }}
                   </a-tag>
                 </a-card>
@@ -260,7 +263,7 @@ export default {
       if (!this.config || !this.config.server || !this.config.server.dns || !this.config.server.dns.providers) {
         return options
       }
-      _.forEach(this.config.server.dns.providers, (dnsConf, key) => {
+      _.forEach(this.config.server.dns.providers, (dnsConfig, key) => {
         options.push({
           value: key,
           label: key

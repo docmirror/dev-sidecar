@@ -95,7 +95,7 @@ module.exports = (serverConfig) => {
     port: serverConfig.port,
     dnsConfig: {
       preSetIpList,
-      providers: dnsUtil.initDNS(serverConfig.dns.providers, preSetIpList),
+      dnsMap: dnsUtil.initDNS(serverConfig.dns.providers, preSetIpList),
       mapping: matchUtil.domainMapRegexply(dnsMapping),
       speedTest: serverConfig.dns.speedTest
     },
@@ -119,10 +119,10 @@ module.exports = (serverConfig) => {
       const matched = matchUtil.matchHostname(intercepts, hostname, 'matched intercepts')
       if ((!!matched) === true) {
         log.debug(`拦截器拦截：${req.url}, matched:`, matched)
-        return true // 拦截
+        return matched // 拦截
       }
 
-      return null // 未匹配到任何拦截配置，由下一个拦截器判断
+      return null // 不在白名单中，也未配置在拦截功能中，跳过当前拦截器，由下一个拦截器判断
     },
     createIntercepts: (context) => {
       const rOptions = context.rOptions

@@ -14,8 +14,8 @@
 >
 ## 打个广告
 >
-> https://ai.handsfree.work
-> 我的ChatGPT，开发者必备，无需fanQ，快速，稳定，价格良心，100问仅需1元，按需扣费，余额永久有效，大家可以试试
+> https://github.com/certd/certd    
+> 我的开源证书管理工具项目，全自动申请和部署证书，有需求的可以去试试，帮忙点个star
 
 
 
@@ -399,9 +399,9 @@ npm run electron:build
 
 1、 加群（请备注dev-sidecar，或简称DS）
 - QQ 1群：390691483，人数：500 / 500（满）
-- QQ 2群：[667666069](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=n4nksr4sji93vZtD5e8YEHRT6qbh6VyQ&authKey=XKBZnzmoiJrAFyOT4V%2BCrgX5c13ds59b84g%2FVRhXAIQd%2FlAiilsuwDRGWJct%2B570&noverify=0&group_code=667666069)，人数：439 / 500
+- QQ 2群：[667666069](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=n4nksr4sji93vZtD5e8YEHRT6qbh6VyQ&authKey=XKBZnzmoiJrAFyOT4V%2BCrgX5c13ds59b84g%2FVRhXAIQd%2FlAiilsuwDRGWJct%2B570&noverify=0&group_code=667666069)，人数：447 / 500
 - QQ 3群：419807815，人数：500 / 500（满）
-- QQ 4群：438148299，人数：200 / 200（满）
+- QQ 4群：[438148299](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=i_NCBB5f_Bkm2JsEV1tLs2TkQ79UlCID&authKey=nMsVJbJ6P%2FGNO7Q6vsVUadXRKnULUURwR8zvUZJnP3IgzhHYPhYdcBCHvoOh8vYr&noverify=0&group_code=438148299)，人数：203 / 1000
 - QQ 5群：[767622917](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nAWi_Rxj7mM4Unp5LMiatmUWhGimtbcB&authKey=aswmlWGjbt3GIWXtvjB2GJqqAKuv7hWjk6UBs3MTb%2Biyvr%2Fsbb1kA9CjF6sK7Hgg&noverify=0&group_code=767622917)，人数：016 / 200（new）
 
 
