@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar-gui",
-  "version": "1.8.8",
+  "version": "1.8.9",
   "private": false,
   "license": "MPL-2.0",
   "main": "background.js",
@@ -21,8 +21,8 @@
     "name": "Greper"
   },
   "dependencies": {
-    "@docmirror/dev-sidecar": "^1.8.8",
-    "@docmirror/mitmproxy": "^1.8.8",
+    "@docmirror/dev-sidecar": "^1.8.9",
+    "@docmirror/mitmproxy": "^1.8.9",
     "@mihomo-party/sysproxy": "^2.0.4",
     "@natmri/platform-napi": "0.0.7",
     "adm-zip": "^0.5.5",
