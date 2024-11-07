@@ -40,6 +40,7 @@
     "node-forge": "^0.8.2",
     "node-powershell": "^4.0.0",
     "require-context": "^1.1.0",
+    "spawn-sync": "^2.0.0",
     "through2": "^2.0.1",
     "tunnel-agent": "^0.4.3",
     "util": "^0.12.3",
