@@ -16,7 +16,7 @@ module.exports = {
           callback(null, aliveIpObj.host, 4)
           return
         } else {
-          log.info(`----- ${action}: ${hostname}, no alive ip${target}, tester:`, tester)
+          log.info(`----- ${action}: ${hostname}, no alive ip${target}, tester: { "ready": ${tester.ready}, "backupList": ${JSON.stringify(tester.backupList)} }`)
         }
       }
       dns.lookup(hostname).then(ip => {
