@@ -1,8 +1,7 @@
 'use strict'
 /* global __static */
 import path from 'path'
-import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, nativeImage, nativeTheme, globalShortcut } from 'electron'
-import { powerMonitor } from './background/powerMonitor'
+import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, powerMonitor, nativeImage, nativeTheme, globalShortcut } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
 import DevSidecar from '@docmirror/dev-sidecar'
@@ -14,6 +13,9 @@ const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+
+// 避免其他系统出现异常，只有 Windows 使用 './background/powerMonitor'
+const _powerMonitor = isWindows ? require('./background/powerMonitor').powerMonitor : powerMonitor
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -192,7 +194,7 @@ function createWindow (startHideWindow) {
 
   // !!IMPORTANT
   if (isWindows) {
-    powerMonitor.setupMainWindow(win)
+    _powerMonitor.setupMainWindow(win)
   }
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -450,7 +452,7 @@ if (!isFirstInstance) {
       log.info('error:', err)
     }
 
-    powerMonitor.on('shutdown', async (e) => {
+    _powerMonitor.on('shutdown', async (e) => {
       if (e) {
         e.preventDefault()
       }

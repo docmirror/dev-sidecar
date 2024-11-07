@@ -24,7 +24,7 @@
     "@docmirror/dev-sidecar": "^1.8.9",
     "@docmirror/mitmproxy": "^1.8.9",
     "@mihomo-party/sysproxy": "^2.0.4",
-    "@natmri/platform-napi": "0.0.7",
+    "@natmri/platform-napi": "^0.0.7",
     "adm-zip": "^0.5.5",
     "ant-design-vue": "^1.6.5",
     "compressing": "^1.5.1",
