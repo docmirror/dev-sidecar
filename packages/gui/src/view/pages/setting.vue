@@ -32,7 +32,7 @@
         <div class="form-help">
           应用启动时会向下面的地址请求配置补丁，获得最新的优化后的github访问体验。<br/>
           如果您觉得远程配置有安全风险，请关闭此功能，或删除共享远程配置，仅使用个人远程配置。<br/>
-          配置优先级：本地修改配置  >  个人远程配置  >  共享远程配置
+          配置优先级：本地修改配置  >  个人远程配置  >  共享远程配置 > 默认配置
         </div>
       </a-form-item>
       <a-form-item label="共享远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
