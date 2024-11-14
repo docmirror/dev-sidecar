@@ -2,7 +2,12 @@
   "name": "@docmirror/dev-sidecar-gui",
   "version": "1.8.9",
   "private": false,
+  "author": {
+    "email": "xiaojunnuo@qq.com",
+    "name": "Greper"
+  },
   "license": "MPL-2.0",
+  "homepage": "https://github.com/docmirror/dev-sidecar",
   "main": "background.js",
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -15,16 +20,11 @@
     "electron:icons-mac": "electron-icon-builder --input=./public/logo/mac.png --output=build --flatten",
     "electron:icons-black": "electron-icon-builder --input=./public/logo/win-black.png --output=build/black --flatten"
   },
-  "homepage": "https://github.com/docmirror/dev-sidecar",
-  "author": {
-    "email": "xiaojunnuo@qq.com",
-    "name": "Greper"
-  },
   "dependencies": {
     "@docmirror/dev-sidecar": "^1.8.9",
     "@docmirror/mitmproxy": "^1.8.9",
     "@mihomo-party/sysproxy": "^2.0.4",
-    "@natmri/platform-napi": "^0.0.7",
+    "@natmri/platform-napi": "^0.0.8",
     "adm-zip": "^0.5.5",
     "ant-design-vue": "^1.6.5",
     "compressing": "^1.5.1",
@@ -37,7 +37,7 @@
     "es-abstract": "^1.17.7",
     "extract-zip": "^2.0.1",
     "iconv-lite": "^0.6.2",
-    "json5": "^2.1.3",
+    "json5": "^2.2.3",
     "lodash": "^4.17.20",
     "log4js": "^6.3.0",
     "request-progress": "^3.0.0",

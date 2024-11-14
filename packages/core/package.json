@@ -1,17 +1,17 @@
 {
   "name": "@docmirror/dev-sidecar",
   "version": "1.8.9",
+  "private": false,
   "description": "给开发者的加速代理工具",
-  "main": "src/index.js",
+  "author": "docmirror.cn",
+  "license": "MPL-2.0",
   "keywords": [
     "dev-sidecar",
     "github加速",
     "google加速",
     "代理"
   ],
-  "author": "docmirror.cn",
-  "license": "MPL-2.0",
-  "private": false,
+  "main": "src/index.js",
   "scripts": {
     "start": "node ./start",
     "test": "mocha"
@@ -31,7 +31,7 @@
     "iconv-lite": "^0.4.13",
     "is-browser": "^2.1.0",
     "jschardet": "^1.4.1",
-    "json5": "^2.1.3",
+    "json5": "^2.2.3",
     "lodash": "^4.7.0",
     "log4js": "^6.3.0",
     "lru-cache": "^6.0.0",

@@ -1,11 +1,11 @@
 {
   "name": "dev-sidecar-parent",
   "private": false,
-  "license": "MPL-2.0",
   "author": "Greper",
+  "license": "MPL-2.0",
+  "dependencies": {
+  },
   "devDependencies": {
     "lerna": "^6.6.2"
-  },
-  "dependencies": {
   }
 }
