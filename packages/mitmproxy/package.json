@@ -23,7 +23,7 @@
     "dns-over-tls": "^0.0.9",
     "is-browser": "^2.1.0",
     "json5": "^2.2.3",
-    "lodash": "^4.7.0",
+    "lodash": "^4.17.20",
     "log4js": "^6.3.0",
     "lru-cache": "^6.0.0",
     "mkdirp": "^0.5.1",
