@@ -17,7 +17,7 @@ jobs:
           - ubuntu
           - macos
         node:
-          - 17
+          - 16
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v4.1.7
@@ -81,8 +81,6 @@ jobs:
           lerna bootstrap --npm-client=yarn;
 
       - name: 'npm run electron:build'
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
         run: |
           echo "======================================================================";
           echo "cd packages/gui";
