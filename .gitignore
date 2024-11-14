@@ -1,11 +1,21 @@
 # IntelliJ project files
 .idea
 *.iml
-out
-gen
+
+# vscode settings files
+.vscode
+
+# Mac
+.DS_Store
+
+# Node files
 node_modules/
 *.lock
-*.log
 pnpm-lock.yaml
 package-lock.json
+
+# Other files
+out
+gen
+*.log
 *.lnk
