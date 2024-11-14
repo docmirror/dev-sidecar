@@ -1,9 +1,9 @@
-name: "Build And Release"
+name: 'Build And Release'
 
 on:
   push:
     tags:
-      - "*"
+      - '*'
 
 jobs:
   # job 1
@@ -12,39 +12,38 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [
-          windows,
-          ubuntu,
-          macos
-        ]
-        node: [
-          16,
-          17
-        ]
+        os:
+          - windows
+          - ubuntu
+          - macos
+
+        node:
+          - 17
+
     steps:
-      - name: "Checkout"
+      - name: 'Checkout'
         uses: actions/checkout@v4.1.7
 
-      - name: "Setup Node.js environment"
-        uses: actions/setup-node@v4.0.3
+      - name: 'Setup Node.js environment'
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
 
-      - name: "Get package info"
+      - name: 'Get package info'
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
         with:
           path: ./packages/mitmproxy
 
-      - name: "Print"
+      - name: 'Print'
         run: |
           echo "version = ${{ steps.package-info.outputs.version }}";
           echo "github.ref_type = ${{ github.ref_type }}";
           echo "github.ref = ${{ github.ref }}";
           echo "github.ref_name = ${{ github.ref_name }}";
 
-      - name: "npm install -g lerna@6/yarn"
+      - name: 'npm install -g lerna@6/yarn'
         run: |
           echo "======================================================================";
           echo "npm install -g lerna@6";
@@ -56,7 +55,7 @@ jobs:
           echo "--------------------";
           npm install -g yarn;
 
-      - name: "npm -v | yarn -v | lerna -v"
+      - name: 'npm -v | yarn -v | lerna -v'
         run: |
           echo "======================================================================";
           echo "npm -v";
@@ -73,7 +72,7 @@ jobs:
           echo "--------------------";
           lerna -v;
 
-      - name: "lerna bootstrap"
+      - name: 'lerna bootstrap'
         run: |
           echo "======================================================================";
           dir || ls -lah;
@@ -83,7 +82,7 @@ jobs:
           echo "--------------------";
           lerna bootstrap --npm-client=yarn;
 
-      - name: "npm run electron:build for node16"
+      - name: 'npm run electron:build for node16'
         if: ${{ matrix.node == '16' }}
         run: |
           echo "======================================================================";
@@ -109,7 +108,7 @@ jobs:
           cd ../../../;
           dir || ls -lah;
 
-      - name: "npm run electron:build for node17"
+      - name: 'npm run electron:build for node17'
         if: ${{ matrix.node != '16' }}
         env:
           NODE_OPTIONS: --openssl-legacy-provider
@@ -137,33 +136,33 @@ jobs:
           cd ../../../;
           dir || ls -lah;
 
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.exe - Windows"
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.exe - Windows'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.exe
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.exe"
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.exe'
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.deb - Ubuntu"
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.deb - Ubuntu'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.deb
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.deb"
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.deb'
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.AppImage - Ubuntu"
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.AppImage - Ubuntu'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.AppImage"
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.AppImage'
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.dmg - Mac"
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.dmg - Mac'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'macos' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.dmg"
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-node${{ matrix.node }}.dmg'
           if-no-files-found: error
 
   # job 2
@@ -172,40 +171,40 @@ jobs:
     needs:
       - build-and-upload
     steps:
-      - name: "Checkout"
+      - name: 'Checkout'
         uses: actions/checkout@v4.1.7
 
-      - name: "Get package info"
+      - name: 'Get package info'
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
         with:
           path: ./packages/mitmproxy
 
-      - name: "Make 'release' dir"
+      - name: 'Make "release" dir'
         run: mkdir release
 
       # Download artifacts with node16
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.exe - Windows"
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.exe - Windows'
         uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.exe
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.deb - Ubuntu"
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.deb - Ubuntu'
         uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.deb
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.AppImage - Ubuntu"
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.AppImage - Ubuntu'
         uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.AppImage
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.dmg - Mac"
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-node16.dmg - Mac'
         uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}-node16.dmg
           path: release
-      - name: "Rename 'release/DevSidecar-${{ steps.package-info.outputs.version }}.*' to 'release/DevSidecar-${{ steps.package-info.outputs.version }}-node16.*'"
+      - name: 'Rename "release/DevSidecar-${{ steps.package-info.outputs.version }}.*" to "release/DevSidecar-${{ steps.package-info.outputs.version }}-node16.*"'
         run: |
           mv release/DevSidecar-${{ steps.package-info.outputs.version }}.exe      release/DevSidecar-${{ steps.package-info.outputs.version }}-node16.exe;
           mv release/DevSidecar-${{ steps.package-info.outputs.version }}.deb      release/DevSidecar-${{ steps.package-info.outputs.version }}-node16.deb;
@@ -213,39 +212,39 @@ jobs:
           mv release/DevSidecar-${{ steps.package-info.outputs.version }}.dmg      release/DevSidecar-${{ steps.package-info.outputs.version }}-node16.dmg;
 
       # Download artifacts with node17
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.exe - Windows"
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.exe - Windows'
         uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.exe
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.deb - Ubuntu"
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.deb - Ubuntu'
         uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.deb
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.AppImage - Ubuntu"
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.AppImage - Ubuntu'
         uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.AppImage
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.dmg - Mac"
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-node17.dmg - Mac'
         uses: actions/download-artifact@v4.1.8
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}-node17.dmg
           path: release
-      - name: "Rename 'release/DevSidecar-${{ steps.package-info.outputs.version }}.*' to 'release/DevSidecar-${{ steps.package-info.outputs.version }}-node17.*'"
+      - name: 'Rename "release/DevSidecar-${{ steps.package-info.outputs.version }}.*" to "release/DevSidecar-${{ steps.package-info.outputs.version }}-node17.*"'
         run: |
           mv release/DevSidecar-${{ steps.package-info.outputs.version }}.exe      release/DevSidecar-${{ steps.package-info.outputs.version }}-node17.exe;
           mv release/DevSidecar-${{ steps.package-info.outputs.version }}.deb      release/DevSidecar-${{ steps.package-info.outputs.version }}-node17.deb;
           mv release/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage release/DevSidecar-${{ steps.package-info.outputs.version }}-node17.AppImage;
           mv release/DevSidecar-${{ steps.package-info.outputs.version }}.dmg      release/DevSidecar-${{ steps.package-info.outputs.version }}-node17.dmg;
 
-      - name: "Print files from 'release' dir"
+      - name: 'Print files from "release" dir'
         run: |
           ls -lah release;
 
-      - name: "Create a draft release"
-        uses: fnkr/github-action-ghr@ghr-options
+      - name: 'Create a draft release'
+        uses: wangliang181230/github-action-ghr@master
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GHR_PATH: release/
