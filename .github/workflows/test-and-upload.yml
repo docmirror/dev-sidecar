@@ -178,12 +178,6 @@ jobs:
         with:
           name: DevSidecar-${{ steps.package-info.outputs.version }}.dmg
           path: release
-      - name: 'Rename "release/DevSidecar-${{ steps.package-info.outputs.version }}.*" to "release/DevSidecar-${{ steps.package-info.outputs.version }}.*"'
-        run: |
-          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.exe      release/DevSidecar-${{ steps.package-info.outputs.version }}.exe;
-          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.deb      release/DevSidecar-${{ steps.package-info.outputs.version }}.deb;
-          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage release/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage;
-          mv release/DevSidecar-${{ steps.package-info.outputs.version }}.dmg      release/DevSidecar-${{ steps.package-info.outputs.version }}.dmg;
 
       - name: 'Print files from "release" dir'
         run: |
