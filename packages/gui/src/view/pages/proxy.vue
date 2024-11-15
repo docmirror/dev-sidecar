@@ -1,3 +1,74 @@
+<script>
+import Plugin from '../mixins/plugin'
+export default {
+  name: 'Proxy',
+  mixins: [Plugin],
+  data () {
+    return {
+      key: 'proxy',
+      loopbackVisible: false,
+      excludeIpList: []
+    }
+  },
+  async created () {
+  },
+  mounted () {
+  },
+  methods: {
+    async openExternal (url) {
+      await this.$api.ipc.openExternal(url)
+    },
+    ready () {
+      this.initExcludeIpList()
+    },
+    async applyBefore () {
+      this.submitExcludeIpList()
+    },
+    async applyAfter () {
+      await this.$api.proxy.restart()
+    },
+    async openEnableLoopback () {
+      try {
+        await this.$api.proxy.setEnableLoopback()
+      } catch (e) {
+        if (e.message.indexOf('EACCES') !== -1) {
+          this.$message.error('请将DevSidecar关闭后，以管理员身份重新打开，再尝试此操作')
+          return
+        }
+        this.$message.error('打开失败：' + e.message)
+      }
+    },
+    getProxyConfig () {
+      return this.config.proxy
+    },
+    initExcludeIpList () {
+      this.excludeIpList = []
+      for (const key in this.config.proxy.excludeIpList) {
+        const value = this.config.proxy.excludeIpList[key]
+        this.excludeIpList.push({
+          key, value
+        })
+      }
+    },
+    addExcludeIp () {
+      this.excludeIpList.unshift({ key: '', value: true })
+    },
+    delExcludeIp (item, index) {
+      this.excludeIpList.splice(index, 1)
+    },
+    submitExcludeIpList () {
+      const excludeIpList = {}
+      for (const item of this.excludeIpList) {
+        if (item.key) {
+          excludeIpList[item.key] = item.value
+        }
+      }
+      this.config.proxy.excludeIpList = excludeIpList
+    }
+  }
+}
+</script>
+
 <template>
   <ds-container>
     <template slot="header">
@@ -42,7 +113,7 @@
         </div>
       </a-form-item>
       <a-form-item v-if="isWindows()" label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
-       <a-button @click="loopbackVisible=true">去设置</a-button>
+        <a-button @click="loopbackVisible=true">去设置</a-button>
         <div class="form-help">解决<code>OneNote</code>、<code>MicrosoftStore</code>、<code>Outlook</code>等<code>UWP应用</code>开启代理后无法访问网络的问题</div>
       </a-form-item>
 
@@ -118,76 +189,3 @@
   </ds-container>
 
 </template>
-
-<script>
-import Plugin from '../mixins/plugin'
-export default {
-  name: 'Proxy',
-  mixins: [Plugin],
-  data () {
-    return {
-      key: 'proxy',
-      loopbackVisible: false,
-      excludeIpList: []
-    }
-  },
-  async created () {
-  },
-  mounted () {
-  },
-  methods: {
-    async openExternal (url) {
-      await this.$api.ipc.openExternal(url)
-    },
-    ready () {
-      this.initExcludeIpList()
-    },
-    async applyBefore () {
-      this.submitExcludeIpList()
-    },
-    async applyAfter () {
-      await this.$api.proxy.restart()
-    },
-    async openEnableLoopback () {
-      try {
-        await this.$api.proxy.setEnableLoopback()
-      } catch (e) {
-        if (e.message.indexOf('EACCES') !== -1) {
-          this.$message.error('请将DevSidecar关闭后，以管理员身份重新打开，再尝试此操作')
-          return
-        }
-        this.$message.error('打开失败：' + e.message)
-      }
-    },
-    getProxyConfig () {
-      return this.config.proxy
-    },
-    initExcludeIpList () {
-      this.excludeIpList = []
-      for (const key in this.config.proxy.excludeIpList) {
-        const value = this.config.proxy.excludeIpList[key]
-        this.excludeIpList.push({
-          key, value
-        })
-      }
-    },
-    addExcludeIp () {
-      this.excludeIpList.unshift({ key: '', value: true })
-    },
-    delExcludeIp (item, index) {
-      this.excludeIpList.splice(index, 1)
-    },
-    submitExcludeIpList () {
-      const excludeIpList = {}
-      for (const item of this.excludeIpList) {
-        if (item.key) {
-          excludeIpList[item.key] = item.value
-        }
-      }
-      this.config.proxy.excludeIpList = excludeIpList
-    }
-  }
-}
-</script>
-<style lang="sass">
-</style>

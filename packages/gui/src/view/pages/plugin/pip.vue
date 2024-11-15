@@ -1,3 +1,47 @@
+<script>
+import Plugin from '../../mixins/plugin'
+
+export default {
+  name: 'pip',
+  mixins: [Plugin],
+  data () {
+    return {
+      key: 'plugin.pip',
+      npmVariables: undefined,
+      registry: false,
+      trustedHostList: []
+    }
+  },
+  created () {
+    console.log('status:', this.status)
+  },
+  mounted () {
+  },
+  methods: {
+    ready () {
+    },
+    async applyBefore () {
+      this.config.plugin.pip.setting.trustedHost = this.config.plugin.pip.setting.trustedHost.replaceAll(/[,，。+\s]+/g, ' ').trim()
+    },
+    async applyAfter () {
+      await this.$api.plugin.pip.start()
+      await this.$api.proxy.restart()
+    },
+    async onSwitchRegistry (event) {
+      await this.setRegistry({ registry: event.target.value })
+      this.$message.success('切换成功')
+    },
+    async setRegistry ({ registry }) {
+      this.config.plugin.pip.setting.registry = registry
+      const domain = registry.substring(registry.indexOf('//') + 2, registry.indexOf('/', 8))
+      this.config.plugin.pip.setting.trustedHost = domain
+      await this.apply()
+    }
+
+  }
+}
+</script>
+
 <template>
   <ds-container>
     <template slot="header">
@@ -8,17 +52,17 @@
 
     <div v-if="config">
       <a-form layout="horizontal">
-<!--        <a-form-item label="启用PIP加速" :label-col="labelCol" :wrapper-col="wrapperCol">-->
-<!--          <a-checkbox v-model="config.plugin.pip.enabled">-->
-<!--            随应用启动-->
-<!--          </a-checkbox>-->
-<!--          <a-tag v-if="status.plugin.pip.enabled" color="green">-->
-<!--            当前已启动-->
-<!--          </a-tag>-->
-<!--          <a-tag v-else color="red">-->
-<!--            当前未启动-->
-<!--          </a-tag>-->
-<!--        </a-form-item>-->
+        <!--        <a-form-item label="启用PIP加速" :label-col="labelCol" :wrapper-col="wrapperCol">-->
+        <!--          <a-checkbox v-model="config.plugin.pip.enabled">-->
+        <!--            随应用启动-->
+        <!--          </a-checkbox>-->
+        <!--          <a-tag v-if="status.plugin.pip.enabled" color="green">-->
+        <!--            当前已启动-->
+        <!--          </a-tag>-->
+        <!--          <a-tag v-else color="red">-->
+        <!--            当前未启动-->
+        <!--          </a-tag>-->
+        <!--        </a-form-item>-->
         <a-form-item label="pip命令名" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-input v-model="config.plugin.pip.setting.command"></a-input>
           <div class="form-help">如果你的<code>pip</code>命令改成了其他名字（如<code>pip3</code>），或想设置绿色版<code>pip</code>程序路径，可在此处修改</div>
@@ -78,51 +122,4 @@
       </div>
     </template>
   </ds-container>
-
 </template>
-
-<script>
-import Plugin from '../../mixins/plugin'
-
-export default {
-  name: 'pip',
-  mixins: [Plugin],
-  data () {
-    return {
-      key: 'plugin.pip',
-      npmVariables: undefined,
-      registry: false,
-      trustedHostList: []
-    }
-  },
-  created () {
-    console.log('status:', this.status)
-  },
-  mounted () {
-  },
-  methods: {
-    ready () {
-    },
-    async applyBefore () {
-      this.config.plugin.pip.setting.trustedHost = this.config.plugin.pip.setting.trustedHost.replaceAll(/[,，。+\s]+/g, ' ').trim()
-    },
-    async applyAfter () {
-      await this.$api.plugin.pip.start()
-      await this.$api.proxy.restart()
-    },
-    async onSwitchRegistry (event) {
-      await this.setRegistry({ registry: event.target.value })
-      this.$message.success('切换成功')
-    },
-    async setRegistry ({ registry }) {
-      this.config.plugin.pip.setting.registry = registry
-      const domain = registry.substring(registry.indexOf('//') + 2, registry.indexOf('/', 8))
-      this.config.plugin.pip.setting.trustedHost = domain
-      await this.apply()
-    }
-
-  }
-}
-</script>
-<style lang="sass">
-</style>

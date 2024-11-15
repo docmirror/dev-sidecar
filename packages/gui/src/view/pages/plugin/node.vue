@@ -1,3 +1,52 @@
+<script>
+import Plugin from '../../mixins/plugin'
+
+export default {
+  name: 'Node',
+  mixins: [Plugin],
+  data () {
+    return {
+      key: 'plugin.node',
+      npmVariables: undefined,
+      registry: false
+    }
+  },
+  created () {
+    console.log('status:', this.status)
+  },
+  mounted () {
+  },
+  methods: {
+    ready () {
+      return this.$api.plugin.node.getVariables().then(ret => {
+        console.log('variables', ret)
+        this.npmVariables = ret
+      })
+    },
+    async onSwitchRegistry (event) {
+      await this.setRegistry({ registry: event.target.value, type: 'npm' })
+      this.$message.success('切换成功')
+    },
+    async onSwitchYarnRegistry (event) {
+      const registry = event.target.value
+      console.log('registry', registry)
+      await this.setRegistry({ registry, type: 'yarn' })
+      this.$message.success('切换成功')
+    },
+    async setRegistry ({ registry, type }) {
+      this.apply()
+      console.log('type', type)
+      await this.$api.plugin.node.setRegistry({ registry, type })
+    },
+    setNpmVariableAll () {
+      this.saveConfig().then(() => {
+        this.$api.plugin.node.setVariables()
+      })
+    }
+  }
+}
+</script>
+
 <template>
   <ds-container>
     <template slot="header">
@@ -82,56 +131,4 @@
       </div>
     </template>
   </ds-container>
-
 </template>
-
-<script>
-import Plugin from '../../mixins/plugin'
-
-export default {
-  name: 'Node',
-  mixins: [Plugin],
-  data () {
-    return {
-      key: 'plugin.node',
-      npmVariables: undefined,
-      registry: false
-    }
-  },
-  created () {
-    console.log('status:', this.status)
-  },
-  mounted () {
-  },
-  methods: {
-    ready () {
-      return this.$api.plugin.node.getVariables().then(ret => {
-        console.log('variables', ret)
-        this.npmVariables = ret
-      })
-    },
-    async onSwitchRegistry (event) {
-      await this.setRegistry({ registry: event.target.value, type: 'npm' })
-      this.$message.success('切换成功')
-    },
-    async onSwitchYarnRegistry (event) {
-      const registry = event.target.value
-      console.log('registry', registry)
-      await this.setRegistry({ registry, type: 'yarn' })
-      this.$message.success('切换成功')
-    },
-    async setRegistry ({ registry, type }) {
-      this.apply()
-      console.log('type', type)
-      await this.$api.plugin.node.setRegistry({ registry, type })
-    },
-    setNpmVariableAll () {
-      this.saveConfig().then(() => {
-        this.$api.plugin.node.setVariables()
-      })
-    }
-  }
-}
-</script>
-<style lang="sass">
-</style>

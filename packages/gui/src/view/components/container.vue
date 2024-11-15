@@ -1,3 +1,9 @@
+<script>
+export default {
+  name: 'ds-container'
+}
+</script>
+
 <template>
   <div class="ds-container">
     <div class="body-wrapper">
@@ -7,12 +13,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'ds-container'
-}
-</script>
 
 <style lang="scss">
 .ds-container{

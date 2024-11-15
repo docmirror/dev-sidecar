@@ -1,3 +1,106 @@
+<script>
+import Plugin from '../../mixins/plugin'
+
+export default {
+  name: 'Overwall',
+  mixins: [Plugin],
+  data () {
+    return {
+      key: 'plugin.overwall',
+      targets: undefined,
+      servers: undefined,
+      overwallOptions: [
+        {
+          value: true,
+          label: '启用'
+        },
+        {
+          value: false,
+          label: '禁用'
+        }
+      ]
+    }
+  },
+  created () {
+    console.log('status:', this.status)
+  },
+  mounted () {
+  },
+  methods: {
+    async openExternal (url) {
+      await this.$api.ipc.openExternal(url)
+    },
+    async applyAfter () {
+      if (this.status.server.enabled) {
+        return this.$api.server.restart()
+      }
+    },
+    ready () {
+      this.initTarget()
+      this.initServer()
+    },
+    async applyBefore () {
+      this.saveTarget()
+      this.saveServer()
+    },
+    initTarget () {
+      this.targets = []
+      const targetsMap = this.config.plugin.overwall.targets
+      for (const key in targetsMap) {
+        const value = targetsMap[key]
+        this.targets.push({
+          key, value
+        })
+      }
+    },
+    deleteTarget (item, index) {
+      this.targets.splice(index, 1)
+    },
+    addTarget () {
+      this.targets.unshift({ key: '', value: true })
+    },
+    saveTarget () {
+      const map = {}
+      for (const item of this.targets) {
+        if (item.key) {
+          map[item.key] = item.value
+        }
+      }
+      this.config.plugin.overwall.targets = map
+    },
+
+    initServer () {
+      this.servers = []
+      const targetsMap = this.config.plugin.overwall.server
+      for (const key in targetsMap) {
+        const value = targetsMap[key]
+        this.servers.push({
+          key, value
+        })
+      }
+      if (this.servers.length === 0) {
+        this.addServer()
+      }
+    },
+    deleteServer (item, index) {
+      this.servers.splice(index, 1)
+    },
+    addServer () {
+      this.servers.unshift({ key: '', value: { type: 'path' } })
+    },
+    saveServer () {
+      const map = {}
+      for (const item of this.servers) {
+        if (item.key) {
+          map[item.key] = item.value
+        }
+      }
+      this.config.plugin.overwall.server = map
+    }
+  }
+}
+</script>
+
 <template>
   <ds-container>
     <template slot="header">
@@ -112,108 +215,3 @@
     </template>
   </ds-container>
 </template>
-
-<script>
-import Plugin from '../../mixins/plugin'
-
-export default {
-  name: 'Overwall',
-  mixins: [Plugin],
-  data () {
-    return {
-      key: 'plugin.overwall',
-      targets: undefined,
-      servers: undefined,
-      overwallOptions: [
-        {
-          value: true,
-          label: '启用'
-        },
-        {
-          value: false,
-          label: '禁用'
-        }
-      ]
-    }
-  },
-  created () {
-    console.log('status:', this.status)
-  },
-  mounted () {
-  },
-  methods: {
-    async openExternal (url) {
-      await this.$api.ipc.openExternal(url)
-    },
-    async applyAfter () {
-      if (this.status.server.enabled) {
-        return this.$api.server.restart()
-      }
-    },
-    ready () {
-      this.initTarget()
-      this.initServer()
-    },
-    async applyBefore () {
-      this.saveTarget()
-      this.saveServer()
-    },
-    initTarget () {
-      this.targets = []
-      const targetsMap = this.config.plugin.overwall.targets
-      for (const key in targetsMap) {
-        const value = targetsMap[key]
-        this.targets.push({
-          key, value
-        })
-      }
-    },
-    deleteTarget (item, index) {
-      this.targets.splice(index, 1)
-    },
-    addTarget () {
-      this.targets.unshift({ key: '', value: true })
-    },
-    saveTarget () {
-      const map = {}
-      for (const item of this.targets) {
-        if (item.key) {
-          map[item.key] = item.value
-        }
-      }
-      this.config.plugin.overwall.targets = map
-    },
-
-    initServer () {
-      this.servers = []
-      const targetsMap = this.config.plugin.overwall.server
-      for (const key in targetsMap) {
-        const value = targetsMap[key]
-        this.servers.push({
-          key, value
-        })
-      }
-      if (this.servers.length === 0) {
-        this.addServer()
-      }
-    },
-    deleteServer (item, index) {
-      this.servers.splice(index, 1)
-    },
-    addServer () {
-      this.servers.unshift({ key: '', value: { type: 'path' } })
-    },
-    saveServer () {
-      const map = {}
-      for (const item of this.servers) {
-        if (item.key) {
-          map[item.key] = item.value
-        }
-      }
-      this.config.plugin.overwall.server = map
-    }
-  }
-}
-</script>
-<style lang="sass">
-</style>
