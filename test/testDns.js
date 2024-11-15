@@ -1,1 +1,1 @@
-console.log("www.baidu.com".match('.*.baidu.com'))
+console.log('www.baidu.com'.match('.*.baidu.com'))
