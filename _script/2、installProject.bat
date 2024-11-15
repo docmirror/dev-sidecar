@@ -2,4 +2,4 @@ cd ../
 
 node -v
 
-lerna bootstrap
+pnpm install
