@@ -15,6 +15,7 @@ module.exports = {
       title: 'DevSidecar-给开发者的边车辅助工具',
     },
   },
+  lintOnSave: false,
   configureWebpack: {
     plugins: [
       new webpack.DefinePlugin({ 'global.GENTLY': true }),
