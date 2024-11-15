@@ -1,9 +1,8 @@
-
 function install (app, api) {
   api.fileSelector = {
     open (value, options) {
       return new Promise((resolve, reject) => {
-        api.ipc.send('file-selector', { key: 'open', value: value, ...options })
+        api.ipc.send('file-selector', { key: 'open', value, ...options })
         api.ipc.on('file-selector', (event, message) => {
           console.log('selector', message)
           if (message.key === 'selected') {
@@ -14,10 +13,10 @@ function install (app, api) {
           api.ipc.on('file-selector', () => {})
         })
       })
-    }
+    },
   }
 }
 
 export default {
-  install
+  install,
 }

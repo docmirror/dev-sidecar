@@ -1,17 +1,15 @@
 'use strict'
 /* global __static */
 import path from 'path'
-import { app, protocol, BrowserWindow, Menu, Tray, ipcMain, dialog, powerMonitor, nativeImage, nativeTheme, globalShortcut } from 'electron'
+import DevSidecar from '@docmirror/dev-sidecar'
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, protocol, Tray } from 'electron'
+import minimist from 'minimist'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
-import DevSidecar from '@docmirror/dev-sidecar'
 import log from './utils/util.log'
-import minimist from 'minimist'
 
 const isWindows = process.platform === 'win32'
-// eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
-// import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // 避免其他系统出现异常，只有 Windows 使用 './background/powerMonitor'
@@ -21,14 +19,13 @@ const _powerMonitor = isWindows ? require('./background/powerMonitor').powerMoni
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 let winIsHidden = false
-// eslint-disable-next-line no-unused-vars
 let tray // 防止被内存清理
 let forceClose = false
 DevSidecar.api.config.reload()
 let hideDockWhenWinClose = DevSidecar.api.config.get().app.dock.hideWhenWinClose || false
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { secure: true, standard: true } }
+  { scheme: 'app', privileges: { secure: true, standard: true } },
 ])
 
 function openDevTools () {
@@ -73,7 +70,7 @@ function setTray () {
     {
       // 系统托盘图标目录
       label: 'DevTools (F12)',
-      click: switchDevTools
+      click: switchDevTools,
     },
     {
       // 系统托盘图标目录
@@ -82,8 +79,8 @@ function setTray () {
         log.info('force quit')
         forceClose = true
         quit()
-      }
-    }
+      },
+    },
   ]
   // 设置系统托盘图标
   const iconRootPath = path.join(__dirname, '../extra/icons/tray')
@@ -123,8 +120,8 @@ function setTray () {
     showWin()
   })
 
-  appTray.on('right-click', function () {
-    setTimeout(function () {
+  appTray.on('right-click', () => {
+    setTimeout(() => {
       appTray.popUpContextMenu(contextMenu)
     }, 200)
   })
@@ -181,11 +178,10 @@ function createWindow (startHideWindow) {
       // preload: path.join(__dirname, 'preload.js'),
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: true// process.env.ELECTRON_NODE_INTEGRATION
+      nodeIntegration: true, // process.env.ELECTRON_NODE_INTEGRATION
     },
     show: !startHideWindow,
-    // eslint-disable-next-line no-undef
-    icon: path.join(__static, 'icon.png')
+    icon: path.join(__static, 'icon.png'),
   })
   winIsHidden = !!startHideWindow
 
@@ -263,7 +259,6 @@ function createWindow (startHideWindow) {
       event.preventDefault()
       // 切换开发者工具显示状态
       switchDevTools()
-      // eslint-disable-next-line brace-style
     }
     // 按 F5，刷新页面
     else if (input.key === 'F5') {
@@ -368,7 +363,7 @@ if (app.getLoginItemSettings().wasOpenedAsHidden) {
   log.info('start args:', args)
 
   // 通过启动参数，判断是否隐藏窗口
-  const hideWindowArg = args.hideWindow + ''
+  const hideWindowArg = `${args.hideWindow}`
   if (hideWindowArg === 'true' || hideWindowArg === '1') {
     startHideWindow = true
   } else if (hideWindowArg === 'false' || hideWindowArg === '0') {
@@ -483,7 +478,7 @@ if (isDevelopment) {
   }
 }
 // 系统关机和重启时的操作
-process.on('exit', function () {
+process.on('exit', () => {
   log.info('进程结束，退出app')
   quit()
 })

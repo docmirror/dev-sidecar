@@ -1,15 +1,16 @@
 import lodash from 'lodash'
 import Vue from 'vue'
+
 const status = {
   server: {
-    enabled: false
+    enabled: false,
   },
   proxy: {
-    enabled: false
+    enabled: false,
   },
   plugin: {
-    node: {}
-  }
+    node: {},
+  },
 }
 async function install (api) {
   api.ipc.on('status', (event, message) => {
@@ -25,5 +26,5 @@ async function install (api) {
 }
 export default {
   install,
-  status
+  status,
 }

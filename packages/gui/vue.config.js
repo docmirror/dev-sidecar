@@ -1,19 +1,24 @@
 const path = require('path')
 const webpack = require('webpack')
+
 const publishUrl = process.env.VUE_APP_PUBLISH_URL
 const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
 console.log('Publish url:', publishUrl)
+
+/**
+ * @type {import('@vue/cli-service').ProjectOptions}
+ */
 module.exports = {
   pages: {
     index: {
       entry: 'src/main.js',
-      title: 'DevSidecar-给开发者的边车辅助工具'
-    }
+      title: 'DevSidecar-给开发者的边车辅助工具',
+    },
   },
   configureWebpack: (config) => {
-    const configNew = {
+    return {
       plugins: [
-        new webpack.DefinePlugin({ 'global.GENTLY': true })
+        new webpack.DefinePlugin({ 'global.GENTLY': true }),
       ],
       module: {
         rules: [
@@ -21,14 +26,13 @@ module.exports = {
             test: /\.json5$/i,
             loader: 'json5-loader',
             options: {
-              esModule: false
+              esModule: false,
             },
-            type: 'javascript/auto'
-          }
-        ]
-      }
+            type: 'javascript/auto',
+          },
+        ],
+      },
     }
-    return configNew
   },
   pluginOptions: {
     electronBuilder: {
@@ -51,7 +55,7 @@ module.exports = {
         '@natmri/platform-napi-linux-arm64-musl',
         '@natmri/platform-napi-linux-arm-gnueabihf',
         '@natmri/platform-napi-darwin-x64',
-        '@natmri/platform-napi-darwin-arm64'
+        '@natmri/platform-napi-darwin-arm64',
       ],
       nodeIntegration: true,
       // Provide an array of files that, when changed, will recompile the main process and restart Electron
@@ -67,8 +71,8 @@ module.exports = {
         extraResources: [
           {
             from: 'extra',
-            to: 'extra'
-          }
+            to: 'extra',
+          },
         ],
         appId: 'dev-sidecar',
         productName: 'dev-sidecar',
@@ -80,35 +84,35 @@ module.exports = {
           perMachine: true,
           allowElevation: true,
           allowToChangeInstallationDirectory: true,
-          include: './build/installer.nsh'
+          include: './build/installer.nsh',
         },
         mac: {
           icon: './build/mac/icon.icns',
           target: {
             arch: 'universal',
-            target: 'dmg'
-          }
+            target: 'dmg',
+          },
         },
         win: {
-          icon: 'build/icons/'
+          icon: 'build/icons/',
           // requestedExecutionLevel: 'highestAvailable' // 加了这个无法开机自启
         },
         linux: {
           icon: 'build/mac/',
           target: [
             'deb',
-            'AppImage'
-          ]
+            'AppImage',
+          ],
         },
         publish: {
           provider: publishProvider,
-          url: publishUrl
+          url: publishUrl,
           // url: 'http://dev-sidecar.docmirror.cn/update/preview/'
-        }
+        },
       },
       chainWebpackMainProcess (config) {
         config.entry('mitmproxy').add(path.join(__dirname, 'src/bridge/mitmproxy.js'))
-      }
-    }
-  }
+      },
+    },
+  },
 }

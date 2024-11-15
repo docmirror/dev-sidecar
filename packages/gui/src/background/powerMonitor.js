@@ -1,5 +1,5 @@
+import { acquireShutdownBlock, insertWndProcHook, releaseShutdownBlock, removeWndProcHook, setMainWindowHandle } from '@natmri/platform-napi'
 import { powerMonitor as _powerMonitor } from 'electron'
-import { setMainWindowHandle, insertWndProcHook, removeWndProcHook, releaseShutdownBlock, acquireShutdownBlock } from '@natmri/platform-napi'
 
 class PowerMonitor {
   constructor () {
@@ -43,7 +43,7 @@ class PowerMonitor {
     if (event === 'shutdown' && process.platform === 'win32') {
       if (!this._shutdownCallback) {
         this._shutdownCallback = async () => {
-          await Promise.all(this._listeners.map((fn) => fn()))
+          await Promise.all(this._listeners.map(fn => fn()))
           releaseShutdownBlock()
         }
         insertWndProcHook(this._shutdownCallback)
@@ -57,7 +57,7 @@ class PowerMonitor {
 
   off (event, listener) {
     if (event === 'shutdown' && process.platform === 'win32') {
-      this._listeners = this._listeners.filter((fn) => fn !== listener)
+      this._listeners = this._listeners.filter(fn => fn !== listener)
     } else {
       return _powerMonitor.off(event, listener)
     }

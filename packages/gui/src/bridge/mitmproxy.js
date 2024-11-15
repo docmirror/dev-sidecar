@@ -1,10 +1,10 @@
-// eslint-disable-next-line no-unused-vars
-const log = require('../utils/util.log')
-const server = require('@docmirror/mitmproxy')
-const jsonApi = require('@docmirror/mitmproxy/src/json')
-const configPath = process.argv[2]
 const fs = require('fs')
 const path = require('path')
+const server = require('@docmirror/mitmproxy')
+const jsonApi = require('@docmirror/mitmproxy/src/json')
+const log = require('../utils/util.log')
+
+const configPath = process.argv[2]
 const configJson = fs.readFileSync(configPath)
 log.info('读取 running.json by gui bridge 成功:', configPath)
 const config = jsonApi.parse(configJson.toString())

@@ -1,10 +1,11 @@
+import autoStart from './auto-start/front'
 // import api from './api/front'
 import error from './error/front'
+import fileSelector from './file-selector/front'
+import onClose from './on-close/front'
 import tongji from './tongji/front'
 import update from './update/front'
-import fileSelector from './file-selector/front'
-import autoStart from './auto-start/front'
-import onClose from './on-close/front'
+
 const modules = {
   // api, // 核心接口模块
   error,
@@ -12,7 +13,7 @@ const modules = {
   tongji, // 统计模块
   update, // 自动更新
   autoStart,
-  onClose
+  onClose,
 }
 export default {
   install (app, api, router) {
@@ -20,5 +21,5 @@ export default {
       modules[module].install(app, api, router)
     }
   },
-  ...modules
+  ...modules,
 }

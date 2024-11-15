@@ -1,16 +1,15 @@
+import fs from 'fs'
+import path from 'path'
+import DevSidecar from '@docmirror/dev-sidecar'
+import AdmZip from 'adm-zip'
 import { ipcMain } from 'electron'
 import { autoUpdater } from 'electron-updater'
-import path from 'path'
 import request from 'request'
 import progress from 'request-progress'
-import fs from 'fs'
-import AdmZip from 'adm-zip'
-import log from '../../utils/util.log'
-import appPathUtil from '../../utils/util.apppath'
 import pkg from '../../../package.json'
-import DevSidecar from '@docmirror/dev-sidecar'
+import appPathUtil from '../../utils/util.apppath'
+import log from '../../utils/util.log'
 
-// eslint-disable-next-line no-unused-vars
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 
@@ -24,16 +23,16 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
     // delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
     // lengthHeader: 'x-transfer-length'  // Length header to use, defaults to content-length
   })
-    .on('progress', function (state) {
+    .on('progress', (state) => {
       onProgress(state.percent * 100)
       log.log('progress', state.percent)
     })
-    .on('error', function (err) {
+    .on('error', (err) => {
       // Do something with err
       log.error('下载升级包失败:', err)
       onError(err)
     })
-    .on('end', function () {
+    .on('end', () => {
       // Do something after request finishes
       onSuccess()
     })
@@ -44,10 +43,10 @@ function parseVersion (version) {
   const matched = version.match(/^v?(\d+\.\d+\.\d+)(.*)$/)
   const versionArr = matched[1].split('.')
   return {
-    major: parseInt(versionArr[0]),
-    minor: parseInt(versionArr[1]),
-    patch: parseInt(versionArr[2]),
-    suffix: matched[2]
+    major: Number.parseInt(versionArr[0]),
+    minor: Number.parseInt(versionArr[1]),
+    patch: Number.parseInt(versionArr[2]),
+    suffix: matched[2],
   }
 }
 
@@ -115,7 +114,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     error: '更新失败',
     checking: '检查更新中',
     updateAva: '发现新版本',
-    updateNotAva: '当前为最新版本，无需更新'
+    updateNotAva: '当前为最新版本，无需更新',
   }
   // 本地开发环境，改变app-update.yml地址
   if (process.env.NODE_ENV === 'development') {
@@ -141,11 +140,11 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   // 检查更新
   const releasesApiUrl = 'https://api.github.com/repos/docmirror/dev-sidecar/releases'
   async function checkForUpdatesFromGitHub () {
-    request(releasesApiUrl, { headers: { 'User-Agent': 'DS/' + curVersion, 'Server-Name': 'baidu.com' } }, (error, response, body) => {
+    request(releasesApiUrl, { headers: { 'User-Agent': `DS/${curVersion}`, 'Server-Name': 'baidu.com' } }, (error, response, body) => {
       try {
         if (error) {
           log.error('检查更新失败:', error)
-          const errorMsg = '检查更新失败：' + error
+          const errorMsg = `检查更新失败：${error}`
           win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: errorMsg })
           return
         }
@@ -203,9 +202,9 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
                 value: {
                   version,
                   releaseNotes: versionData.body
-                    ? (versionData.body.replace(/\r\n/g, '\n').replace(/https:\/\/github.com\/docmirror\/dev-sidecar/g, '').replace(/(?<=(^|\n))[ \t]*[ #]*#\s*/g, '') || '无')
-                    : '无'
-                }
+                    ? (versionData.body.replace(/\r\n/g, '\n').replace(/https:\/\/github.com\/docmirror\/dev-sidecar/g, '').replace(/(?<=(^|\n))[ \t]*(?:#[ #]*)?#\s*/g, '') || '无')
+                    : '无',
+                },
               })
             } else {
               log.info(`检查更新：没有新版本，最近发布的版本号为 '${version}'，而当前版本号为 '${curVersion}'`)
@@ -229,15 +228,15 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
 
           let message
           if (response) {
-            message = '检查更新失败: ' + (bodyObj && bodyObj.message ? bodyObj.message : response.message) + ', code: ' + response.statusCode
+            message = `检查更新失败: ${bodyObj && bodyObj.message ? bodyObj.message : response.message}, code: ${response.statusCode}`
           } else {
-            message = '检查更新失败: ' + (bodyObj && bodyObj.message ? bodyObj.message : body)
+            message = `检查更新失败: ${bodyObj && bodyObj.message ? bodyObj.message : body}`
           }
           win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: message })
         }
       } catch (e) {
         log.error('检查更新失败:', e)
-        win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新失败:' + e.message })
+        win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: `检查更新失败:${e.message}` })
       }
     })
   }
@@ -252,10 +251,10 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     } catch (e) {
       fs.mkdirSync(fileDir)
     }
-    const filePath = path.join(fileDir, value.version + '.zip')
+    const filePath = path.join(fileDir, `${value.version}.zip`)
 
     downloadFile(value.partPackage, filePath, (data) => {
-      win.webContents.send('update', { key: 'progress', value: parseInt(data) })
+      win.webContents.send('update', { key: 'progress', value: Number.parseInt(data) })
     }, () => {
       // 文件下载完成
       win.webContents.send('update', { key: 'progress', value: 100 })
@@ -263,10 +262,10 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
       partPackagePath = filePath
       win.webContents.send('update', {
         key: 'downloaded',
-        value: value
+        value,
       })
     }, (error) => {
-      sendUpdateMessage({ key: 'error', value: error, error: error })
+      sendUpdateMessage({ key: 'error', value: error, error })
     })
   }
 
@@ -294,34 +293,34 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     }
   }
 
-  autoUpdater.on('error', function (error) {
+  autoUpdater.on('error', (error) => {
     log.warn('autoUpdater error:', error)
-    sendUpdateMessage({ key: 'error', value: error, error: error })
+    sendUpdateMessage({ key: 'error', value: error, error })
     // dialog.showErrorBox('Error: ', error == null ? 'unknown' : (error.stack || error).toString())
   })
-  autoUpdater.on('checking-for-update', function () {
+  autoUpdater.on('checking-for-update', () => {
     log.info('autoUpdater checking-for-update')
     sendUpdateMessage({ key: 'checking', value: message.checking })
   })
-  autoUpdater.on('update-available', function (info) {
+  autoUpdater.on('update-available', (info) => {
     log.info('autoUpdater update-available')
     sendUpdateMessage({ key: 'available', value: info })
   })
-  autoUpdater.on('update-not-available', function () {
+  autoUpdater.on('update-not-available', () => {
     log.info('autoUpdater update-not-available')
     sendUpdateMessage({ key: 'notAvailable', value: message.updateNotAva })
   })
   // 更新下载进度
-  autoUpdater.on('download-progress', function (progressObj) {
+  autoUpdater.on('download-progress', (progressObj) => {
     log.info('autoUpdater download-progress')
-    win.webContents.send('update', { key: 'progress', value: parseInt(progressObj.percent) })
+    win.webContents.send('update', { key: 'progress', value: Number.parseInt(progressObj.percent) })
   })
   // 更新完成，重启应用
-  autoUpdater.on('update-downloaded', function (info) {
+  autoUpdater.on('update-downloaded', (info) => {
     log.info('download complete, version:', info.version)
     win.webContents.send('update', {
       key: 'downloaded',
-      value: info
+      value: info,
     })
   })
 
@@ -374,9 +373,9 @@ export default {
       Object.defineProperty(app, 'isPackaged', {
         get () {
           return true
-        }
+        },
       })
     }
     updateHandle(app, api, win, beforeQuit, quit, log)
-  }
+  },
 }

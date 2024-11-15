@@ -1,4 +1,3 @@
-
 function install (app, api) {
   api.ipc.on('auto-start', (event, message) => {
     if (message.value === true) {
@@ -10,10 +9,10 @@ function install (app, api) {
   api.autoStart = {
     async enabled (value) {
       api.ipc.send('auto-start', { key: 'enabled', value })
-    }
+    },
   }
 }
 
 export default {
-  install
+  install,
 }

@@ -1,9 +1,9 @@
-import DsContainer from '../components/container'
 import lodash from 'lodash'
+import DsContainer from '../components/container'
 
 export default {
   components: {
-    DsContainer
+    DsContainer,
   },
   data () {
     return {
@@ -14,7 +14,7 @@ export default {
       wrapperCol: { span: 19 },
       resetDefaultLoading: false,
       applyLoading: false,
-      systemPlatform: ''
+      systemPlatform: '',
     }
   },
   created () {
@@ -77,7 +77,7 @@ export default {
             this.resetDefaultLoading = false
           }
         },
-        onCancel () {}
+        onCancel () {},
       })
     },
     saveConfig () {
@@ -137,6 +137,6 @@ export default {
     },
     isLinux () {
       return this.systemPlatform === 'linux'
-    }
-  }
+    },
+  },
 }

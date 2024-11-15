@@ -1,13 +1,15 @@
-import lodash from 'lodash'
-import DevSidecar from '@docmirror/dev-sidecar'
-import { ipcMain } from 'electron'
 import fs from 'fs'
 import path from 'path'
+import DevSidecar from '@docmirror/dev-sidecar'
+import { ipcMain } from 'electron'
+import lodash from 'lodash'
+
 const pk = require('../../../package.json')
-const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
-process.env.DS_EXTRA_PATH = path.join(__dirname, '../extra/')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
 const log = require('../../utils/util.log')
+
+const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
+process.env.DS_EXTRA_PATH = path.join(__dirname, '../extra/')
 
 const getDefaultConfigBasePath = function () {
   return DevSidecar.api.config.get().server.setting.userBasePath
@@ -42,7 +44,7 @@ const localApi = {
   info: {
     get () {
       return {
-        version: pk.version
+        version: pk.version,
       }
     },
     getConfigDir () {
@@ -50,7 +52,7 @@ const localApi = {
     },
     getSystemPlatform () {
       return DevSidecar.api.shell.getSystemPlatform()
-    }
+    },
   },
   /**
    * 软件设置
@@ -83,7 +85,7 @@ const localApi = {
         if (setting.rootCa == null) {
           setting.rootCa = {
             setuped: false,
-            desc: '根证书未安装'
+            desc: '根证书未安装',
           }
         }
 
@@ -96,7 +98,7 @@ const localApi = {
       const settingPath = _getSettingsPath()
       fs.writeFileSync(settingPath, jsonApi.stringify(setting))
       log.info('保存 setting.json 配置文件成功:', settingPath)
-    }
+    },
   },
   /**
    * 启动所有
@@ -119,8 +121,8 @@ const localApi = {
      */
     restart () {
       return DevSidecar.api.server.restart({ mitmproxyPath })
-    }
-  }
+    },
+  },
 }
 
 function _deepFindFunction (list, parent, parentKey) {
@@ -129,7 +131,7 @@ function _deepFindFunction (list, parent, parentKey) {
     if (item instanceof Function) {
       list.push(parentKey + key)
     } else if (item instanceof Object) {
-      _deepFindFunction(list, item, parentKey + key + '.')
+      _deepFindFunction(list, item, `${parentKey + key}.`)
     }
   }
 }
@@ -184,14 +186,20 @@ export default {
     // 注册从core里来的事件，并转发给view
     DevSidecar.api.event.register('status', (event) => {
       log.info('bridge on status, event:', event)
-      if (win) win.webContents.send('status', { ...event })
+      if (win) {
+        win.webContents.send('status', { ...event })
+      }
     })
     DevSidecar.api.event.register('error', (event) => {
       log.error('bridge on error, event:', event)
-      if (win) win.webContents.send('error.core', event)
+      if (win) {
+        win.webContents.send('error.core', event)
+      }
     })
     DevSidecar.api.event.register('speed', (event) => {
-      if (win) win.webContents.send('speed', event)
+      if (win) {
+        win.webContents.send('speed', event)
+      }
     })
 
     // 合并用户配置
@@ -200,5 +208,5 @@ export default {
   },
   devSidecar: DevSidecar,
   invoke,
-  getDateTimeStr
+  getDateTimeStr,
 }
