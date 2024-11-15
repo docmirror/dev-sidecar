@@ -27,7 +27,7 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@v4.1.7
 
-      - name: 'Setup Node.js environment'
+      - name: 'Setup Node.js "${{ matrix.node }}.x" environment'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
