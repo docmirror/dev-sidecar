@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release
+      - '1.x'
   pull_request:
     branches:
       - master
