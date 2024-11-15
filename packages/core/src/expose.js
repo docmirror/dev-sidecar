@@ -1,16 +1,17 @@
-const status = require('./status')
+const lodash = require('lodash')
 const config = require('./config')
 const event = require('./event')
-const shell = require('./shell')
 const modules = require('./modules')
-const lodash = require('lodash')
+const shell = require('./shell')
+const status = require('./status')
 const log = require('./utils/util.log')
+
 const context = {
   config,
   shell,
   status,
   event,
-  log
+  log,
 }
 
 function setupPlugin (key, plugin, context, config) {
@@ -29,14 +30,14 @@ const proxy = setupPlugin('proxy', modules.proxy, context, config)
 const plugin = {}
 for (const key in modules.plugin) {
   const target = modules.plugin[key]
-  const api = setupPlugin('plugin.' + key, target, context, config)
+  const api = setupPlugin(`plugin.${key}`, target, context, config)
   plugin[key] = api
 }
 config.resetDefault()
 const server = modules.server
 const serverStart = server.start
 
-const newServerStart = ({ mitmproxyPath }) => {
+function newServerStart({ mitmproxyPath }) {
   return serverStart({ mitmproxyPath, plugins: plugin })
 }
 server.start = newServerStart
@@ -126,7 +127,7 @@ const api = {
   status: {
     get () {
       return status
-    }
+    },
   },
   config,
   event,
@@ -134,9 +135,9 @@ const api = {
   server,
   proxy,
   plugin,
-  log
+  log,
 }
 module.exports = {
   status,
-  api
+  api,
 }

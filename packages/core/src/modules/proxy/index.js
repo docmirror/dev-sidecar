@@ -43,7 +43,7 @@ const ProxyPlugin = function (context) {
       await shell.enableLoopback()
       log.info('打开EnableLoopback成功')
       return true
-    }
+    },
   }
   return api
 }
@@ -207,7 +207,7 @@ module.exports = {
       // endregion
 
       // 本地地址，无需代理
-      localhost: true,
+      'localhost': true,
       'localhost.*': true, // 部分VPN会在host中添加这种格式的域名指向127.0.0.1，所以也排除掉
       '127.*.*.*': true,
       'test.*': true, // 本地开发时，测试用的虚拟域名格式，无需代理
@@ -232,12 +232,12 @@ module.exports = {
       '172.31.*.*': true,
 
       // 局域网地址，无需代理
-      '192.168.*.*': true
-    }
+      '192.168.*.*': true,
+    },
   },
   status: {
     enabled: false,
-    proxyTarget: ''
+    proxyTarget: '',
   },
-  plugin: ProxyPlugin
+  plugin: ProxyPlugin,
 }

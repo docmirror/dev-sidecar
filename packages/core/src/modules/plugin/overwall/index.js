@@ -36,14 +36,12 @@ const Plugin = function (context) {
       for (const key in conf.targets) {
         serverConfig.intercepts[key] = {
           '.*': {
-            // eslint-disable-next-line no-template-curly-in-string
-            proxy: main + '/${host}',
-            backup
-          }
+            proxy: `${main}/\${host}`,
+            backup,
+          },
         }
       }
-    }
-
+    },
   }
   return api
 }
@@ -51,5 +49,5 @@ const Plugin = function (context) {
 module.exports = {
   key: 'overwall',
   config: pluginConfig,
-  plugin: Plugin
+  plugin: Plugin,
 }

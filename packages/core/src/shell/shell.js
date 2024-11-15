@@ -1,11 +1,14 @@
-const os = require('os')
 const childProcess = require('child_process')
+const os = require('os')
+
 const _execFile = childProcess.execFile
-const PowerShell = require('node-powershell')
-const log = require('../utils/util.log')
 const fixPath = require('fix-path')
 const iconv = require('iconv-lite')
+const PowerShell = require('node-powershell')
+const log = require('../utils/util.log')
+
 fixPath()
+
 class SystemShell {
   static async exec (cmds, args) {
     throw new Error('You have to implement the method exec!')
@@ -46,7 +49,7 @@ class WindowsSystemShell extends SystemShell {
     if (type === 'ps') {
       const ps = new PowerShell({
         executionPolicy: 'Bypass',
-        noProfile: true
+        noProfile: true,
       })
 
       for (const cmd of cmds) {
@@ -63,7 +66,7 @@ class WindowsSystemShell extends SystemShell {
     } else {
       let compose = 'echo  "test" ' // 'chcp 65001  '
       for (const cmd of cmds) {
-        compose += ' && ' + cmd
+        compose += ` && ${cmd}`
       }
       // compose += '&& exit'
       const ret = await childExec(compose, args)
@@ -77,7 +80,7 @@ function _childExec (composeCmds, options = {}) {
   return new Promise((resolve, reject) => {
     const childProcess = require('child_process')
     log.info('shell:', composeCmds)
-    childProcess.exec(composeCmds, options, function (error, stdout, stderr) {
+    childProcess.exec(composeCmds, options, (error, stdout, stderr) => {
       if (error) {
         if (options.printErrorLog !== false) {
           log.error('cmd 命令执行错误：\n===>\ncommands:', composeCmds, '\n   error:', error, '\n<===')
@@ -100,7 +103,7 @@ function childExec (composeCmds, options = {}) {
 
     const childProcess = require('child_process')
     log.info('shell:', composeCmds)
-    childProcess.exec(composeCmds, { encoding: binaryEncoding }, function (error, stdout, stderr) {
+    childProcess.exec(composeCmds, { encoding: binaryEncoding }, (error, stdout, stderr) => {
       if (error) {
         // console.log('------', decoder.decode(stderr))
         const message = iconv.decode(Buffer.from(stderr, binaryEncoding), encoding)
@@ -175,5 +178,5 @@ module.exports = {
   getSystemShell,
   getSystemPlatform,
   execute,
-  execFile
+  execFile,
 }

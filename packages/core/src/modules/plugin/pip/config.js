@@ -8,6 +8,6 @@ module.exports = {
   setting: {
     command: 'pip',
     trustedHost: 'pypi.org',
-    registry: 'https://pypi.org/simple/'// 可以选择切换官方或者淘宝镜像
-  }
+    registry: 'https://pypi.org/simple/', // 可以选择切换官方或者淘宝镜像
+  },
 }

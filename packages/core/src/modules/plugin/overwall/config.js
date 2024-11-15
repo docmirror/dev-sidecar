@@ -6,8 +6,8 @@ module.exports = {
     'ow-prod.docmirror.top': {
       port: 443,
       path: 'X2dvX292ZXJfd2FsbF8',
-      password: 'dev_sidecar_is_666'
-    }
+      password: 'dev_sidecar_is_666',
+    },
   },
   targets: {
     '*.github.com': true,
@@ -36,13 +36,13 @@ module.exports = {
     '*.intlify.dev': true,
     '*.segment.io': true,
     '*.shields.io': true,
-    '*.jsdelivr.net': true
+    '*.jsdelivr.net': true,
   },
   pac: {
     enabled: true,
     autoUpdate: true,
     pacFileUpdateUrl: 'https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt',
     pacFileAbsolutePath: null, // 自定义 pac.txt 文件位置，可以是本地文件路径
-    pacFilePath: './extra/pac/pac.txt' // 内置 pac.txt 文件路径
-  }
+    pacFilePath: './extra/pac/pac.txt', // 内置 pac.txt 文件路径
+  },
 }

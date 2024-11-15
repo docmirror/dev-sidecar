@@ -3,16 +3,16 @@ module.exports = {
   enabled: false,
   tip: '如果你没有安装nodejs则不需要启动它',
   startup: {
-    variables: true
+    variables: true,
   },
   setting: {
-    command: 'npm',
+    'command': 'npm',
     'strict-ssl': true,
-    cafile: false,
-    NODE_EXTRA_CA_CERTS: false,
-    NODE_TLS_REJECT_UNAUTHORIZED: false,
-    yarnRegistry: 'null',
-    registry: 'https://registry.npmjs.org'// 可以选择切换官方或者淘宝镜像
+    'cafile': false,
+    'NODE_EXTRA_CA_CERTS': false,
+    'NODE_TLS_REJECT_UNAUTHORIZED': false,
+    'yarnRegistry': 'null',
+    'registry': 'https://registry.npmjs.org', // 可以选择切换官方或者淘宝镜像
   },
   // intercepts: {
   //   'cdn.cypress.io': [{ regexp: '/desktop/.*', proxy: 'http://npmmirror.com/mirrors/cypress/' }]
@@ -27,6 +27,6 @@ module.exports = {
     CHROMEDRIVER_CDNURL: 'https://npmmirror.com/mirrors/chromedriver',
     OPERADRIVER: 'https://npmmirror.com/mirrors/operadriver',
     ELECTRON_BUILDER_BINARIES_MIRROR: 'https://npmmirror.com/mirrors/electron-builder-binaries/',
-    PYTHON_MIRROR: 'https://npmmirror.com/mirrors/python'
-  }
+    PYTHON_MIRROR: 'https://npmmirror.com/mirrors/python',
+  },
 }

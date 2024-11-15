@@ -34,6 +34,6 @@ function unregister (id) {
 const EventHub = {
   register,
   fire,
-  unregister
+  unregister,
 }
 module.exports = EventHub

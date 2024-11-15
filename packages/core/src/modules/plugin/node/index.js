@@ -1,5 +1,6 @@
-const nodeConfig = require('./config')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
+const nodeConfig = require('./config')
+
 const NodePlugin = function (context) {
   const { config, shell, event, log } = context
   const nodeApi = {
@@ -95,7 +96,7 @@ const NodePlugin = function (context) {
           value: map[key],
           oldValue: currentMap[key],
           exists,
-          hadSet: currentMap[key] === map[key]
+          hadSet: currentMap[key] === map[key],
         })
       }
       return list
@@ -103,7 +104,7 @@ const NodePlugin = function (context) {
 
     async setVariables () {
       const list = await nodeApi.getVariables()
-      const noSetList = list.filter(item => {
+      const noSetList = list.filter((item) => {
         return !item.exists
       })
       if (noSetList.length > 0) {
@@ -125,7 +126,7 @@ const NodePlugin = function (context) {
 
       const cmds = [
         `${command} config set proxy=http://${ip}:${port}`,
-        `${command} config set https-proxy=http://${ip}:${port}`
+        `${command} config set https-proxy=http://${ip}:${port}`,
       ]
 
       const env = []
@@ -172,13 +173,13 @@ const NodePlugin = function (context) {
         `${command} config  delete proxy`,
         `${command} config  delete https-proxy`,
         `${command} config  delete NODE_EXTRA_CA_CERTS`,
-        `${command} config  delete strict-ssl`
+        `${command} config  delete strict-ssl`,
       ]
       const ret = await shell.exec(cmds, { type: 'cmd' })
       event.fire('status', { key: 'plugin.node.enabled', value: false })
       log.info('关闭【NPM】代理成功')
       return ret
-    }
+    },
   }
   return nodeApi
 }
@@ -187,7 +188,7 @@ module.exports = {
   key: 'node',
   config: nodeConfig,
   status: {
-    enabled: false
+    enabled: false,
   },
-  plugin: NodePlugin
+  plugin: NodePlugin,
 }
