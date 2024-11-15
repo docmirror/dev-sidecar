@@ -1,5 +1,5 @@
-import autoStart from './auto-start/front'
 // import api from './api/front'
+import autoStart from './auto-start/front'
 import error from './error/front'
 import fileSelector from './file-selector/front'
 import onClose from './on-close/front'

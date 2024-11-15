@@ -1,11 +1,11 @@
 const childProcess = require('child_process')
 const os = require('os')
-
-const _execFile = childProcess.execFile
 const fixPath = require('fix-path')
 const iconv = require('iconv-lite')
 const PowerShell = require('node-powershell')
 const log = require('../utils/util.log')
+
+const _execFile = childProcess.execFile
 
 fixPath()
 

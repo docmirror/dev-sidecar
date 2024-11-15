@@ -1,12 +1,12 @@
 <script>
 import _ from 'lodash'
-import vueJsonEditor from 'vue-json-editor-fix-cn'
+import VueJsonEditor from 'vue-json-editor-fix-cn'
 import Plugin from '../mixins/plugin'
 
 export default {
   name: 'Server',
   components: {
-    VueJsonEditor: vueJsonEditor,
+    VueJsonEditor,
   },
   mixins: [Plugin],
   data () {

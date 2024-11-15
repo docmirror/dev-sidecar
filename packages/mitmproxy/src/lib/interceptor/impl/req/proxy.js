@@ -4,7 +4,6 @@ const lodash = require('lodash')
 // 替换占位符
 function replacePlaceholder (url, rOptions, matched) {
   if (url.includes('${')) {
-    // no-template-curly-in-string
     // eslint-disable-next-line no-template-curly-in-string
     url = url.replace('${host}', rOptions.hostname)
 
