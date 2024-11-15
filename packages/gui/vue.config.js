@@ -15,23 +15,21 @@ module.exports = {
       title: 'DevSidecar-给开发者的边车辅助工具'
     }
   },
-  configureWebpack: (config) => {
-    return {
-      plugins: [
-        new webpack.DefinePlugin({ 'global.GENTLY': true })
-      ],
-      module: {
-        rules: [
-          {
-            test: /\.json5$/i,
-            loader: 'json5-loader',
-            options: {
-              esModule: false
-            },
-            type: 'javascript/auto'
-          }
-        ]
-      }
+  configureWebpack: {
+    plugins: [
+      new webpack.DefinePlugin({ 'global.GENTLY': true })
+    ],
+    module: {
+      rules: [
+        {
+          test: /\.json5$/i,
+          loader: 'json5-loader',
+          options: {
+            esModule: false
+          },
+          type: 'javascript/auto'
+        }
+      ]
     }
   },
   pluginOptions: {
