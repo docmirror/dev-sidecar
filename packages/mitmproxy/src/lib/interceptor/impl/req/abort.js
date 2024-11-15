@@ -10,8 +10,8 @@ module.exports = {
     })
     res.write(
       'DevSidecar 403: Request abort.\n\n'
-        + '  This request is matched by abort intercept.\n'
-        + '  因配置abort拦截器，本请求直接返回403禁止访问。',
+      + '  This request is matched by abort intercept.\n'
+      + '  因配置abort拦截器，本请求直接返回403禁止访问。',
     )
     res.end()
 

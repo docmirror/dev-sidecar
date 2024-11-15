@@ -10,8 +10,8 @@ module.exports = {
     })
     res.write(
       'DevSidecar 200: Request success.\n\n'
-        + '  This request is matched by success intercept.\n\n'
-        + '  因配置success拦截器，本请求直接返回200成功。',
+      + '  This request is matched by success intercept.\n\n'
+      + '  因配置success拦截器，本请求直接返回200成功。',
     )
     res.end()
 

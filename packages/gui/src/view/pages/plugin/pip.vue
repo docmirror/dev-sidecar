@@ -2,7 +2,7 @@
 import Plugin from '../../mixins/plugin'
 
 export default {
-  name: 'pip',
+  name: 'Pip',
   mixins: [Plugin],
   data () {
     return {

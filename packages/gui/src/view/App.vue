@@ -20,7 +20,7 @@ export default {
     },
     theme () {
       return this.config.app.theme
-    }
+    },
   },
   created () {
     this.menus = createMenus(this)

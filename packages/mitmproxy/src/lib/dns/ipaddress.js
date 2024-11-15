@@ -9,7 +9,7 @@ module.exports = class DNSOverIpAddress extends BaseDNS {
     // const res = fs.readFileSync(path.resolve(__dirname, './data.txt')).toString()
     const res = await axios.get(url)
     if (res.status !== 200 && res.status !== 201) {
-      log.info(`[dns] get ${hostname} ipaddress: error:${res}`)
+      log.error(`[dns] get ${hostname} ipaddress: error: ${res}`)
       return
     }
     const ret = res.data
