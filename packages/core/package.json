@@ -17,7 +17,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@docmirror/mitmproxy": "^1.8.9",
+    "@docmirror/mitmproxy": "workspace:*",
     "agentkeepalive": "^2.1.1",
     "babel-preset-es2020": "^1.0.2",
     "charset": "^1.0.0",

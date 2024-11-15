@@ -22,7 +22,7 @@ jobs:
           - ubuntu
           - macos
         node:
-          - 16
+          - 22
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v4.1.7
@@ -32,6 +32,16 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
+
+      - name: 'Setup pnpm'
+        uses: pnpm/action-setup@v4
+
+      - name: 'Setup Python environment (Mac) Because of electron-builder install-app-deps requires Python setuptools'
+        if: matrix.os == 'macos'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
 
       - name: 'Get package info'
         id: package-info
@@ -46,19 +56,7 @@ jobs:
           echo "github.ref = ${{ github.ref }}";
           echo "github.ref_name = ${{ github.ref_name }}";
 
-      - name: 'npm install -g lerna@6/yarn'
-        run: |
-          echo "======================================================================";
-          echo "npm install -g lerna@6";
-          echo "--------------------";
-          npm install -g lerna@6;
-
-          echo "======================================================================";
-          echo "npm install -g yarn";
-          echo "--------------------";
-          npm install -g yarn;
-
-      - name: 'npm -v | yarn -v | lerna -v'
+      - name: 'npm -v | pnpm -v | python --version'
         run: |
           echo "======================================================================";
           echo "npm -v";
@@ -66,24 +64,24 @@ jobs:
           npm -v;
 
           echo "======================================================================";
-          echo "yarn -v";
+          echo "pnpm -v";
           echo "--------------------";
-          yarn -v;
+          pnpm -v;
 
           echo "======================================================================";
-          echo "lerna -v";
+          echo "python --version";
           echo "--------------------";
-          lerna -v;
+          python --version;
 
-      - name: 'lerna bootstrap'
+      - name: 'pnpm install'
         run: |
           echo "======================================================================";
           dir || ls -lah;
 
           echo "======================================================================";
-          echo "lerna bootstrap --npm-client=yarn";
+          echo "pnpm install";
           echo "--------------------";
-          lerna bootstrap --npm-client=yarn;
+          pnpm install;
 
       - name: 'npm run electron:build'
         run: |
