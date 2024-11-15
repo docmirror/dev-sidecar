@@ -4,14 +4,12 @@ on:
   push:
     branches:
       - master
-      - release
       - '1.x'
   pull_request:
     branches:
       - master
 
 jobs:
-  # job 1
   test-and-upload:
     runs-on: ${{ matrix.os }}-latest
     strategy:
@@ -135,57 +133,3 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}.dmg'
           if-no-files-found: error
-
-  # job 2
-  download-and-release:
-    if: ${{ github.ref_name == 'release' }}
-    runs-on: ubuntu-latest
-    needs:
-      - test-and-upload
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v4.1.7
-
-      - name: 'Get package info'
-        id: package-info
-        uses: luizfelipelaviola/get-package-info@v1
-        with:
-          path: ./packages/mitmproxy
-
-      - name: 'Make "release" dir'
-        run: mkdir release
-
-      # Download artifacts
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}.exe - Windows'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.exe
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}.deb - Ubuntu'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.deb
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}.AppImage - Ubuntu'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}.dmg - Mac'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.dmg
-          path: release
-
-      - name: 'Print files from "release" dir'
-        run: |
-          ls -lah release;
-
-      - name: 'Create a draft release'
-        uses: wangliang181230/github-action-ghr@master
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          GHR_PATH: release/
-          GHR_TITLE: ${{ github.ref_name }}
-          GHR_REPLACE: true
-          GHR_DRAFT: true
