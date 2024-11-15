@@ -258,7 +258,7 @@ export default {
         width: 610,
         content: (h) => (
           <div class="restore-factory-settings">
-            <hr/>
+            <hr />
             <p>
               <h3>操作警告：</h3>
               <div>
@@ -269,11 +269,13 @@ export default {
                 ，请谨慎操作！！！
               </div>
             </p>
-            <hr/>
+            <hr />
             <p>
               <h3>找回个性化配置的方法：</h3>
               <div>
-                1. 找到备份文件，路径：<span>~/.dev-sidecar/config.json.时间戳.bak.json</span><br/>
+                1. 找到备份文件，路径：
+                <span>~/.dev-sidecar/config.json.时间戳.bak.json</span>
+                <br />
                 2. 将该备份文件重命名为<span>config.json</span>，再重启软件即可恢复个性化配置。
               </div>
             </p>

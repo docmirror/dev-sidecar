@@ -155,7 +155,7 @@ function install (app, api) {
             return (
               <div>
                 <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
-                <hr/>
+                <hr />
                 <pre style="max-height:350px;font-family:auto">
                   {releaseNotes}
                 </pre>
@@ -201,7 +201,7 @@ function install (app, api) {
             return (
               <div>
                 <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
-                <hr/>
+                <hr />
                 <pre style="max-height:350px;font-family:auto">
                   {releaseNotes}
                 </pre>
