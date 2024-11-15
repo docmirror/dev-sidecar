@@ -34,8 +34,8 @@
     "lodash": "^4.17.20",
     "log4js": "^6.3.0",
     "request-progress": "^3.0.0",
-    "sass": "^1.27.1",
-    "sass-loader": "^10.0.4",
+    "sass": "^1.81.0",
+    "sass-loader": "^16.0.3",
     "vue": "^2.7.16",
     "vue-json-editor-fix-cn": "^1.4.3",
     "vue-router": "^3.4.8"
@@ -44,15 +44,13 @@
     "@babel/plugin-syntax-jsx": "^7.25.9",
     "@vue/babel-helper-vue-jsx-merge-props": "^1.4.0",
     "@vue/babel-preset-jsx": "^1.4.0",
-    "@vue/cli-plugin-babel": "^4.5.19",
-    "@vue/cli-service": "^4.5.19",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
     "electron": "^17.4.11",
     "electron-builder": "^25.0.6",
-    "electron-devtools-installer": "^3.2.0",
     "electron-icon-builder": "^2.0.1",
     "json5-loader": "^4.0.1",
-    "vue-cli-plugin-electron-builder": "^2.1.1",
-    "vue-template-compiler": "2.7.16"
+    "vue-cli-plugin-electron-builder": "^2.1.1"
   },
   "browserslist": [
     "> 1%",

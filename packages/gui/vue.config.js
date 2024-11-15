@@ -35,6 +35,8 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
+      // Ref: https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/1891
+      customFileProtocol: './',
       externals: [
         '@mihomo-party/sysproxy',
         '@mihomo-party/sysproxy-win32-ia32-msvc',

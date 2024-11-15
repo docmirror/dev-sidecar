@@ -119,7 +119,7 @@ body{
     padding:5px;
     border-bottom: #eee solid 1px;
     height:60px;
-    background-image: url("/logo/logo-lang.svg");
+    background-image: url("../../public/logo/logo-lang.svg");
     background-size: auto 50px;
     background-repeat: no-repeat;
     background-position: 5px center;
