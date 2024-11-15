@@ -1,6 +1,6 @@
+const fs = require('fs')
 const path = require('path')
 const pkg = require('../package.json')
-const fs = require('fs')
 
 function appendIntro (context, systemType, latest) {
   const version = pkg.version
@@ -14,8 +14,7 @@ partMiniVersion: 1.7.0
 releaseNotes:
   - 升级日志
   - https://download.fastgit.org/docmirror/dev-sidecar/releases/download/v${version}/DevSidecar-${version}.exe
-`,
-  (err) => {
+`, (err) => {
     if (err) {
       console.log('修改latest 失败')
     }

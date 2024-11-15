@@ -1,12 +1,13 @@
-const tlsUtils = require('../tls/tlsUtils')
 const http = require('http')
-const config = require('../common/config')
 const log = require('../../../utils/util.log')
-const createRequestHandler = require('./createRequestHandler')
+const speedTest = require('../../speed/index.js')
+const config = require('../common/config')
+const tlsUtils = require('../tls/tlsUtils')
 const createConnectHandler = require('./createConnectHandler')
 const createFakeServerCenter = require('./createFakeServerCenter')
+const createRequestHandler = require('./createRequestHandler')
 const createUpgradeHandler = require('./createUpgradeHandler')
-const speedTest = require('../../speed/index.js')
+
 module.exports = {
   createProxy ({
     host = config.defaultHost,
@@ -96,7 +97,7 @@ module.exports = {
           connectHandler(req, cltSocket, head, ssl)
         })
         // TODO: handler WebSocket
-        server.on('upgrade', function (req, cltSocket, head) {
+        server.on('upgrade', (req, cltSocket, head) => {
           if (printDebugLog) {
             log.debug(`【server upgrade, ssl: ${ssl}】\r\n----- req -----\r\n`, req)
           } else {

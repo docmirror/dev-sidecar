@@ -1,19 +1,19 @@
+const lodash = require('lodash')
 const config = require('../../config')
 const event = require('../../event')
 const status = require('../../status')
-const lodash = require('lodash')
 const fork = require('child_process').fork
-const log = require('../../utils/util.log')
 const fs = require('fs')
 const path = require('path')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
+const log = require('../../utils/util.log')
 
 let server = null
 function fireStatus (status) {
   event.fire('status', { key: 'server.enabled', value: status })
 }
 function sleep (time) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve()
     }, time)
@@ -98,7 +98,7 @@ const serverApi = {
     serverProcess.on('uncaughtException', (err, origin) => {
       log.error('server process uncaughtException:', err)
     })
-    serverProcess.on('message', function (msg) {
+    serverProcess.on('message', (msg) => {
       log.info('收到子进程消息:', JSON.stringify(msg))
       if (msg.type === 'status') {
         fireStatus(msg.event)

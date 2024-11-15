@@ -1,12 +1,8 @@
 const LRU = require('lru-cache')
-// const { isIP } = require('validator')
 const log = require('../../utils/util.log')
 const { DynamicChoice } = require('../choice/index')
+
 const cacheSize = 1024
-// eslint-disable-next-line no-unused-vars
-// function _isIP (v) {
-//   return v && isIP(v)
-// }
 
 class IpCache extends DynamicChoice {
   constructor (hostname) {

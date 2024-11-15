@@ -1,11 +1,11 @@
-import Vue from 'vue'
-import App from './view/App.vue'
 import antd from 'ant-design-vue'
-import 'ant-design-vue/dist/antd.css'
-import view from './view'
+import Vue from 'vue'
 import VueRouter from 'vue-router'
-import routes from './view/router'
+import view from './view'
+import App from './view/App.vue'
 import DsContainer from './view/components/container'
+import routes from './view/router'
+import 'ant-design-vue/dist/antd.css'
 import './view/style/index.scss'
 import './view/style/theme/dark.scss' // 暗色主题
 

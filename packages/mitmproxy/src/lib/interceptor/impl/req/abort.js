@@ -9,8 +9,8 @@ module.exports = {
       'DS-Interceptor': 'abort'
     })
     res.write(
-      'DevSidecar 403: Request abort.\r\n\r\n' +
-      '  This request is matched by abort intercept.\r\n' +
+      'DevSidecar 403: Request abort.\n\n' +
+      '  This request is matched by abort intercept.\n' +
       '  因配置abort拦截器，本请求直接返回403禁止访问。'
     )
     res.end()

@@ -152,12 +152,12 @@ export default {
                 <span>PAC没有拦截到的域名，可以在此处定义；配置为<code>禁用</code>时，将不使用梯子</span>
               </a-col>
               <a-col :span="2">
-                <a-button type="primary" icon="plus" @click="addTarget()"/>
+                <a-button type="primary" icon="plus" @click="addTarget()" />
               </a-col>
             </a-row>
-            <a-row :gutter="10" v-for="(item,index) of targets" :key="index">
+            <a-row v-for="(item, index) of targets" :key="index" :gutter="10">
               <a-col :span="18">
-                <a-input v-model="item.key"></a-input>
+                <a-input v-model="item.key" />
               </a-col>
               <a-col :span="4">
                 <a-select v-model="item.value" style="width:100%">
@@ -167,7 +167,7 @@ export default {
                 </a-select>
               </a-col>
               <a-col :span="2">
-                <a-button type="danger" icon="minus" @click="deleteTarget(item,index)"/>
+                <a-button type="danger" icon="minus" @click="deleteTarget(item, index)" />
               </a-col>
             </a-row>
           </div>
@@ -179,24 +179,24 @@ export default {
                 <span>Nginx二层代理服务端配置</span>
               </a-col>
               <a-col :span="2">
-                <a-button type="primary" icon="plus" @click="addServer()"/>
+                <a-button type="primary" icon="plus" @click="addServer()" />
               </a-col>
             </a-row>
-            <a-row :gutter="10" v-for="(item,index) of servers" :key="index">
+            <a-row v-for="(item, index) of servers" :key="index" :gutter="10">
               <a-col :span="6">
-                <a-input addon-before="域名" placeholder="yourdomain.com" v-model="item.key"/>
+                <a-input v-model="item.key" addon-before="域名" placeholder="yourdomain.com" />
               </a-col>
               <a-col :span="5">
-                <a-input addon-before="端口" placeholder="443" v-model="item.value.port"/>
+                <a-input v-model="item.value.port" addon-before="端口" placeholder="443" />
               </a-col>
               <a-col :span="6">
-                <a-input addon-before="路径" placeholder="xxxxxx" v-model="item.value.path"/>
+                <a-input v-model="item.value.path" addon-before="路径" placeholder="xxxxxx" />
               </a-col>
               <a-col :span="5">
-                <a-input addon-before="密码" type="password" placeholder="password" v-model="item.value.password"/>
+                <a-input v-model="item.value.password" addon-before="密码" type="password" placeholder="password" />
               </a-col>
               <a-col :span="2">
-                <a-button type="danger" icon="minus" @click="deleteServer(item,index)"/>
+                <a-button type="danger" icon="minus" @click="deleteServer(item, index)" />
               </a-col>
             </a-row>
             <div class="form-help">

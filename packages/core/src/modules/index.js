@@ -1,11 +1,5 @@
-const server = require('./server')
-
-const proxy = require('./proxy')
-
-const plugin = require('./plugin')
-
 module.exports = {
-  server,
-  proxy,
-  plugin
+  server: require('./server'),
+  proxy: require('./proxy'),
+  plugin: require('./plugin')
 }

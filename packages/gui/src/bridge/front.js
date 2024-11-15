@@ -1,10 +1,11 @@
 // import api from './api/front'
+import autoStart from './auto-start/front'
 import error from './error/front'
+import fileSelector from './file-selector/front'
+import onClose from './on-close/front'
 import tongji from './tongji/front'
 import update from './update/front'
-import fileSelector from './file-selector/front'
-import autoStart from './auto-start/front'
-import onClose from './on-close/front'
+
 const modules = {
   // api, // 核心接口模块
   error,

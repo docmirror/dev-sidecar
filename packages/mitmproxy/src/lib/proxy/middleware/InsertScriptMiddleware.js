@@ -1,6 +1,6 @@
-const log = require('../../../utils/util.log')
-const through = require('through2')
 const zlib = require('zlib')
+const through = require('through2')
+const log = require('../../../utils/util.log')
 
 // 编解码器
 const codecMap = {
@@ -84,7 +84,7 @@ function injectScriptIntoHtml (tags, chunk, script) {
 }
 
 function handleResponseHeaders (res, proxyRes) {
-  Object.keys(proxyRes.headers).forEach(function (key) {
+  Object.keys(proxyRes.headers).forEach((key) => {
     if (proxyRes.headers[key] !== undefined) {
       // let newkey = key.replace(/^[a-z]|-[a-z]/g, (match) => {
       //   return match.toUpperCase()
@@ -100,7 +100,7 @@ function handleResponseHeaders (res, proxyRes) {
         const reg = /script-src ([^:]*);/i
         const matched = policy.match(reg)
         if (matched) {
-          if (matched[1].indexOf('self') < 0) {
+          if (!matched[1].includes('self')) {
             policy = policy.replace('script-src', 'script-src \'self\' ')
           }
         }
@@ -117,6 +117,7 @@ function handleResponseHeaders (res, proxyRes) {
 
 const contextPath = '/____ds_script____/'
 const monkey = require('../../monkey')
+
 module.exports = {
   requestIntercept (context, req, res, ssl, next) {
     const { rOptions, log, setting } = context

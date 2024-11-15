@@ -1,4 +1,5 @@
 const pluginConfig = require('./config')
+
 const Plugin = function (context) {
   const { config, shell, event, log } = context
   const pluginApi = {

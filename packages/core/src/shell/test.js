@@ -34,8 +34,9 @@
 //   console.error(e)
 // })
 
-const request = require('request')
 const fs = require('fs')
+const request = require('request')
+
 request({
   url: 'https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
   proxy: 'http://127.0.0.1:31181',

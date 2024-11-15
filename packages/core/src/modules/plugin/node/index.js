@@ -1,5 +1,6 @@
-const nodeConfig = require('./config')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
+const nodeConfig = require('./config')
+
 const NodePlugin = function (context) {
   const { config, shell, event, log } = context
   const nodeApi = {
@@ -44,7 +45,7 @@ const NodePlugin = function (context) {
 
       const cmds = []
       for (const item of list) {
-        if (item.value != null && item.value.length > 0 && item.value !== 'null') {
+        if (item.value != null && item.value.length > 0 && item.value !== 'default' && item.value !== 'null') {
           cmds.push(`${command} config set ${item.key}  ${item.value}`)
         } else {
           cmds.push(`${command} config delete ${item.key}`)
@@ -67,7 +68,7 @@ const NodePlugin = function (context) {
       const cmds = []
       log.debug('yarn set:', JSON.stringify(list))
       for (const item of list) {
-        if (item.value != null && item.value.length > 0 && item.value !== 'null') {
+        if (item.value != null && item.value.length > 0 && item.value !== 'default' && item.value !== 'null') {
           cmds.push(`yarn config set ${item.key}  ${item.value}`)
         } else {
           cmds.push(`yarn config delete ${item.key}`)
@@ -103,7 +104,7 @@ const NodePlugin = function (context) {
 
     async setVariables () {
       const list = await nodeApi.getVariables()
-      const noSetList = list.filter(item => {
+      const noSetList = list.filter((item) => {
         return !item.exists
       })
       if (noSetList.length > 0) {

@@ -1,14 +1,13 @@
-const interceptorImpls = require('./lib/interceptor')
+const fs = require('fs')
+const path = require('path')
+const lodash = require('lodash')
+const jsonApi = require('./json')
 const dnsUtil = require('./lib/dns')
+const interceptorImpls = require('./lib/interceptor')
+const scriptInterceptor = require('./lib/interceptor/impl/res/script')
+const { getTmpPacFilePath, downloadPacAsync, createOverwallMiddleware } = require('./lib/proxy/middleware/overwall')
 const log = require('./utils/util.log')
 const matchUtil = require('./utils/util.match')
-const path = require('path')
-const fs = require('fs')
-const lodash = require('lodash')
-const scriptInterceptor = require('./lib/interceptor/impl/res/script')
-const jsonApi = require('./json')
-
-const { getTmpPacFilePath, downloadPacAsync, createOverwallMiddleware } = require('./lib/proxy/middleware/overwall')
 
 // 处理拦截配置
 function buildIntercepts (intercepts) {

@@ -1,16 +1,16 @@
 /**
  * 获取环境变量
  */
-const Shell = require('../../shell')
 const Registry = require('winreg')
-
-const execute = Shell.execute
-const execFile = Shell.execFile
-const log = require('../../../utils/util.log')
-const extraPath = require('../extra-path/index')
+const Shell = require('../../shell')
 const fs = require('fs')
 const path = require('path')
 const request = require('request')
+const log = require('../../../utils/util.log')
+const extraPath = require('../extra-path/index')
+
+const execute = Shell.execute
+const execFile = Shell.execFile
 
 let config = null
 function loadConfig () {
@@ -20,7 +20,6 @@ function loadConfig () {
 }
 
 async function _winUnsetProxy (exec, setEnv) {
-  // eslint-disable-next-line no-constant-condition
   const proxyPath = extraPath.getProxyExePath()
   await execFile(proxyPath, ['set', '1'])
 
@@ -74,12 +73,12 @@ async function downloadDomesticDomainAllowListAsync () {
 
       let fileTxt = body
       try {
-        if (fileTxt.indexOf('*.') < 0) {
+        if (!fileTxt.includes('*.')) {
           fileTxt = Buffer.from(fileTxt, 'base64').toString('utf8')
           // log.debug('解析 base64 后的 domestic-domain-allowlist:', fileTxt)
         }
       } catch (e) {
-        if (fileTxt.indexOf('*.') < 0) {
+        if (!fileTxt.includes('*.')) {
           log.error(`远程 domestic-domain-allowlist.txt 文件内容即不是base64格式，也不是要求的格式，url: ${remoteFileUrl}，body: ${body}`)
           return
         }
@@ -195,7 +194,7 @@ function getProxyExcludeIpStr (split) {
     try {
       let domesticDomainAllowList = getDomesticDomainAllowList()
       if (domesticDomainAllowList) {
-        domesticDomainAllowList = (domesticDomainAllowList + '\n').replaceAll(/[\r\n]+/g, '\n').replaceAll(/[^\n]*[^*.a-zA-Z\d-\n]+[^\n]*\r?\n/g, '').trim().replaceAll(/\s*\n+\s*/g, split)
+        domesticDomainAllowList = (`${domesticDomainAllowList}\n`).replaceAll(/[\r\n]+/g, '\n').replaceAll(/[\d*\-.A-Z]*[^\d\n*\-.A-Z][^\n]*\n/gi, '').trim().replaceAll(/\s*\n\s*/g, split)
         if (domesticDomainAllowList) {
           excludeIpStr += domesticDomainAllowList
           log.info('系统代理排除列表拼接国内域名')
@@ -224,7 +223,7 @@ async function _winSetProxy (exec, ip, port, setEnv) {
   let proxyAddr = `https=http://${ip}:${port}`
   // http
   if (config.get().proxy.proxyHttp) {
-    proxyAddr = `http=http://${ip}:${port - 1};` + proxyAddr
+    proxyAddr = `http=http://${ip}:${port - 1};${proxyAddr}`
   }
 
   // 读取排除域名
@@ -283,12 +282,12 @@ const executor = {
         setProxyCmd.push(`gsettings set org.gnome.system.proxy.http host ${ip}`)
         setProxyCmd.push(`gsettings set org.gnome.system.proxy.http port ${port - 1}`)
       } else {
-        setProxyCmd.push("gsettings set org.gnome.system.proxy.http host ''")
+        setProxyCmd.push('gsettings set org.gnome.system.proxy.http host \'\'')
         setProxyCmd.push('gsettings set org.gnome.system.proxy.http port 0')
       }
 
       // 设置排除域名（ignore-hosts）
-      const excludeIpStr = getProxyExcludeIpStr("', '")
+      const excludeIpStr = getProxyExcludeIpStr('\', \'')
       setProxyCmd.push(`gsettings set org.gnome.system.proxy ignore-hosts "['${excludeIpStr}']"`)
 
       await exec(setProxyCmd)

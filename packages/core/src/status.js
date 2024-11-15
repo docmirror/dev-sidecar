@@ -1,6 +1,7 @@
-const event = require('./event')
 const lodash = require('lodash')
+const event = require('./event')
 const log = require('./utils/util.log')
+
 const status = {
   server: { enabled: false },
   proxy: {},

@@ -1,14 +1,17 @@
 const { promisify } = require('util')
 const doh = require('dns-over-http')
-const BaseDNS = require('./base')
 const log = require('../../utils/util.log')
-const dohQueryAsync = promisify(doh.query)
 const matchUtil = require('../../utils/util.match')
+const BaseDNS = require('./base')
+
+const dohQueryAsync = promisify(doh.query)
 
 function mapToList (ipMap) {
   const ipList = []
   for (const key in ipMap) {
-    if (!ipMap[key]) continue
+    if (!ipMap[key]) {
+      continue
+    }
     ipList.push(ipMap[key])
   }
   return ipList

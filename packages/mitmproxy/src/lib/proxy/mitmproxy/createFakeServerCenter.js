@@ -1,7 +1,8 @@
 const fs = require('fs')
 const forge = require('node-forge')
-const FakeServersCenter = require('../tls/FakeServersCenter')
 const log = require('../../../utils/util.log')
+const FakeServersCenter = require('../tls/FakeServersCenter')
+
 module.exports = function createFakeServerCenter ({
   maxLength,
   caCertPath,

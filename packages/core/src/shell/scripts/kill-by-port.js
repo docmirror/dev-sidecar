@@ -1,4 +1,5 @@
 const Shell = require('../shell')
+
 const execute = Shell.execute
 
 const executor = {
@@ -9,11 +10,11 @@ const executor = {
     return true
   },
   async linux (exec, { port }) {
-    await exec('kill `lsof -i:' + port + " |grep 'dev-sidecar\\|electron\\|@docmirro' |awk '{print $2}'`")
+    await exec(`kill \`lsof -i:${port} |grep 'dev-sidecar\\|electron\\|@docmirro' |awk '{print $2}'\``)
     return true
   },
   async mac (exec, { port }) {
-    await exec('kill `lsof -i:' + port + " |grep 'dev-side\\|Elect' |awk '{print $2}'`")
+    await exec(`kill \`lsof -i:${port} |grep 'dev-side\\|Elect' |awk '{print $2}'\``)
     return true
   }
 }

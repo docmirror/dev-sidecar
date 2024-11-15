@@ -1,42 +1,42 @@
 {
-  app: {
-    autoStart: {
-      enabled: true,
+  "app": {
+    "autoStart": {
+      "enabled": true
     },
-    mode: 'default',
+    "mode": "default"
   },
-  plugin: {
-    node: {
-      setting: {
-        yarnRegistry: 'null',
-      },
-    },
-    git: {
-      enabled: true,
-    },
-    overwall: {
-      enabled: false,
-      targets: {
-        '*gagedigital.com': true,
-        '*yonsz.net': true,
-        '*bootstrapcdn.com': true,
-        '*cloudflare.com': true,
-        'help.yonsz.net': true,
-      },
-    },
-  },
-  server: {
-    intercepts: {
-      'dev-sidecar.docmirror.cn': {
-        '.*': {
-          proxy: 'dev-sidecar-preview.docmirror.cn',
-        },
-      },
-      'test1111.gagedigital.com': {
-        '.*': {
-          proxy: 'test1.gagedigital.com',
-        },
+  "plugin": {
+    "node": {
+      "setting": {
+        "yarnRegistry": "null"
       }
     },
+    "git": {
+      "enabled": true
+    },
+    "overwall": {
+      "enabled": false,
+      "targets": {
+        "*gagedigital.com": true,
+        "*yonsz.net": true,
+        "*bootstrapcdn.com": true,
+        "*cloudflare.com": true,
+        "help.yonsz.net": true
+      }
+    }
+  },
+  "server": {
+    "intercepts": {
+      "dev-sidecar.docmirror.cn": {
+        ".*": {
+          "proxy": "dev-sidecar-preview.docmirror.cn"
+        }
+      },
+      "test1111.gagedigital.com": {
+        ".*": {
+          "proxy": "test1.gagedigital.com"
+        }
+      }
+    }
   }
 }

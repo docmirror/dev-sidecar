@@ -17,9 +17,9 @@ options.paragraph = 'false'
 options.probability = 'false'
 
 // 调用通用文字识别（高精度版）（异步）
-client.accurateBasic(imageBase64, options).then(function (result) {
+client.accurateBasic(imageBase64, options).then((result) => {
   console.log(JSON.stringify(result))
-}).catch(function (err) {
+}).catch((err) => {
   // 如果发生网络错误
   console.log(err)
 })

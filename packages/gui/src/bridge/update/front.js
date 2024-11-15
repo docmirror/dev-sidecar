@@ -80,11 +80,13 @@ function install (app, api) {
       cancelText: '取消',
       okText: '打开链接',
       width: 420,
-      content: h => {
-        return <div>
-          <div>请前往 <a onClick={openGithubUrl}>github项目release页面</a> 下载新版本手动安装</div>
-          <div><a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
-        </div>
+      content: (h) => {
+        return (
+          <div>
+            <div>请前往 <a onClick={openGithubUrl}>github项目release页面</a> 下载新版本手动安装</div>
+            <div><a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
+          </div>
+        )
       },
       onOk () {
         openGithubUrl()
@@ -141,31 +143,35 @@ function install (app, api) {
     }
     console.log(value)
     app.$confirm({
-      title: '发现新版本：v' + value.version,
+      title: `发现新版本：v${value.version}`,
       cancelText: '暂不升级',
       okText: '升级',
       width: 700,
-      content: h => {
+      content: (h) => {
         if (value.releaseNotes) {
           const notes = []
           if (typeof value.releaseNotes === 'string') {
             const releaseNotes = value.releaseNotes.replace(/\r\n/g, '\n')
-            return <div>
-              <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
-              <hr/>
-              <pre style="max-height:350px;font-family:auto">
-                {releaseNotes}
-              </pre>
-            </div>
+            return (
+              <div>
+                <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
+                <hr/>
+                <pre style="max-height:350px;font-family:auto">
+                  {releaseNotes}
+                </pre>
+              </div>
+            )
           } else {
             for (const note of value.releaseNotes) {
               notes.push(<li>{note}</li>)
             }
-            return <div>
-              <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
-              <div>更新内容：</div>
-              <ol>{notes}</ol>
-            </div>
+            return (
+              <div>
+                <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
+                <div>更新内容：</div>
+                <ol>{notes}</ol>
+              </div>
+            )
           }
         }
       },
@@ -187,27 +193,31 @@ function install (app, api) {
       cancelText: '暂不升级',
       okText: '立即升级',
       width: 700,
-      content: h => {
+      content: (h) => {
         if (value.releaseNotes) {
           const notes = []
           if (typeof value.releaseNotes === 'string') {
             const releaseNotes = value.releaseNotes.replace(/\r\n/g, '\n')
-            return <div>
-              <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
-              <hr/>
-              <pre style="max-height:350px;font-family:auto">
-                {releaseNotes}
-              </pre>
-            </div>
+            return (
+              <div>
+                <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
+                <hr/>
+                <pre style="max-height:350px;font-family:auto">
+                  {releaseNotes}
+                </pre>
+              </div>
+            )
           } else {
             for (const note of value.releaseNotes) {
               notes.push(<li>{note}</li>)
             }
-            return <div>
-              <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
-              <div>更新内容：</div>
-              <ol>{notes}</ol>
-            </div>
+            return (
+              <div>
+                <div>发布公告：<a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>
+                <div>更新内容：</div>
+                <ol>{notes}</ol>
+              </div>
+            )
           }
         }
       },

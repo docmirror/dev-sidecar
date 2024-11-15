@@ -11,12 +11,12 @@ const options = {
   }
 }
 
-const request = http.get('http://test.target/', options, function (response) {
-  response.on('data', function (data) {
+const request = http.get('http://test.target/', options, (response) => {
+  response.on('data', (data) => {
     process.stdout.write(data)
   })
 })
 
-request.on('error', function (error) {
+request.on('error', (error) => {
   console.log(error)
 })

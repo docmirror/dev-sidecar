@@ -1,8 +1,6 @@
-const node = require('./node')
-const git = require('./git')
-const overwall = require('./overwall')
-const pip = require('./pip')
-
 module.exports = {
-  node, git, pip, overwall
+  node: require('./node'),
+  git: require('./git'),
+  pip: require('./pip'),
+  overwall: require('./overwall')
 }

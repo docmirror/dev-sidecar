@@ -2,7 +2,7 @@
 import Plugin from '../../mixins/plugin'
 
 export default {
-  name: 'pip',
+  name: 'Pip',
   mixins: [Plugin],
   data () {
     return {
@@ -37,7 +37,6 @@ export default {
       this.config.plugin.pip.setting.trustedHost = domain
       await this.apply()
     }
-
   }
 }
 </script>
@@ -46,30 +45,32 @@ export default {
   <ds-container>
     <template slot="header">
       PIP加速
-      <span style="color:#999;">
-      </span>
     </template>
 
     <div v-if="config">
       <a-form layout="horizontal">
-        <!--        <a-form-item label="启用PIP加速" :label-col="labelCol" :wrapper-col="wrapperCol">-->
-        <!--          <a-checkbox v-model="config.plugin.pip.enabled">-->
-        <!--            随应用启动-->
-        <!--          </a-checkbox>-->
-        <!--          <a-tag v-if="status.plugin.pip.enabled" color="green">-->
-        <!--            当前已启动-->
-        <!--          </a-tag>-->
-        <!--          <a-tag v-else color="red">-->
-        <!--            当前未启动-->
-        <!--          </a-tag>-->
-        <!--        </a-form-item>-->
+        <!--        <a-form-item label="启用PIP加速" :label-col="labelCol" :wrapper-col="wrapperCol"> -->
+        <!--          <a-checkbox v-model="config.plugin.pip.enabled"> -->
+        <!--            随应用启动 -->
+        <!--          </a-checkbox> -->
+        <!--          <a-tag v-if="status.plugin.pip.enabled" color="green"> -->
+        <!--            当前已启动 -->
+        <!--          </a-tag> -->
+        <!--          <a-tag v-else color="red"> -->
+        <!--            当前未启动 -->
+        <!--          </a-tag> -->
+        <!--        </a-form-item> -->
         <a-form-item label="pip命令名" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.pip.setting.command"></a-input>
-          <div class="form-help">如果你的<code>pip</code>命令改成了其他名字（如<code>pip3</code>），或想设置绿色版<code>pip</code>程序路径，可在此处修改</div>
+          <a-input v-model="config.plugin.pip.setting.command" />
+          <div class="form-help">
+            如果你的<code>pip</code>命令改成了其他名字（如<code>pip3</code>），或想设置绿色版<code>pip</code>程序路径，可在此处修改
+          </div>
         </a-form-item>
         <a-form-item label="仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-radio-group v-model="config.plugin.pip.setting.registry" @change="onSwitchRegistry"
-                         default-value="https://pypi.org/simple/" button-style="solid">
+          <a-radio-group
+            v-model="config.plugin.pip.setting.registry" default-value="https://pypi.org/simple/"
+            button-style="solid" @change="onSwitchRegistry"
+          >
             <a-radio-button value="https://pypi.org/simple/" title="https://pypi.org/simple/">
               原生
             </a-radio-button>
@@ -104,10 +105,12 @@ export default {
               山东理工大学镜像
             </a-radio-button>
           </a-radio-group>
-          <div class="form-help">设置后立即生效，即使关闭 ds 也会继续保持</div>
+          <div class="form-help">
+            设置后立即生效，即使关闭 ds 也会继续保持
+          </div>
         </a-form-item>
         <a-form-item label="信任仓库域名" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.pip.setting.trustedHost"></a-input>
+          <a-input v-model="config.plugin.pip.setting.trustedHost" />
           <div class="form-help">
             使用以上域名安装包时，不会进行SSL证书验证，多个域名用空格隔开<br/>
             注意：切换仓库镜像同时会修改<code>pip.ini</code>中的<code>trusted-host</code>配置，即使关闭 ds 也会继续保持

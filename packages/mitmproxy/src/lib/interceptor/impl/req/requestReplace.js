@@ -32,7 +32,7 @@ module.exports = {
     // 替换请求头
     if (requestReplaceConfig.headers) {
       replaceRequestHeaders(rOptions, requestReplaceConfig.headers, log)
-      actions += (actions ? ',' : '') + 'headers'
+      actions += `${actions ? ',' : ''}headers`
     }
 
     // 替换下载文件请求的请求地址（此功能主要是为了方便拦截配置）
@@ -40,7 +40,7 @@ module.exports = {
     if (requestReplaceConfig.doDownload && rOptions.path.match(/DS_DOWNLOAD/i)) {
       rOptions.doDownload = true
       rOptions.path = rOptions.path.replace(/[?&/]?DS_DOWNLOAD(=[^?&/]+)?$/gi, '')
-      actions += (actions ? ',' : '') + 'path:remove-DS_DOWNLOAD'
+      actions += `${actions ? ',' : ''}path:remove-DS_DOWNLOAD`
     }
 
     res.setHeader('DS-RequestReplace-Interceptor', actions)

@@ -1,4 +1,3 @@
-
 function install (app, api) {
   api.ipc.on('auto-start', (event, message) => {
     if (message.value === true) {

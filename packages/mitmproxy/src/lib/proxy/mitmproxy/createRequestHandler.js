@@ -1,14 +1,15 @@
 const http = require('http')
 const https = require('https')
-const commonUtil = require('../common/util')
 const jsonApi = require('../../../json')
-// const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i
-const DnsUtil = require('../../dns/index')
 const log = require('../../../utils/util.log')
 const RequestCounter = require('../../choice/RequestCounter')
+const commonUtil = require('../common/util')
+// const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i
+const DnsUtil = require('../../dns/index')
+const compatible = require('../compatible/compatible')
 const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
 const dnsLookup = require('./dnsLookup')
-const compatible = require('../compatible/compatible')
+
 const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
 
 // create requestHandler function
@@ -63,7 +64,9 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               }
               const goNext = reqIncpt.requestIntercept(context, req, res, ssl, next)
               if (goNext) {
-                if (goNext !== 'no-next') next()
+                if (goNext !== 'no-next') {
+                  next()
+                }
                 return
               }
             }
@@ -107,7 +110,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
         function onFree () {
           url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
           const start = new Date()
-          log.info('发起代理请求:', url, (rOptions.servername ? ', sni: ' + rOptions.servername : ''), ', headers:', jsonApi.stringify2(rOptions.headers))
+          log.info('发起代理请求:', url, (rOptions.servername ? `, sni: ${rOptions.servername}` : ''), ', headers:', jsonApi.stringify2(rOptions.headers))
 
           const isDnsIntercept = {}
           if (dnsConfig && dnsConfig.dnsMap) {
@@ -181,7 +184,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           proxyReq.on('error', (e) => {
             const cost = new Date() - start
             log.error(`代理请求错误: ${url}, cost: ${cost} ms, error:`, e, ', rOptions:', jsonApi.stringify2(rOptions))
-            countSlow(isDnsIntercept, '代理请求错误: ' + e.message)
+            countSlow(isDnsIntercept, `代理请求错误: ${e.message}`)
             reject(e)
 
             // 自动兼容程序：2
@@ -205,7 +208,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           })
 
           // 原始请求的事件监听
-          req.on('aborted', function () {
+          req.on('aborted', () => {
             const cost = new Date() - start
             const errorMsg = `请求被取消: ${url}, cost: ${cost} ms`
             log.error(errorMsg, ', rOptions:', jsonApi.stringify2(rOptions))
@@ -215,7 +218,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             }
             reject(new Error(errorMsg))
           })
-          req.on('error', function (e, req, res) {
+          req.on('error', (e, req, res) => {
             const cost = new Date() - start
             log.error(`请求错误: ${url}, cost: ${cost} ms, error:`, e, ', rOptions:', jsonApi.stringify2(rOptions))
             reject(e)
@@ -246,7 +249,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       //   // console.log('BODY: ')
       // })
       proxyRes.on('error', (error) => {
-        countSlow(null, 'error: ' + error.message)
+        countSlow(null, `error: ${error.message}`)
         log.error(`proxy res error: ${url}, error:`, error)
       })
 
@@ -300,7 +303,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       await responseInterceptorPromise
 
       if (!res.headersSent) { // prevent duplicate set headers
-        Object.keys(proxyRes.headers).forEach(function (key) {
+        Object.keys(proxyRes.headers).forEach((key) => {
           if (proxyRes.headers[key] !== undefined) {
             // https://github.com/nodejitsu/node-http-proxy/issues/362
             if (/^www-authenticate$/i.test(key)) {
@@ -314,12 +317,12 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
         })
 
         if (proxyRes.statusCode >= 400) {
-          countSlow(null, 'Status return: ' + proxyRes.statusCode)
+          countSlow(null, `Status return: ${proxyRes.statusCode}`)
         }
         res.writeHead(proxyRes.statusCode)
         proxyRes.pipe(res)
       }
-    })().catch(e => {
+    })().catch((e) => {
       if (!res.writableEnded) {
         try {
           const status = e.status || 500

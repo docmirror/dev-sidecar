@@ -75,8 +75,8 @@ function deleteNullItems (target) {
 }
 
 module.exports = {
-  doMerge: function (oldObj, newObj) {
-    return lodash.mergeWith(oldObj, newObj, function (objValue, srcValue) {
+  doMerge (oldObj, newObj) {
+    return lodash.mergeWith(oldObj, newObj, (objValue, srcValue) => {
       if (lodash.isArray(objValue)) {
         return srcValue
       }

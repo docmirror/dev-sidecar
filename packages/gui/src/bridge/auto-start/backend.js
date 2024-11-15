@@ -44,7 +44,8 @@ export default {
             openAtLogin: true,
             openAsHidden: true,
             args: [
-              '--hideWindow', '"true"'
+              '--hideWindow',
+              '"true"'
             ]
           })
         }

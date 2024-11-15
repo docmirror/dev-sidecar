@@ -1,5 +1,7 @@
 const https = require('https')
+
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
+
 function request () {
   return new Promise((resolve, reject) => {
     const options = {
@@ -28,12 +30,12 @@ function request () {
   })
 }
 // eslint-disable-next-line no-undef
-describe('ssl.verify', function () {
+describe('ssl.verify', () => {
   // eslint-disable-next-line no-undef
-  it('regex.test.js', async function () {
-  //  https.request('https://test1.gagedigital.com/ssltest.php')
+  it('regex.test.js', async () => {
+    // https.request('https://test1.gagedigital.com/ssltest.php')
     await request()
-    // eslint-disable-next-line no-unused-expressions
+
     // expect(ret).be.ok
   })
 })

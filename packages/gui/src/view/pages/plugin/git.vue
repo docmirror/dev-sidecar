@@ -97,15 +97,15 @@ export default {
                 <span><code>Git.exe</code>将不代理以下仓库；可以是根地址、组织/机构地址、完整地址</span>
               </a-col>
               <a-col :span="2">
-                <a-button type="primary" icon="plus" @click="addNoProxyUrl()"/>
+                <a-button type="primary" icon="plus" @click="addNoProxyUrl()" />
               </a-col>
             </a-row>
-            <a-row :gutter="10" v-for="(item,index) of noProxyUrls" :key='index'>
+            <a-row v-for="(item, index) of noProxyUrls" :key="index" :gutter="10">
               <a-col :span="22">
-                <a-input :disabled="item.value === false" v-model="item.key"></a-input>
+                <a-input v-model="item.key" :disabled="item.value === false" />
               </a-col>
               <a-col :span="2">
-                <a-button type="danger" icon="minus" @click="delNoProxyUrl(item,index)"/>
+                <a-button type="danger" icon="minus" @click="delNoProxyUrl(item, index)" />
               </a-col>
             </a-row>
           </div>

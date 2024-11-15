@@ -12,7 +12,7 @@ module.exports = {
     }
 
     // 判断当前响应码是否不使用缓存
-    if (interceptOpt.cacheExcludeStatusCodeList && interceptOpt.cacheExcludeStatusCodeList[proxyRes.statusCode + '']) {
+    if (interceptOpt.cacheExcludeStatusCodeList && interceptOpt.cacheExcludeStatusCodeList[`${proxyRes.statusCode}`]) {
       return
     }
 
@@ -32,7 +32,7 @@ module.exports = {
     // 获取maxAge配置
     let maxAge = cacheReq.getMaxAge(interceptOpt)
     // public 或 private
-    const cacheControlType = (interceptOpt.cacheControlType || 'public') + ', '
+    const cacheControlType = `${interceptOpt.cacheControlType || 'public'}, `
     // immutable属性
     const cacheImmutable = interceptOpt.cacheImmutable !== false ? ', immutable' : ''
 
@@ -65,7 +65,7 @@ module.exports = {
     if (originalHeaders.cacheControl) {
       const maxAgeMatch = originalHeaders.cacheControl.value.match(/max-age=(\d+)/)
       if (maxAgeMatch && maxAgeMatch[1] > maxAge) {
-        if (interceptOpt.cacheImmutable !== false && originalHeaders.cacheControl.value.indexOf('immutable') < 0) {
+        if (interceptOpt.cacheImmutable !== false && !originalHeaders.cacheControl.value.includes('immutable')) {
           maxAge = maxAgeMatch[1]
         } else {
           const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`

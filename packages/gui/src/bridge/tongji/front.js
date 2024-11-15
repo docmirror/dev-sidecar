@@ -1,11 +1,10 @@
-
 /**
  * second step
  * @param {*} ipcRenderer
  * @param {*} siteId
  * @param {*} router
  */
-const ebtRenderer = (ipcRenderer, siteId, router) => {
+function ebtRenderer (ipcRenderer, siteId, router) {
   /* istanbul ignore else */
   if (!(ipcRenderer && ipcRenderer.on && ipcRenderer.send)) {
     throw new TypeError('require ipcRenderer')
@@ -38,7 +37,7 @@ const ebtRenderer = (ipcRenderer, siteId, router) => {
       router.beforeEach((to, _, next) => {
         /* istanbul ignore else */
         if (to.path) {
-          window._hmt.push(['_trackPageview', '/#' + to.fullPath])
+          window._hmt.push(['_trackPageview', `/#${to.fullPath}`])
           console.log('baidu trace', to.fullPath)
         }
 

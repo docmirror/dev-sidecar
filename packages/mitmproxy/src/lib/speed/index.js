@@ -1,10 +1,11 @@
-const SpeedTester = require('./SpeedTester.js')
 const _ = require('lodash')
-const config = require('./config')
 const log = require('../../utils/util.log.js')
-const SpeedTestPool = {
+const config = require('./config')
+const SpeedTester = require('./SpeedTester.js')
 
+const SpeedTestPool = {
 }
+
 function initSpeedTest (runtimeConfig) {
   const { enabled, hostnameList } = runtimeConfig
   const conf = config.getConfig()

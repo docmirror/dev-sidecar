@@ -1,9 +1,8 @@
-
 /**
  * first step
  * @param {*} ipcMain
  */
-const ebtMain = (ipcMain) => {
+function ebtMain (ipcMain) {
   const isDevelopment = process.env.NODE_ENV !== 'production'
   const request = require('request')
   /* istanbul ignore else */
@@ -21,15 +20,14 @@ const ebtMain = (ipcMain) => {
       headers: {
         Referer: 'https://hm.baidu.com/'
       }
-    },
-    (err, response, body) => {
+    }, (err, response, body) => {
       if (err) {
         console.error('百度统计请求出错', err)
         return
       }
       const rource = '(h.c.b.su=h.c.b.u||document.location.href),h.c.b.u=f.protocol+"//"+document.location.host+'
       /* istanbul ignore else */
-      if (body && body.indexOf(rource) >= 0) {
+      if (body && body.includes(rource)) {
         // step 3
         let text = body
 

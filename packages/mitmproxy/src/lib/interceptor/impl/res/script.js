@@ -29,7 +29,7 @@ module.exports = {
     }
 
     // 如果没有响应头 'content-type'，或其值不是 'text/html'，则不处理
-    if (!proxyRes.headers['content-type'] || proxyRes.headers['content-type'].indexOf('text/html') < 0) {
+    if (!proxyRes.headers['content-type'] || !proxyRes.headers['content-type'].includes('text/html')) {
       res.setHeader('DS-Script-Interceptor', 'Not text/html')
       return
     }
@@ -50,7 +50,7 @@ module.exports = {
 
         let scriptTag
 
-        if (key.indexOf('/') >= 0) {
+        if (key.includes('/')) {
           scriptTag = getScriptByUrlOrPath(key) // 1.绝对地址或相对地址（注意：当目标站点限制跨域脚本时，可使用相对地址，再结合proxy拦截器进行代理，可规避掉限制跨域脚本问题。）
         } else {
           const script = scripts[key]
@@ -60,7 +60,7 @@ module.exports = {
           scriptTag = getScript(key, script.script) // 2.DS内置脚本
         }
 
-        tags += '\r\n\t' + scriptTag
+        tags += `\r\n\t${scriptTag}`
       }
 
       // 如果脚本为空，则不插入
@@ -70,15 +70,15 @@ module.exports = {
 
       // 插入油猴脚本浏览器扩展
       if (typeof interceptOpt.tampermonkeyScript === 'string') {
-        tags = '\r\n\t' + getScriptByUrlOrPath(interceptOpt.tampermonkeyScript) + tags
+        tags = `\r\n\t${getScriptByUrlOrPath(interceptOpt.tampermonkeyScript)}${tags}`
       } else {
-        tags = '\r\n\t' + getScript('tampermonkey', scripts.tampermonkey.script) + tags
+        tags = `\r\n\t${getScript('tampermonkey', scripts.tampermonkey.script)}${tags}`
       }
 
       res.setHeader('DS-Script-Interceptor', 'true')
       log.info(`script response intercept: insert script ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`, ', head:', tags)
       return {
-        head: tags + '\r\n'
+        head: `${tags}\r\n`
       }
     } catch (err) {
       try {
@@ -102,10 +102,12 @@ module.exports = {
       const handleScriptUrl = (scriptUrl, name, replaceScriptUrlFun) => {
         if (scriptUrl.indexOf('https:') === 0 || scriptUrl.indexOf('http:') === 0) {
           // 绝对地址
-          const scriptKey = SCRIPT_PROXY_URL_PRE + scriptUrl.replace('.js', '').replace(/[\W_]+/g, '_') + '.js' // 伪脚本地址：移除 script 中可能存在的特殊字符，并转为相对地址
+          const scriptKey = `${SCRIPT_PROXY_URL_PRE + scriptUrl.replace('.js', '').replace(/[\W_]+/g, '_')}.js` // 伪脚本地址：移除 script 中可能存在的特殊字符，并转为相对地址
           scriptProxy[scriptKey] = scriptUrl
           log.info(`替换${name}配置值：'${scriptUrl}' -> '${scriptKey}'`)
-          if (typeof replaceScriptUrlFun === 'function') replaceScriptUrlFun(scriptKey)
+          if (typeof replaceScriptUrlFun === 'function') {
+            replaceScriptUrlFun(scriptKey)
+          }
         } else if (scriptUrl.indexOf('/') === 0) {
           // 相对地址
           scriptProxy[scriptUrl] = scriptUrl

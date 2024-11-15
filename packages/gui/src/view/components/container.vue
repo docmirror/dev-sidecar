@@ -1,15 +1,15 @@
 <script>
 export default {
-  name: 'ds-container'
+  name: 'DsContainer'
 }
 </script>
 
 <template>
   <div class="ds-container">
     <div class="body-wrapper">
-      <div v-if="$slots.header" class="container-header"><slot name="header"></slot></div>
-      <div class="container-body"> <slot></slot></div>
-      <div class="container-footer"> <slot name="footer"></slot></div>
+      <div v-if="$slots.header" class="container-header"><slot name="header" /></div>
+      <div class="container-body"><slot /></div>
+      <div class="container-footer"><slot name="footer" /></div>
     </div>
   </div>
 </template>
@@ -49,5 +49,4 @@ export default {
     padding:15px;
   }
 }
-
 </style>

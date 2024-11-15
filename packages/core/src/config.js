@@ -1,12 +1,12 @@
 const fs = require('fs')
-const Shell = require('./shell')
-const lodash = require('lodash')
-const defConfig = require('./config/index.js')
-const jsonApi = require('@docmirror/mitmproxy/src/json')
-const request = require('request')
 const path = require('path')
-const log = require('./utils/util.log')
+const jsonApi = require('@docmirror/mitmproxy/src/json')
+const lodash = require('lodash')
+const request = require('request')
+const defConfig = require('./config/index.js')
 const mergeApi = require('./merge.js')
+const Shell = require('./shell')
+const log = require('./utils/util.log')
 
 let configTarget = lodash.cloneDeep(defConfig)
 
@@ -80,7 +80,7 @@ const configApi = {
       configApi.deleteRemoteConfigFile(suffix)
       return
     }
-    // eslint-disable-next-line handle-callback-err
+
     return new Promise((resolve, reject) => {
       log.info('开始下载远程配置:', remoteConfigUrl)
 
@@ -131,7 +131,7 @@ const configApi = {
           if (response) {
             message = `下载远程配置失败: ${remoteConfigUrl}, message: ${response.message}, code: ${response.statusCode}`
           } else {
-            message = '下载远程配置失败: response: ' + response
+            message = `下载远程配置失败: response: ${response}`
           }
           reject(new Error(message))
         }
@@ -337,7 +337,7 @@ const configApi = {
   },
   async setVariables (type) {
     const list = await configApi.getVariables(type)
-    const noSetList = list.filter(item => {
+    const noSetList = list.filter((item) => {
       return !item.exists
     })
     if (list.length > 0) {
@@ -345,9 +345,9 @@ const configApi = {
         root_ca_cert_path: configApi.get().server.setting.rootCaFile.certPath
       }
       for (const item of noSetList) {
-        if (item.value.indexOf('${') >= 0) {
+        if (item.value.includes('${')) {
           for (const key in context) {
-            item.value = item.value.replcace(new RegExp('${' + key + '}', 'g'), context[key])
+            item.value = item.value.replcace(new RegExp(`\${${key}}`, 'g'), context[key])
           }
         }
       }

@@ -1,4 +1,5 @@
 const path = require('path')
+
 const config = exports
 
 config.defaultHost = '127.0.0.1'

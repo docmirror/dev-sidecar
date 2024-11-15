@@ -1,5 +1,5 @@
-const request = require('request')
 const HttpsAgent = require('@docmirror/mitmproxy/src/lib/proxy/common/ProxyHttpsAgent')
+const request = require('request')
 
 const options = {
   url: 'https://raw.githubusercontent.com/docmirror/dev-sidecar/refs/heads/master/packages/core/src/config/remote_config.json5',

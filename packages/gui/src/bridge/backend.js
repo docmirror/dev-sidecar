@@ -1,8 +1,8 @@
 import api from './api/backend'
+import autoStart from './auto-start/backend'
+import fileSelector from './file-selector/backend'
 import tongji from './tongji/backend'
 import update from './update/backend'
-import fileSelector from './file-selector/backend'
-import autoStart from './auto-start/backend'
 
 const modules = {
   api, // 核心接口模块

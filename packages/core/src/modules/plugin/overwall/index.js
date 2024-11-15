@@ -36,14 +36,12 @@ const Plugin = function (context) {
       for (const key in conf.targets) {
         serverConfig.intercepts[key] = {
           '.*': {
-            // eslint-disable-next-line no-template-curly-in-string
-            proxy: main + '/${host}',
+            proxy: `${main}/\${host}`,
             backup
           }
         }
       }
     }
-
   }
   return api
 }

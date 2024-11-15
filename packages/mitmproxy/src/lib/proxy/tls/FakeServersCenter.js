@@ -1,8 +1,9 @@
-const https = require('https')
 const http = require('http')
-const tlsUtils = require('./tlsUtils')
-const CertAndKeyContainer = require('./CertAndKeyContainer')
+const https = require('https')
 const forge = require('node-forge')
+const CertAndKeyContainer = require('./CertAndKeyContainer')
+const tlsUtils = require('./tlsUtils')
+
 const pki = forge.pki
 // const colors = require('colors')
 const tls = require('tls')

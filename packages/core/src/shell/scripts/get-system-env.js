@@ -2,7 +2,9 @@
  * 获取环境变量
  */
 const Shell = require('../shell')
+
 const execute = Shell.execute
+
 const executor = {
   async windows (exec) {
     const ret = await exec(['set'], { type: 'cmd' })
@@ -19,10 +21,10 @@ const executor = {
     return map
   },
   async linux (exec, { port }) {
-    throw Error('暂未实现此功能')
+    throw new Error('暂未实现此功能')
   },
   async mac (exec, { port }) {
-    throw Error('暂未实现此功能')
+    throw new Error('暂未实现此功能')
   }
 }
 

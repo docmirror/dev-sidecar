@@ -1,6 +1,7 @@
-const BaseDNS = require('./base')
 const axios = require('axios')
 const log = require('../../utils/util.log')
+const BaseDNS = require('./base')
+
 module.exports = class DNSOverIpAddress extends BaseDNS {
   async _lookup (hostname) {
     const url = `https://${hostname}.ipaddress.com`
@@ -8,7 +9,7 @@ module.exports = class DNSOverIpAddress extends BaseDNS {
     // const res = fs.readFileSync(path.resolve(__dirname, './data.txt')).toString()
     const res = await axios.get(url)
     if (res.status !== 200 && res.status !== 201) {
-      log.info(`[dns] get ${hostname} ipaddress: error:${res}`)
+      log.error(`[dns] get ${hostname} ipaddress: error: ${res}`)
       return
     }
     const ret = res.data

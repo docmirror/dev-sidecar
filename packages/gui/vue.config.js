@@ -1,8 +1,13 @@
 const path = require('path')
 const webpack = require('webpack')
+
 const publishUrl = process.env.VUE_APP_PUBLISH_URL
 const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
 console.log('Publish url:', publishUrl)
+
+/**
+ * @type {import('@vue/cli-service').ProjectOptions}
+ */
 module.exports = {
   pages: {
     index: {
@@ -11,7 +16,7 @@ module.exports = {
     }
   },
   configureWebpack: (config) => {
-    const configNew = {
+    return {
       plugins: [
         new webpack.DefinePlugin({ 'global.GENTLY': true })
       ],
@@ -28,7 +33,6 @@ module.exports = {
         ]
       }
     }
-    return configNew
   },
   pluginOptions: {
     electronBuilder: {

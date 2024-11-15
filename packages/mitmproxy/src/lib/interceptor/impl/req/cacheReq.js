@@ -44,7 +44,7 @@ function getLastModifiedTimeFromIfModifiedSince (rOptions, log) {
     return new Date(lastModified).getTime()
   } catch (e) {
     // 为数字时，直接返回
-    if (/\\d+/g.test(lastModified)) {
+    if (/\\d+/.test(lastModified)) {
       return lastModified - 0
     }
 
@@ -66,12 +66,12 @@ module.exports = {
 
     // 获取 Cache-Control 用于判断是否禁用缓存
     const cacheControl = rOptions.headers['cache-control']
-    if (cacheControl && (cacheControl.indexOf('no-cache') >= 0 || cacheControl.indexOf('no-store') >= 0)) {
+    if (cacheControl && (cacheControl.includes('no-cache') || cacheControl.includes('no-store'))) {
       return // 当前请求指定要禁用缓存，跳过当前拦截器
     }
     // 获取 Pragma 用于判断是否禁用缓存
     const pragma = rOptions.headers.pragma
-    if (pragma && (pragma.indexOf('no-cache') >= 0 || pragma.indexOf('no-store') >= 0)) {
+    if (pragma && (pragma.includes('no-cache') || pragma.includes('no-store'))) {
       return // 当前请求指定要禁用缓存，跳过当前拦截器
     }
 
@@ -91,7 +91,7 @@ module.exports = {
 
     // 缓存未过期，直接拦截请求并响应304
     res.writeHead(304, {
-      'DS-Interceptor': 'cache: ' + maxAge
+      'DS-Interceptor': `cache: ${maxAge}`
     })
     res.end()
 

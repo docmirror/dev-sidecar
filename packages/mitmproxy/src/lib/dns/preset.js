@@ -1,10 +1,12 @@
-const BaseDNS = require('./base')
 const matchUtil = require('../../utils/util.match')
+const BaseDNS = require('./base')
 
 function mapToList (ipMap) {
   const ipList = []
   for (const key in ipMap) {
-    if (!ipMap[key]) continue
+    if (!ipMap[key]) {
+      continue
+    }
     ipList.push(ipMap[key])
   }
   return ipList

@@ -1,5 +1,6 @@
-import path from 'path'
 import os from 'os'
+import path from 'path'
+
 function getSystemPlatform () {
   switch (os.platform()) {
     case 'darwin':

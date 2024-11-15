@@ -1,8 +1,8 @@
-const DNSOverTLS = require('./tls.js')
+const matchUtil = require('../../utils/util.match')
 const DNSOverHTTPS = require('./https.js')
 const DNSOverIpAddress = require('./ipaddress.js')
 const DNSOverPreSetIpList = require('./preset.js')
-const matchUtil = require('../../utils/util.match')
+const DNSOverTLS = require('./tls.js')
 
 module.exports = {
   initDNS (dnsProviders, preSetIpList) {

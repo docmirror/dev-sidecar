@@ -1,4 +1,5 @@
 const pipConfig = require('./config')
+
 const PipPlugin = function (context) {
   const { config, shell, event, log } = context
   const api = {
@@ -20,7 +21,7 @@ const PipPlugin = function (context) {
     },
     async getPipEnv () {
       const command = config.get().plugin.pip.setting.command
-      let ret = await shell.exec([command + ' config list'], { type: 'cmd' })
+      let ret = await shell.exec([`${command} config list`], { type: 'cmd' })
       if (ret != null) {
         ret = ret.trim()
         const lines = ret.split('\n')

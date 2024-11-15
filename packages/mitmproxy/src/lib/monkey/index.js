@@ -1,10 +1,11 @@
 const fs = require('fs')
 const path = require('path')
 const log = require('../../utils/util.log')
+
 let scripts
 
 function buildScript (sc, content, scriptName) {
-  const scriptKey = `ds_${scriptName}${sc.version ? ('_' + sc.version) : ''}:`
+  const scriptKey = `ds_${scriptName}${sc.version ? (`_${sc.version}`) : ''}:`
 
   // 代码1：监听事件
   const runAt = sc['run-at'] || 'document-end'
@@ -45,9 +46,9 @@ if (!((window.__ds_global__ || {}).GM_getValue || (() => true))("ds_enabled", tr
     }
 
     if (item.indexOf('.') > 0) {
-      grantStr += item + ' = (window.__ds_global__ || {})[\'' + item + '\'];'
+      grantStr += `${item} = (window.__ds_global__ || {})['${item}'];`
     } else {
-      grantStr += 'const ' + item + ' = (window.__ds_global__ || {})[\'' + item + '\'] || (() => {});'
+      grantStr += `const ${item} = (window.__ds_global__ || {})['${item}'] || (() => {});`
     }
   }
 
@@ -81,7 +82,7 @@ function loadScript (content, scriptName) {
     script: ''
   }
   for (const string of confItemArr) {
-    const reg = new RegExp('.*@([^\\s]+)\\s(.+)')
+    const reg = new RegExp('.*@(\\S+)\\s(.+)')
     const ret = string.match(reg)
     if (ret) {
       const key = ret[1].trim()
@@ -103,7 +104,7 @@ function loadScript (content, scriptName) {
 
 function readFile (rootDir, script) {
   log.info('read script, script root location:', path.resolve('./'))
-  const location = path.join(rootDir, './' + script)
+  const location = path.join(rootDir, `./${script}`)
   log.info('read script, the script location:', location)
   return fs.readFileSync(location).toString()
 }

@@ -1,5 +1,5 @@
-import DsContainer from '../components/container'
 import lodash from 'lodash'
+import DsContainer from '../components/container'
 
 export default {
   components: {
