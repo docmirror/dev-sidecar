@@ -1,6 +1,6 @@
+const path = require('path')
 const log4js = require('log4js')
 const config = require('../config/index')
-const path = require('path')
 
 const level = process.env.NODE_ENV === 'development' ? 'debug' : 'info'
 

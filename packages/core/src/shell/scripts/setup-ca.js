@@ -5,20 +5,17 @@ const execute = Shell.execute
 const executor = {
   async windows (exec, { certPath }) {
     const cmds = [`start "" "${certPath}"`]
-    // eslint-disable-next-line no-unused-vars
-    const ret = await exec(cmds, { type: 'cmd' })
+    await exec(cmds, { type: 'cmd' })
     return true
   },
   async linux (exec, { certPath }) {
     const cmds = [`sudo cp ${certPath} /usr/local/share/ca-certificates`, 'sudo update-ca-certificates ']
-    // eslint-disable-next-line no-unused-vars
-    const ret = await exec(cmds)
+    await exec(cmds)
     return true
   },
   async mac (exec, { certPath }) {
     const cmds = [`open "${certPath}"`]
-    // eslint-disable-next-line no-unused-vars
-    const ret = await exec(cmds, { type: 'cmd' })
+    await exec(cmds, { type: 'cmd' })
     return true
   },
 }

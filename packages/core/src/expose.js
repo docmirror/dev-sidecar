@@ -37,7 +37,7 @@ config.resetDefault()
 const server = modules.server
 const serverStart = server.start
 
-function newServerStart({ mitmproxyPath }) {
+function newServerStart ({ mitmproxyPath }) {
   return serverStart({ mitmproxyPath, plugins: plugin })
 }
 server.start = newServerStart
