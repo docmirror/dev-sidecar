@@ -30,5 +30,5 @@ module.exports = [
 
   // response interceptor impls
   OPTIONSHeaders, cacheRes, responseReplace,
-  script
+  script,
 ]

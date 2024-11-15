@@ -1,3 +1,68 @@
+<script>
+import Plugin from '../../mixins/plugin'
+
+export default {
+  name: 'Git',
+  mixins: [Plugin],
+  data () {
+    return {
+      key: 'plugin.git',
+      noProxyUrls: [],
+      needRestart: false,
+    }
+  },
+  created () {
+    console.log('status:', this.status)
+  },
+  mounted () {
+  },
+  methods: {
+    ready () {
+      this.initNoProxyUrls()
+    },
+    async applyBefore () {
+      if (this.status.plugin.git.enabled) {
+        await this.$api.plugin.git.close()
+        this.needRestart = true
+      } else {
+        this.needRestart = false
+      }
+      this.submitNoProxyUrls()
+    },
+    async applyAfter () {
+      if (this.needRestart) {
+        await this.$api.plugin.git.start()
+      }
+    },
+    initNoProxyUrls () {
+      this.noProxyUrls = []
+      for (const key in this.config.plugin.git.setting.noProxyUrls) {
+        const value = this.config.plugin.git.setting.noProxyUrls[key]
+        this.noProxyUrls.push({
+          key,
+          value,
+        })
+      }
+    },
+    addNoProxyUrl () {
+      this.noProxyUrls.unshift({ key: '', value: true })
+    },
+    delNoProxyUrl (item, index) {
+      this.noProxyUrls.splice(index, 1)
+    },
+    submitNoProxyUrls () {
+      const noProxyUrls = {}
+      for (const item of this.noProxyUrls) {
+        if (item.key) {
+          noProxyUrls[item.key] = item.value
+        }
+      }
+      this.config.plugin.git.setting.noProxyUrls = noProxyUrls
+    },
+  },
+}
+</script>
+
 <template>
   <ds-container>
     <template slot="header">
@@ -33,15 +98,15 @@
                 <span><code>Git.exe</code>将不代理以下仓库；可以是根地址、组织/机构地址、完整地址</span>
               </a-col>
               <a-col :span="2">
-                <a-button type="primary" icon="plus" @click="addNoProxyUrl()"/>
+                <a-button type="primary" icon="plus" @click="addNoProxyUrl()" />
               </a-col>
             </a-row>
-            <a-row :gutter="10" v-for="(item,index) of noProxyUrls" :key='index'>
+            <a-row v-for="(item, index) of noProxyUrls" :key="index" :gutter="10">
               <a-col :span="22">
-                <a-input :disabled="item.value === false" v-model="item.key"></a-input>
+                <a-input v-model="item.key" :disabled="item.value === false" />
               </a-col>
               <a-col :span="2">
-                <a-button type="danger" icon="minus" @click="delNoProxyUrl(item,index)"/>
+                <a-button type="danger" icon="minus" @click="delNoProxyUrl(item, index)" />
               </a-col>
             </a-row>
           </div>
@@ -55,69 +120,4 @@
       </div>
     </template>
   </ds-container>
-
 </template>
-
-<script>
-import Plugin from '../../mixins/plugin'
-
-export default {
-  name: 'Git',
-  mixins: [Plugin],
-  data () {
-    return {
-      key: 'plugin.git',
-      noProxyUrls: [],
-      needRestart: false
-    }
-  },
-  created () {
-    console.log('status:', this.status)
-  },
-  mounted () {
-  },
-  methods: {
-    ready () {
-      this.initNoProxyUrls()
-    },
-    async applyBefore () {
-      if (this.status.plugin.git.enabled) {
-        await this.$api.plugin.git.close()
-        this.needRestart = true
-      } else {
-        this.needRestart = false
-      }
-      this.submitNoProxyUrls()
-    },
-    async applyAfter () {
-      if (this.needRestart) {
-        await this.$api.plugin.git.start()
-      }
-    },
-    initNoProxyUrls () {
-      this.noProxyUrls = []
-      for (const key in this.config.plugin.git.setting.noProxyUrls) {
-        const value = this.config.plugin.git.setting.noProxyUrls[key]
-        this.noProxyUrls.push({
-          key, value
-        })
-      }
-    },
-    addNoProxyUrl () {
-      this.noProxyUrls.unshift({ key: '', value: true })
-    },
-    delNoProxyUrl (item, index) {
-      this.noProxyUrls.splice(index, 1)
-    },
-    submitNoProxyUrls () {
-      const noProxyUrls = {}
-      for (const item of this.noProxyUrls) {
-        if (item.key) {
-          noProxyUrls[item.key] = item.value
-        }
-      }
-      this.config.plugin.git.setting.noProxyUrls = noProxyUrls
-    }
-  }
-}
-</script>

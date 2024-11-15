@@ -53,7 +53,7 @@ export function apiInit (app) {
     })
   }
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     resolve(apiObj)
   })
 }

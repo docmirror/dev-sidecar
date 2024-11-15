@@ -1,90 +1,3 @@
-<template>
-  <ds-container>
-    <template slot="header">
-      NPM加速
-      <span style="color:#999;">
-        由于nodejs不走系统证书，所以npm加速不是很好用，可以用淘宝registry
-      </span>
-    </template>
-
-    <div v-if="config">
-      <a-form layout="horizontal">
-        <a-form-item label="启用NPM代理" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.node.enabled">
-            随应用启动
-          </a-checkbox>
-          <a-tag v-if="status.plugin.node.enabled" color="green">
-            当前已启动
-          </a-tag>
-          <a-tag v-else color="red">
-            当前未启动
-          </a-tag>
-        </a-form-item>
-        <a-form-item label="npm命令名" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.node.setting.command"></a-input>
-          <div class="form-help">如果你的npm命令改成了其他名字，或者想设置绿色版npm程序路径，可在此处修改</div>
-        </a-form-item>
-        <a-form-item label="SSL校验" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.node.setting['strict-ssl']">
-            关闭strict-ssl
-          </a-checkbox>
-          npm代理启用后必须关闭
-        </a-form-item>
-        <a-form-item label="npm仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-radio-group v-model="config.plugin.node.setting.registry" @change="onSwitchRegistry"
-                         default-value="https://registry.npmjs.org" button-style="solid">
-            <a-radio-button value="https://registry.npmjs.org" title="https://registry.npmjs.org">
-              npmjs原生
-            </a-radio-button>
-            <a-radio-button value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
-              taobao镜像
-            </a-radio-button>
-          </a-radio-group>
-          <div class="form-help">设置后立即生效，即使关闭 ds 也会继续保持</div>
-        </a-form-item>
-
-        <a-form-item label="yarn仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-radio-group v-model="config.plugin.node.setting.yarnRegistry" :default-value="'null'" @change="onSwitchYarnRegistry" button-style="solid">
-            <a-radio-button :value="'null'" title="https://registry.yarnpkg.com">
-              yarn原生
-            </a-radio-button>
-            <a-radio-button value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
-              taobao镜像
-            </a-radio-button>
-          </a-radio-group>
-          <div class="form-help">设置后立即生效，即使关闭 ds 也会继续保持</div>
-        </a-form-item>
-
-        <a-form-item label="镜像变量设置" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.node.startup.variables">
-            自动设置，启动npm加速开关时将会设置如下环境变量
-          </a-checkbox>
-          <div class="form-help">某些库需要自己设置镜像变量，才能下载，比如：<code>electron</code></div>
-          <a-row :gutter="10" style="margin-top: 2px" v-for="(item,index) of npmVariables" :key='index'>
-            <a-col :span="10">
-              <a-input v-model="item.key" :title="item.key" readOnly></a-input>
-            </a-col>
-            <a-col :span="10">
-              <a-input v-model="item.value" :title="item.value" readOnly></a-input>
-            </a-col>
-            <a-col :span="4">
-              <a-icon v-if="item.exists && item.hadSet" title="已设置" style="color:green" type="check"/>
-              <a-icon v-else title="还未设置" style="color:red" type="exclamation-circle"/>
-            </a-col>
-          </a-row>
-        </a-form-item>
-      </a-form>
-    </div>
-    <template slot="footer">
-      <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">恢复默认</a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
-      </div>
-    </template>
-  </ds-container>
-
-</template>
-
 <script>
 import Plugin from '../../mixins/plugin'
 
@@ -95,7 +8,7 @@ export default {
     return {
       key: 'plugin.node',
       npmVariables: undefined,
-      registry: false
+      registry: false,
     }
   },
   created () {
@@ -105,7 +18,7 @@ export default {
   },
   methods: {
     ready () {
-      return this.$api.plugin.node.getVariables().then(ret => {
+      return this.$api.plugin.node.getVariables().then((ret) => {
         console.log('variables', ret)
         this.npmVariables = ret
       })
@@ -129,9 +42,103 @@ export default {
       this.saveConfig().then(() => {
         this.$api.plugin.node.setVariables()
       })
-    }
-  }
+    },
+  },
 }
 </script>
-<style lang="sass">
-</style>
+
+<template>
+  <ds-container>
+    <template slot="header">
+      NPM加速
+      <span style="color:#999;">
+        由于nodejs不走系统证书，所以npm加速不是很好用，可以用淘宝registry
+      </span>
+    </template>
+
+    <div v-if="config">
+      <a-form layout="horizontal">
+        <a-form-item label="启用NPM代理" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-checkbox v-model="config.plugin.node.enabled">
+            随应用启动
+          </a-checkbox>
+          <a-tag v-if="status.plugin.node.enabled" color="green">
+            当前已启动
+          </a-tag>
+          <a-tag v-else color="red">
+            当前未启动
+          </a-tag>
+        </a-form-item>
+        <a-form-item label="npm命令名" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-input v-model="config.plugin.node.setting.command" />
+          <div class="form-help">
+            如果你的npm命令改成了其他名字，或者想设置绿色版npm程序路径，可在此处修改
+          </div>
+        </a-form-item>
+        <a-form-item label="SSL校验" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-checkbox v-model="config.plugin.node.setting['strict-ssl']">
+            关闭strict-ssl
+          </a-checkbox>
+          npm代理启用后必须关闭
+        </a-form-item>
+        <a-form-item label="npm仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-radio-group
+            v-model="config.plugin.node.setting.registry" default-value="https://registry.npmjs.org"
+            button-style="solid" @change="onSwitchRegistry"
+          >
+            <a-radio-button value="https://registry.npmjs.org" title="https://registry.npmjs.org">
+              npmjs原生
+            </a-radio-button>
+            <a-radio-button value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
+              taobao镜像
+            </a-radio-button>
+          </a-radio-group>
+          <div class="form-help">
+            设置后立即生效，即使关闭 ds 也会继续保持
+          </div>
+        </a-form-item>
+
+        <a-form-item label="yarn仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-radio-group v-model="config.plugin.node.setting.yarnRegistry" default-value="null" button-style="solid" @change="onSwitchYarnRegistry">
+            <a-radio-button value="default" title="https://registry.yarnpkg.com">
+              yarn原生
+            </a-radio-button>
+            <a-radio-button value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
+              taobao镜像
+            </a-radio-button>
+          </a-radio-group>
+          <div class="form-help">
+            设置后立即生效，即使关闭 ds 也会继续保持
+          </div>
+        </a-form-item>
+
+        <a-form-item label="镜像变量设置" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-checkbox v-model="config.plugin.node.startup.variables">
+            自动设置，启动npm加速开关时将会设置如下环境变量
+          </a-checkbox>
+          <div class="form-help">
+            某些库需要自己设置镜像变量，才能下载，比如：<code>electron</code>
+          </div>
+          <a-row v-for="(item, index) of npmVariables" :key="index" :gutter="10" style="margin-top: 2px">
+            <a-col :span="10">
+              <a-input v-model="item.key" :title="item.key" read-only />
+            </a-col>
+            <a-col :span="10">
+              <a-input v-model="item.value" :title="item.value" read-only />
+            </a-col>
+            <a-col :span="4">
+              <a-icon v-if="item.exists && item.hadSet" title="已设置" style="color:green" type="check" />
+              <a-icon v-else title="还未设置" style="color:red" type="exclamation-circle" />
+            </a-col>
+          </a-row>
+        </a-form-item>
+      </a-form>
+    </div>
+    <template slot="footer">
+      <div class="footer-bar">
+        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">恢复默认</a-button>
+        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
+      </div>
+    </template>
+  </ds-container>
+</template>

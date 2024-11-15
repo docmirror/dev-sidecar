@@ -1,132 +1,13 @@
-<template>
-  <ds-container class="page_index">
-    <template slot="header">
-      给开发者的辅助工具
-      <span>
-          <a-button style="margin-right:10px" @click="openSetupCa">
-            <a-badge :count="_rootCaSetuped?0:1" dot>安装根证书</a-badge>
-          </a-button>
-
-          <a-button style="margin-right:10px" @click="doCheckUpdate(true)" :loading="update.downloading || update.checking"
-                    :title="'当前版本:'+info.version">
-            <a-badge :count="update.newVersion?1:0" dot>
-              <span v-if="update.downloading">{{ update.progress }}%</span>{{ update.downloading ? '新版本下载中' : ('检查更新' + (update.checking ? '中' : '')) }}
-            </a-badge>
-          </a-button>
-      </span>
-    </template>
-
-    <div class="box">
-      <a-alert v-if="config && config.app.showShutdownTip" message="本应用开启后会修改系统代理，直接重启电脑可能会无法上网，您可以再次启动本应用即可恢复。如您需要卸载，在卸载前请务必完全退出本应用再进行卸载" banner closable @close="onShutdownTipClose"/>
-      <div class="mode-bar" style="margin:20px;" v-if="config && config.app">
-        <a-radio-group v-model="config.app.mode" button-style="solid" @change="modeChange">
-          <a-tooltip placement="topLeft" title="启用测速，关闭拦截，关闭增强（不稳定，不需要安装证书，最安全）">
-            <a-radio-button value="safe">
-              安全模式
-            </a-radio-button>
-          </a-tooltip>
-          <a-tooltip placement="topLeft" title="启用测速，启用拦截，关闭增强（需要安装证书）">
-            <a-radio-button value="default">
-              默认模式
-            </a-radio-button>
-          </a-tooltip>
-          <a-tooltip v-if="setting.overwall" placement="topLeft" title="一个简单的梯子（敏感原因，默认隐藏，更多信息请点击左侧增强功能菜单）">
-            <a-radio-button value="ow">
-              增强模式
-            </a-radio-button>
-          </a-tooltip>
-          <a-tooltip v-else placement="topLeft" title="这个页面有个彩蛋">
-            <a-radio-button :disabled="true" value="ow">
-              彩蛋
-            </a-radio-button>
-          </a-tooltip>
-        </a-radio-group>
-      </div>
-
-      <div v-if="status"
-           style="margin-top:20px;display: flex; align-items:center;justify-content:space-around;flex-direction: row">
-
-        <div style="text-align: center">
-          <div class="big_button">
-            <a-button shape="circle" :type="startup.type()" :loading="startup.loading" @click="startup.doClick">
-              <img v-if="!startup.loading && !status.server.enabled" width="50" src="/logo/logo-simple.svg">
-              <img v-if="!startup.loading && status.server.enabled" width="50" src="/logo/logo-fff.svg">
-            </a-button>
-            <div class="mt10">{{ status.server.enabled ? '已开启' : '已关闭' }}</div>
-
-          </div>
-        </div>
-        <div :span="12">
-          <a-form style="margin-top:20px" :label-col="{ span: 15 }" :wrapper-col="{ span: 9 }">
-            <a-form-item v-for=" (item, key) in switchBtns" :key="key" :label="item.label">
-              <a-tooltip placement="topLeft">
-                <a-switch style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked
-                          @change="item.doClick">
-                  <a-icon slot="checkedChildren" type="check"/>
-                  <a-icon slot="unCheckedChildren" type="close"/>
-                </a-switch>
-              </a-tooltip>
-            </a-form-item>
-          </a-form>
-        </div>
-      </div>
-
-    </div>
-
-    <setup-ca title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped"></setup-ca>
-    <div slot="footer">
-      <div class="star" v-if="!setting.overwall">
-        <div class="donate">
-          <a-tooltip placement="topLeft" title="彩蛋，点我">
-            <span style="display: block;width:100px;height:50px;" @click="wantOW()"></span>
-          </a-tooltip>
-        </div>
-        <div class="right"></div>
-      </div>
-      <div class="star" v-if="setting.development == null || !setting.development">
-        <div class="donate" @click="donateModal=true">
-          <a-icon type="like" theme="outlined"/>
-          捐赠
-        </div>
-        <div class="right">
-          <div>如果它解决了你的问题，请不要吝啬你的star哟！点这里
-            <a-icon style="margin-right:10px;" type="arrow-right" theme="outlined"/>
-          </div>
-          <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img alt="GitHub stars"
-                                                                                    src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
-        </div>
-      </div>
-
-      <a-modal title="捐赠" v-if="setting.development == null || !setting.development" v-model="donateModal" width="550px" cancelText="不了" okText="果断支持" @ok="goDonate">
-        <div>* 本应用完全免费，如果觉得好用，可以给予捐赠。</div>
-        <div>* 开源项目持续发展离不开您的支持，感谢</div>
-        <div class="payQrcode">
-          <img height="200px" src="/pay.jpg"/>
-        </div>
-      </a-modal>
-    </div>
-  </ds-container>
-
-</template>
-
 <script>
 import lodash from 'lodash'
-import setupCa from '../components/setup-ca'
 import DsContainer from '../components/container'
+import SetupCa from '../components/setup-ca'
 
 export default {
   name: 'Index',
   components: {
     DsContainer,
-    setupCa
-  },
-  computed: {
-    _rootCaSetuped () {
-      if (this.setting.rootCa) {
-        return this.setting.rootCa.setuped === true
-      }
-      return false
-    }
+    SetupCa,
   },
   data () {
     return {
@@ -143,7 +24,7 @@ export default {
           } else {
             this.apiCall(this.startup, this.$api.startup)
           }
-        }
+        },
       },
       info: {},
       newVersionDownloading: false,
@@ -153,15 +34,23 @@ export default {
         loading: false,
         doClick: (checked) => {
           this.onServerClick(checked)
-        }
+        },
       },
       switchBtns: undefined,
       config: undefined,
       setupCa: {
-        visible: false
+        visible: false,
       },
-      update: { checking: false, downloading: false, progress: 0, newVersion: false }
+      update: { checking: false, downloading: false, progress: 0, newVersion: false },
     }
+  },
+  computed: {
+    _rootCaSetuped () {
+      if (this.setting.rootCa) {
+        return this.setting.rootCa.setuped === true
+      }
+      return false
+    },
   },
   async created () {
     await this.doCheckRootCa()
@@ -173,7 +62,7 @@ export default {
       this.update.autoChecked = true // 应用启动时，执行一次
       this.doCheckUpdate(false)
     }
-    this.$api.info.get().then(ret => {
+    this.$api.info.get().then((ret) => {
       this.info = ret
     })
   },
@@ -212,9 +101,9 @@ export default {
         title: '彩蛋（增强模式）',
         content: (
           <div>
-          我把它藏在了源码里，感兴趣的话可以找一找它（线索提示 // TODO）
+            我把它藏在了源码里，感兴趣的话可以找一找它（线索提示 // TODO）
           </div>
-        )
+        ),
       })
     },
     async doCheckRootCa () {
@@ -237,7 +126,7 @@ export default {
           // const rootCa = this.setting.rootCa
           // rootCa.noTip = true
           // this.$api.setting.save(this.setting)
-        }
+        },
       })
     },
     openSetupCa () {
@@ -273,7 +162,7 @@ export default {
       this.$api.setting.save(this.setting)
     },
     reloadConfig () {
-      return this.$api.config.reload().then(ret => {
+      return this.$api.config.reload().then((ret) => {
         this.config = ret
         return ret
       })
@@ -303,7 +192,7 @@ export default {
         },
         doClick: (checked) => {
           this.onSwitchClick(this.switchBtns[key], apiTarget.start, apiTarget.close, checked)
-        }
+        },
       }
     },
     async apiCall (btn, api, param) {
@@ -360,12 +249,131 @@ export default {
         cancelText: '下次还显示',
         onOk: () => {
           this.$api.config.update({ app: { showShutdownTip: false } })
-        }
+        },
       })
-    }
-  }
+    },
+  },
 }
 </script>
+
+<template>
+  <DsContainer class="page_index">
+    <template slot="header">
+      给开发者的辅助工具
+      <span>
+        <a-button style="margin-right:10px" @click="openSetupCa">
+          <a-badge :count="_rootCaSetuped ? 0 : 1" dot>安装根证书</a-badge>
+        </a-button>
+
+        <a-button
+          style="margin-right:10px" :loading="update.downloading || update.checking" :title="`当前版本:${info.version}`"
+          @click="doCheckUpdate(true)"
+        >
+          <a-badge :count="update.newVersion ? 1 : 0" dot>
+            <span v-if="update.downloading">{{ update.progress }}%</span>{{ update.downloading ? '新版本下载中' : (`检查更新${update.checking ? '中' : ''}`) }}
+          </a-badge>
+        </a-button>
+      </span>
+    </template>
+
+    <div class="box">
+      <a-alert v-if="config && config.app.showShutdownTip" message="本应用开启后会修改系统代理，直接重启电脑可能会无法上网，您可以再次启动本应用即可恢复。如您需要卸载，在卸载前请务必完全退出本应用再进行卸载" banner closable @close="onShutdownTipClose" />
+      <div v-if="config && config.app" class="mode-bar" style="margin:20px;">
+        <a-radio-group v-model="config.app.mode" button-style="solid" @change="modeChange">
+          <a-tooltip placement="topLeft" title="启用测速，关闭拦截，关闭增强（不稳定，不需要安装证书，最安全）">
+            <a-radio-button value="safe">
+              安全模式
+            </a-radio-button>
+          </a-tooltip>
+          <a-tooltip placement="topLeft" title="启用测速，启用拦截，关闭增强（需要安装证书）">
+            <a-radio-button value="default">
+              默认模式
+            </a-radio-button>
+          </a-tooltip>
+          <a-tooltip v-if="setting.overwall" placement="topLeft" title="一个简单的梯子（敏感原因，默认隐藏，更多信息请点击左侧增强功能菜单）">
+            <a-radio-button value="ow">
+              增强模式
+            </a-radio-button>
+          </a-tooltip>
+          <a-tooltip v-else placement="topLeft" title="这个页面有个彩蛋">
+            <a-radio-button :disabled="true" value="ow">
+              彩蛋
+            </a-radio-button>
+          </a-tooltip>
+        </a-radio-group>
+      </div>
+
+      <div
+        v-if="status"
+        style="margin-top:20px;display: flex; align-items:center;justify-content:space-around;flex-direction: row"
+      >
+        <div style="text-align: center">
+          <div class="big_button">
+            <a-button shape="circle" :type="startup.type()" :loading="startup.loading" @click="startup.doClick">
+              <img v-if="!startup.loading && !status.server.enabled" width="50" src="/logo/logo-simple.svg">
+              <img v-if="!startup.loading && status.server.enabled" width="50" src="/logo/logo-fff.svg">
+            </a-button>
+            <div class="mt10">
+              {{ status.server.enabled ? '已开启' : '已关闭' }}
+            </div>
+          </div>
+        </div>
+        <div :span="12">
+          <a-form style="margin-top:20px" :label-col="{ span: 15 }" :wrapper-col="{ span: 9 }">
+            <a-form-item v-for=" (item, key) in switchBtns" :key="key" :label="item.label">
+              <a-tooltip placement="topLeft">
+                <a-switch
+                  style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked
+                  @change="item.doClick"
+                >
+                  <a-icon slot="checkedChildren" type="check" />
+                  <a-icon slot="unCheckedChildren" type="close" />
+                </a-switch>
+              </a-tooltip>
+            </a-form-item>
+          </a-form>
+        </div>
+      </div>
+    </div>
+
+    <SetupCa title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped" />
+    <div slot="footer">
+      <div v-if="!setting.overwall" class="star">
+        <div class="donate">
+          <a-tooltip placement="topLeft" title="彩蛋，点我">
+            <span style="display: block;width:100px;height:50px;" @click="wantOW()" />
+          </a-tooltip>
+        </div>
+        <div class="right" />
+      </div>
+      <div v-if="setting.development == null || !setting.development" class="star">
+        <div class="donate" @click="donateModal = true">
+          <a-icon type="like" theme="outlined" />
+          捐赠
+        </div>
+        <div class="right">
+          <div>
+            如果它解决了你的问题，请不要吝啬你的star哟！点这里
+            <a-icon style="margin-right:10px;" type="arrow-right" theme="outlined" />
+          </div>
+          <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img
+            alt="GitHub stars"
+            src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"
+          ></a>
+        </div>
+      </div>
+
+      <a-modal v-if="setting.development == null || !setting.development" v-model="donateModal" title="捐赠" width="550px" cancel-text="不了" ok-text="果断支持" @ok="goDonate">
+        <div>* 本应用完全免费，如果觉得好用，可以给予捐赠。</div>
+        <div>* 开源项目持续发展离不开您的支持，感谢</div>
+        <div class="payQrcode">
+          <img height="200px" src="/pay.jpg">
+        </div>
+      </a-modal>
+    </div>
+  </DsContainer>
+</template>
+
 <style lang="scss">
 .page_index {
   .mode-bar {

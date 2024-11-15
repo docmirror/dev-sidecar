@@ -21,7 +21,7 @@ function getTimeoutConfig (hostname, serverSetting) {
 
   return {
     timeout: timeoutConfig.timeout || serverSetting.defaultTimeout || 20000,
-    keepAliveTimeout: timeoutConfig.keepAliveTimeout || serverSetting.defaultKeepAliveTimeout || 30000
+    keepAliveTimeout: timeoutConfig.keepAliveTimeout || serverSetting.defaultKeepAliveTimeout || 30000,
   }
 }
 

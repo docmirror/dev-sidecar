@@ -171,7 +171,9 @@ module.exports = {
       res.writeHead(200, headers)
       res.write(JSON.stringify(result)) // 格式如：{"words_result":[{"words":"6525"}],"words_result_num":1,"log_id":1818877093747960000}
       res.end()
-      if (next) next() // 异步执行完继续next
+      if (next) {
+        next() // 异步执行完继续next
+      }
     }).catch((err) => {
       log.info('baiduOcr error:', err)
       res.writeHead(200, headers)
