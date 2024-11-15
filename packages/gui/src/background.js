@@ -19,6 +19,7 @@ const _powerMonitor = isWindows ? require('./background/powerMonitor').powerMoni
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 let winIsHidden = false
+
 let tray // 防止被内存清理
 let forceClose = false
 DevSidecar.api.config.reload()

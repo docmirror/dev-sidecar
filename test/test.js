@@ -23,7 +23,7 @@
 // const content = fs.readFileSync('C:\\Users\\Administrator\\.dev-sidecar\\dev-sidecar.ca.crt')
 // console.log('content:',JSON.stringify(content.toString().replace(new RegExp('\r\n','g'),'\n')))
 
-// function testCa() {
+// function testCa () {
 //     const https = require('https')
 //     const fs = require('fs')
 //     process.env.NODE_EXTRA_CA_CERTS = 'C:\\Users\\Administrator\\.dev-sidecar\\dev-sidecar.ca.crt'
