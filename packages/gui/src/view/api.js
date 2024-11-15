@@ -1,10 +1,11 @@
-import lodash from 'lodash'
 import { ipcRenderer, shell } from 'electron'
+import lodash from 'lodash'
+
 let inited = false
 let apiObj = null
 export function apiInit (app) {
   const invoke = (api, args) => {
-    return ipcRenderer.invoke('apiInvoke', [api, args]).catch(e => {
+    return ipcRenderer.invoke('apiInvoke', [api, args]).catch((e) => {
       app.$notification.error({
         message: 'Api invoke error',
         description: e.message
@@ -42,7 +43,7 @@ export function apiInit (app) {
   }
 
   if (!inited) {
-    return invoke('getApiList').then(list => {
+    return invoke('getApiList').then((list) => {
       inited = true
       for (const item of list) {
         bindApi(item)
@@ -52,7 +53,7 @@ export function apiInit (app) {
     })
   }
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     resolve(apiObj)
   })
 }

@@ -1,5 +1,6 @@
 import lodash from 'lodash'
 import Vue from 'vue'
+
 const status = {
   server: {
     enabled: false

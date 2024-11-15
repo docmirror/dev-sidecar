@@ -1,49 +1,7 @@
-<template>
-  <a-config-provider :locale="locale">
-  <div class="ds_layout" :class="themeClass">
-    <a-layout>
-      <a-layout-sider :theme="theme">
-        <div class="logo"></div>
-        <div class="aside">
-          <a-menu
-            mode="inline"
-            :defaultSelectedKeys="[$route.fullPath]"
-            :defaultOpenKeys="['/plugin']"
-          >
-            <template v-for="(item) of menus">
-              <a-sub-menu v-if="item.children && item.children.length>0" :key="item.path" @titleClick="titleClick(item)">
-                <span slot="title"><a-icon :type="item.icon?item.icon:'file'"/><span>{{item.title}}</span></span>
-                  <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)">
-                    <a-icon  :type="sub.icon?sub.icon:'file'"/> {{ sub.title }}
-                  </a-menu-item>
-              </a-sub-menu>
-              <a-menu-item v-else :key="item.path" @click="menuClick(item)">
-                <a-icon  :type="item.icon?item.icon:'file'"/>
-                <span class="nav-text">{{ item.title }}</span>
-              </a-menu-item>
-            </template>
-          </a-menu>
-        </div>
-      </a-layout-sider>
-      <a-layout>
-<!--        <a-layout-header>Header</a-layout-header>-->
-        <a-layout-content>
-          <router-view></router-view>
-        </a-layout-content>
-        <a-layout-footer>
-          <div class="footer">
-            ©2020-2024 docmirror.cn by Greper, WangLiang  <span>{{info.version}}</span>
-          </div>
-        </a-layout-footer>
-      </a-layout>
-    </a-layout>
-  </div>
-  </a-config-provider>
-</template>
-
 <script>
 import createMenus from '@/view/router/menu'
 import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
+
 export default {
   name: 'App',
   components: {
@@ -58,7 +16,7 @@ export default {
   },
   computed: {
     themeClass () {
-      return 'theme-' + this.config.app.theme
+      return `theme-${this.config.app.theme}`
     },
     theme () {
       return this.config.app.theme
@@ -67,7 +25,7 @@ export default {
   created () {
     this.menus = createMenus(this)
     this.config = this.$global.config
-    this.$api.info.get().then(ret => {
+    this.$api.info.get().then((ret) => {
       this.info = ret
     })
   },
@@ -85,6 +43,49 @@ export default {
   }
 }
 </script>
+
+<template>
+  <a-config-provider :locale="locale">
+    <div class="ds_layout" :class="themeClass">
+      <a-layout>
+        <a-layout-sider :theme="theme">
+          <div class="logo" />
+          <div class="aside">
+            <a-menu
+              mode="inline"
+              :default-selected-keys="[$route.fullPath]"
+              :default-open-keys="['/plugin']"
+            >
+              <template v-for="(item) of menus">
+                <a-sub-menu v-if="item.children && item.children.length > 0" :key="item.path" @titleClick="titleClick(item)">
+                  <span slot="title"><a-icon :type="item.icon ? item.icon : 'file'" /><span>{{ item.title }}</span></span>
+                  <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)">
+                    <a-icon :type="sub.icon ? sub.icon : 'file'" /> {{ sub.title }}
+                  </a-menu-item>
+                </a-sub-menu>
+                <a-menu-item v-else :key="item.path" @click="menuClick(item)">
+                  <a-icon :type="item.icon ? item.icon : 'file'" />
+                  <span class="nav-text">{{ item.title }}</span>
+                </a-menu-item>
+              </template>
+            </a-menu>
+          </div>
+        </a-layout-sider>
+        <a-layout>
+          <!-- <a-layout-header>Header</a-layout-header> -->
+          <a-layout-content>
+            <router-view />
+          </a-layout-content>
+          <a-layout-footer>
+            <div class="footer">
+              ©2020-2024 docmirror.cn by Greper, WangLiang  <span>{{ info.version }}</span>
+            </div>
+          </a-layout-footer>
+        </a-layout>
+      </a-layout>
+    </div>
+  </a-config-provider>
+</template>
 
 <style lang="scss">
 body{
