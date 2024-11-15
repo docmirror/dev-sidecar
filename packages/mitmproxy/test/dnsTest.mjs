@@ -4,33 +4,33 @@ const dnsProviders = dns.initDNS({
   aliyun: {
     type: 'https',
     server: 'https://dns.alidns.com/dns-query',
-    cacheSize: 1000
+    cacheSize: 1000,
   },
   cloudflare: {
     type: 'https',
     server: 'https://1.1.1.1/dns-query',
-    cacheSize: 1000
+    cacheSize: 1000,
   },
   ipaddress: {
     type: 'ipaddress',
     server: 'ipaddress',
-    cacheSize: 1000
+    cacheSize: 1000,
   },
   quad9: {
     type: 'https',
     server: 'https://9.9.9.9/dns-query',
-    cacheSize: 1000
+    cacheSize: 1000,
   },
   rubyfish: {
     type: 'https',
     server: 'https://rubyfish.cn/dns-query',
-    cacheSize: 1000
+    cacheSize: 1000,
   },
   py233: {
     type: 'https',
     server: ' https://i.233py.com/dns-query',
-    cacheSize: 1000
-  }
+    cacheSize: 1000,
+  },
 
   // sb: {
   //   type: 'https',

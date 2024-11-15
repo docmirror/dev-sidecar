@@ -1,12 +1,13 @@
-const url = require('url')
-const request = require('request')
-const lodash = require('lodash')
-const pac = require('./source/pac')
-const matchUtil = require('../../../utils/util.match')
-const log = require('../../../utils/util.log')
-const path = require('path')
-const fs = require('fs')
 const { Buffer } = require('buffer')
+const fs = require('fs')
+const path = require('path')
+const url = require('url')
+const lodash = require('lodash')
+const request = require('request')
+const log = require('../../../utils/util.log')
+const matchUtil = require('../../../utils/util.match')
+const pac = require('./source/pac')
+
 let pacClient = null
 
 function matched (hostname, overWallTargetMap) {
@@ -23,7 +24,7 @@ function matched (hostname, overWallTargetMap) {
   if (pacClient == null) {
     return null
   }
-  const ret = pacClient.FindProxyForURL('https://' + hostname, hostname)
+  const ret = pacClient.FindProxyForURL(`https://${hostname}`, hostname)
   if (ret && ret.indexOf('PROXY ') === 0) {
     log.info(`matchHostname: matched overwall: '${hostname}' -> '${ret}' in pac.txt`)
     return 'in pac.txt'
@@ -113,12 +114,12 @@ async function downloadPacAsync (pacConfig) {
       // 尝试解析Base64（注：https://gitlab.com/gfwlist/gfwlist/raw/master/gfwlist.txt 下载下来的是Base64格式）
       let pacTxt = body
       try {
-        if (pacTxt.indexOf('!---------------------EOF') < 0) {
+        if (!pacTxt.includes('!---------------------EOF')) {
           pacTxt = Buffer.from(pacTxt, 'base64').toString('utf8')
           // log.debug('解析 base64 后的 pax:', pacTxt)
         }
       } catch (e) {
-        if (pacTxt.indexOf('!---------------------EOF') < 0) {
+        if (!pacTxt.includes('!---------------------EOF')) {
           log.error(`远程 pac.txt 文件内容即不是base64格式，也不是要求的格式，url: ${remotePacFileUrl}，body: ${body}`)
           return
         }
@@ -181,7 +182,7 @@ function createOverwallMiddleware (overWallConfig) {
           context.requestCount = {
             key: cacheKey,
             value: count.value,
-            count
+            count,
           }
         }
       }
@@ -190,10 +191,10 @@ function createOverwallMiddleware (overWallConfig) {
       const port = server[domain].port
       const path = server[domain].path
       const password = server[domain].password
-      const proxyTarget = domain + '/' + path + '/' + hostname + req.url
+      const proxyTarget = `${domain}/${path}/${hostname}${req.url}`
 
       // const backup = interceptOpt.backup
-      const proxy = proxyTarget.indexOf('http:') === 0 || proxyTarget.indexOf('https:') === 0 ? proxyTarget : (rOptions.protocol + '//' + proxyTarget)
+      const proxy = proxyTarget.indexOf('http:') === 0 || proxyTarget.indexOf('https:') === 0 ? proxyTarget : (`${rOptions.protocol}//${proxyTarget}`)
       // eslint-disable-next-line node/no-deprecated-api
       const URL = url.parse(proxy)
       rOptions.origional = lodash.cloneDeep(rOptions) // 备份原始请求参数
@@ -218,12 +219,12 @@ function createOverwallMiddleware (overWallConfig) {
       res.setHeader('DS-Overwall', matchedResult)
 
       return true
-    }
+    },
   }
 }
 
 module.exports = {
   getTmpPacFilePath,
   downloadPacAsync,
-  createOverwallMiddleware
+  createOverwallMiddleware,
 }

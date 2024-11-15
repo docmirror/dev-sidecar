@@ -12,7 +12,7 @@ module.exports = {
     }
 
     // 判断当前响应码是否不使用缓存
-    if (interceptOpt.cacheExcludeStatusCodeList && interceptOpt.cacheExcludeStatusCodeList[proxyRes.statusCode + '']) {
+    if (interceptOpt.cacheExcludeStatusCodeList && interceptOpt.cacheExcludeStatusCodeList[`${proxyRes.statusCode}`]) {
       return
     }
 
@@ -32,7 +32,7 @@ module.exports = {
     // 获取maxAge配置
     let maxAge = cacheReq.getMaxAge(interceptOpt)
     // public 或 private
-    const cacheControlType = (interceptOpt.cacheControlType || 'public') + ', '
+    const cacheControlType = `${interceptOpt.cacheControlType || 'public'}, `
     // immutable属性
     const cacheImmutable = interceptOpt.cacheImmutable !== false ? ', immutable' : ''
 
@@ -41,7 +41,7 @@ module.exports = {
       cacheControl: null,
       lastModified: null,
       expires: null,
-      etag: null
+      etag: null,
     }
     for (let i = 0; i < proxyRes.rawHeaders.length; i += 2) {
       // 尝试修改rawHeaders中的cache-control、last-modified、expires
@@ -65,7 +65,7 @@ module.exports = {
     if (originalHeaders.cacheControl) {
       const maxAgeMatch = originalHeaders.cacheControl.value.match(/max-age=(\d+)/)
       if (maxAgeMatch && maxAgeMatch[1] > maxAge) {
-        if (interceptOpt.cacheImmutable !== false && originalHeaders.cacheControl.value.indexOf('immutable') < 0) {
+        if (interceptOpt.cacheImmutable !== false && !originalHeaders.cacheControl.value.includes('immutable')) {
           maxAge = maxAgeMatch[1]
         } else {
           const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`
@@ -81,7 +81,7 @@ module.exports = {
     const replaceHeaders = {
       cacheControl: `${cacheControlType}max-age=${maxAge + 1}${cacheImmutable}`,
       lastModified: now.toUTCString(),
-      expires: new Date(now.getTime() + maxAge * 1000).toUTCString()
+      expires: new Date(now.getTime() + maxAge * 1000).toUTCString(),
     }
     // 开始替换
     // 替换cache-control
@@ -108,5 +108,5 @@ module.exports = {
   is (interceptOpt) {
     const maxAge = cacheReq.getMaxAge(interceptOpt)
     return maxAge != null && maxAge > 0
-  }
+  },
 }

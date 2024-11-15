@@ -16,7 +16,7 @@ module.exports = class CertAndKeyContainer {
     maxLength = 1000,
     getCertSocketTimeout = 2 * 1000,
     caCert,
-    caKey
+    caKey,
   }) {
     this.queue = []
     this.maxLength = maxLength
@@ -50,7 +50,7 @@ module.exports = class CertAndKeyContainer {
 
     const certPromiseObj = {
       port,
-      mappingHostNames: [hostname] // temporary hostname
+      mappingHostNames: [hostname], // temporary hostname
     }
 
     const promise = new Promise((resolve, reject) => {

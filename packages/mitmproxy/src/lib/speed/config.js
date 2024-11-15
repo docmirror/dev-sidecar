@@ -1,9 +1,9 @@
 const config = {
   notify () {},
-  dnsMap: {}
+  dnsMap: {},
 }
 module.exports = {
   getConfig () {
     return config
-  }
+  },
 }

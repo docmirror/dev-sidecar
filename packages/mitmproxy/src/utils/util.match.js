@@ -9,7 +9,7 @@ function isMatched (url, regexp) {
   try {
     let urlRegexp = regexp
     if (regexp[0] === '*' || regexp[0] === '?' || regexp[0] === '+') {
-      urlRegexp = '.' + regexp
+      urlRegexp = `.${regexp}`
     }
     return url.match(urlRegexp)
   } catch (e) {
@@ -22,7 +22,7 @@ function domainRegexply (target) {
   if (target === '.*' || target === '*' || target === 'true' || target === true) {
     return '^.*$'
   }
-  return '^' + target.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$'
+  return `^${target.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`
 }
 
 function domainMapRegexply (hostMap) {
@@ -32,7 +32,7 @@ function domainMapRegexply (hostMap) {
   const regexpMap = {}
   const origin = {} // 用于快速匹配，见matchHostname、matchHostnameAll方法
   lodash.each(hostMap, (value, domain) => {
-    if (domain.indexOf('*') >= 0 || domain[0] === '^') {
+    if (domain.includes('*') || domain[0] === '^') {
       const regDomain = domain[0] !== '^' ? domainRegexply(domain) : domain
       regexpMap[regDomain] = value
 
@@ -65,12 +65,12 @@ function matchHostname (hostMap, hostname, action) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "${hostname}": ${JSON.stringify(value)} }`)
     return value // 快速匹配成功
   }
-  value = hostMap.origin['*' + hostname]
+  value = hostMap.origin[`*${hostname}`]
   if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "*${hostname}": ${JSON.stringify(value)} }`)
     return value // 快速匹配成功
   }
-  value = hostMap.origin['*.' + hostname]
+  value = hostMap.origin[`*.${hostname}`]
   if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "*.${hostname}": ${JSON.stringify(value)} }`)
     return value // 快速匹配成功
@@ -94,7 +94,7 @@ function matchHostname (hostMap, hostname, action) {
 }
 
 function merge (oldObj, newObj) {
-  return lodash.mergeWith(oldObj, newObj, function (objValue, srcValue) {
+  return lodash.mergeWith(oldObj, newObj, (objValue, srcValue) => {
     if (lodash.isArray(objValue)) {
       return srcValue
     }
@@ -146,13 +146,13 @@ function matchHostnameAll (hostMap, hostname, action) {
 
   // 域名快速匹配：直接匹配 或者 两种前缀通配符匹配
   // 优先级：2
-  value = hostMap.origin['*' + hostname]
+  value = hostMap.origin[`*${hostname}`]
   if (value) {
     log.debug(`matchHostname-one: ${action}: '${hostname}' -> { "*${hostname}": ${JSON.stringify(value)} }`)
     values = merge(values, value)
   }
   // 优先级：3
-  value = hostMap.origin['*.' + hostname]
+  value = hostMap.origin[`*.${hostname}`]
   if (value) {
     log.debug(`matchHostname-one: ${action}: '${hostname}' -> { "*.${hostname}": ${JSON.stringify(value)} }`)
     values = merge(values, value)
@@ -178,5 +178,5 @@ module.exports = {
   domainRegexply,
   domainMapRegexply,
   matchHostname,
-  matchHostnameAll
+  matchHostnameAll,
 }

@@ -1,21 +1,21 @@
-const log = require('../../../utils/util.log')
-const through = require('through2')
 const zlib = require('zlib')
+const through = require('through2')
+const log = require('../../../utils/util.log')
 
 // 编解码器
 const codecMap = {
   gzip: {
     createCompressor: () => zlib.createGzip(),
-    createDecompressor: () => zlib.createGunzip()
+    createDecompressor: () => zlib.createGunzip(),
   },
   deflate: {
     createCompressor: () => zlib.createDeflate(),
-    createDecompressor: () => zlib.createInflate()
+    createDecompressor: () => zlib.createInflate(),
   },
   br: {
     createCompressor: () => zlib.createBrotliCompress(),
-    createDecompressor: () => zlib.createBrotliDecompress()
-  }
+    createDecompressor: () => zlib.createBrotliDecompress(),
+  },
 }
 const supportedEncodings = Object.keys(codecMap)
 const supportedEncodingsStr = supportedEncodings.join(', ')
@@ -41,7 +41,7 @@ const httpUtil = {
   isHtml (res) {
     const contentType = res.headers['content-type']
     return (typeof contentType !== 'undefined') && /text\/html|application\/xhtml\+xml/.test(contentType)
-  }
+  },
 }
 const HEAD = Buffer.from('</head>')
 const HEAD_UP = Buffer.from('</HEAD>')
@@ -84,7 +84,7 @@ function injectScriptIntoHtml (tags, chunk, script) {
 }
 
 function handleResponseHeaders (res, proxyRes) {
-  Object.keys(proxyRes.headers).forEach(function (key) {
+  Object.keys(proxyRes.headers).forEach((key) => {
     if (proxyRes.headers[key] !== undefined) {
       // let newkey = key.replace(/^[a-z]|-[a-z]/g, (match) => {
       //   return match.toUpperCase()
@@ -100,7 +100,7 @@ function handleResponseHeaders (res, proxyRes) {
         const reg = /script-src ([^:]*);/i
         const matched = policy.match(reg)
         if (matched) {
-          if (matched[1].indexOf('self') < 0) {
+          if (!matched[1].includes('self')) {
             policy = policy.replace('script-src', 'script-src \'self\' ')
           }
         }
@@ -117,6 +117,7 @@ function handleResponseHeaders (res, proxyRes) {
 
 const contextPath = '/____ds_script____/'
 const monkey = require('../../monkey')
+
 module.exports = {
   requestIntercept (context, req, res, ssl, next) {
     const { rOptions, log, setting } = context
@@ -141,8 +142,8 @@ module.exports = {
       'Content-Type': 'application/javascript; charset=utf-8',
       'Cache-Control': 'public, max-age=86401, immutable', // 缓存1天
       'Last-Modified': now.toUTCString(),
-      Expires: new Date(now.getTime() + 86400000).toUTCString(), // 缓存1天
-      Date: new Date().toUTCString()
+      'Expires': new Date(now.getTime() + 86400000).toUTCString(), // 缓存1天
+      'Date': new Date().toUTCString(),
     })
     res.write(script.script)
     res.end()
@@ -194,5 +195,5 @@ module.exports = {
     next()
   },
   httpUtil,
-  handleResponseHeaders
+  handleResponseHeaders,
 }

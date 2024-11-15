@@ -12,7 +12,7 @@ module.exports = {
     }
 
     const headers = {
-      'Access-Control-Allow-Origin': rOptions.headers.origin
+      'Access-Control-Allow-Origin': rOptions.headers.origin,
     }
 
     // 替换响应头
@@ -23,5 +23,5 @@ module.exports = {
   },
   is (interceptOpt) {
     return !!interceptOpt.options
-  }
+  },
 }

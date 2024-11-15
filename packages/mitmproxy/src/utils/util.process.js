@@ -8,5 +8,5 @@ module.exports = {
     if (process.send) {
       process.send({ type: 'status', event: status })
     }
-  }
+  },
 }

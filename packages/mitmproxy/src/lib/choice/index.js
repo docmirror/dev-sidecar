@@ -1,6 +1,8 @@
 const LRU = require('lru-cache')
-const cacheSize = 1024
 const log = require('../../utils/util.log')
+
+const cacheSize = 1024
+
 class ChoiceCache {
   constructor () {
     this.cache = new LRU(cacheSize)
@@ -126,5 +128,5 @@ class DynamicChoice {
 
 module.exports = {
   DynamicChoice,
-  ChoiceCache
+  ChoiceCache,
 }

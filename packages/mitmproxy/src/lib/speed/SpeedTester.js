@@ -1,8 +1,9 @@
 // 1个小时不访问，取消获取
-const _ = require('lodash')
 const net = require('net')
-const config = require('./config.js')
+const _ = require('lodash')
 const log = require('../../utils/util.log.js')
+const config = require('./config.js')
+
 const DISABLE_TIMEOUT = 60 * 60 * 1000
 class SpeedTester {
   constructor ({ hostname }) {
@@ -60,7 +61,7 @@ class SpeedTester {
     const promiseList = []
     for (const dnsKey in dnsMap) {
       const dns = dnsMap[dnsKey]
-      const one = this.getFromOneDns(dns).then(ipList => {
+      const one = this.getFromOneDns(dns).then((ipList) => {
         if (ipList) {
           for (const ip of ipList) {
             ips[ip] = { dns: ipList.isPreSet === true ? '预设IP' : dnsKey }

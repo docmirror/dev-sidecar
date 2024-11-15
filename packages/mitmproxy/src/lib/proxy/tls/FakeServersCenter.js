@@ -1,8 +1,9 @@
-const https = require('https')
 const http = require('http')
-const tlsUtils = require('./tlsUtils')
-const CertAndKeyContainer = require('./CertAndKeyContainer')
+const https = require('https')
 const forge = require('node-forge')
+const CertAndKeyContainer = require('./CertAndKeyContainer')
+const tlsUtils = require('./tlsUtils')
+
 const pki = forge.pki
 // const colors = require('colors')
 const tls = require('tls')
@@ -27,7 +28,7 @@ module.exports = class FakeServersCenter {
     this.certAndKeyContainer = new CertAndKeyContainer({
       getCertSocketTimeout,
       caCert,
-      caKey
+      caKey,
     })
   }
 
@@ -76,7 +77,7 @@ module.exports = class FakeServersCenter {
     const serverPromiseObj = {
       port,
       ssl,
-      mappingHostNames: [hostname] // temporary hostname
+      mappingHostNames: [hostname], // temporary hostname
     }
 
     const promise = new Promise((resolve, reject) => {
@@ -99,10 +100,10 @@ module.exports = class FakeServersCenter {
                 log.info(`fakeServer SNICallback: ${hostname}:${port}`)
                 done(null, tls.createSecureContext({
                   key: pki.privateKeyToPem(certObj.key),
-                  cert: pki.certificateToPem(certObj.cert)
+                  cert: pki.certificateToPem(certObj.cert),
                 }))
               })()
-            }
+            },
           })
         } else {
           fakeServer = new http.Server()
@@ -111,7 +112,7 @@ module.exports = class FakeServersCenter {
           cert,
           key,
           server: fakeServer,
-          port: 0 // if port === 0 ,should listen server's `listening` event.
+          port: 0, // if port === 0 ,should listen server's `listening` event.
         }
         serverPromiseObj.serverObj = serverObj
 
@@ -121,12 +122,16 @@ module.exports = class FakeServersCenter {
           serverObj.port = address.port
         })
         fakeServer.on('request', (req, res) => {
-          if (printDebugLog) log.debug(`【fakeServer request - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
+          if (printDebugLog) {
+            log.debug(`【fakeServer request - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
+          }
           this.requestHandler(req, res, ssl)
         })
         let once = true
         fakeServer.on('listening', () => {
-          if (printDebugLog) log.debug(`【fakeServer listening - ${hostname}:${port}】no arguments...`)
+          if (printDebugLog) {
+            log.debug(`【fakeServer listening - ${hostname}:${port}】no arguments...`)
+          }
           if (cert && once) {
             once = false
             let newMappingHostNames = tlsUtils.getMappingHostNamesFromCert(cert)

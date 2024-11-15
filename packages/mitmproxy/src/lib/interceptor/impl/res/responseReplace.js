@@ -1,5 +1,6 @@
 const lodash = require('lodash')
 const cacheReq = require('../req/cacheReq')
+
 const REMOVE = '[remove]'
 
 // 替换响应头
@@ -96,20 +97,20 @@ module.exports = {
         replaceHeaders.expires = '[remove]'
       }
 
-      actions += (actions ? ',' : '') + 'download:' + filename
+      actions += `${actions ? ',' : ''}download:${filename}`
     }
 
     // 替换响应头
     if (replaceResponseHeaders(replaceHeaders, res, proxyRes)) {
-      actions += (actions ? ',' : '') + 'headers'
+      actions += `${actions ? ',' : ''}headers`
     }
 
     if (actions) {
       res.setHeader('DS-ResponseReplace-Interceptor', actions)
-      log.info('response intercept: ' + actions)
+      log.info(`response intercept: ${actions}`)
     }
   },
   is (interceptOpt) {
     return !!interceptOpt.responseReplace
-  }
+  },
 }

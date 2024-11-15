@@ -3,21 +3,20 @@ const lodash = require('lodash')
 
 // 替换占位符
 function replacePlaceholder (url, rOptions, matched) {
-  if (url.indexOf('${') >= 0) {
-    // eslint-disable-next-line
+  if (url.includes('${')) {
     // no-template-curly-in-string
     // eslint-disable-next-line no-template-curly-in-string
     url = url.replace('${host}', rOptions.hostname)
 
-    if (matched && url.indexOf('${') >= 0) {
+    if (matched && url.includes('${')) {
       for (let i = 0; i < matched.length; i++) {
-        url = url.replace('${m[' + i + ']}', matched[i] == null ? '' : matched[i])
+        url = url.replace(`\${m[${i}]}`, matched[i] == null ? '' : matched[i])
       }
     }
 
     // 移除多余的占位符
-    if (url.indexOf('${') >= 0) {
-      url = url.replace(/\$\{[^}]+}/g, '')
+    if (url.includes('${')) {
+      url = url.replace(/\$\{[^}]+\}/g, '')
     }
   }
 
@@ -45,7 +44,7 @@ function buildTargetUrl (rOptions, urlConf, interceptOpt, matched) {
   targetUrl = replacePlaceholder(targetUrl, rOptions, matched)
 
   // 拼接协议
-  targetUrl = targetUrl.indexOf('http:') === 0 || targetUrl.indexOf('https:') === 0 ? targetUrl : rOptions.protocol + '//' + targetUrl
+  targetUrl = targetUrl.indexOf('http:') === 0 || targetUrl.indexOf('https:') === 0 ? targetUrl : `${rOptions.protocol}//${targetUrl}`
 
   return targetUrl
 }
@@ -90,7 +89,7 @@ module.exports = {
       for (const bk of interceptOpt.backup) {
         backupList.push(bk)
       }
-      const key = rOptions.hostname + '/' + interceptOpt.key
+      const key = `${rOptions.hostname}/${interceptOpt.key}`
       const count = RequestCounter.getOrCreate(key, backupList)
       if (count.value == null) {
         count.doRank()
@@ -103,7 +102,7 @@ module.exports = {
         context.requestCount = {
           key,
           value: count.value,
-          count
+          count,
         }
       }
     }
@@ -135,5 +134,5 @@ module.exports = {
   },
   is (interceptOpt) {
     return !!interceptOpt.proxy
-  }
+  },
 }

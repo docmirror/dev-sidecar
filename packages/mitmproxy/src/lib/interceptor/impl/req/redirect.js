@@ -10,8 +10,8 @@ module.exports = {
     const redirect = proxyApi.buildTargetUrl(rOptions, interceptOpt.redirect, interceptOpt, matched)
 
     res.writeHead(302, {
-      Location: redirect,
-      'DS-Interceptor': 'redirect'
+      'Location': redirect,
+      'DS-Interceptor': 'redirect',
     })
     res.end()
 
@@ -21,5 +21,5 @@ module.exports = {
   },
   is (interceptOpt) {
     return interceptOpt.redirect // 如果配置中有redirect，那么这个配置是需要redirect拦截的
-  }
+  },
 }

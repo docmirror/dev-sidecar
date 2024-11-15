@@ -1,9 +1,10 @@
 const url = require('url')
-const Agent = require('./ProxyHttpAgent')
-const HttpsAgent = require('./ProxyHttpsAgent')
 const tunnelAgent = require('tunnel-agent')
 const log = require('../../../utils/util.log')
 const matchUtil = require('../../../utils/util.match')
+const Agent = require('./ProxyHttpAgent')
+const HttpsAgent = require('./ProxyHttpsAgent')
+
 const util = exports
 
 const httpsAgentCache = {}
@@ -25,7 +26,7 @@ function getTimeoutConfig (hostname, serverSetting) {
 }
 
 function createHttpsAgent (timeoutConfig, verifySsl) {
-  const key = timeoutConfig.timeout + '-' + timeoutConfig.keepAliveTimeout
+  const key = `${timeoutConfig.timeout}-${timeoutConfig.keepAliveTimeout}`
   if (!httpsAgentCache[key]) {
     verifySsl = !!verifySsl
 
@@ -39,7 +40,7 @@ function createHttpsAgent (timeoutConfig, verifySsl) {
       timeout: timeoutConfig.timeout,
       keepAliveTimeout: timeoutConfig.keepAliveTimeout,
       checkServerIdentity,
-      rejectUnauthorized: verifySsl
+      rejectUnauthorized: verifySsl,
     })
 
     agent.unVerifySslAgent = new HttpsAgent({
@@ -47,7 +48,7 @@ function createHttpsAgent (timeoutConfig, verifySsl) {
       timeout: timeoutConfig.timeout,
       keepAliveTimeout: timeoutConfig.keepAliveTimeout,
       checkServerIdentity,
-      rejectUnauthorized: false
+      rejectUnauthorized: false,
     })
 
     httpsAgentCache[key] = agent
@@ -57,12 +58,12 @@ function createHttpsAgent (timeoutConfig, verifySsl) {
 }
 
 function createHttpAgent (timeoutConfig) {
-  const key = timeoutConfig.timeout + '-' + timeoutConfig.keepAliveTimeout
+  const key = `${timeoutConfig.timeout}-${timeoutConfig.keepAliveTimeout}`
   if (!httpAgentCache[key]) {
     httpAgentCache[key] = new Agent({
       keepAlive: true,
       timeout: timeoutConfig.timeout,
-      keepAliveTimeout: timeoutConfig.keepAliveTimeout
+      keepAliveTimeout: timeoutConfig.keepAliveTimeout,
     })
     log.info('创建 HttpAgent 成功, timeoutConfig:', timeoutConfig)
   }
@@ -80,12 +81,12 @@ util.parseHostnameAndPort = (host, defaultPort) => {
   if (arr) {
     arr = arr.slice(1)
     if (arr[1]) {
-      arr[1] = parseInt(arr[1], 10)
+      arr[1] = Number.parseInt(arr[1], 10)
     }
   } else {
     arr = host.split(':')
     if (arr.length > 1) {
-      arr[1] = parseInt(arr[1], 10)
+      arr[1] = Number.parseInt(arr[1], 10)
     }
   }
 
@@ -149,7 +150,7 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
     path: urlObject.path,
     headers: req.headers,
     agent,
-    compatibleConfig
+    compatibleConfig,
   }
 
   // eslint-disable-next-line node/no-deprecated-api
@@ -188,8 +189,8 @@ util.getTunnelAgent = (requestIsSSL, externalProxyUrl) => {
         httpsOverHttpAgent = tunnelAgent.httpsOverHttp({
           proxy: {
             host: hostname,
-            port: port
-          }
+            port,
+          },
         })
       }
       return httpsOverHttpAgent
@@ -198,8 +199,8 @@ util.getTunnelAgent = (requestIsSSL, externalProxyUrl) => {
         httpsOverHttpsAgent = tunnelAgent.httpsOverHttps({
           proxy: {
             host: hostname,
-            port: port
-          }
+            port,
+          },
         })
       }
       return httpsOverHttpsAgent
@@ -220,8 +221,8 @@ util.getTunnelAgent = (requestIsSSL, externalProxyUrl) => {
         httpOverHttpsAgent = tunnelAgent.httpOverHttps({
           proxy: {
             host: hostname,
-            port: port
-          }
+            port,
+          },
         })
       }
       return httpOverHttpsAgent

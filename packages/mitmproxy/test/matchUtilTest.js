@@ -5,7 +5,7 @@ const hostMap = matchUtil.domainMapRegexply({
   '*bbb.com': true,
   '*.ccc.com': true,
   '^.{1,3}ddd.com$': true,
-  '*.cn': true
+  '*.cn': true,
 })
 
 console.log(hostMap)

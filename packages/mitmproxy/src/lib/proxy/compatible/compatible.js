@@ -25,7 +25,7 @@ const defaultConfig = {
     // 'xxx.xxx.xxx.xxx:443': {
     //   rejectUnauthorized: false
     // }
-  }
+  },
 }
 
 const config = _loadFromFile(defaultConfig)
@@ -63,8 +63,12 @@ function _loadFromFile (defaultConfig) {
     log.info('读取 automaticCompatibleConfig.json 成功:', configPath)
     const fileStr = file.toString()
     config = fileStr && fileStr.length > 2 ? jsonApi.parse(fileStr) : defaultConfig
-    if (config.connect == null) config.connect = defaultConfig.connect
-    if (config.request == null) config.request = defaultConfig.request
+    if (config.connect == null) {
+      config.connect = defaultConfig.connect
+    }
+    if (config.request == null) {
+      config.request = defaultConfig.request
+    }
   }
 
   return config
@@ -108,7 +112,9 @@ module.exports = {
     }
 
     // 配置保存到文件
-    if (autoSave) _saveConfigToFile()
+    if (autoSave) {
+      _saveConfigToFile()
+    }
 
     log.info(`【自动兼容程序】${hostname}:${port}: 设置 connect.ssl = ${ssl}`)
   },
@@ -138,8 +144,10 @@ module.exports = {
     }
 
     // 配置保存到文件
-    if (autoSave) _saveConfigToFile()
+    if (autoSave) {
+      _saveConfigToFile()
+    }
 
     log.info(`【自动兼容程序】${rOptions.hostname}:${rOptions.port}: 设置 request.rejectUnauthorized = ${rejectUnauthorized}`)
-  }
+  },
 }

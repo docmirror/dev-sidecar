@@ -1,12 +1,13 @@
-const tlsUtils = require('../tls/tlsUtils')
 const http = require('http')
-const config = require('../common/config')
 const log = require('../../../utils/util.log')
-const createRequestHandler = require('./createRequestHandler')
+const speedTest = require('../../speed/index.js')
+const config = require('../common/config')
+const tlsUtils = require('../tls/tlsUtils')
 const createConnectHandler = require('./createConnectHandler')
 const createFakeServerCenter = require('./createFakeServerCenter')
+const createRequestHandler = require('./createRequestHandler')
 const createUpgradeHandler = require('./createUpgradeHandler')
-const speedTest = require('../../speed/index.js')
+
 module.exports = {
   createProxy ({
     host = config.defaultHost,
@@ -21,7 +22,7 @@ module.exports = {
     externalProxy,
     dnsConfig,
     setting,
-    compatibleConfig
+    compatibleConfig,
   }, callback) {
     // Don't reject unauthorized
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
@@ -59,7 +60,7 @@ module.exports = {
       externalProxy,
       dnsConfig,
       setting,
-      compatibleConfig
+      compatibleConfig,
     )
 
     const upgradeHandler = createUpgradeHandler(setting)
@@ -70,7 +71,7 @@ module.exports = {
       caKeyPath,
       requestHandler,
       upgradeHandler,
-      getCertSocketTimeout
+      getCertSocketTimeout,
     })
 
     const connectHandler = createConnectHandler(
@@ -78,7 +79,7 @@ module.exports = {
       middlewares,
       fakeServersCenter,
       dnsConfig,
-      compatibleConfig
+      compatibleConfig,
     )
 
     // 创建监听方法，用于监听 http 和 https 两个端口
@@ -87,16 +88,20 @@ module.exports = {
       server.listen(port, host, () => {
         log.info(`dev-sidecar启动 ${ssl ? 'https' : 'http'} 端口: ${host}:${port}`)
         server.on('request', (req, res) => {
-          if (printDebugLog) log.debug(`【server request, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
+          if (printDebugLog) {
+            log.debug(`【server request, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
+          }
           requestHandler(req, res, ssl)
         })
         // tunneling for https
         server.on('connect', (req, cltSocket, head) => {
-          if (printDebugLog) log.debug(`【server connect, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- cltSocket -----\r\n', cltSocket, '\r\n----- head -----\r\n', head)
+          if (printDebugLog) {
+            log.debug(`【server connect, ssl: ${ssl}】\r\n----- req -----\r\n`, req, '\r\n----- cltSocket -----\r\n', cltSocket, '\r\n----- head -----\r\n', head)
+          }
           connectHandler(req, cltSocket, head, ssl)
         })
         // TODO: handler WebSocket
-        server.on('upgrade', function (req, cltSocket, head) {
+        server.on('upgrade', (req, cltSocket, head) => {
           if (printDebugLog) {
             log.debug(`【server upgrade, ssl: ${ssl}】\r\n----- req -----\r\n`, req)
           } else {
@@ -154,5 +159,5 @@ module.exports = {
   },
   createCA (caPaths) {
     return tlsUtils.initCA(caPaths)
-  }
+  },
 }

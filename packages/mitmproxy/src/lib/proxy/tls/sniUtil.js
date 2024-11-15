@@ -69,28 +69,38 @@ module.exports = function extractSNI (data) {
   pos += 32
 
   // skip SessionID
-  if (pos > end - 1) return null
+  if (pos > end - 1) {
+    return null
+  }
   const sessionIdLength = data[pos]
   pos += 1 + sessionIdLength
 
   // skip CipherSuite
-  if (pos > end - 2) return null
+  if (pos > end - 2) {
+    return null
+  }
   const cipherSuiteLength = data[pos] << 8 | data[pos + 1]
   pos += 2 + cipherSuiteLength
 
   // skip CompressionMethod
-  if (pos > end - 1) return null
+  if (pos > end - 1) {
+    return null
+  }
   const compressionMethodLength = data[pos]
   pos += 1 + compressionMethodLength
 
   // verify extensions exist
-  if (pos > end - 2) return null
+  if (pos > end - 2) {
+    return null
+  }
   const extensionsLength = data[pos] << 8 | data[pos + 1]
   pos += 2
 
   // verify the extensions fit
   const extensionsEnd = pos + extensionsLength
-  if (extensionsEnd > end) return null
+  if (extensionsEnd > end) {
+    return null
+  }
   end = extensionsEnd
 
   /*
@@ -129,14 +139,18 @@ module.exports = function extractSNI (data) {
     pos += 4
     if (extensionType === 0) { // ExtensionType was server_name(0)
       // read ServerNameList length
-      if (pos > end - 2) return null
+      if (pos > end - 2) {
+        return null
+      }
       const nameListLength = data[pos] << 8 | data[pos + 1]
       pos += 2
 
       // verify we have enough bytes and loop over SeverNameList
       let n = pos
       pos += nameListLength
-      if (pos > end) return null
+      if (pos > end) {
+        return null
+      }
       while (n < pos - 3) {
         const nameType = data[n]
         const nameLength = data[n + 1] << 8 | data[n + 2]
@@ -145,7 +159,9 @@ module.exports = function extractSNI (data) {
         // check if NameType is host_name(0)
         if (nameType === 0) {
           // verify we have enough bytes
-          if (n > end - nameLength) return null
+          if (n > end - nameLength) {
+            return null
+          }
 
           // decode as ascii and return
 
@@ -154,7 +170,7 @@ module.exports = function extractSNI (data) {
             sniName,
             start: n,
             end: n + nameLength,
-            length: nameLength
+            length: nameLength,
           }
         } else {
           n += nameLength

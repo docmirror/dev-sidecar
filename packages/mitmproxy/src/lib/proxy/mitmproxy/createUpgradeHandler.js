@@ -1,7 +1,8 @@
 const http = require('http')
 const https = require('https')
-const util = require('../common/util')
 const log = require('../../../utils/util.log')
+const util = require('../common/util')
+
 // copy from node-http-proxy.  ^_^
 
 // create connectHandler function
@@ -13,17 +14,19 @@ module.exports = function createUpgradeHandler (serverSetting) {
     proxyReq.on('error', (e) => {
       log.error('upgradeHandler error:', e)
     })
-    proxyReq.on('response', function (res) {
+    proxyReq.on('response', (res) => {
       // if upgrade event isn't going to happen, close the socket
-      if (!res.upgrade) cltSocket.end()
+      if (!res.upgrade) {
+        cltSocket.end()
+      }
     })
 
-    proxyReq.on('upgrade', function (proxyRes, proxySocket, proxyHead) {
+    proxyReq.on('upgrade', (proxyRes, proxySocket, proxyHead) => {
       proxySocket.on('error', (e) => {
         log.error('upgrade error:', e)
       })
 
-      cltSocket.on('error', function (e) {
+      cltSocket.on('error', (e) => {
         log.error('upgrade socket error:', e)
         proxySocket.end()
       })
@@ -33,23 +36,24 @@ module.exports = function createUpgradeHandler (serverSetting) {
 
       proxySocket.setKeepAlive(true, 0)
 
-      if (proxyHead && proxyHead.length) proxySocket.unshift(proxyHead)
+      if (proxyHead && proxyHead.length) {
+        proxySocket.unshift(proxyHead)
+      }
 
       cltSocket.write(
-        Object.keys(proxyRes.headers).reduce(function (head, key) {
+        `${Object.keys(proxyRes.headers).reduce((head, key) => {
           const value = proxyRes.headers[key]
 
           if (!Array.isArray(value)) {
-            head.push(key + ': ' + value)
+            head.push(`${key}: ${value}`)
             return head
           }
 
           for (let i = 0; i < value.length; i++) {
-            head.push(key + ': ' + value[i])
+            head.push(`${key}: ${value[i]}`)
           }
           return head
-        }, ['HTTP/1.1 101 Switching Protocols'])
-          .join('\r\n') + '\r\n\r\n'
+        }, ['HTTP/1.1 101 Switching Protocols']).join('\r\n')}\r\n\r\n`,
       )
 
       proxySocket.pipe(cltSocket).pipe(proxySocket)

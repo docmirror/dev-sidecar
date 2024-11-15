@@ -20,7 +20,7 @@ function createPacClient (pacFilePath) {
 
   const getRules = function (pacFilePath) {
     let text = readFile(pacFilePath)
-    if (text.indexOf('!---------------------EOF') < 0) {
+    if (!text.includes('!---------------------EOF')) {
       text = Buffer.from(text, 'base64').toString()
     }
     const rules = []

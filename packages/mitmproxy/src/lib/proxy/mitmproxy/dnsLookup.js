@@ -1,10 +1,10 @@
-const speedTest = require('../../speed')
-const log = require('../../../utils/util.log')
 const defaultDns = require('dns')
+const log = require('../../../utils/util.log')
+const speedTest = require('../../speed')
 
 module.exports = {
-  createLookupFunc: function (res, dns, action, target, isDnsIntercept) {
-    target = target ? (', target: ' + target) : ''
+  createLookupFunc (res, dns, action, target, isDnsIntercept) {
+    target = target ? (`, target: ${target}`) : ''
 
     return (hostname, options, callback) => {
       const tester = speedTest.getSpeedTester(hostname)
@@ -12,14 +12,16 @@ module.exports = {
         const aliveIpObj = tester.pickFastAliveIpObj()
         if (aliveIpObj) {
           log.info(`----- ${action}: ${hostname}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host}${target} -----`)
-          if (res) res.setHeader('DS-DNS-Lookup', `IpTester: ${aliveIpObj.host} ${aliveIpObj.dns === '预设IP' ? 'PreSet' : aliveIpObj.dns}`)
+          if (res) {
+            res.setHeader('DS-DNS-Lookup', `IpTester: ${aliveIpObj.host} ${aliveIpObj.dns === '预设IP' ? 'PreSet' : aliveIpObj.dns}`)
+          }
           callback(null, aliveIpObj.host, 4)
           return
         } else {
           log.info(`----- ${action}: ${hostname}, no alive ip${target}, tester: { "ready": ${tester.ready}, "backupList": ${JSON.stringify(tester.backupList)} }`)
         }
       }
-      dns.lookup(hostname).then(ip => {
+      dns.lookup(hostname).then((ip) => {
         if (isDnsIntercept) {
           isDnsIntercept.dns = dns
           isDnsIntercept.hostname = hostname
@@ -42,7 +44,9 @@ module.exports = {
           }
           if (isTestFailedIp === false) {
             log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.name}': ${ip}${target} -----`)
-            if (res) res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.name === '预设IP' ? 'PreSet' : dns.name}`)
+            if (res) {
+              res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.name === '预设IP' ? 'PreSet' : dns.name}`)
+            }
             callback(null, ip, 4)
             return
           } else {
@@ -56,5 +60,5 @@ module.exports = {
         defaultDns.lookup(hostname, options, callback)
       })
     }
-  }
+  },
 }

@@ -22,13 +22,13 @@ function getTomorrow () {
 // }
 
 const AipOcrClient = require('baidu-aip-sdk').ocr
+
 const AipOcrClientMap = {}
 const apis = [
   'accurateBasic', // 调用通用文字识别（高精度版）
   'accurate', // 调用通用文字识别（含位置高精度版）
-  'handwriting' // 手写文字识别
+  'handwriting', // 手写文字识别
 ]
-
 const limitMap = {}
 
 function createBaiduOcrClient (config) {
@@ -57,7 +57,9 @@ function getConfig (interceptOpt, tryCount, log) {
     }
 
     // 避免count值过大，造成问题
-    if (count >= 100000) count = 0
+    if (count >= 100000) {
+      count = 0
+    }
   } else {
     config = interceptOpt.baiduOcr
     tryCount = null // 将tryCount设置为null代表只有一个配置
@@ -95,13 +97,13 @@ function getConfig (interceptOpt, tryCount, log) {
 }
 
 function limitConfig (id, api) {
-  const key = id + '_' + api
+  const key = `${id}_${api}`
   limitMap[key] = getTomorrow()
   // limitMap[key] = Date.now() + 5000 // 测试用，5秒后解禁
 }
 
 function checkIsLimitConfig (id, api) {
-  const key = id + '_' + api
+  const key = `${id}_${api}`
   const limitTime = limitMap[key]
   return limitTime && limitTime > Date.now()
 }
@@ -114,7 +116,7 @@ module.exports = {
 
     const headers = {
       'Content-Type': 'application/json; charset=utf-8',
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
     }
 
     // 获取配置
@@ -151,10 +153,10 @@ module.exports = {
       detect_direction: 'false',
       paragraph: 'false',
       probability: 'false',
-      ...(config.options || {})
+      ...(config.options || {}),
     }
     log.info('发起百度ocr请求', req.hostname)
-    client[config.api || apis[0]](imageBase64, options).then(function (result) {
+    client[config.api || apis[0]](imageBase64, options).then((result) => {
       if (result.error_code != null) {
         log.error('baiduOcr error:', result)
         if (result.error_code === 17) {
@@ -170,12 +172,14 @@ module.exports = {
       res.write(JSON.stringify(result)) // 格式如：{"words_result":[{"words":"6525"}],"words_result_num":1,"log_id":1818877093747960000}
       res.end()
       if (next) next() // 异步执行完继续next
-    }).catch(function (err) {
+    }).catch((err) => {
       log.info('baiduOcr error:', err)
       res.writeHead(200, headers)
-      res.write('{"error_code": 999500, "error_msg": "' + err + '"}') // 格式如：{"words_result":[{"words":"6525"}],"words_result_num":1,"log_id":1818877093747960000}
+      res.write(`{"error_code": 999500, "error_msg": "${err}"}`) // 格式如：{"words_result":[{"words":"6525"}],"words_result_num":1,"log_id":1818877093747960000}
       res.end()
-      if (next) next() // 异步执行完继续next
+      if (next) {
+        next() // 异步执行完继续next
+      }
     })
 
     log.info('proxy baiduOcr: hostname:', req.hostname)
@@ -184,5 +188,5 @@ module.exports = {
   },
   is (interceptOpt) {
     return !!interceptOpt.baiduOcr
-  }
+  },
 }

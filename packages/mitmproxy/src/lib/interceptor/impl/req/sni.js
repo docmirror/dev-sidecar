@@ -19,5 +19,5 @@ module.exports = {
   },
   is (interceptOpt) {
     return !!interceptOpt.sni && !interceptOpt.proxy // proxy生效时，sni不需要生效，因为proxy中也会使用sni覆盖 rOptions.servername
-  }
+  },
 }

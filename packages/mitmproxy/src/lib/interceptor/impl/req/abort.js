@@ -6,12 +6,12 @@ module.exports = {
 
     res.writeHead(403, {
       'Content-Type': 'text/plain; charset=utf-8',
-      'DS-Interceptor': 'abort'
+      'DS-Interceptor': 'abort',
     })
     res.write(
-      'DevSidecar 403: Request abort.\r\n\r\n' +
-      '  This request is matched by abort intercept.\r\n' +
-      '  因配置abort拦截器，本请求直接返回403禁止访问。'
+      'DevSidecar 403: Request abort.\n\n'
+        + '  This request is matched by abort intercept.\n'
+        + '  因配置abort拦截器，本请求直接返回403禁止访问。',
     )
     res.end()
 
@@ -21,5 +21,5 @@ module.exports = {
   },
   is (interceptOpt) {
     return !!interceptOpt.abort
-  }
+  },
 }

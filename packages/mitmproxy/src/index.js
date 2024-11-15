@@ -1,13 +1,14 @@
 const mitmproxy = require('./lib/proxy')
-const ProxyOptions = require('./options')
 const proxyConfig = require('./lib/proxy/common/config')
+const speedTest = require('./lib/speed/index.js')
+const ProxyOptions = require('./options')
 const log = require('./utils/util.log')
 const { fireError, fireStatus } = require('./utils/util.process')
-const speedTest = require('./lib/speed/index.js')
+
 let servers = []
 
 function registerProcessListener () {
-  process.on('message', function (msg) {
+  process.on('message', (msg) => {
     log.info('child get msg:', JSON.stringify(msg))
     if (msg.type === 'action') {
       api[msg.event.key](msg.event.params)
@@ -22,7 +23,7 @@ function registerProcessListener () {
   })
 
   // 避免异常崩溃
-  process.on('uncaughtException', function (err) {
+  process.on('uncaughtException', (err) => {
     if (err.code === 'ECONNABORTED') {
       //  log.error(err.errno)
       return
@@ -37,7 +38,7 @@ function registerProcessListener () {
   process.on('uncaughtExceptionMonitor', (err, origin) => {
     log.info('Process uncaughtExceptionMonitor:', err, origin)
   })
-  process.on('exit', function (code, signal) {
+  process.on('exit', (code, signal) => {
     log.info('代理服务进程被关闭:', code, signal)
   })
   process.on('beforeExit', (code, signal) => {
@@ -115,12 +116,12 @@ const api = {
         resolve()
       }
     })
-  }
+  },
 }
 
 module.exports = {
   ...api,
   config: proxyConfig,
   log,
-  speedTest
+  speedTest,
 }

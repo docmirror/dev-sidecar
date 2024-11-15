@@ -6,12 +6,12 @@ module.exports = {
 
     res.writeHead(200, {
       'Content-Type': 'text/plain; charset=utf-8',
-      'DS-Interceptor': 'success'
+      'DS-Interceptor': 'success',
     })
     res.write(
-      'DevSidecar 200: Request success.\n\n' +
-      '  This request is matched by success intercept.\n\n' +
-      '  因配置success拦截器，本请求直接返回200成功。'
+      'DevSidecar 200: Request success.\n\n'
+        + '  This request is matched by success intercept.\n\n'
+        + '  因配置success拦截器，本请求直接返回200成功。',
     )
     res.end()
 
@@ -21,5 +21,5 @@ module.exports = {
   },
   is (interceptOpt) {
     return !!interceptOpt.success
-  }
+  },
 }

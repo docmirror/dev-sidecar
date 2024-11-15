@@ -1,14 +1,13 @@
-const interceptorImpls = require('./lib/interceptor')
+const fs = require('fs')
+const path = require('path')
+const lodash = require('lodash')
+const jsonApi = require('./json')
 const dnsUtil = require('./lib/dns')
+const interceptorImpls = require('./lib/interceptor')
+const scriptInterceptor = require('./lib/interceptor/impl/res/script')
+const { getTmpPacFilePath, downloadPacAsync, createOverwallMiddleware } = require('./lib/proxy/middleware/overwall')
 const log = require('./utils/util.log')
 const matchUtil = require('./utils/util.match')
-const path = require('path')
-const fs = require('fs')
-const lodash = require('lodash')
-const scriptInterceptor = require('./lib/interceptor/impl/res/script')
-const jsonApi = require('./json')
-
-const { getTmpPacFilePath, downloadPacAsync, createOverwallMiddleware } = require('./lib/proxy/middleware/overwall')
 
 // 处理拦截配置
 function buildIntercepts (intercepts) {
@@ -97,12 +96,12 @@ module.exports = (serverConfig) => {
       preSetIpList,
       dnsMap: dnsUtil.initDNS(serverConfig.dns.providers, preSetIpList),
       mapping: matchUtil.domainMapRegexply(dnsMapping),
-      speedTest: serverConfig.dns.speedTest
+      speedTest: serverConfig.dns.speedTest,
     },
     setting,
     compatibleConfig: {
       connect: serverConfig.compatible ? matchUtil.domainMapRegexply(serverConfig.compatible.connect) : {},
-      request: serverConfig.compatible ? matchUtil.domainMapRegexply(serverConfig.compatible.request) : {}
+      request: serverConfig.compatible ? matchUtil.domainMapRegexply(serverConfig.compatible.request) : {},
     },
     middlewares,
     sslConnectInterceptor: (req, cltSocket, head) => {
@@ -205,7 +204,7 @@ module.exports = (serverConfig) => {
             }
             matchInterceptsOpts[impl.name] = {
               order: interceptOpt.order || 0,
-              index: matchIntercepts.length - 1
+              index: matchIntercepts.length - 1,
             }
           }
         }
@@ -217,7 +216,7 @@ module.exports = (serverConfig) => {
       // }
 
       return matchIntercepts
-    }
+    },
   }
 
   if (setting.rootCaFile) {

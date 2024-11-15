@@ -1,10 +1,11 @@
 const fs = require('fs')
 const path = require('path')
 const log = require('../../utils/util.log')
+
 let scripts
 
 function buildScript (sc, content, scriptName) {
-  const scriptKey = `ds_${scriptName}${sc.version ? ('_' + sc.version) : ''}:`
+  const scriptKey = `ds_${scriptName}${sc.version ? (`_${sc.version}`) : ''}:`
 
   // 代码1：监听事件
   const runAt = sc['run-at'] || 'document-end'
@@ -19,7 +20,7 @@ function buildScript (sc, content, scriptName) {
   const options = {
     name: sc.name,
     version: sc.version,
-    icon: sc.icon
+    icon: sc.icon,
   }
   const initStr = `
 const DS_init = (window.__ds_global__ || {})['DS_init']
@@ -45,21 +46,21 @@ if (!((window.__ds_global__ || {}).GM_getValue || (() => true))("ds_enabled", tr
     }
 
     if (item.indexOf('.') > 0) {
-      grantStr += item + ' = (window.__ds_global__ || {})[\'' + item + '\'];'
+      grantStr += `${item} = (window.__ds_global__ || {})['${item}'];`
     } else {
-      grantStr += 'const ' + item + ' = (window.__ds_global__ || {})[\'' + item + '\'] || (() => {});'
+      grantStr += `const ${item} = (window.__ds_global__ || {})['${item}'] || (() => {});`
     }
   }
 
   // 拼接脚本
-  return eventStr + ', () => {' +
-    initStr + '\r\n' +
-    checkEnabledStr + '\r\n\r\n' +
-    (grantStr ? (grantStr + '\r\n\r\n') : '') +
-    content +
-    `\r\nconsole.log("${scriptKey} completed")` +
-    '\r\n})' +
-    `\r\nconsole.log("${scriptKey} loaded")`
+  return `${eventStr}, () => {${
+    initStr}\r\n${
+    checkEnabledStr}\r\n\r\n${
+    grantStr ? (`${grantStr}\r\n\r\n`) : ''
+    }${content
+    }\r\nconsole.log("${scriptKey} completed")`
+    + `\r\n})`
+    + `\r\nconsole.log("${scriptKey} loaded")`
 }
 
 function loadScript (content, scriptName) {
@@ -78,10 +79,10 @@ function loadScript (content, scriptName) {
   const sc = {
     grant: [],
     match: [],
-    script: ''
+    script: '',
   }
   for (const string of confItemArr) {
-    const reg = new RegExp('.*@([^\\s]+)\\s(.+)')
+    const reg = new RegExp('.*@(\\S+)\\s(.+)')
     const ret = string.match(reg)
     if (ret) {
       const key = ret[1].trim()
@@ -103,7 +104,7 @@ function loadScript (content, scriptName) {
 
 function readFile (rootDir, script) {
   log.info('read script, script root location:', path.resolve('./'))
-  const location = path.join(rootDir, './' + script)
+  const location = path.join(rootDir, `./${script}`)
   log.info('read script, the script location:', location)
   return fs.readFileSync(location).toString()
 }
@@ -123,7 +124,7 @@ const api = {
     scripts.tampermonkey = { script: readFile(rootDir, 'tampermonkey.script') }
     return scripts
   },
-  loadScript
+  loadScript,
 }
 
 module.exports = api
