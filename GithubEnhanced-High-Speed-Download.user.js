@@ -164,8 +164,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (GM_getValue('menu_rawDownLink')) menu_rawFast_ID = GM_registerMenuCommand(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'][menu_rawFast]} [ ${raw_url[menu_rawFast][1]} ] 加速源 (☁) - 点击切换`, menu_toggle_raw_fast, {title: "点击切换「项目列表单文件快捷下载 (☁)」功能的加速源"});
 			menu_gitClone_ID = GM_registerMenuCommand(`${GM_getValue('menu_gitClone')?'✅':'❌'} 添加 git clone 命令`, function(){if (GM_getValue('menu_gitClone') == true) {GM_setValue('menu_gitClone', false); GM_notification({text: `已关闭「添加 git clone 命令」功能`, timeout: 3500});} else {GM_setValue('menu_gitClone', true); GM_notification({text: `已开启「添加 git clone 命令」功能`, timeout: 3500});}registerMenuCommand();}, {title: "点击开关「添加 git clone 命令」功能"});
 			menu_feedBack_ID = GM_registerMenuCommand('💬 反馈问题 & 功能建议', function () {GM_openInTab('https://github.com/XIU2/UserScript', {active: true,insert: true,setParent: true});GM_openInTab('https://greasyfork.org/zh-CN/scripts/412245/feedback', {active: true,insert: true,setParent: true});}, {title: "点击前往反馈问题或提出建议"});
-			menu_hideShortcut_ID = GM_registerMenuCommand('🐍 隐藏图标快捷键：Ctrl+Alt+H', function () {DS_hidePlugin()});
-			menu_showShortcut_ID = GM_registerMenuCommand('🐢 显示图标快捷键：Ctrl+Alt+S');
+			menu_hideShortcut_ID = GM_registerMenuCommand('🐍 隐藏图标（快捷键：Ctrl+Alt+H）', function () {DS_hidePlugin()}, {title: "点击隐藏图标"});
+			menu_showShortcut_ID = GM_registerMenuCommand('🐢 显示图标（快捷键：Ctrl+Alt+S）', null, {title: "隐藏后可通过快捷键呼出图标"});
 		}
 
 		// 切换加速源
