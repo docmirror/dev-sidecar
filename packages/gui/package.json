@@ -25,8 +25,8 @@
     "@docmirror/mitmproxy": "workspace:*",
     "@mihomo-party/sysproxy": "^2.0.4",
     "@natmri/platform-napi": "^0.0.7",
-    "adm-zip": "^0.5.5",
-    "ant-design-vue": "^1.6.5",
+    "adm-zip": "^0.5.16",
+    "ant-design-vue": "^1.7.8",
     "electron-baidu-tongji": "^1.0.5",
     "electron-sudo": "^4.0.12",
     "electron-updater": "^4.3.5",
@@ -38,7 +38,7 @@
     "sass-loader": "^16.0.3",
     "vue": "^2.7.16",
     "vue-json-editor-fix-cn": "^1.4.3",
-    "vue-router": "^3.4.8"
+    "vue-router": "^3.6.5"
   },
   "devDependencies": {
     "@babel/plugin-syntax-jsx": "^7.25.9",
@@ -46,7 +46,7 @@
     "@vue/babel-preset-jsx": "^1.4.0",
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
-    "electron": "^17.4.11",
+    "electron": "^19.1.9",
     "electron-builder": "^25.0.6",
     "electron-icon-builder": "^2.0.1",
     "json5-loader": "^4.0.1",
