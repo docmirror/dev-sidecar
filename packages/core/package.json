@@ -13,7 +13,6 @@
   ],
   "main": "src/index.js",
   "scripts": {
-    "start": "node ./start",
     "test": "mocha"
   },
   "dependencies": {
@@ -26,7 +25,6 @@
     "winreg": "^1.2.5"
   },
   "devDependencies": {
-    "@docmirror/mitmproxy": "workspace:*",
     "chai": "^4.3.4",
     "mocha": "^8.2.1"
   }

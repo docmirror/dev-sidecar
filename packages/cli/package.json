@@ -1,0 +1,23 @@
+{
+  "name": "@docmirror/dev-sidecar-cli",
+  "version": "1.8.9",
+  "private": false,
+  "description": "给开发者的加速代理工具",
+  "author": "docmirror.cn",
+  "license": "MPL-2.0",
+  "keywords": [
+    "dev-sidecar",
+    "github加速",
+    "google加速",
+    "代理"
+  ],
+  "bin": "./cli.js",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node ./src"
+  },
+  "dependencies": {
+    "@docmirror/dev-sidecar": "workspace:*",
+    "@docmirror/mitmproxy": "workspace:*"
+  }
+}
