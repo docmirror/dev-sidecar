@@ -32,7 +32,6 @@
     "electron-updater": "^4.3.5",
     "json5": "^2.2.3",
     "lodash": "^4.17.20",
-    "log4js": "^6.3.0",
     "request-progress": "^3.0.0",
     "sass": "^1.81.0",
     "sass-loader": "^16.0.3",
