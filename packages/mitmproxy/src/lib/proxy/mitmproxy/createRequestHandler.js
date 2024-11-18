@@ -1,5 +1,5 @@
-const http = require('http')
-const https = require('https')
+const http = require('node:http')
+const https = require('node:https')
 const jsonApi = require('../../../json')
 const log = require('../../../utils/util.log')
 const RequestCounter = require('../../choice/RequestCounter')

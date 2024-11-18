@@ -34,7 +34,7 @@
 //   console.error(e)
 // })
 
-const fs = require('fs')
+const fs = require('node:fs')
 const request = require('request')
 
 request({

@@ -1,4 +1,4 @@
-const url = require('url')
+const url = require('node:url')
 const tunnelAgent = require('tunnel-agent')
 const log = require('../../../utils/util.log')
 const matchUtil = require('../../../utils/util.match')

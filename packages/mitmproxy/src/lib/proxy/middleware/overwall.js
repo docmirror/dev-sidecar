@@ -1,7 +1,7 @@
-const { Buffer } = require('buffer')
-const fs = require('fs')
-const path = require('path')
-const url = require('url')
+const { Buffer } = require('node:buffer')
+const fs = require('node:fs')
+const path = require('node:path')
+const url = require('node:url')
 const lodash = require('lodash')
 const request = require('request')
 const log = require('../../../utils/util.log')
@@ -49,7 +49,7 @@ function loadPacLastModifiedTime (pacTxt) {
   if (matched && matched.length > 0) {
     try {
       return new Date(matched[0])
-    } catch (ignore) {
+    } catch {
       return null
     }
   }
@@ -74,7 +74,7 @@ function savePacFile (pacTxt) {
   // 尝试解析和修改 pac.txt 文件时间
   const lastModifiedTime = loadPacLastModifiedTime(pacTxt)
   if (lastModifiedTime) {
-    fs.stat(pacFilePath, (err, stats) => {
+    fs.stat(pacFilePath, (err, _stats) => {
       if (err) {
         log.error('修改 pac.txt 文件时间失败:', err)
         return
@@ -113,13 +113,11 @@ async function downloadPacAsync (pacConfig) {
 
       // 尝试解析Base64（注：https://gitlab.com/gfwlist/gfwlist/raw/master/gfwlist.txt 下载下来的是Base64格式）
       let pacTxt = body
-      try {
-        if (!pacTxt.includes('!---------------------EOF')) {
+      if (!pacTxt.includes('!---------------------EOF')) {
+        try {
           pacTxt = Buffer.from(pacTxt, 'base64').toString('utf8')
           // log.debug('解析 base64 后的 pax:', pacTxt)
-        }
-      } catch (e) {
-        if (!pacTxt.includes('!---------------------EOF')) {
+        } catch {
           log.error(`远程 pac.txt 文件内容即不是base64格式，也不是要求的格式，url: ${remotePacFileUrl}，body: ${body}`)
           return
         }
@@ -153,11 +151,11 @@ function createOverwallMiddleware (overWallConfig) {
   }
   const overWallTargetMap = matchUtil.domainMapRegexply(overWallConfig.targets)
   return {
-    sslConnectInterceptor: (req, cltSocket, head) => {
+    sslConnectInterceptor: (req, _cltSocket, _head) => {
       const hostname = req.url.split(':')[0]
       return matched(hostname, overWallTargetMap)
     },
-    requestIntercept (context, req, res, ssl, next) {
+    requestIntercept (context, req, res, _ssl, _next) {
       const { rOptions, log, RequestCounter } = context
       if (rOptions.protocol === 'http:') {
         return

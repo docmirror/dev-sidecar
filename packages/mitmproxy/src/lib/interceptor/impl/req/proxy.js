@@ -1,4 +1,4 @@
-const url = require('url')
+const url = require('node:url')
 const lodash = require('lodash')
 
 // 替换占位符

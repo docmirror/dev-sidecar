@@ -386,7 +386,7 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding:10px;
+    padding: 10px;
     .donate {
       cursor: pointer;
     }

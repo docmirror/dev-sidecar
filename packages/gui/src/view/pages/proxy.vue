@@ -113,7 +113,9 @@ export default {
         </div>
       </a-form-item>
       <a-form-item v-if="isWindows()" label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-button @click="loopbackVisible = true">去设置</a-button>
+        <a-button @click="loopbackVisible = true">
+          去设置
+        </a-button>
         <div class="form-help">
           解决<code>OneNote</code>、<code>MicrosoftStore</code>、<code>Outlook</code>等<code>UWP应用</code>开启代理后无法访问网络的问题
         </div>
@@ -162,8 +164,12 @@ export default {
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">恢复默认</a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
+        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">
+          恢复默认
+        </a-button>
+        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
+          应用
+        </a-button>
       </div>
     </template>
 
@@ -179,7 +185,9 @@ export default {
     >
       <template slot="title">
         设置Loopback
-        <a-button style="float:right;margin-right:10px;" @click="openEnableLoopback()">打开EnableLoopback</a-button>
+        <a-button style="float:right;margin-right:10px;" @click="openEnableLoopback()">
+          打开EnableLoopback
+        </a-button>
       </template>
       <div>
         <div>1、此设置用于解决OneNote、MicrosoftStore、Outlook等UWP应用无法访问网络的问题。</div>

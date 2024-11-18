@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require('node:fs')
 const forge = require('node-forge')
 const log = require('../../../utils/util.log')
 const FakeServersCenter = require('../tls/FakeServersCenter')

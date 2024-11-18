@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('node:path')
 
 function getUserBasePath () {
   const userHome = process.env.USERPROFILE || process.env.HOME || '/'

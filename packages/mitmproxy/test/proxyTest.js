@@ -1,4 +1,4 @@
-const http = require('http')
+const http = require('node:http')
 
 const options = {
   headers: {

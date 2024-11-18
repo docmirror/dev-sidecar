@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const lodash = require('lodash')
 const jsonApi = require('./json')
 const dnsUtil = require('./lib/dns')
@@ -210,7 +210,9 @@ module.exports = (serverConfig) => {
         }
       }
 
-      matchIntercepts.sort((a, b) => { return a.priority - b.priority })
+      matchIntercepts.sort((a, b) => {
+        return a.priority - b.priority
+      })
       // for (const interceptor of matchIntercepts) {
       //   log.info('interceptor:', interceptor.name, 'priority:', interceptor.priority)
       // }

@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import DevSidecar from '@docmirror/dev-sidecar'
 import AdmZip from 'adm-zip'
 import { ipcMain } from 'electron'

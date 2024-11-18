@@ -235,11 +235,19 @@ export default {
       try {
         const remoteConfig = {}
 
-        await this.$api.config.readRemoteConfigStr().then((ret) => { remoteConfig.old1 = ret })
-        await this.$api.config.readRemoteConfigStr('_personal').then((ret) => { remoteConfig.old2 = ret })
+        await this.$api.config.readRemoteConfigStr().then((ret) => {
+          remoteConfig.old1 = ret
+        })
+        await this.$api.config.readRemoteConfigStr('_personal').then((ret) => {
+          remoteConfig.old2 = ret
+        })
         await this.$api.config.downloadRemoteConfig()
-        await this.$api.config.readRemoteConfigStr().then((ret) => { remoteConfig.new1 = ret })
-        await this.$api.config.readRemoteConfigStr('_personal').then((ret) => { remoteConfig.new2 = ret })
+        await this.$api.config.readRemoteConfigStr().then((ret) => {
+          remoteConfig.new1 = ret
+        })
+        await this.$api.config.readRemoteConfigStr('_personal').then((ret) => {
+          remoteConfig.new2 = ret
+        })
 
         if (remoteConfig.old1 === remoteConfig.new1 && remoteConfig.old2 === remoteConfig.new2) {
           this.$message.info('远程配置没有变化，不做任何处理。')
@@ -276,7 +284,9 @@ export default {
                 1. 找到备份文件，路径：
                 <span>~/.dev-sidecar/config.json.时间戳.bak.json</span>
                 <br />
-                2. 将该备份文件重命名为<span>config.json</span>，再重启软件即可恢复个性化配置。
+                2. 将该备份文件重命名为
+                <span>config.json</span>
+                ，再重启软件即可恢复个性化配置。
               </div>
             </p>
           </div>
@@ -316,7 +326,9 @@ export default {
         <a-checkbox v-model="config.app.autoStart.enabled" @change="onAutoStartChange">
           本应用开机自启
         </a-checkbox>
-        <a-button class="md-mr-10" icon="profile" @click="openLog()">日志</a-button>
+        <a-button class="md-mr-10" icon="profile" @click="openLog()">
+          日志
+        </a-button>
         <div class="form-help">
           windows下建议开启开机自启。<a @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">更多说明参考</a>
         </div>

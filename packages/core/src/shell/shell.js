@@ -1,5 +1,5 @@
-const childProcess = require('child_process')
-const os = require('os')
+const childProcess = require('node:child_process')
+const os = require('node:os')
 const fixPath = require('fix-path')
 const iconv = require('iconv-lite')
 const PowerShell = require('node-powershell')
@@ -78,7 +78,7 @@ class WindowsSystemShell extends SystemShell {
 
 function _childExec (composeCmds, options = {}) {
   return new Promise((resolve, reject) => {
-    const childProcess = require('child_process')
+    const childProcess = require('node:child_process')
     log.info('shell:', composeCmds)
     childProcess.exec(composeCmds, options, (error, stdout, stderr) => {
       if (error) {
@@ -101,7 +101,7 @@ function childExec (composeCmds, options = {}) {
     const encoding = 'cp936'
     const binaryEncoding = 'binary'
 
-    const childProcess = require('child_process')
+    const childProcess = require('node:child_process')
     log.info('shell:', composeCmds)
     childProcess.exec(composeCmds, { encoding: binaryEncoding }, (error, stdout, stderr) => {
       if (error) {

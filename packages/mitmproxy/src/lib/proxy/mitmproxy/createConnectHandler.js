@@ -1,5 +1,5 @@
-const net = require('net')
-const url = require('url')
+const net = require('node:net')
+const url = require('node:url')
 const jsonApi = require('../../../json')
 const log = require('../../../utils/util.log')
 const DnsUtil = require('../../dns/index')

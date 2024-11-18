@@ -1,10 +1,10 @@
+const fork = require('node:child_process').fork
+const fs = require('node:fs')
+const path = require('node:path')
 const lodash = require('lodash')
 const config = require('../../config')
 const event = require('../../event')
 const status = require('../../status')
-const fork = require('child_process').fork
-const fs = require('fs')
-const path = require('path')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
 const log = require('../../utils/util.log')
 

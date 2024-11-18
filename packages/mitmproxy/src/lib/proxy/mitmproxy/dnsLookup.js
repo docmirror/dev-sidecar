@@ -1,4 +1,4 @@
-const defaultDns = require('dns')
+const defaultDns = require('node:dns')
 const log = require('../../../utils/util.log')
 const speedTest = require('../../speed')
 

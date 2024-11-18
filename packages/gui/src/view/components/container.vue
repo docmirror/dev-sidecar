@@ -7,21 +7,27 @@ export default {
 <template>
   <div class="ds-container">
     <div class="body-wrapper">
-      <div v-if="$slots.header" class="container-header"><slot name="header" /></div>
-      <div class="container-body"><slot /></div>
-      <div class="container-footer"><slot name="footer" /></div>
+      <div v-if="$slots.header" class="container-header">
+        <slot name="header" />
+      </div>
+      <div class="container-body">
+        <slot />
+      </div>
+      <div class="container-footer">
+        <slot name="footer" />
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="scss">
-.ds-container{
-  height:100%;
+.ds-container {
+  height: 100%;
   background: #fff;
   display: flex;
   position: relative;
 
-  .body-wrapper{
+  .body-wrapper {
     position: absolute;
     top: 0px;
     right: 0px;
@@ -32,21 +38,21 @@ export default {
     overflow: hidden;
   }
 
-  .container-header{
-    padding:15px;
-    border-bottom: 1px solid #EEE;
-    background: #FFF;
-    height:60px;
+  .container-header {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+    height: 60px;
     display: flex;
     align-items: center;
-    justify-content:  space-between;
+    justify-content: space-between;
   }
-  .container-body{
+  .container-body {
     flex: 1;
     height: 0;
     overflow: auto;
     position: relative;
-    padding:15px;
+    padding: 15px;
   }
 }
 </style>

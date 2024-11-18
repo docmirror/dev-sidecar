@@ -3,7 +3,7 @@
 开发者边车，命名取自service-mesh的service-sidecar，意为为开发者打辅助的边车工具（以下简称ds）
 通过本地代理的方式将https请求代理到一些国内的加速通道上
 
-<a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+`<a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github">``</a>`
 
 > Gitee上的同步项目已被封禁，此项目将不再更新与维护 【狗头保命】
 >
@@ -12,7 +12,7 @@
 
 ## 打个广告
 
-> <https://github.com/certd/certd>
+> [https://github.com/certd/certd](https://github.com/certd/certd)
 > 我的开源证书管理工具项目，全自动申请和部署证书，有需求的可以去试试，帮忙点个star
 
 ## 重要提醒
@@ -22,7 +22,7 @@
 > 注意：由于electron无法监听windows的关机事件，开着ds情况下直接重启电脑，会导致无法上网，你可以手动启动ds即可恢复网络，你也可以将ds设置为开机自启。
 >
 > 关于此问题的更多讨论请前往：
-> <https://github.com/docmirror/dev-sidecar/issues/109>
+> [https://github.com/docmirror/dev-sidecar/issues/109](https://github.com/docmirror/dev-sidecar/issues/109)
 
 > ------------------------------重要提醒2---------------------------------
 >
@@ -54,12 +54,12 @@
 - 解决git push 偶尔失败需要输入账号密码的问题（fatal: TaskCanceledException encountered / fatal: HttpRequestException encountered）
 - raw/blame加速
 
-> 以上部分功能通过`X.I.U`的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
+> 以上部分功能通过 `X.I.U` 的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
 >
-> - <https://github.com/XIU2/UserScript>
-> - <https://greasyfork.org/scripts/412245>
+> - [https://github.com/XIU2/UserScript](https://github.com/XIU2/UserScript)
+> - [https://greasyfork.org/scripts/412245](https://greasyfork.org/scripts/412245)
 >
-> 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过`加速服务->基本设置->启用脚本`进行关闭）。
+> 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过 `加速服务->基本设置->启用脚本` 进行关闭）。
 
 ### 1.4、 Stack Overflow 加速
 
@@ -152,12 +152,14 @@
 #### 1）git clone 加速
 
 - 方式1：快捷复制：
-    > 开启脚本支持，然后在复制clone链接下方，即可复制到加速链接
+
+  > 开启脚本支持，然后在复制clone链接下方，即可复制到加速链接
 
 - 方式2：
-    > 1. 使用方式：用实际的名称替换 `{}` 的内容，即可加速clone <https://hub.fastgit.org/{username}/{reponame}.git>
-    > 2. clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来
-    > 3. 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
+
+  > 1. 使用方式：用实际的名称替换 `{}` 的内容，即可加速clone [https://hub.fastgit.org/{username}/{reponame}.git](https://hub.fastgit.org/%7Busername%7D/%7Breponame%7D.git)
+  > 2. clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来
+  > 3. 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
 
 #### 2）`github.com` 的镜像网站（注意：部分镜像网站不能登录）
 
@@ -258,7 +260,7 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 
 1. 本应用仅支持https加速
    请务必确认你访问的地址是https开头的
-   比如： <https://github.com/>
+   比如： [https://github.com/](https://github.com/)
 2. 检查浏览器是否装了什么插件，与ds有冲突
 3. 检查是否安装了其他代理软件，与ds有冲突
 4. 请确认浏览器的代理设置为使用IE代理/或者使用系统代理状态
@@ -279,7 +281,7 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 
 1. 火狐浏览器->选项->隐私与安全->证书->查看证书
 2. 证书颁发机构->导入
-3. 选择证书文件`C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为`~/.dev-sidecar`目录）
+3. 选择证书文件 `C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为 `~/.dev-sidecar` 目录）
 4. 勾选信任由此证书颁发机构来标识网站，确定即可
 
 ### 6.4、打开github显示连接超时

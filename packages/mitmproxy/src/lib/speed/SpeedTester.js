@@ -1,5 +1,5 @@
 // 1个小时不访问，取消获取
-const net = require('net')
+const net = require('node:net')
 const _ = require('lodash')
 const log = require('../../utils/util.log.js')
 const config = require('./config.js')

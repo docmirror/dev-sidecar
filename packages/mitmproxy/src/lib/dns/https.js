@@ -1,4 +1,4 @@
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const doh = require('dns-over-http')
 const log = require('../../utils/util.log')
 const matchUtil = require('../../utils/util.match')

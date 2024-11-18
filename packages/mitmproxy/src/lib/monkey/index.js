@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const log = require('../../utils/util.log')
 
 let scripts
@@ -57,10 +57,10 @@ if (!((window.__ds_global__ || {}).GM_getValue || (() => true))("ds_enabled", tr
     initStr}\r\n${
     checkEnabledStr}\r\n\r\n${
     grantStr ? (`${grantStr}\r\n\r\n`) : ''
-    }${content
-    }\r\nconsole.log("${scriptKey} completed")`
-    + `\r\n})`
-    + `\r\nconsole.log("${scriptKey} loaded")`
+  }${content
+  }\r\nconsole.log("${scriptKey} completed")`
+  + `\r\n})`
+  + `\r\nconsole.log("${scriptKey} loaded")`
 }
 
 function loadScript (content, scriptName) {

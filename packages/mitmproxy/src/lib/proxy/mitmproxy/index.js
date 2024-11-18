@@ -1,4 +1,4 @@
-const http = require('http')
+const http = require('node:http')
 const log = require('../../../utils/util.log')
 const speedTest = require('../../speed/index.js')
 const config = require('../common/config')

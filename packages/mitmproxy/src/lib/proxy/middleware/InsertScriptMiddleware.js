@@ -1,4 +1,4 @@
-const zlib = require('zlib')
+const zlib = require('node:zlib')
 const through = require('through2')
 const log = require('../../../utils/util.log')
 

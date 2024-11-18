@@ -1,13 +1,10 @@
-const path = require('path')
+const path = require('node:path')
 const webpack = require('webpack')
 
 const publishUrl = process.env.VUE_APP_PUBLISH_URL
 const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
 console.log('Publish url:', publishUrl)
 
-/**
- * @type {import('@vue/cli-service').ProjectOptions}
- */
 module.exports = {
   pages: {
     index: {

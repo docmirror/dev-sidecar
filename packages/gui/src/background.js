@@ -1,6 +1,6 @@
 'use strict'
 /* global __static */
-import path from 'path'
+import path from 'node:path'
 import DevSidecar from '@docmirror/dev-sidecar'
 import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, protocol, Tray } from 'electron'
 import minimist from 'minimist'
