@@ -1,0 +1,90 @@
+name: npm run electron
+
+on:
+  push:
+    branches:
+      - run
+
+jobs:
+  npm-run-electron:
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows
+          - ubuntu
+          - macos
+        node:
+          - 22
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+
+      - name: 'Setup Node.js "${{ matrix.node }}.x" environment'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          registry-url: https://npm.pkg.github.com/
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Python environment (Mac) Because of electron-builder install-app-deps requires Python setup tools
+        if: matrix.os == 'macos'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Get package info
+        id: package-info
+        uses: luizfelipelaviola/get-package-info@v1
+        with:
+          path: ./packages/mitmproxy
+
+      - name: Print
+        run: |
+          echo "version = ${{ steps.package-info.outputs.version }}";
+          echo "github.ref_type = ${{ github.ref_type }}";
+          echo "github.ref = ${{ github.ref }}";
+          echo "github.ref_name = ${{ github.ref_name }}";
+
+      - name: 'npm -v | pnpm -v | python --version'
+        run: |
+          echo "======================================================================";
+          echo "npm -v";
+          echo "--------------------";
+          npm -v;
+
+          echo "======================================================================";
+          echo "pnpm -v";
+          echo "--------------------";
+          pnpm -v;
+
+          echo "======================================================================";
+          echo "python --version";
+          echo "--------------------";
+          python --version;
+
+      - name: pnpm install
+        run: |
+          echo "======================================================================";
+          dir || ls -lah;
+
+          echo "======================================================================";
+          echo "pnpm install";
+          echo "--------------------";
+          pnpm install;
+
+      - name: 'npm run electron'
+        run: |
+          echo "======================================================================";
+          echo "cd packages/gui";
+          echo "--------------------";
+          cd packages/gui;
+          dir || ls -lah;
+
+          echo "======================================================================";
+          echo "npm run electron";
+          echo "--------------------";
+          npm run electron;
