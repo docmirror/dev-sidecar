@@ -151,21 +151,18 @@
 
 #### 1）git clone 加速
 
--方式1：快捷复制：
+- 方式1：快捷复制：
+    > 开启脚本支持，然后在复制clone链接下方，即可复制到加速链接
 
-> 开启脚本支持，然后在复制clone链接下方，即可复制到加速链接
-
--方式2：
-
-> 1. 使用方式：用实际的名称替换 `{}`的内容，即可加速clone
- <https://hub.fastgit.org/{username}/{reponame}.git>
-> 2.clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来
-> 3. 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
+- 方式2：
+    > 1. 使用方式：用实际的名称替换 `{}` 的内容，即可加速clone <https://hub.fastgit.org/{username}/{reponame}.git>
+    > 2. clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来
+    > 3. 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
 
 #### 2）`github.com` 的镜像网站（注意：部分镜像网站不能登录）
 
-> 1.  [hub.fastgit.org](https://hub.fastgit.org/) （2024/11/18：这个好像失效了？）
-> 2.  [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限（2024/11/18：这个好像失效了？）
+> 1. [hub.fastgit.org](https://hub.fastgit.org/) （2024/11/18：这个好像失效了？）
+> 2. [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限（2024/11/18：这个好像失效了？）
 > 3. [dgithub.xyz](https://dgithub.xyz/)
 
 ## 五、api
@@ -318,8 +315,9 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 当应用意外关闭时，可能会因为没有将系统代理恢复，从而导致完全无法上网。
 
 对于此问题有如下几种解决方案可供选择：
-1.重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）
-2.如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
+
+1. 重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）
+2. 如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
 3. 如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启
 
 ### 6.8、卸载应用后上不了网，git请求不了
