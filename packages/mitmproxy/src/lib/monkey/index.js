@@ -12,8 +12,7 @@ function buildScript (sc, content, scriptName) {
   let eventStr
   if (runAt === 'document-end') {
     eventStr = 'document.addEventListener("DOMContentLoaded"'
-  }
-  else {
+  } else {
     eventStr = 'window.addEventListener("load"'
   }
 
@@ -48,8 +47,7 @@ if (!((window.__ds_global__ || {}).GM_getValue || (() => true))("ds_enabled", tr
 
     if (item.indexOf('.') > 0) {
       grantStr += `${item} = (window.__ds_global__ || {})['${item}'];`
-    }
-    else {
+    } else {
       grantStr += `const ${item} = (window.__ds_global__ || {})['${item}'] || (() => {});`
     }
   }
@@ -91,11 +89,9 @@ function loadScript (content, scriptName) {
       const value = ret[2].trim()
       if (key === 'grant') {
         sc.grant.push(value)
-      }
-      else if (key === 'match') {
+      } else if (key === 'match') {
         sc.match.push(value)
-      }
-      else {
+      } else {
         sc[key] = value
       }
     }

@@ -24,8 +24,7 @@ function getExclusionArray (exclusions) {
     if (exclusions.length > 0) {
       ret = exclusions
     }
-  }
-  else if (lodash.isObject(exclusions)) {
+  } else if (lodash.isObject(exclusions)) {
     ret = []
     for (const exclusion in exclusions) {
       ret.push(exclusion)
@@ -158,8 +157,7 @@ module.exports = (serverConfig) => {
                 }
               }
             }
-          }
-          catch (e) {
+          } catch (e) {
             log.error(`判断拦截器是否排除当前path时出现异常, path: ${rOptions.path}, interceptOpt:`, interceptOpt, ', error:', e)
           }
           if (isExcluded) {
@@ -191,8 +189,7 @@ module.exports = (serverConfig) => {
               interceptor.requestIntercept = (context, req, res, ssl, next) => {
                 return impl.requestIntercept(context, interceptOpt, req, res, ssl, next, matched)
               }
-            }
-            else if (impl.responseIntercept) {
+            } else if (impl.responseIntercept) {
               // res拦截器
               interceptor.responseIntercept = (context, req, res, proxyReq, proxyRes, ssl, next) => {
                 return impl.responseIntercept(context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next, matched)
@@ -202,8 +199,7 @@ module.exports = (serverConfig) => {
             // log.info(`${action} interceptor: ${impl.name}, hostname: ${rOptions.hostname}, regexp: ${regexp}`)
             if (action === 'add') {
               matchIntercepts.push(interceptor)
-            }
-            else {
+            } else {
               matchIntercepts[matchedInterceptOpt.index] = interceptor
             }
             matchInterceptsOpts[impl.name] = {
@@ -214,7 +210,9 @@ module.exports = (serverConfig) => {
         }
       }
 
-      matchIntercepts.sort((a, b) => { return a.priority - b.priority })
+      matchIntercepts.sort((a, b) => {
+        return a.priority - b.priority
+      })
       // for (const interceptor of matchIntercepts) {
       //   log.info('interceptor:', interceptor.name, 'priority:', interceptor.priority)
       // }

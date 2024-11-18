@@ -218,12 +218,10 @@ export default {
           await this.$api.config.downloadRemoteConfig()
           this.$message.info('下载远程配置成功，开始重启代理服务和系统代理')
           await this.reloadConfigAndRestart()
-        }
-        finally {
+        } finally {
           this.reloadLoading = false
         }
-      }
-      else {
+      } else {
         this.$message.info('远程配置已关闭，开始重启代理服务和系统代理')
         await this.reloadConfigAndRestart()
       }
@@ -237,22 +235,28 @@ export default {
       try {
         const remoteConfig = {}
 
-        await this.$api.config.readRemoteConfigStr().then((ret) => { remoteConfig.old1 = ret })
-        await this.$api.config.readRemoteConfigStr('_personal').then((ret) => { remoteConfig.old2 = ret })
+        await this.$api.config.readRemoteConfigStr().then((ret) => {
+          remoteConfig.old1 = ret
+        })
+        await this.$api.config.readRemoteConfigStr('_personal').then((ret) => {
+          remoteConfig.old2 = ret
+        })
         await this.$api.config.downloadRemoteConfig()
-        await this.$api.config.readRemoteConfigStr().then((ret) => { remoteConfig.new1 = ret })
-        await this.$api.config.readRemoteConfigStr('_personal').then((ret) => { remoteConfig.new2 = ret })
+        await this.$api.config.readRemoteConfigStr().then((ret) => {
+          remoteConfig.new1 = ret
+        })
+        await this.$api.config.readRemoteConfigStr('_personal').then((ret) => {
+          remoteConfig.new2 = ret
+        })
 
         if (remoteConfig.old1 === remoteConfig.new1 && remoteConfig.old2 === remoteConfig.new2) {
           this.$message.info('远程配置没有变化，不做任何处理。')
           this.$message.warn('如果您确实修改了远程配置，请稍等片刻再重试！')
-        }
-        else {
+        } else {
           this.$message.success('获取到了最新的远程配置，开始重启代理服务和系统代理')
           await this.reloadConfigAndRestart()
         }
-      }
-      finally {
+      } finally {
         this.reloadLoading = false
       }
     },
@@ -297,12 +301,10 @@ export default {
               this.config = await this.$api.config.get()
               this.$message.success('恢复出厂设置成功，开始重启代理服务和系统代理')
               await this.reloadConfigAndRestart()
-            }
-            else {
+            } else {
               this.$message.info('已是出厂设置，无需恢复')
             }
-          }
-          finally {
+          } finally {
             this.removeUserConfigLoading = false
           }
         },

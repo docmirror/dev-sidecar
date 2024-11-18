@@ -9,8 +9,7 @@ const home = process.env.USER_HOME || process.env.HOME || 'C:/Users/Administrato
 let configPath
 if (process.argv && process.argv.length > 3) {
   configPath = process.argv[2]
-}
-else {
+} else {
   configPath = path.join(home, '.dev-sidecar/running.json')
 }
 

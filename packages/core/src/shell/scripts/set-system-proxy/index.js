@@ -44,8 +44,7 @@ async function _winUnsetProxy (exec, setEnv) {
         })
       }
     })
-  }
-  catch (e) {
+  } catch (e) {
     log.error('删除环境变量 HTTPS_PROXY、HTTP_PROXY 失败:', e)
   }
 }
@@ -68,8 +67,7 @@ async function downloadDomesticDomainAllowListAsync () {
       if (body == null || body.length < 100) {
         log.warn('下载远程 domestic-domain-allowlist.txt 文件成功，但内容为空或内容太短，判断为无效的 domestic-domain-allowlist.txt 文件:', remoteFileUrl, ', body:', body)
         return
-      }
-      else {
+      } else {
         log.info('下载远程 domestic-domain-allowlist.txt 文件成功:', remoteFileUrl)
       }
 
@@ -79,8 +77,7 @@ async function downloadDomesticDomainAllowListAsync () {
           fileTxt = Buffer.from(fileTxt, 'base64').toString('utf8')
           // log.debug('解析 base64 后的 domestic-domain-allowlist:', fileTxt)
         }
-      }
-      catch (e) {
+      } catch (e) {
         if (!fileTxt.includes('*.')) {
           log.error(`远程 domestic-domain-allowlist.txt 文件内容即不是base64格式，也不是要求的格式，url: ${remoteFileUrl}，body: ${body}`)
           return
@@ -89,8 +86,7 @@ async function downloadDomesticDomainAllowListAsync () {
 
       // 保存到本地
       saveDomesticDomainAllowListFile(fileTxt)
-    }
-    else {
+    } else {
       log.error(`下载远程 domestic-domain-allowlist.txt 文件失败: ${remoteFileUrl}, response:`, response, ', body:', body)
     }
   })
@@ -101,8 +97,7 @@ function loadLastModifiedTimeFromTxt (fileTxt) {
   if (matched && matched.length > 0) {
     try {
       return new Date(matched[0])
-    }
-    catch (ignore) {
+    } catch (ignore) {
       return null
     }
   }
@@ -127,8 +122,7 @@ function saveDomesticDomainAllowListFile (fileTxt) {
       fs.utimes(filePath, lastModifiedTime, lastModifiedTime, (utimesErr) => {
         if (utimesErr) {
           log.error('修改 domestic-domain-allowlist.txt 文件时间失败:', utimesErr)
-        }
-        else {
+        } else {
           log.info(`'${filePath}' 文件的修改时间已更新为其最近更新时间 '${formatDate(lastModifiedTime)}'`)
         }
       })
@@ -169,22 +163,19 @@ function getDomesticDomainAllowList () {
       // 如果临时文件已存在，则使用临时文件
       fileAbsolutePath = tmpFilePath
       log.info('读取已下载的 domestic-domain-allowlist.txt 文件:', fileAbsolutePath)
-    }
-    else {
+    } else {
       // 如果临时文件不存在，则使用内置文件
       log.info('__dirname:', __dirname)
       fileAbsolutePath = path.join(__dirname, '../', config.get().proxy.domesticDomainAllowListFilePath)
       log.info('读取内置的 domestic-domain-allowlist.txt 文件:', fileAbsolutePath)
     }
-  }
-  else {
+  } else {
     log.info('读取自定义路径的 domestic-domain-allowlist.txt 文件:', fileAbsolutePath)
   }
 
   try {
     return fs.readFileSync(fileAbsolutePath).toString()
-  }
-  catch (e) {
+  } catch (e) {
     log.error(`读取 domestic-domain-allowlist.txt 文件失败: ${fileAbsolutePath}, error:`, e)
     return null
   }
@@ -207,13 +198,11 @@ function getProxyExcludeIpStr (split) {
         if (domesticDomainAllowList) {
           excludeIpStr += domesticDomainAllowList
           log.info('系统代理排除列表拼接国内域名')
-        }
-        else {
+        } else {
           log.info('国内域名为空，不进行系统代理排除列表拼接国内域名')
         }
       }
-    }
-    catch (e) {
+    } catch (e) {
       log.error('系统代理排除列表拼接国内域名失败:', e)
     }
   }
@@ -257,8 +246,7 @@ async function _winSetProxy (exec, ip, port, setEnv) {
       }
 
       //  await addClearScriptIni()
-    }
-    catch (e) {
+    } catch (e) {
       log.error('设置环境变量 HTTPS_PROXY、HTTP_PROXY 失败:', e)
     }
   }
@@ -272,8 +260,7 @@ const executor = {
     if (ip != null) { // 设置代理
       log.info('设置windows系统代理:', ip, port, setEnv)
       return _winSetProxy(exec, ip, port, setEnv)
-    }
-    else { // 关闭代理
+    } else { // 关闭代理
       log.info('关闭windows系统代理')
       return _winUnsetProxy(exec, setEnv)
     }
@@ -294,8 +281,7 @@ const executor = {
       if (config.get().proxy.proxyHttp) {
         setProxyCmd.push(`gsettings set org.gnome.system.proxy.http host ${ip}`)
         setProxyCmd.push(`gsettings set org.gnome.system.proxy.http port ${port - 1}`)
-      }
-      else {
+      } else {
         setProxyCmd.push('gsettings set org.gnome.system.proxy.http host \'\'')
         setProxyCmd.push('gsettings set org.gnome.system.proxy.http port 0')
       }
@@ -305,8 +291,7 @@ const executor = {
       setProxyCmd.push(`gsettings set org.gnome.system.proxy ignore-hosts "['${excludeIpStr}']"`)
 
       await exec(setProxyCmd)
-    }
-    else { // 关闭代理
+    } else { // 关闭代理
       const setProxyCmd = [
         'gsettings set org.gnome.system.proxy mode none',
       ]
@@ -328,8 +313,7 @@ const executor = {
       // http
       if (config.get().proxy.proxyHttp) {
         await exec(`networksetup -setwebproxy "${wifiAdaptor}" ${ip} ${port - 1}`)
-      }
-      else {
+      } else {
         await exec(`networksetup -setwebproxystate "${wifiAdaptor}" off`)
       }
 
@@ -344,8 +328,7 @@ const executor = {
       // source ~/.zshrc
       // `
       // await exec(setEnv)
-    }
-    else { // 关闭代理
+    } else { // 关闭代理
       // https
       await exec(`networksetup -setsecurewebproxystate "${wifiAdaptor}" off`)
       // http

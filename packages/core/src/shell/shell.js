@@ -60,12 +60,10 @@ class WindowsSystemShell extends SystemShell {
         const ret = await ps.invoke()
         // log.info('ps complete', cmds)
         return ret
-      }
-      finally {
+      } finally {
         ps.dispose()
       }
-    }
-    else {
+    } else {
       let compose = 'echo  "test" ' // 'chcp 65001  '
       for (const cmd of cmds) {
         compose += ` && ${cmd}`
@@ -88,8 +86,7 @@ function _childExec (composeCmds, options = {}) {
           log.error('cmd 命令执行错误：\n===>\ncommands:', composeCmds, '\n   error:', error, '\n<===')
         }
         reject(new Error(stderr))
-      }
-      else {
+      } else {
         // log.info('cmd 命令完成：', stdout)
         resolve(stdout)
       }
@@ -114,8 +111,7 @@ function childExec (composeCmds, options = {}) {
           log.error('cmd 命令执行错误：\n------------------------------\ncommands:', composeCmds, '\n message:', message, '\n   error:', error, '\n------------------------------')
         }
         reject(new Error(message))
-      }
-      else {
+      } else {
         // log.info('cmd 命令完成：', stdout)
         const message = iconv.decode(Buffer.from(stdout, binaryEncoding), encoding)
         resolve(message)
@@ -171,8 +167,7 @@ async function execFile (file, args, options) {
         log.debug('文件执行成功：', file)
         resolve(stdout)
       })
-    }
-    catch (e) {
+    } catch (e) {
       log.error('文件执行出错：', file, e)
       reject(e)
     }

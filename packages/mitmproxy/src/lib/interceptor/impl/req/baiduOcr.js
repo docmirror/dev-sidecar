@@ -60,8 +60,7 @@ function getConfig (interceptOpt, tryCount, log) {
     if (count >= 100000) {
       count = 0
     }
-  }
-  else {
+  } else {
     config = interceptOpt.baiduOcr
     tryCount = null // 将tryCount设置为null代表只有一个配置
   }
@@ -84,13 +83,11 @@ function getConfig (interceptOpt, tryCount, log) {
   if (config.api == null) {
     if (tryCount == null) {
       return null // 只配置了一个账号，没有更多账号可以选择了，直接返回null
-    }
-    else {
+    } else {
       if (tryCount < interceptOpt.baiduOcr.length) {
         // 递归找到有效的配置
         return getConfig(interceptOpt, tryCount + 1, log)
-      }
-      else {
+      } else {
         return null
       }
     }
@@ -167,8 +164,7 @@ module.exports = {
           limitConfig(config.id, config.api)
           log.error(`当前百度云账号的接口 ${config.api}，已达到当日调用次数上限，暂时禁用它，明天会自动放开:`, config)
         }
-      }
-      else {
+      } else {
         log.info('baiduOcr success:', result)
       }
 

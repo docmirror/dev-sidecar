@@ -30,8 +30,7 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
     if (hostnamePreSetIpList && (hostnamePreSetIpList.length > 0 || hostnamePreSetIpList.length === undefined)) {
       if (hostnamePreSetIpList.length > 0) {
         hostnamePreSetIpList = hostnamePreSetIpList.slice()
-      }
-      else {
+      } else {
         hostnamePreSetIpList = mapToList(hostnamePreSetIpList)
       }
 
@@ -53,13 +52,11 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
       const ret = result.answers.filter(item => item.type === 'A').map(item => item.data)
       if (ret.length === 0) {
         log.info('该域名没有IPv4地址解析:', hostname, ', cost:', (new Date() - start), 'ms')
-      }
-      else {
+      } else {
         log.info('获取到域名地址：', hostname, JSON.stringify(ret), ', cost:', (new Date() - start), 'ms')
       }
       return ret
-    }
-    catch (e) {
+    } catch (e) {
       log.warn('DNS query error:', hostname, ', dns:', this.dnsServer, ', cost:', (new Date() - start), 'ms, error:', e)
       return []
     }

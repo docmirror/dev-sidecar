@@ -14,11 +14,9 @@ module.exports = {
 
       if (conf.type === 'ipaddress') {
         dnsMap[provider] = new DNSOverIpAddress(conf.server)
-      }
-      else if (conf.type === 'https') {
+      } else if (conf.type === 'https') {
         dnsMap[provider] = new DNSOverHTTPS(conf.server, preSetIpList)
-      }
-      else {
+      } else {
         dnsMap[provider] = new DNSOverTLS(conf.server)
       }
 

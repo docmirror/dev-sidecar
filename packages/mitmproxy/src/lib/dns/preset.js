@@ -26,8 +26,7 @@ module.exports = class DNSOverPreSetIpList extends BaseDNS {
     if (hostnamePreSetIpList && (hostnamePreSetIpList.length > 0 || hostnamePreSetIpList.length === undefined)) {
       if (hostnamePreSetIpList.length > 0) {
         hostnamePreSetIpList = hostnamePreSetIpList.slice()
-      }
-      else {
+      } else {
         hostnamePreSetIpList = mapToList(hostnamePreSetIpList)
       }
 

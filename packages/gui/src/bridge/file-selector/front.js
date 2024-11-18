@@ -7,8 +7,7 @@ function install (app, api) {
           console.log('selector', message)
           if (message.key === 'selected') {
             resolve(message.value)
-          }
-          else {
+          } else {
             reject(new Error('没有选择文件'))
           }
           api.ipc.on('file-selector', () => {})

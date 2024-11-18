@@ -48,8 +48,7 @@ export default {
         await this.applyBefore()
         await this.saveConfig()
         await this.applyAfter()
-      }
-      finally {
+      } finally {
         this.applyLoading = false
       }
     },
@@ -74,8 +73,7 @@ export default {
               await this.ready(this.config)
             }
             await this.apply()
-          }
-          finally {
+          } finally {
             this.resetDefaultLoading = false
           }
         },
@@ -127,8 +125,7 @@ export default {
           await this.$api.plugin.git.start()
         }
         this.$message.success('代理服务和系统代理重启成功')
-      }
-      else {
+      } else {
         this.$message.info('代理服务和系统代理未启动，无需重启')
       }
     },

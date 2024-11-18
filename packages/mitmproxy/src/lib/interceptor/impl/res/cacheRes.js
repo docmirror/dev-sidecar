@@ -47,14 +47,11 @@ module.exports = {
       // 尝试修改rawHeaders中的cache-control、last-modified、expires
       if (proxyRes.rawHeaders[i].toLowerCase() === 'cache-control') {
         originalHeaders.cacheControl = { value: proxyRes.rawHeaders[i + 1], valueIndex: i + 1 }
-      }
-      else if (proxyRes.rawHeaders[i].toLowerCase() === 'last-modified') {
+      } else if (proxyRes.rawHeaders[i].toLowerCase() === 'last-modified') {
         originalHeaders.lastModified = { value: proxyRes.rawHeaders[i + 1], valueIndex: i + 1 }
-      }
-      else if (proxyRes.rawHeaders[i].toLowerCase() === 'expires') {
+      } else if (proxyRes.rawHeaders[i].toLowerCase() === 'expires') {
         originalHeaders.expires = { value: proxyRes.rawHeaders[i + 1], valueIndex: i + 1 }
-      }
-      else if (proxyRes.rawHeaders[i].toLowerCase() === 'etag') {
+      } else if (proxyRes.rawHeaders[i].toLowerCase() === 'etag') {
         originalHeaders.etag = { value: proxyRes.rawHeaders[i + 1], valueIndex: i + 1 }
       }
 
@@ -70,8 +67,7 @@ module.exports = {
       if (maxAgeMatch && maxAgeMatch[1] > maxAge) {
         if (interceptOpt.cacheImmutable !== false && !originalHeaders.cacheControl.value.includes('immutable')) {
           maxAge = maxAgeMatch[1]
-        }
-        else {
+        } else {
           const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`
           res.setHeader('DS-Cache-Response-Interceptor', `skip: ${maxAgeMatch[1]} > ${maxAge}`)
           log.info(`cache response intercept: skip: ${maxAgeMatch[1]} > ${maxAge}, url: ${url}`)
@@ -91,22 +87,19 @@ module.exports = {
     // 替换cache-control
     if (originalHeaders.cacheControl) {
       proxyRes.rawHeaders[originalHeaders.cacheControl.valueIndex] = replaceHeaders.cacheControl
-    }
-    else {
+    } else {
       res.setHeader('Cache-Control', replaceHeaders.cacheControl)
     }
     // 替换last-modified
     if (originalHeaders.lastModified) {
       proxyRes.rawHeaders[originalHeaders.lastModified.valueIndex] = replaceHeaders.lastModified
-    }
-    else {
+    } else {
       res.setHeader('Last-Modified', replaceHeaders.lastModified)
     }
     // 替换expires
     if (originalHeaders.expires) {
       proxyRes.rawHeaders[originalHeaders.expires.valueIndex] = replaceHeaders.expires
-    }
-    else {
+    } else {
       res.setHeader('Expires', replaceHeaders.expires)
     }
 

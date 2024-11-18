@@ -60,8 +60,7 @@ function reSpeedTest () {
 function action (event) {
   if (event.key === 'reTest') {
     reSpeedTest()
-  }
-  else if (event.key === 'getList') {
+  } else if (event.key === 'getList') {
     process.send({ type: 'speed', event: { key: 'getList', value: getAllSpeedTester() } })
   }
 }

@@ -28,8 +28,7 @@ const Plugin = function (context) {
       for (const key in server) {
         if (i === 0) {
           main = key
-        }
-        else {
+        } else {
           backup.push(key)
         }
         i++

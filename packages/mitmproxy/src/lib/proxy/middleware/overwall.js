@@ -15,8 +15,7 @@ function matched (hostname, overWallTargetMap) {
   const ret1 = matchUtil.matchHostname(overWallTargetMap, hostname, 'matched overwall')
   if (ret1) {
     return 'in config'
-  }
-  else if (ret1 === false || ret1 === 'false') {
+  } else if (ret1 === false || ret1 === 'false') {
     log.debug(`域名 ${hostname} 的overwall配置为 false，跳过增强功能，即使它在 pac.txt 里`)
     return null
   }
@@ -29,8 +28,7 @@ function matched (hostname, overWallTargetMap) {
   if (ret && ret.indexOf('PROXY ') === 0) {
     log.info(`matchHostname: matched overwall: '${hostname}' -> '${ret}' in pac.txt`)
     return 'in pac.txt'
-  }
-  else {
+  } else {
     log.debug(`matchHostname: matched overwall: Not-Matched '${hostname}' -> '${ret}' in pac.txt`)
     return null
   }
@@ -51,8 +49,7 @@ function loadPacLastModifiedTime (pacTxt) {
   if (matched && matched.length > 0) {
     try {
       return new Date(matched[0])
-    }
-    catch {
+    } catch {
       return null
     }
   }
@@ -87,8 +84,7 @@ function savePacFile (pacTxt) {
       fs.utimes(pacFilePath, lastModifiedTime, lastModifiedTime, (utimesErr) => {
         if (utimesErr) {
           log.error('修改 pac.txt 文件时间失败:', utimesErr)
-        }
-        else {
+        } else {
           log.info(`'${pacFilePath}' 文件的修改时间已更新为其最近更新时间 '${formatDate(lastModifiedTime)}'`)
         }
       })
@@ -111,8 +107,7 @@ async function downloadPacAsync (pacConfig) {
       if (body == null || body.length < 100) {
         log.warn('下载远程 pac.txt 文件成功，但内容为空或内容太短，判断为无效的 pax.txt 文件:', remotePacFileUrl, ', body:', body)
         return
-      }
-      else {
+      } else {
         log.info('下载远程 pac.txt 文件成功:', remotePacFileUrl)
       }
 
@@ -123,8 +118,7 @@ async function downloadPacAsync (pacConfig) {
           pacTxt = Buffer.from(pacTxt, 'base64').toString('utf8')
           // log.debug('解析 base64 后的 pax:', pacTxt)
         }
-      }
-      catch {
+      } catch {
         if (!pacTxt.includes('!---------------------EOF')) {
           log.error(`远程 pac.txt 文件内容即不是base64格式，也不是要求的格式，url: ${remotePacFileUrl}，body: ${body}`)
           return
@@ -133,8 +127,7 @@ async function downloadPacAsync (pacConfig) {
 
       // 保存到本地
       savePacFile(pacTxt)
-    }
-    else {
+    } else {
       log.error(`下载远程 pac.txt 文件失败: ${remotePacFileUrl}, response:`, response, ', body:', body)
     }
   })
@@ -183,8 +176,7 @@ function createOverwallMiddleware (overWallConfig) {
         }
         if (count.value == null) {
           log.error('`count.value` is null, the count:', count)
-        }
-        else {
+        } else {
           count.doCount(count.value)
           proxyServer = count.value
           context.requestCount = {

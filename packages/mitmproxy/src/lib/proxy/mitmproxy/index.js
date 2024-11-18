@@ -104,8 +104,7 @@ module.exports = {
         server.on('upgrade', (req, cltSocket, head) => {
           if (printDebugLog) {
             log.debug(`【server upgrade, ssl: ${ssl}】\r\n----- req -----\r\n`, req)
-          }
-          else {
+          } else {
             log.info(`【server upgrade, ssl: ${ssl}】`, req.url)
           }
           upgradeHandler(req, cltSocket, head, ssl)

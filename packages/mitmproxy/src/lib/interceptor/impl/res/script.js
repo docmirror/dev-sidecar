@@ -52,8 +52,7 @@ module.exports = {
 
         if (key.includes('/')) {
           scriptTag = getScriptByUrlOrPath(key) // 1.绝对地址或相对地址（注意：当目标站点限制跨域脚本时，可使用相对地址，再结合proxy拦截器进行代理，可规避掉限制跨域脚本问题。）
-        }
-        else {
+        } else {
           const script = scripts[key]
           if (script == null) {
             continue
@@ -72,8 +71,7 @@ module.exports = {
       // 插入油猴脚本浏览器扩展
       if (typeof interceptOpt.tampermonkeyScript === 'string') {
         tags = `\r\n\t${getScriptByUrlOrPath(interceptOpt.tampermonkeyScript)}${tags}`
-      }
-      else {
+      } else {
         tags = `\r\n\t${getScript('tampermonkey', scripts.tampermonkey.script)}${tags}`
       }
 
@@ -82,12 +80,10 @@ module.exports = {
       return {
         head: `${tags}\r\n`,
       }
-    }
-    catch (err) {
+    } catch (err) {
       try {
         res.setHeader('DS-Script-Interceptor', 'error')
-      }
-      catch (e) {
+      } catch (e) {
         // ignore
       }
       log.error('load monkey script error', err)
@@ -112,8 +108,7 @@ module.exports = {
           if (typeof replaceScriptUrlFun === 'function') {
             replaceScriptUrlFun(scriptKey)
           }
-        }
-        else if (scriptUrl.indexOf('/') === 0) {
+        } else if (scriptUrl.indexOf('/') === 0) {
           // 相对地址
           scriptProxy[scriptUrl] = scriptUrl
         }
@@ -129,8 +124,7 @@ module.exports = {
               pathConfig.script[i] = scriptKey
             })
           }
-        }
-        else if (typeof pathConfig.script === 'string') {
+        } else if (typeof pathConfig.script === 'string') {
           handleScriptUrl(pathConfig.script, 'script', (scriptKey) => {
             pathConfig.script = scriptKey
           })
@@ -180,8 +174,7 @@ module.exports = {
             const obj = {}
             obj[pathPattern] = hostnameConfig[pathPattern]
             log.debug(`域名 '${hostnamePattern}' 拦截配置中，新增伪脚本地址的代理配置:`, JSON.stringify(obj, null, '\t'))
-          }
-          else {
+          } else {
             // 相对地址：新增响应头Content-Type替换配置
             if (hostnameConfig[scriptKey]) {
               continue // 配置已经存在，按自定义配置优先

@@ -31,8 +31,7 @@ export default {
     async openEnableLoopback () {
       try {
         await this.$api.proxy.setEnableLoopback()
-      }
-      catch (e) {
+      } catch (e) {
         if (e.message.includes('EACCES')) {
           this.$message.error('请将DevSidecar关闭后，以管理员身份重新打开，再尝试此操作')
           return

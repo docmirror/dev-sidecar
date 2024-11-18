@@ -7,8 +7,7 @@ const NodePlugin = function (context) {
     async start () {
       try {
         await nodeApi.setVariables()
-      }
-      catch (err) {
+      } catch (err) {
         log.warn('set variables error:', err)
       }
 
@@ -48,8 +47,7 @@ const NodePlugin = function (context) {
       for (const item of list) {
         if (item.value != null && item.value.length > 0 && item.value !== 'default' && item.value !== 'null') {
           cmds.push(`${command} config set ${item.key}  ${item.value}`)
-        }
-        else {
+        } else {
           cmds.push(`${command} config delete ${item.key}`)
         }
       }
@@ -72,8 +70,7 @@ const NodePlugin = function (context) {
       for (const item of list) {
         if (item.value != null && item.value.length > 0 && item.value !== 'default' && item.value !== 'null') {
           cmds.push(`yarn config set ${item.key}  ${item.value}`)
-        }
-        else {
+        } else {
           cmds.push(`yarn config delete ${item.key}`)
         }
       }
@@ -118,8 +115,7 @@ const NodePlugin = function (context) {
     async setRegistry ({ registry, type }) {
       if (type === 'npm') {
         await nodeApi.setNpmEnv([{ key: 'registry', value: registry }])
-      }
-      else {
+      } else {
         await nodeApi.setYarnEnv([{ key: 'registry', value: registry }])
       }
       return true

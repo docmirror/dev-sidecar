@@ -24,8 +24,7 @@ export default {
       if (this.status.plugin.git.enabled) {
         await this.$api.plugin.git.close()
         this.needRestart = true
-      }
-      else {
+      } else {
         this.needRestart = false
       }
       this.submitNoProxyUrls()

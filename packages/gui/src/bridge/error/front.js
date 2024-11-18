@@ -29,8 +29,7 @@ function handleServerStartError (message, err, app, api) {
         console.log('Cancel')
       },
     })
-  }
-  else {
+  } else {
     app.$message.error(`加速服务启动失败：${message.message}`)
   }
 }

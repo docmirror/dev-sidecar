@@ -12,8 +12,7 @@ function isMatched (url, regexp) {
       urlRegexp = `.${regexp}`
     }
     return url.match(urlRegexp)
-  }
-  catch (e) {
+  } catch (e) {
     log.error('匹配串有问题:', regexp)
     return null
   }
@@ -40,8 +39,7 @@ function domainMapRegexply (hostMap) {
       if (domain.indexOf('*') === 0 && domain.lastIndexOf('*') === 0) {
         origin[domain] = value
       }
-    }
-    else {
+    } else {
       origin[domain] = value
     }
   })
@@ -170,8 +168,7 @@ function matchHostnameAll (hostMap, hostname, action) {
     deleteNullItems(values)
     log.info(`matchHostname-all: ${action}: '${hostname}':`, JSON.stringify(values))
     return values
-  }
-  else {
+  } else {
     log.debug(`matchHostname-all: ${action}: '${hostname}' Not-Matched`)
   }
 }

@@ -30,8 +30,7 @@ function _getConfigPath () {
   const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
-  }
-  else {
+  } else {
     // 兼容1.7.3及以下版本的配置文件处理逻辑
     const newFilePath = path.join(dir, '/config.json')
     const oldFilePath = path.join(dir, '/config.json5')
@@ -53,8 +52,7 @@ const configApi = {
       try {
         await configApi.downloadRemoteConfig()
         configApi.reload()
-      }
-      catch (e) {
+      } catch (e) {
         log.error('定时下载远程配置并重载配置失败', e)
       }
     }
@@ -104,8 +102,7 @@ const configApi = {
             log.warn('下载远程配置成功，但内容为空:', remoteConfigUrl)
             resolve()
             return
-          }
-          else {
+          } else {
             log.info('下载远程配置成功:', remoteConfigUrl)
           }
 
@@ -113,8 +110,7 @@ const configApi = {
           let remoteConfig
           try {
             remoteConfig = jsonApi.parse(body)
-          }
-          catch (e) {
+          } catch (e) {
             log.error(`远程配置内容格式不正确, url: ${remoteConfigUrl}, body: ${body}`)
             remoteConfig = null
           }
@@ -123,21 +119,18 @@ const configApi = {
             const remoteSavePath = _getRemoteSavePath(suffix)
             fs.writeFileSync(remoteSavePath, body)
             log.info('保存远程配置文件成功:', remoteSavePath)
-          }
-          else {
+          } else {
             log.warn('远程配置对象为空:', remoteConfigUrl)
           }
 
           resolve()
-        }
-        else {
+        } else {
           log.error(`下载远程配置失败: ${remoteConfigUrl}, response:`, response, ', body:', body)
 
           let message
           if (response) {
             message = `下载远程配置失败: ${remoteConfigUrl}, message: ${response.message}, code: ${response.statusCode}`
-          }
-          else {
+          } else {
             message = `下载远程配置失败: response: ${response}`
           }
           reject(new Error(message))
@@ -161,8 +154,7 @@ const configApi = {
         if (!get().app.remoteConfig.personalUrl) {
           return '{}'
         }
-      }
-      else if (suffix === '') {
+      } else if (suffix === '') {
         if (!get().app.remoteConfig.url) {
           return '{}'
         }
@@ -175,12 +167,10 @@ const configApi = {
         const file = fs.readFileSync(path)
         log.info('读取远程配置文件内容成功:', path)
         return file.toString()
-      }
-      else {
+      } else {
         log.warn('远程配置文件不存在:', path)
       }
-    }
-    catch (e) {
+    } catch (e) {
       log.error('读取远程配置文件内容失败:', e)
     }
 
@@ -230,8 +220,7 @@ const configApi = {
     if (!fs.existsSync(configPath)) {
       userConfig = {}
       log.info('config.json 文件不存在:', configPath)
-    }
-    else {
+    } else {
       const file = fs.readFileSync(configPath)
       log.info('读取 config.json 成功:', configPath)
       const fileStr = file.toString()
@@ -276,8 +265,7 @@ const configApi = {
       if (get().app.remoteConfig.personalUrl) {
         mergeApi.doMerge(merged, personalRemoteConfig) // 再合并一次个人远程配置，使配置生效
       }
-    }
-    else {
+    } else {
       mergeApi.doMerge(merged, defConfig) // 合并默认配置
     }
     if (newConfig != null) {
@@ -318,8 +306,7 @@ const configApi = {
       configApi.load(null)
 
       return true // 删除并重新加载配置成功
-    }
-    else {
+    } else {
       return false // config.json 文件不存在
     }
   },
@@ -328,8 +315,7 @@ const configApi = {
       let value = lodash.get(defConfig, key)
       value = lodash.cloneDeep(value)
       lodash.set(configTarget, key, value)
-    }
-    else {
+    } else {
       configTarget = lodash.cloneDeep(defConfig)
     }
     return configTarget

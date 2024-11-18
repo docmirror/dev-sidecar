@@ -58,8 +58,7 @@ function _loadFromFile (defaultConfig) {
   if (!fs.existsSync(configPath)) {
     config = defaultConfig
     log.info(`本地未保存过 ${configPath} 文件，使用默认配置`)
-  }
-  else {
+  } else {
     const file = fs.readFileSync(configPath)
     log.info('读取 automaticCompatibleConfig.json 成功:', configPath)
     const fileStr = file.toString()
@@ -80,8 +79,7 @@ function _saveConfigToFile () {
   try {
     fs.writeFileSync(filePath, jsonApi.stringify(config))
     log.info('保存 automaticCompatibleConfig.json 成功:', filePath)
-  }
-  catch (e) {
+  } catch (e) {
     log.error('保存 automaticCompatibleConfig.json 失败:', filePath, e)
   }
 }
@@ -109,8 +107,7 @@ module.exports = {
     const connectCompatibleConfig = this.getConnectCompatibleConfig(hostname, port)
     if (connectCompatibleConfig) {
       connectCompatibleConfig.ssl = ssl
-    }
-    else {
+    } else {
       config.connect[`${hostname}:${port}`] = { ssl }
     }
 
@@ -142,8 +139,7 @@ module.exports = {
     const requestCompatibleConfig = this.getRequestCompatibleConfig(rOptions.hostname, rOptions.port)
     if (requestCompatibleConfig) {
       requestCompatibleConfig.rejectUnauthorized = rejectUnauthorized
-    }
-    else {
+    } else {
       config.request[`${rOptions.hostname}:${rOptions.port}`] = { rejectUnauthorized }
     }
 

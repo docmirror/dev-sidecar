@@ -172,13 +172,11 @@ module.exports = function extractSNI (data) {
             end: n + nameLength,
             length: nameLength,
           }
-        }
-        else {
+        } else {
           n += nameLength
         }
       }
-    }
-    else { // ExtensionType was something we are not interested in
+    } else { // ExtensionType was something we are not interested in
       pos += extensionSize
     }
   }

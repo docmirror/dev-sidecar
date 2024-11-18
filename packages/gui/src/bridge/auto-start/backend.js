@@ -19,8 +19,7 @@ Comment=
 EOF
 `
     await DevSidecar.api.shell.exec(cmd)
-  }
-  else {
+  } else {
     const removeStart = 'sudo rm ~/.config/autostart/dev-sidecar.desktop -rf'
     await DevSidecar.api.shell.exec(removeStart)
   }
@@ -40,8 +39,7 @@ export default {
       if (message.value) {
         if (isLinux) {
           await setAutoStartForLinux(app, true)
-        }
-        else {
+        } else {
           app.setLoginItemSettings({
             openAtLogin: true,
             openAsHidden: true,
@@ -53,12 +51,10 @@ export default {
         }
 
         event.sender.send('auto-start', { key: 'enabled', value: true })
-      }
-      else {
+      } else {
         if (isLinux) {
           await setAutoStartForLinux(app, false)
-        }
-        else {
+        } else {
           app.setLoginItemSettings({
             openAtLogin: false,
             openAsHidden: false,

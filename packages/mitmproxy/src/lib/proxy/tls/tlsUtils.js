@@ -244,8 +244,7 @@ utils.initCA = function ({ caCertPath, caKeyPath }) {
       caKeyPath,
       create: false,
     }
-  }
-  catch (e) {
+  } catch (e) {
     const caObj = utils.createCA(config.caName)
 
     const caCert = caObj.cert

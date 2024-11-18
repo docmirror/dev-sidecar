@@ -9,8 +9,7 @@ export default {
         }).then((result) => {
           if (result.canceled) {
             event.sender.send('file-selector', { key: 'canceled' })
-          }
-          else {
+          } else {
             event.sender.send('file-selector', { key: 'selected', value: result.filePaths })
           }
         }).catch((err) => {

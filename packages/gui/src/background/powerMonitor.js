@@ -34,8 +34,7 @@ class PowerMonitor {
         releaseShutdownBlock()
         this._shutdownCallback = null
       }
-    }
-    else {
+    } else {
       return _powerMonitor.removeAllListeners(event)
     }
   }
@@ -51,8 +50,7 @@ class PowerMonitor {
         acquireShutdownBlock('正在停止 DevSidecar 代理')
       }
       this._listeners.push(listener)
-    }
-    else {
+    } else {
       return _powerMonitor.on(event, listener)
     }
   }
@@ -60,8 +58,7 @@ class PowerMonitor {
   off (event, listener) {
     if (event === 'shutdown' && process.platform === 'win32') {
       this._listeners = this._listeners.filter(fn => fn !== listener)
-    }
-    else {
+    } else {
       return _powerMonitor.off(event, listener)
     }
   }
@@ -69,8 +66,7 @@ class PowerMonitor {
   once (event, listener) {
     if (event === 'shutdown' && process.platform === 'win32') {
       return this.on(event, listener)
-    }
-    else {
+    } else {
       return _powerMonitor.once(event, listener)
     }
   }

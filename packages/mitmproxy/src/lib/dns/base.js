@@ -43,8 +43,7 @@ module.exports = class BaseDNS {
           ipCache.doCount(ipCache.value, false)
           return ipCache.value
         }
-      }
-      else {
+      } else {
         ipCache = new IpCache(hostname)
         this.cache.set(hostname, ipCache)
       }
@@ -61,8 +60,7 @@ module.exports = class BaseDNS {
       log.info(`[DNS]: ${hostname} ➜ ${ipCache.value} (${new Date() - t} ms), ipList: ${JSON.stringify(ipList)}, ipCache:`, JSON.stringify(ipCache))
 
       return ipCache.value
-    }
-    catch (error) {
+    } catch (error) {
       log.error(`[DNS] cannot resolve hostname ${hostname} (${error})`, error)
       return hostname
     }

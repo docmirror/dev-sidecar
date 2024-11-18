@@ -23,11 +23,9 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
 
     if (rOptions.headers.connection === 'close') {
       req.socket.setKeepAlive(false)
-    }
-    else if (rOptions.customSocketId != null) { // for NTLM
+    } else if (rOptions.customSocketId != null) { // for NTLM
       req.socket.setKeepAlive(true, 60 * 60 * 1000)
-    }
-    else {
+    } else {
       req.socket.setKeepAlive(true, 30000)
     }
     const context = {
@@ -73,12 +71,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               }
             }
             next()
-          }
-          else {
+          } else {
             next()
           }
-        }
-        catch (e) {
+        } catch (e) {
           reject(e)
         }
       })
@@ -129,12 +125,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               rOptions.lookup = dnsLookup.createLookupFunc(res, dns, 'request url', url, isDnsIntercept)
               log.debug(`域名 ${rOptions.hostname} DNS: ${dns.name}`)
               res.setHeader('DS-DNS', dns.name)
-            }
-            else {
+            } else {
               log.info(`域名 ${rOptions.hostname} 在DNS中未配置`)
             }
-          }
-          else {
+          } else {
             log.info(`域名 ${rOptions.hostname} DNS配置不存在`)
           }
 
@@ -163,8 +157,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             const cost = new Date() - start
             if (rOptions.protocol === 'https:') {
               log.info(`代理请求返回: 【${proxyRes.statusCode}】${url}, cost: ${cost} ms`)
-            }
-            else {
+            } else {
               log.info(`请求返回: 【${proxyRes.statusCode}】${url}, cost: ${cost} ms`)
             }
             // console.log('request:', proxyReq, proxyReq.socket)
@@ -291,8 +284,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
                 if (append.body) {
                   body += append.body
                 }
-              }
-              else if (append === false) {
+              } else if (append === false) {
                 break // 返回false表示终止拦截器，跳出循环
               }
             }
@@ -300,12 +292,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               head,
               body,
             })
-          }
-          else {
+          } else {
             next()
           }
-        }
-        catch (e) {
+        } catch (e) {
           reject(e)
         }
       })
@@ -341,15 +331,13 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
 目标网站请求错误：【${e.code}】 ${e.message}<br/>
 目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`,
           )
-        }
-        catch (e) {
+        } catch (e) {
           // do nothing
         }
 
         try {
           res.end()
-        }
-        catch (e) {
+        } catch (e) {
           // do nothing
         }
 

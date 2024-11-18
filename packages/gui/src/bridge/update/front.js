@@ -31,28 +31,23 @@ function install (app, api) {
       updateParams.checking = false
       updateParams.newVersionData = message.value
       foundNewVersion(message.value)
-    }
-    else if (type === 'notAvailable') {
+    } else if (type === 'notAvailable') {
       updateParams.checking = false
       noNewVersion()
-    }
-    else if (type === 'downloaded') {
+    } else if (type === 'downloaded') {
       // 更新包已下载完成，让用户确认是否更新
       updateParams.downloading = false
       console.log('updateParams', updateParams)
       newUpdateIsReady(message.value)
-    }
-    else if (type === 'progress') {
+    } else if (type === 'progress') {
       progressUpdate(message.value)
-    }
-    else if (type === 'error') {
+    } else if (type === 'error') {
       updateParams.checking = false
       updateParams.downloading = false
       if (message.action === 'checkForUpdate' && updateParams.newVersionData) {
         // 如果检查更新报错了，但刚才成功拿到过一次数据，就拿之前的数据
         foundNewVersion(updateParams.newVersionData)
-      }
-      else {
+      } else {
         if (updateParams.fromUser === false && message.action === 'checkForUpdate') {
           return // 不是手动检查更新，不提示错误信息，避免打扰
         }
@@ -174,8 +169,7 @@ function install (app, api) {
                 </pre>
               </div>
             )
-          }
-          else {
+          } else {
             for (const note of value.releaseNotes) {
               notes.push(<li>{note}</li>)
             }
@@ -227,8 +221,7 @@ function install (app, api) {
                 </pre>
               </div>
             )
-          }
-          else {
+          } else {
             for (const note of value.releaseNotes) {
               notes.push(<li>{note}</li>)
             }

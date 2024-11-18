@@ -10,8 +10,7 @@ function replaceRequestHeaders (rOptions, headers, log) {
     if (value) {
       log.debug(`[DS-RequestReplace-Interceptor] replace '${key}': '${rOptions.headers[key.toLowerCase()]}' -> '${value}'`)
       rOptions.headers[key.toLowerCase()] = value
-    }
-    else if (rOptions.headers[key.toLowerCase()]) {
+    } else if (rOptions.headers[key.toLowerCase()]) {
       log.debug(`[DS-RequestReplace-Interceptor] remove '${key}': '${rOptions.headers[key.toLowerCase()]}'`)
       delete rOptions.headers[key.toLowerCase()]
     }
