@@ -59,7 +59,7 @@ module.exports = class BaseDNS {
 
       return ipCache.value
     } catch (error) {
-      log.error(`[DNS] cannot resolve hostname ${hostname} (${error})`, error)
+      log.error(`[DNS] cannot resolve hostname ${hostname}, error:`, error)
       return hostname
     }
   }
