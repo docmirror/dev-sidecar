@@ -28,7 +28,7 @@
     "ant-design-vue": "^1.7.8",
     "electron-baidu-tongji": "^1.0.5",
     "electron-sudo": "^4.0.12",
-    "electron-updater": "^4.3.5",
+    "electron-updater": "^6.3.9",
     "json5": "^2.2.3",
     "lodash": "^4.17.20",
     "request-progress": "^3.0.0",
