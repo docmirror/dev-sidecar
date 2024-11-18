@@ -8,7 +8,6 @@
   },
   "license": "MPL-2.0",
   "homepage": "https://github.com/docmirror/dev-sidecar",
-  "main": "background.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
@@ -25,67 +24,35 @@
     "@docmirror/mitmproxy": "workspace:*",
     "@mihomo-party/sysproxy": "^2.0.4",
     "@natmri/platform-napi": "^0.0.7",
-    "adm-zip": "^0.5.5",
-    "ant-design-vue": "^1.6.5",
-    "compressing": "^1.5.1",
-    "core-js": "^3.6.5",
+    "adm-zip": "^0.5.16",
+    "ant-design-vue": "^1.7.8",
     "electron-baidu-tongji": "^1.0.5",
-    "electron-reload": "^1.5.0",
-    "electron-store": "^6.0.1",
     "electron-sudo": "^4.0.12",
-    "electron-updater": "^4.3.5",
-    "es-abstract": "^1.17.7",
-    "extract-zip": "^2.0.1",
-    "iconv-lite": "^0.6.2",
+    "electron-updater": "^6.3.9",
     "json5": "^2.2.3",
     "lodash": "^4.17.20",
-    "log4js": "^6.3.0",
     "request-progress": "^3.0.0",
-    "sass": "^1.27.1",
-    "sass-loader": "^10.0.4",
-    "vue": "^2.6.11",
+    "sass": "^1.81.0",
+    "sass-loader": "^16.0.3",
+    "vue": "^2.7.16",
     "vue-json-editor-fix-cn": "^1.4.3",
-    "vue-router": "^3.4.8"
+    "vue-router": "^3.6.5"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.0",
-    "@vue/cli-plugin-eslint": "^4.5.0",
-    "@vue/cli-service": "^4.5.0",
-    "@vue/eslint-config-standard": "^5.1.2",
-    "babel-eslint": "^10.1.0",
-    "electron": "^17.4.11",
+    "@babel/plugin-syntax-jsx": "^7.25.9",
+    "@vue/babel-helper-vue-jsx-merge-props": "^1.4.0",
+    "@vue/babel-preset-jsx": "^1.4.0",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "electron": "^19.1.9",
     "electron-builder": "^25.0.6",
-    "electron-devtools-installer": "^3.1.0",
     "electron-icon-builder": "^2.0.1",
-    "eslint": "^6.7.2",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^6.2.2",
     "json5-loader": "^4.0.1",
-    "vue-cli-plugin-electron-builder": "^2.1.1",
-    "vue-template-compiler": "^2.6.11"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "@vue/standard"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
+    "vue-cli-plugin-electron-builder": "^3.0.0-alpha.4"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
     "not dead"
-  ],
-  "__npminstall_done": false,
-  "gitHead": "30ecf21cb001fb8d821e575d476ca0ffb4ff086e"
+  ]
 }

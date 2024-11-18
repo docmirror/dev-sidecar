@@ -347,18 +347,14 @@ npm config delete https-proxy
 
 #### 1）安装 `nodejs`
 
-推荐安装 nodejs `16.x.x` 的版本，其他版本未做测试
+推荐安装 nodejs `22.x.x` 的版本，其他版本未做测试
 
-#### 2）安装 `lerna`
+#### 2）安装 `pnpm`
 
 运行如下命令即可安装所需依赖：
 
-> 注：lerna指定为6.x版本，更高版本会导致打包失败（不兼容导致）
-
 ```shell
-npm install -g cnpm --registry=https://registry.npmmirror.com
-
-cnpm install -g lerna@6
+npm install -g pnpm --registry=https://registry.npmmirror.com
 
 ```
 
@@ -372,11 +368,8 @@ git clone https://github.com/docmirror/dev-sidecar
 
 cd dev-sidecar
 
-# 注意不要使用 `npm install` 来安装依赖，因为 `lerna bootstrap` 会自动安装依赖
-lerna bootstrap
-# 如果 `lerna bootstrap` 有报错，可以尝试执行如下两行命令，用yarn替换掉npm：
-#cnpm install -g yarn
-#lerna bootstrap --npm-client=yarn
+# 注意不要使用 `npm install` 来安装依赖，因为 `pnpm` 会自动安装依赖
+pnpm install
 
 # 运行DevSidecar
 cd packages/gui

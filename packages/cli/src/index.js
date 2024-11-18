@@ -1,14 +1,14 @@
 const fs = require('node:fs')
-const DevSidecar = require('../index')
+const DevSidecar = require('@docmirror/dev-sidecar')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
 
 // 启动服务
-const mitmproxyPath = './start/mitmproxy'
+const mitmproxyPath = './mitmproxy'
 async function startup () {
-  const banner = fs.readFileSync('./start/banner.txt')
+  const banner = fs.readFileSync('./banner.txt')
   console.log(banner.toString())
 
-  const configPath = './start/user_config.json5'
+  const configPath = './user_config.json5'
   if (fs.existsSync(configPath)) {
     const file = fs.readFileSync(configPath)
     const userConfig = jsonApi.parse(file.toString())

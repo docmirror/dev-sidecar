@@ -11,61 +11,22 @@
   "main": "src/index.js",
   "scripts": {},
   "dependencies": {
-    "agentkeepalive": "^2.1.1",
-    "axios": "^0.21.1",
+    "@docmirror/dev-sidecar": "workspace:*",
+    "agentkeepalive": "^4.5.0",
+    "axios": "^1.7.7",
     "baidu-aip-sdk": "^4.16.16",
-    "child_process": "^1.0.2",
-    "colors": "^1.1.2",
-    "commander": "^2.9.0",
-    "crypto-js": "^4.0.0",
-    "debug": "^4.1.1",
     "dns-over-http": "^0.2.0",
     "dns-over-tls": "^0.0.9",
     "is-browser": "^2.1.0",
     "json5": "^2.2.3",
     "lodash": "^4.17.20",
-    "log4js": "^6.3.0",
-    "lru-cache": "^6.0.0",
-    "mkdirp": "^0.5.1",
-    "node-cmd": "^3.0.0",
-    "node-forge": "^0.8.2",
-    "require-context": "^1.1.0",
+    "lru-cache": "^7.15.0",
+    "node-forge": "^1.3.1",
     "stream-throttle": "^0.1.3",
-    "through2": "^2.0.1",
-    "tunnel-agent": "^0.4.3",
-    "util": "^0.12.3",
-    "validator": "^13.1.17"
+    "through2": "^4.0.2",
+    "tunnel-agent": "^0.6.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.0",
-    "@vue/cli-plugin-eslint": "^4.5.0",
-    "@vue/eslint-config-standard": "^5.1.2",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^6.2.2"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "@vue/standard"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ],
-  "gitHead": "30ecf21cb001fb8d821e575d476ca0ffb4ff086e"
+    "crypto-js": "^4.2.0"
+  }
 }
