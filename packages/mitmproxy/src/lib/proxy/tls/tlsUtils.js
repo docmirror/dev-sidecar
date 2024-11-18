@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 const _ = require('lodash')
-const mkdirp = require('mkdirp')
 const forge = require('node-forge')
 const log = require('../../../utils/util.log')
 const config = require('../common/config')
@@ -253,8 +252,7 @@ utils.initCA = function ({ caCertPath, caKeyPath }) {
 
     const certPem = pki.certificateToPem(caCert)
     const keyPem = pki.privateKeyToPem(cakey)
-
-    mkdirp.sync(path.dirname(caCertPath))
+    fs.mkdirSync(path.dirname(caCertPath), { recursive: true })
     fs.writeFileSync(caCertPath, certPem)
     fs.writeFileSync(caKeyPath, keyPem)
     log.info('生成证书文件成功，共2个文件:', caCertPath, caKeyPath)
