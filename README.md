@@ -69,7 +69,7 @@
 ### 1.5、 npm加速
 
 - 支持开启npm代理
-- 官方与淘宝npm registry一键切换,
+- 官方与淘宝npm registry一键切换
 - 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
 
 **_安全警告_**：
@@ -151,21 +151,22 @@
 
 #### 1）git clone 加速
 
-方式1：快捷复制：
+-方式1：快捷复制：
 
 > 开启脚本支持，然后在复制clone链接下方，即可复制到加速链接
 
-方式2：
+-方式2：
 
-> 使用方式用实际的名称替换{}的内容，即可加速clone
-> <https://hub.fastgit.org/{username}/{reponame}.git>
-> clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来
-> 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
+> 1. 使用方式：用实际的名称替换 `{}`的内容，即可加速clone
+ <https://hub.fastgit.org/{username}/{reponame}.git>
+> 2.clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来
+> 3. 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
 
-#### 2）github.com的镜像网站(注意：不能登录)
+#### 2）`github.com` 的镜像网站（注意：部分镜像网站不能登录）
 
-> 1.  [hub.fastgit.org](https://hub.fastgit.org/)
-> 2.  [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限
+> 1.  [hub.fastgit.org](https://hub.fastgit.org/) （2024/11/18：这个好像失效了？）
+> 2.  [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限（2024/11/18：这个好像失效了？）
+> 3. [dgithub.xyz](https://dgithub.xyz/)
 
 ## 五、api
 
@@ -284,10 +285,10 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 
 #### 3）火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书
 
-> 1、火狐浏览器->选项->隐私与安全->证书->查看证书
-> 2、证书颁发机构->导入
-> 3、选择证书文件`C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为`~/.dev-sidecar`目录）
-> 4、勾选信任由此证书颁发机构来标识网站，确定即可
+    - 1. 火狐浏览器->选项->隐私与安全->证书->查看证书
+    - 2. 证书颁发机构->导入
+    - 3. 选择证书文件`C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为`~/.dev-sidecar`目录）
+    - 4. 勾选信任由此证书颁发机构来标识网站，确定即可
 
 ### 6.4、打开github显示连接超时
 
@@ -295,9 +296,9 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 ```
 
-1、检查测速界面github.com是否有ip ，如果没有ip，则可能是由于你的网络提供商封锁了dns服务商的ip（试试能否ping通：1.1.1.1 / 9.9.9.9 ）
-2、如果是安全模式，则是因为不稳定导致的，等一会再刷新试试
-3、如果是增强模式，则是由于访问人数过多，正常现象
+1. 检查测速界面github.com是否有ip ，如果没有ip，则可能是由于你的网络提供商封锁了dns服务商的ip（试试能否ping通：1.1.1.1 / 9.9.9.9 ）
+2. 如果是安全模式，则是因为不稳定导致的，等一会再刷新试试
+3. 如果是增强模式，则是由于访问人数过多，正常现象
 
 ### 6.5、查看日志是否有报错
 
@@ -308,8 +309,8 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 
 ### 6.6、某些原本可以打开的网站打不开了
 
-1、可以尝试关闭pac
-2、可以将域名加入白名单
+1. 可以尝试关闭pac
+2. 可以将域名加入白名单
 
 ### 6.7、应用意外关闭导致没有网络了
 
@@ -317,9 +318,9 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 当应用意外关闭时，可能会因为没有将系统代理恢复，从而导致完全无法上网。
 
 对于此问题有如下几种解决方案可供选择：
-1、重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）
-2、如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
-3、如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启
+1.重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）
+2.如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
+3. 如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启
 
 ### 6.8、卸载应用后上不了网，git请求不了
 

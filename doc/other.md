@@ -2,7 +2,7 @@
 
 ## Java程序使用
 
-> 由[Enaium](https://github.com/Enaium) 提供,未做验证，可供参考
+> 由 [Enaium](https://github.com/Enaium) 提供，未做验证，可供参考
 >
 > 需要先通过keytool安装证书
 > `keytool -import -alias dev-sidecar -keystore "jdk路径\security\cacerts" -file 用户目录\.dev-sidecar\dev-sidecar.ca.crt`默认密码为`changeit`

@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - master
+      - 1.x
 
 jobs:
   test-and-upload:

@@ -1,9 +1,9 @@
-const fs = require('node:fs')
-const path = require('node:path')
-const request = require('request')
 /**
  * 获取环境变量
  */
+const fs = require('node:fs')
+const path = require('node:path')
+const request = require('request')
 const Registry = require('winreg')
 const log = require('../../../utils/util.log')
 const Shell = require('../../shell')
