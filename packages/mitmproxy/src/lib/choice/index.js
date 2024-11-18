@@ -7,6 +7,9 @@ class ChoiceCache {
   constructor () {
     this.cache = new LRUCache({
       maxSize: cacheSize,
+      sizeCalculation: () => {
+        return 1
+      },
     })
   }
 
