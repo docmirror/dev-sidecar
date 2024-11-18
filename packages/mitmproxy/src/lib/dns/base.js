@@ -1,4 +1,4 @@
-const LRUCache = require('lru-cache').default
+const LRUCache = require('lru-cache')
 const log = require('../../utils/util.log')
 const { DynamicChoice } = require('../choice/index')
 

@@ -8,7 +8,6 @@
   },
   "license": "MPL-2.0",
   "homepage": "https://github.com/docmirror/dev-sidecar",
-  "main": "background.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
@@ -49,7 +48,7 @@
     "electron-builder": "^25.0.6",
     "electron-icon-builder": "^2.0.1",
     "json5-loader": "^4.0.1",
-    "vue-cli-plugin-electron-builder": "^2.1.1"
+    "vue-cli-plugin-electron-builder": "^3.0.0-alpha.4"
   },
   "browserslist": [
     "> 1%",
