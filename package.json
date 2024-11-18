@@ -3,5 +3,13 @@
   "packageManager": "pnpm@9.13.2",
   "private": false,
   "author": "Greper",
-  "license": "MPL-2.0"
+  "license": "MPL-2.0",
+  "devDependencies": {
+    "eslint": "^9.15.0",
+    "@antfu/eslint-config": "^3.9.1"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  }
 }
