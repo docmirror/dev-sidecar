@@ -9,17 +9,12 @@ const res = {
 
 const proxyRes = {
   rawHeaders: [
-    'Content-Type',
-    'application/json; charset=utf-8',
-    'Content-Length',
-    '2',
-    'ETag',
-    'W/"2"',
-    'Date',
-    'Thu, 01 Jan 1970 00:00:00 GMT',
-    'Connection',
-    'keep-alive',
-  ],
+    'Content-Type', 'application/json; charset=utf-8',
+    'Content-Length', '2',
+    'ETag', 'W/"2"',
+    'Date', 'Thu, 01 Jan 1970 00:00:00 GMT',
+    'Connection', 'keep-alive'
+  ]
 }
 
 const newHeaders = {

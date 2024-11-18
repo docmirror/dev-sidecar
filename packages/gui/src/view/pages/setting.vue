@@ -264,7 +264,7 @@ export default {
       this.$confirm({
         title: '确定要恢复出厂设置吗？',
         width: 610,
-        content: h => (
+        content: (h) => (
           <div class="restore-factory-settings">
             <hr />
             <p>

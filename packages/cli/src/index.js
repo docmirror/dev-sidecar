@@ -5,10 +5,10 @@ const jsonApi = require('@docmirror/mitmproxy/src/json')
 // 启动服务
 const mitmproxyPath = './mitmproxy'
 async function startup () {
-  const banner = fs.readFileSync('./src/banner.txt')
+  const banner = fs.readFileSync('./banner.txt')
   console.log(banner.toString())
 
-  const configPath = './src/user_config.json5'
+  const configPath = './user_config.json5'
   if (fs.existsSync(configPath)) {
     const file = fs.readFileSync(configPath)
     const userConfig = jsonApi.parse(file.toString())
