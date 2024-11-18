@@ -11,5 +11,10 @@ export default antfu({
   isInEditor: true,
   ignore: [
     '**/test/**',
-  ]
+  ],
+  formatters: {
+    css: true,
+    html: true,
+    markdown: 'prettier',
+  }
 })
