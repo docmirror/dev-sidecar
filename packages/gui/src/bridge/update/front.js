@@ -85,7 +85,6 @@ function install (app, api) {
             <div>
               请前往
               <a onClick={openGithubUrl}>github项目release页面</a>
-              {' '}
               下载新版本手动安装
             </div>
             <div><a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a></div>

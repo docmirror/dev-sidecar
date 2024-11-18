@@ -372,7 +372,7 @@ if (app.getLoginItemSettings().wasOpenedAsHidden) {
     startHideWindow = false
   }
 }
-log.info('start hide window:', startHideWindow, ', app.getLoginItemSettings() = ', jsonApi.stringify2(app.getLoginItemSettings()))
+log.info('startHideWindow = ', startHideWindow, ', app.getLoginItemSettings() = ', jsonApi.stringify2(app.getLoginItemSettings()))
 
 // 禁止双开
 const isFirstInstance = app.requestSingleInstanceLock()
