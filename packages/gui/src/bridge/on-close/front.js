@@ -12,7 +12,7 @@ function install (app, api) {
     }
     app.$confirm({
       title: '关闭策略',
-      content: h => (
+      content: (h) => (
         <div>
           <div style="margin-top:10px">
             <a-radio-group vOn:change={onRadioChange} defaultValue={closeType}>

@@ -6,6 +6,7 @@ import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage,
 import minimist from 'minimist'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
+import jsonApi from '@docmirror/mitmproxy/src/json'
 import log from './utils/util.log'
 
 const isWindows = process.platform === 'win32'
@@ -371,7 +372,7 @@ if (app.getLoginItemSettings().wasOpenedAsHidden) {
     startHideWindow = false
   }
 }
-log.info('start hide window:', startHideWindow, app.getLoginItemSettings())
+log.info('start hide window:', startHideWindow, ', app.getLoginItemSettings() = ', jsonApi.stringify2(app.getLoginItemSettings()))
 
 // 禁止双开
 const isFirstInstance = app.requestSingleInstanceLock()

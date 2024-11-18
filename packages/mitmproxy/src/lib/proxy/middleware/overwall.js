@@ -113,13 +113,11 @@ async function downloadPacAsync (pacConfig) {
 
       // 尝试解析Base64（注：https://gitlab.com/gfwlist/gfwlist/raw/master/gfwlist.txt 下载下来的是Base64格式）
       let pacTxt = body
-      try {
-        if (!pacTxt.includes('!---------------------EOF')) {
+      if (!pacTxt.includes('!---------------------EOF')) {
+        try {
           pacTxt = Buffer.from(pacTxt, 'base64').toString('utf8')
           // log.debug('解析 base64 后的 pax:', pacTxt)
-        }
-      } catch {
-        if (!pacTxt.includes('!---------------------EOF')) {
+        } catch {
           log.error(`远程 pac.txt 文件内容即不是base64格式，也不是要求的格式，url: ${remotePacFileUrl}，body: ${body}`)
           return
         }

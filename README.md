@@ -54,12 +54,12 @@
 - 解决git push 偶尔失败需要输入账号密码的问题（fatal: TaskCanceledException encountered / fatal: HttpRequestException encountered）
 - raw/blame加速
 
-> 以上部分功能通过 `X.I.U`的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
+> 以上部分功能通过 `X.I.U` 的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
 >
 > - [https://github.com/XIU2/UserScript](https://github.com/XIU2/UserScript)
 > - [https://greasyfork.org/scripts/412245](https://greasyfork.org/scripts/412245)
 >
-> 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过 `加速服务->基本设置->启用脚本`进行关闭）。
+> 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过 `加速服务->基本设置->启用脚本` 进行关闭）。
 
 ### 1.4、 Stack Overflow 加速
 
@@ -281,7 +281,7 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 
     - 1. 火狐浏览器->选项->隐私与安全->证书->查看证书
     - 2. 证书颁发机构->导入
-    - 3. 选择证书文件`C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为 `~/.dev-sidecar`目录）
+    - 3. 选择证书文件 `C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为 `~/.dev-sidecar` 目录）
     - 4. 勾选信任由此证书颁发机构来标识网站，确定即可
 
 ### 6.4、打开github显示连接超时

@@ -1,14 +1,13 @@
 const http = require('node:http')
 const https = require('node:https')
+const tls = require('node:tls')
 const forge = require('node-forge')
 const CertAndKeyContainer = require('./CertAndKeyContainer')
 const tlsUtils = require('./tlsUtils')
-
-const pki = forge.pki
-// const colors = require('colors')
-const tls = require('node:tls')
 const log = require('../../../utils/util.log')
 const compatible = require('../compatible/compatible')
+
+const pki = forge.pki
 
 function arraysHaveSameElements (arr1, arr2) {
   if (arr1.length !== arr2.length) {

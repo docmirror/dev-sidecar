@@ -75,7 +75,6 @@ function install (app, api) {
   function goManualUpdate (value) {
     updateParams.newVersion = false
     app.$confirm({
-      // title: '暂不支持自动升级',
       title: '暂不提供自动升级',
       cancelText: '取消',
       okText: '打开链接',
