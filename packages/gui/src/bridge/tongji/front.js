@@ -19,7 +19,9 @@ function ebtRenderer (ipcRenderer, siteId, router) {
   ipcRenderer.on('electron-baidu-tongji-reply', (_, { text, isDevelopment }) => {
     console.log('electron-baidu-tongji-reply')
     /* istanbul ignore else */
-    if (isDevelopment) { document.body.classList.add('electron-baidu-tongji_dev') }
+    if (isDevelopment) {
+      document.body.classList.add('electron-baidu-tongji_dev')
+    }
 
     window._hmt = window._hmt || []
 

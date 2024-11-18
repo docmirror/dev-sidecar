@@ -1,12 +1,12 @@
 /**
  * 获取环境变量
  */
-const Registry = require('winreg')
-const Shell = require('../../shell')
 const fs = require('fs')
 const path = require('path')
 const request = require('request')
+const Registry = require('winreg')
 const log = require('../../../utils/util.log')
+const Shell = require('../../shell')
 const extraPath = require('../extra-path/index')
 
 const execute = Shell.execute
