@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const log = require('../../../../utils/util.log')
 
 function createPacClient (pacFilePath) {
@@ -12,7 +12,8 @@ function createPacClient (pacFilePath) {
       const filePath = path.resolve(location)
       log.info('read pac path:', filePath)
       return fs.readFileSync(location).toString()
-    } catch (e) {
+    }
+    catch (e) {
       log.error('读取pac失败:', e)
       return ''
     }

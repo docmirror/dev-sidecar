@@ -22,9 +22,11 @@ export default {
     setupImage () {
       if (this.systemPlatform === 'mac') {
         return '/setup-mac.png'
-      } else if (this.systemPlatform === 'linux') {
+      }
+      else if (this.systemPlatform === 'linux') {
         return '/setup-linux.png'
-      } else {
+      }
+      else {
         return '/setup.png'
       }
     },

@@ -88,7 +88,8 @@ class DynamicChoice {
     if (this.backupList.length > 0) {
       this.value = this.backupList.shift()
       log.info(`切换backup完成: ${this.key}, ip: ${valueBackup} ➜ ${this.value}, this:`, this)
-    } else {
+    }
+    else {
       this.value = null
       log.info(`切换backup完成: ${this.key}, backupList为空了，设置this.value: from '${valueBackup}' to null. this:`, this)
     }
@@ -109,7 +110,8 @@ class DynamicChoice {
       // 失败次数+1，累计连续失败次数+1
       count.error++
       count.keepErrorCount++
-    } else {
+    }
+    else {
       // 总次数+1
       count.total++
     }

@@ -73,7 +73,8 @@ module.exports = class CertAndKeyContainer {
       if (fast) {
         certObj = tlsUtils.createFakeCertificateByDomain(this.caKey, this.caCert, hostname)
         _resolve(certObj)
-      } else {
+      }
+      else {
         // 这个太慢了
         // const preReq = https.request({
         //   port: port,

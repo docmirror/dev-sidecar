@@ -5,16 +5,20 @@ export default antfu({
     vueVersion: 2,
   },
   rules: {
-    "style/space-before-function-paren": ["error", "always"],
-    "no-console": 'off'
+    'style/space-before-function-paren': ['error', 'always'],
+    'node/prefer-global/buffer': 'off',
+    'node/prefer-global/process': 'off',
+    'no-console': 'off',
   },
-  isInEditor: true,
   ignore: [
-    '**/test/**',
+    '**/node_modules/*',
+    '**/build/*',
+    '**/test/*',
+    '**/dist_electron/*',
   ],
   formatters: {
     css: true,
     html: true,
     markdown: 'prettier',
-  }
+  },
 })

@@ -1,5 +1,5 @@
-const net = require('net')
-const url = require('url')
+const net = require('node:net')
+const url = require('node:url')
 const jsonApi = require('../../../json')
 const log = require('../../../utils/util.log')
 const DnsUtil = require('../../dns/index')
@@ -45,7 +45,8 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
       }).catch((e) => {
         log.error(`----- fakeServer getServerPromise error: ${hostname}:${port}, error:`, e)
       })
-    } else {
+    }
+    else {
       log.info(`不拦截请求，直连目标服务器: ${hostname}:${port}, headers:`, jsonApi.stringify2(req.headers))
       connect(req, cltSocket, head, hostname, port, dnsConfig, true)
     }
@@ -117,7 +118,8 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
     const proxySocket = net.connect(options, () => {
       if (!isDirect) {
         log.info('Proxy connect start:', hostport)
-      } else {
+      }
+      else {
         log.debug('Direct connect start:', hostport)
       }
 
@@ -190,7 +192,8 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
     }
 
     return proxySocket
-  } catch (e) {
+  }
+  catch (e) {
     log.error(`${isDirect ? '直连' : '代理连接'}错误: ${hostport}, error:`, e)
   }
 }

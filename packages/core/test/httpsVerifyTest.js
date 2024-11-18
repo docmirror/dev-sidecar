@@ -1,4 +1,4 @@
-const https = require('https')
+const https = require('node:https')
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
 

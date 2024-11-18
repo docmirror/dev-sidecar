@@ -1,6 +1,6 @@
 'use strict'
 /* global __static */
-import path from 'path'
+import path from 'node:path'
 import DevSidecar from '@docmirror/dev-sidecar'
 import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, protocol, Tray } from 'electron'
 import minimist from 'minimist'
@@ -34,7 +34,8 @@ function openDevTools () {
     log.debug('尝试打开 `开发者工具`')
     win.webContents.openDevTools()
     log.debug('打开 `开发者工具` 成功')
-  } catch (e) {
+  }
+  catch (e) {
     log.error('打开 `开发者工具` 失败:', e)
   }
 }
@@ -44,7 +45,8 @@ function closeDevTools () {
     log.debug('尝试关闭 `开发者工具`')
     win.webContents.closeDevTools()
     log.debug('关闭 `开发者工具` 成功')
-  } catch (e) {
+  }
+  catch (e) {
     log.error('关闭 `开发者工具` 失败:', e)
   }
 }
@@ -55,7 +57,8 @@ function switchDevTools () {
   }
   if (win.webContents.isDevToolsOpened()) {
     closeDevTools()
-  } else {
+  }
+  else {
     openDevTools()
   }
 }
@@ -102,7 +105,8 @@ function setTray () {
       if (nativeTheme.shouldUseDarkColors) {
         console.log('i am dark.')
         tray.setImage(iconWhitePath)
-      } else {
+      }
+      else {
         console.log('i am light.')
         tray.setImage(iconBlackPath)
         // tray.setPressedImage(iconWhitePath)
@@ -200,7 +204,8 @@ function createWindow (startHideWindow) {
     if (!process.env.IS_TEST) {
       setTimeout(openDevTools, 2000)
     }
-  } else {
+  }
+  else {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
@@ -219,7 +224,8 @@ function createWindow (startHideWindow) {
   ipcMain.on('close', async (event, message) => {
     if (message.value === 1) {
       quit()
-    } else {
+    }
+    else {
       hideWin()
     }
   })
@@ -239,10 +245,12 @@ function createWindow (startHideWindow) {
     if (closeStrategy === 0) {
       // 弹窗提示，选择关闭策略
       win.webContents.send('close.showTip', closeStrategy)
-    } else if (closeStrategy === 1) {
+    }
+    else if (closeStrategy === 1) {
       // 直接退出
       quit()
-    } else if (closeStrategy === 2) {
+    }
+    else if (closeStrategy === 2) {
       // 隐藏窗口
       hideWin()
     }
@@ -320,7 +328,8 @@ function registerShowHideShortcut (showHideShortcut) {
           if (winIsHidden) {
             showWin()
           }
-        } else {
+        }
+        else {
           // linux，快捷键不关闭窗口
           if (!isLinux()) {
             hideWin()
@@ -330,10 +339,12 @@ function registerShowHideShortcut (showHideShortcut) {
 
       if (registerSuccess) {
         log.info('注册快捷键成功:', DevSidecar.api.config.get().app.showHideShortcut)
-      } else {
+      }
+      else {
         log.error('注册快捷键失败:', DevSidecar.api.config.get().app.showHideShortcut)
       }
-    } catch (e) {
+    }
+    catch (e) {
       log.error('注册快捷键异常:', DevSidecar.api.config.get().app.showHideShortcut, ', error:', e)
     }
   }
@@ -359,7 +370,8 @@ app.disableHardwareAcceleration() // 禁用gpu
 let startHideWindow = !DevSidecar.api.config.get().app.startShowWindow
 if (app.getLoginItemSettings().wasOpenedAsHidden) {
   startHideWindow = true
-} else if (process.argv) {
+}
+else if (process.argv) {
   const args = minimist(process.argv)
   log.info('start args:', args)
 
@@ -367,7 +379,8 @@ if (app.getLoginItemSettings().wasOpenedAsHidden) {
   const hideWindowArg = `${args.hideWindow}`
   if (hideWindowArg === 'true' || hideWindowArg === '1') {
     startHideWindow = true
-  } else if (hideWindowArg === 'false' || hideWindowArg === '0') {
+  }
+  else if (hideWindowArg === 'false' || hideWindowArg === '0') {
     startHideWindow = false
   }
 }
@@ -380,7 +393,8 @@ if (!isFirstInstance) {
   setTimeout(() => {
     app.quit()
   }, 1000)
-} else {
+}
+else {
   app.on('before-quit', async () => {
     log.info('before-quit')
     if (process.platform === 'darwin') {
@@ -414,7 +428,8 @@ if (!isFirstInstance) {
     // dock icon is clicked and there are no other windows open.
     if (win == null) {
       createWindow(false)
-    } else {
+    }
+    else {
       showWin()
     }
   })
@@ -437,14 +452,16 @@ if (!isFirstInstance) {
       createWindow(startHideWindow)
       const context = { win, app, beforeQuit, quit, ipcMain, dialog, log, api: DevSidecar.api, changeAppConfig }
       backend.install(context) // 模块安装
-    } catch (err) {
+    }
+    catch (err) {
       log.info('error:', err)
     }
 
     try {
       // 最小化到托盘
       tray = setTray()
-    } catch (err) {
+    }
+    catch (err) {
       log.info('error:', err)
     }
 
@@ -472,7 +489,8 @@ if (isDevelopment) {
         quit()
       }
     })
-  } else {
+  }
+  else {
     process.on('SIGINT', () => {
       quit()
     })

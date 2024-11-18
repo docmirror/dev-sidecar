@@ -48,7 +48,8 @@ const PipPlugin = function (context) {
       for (const item of list) {
         if (item.value != null) {
           cmds.push(`${command} config set global.${item.key}  ${item.value}`)
-        } else {
+        }
+        else {
           cmds.push(`${command} config unset  global.${item.key}`)
         }
       }

@@ -1,17 +1,17 @@
 {
   "name": "dev-sidecar-parent",
   "type": "module",
-  "packageManager": "pnpm@9.13.2",
   "private": false,
+  "packageManager": "pnpm@9.13.2",
   "author": "Greper",
   "license": "MPL-2.0",
-  "devDependencies": {
-    "eslint": "^9.15.0",
-    "@antfu/eslint-config": "^3.9.1",
-    "eslint-plugin-format": "^0.1.2"
-  },
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^3.9.1",
+    "eslint": "^9.15.0",
+    "eslint-plugin-format": "^0.1.2"
   }
 }

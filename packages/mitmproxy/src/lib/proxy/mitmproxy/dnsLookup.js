@@ -1,4 +1,4 @@
-const defaultDns = require('dns')
+const defaultDns = require('node:dns')
 const log = require('../../../utils/util.log')
 const speedTest = require('../../speed')
 
@@ -17,7 +17,8 @@ module.exports = {
           }
           callback(null, aliveIpObj.host, 4)
           return
-        } else {
+        }
+        else {
           log.info(`----- ${action}: ${hostname}, no alive ip${target}, tester: { "ready": ${tester.ready}, "backupList": ${JSON.stringify(tester.backupList)} }`)
         }
       }
@@ -49,11 +50,13 @@ module.exports = {
             }
             callback(null, ip, 4)
             return
-          } else {
+          }
+          else {
             // 使用默认dns
             log.info(`----- ${action}: ${hostname}, use hostname by default DNS: ${hostname}, skip test failed ip from dns '${dns.name}: ${ip}'${target}, options:`, options)
           }
-        } else {
+        }
+        else {
           // 使用默认dns
           log.info(`----- ${action}: ${hostname}, use hostname by default DNS: ${hostname}${target}, options:`, options, ', dns:', dns)
         }

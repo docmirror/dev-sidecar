@@ -1,5 +1,5 @@
 // 1个小时不访问，取消获取
-const net = require('net')
+const net = require('node:net')
 const _ = require('lodash')
 const log = require('../../utils/util.log.js')
 const config = require('./config.js')
@@ -124,7 +124,8 @@ class SpeedTester {
         }
         return a.time - b.time
       })
-    } catch (e) {
+    }
+    catch (e) {
       if (e.message !== 'timeout') {
         log.warn('[speed] test error:  ', this.hostname, `➜ ${item.host}:${item.port} from DNS '${item.dns}'`, ', errorMsg:', e.message)
       }

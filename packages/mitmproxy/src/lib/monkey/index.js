@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const log = require('../../utils/util.log')
 
 let scripts
@@ -12,7 +12,8 @@ function buildScript (sc, content, scriptName) {
   let eventStr
   if (runAt === 'document-end') {
     eventStr = 'document.addEventListener("DOMContentLoaded"'
-  } else {
+  }
+  else {
     eventStr = 'window.addEventListener("load"'
   }
 
@@ -47,7 +48,8 @@ if (!((window.__ds_global__ || {}).GM_getValue || (() => true))("ds_enabled", tr
 
     if (item.indexOf('.') > 0) {
       grantStr += `${item} = (window.__ds_global__ || {})['${item}'];`
-    } else {
+    }
+    else {
       grantStr += `const ${item} = (window.__ds_global__ || {})['${item}'] || (() => {});`
     }
   }
@@ -57,10 +59,10 @@ if (!((window.__ds_global__ || {}).GM_getValue || (() => true))("ds_enabled", tr
     initStr}\r\n${
     checkEnabledStr}\r\n\r\n${
     grantStr ? (`${grantStr}\r\n\r\n`) : ''
-    }${content
-    }\r\nconsole.log("${scriptKey} completed")`
-    + `\r\n})`
-    + `\r\nconsole.log("${scriptKey} loaded")`
+  }${content
+  }\r\nconsole.log("${scriptKey} completed")`
+  + `\r\n})`
+  + `\r\nconsole.log("${scriptKey} loaded")`
 }
 
 function loadScript (content, scriptName) {
@@ -89,9 +91,11 @@ function loadScript (content, scriptName) {
       const value = ret[2].trim()
       if (key === 'grant') {
         sc.grant.push(value)
-      } else if (key === 'match') {
+      }
+      else if (key === 'match') {
         sc.match.push(value)
-      } else {
+      }
+      else {
         sc[key] = value
       }
     }

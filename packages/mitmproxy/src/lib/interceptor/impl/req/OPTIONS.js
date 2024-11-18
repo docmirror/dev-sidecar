@@ -6,7 +6,8 @@ function readConfig (config, defaultConfig) {
     if (Object.isArray(config)) {
       config = config.join(',')
     }
-  } else {
+  }
+  else {
     config = defaultConfig
   }
   return config

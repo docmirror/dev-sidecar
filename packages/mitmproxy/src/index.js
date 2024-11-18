@@ -12,7 +12,8 @@ function registerProcessListener () {
     log.info('child get msg:', JSON.stringify(msg))
     if (msg.type === 'action') {
       api[msg.event.key](msg.event.params)
-    } else if (msg.type === 'speed') {
+    }
+    else if (msg.type === 'speed') {
       speedTest.action(msg.event)
     }
   })
@@ -61,7 +62,8 @@ const api = {
 
     if (proxyOptions.setting && proxyOptions.setting.NODE_TLS_REJECT_UNAUTHORIZED === false) {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-    } else {
+    }
+    else {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
     }
     // log.info('启动代理服务时的配置:', JSON.stringify(proxyOptions, null, '\t'))
@@ -98,7 +100,8 @@ const api = {
               if (err.code === 'ERR_SERVER_NOT_RUNNING') {
                 log.info('代理服务未运行，无需关闭')
                 resolve()
-              } else {
+              }
+              else {
                 log.error('代理服务关闭失败:', err)
                 reject(err)
               }
@@ -110,7 +113,8 @@ const api = {
           })
         }
         servers = []
-      } else {
+      }
+      else {
         log.info('server is null, no need to close.')
         fireStatus(false)
         resolve()

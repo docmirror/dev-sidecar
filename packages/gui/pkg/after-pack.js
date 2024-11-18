@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const AdmZip = require('adm-zip')
 const pkg = require('../package.json')
 
@@ -24,11 +24,13 @@ exports.default = async function (context) {
   if (context.packager.platform.nodeName === 'darwin') {
     targetPath = path.join(context.appOutDir, `${context.packager.appInfo.productName}.app/Contents/Resources`)
     systemType = 'mac'
-  } else if (context.packager.platform.nodeName === 'linux') {
+  }
+  else if (context.packager.platform.nodeName === 'linux') {
     targetPath = path.join(context.appOutDir, './resources')
     systemType = 'linux'
     writeAppUpdateYmlForLinux()
-  } else {
+  }
+  else {
     targetPath = path.join(context.appOutDir, './resources')
     systemType = 'win'
   }

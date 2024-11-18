@@ -16,12 +16,12 @@
     "test": "mocha"
   },
   "dependencies": {
-    "spawn-sync": "^2.0.0",
     "fix-path": "^3.0.0",
     "iconv-lite": "^0.6.3",
     "lodash": "^4.17.20",
     "log4js": "^6.9.1",
     "node-powershell": "^4.0.0",
+    "spawn-sync": "^2.0.0",
     "winreg": "^1.2.5"
   },
   "devDependencies": {

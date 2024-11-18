@@ -14,7 +14,7 @@ module.exports = class DNSOverIpAddress extends BaseDNS {
     }
     const ret = res.data
 
-    const regexp = /<tr><th>IP Address<\/th><td><ul class="comma-separated"><li>([^<]*)<\/li><\/ul><\/td><\/tr>/gm
+    const regexp = /<tr><th>IP Address<\/th><td><ul class="comma-separated"><li>([^<]*)<\/li><\/ul><\/td><\/tr>/g
     const matched = regexp.exec(ret)
     let ip = null
 

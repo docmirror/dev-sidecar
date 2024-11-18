@@ -218,10 +218,12 @@ export default {
           await this.$api.config.downloadRemoteConfig()
           this.$message.info('下载远程配置成功，开始重启代理服务和系统代理')
           await this.reloadConfigAndRestart()
-        } finally {
+        }
+        finally {
           this.reloadLoading = false
         }
-      } else {
+      }
+      else {
         this.$message.info('远程配置已关闭，开始重启代理服务和系统代理')
         await this.reloadConfigAndRestart()
       }
@@ -244,11 +246,13 @@ export default {
         if (remoteConfig.old1 === remoteConfig.new1 && remoteConfig.old2 === remoteConfig.new2) {
           this.$message.info('远程配置没有变化，不做任何处理。')
           this.$message.warn('如果您确实修改了远程配置，请稍等片刻再重试！')
-        } else {
+        }
+        else {
           this.$message.success('获取到了最新的远程配置，开始重启代理服务和系统代理')
           await this.reloadConfigAndRestart()
         }
-      } finally {
+      }
+      finally {
         this.reloadLoading = false
       }
     },
@@ -256,7 +260,7 @@ export default {
       this.$confirm({
         title: '确定要恢复出厂设置吗？',
         width: 610,
-        content: (h) => (
+        content: h => (
           <div class="restore-factory-settings">
             <hr />
             <p>
@@ -276,7 +280,9 @@ export default {
                 1. 找到备份文件，路径：
                 <span>~/.dev-sidecar/config.json.时间戳.bak.json</span>
                 <br />
-                2. 将该备份文件重命名为<span>config.json</span>，再重启软件即可恢复个性化配置。
+                2. 将该备份文件重命名为
+                <span>config.json</span>
+                ，再重启软件即可恢复个性化配置。
               </div>
             </p>
           </div>
@@ -291,10 +297,12 @@ export default {
               this.config = await this.$api.config.get()
               this.$message.success('恢复出厂设置成功，开始重启代理服务和系统代理')
               await this.reloadConfigAndRestart()
-            } else {
+            }
+            else {
               this.$message.info('已是出厂设置，无需恢复')
             }
-          } finally {
+          }
+          finally {
             this.removeUserConfigLoading = false
           }
         },
@@ -316,7 +324,9 @@ export default {
         <a-checkbox v-model="config.app.autoStart.enabled" @change="onAutoStartChange">
           本应用开机自启
         </a-checkbox>
-        <a-button class="md-mr-10" icon="profile" @click="openLog()">日志</a-button>
+        <a-button class="md-mr-10" icon="profile" @click="openLog()">
+          日志
+        </a-button>
         <div class="form-help">
           windows下建议开启开机自启。<a @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">更多说明参考</a>
         </div>

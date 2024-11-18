@@ -46,14 +46,16 @@ async function startup ({ mitmproxyPath }) {
   if (conf.server.enabled) {
     try {
       await server.start({ mitmproxyPath })
-    } catch (err) {
+    }
+    catch (err) {
       log.error('代理服务启动失败：', err)
     }
   }
   if (conf.proxy.enabled) {
     try {
       await proxy.start()
-    } catch (err) {
+    }
+    catch (err) {
       log.error('开启系统代理失败：', err)
     }
   }
@@ -65,7 +67,8 @@ async function startup ({ mitmproxyPath }) {
           try {
             await plugin[key].start()
             log.info(`插件【${key}】已启动`)
-          } catch (err) {
+          }
+          catch (err) {
             log.error(`插件【${key}】启动失败:`, err)
           }
         }
@@ -75,7 +78,8 @@ async function startup ({ mitmproxyPath }) {
     if (plugins && plugins.length > 0) {
       await Promise.all(plugins)
     }
-  } catch (err) {
+  }
+  catch (err) {
     log.error('开启插件失败：', err)
   }
 }
@@ -89,7 +93,8 @@ async function shutdown () {
           try {
             await plugin[key].close()
             log.info(`插件【${key}】已关闭`)
-          } catch (err) {
+          }
+          catch (err) {
             log.error(`插件【${key}】关闭失败:`, err)
           }
         }
@@ -99,7 +104,8 @@ async function shutdown () {
     if (plugins.length > 0) {
       await Promise.all(plugins)
     }
-  } catch (error) {
+  }
+  catch (error) {
     log.error('插件关闭失败:', error)
   }
 
@@ -107,7 +113,8 @@ async function shutdown () {
     try {
       await proxy.close()
       log.info('系统代理已关闭')
-    } catch (err) {
+    }
+    catch (err) {
       log.error('系统代理关闭失败:', err)
     }
   }
@@ -115,7 +122,8 @@ async function shutdown () {
     try {
       await server.close()
       log.info('代理服务已关闭')
-    } catch (err) {
+    }
+    catch (err) {
       log.error('代理服务关闭失败:', err)
     }
   }

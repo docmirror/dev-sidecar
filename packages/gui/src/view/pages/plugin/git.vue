@@ -24,7 +24,8 @@ export default {
       if (this.status.plugin.git.enabled) {
         await this.$api.plugin.git.close()
         this.needRestart = true
-      } else {
+      }
+      else {
         this.needRestart = false
       }
       this.submitNoProxyUrls()
@@ -115,8 +116,12 @@ export default {
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">恢复默认</a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
+        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">
+          恢复默认
+        </a-button>
+        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
+          应用
+        </a-button>
       </div>
     </template>
   </ds-container>

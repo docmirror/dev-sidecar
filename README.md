@@ -5,80 +5,77 @@
 
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
 
->
 > Gitee上的同步项目已被封禁，此项目将不再更新与维护 【狗头保命】
 >
 > 我将继续奋战在开源一线，为社区贡献更多更好的开源项目。
-> 感兴趣的可以关注我的主页 [【github】](https://github.com/greper)  [【gitee】](https://gitee.com/greper)
->
+> 感兴趣的可以关注我的主页 [【github】](https://github.com/greper) [【gitee】](https://gitee.com/greper)
+
 ## 打个广告
->
+
 > <https://github.com/certd/certd>
 > 我的开源证书管理工具项目，全自动申请和部署证书，有需求的可以去试试，帮忙点个star
 
 ## 重要提醒
->
+
 > ------------------------------重要提醒1---------------------------------
 >
 > 注意：由于electron无法监听windows的关机事件，开着ds情况下直接重启电脑，会导致无法上网，你可以手动启动ds即可恢复网络，你也可以将ds设置为开机自启。
 >
 > 关于此问题的更多讨论请前往：
 > <https://github.com/docmirror/dev-sidecar/issues/109>
->
 
 > ------------------------------重要提醒2---------------------------------
 >
 > 注意：本应用启动会自动修改系统代理，所以会与其他代理软件有冲突，请务必不要一起使用。
 > 本应用主要目的在于直连访问github，如果你已经有飞机了，那建议还是不要用这个自行车（ds）了
->
 
 ## 一、 特性
 
-### 1.1、 dns优选（解决***污染问题）
+### 1.1、 dns优选（解决\*\*\*污染问题）
 
-* 根据网络状况智能解析最佳域名ip地址，获取最佳网络速度
-* 解决一些网站和库无法访问或访问速度慢的问题
-* 建议遇到打开比较慢的国外网站，可以优先尝试将该域名添加到dns设置中（注意：被***封杀的无效）
+- 根据网络状况智能解析最佳域名ip地址，获取最佳网络速度
+- 解决一些网站和库无法访问或访问速度慢的问题
+- 建议遇到打开比较慢的国外网站，可以优先尝试将该域名添加到dns设置中（注意：被\*\*\*封杀的无效）
 
 ### 1.2、 请求拦截
 
-* 拦截打不开的网站，代理到加速镜像站点上去。
-* 可配置多个镜像站作为备份
-* 具备测速机制，当访问失败或超时之后，自动切换到备用站点，使得目标服务高可用
+- 拦截打不开的网站，代理到加速镜像站点上去。
+- 可配置多个镜像站作为备份
+- 具备测速机制，当访问失败或超时之后，自动切换到备用站点，使得目标服务高可用
 
 ### 1.3、 github加速
 
-* github 直连加速 (通过修改sni实现，感谢 [fastGithub](https://github.com/dotnetcore/FastGithub) 提供的思路)
-* release、source、zip下载加速
-* clone 加速
-* 头像加速
-* 解决readme中图片引用无法加载的问题
-* gist.github.com 加速
-* 解决git push 偶尔失败需要输入账号密码的问题（fatal: TaskCanceledException encountered  /  fatal: HttpRequestException encountered）
-* raw/blame加速
+- github 直连加速 (通过修改sni实现，感谢 [fastGithub](https://github.com/dotnetcore/FastGithub) 提供的思路)
+- release、source、zip下载加速
+- clone 加速
+- 头像加速
+- 解决readme中图片引用无法加载的问题
+- gist.github.com 加速
+- 解决git push 偶尔失败需要输入账号密码的问题（fatal: TaskCanceledException encountered / fatal: HttpRequestException encountered）
+- raw/blame加速
 
 > 以上部分功能通过`X.I.U`的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
 >
-> * <https://github.com/XIU2/UserScript>
-> * <https://greasyfork.org/scripts/412245>
+> - <https://github.com/XIU2/UserScript>
+> - <https://greasyfork.org/scripts/412245>
 >
 > 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过`加速服务->基本设置->启用脚本`进行关闭）。
 
 ### 1.4、 Stack Overflow 加速
 
-* 将ajax.google.com代理到加速CDN上
-* recaptcha 图片验证码加速
+- 将ajax.google.com代理到加速CDN上
+- recaptcha 图片验证码加速
 
 ### 1.5、 npm加速
 
-* 支持开启npm代理
-* 官方与淘宝npm registry一键切换,
-* 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
+- 支持开启npm代理
+- 官方与淘宝npm registry一键切换,
+- 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
 
-***安全警告***：
+**_安全警告_**：
 
-* 请勿使用来源不明的服务地址，有隐私和账号泄露风险
-* 本应用及服务端承诺不收集任何信息。介意者请使用安全模式。
+- 请勿使用来源不明的服务地址，有隐私和账号泄露风险
+- 本应用及服务端承诺不收集任何信息。介意者请使用安全模式。
 
 ## 二、快速开始
 
@@ -88,8 +85,8 @@
 
 #### 1）下载安装包
 
-* release下载
-[Github Release](https://github.com/docmirror/dev-sidecar/releases)
+- release下载
+  [Github Release](https://github.com/docmirror/dev-sidecar/releases)
 
 > Windows: 请选择DevSidecar-x.x.x.exe
 > Mac: 请选择DevSidecar-x.x.x.dmg
@@ -123,50 +120,52 @@
 
 ### 2.2、开启前 vs 开启后
 
-|  | 开启前 | 开启后 |
-| ---- | ---- | ---- |
-|头像| ![](./doc/avatar2.png) |![](./doc/avatar1.png)  |
-|clone |![](./doc/clone-before.png) |![](./doc/clone.png)    |
-|zip 下载 |![](./doc/download-before.png) |![](./doc/download.png)秒下的，实在截不到速度的图    |
+|          | 开启前                         | 开启后                                            |
+| -------- | ------------------------------ | ------------------------------------------------- |
+| 头像     | ![](./doc/avatar2.png)         | ![](./doc/avatar1.png)                            |
+| clone    | ![](./doc/clone-before.png)    | ![](./doc/clone.png)                              |
+| zip 下载 | ![](./doc/download-before.png) | ![](./doc/download.png)秒下的，实在截不到速度的图 |
 
 ## 三、模式说明
 
 ### 3.1、安全模式
 
-* 此模式：关闭拦截、关闭增强、开启dns优选、开启测速
-* 最安全，无需安装证书，可以在浏览器地址栏左侧查看域名证书
-* 功能也最弱，只有特性1，相当于查询github的国外ip，手动改hosts一个意思。
-* github的可访问性不稳定，取决于IP测速，如果有绿色ip存在，就 `有可能` 可以直连访问。
+- 此模式：关闭拦截、关闭增强、开启dns优选、开启测速
+- 最安全，无需安装证书，可以在浏览器地址栏左侧查看域名证书
+- 功能也最弱，只有特性1，相当于查询github的国外ip，手动改hosts一个意思。
+- github的可访问性不稳定，取决于IP测速，如果有绿色ip存在，就 `有可能` 可以直连访问。
   ![](./doc/speed.png)
 
 ### 3.2、默认模式
 
-* 此模式：开启拦截、关闭增强、开启dns优选、开启测速
-* 需要安装证书，通过修改sni直连访问github
-* 功能上包含特性1/2/3/4。
+- 此模式：开启拦截、关闭增强、开启dns优选、开启测速
+- 需要安装证书，通过修改sni直连访问github
+- 功能上包含特性1/2/3/4。
 
 ## 四、 最佳实践
 
-* 把dev-sidecar一直开着就行了（注意windows下开着ds重启电脑，会无法上网，重新打开ds即可。）
-* 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被***封杀的无效）
+- 把dev-sidecar一直开着就行了（注意windows下开着ds重启电脑，会无法上网，重新打开ds即可。）
+- 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被\*\*\*封杀的无效）
 
 ### 其他加速
 
 #### 1）git clone 加速
 
- 方式1：快捷复制：
-  > 开启脚本支持，然后在复制clone链接下方，即可复制到加速链接
+方式1：快捷复制：
 
- 方式2：
-  > 使用方式用实际的名称替换{}的内容，即可加速clone
-  > <https://hub.fastgit.org/{username}/{reponame}.git>
-  > clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来
-  > 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
+> 开启脚本支持，然后在复制clone链接下方，即可复制到加速链接
+
+方式2：
+
+> 使用方式用实际的名称替换{}的内容，即可加速clone
+> <https://hub.fastgit.org/{username}/{reponame}.git>
+> clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来
+> 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
 
 #### 2）github.com的镜像网站(注意：不能登录)
-   >
-   > 1. [hub.fastgit.org](https://hub.fastgit.org/)
-   > 2. [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限
+
+> 1.  [hub.fastgit.org](https://hub.fastgit.org/)
+> 2.  [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限
 
 ## 五、api
 
@@ -252,16 +251,16 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 
 如果有上面的错误提示，请尝试如下方法：
 
->取消访问偏好设置需要管理员密码
->系统偏好设置—>安全性与隐私—> 通用—> 高级—> 访问系统范围的偏好设置需要输入管理员密码（取消勾选）
+> 取消访问偏好设置需要管理员密码
+> 系统偏好设置—>安全性与隐私—> 通用—> 高级—> 访问系统范围的偏好设置需要输入管理员密码（取消勾选）
 
 ### 6.2、没有加速效果
 
->本应用仅支持https加速，请务必确认你访问的网站地址是https开头的
+> 本应用仅支持https加速，请务必确认你访问的网站地址是https开头的
 
 1. 本应用仅支持https加速
-请务必确认你访问的地址是https开头的
-比如： <https://github.com/>
+   请务必确认你访问的地址是https开头的
+   比如： <https://github.com/>
 
 2. 检查浏览器是否装了什么插件，与ds有冲突
 
@@ -269,10 +268,10 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 
 4. 请确认浏览器的代理设置为使用IE代理/或者使用系统代理状态
 
-6. 可以尝试换个浏览器试试
+5. 可以尝试换个浏览器试试
 
-7. 请确认网络代理设置处于勾选状态
-正常情况下ds在“系统代理”开关打开时，会自动设置系统代理。
+6. 请确认网络代理设置处于勾选状态
+   正常情况下ds在“系统代理”开关打开时，会自动设置系统代理。
 
 ### 6.3、浏览器打开提示证书不受信任
 
@@ -293,8 +292,7 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 ### 6.4、打开github显示连接超时
 
 ```html
-DevSidecar Warning:
-Error: www.github.com:443, 代理请求超时
+DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 ```
 
 1、检查测速界面github.com是否有ip ，如果没有ip，则可能是由于你的网络提供商封锁了dns服务商的ip（试试能否ping通：1.1.1.1 / 9.9.9.9 ）
@@ -303,8 +301,8 @@ Error: www.github.com:443, 代理请求超时
 
 ### 6.5、查看日志是否有报错
 
- 如果还是不行，请在下方加作者好友，将服务日志发送给作者进行分析
- 日志打开方式：加速服务->右边日志按钮->打开日志文件夹
+如果还是不行，请在下方加作者好友，将服务日志发送给作者进行分析
+日志打开方式：加速服务->右边日志按钮->打开日志文件夹
 
 ![](./doc/log.png)
 
@@ -318,10 +316,10 @@ Error: www.github.com:443, 代理请求超时
 应用开启后会自动修改系统代理设置，正常退出会自动关闭系统代理
 当应用意外关闭时，可能会因为没有将系统代理恢复，从而导致完全无法上网。
 
- 对于此问题有如下几种解决方案可供选择：
- 1、重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）
- 2、如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
- 3、如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启
+对于此问题有如下几种解决方案可供选择：
+1、重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）
+2、如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
+3、如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启
 
 ### 6.8、卸载应用后上不了网，git请求不了
 
@@ -345,7 +343,7 @@ npm config delete https-proxy
 
 ## 七、在其他程序使用
 
-* [java程序使用](./doc/other.md#Java程序使用)
+- [java程序使用](./doc/other.md#Java程序使用)
 
 ## 八、贡献代码
 
@@ -358,6 +356,7 @@ npm config delete https-proxy
 #### 2）安装 `lerna`
 
 运行如下命令即可安装所需依赖：
+
 > 注：lerna指定为6.x版本，更高版本会导致打包失败（不兼容导致）
 
 ```shell
@@ -407,19 +406,20 @@ npm run electron:build
 欢迎bug反馈，需求建议，技术交流等
 
 1、 加群（请备注dev-sidecar，或简称DS）
-* QQ 1群：390691483，人数：500 / 500（满）
-* QQ 2群：[667666069](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=n4nksr4sji93vZtD5e8YEHRT6qbh6VyQ&authKey=XKBZnzmoiJrAFyOT4V%2BCrgX5c13ds59b84g%2FVRhXAIQd%2FlAiilsuwDRGWJct%2B570&noverify=0&group_code=667666069)，人数：447 / 500
-* QQ 3群：419807815，人数：500 / 500（满）
-* QQ 4群：[438148299](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=i_NCBB5f_Bkm2JsEV1tLs2TkQ79UlCID&authKey=nMsVJbJ6P%2FGNO7Q6vsVUadXRKnULUURwR8zvUZJnP3IgzhHYPhYdcBCHvoOh8vYr&noverify=0&group_code=438148299)，人数：203 / 1000
-* QQ 5群：[767622917](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nAWi_Rxj7mM4Unp5LMiatmUWhGimtbcB&authKey=aswmlWGjbt3GIWXtvjB2GJqqAKuv7hWjk6UBs3MTb%2Biyvr%2Fsbb1kA9CjF6sK7Hgg&noverify=0&group_code=767622917)，人数：016 / 200（new）
+
+- QQ 1群：390691483，人数：500 / 500（满）
+- QQ 2群：[667666069](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=n4nksr4sji93vZtD5e8YEHRT6qbh6VyQ&authKey=XKBZnzmoiJrAFyOT4V%2BCrgX5c13ds59b84g%2FVRhXAIQd%2FlAiilsuwDRGWJct%2B570&noverify=0&group_code=667666069)，人数：447 / 500
+- QQ 3群：419807815，人数：500 / 500（满）
+- QQ 4群：[438148299](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=i_NCBB5f_Bkm2JsEV1tLs2TkQ79UlCID&authKey=nMsVJbJ6P%2FGNO7Q6vsVUadXRKnULUURwR8zvUZJnP3IgzhHYPhYdcBCHvoOh8vYr&noverify=0&group_code=438148299)，人数：203 / 1000
+- QQ 5群：[767622917](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nAWi_Rxj7mM4Unp5LMiatmUWhGimtbcB&authKey=aswmlWGjbt3GIWXtvjB2GJqqAKuv7hWjk6UBs3MTb%2Biyvr%2Fsbb1kA9CjF6sK7Hgg&noverify=0&group_code=767622917)，人数：016 / 200（new）
 
 ## 十、求star
 
 我的其他项目求star
 
-* [fast-crud](https://github.com/fast-crud/fast-crud) : 开发crud快如闪电
-* [certd](https://github.com/certd/certd) : 让你的证书永不过期
-* [trident-sync](https://github.com/handsfree-work/trident-sync) : 二次开发项目同步升级工具
+- [fast-crud](https://github.com/fast-crud/fast-crud) : 开发crud快如闪电
+- [certd](https://github.com/certd/certd) : 让你的证书永不过期
+- [trident-sync](https://github.com/handsfree-work/trident-sync) : 二次开发项目同步升级工具
 
 ## 十一、感谢
 
@@ -429,14 +429,14 @@ npm run electron:build
 
 本项目参考如下开源项目
 
-* [node-mitmproxy](https://github.com/wuchangming/node-mitmproxy)
-* [ReplaceGoogleCDN](https://github.com/justjavac/ReplaceGoogleCDN)
+- [node-mitmproxy](https://github.com/wuchangming/node-mitmproxy)
+- [ReplaceGoogleCDN](https://github.com/justjavac/ReplaceGoogleCDN)
 
 特别感谢
 
-* [github增强油猴脚本](https://greasyfork.org/zh-CN/scripts/412245-github-%E5%A2%9E%E5%BC%BA-%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD) 本项目部分加速功能完全复制该脚本。
-* [中国域名白名单](https://github.com/pluwen/china-domain-allowlist)，本项目的系统代理排除域名功能中，使用了该白名单。
+- [github增强油猴脚本](https://greasyfork.org/zh-CN/scripts/412245-github-%E5%A2%9E%E5%BC%BA-%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD) 本项目部分加速功能完全复制该脚本。
+- [中国域名白名单](https://github.com/pluwen/china-domain-allowlist)，本项目的系统代理排除域名功能中，使用了该白名单。
 
 本项目部分加速资源由如下组织提供
 
-* [FastGit UK](https://fastgit.org/)
+- [FastGit UK](https://fastgit.org/)

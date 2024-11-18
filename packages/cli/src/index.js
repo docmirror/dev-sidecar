@@ -1,6 +1,6 @@
-const fs = require('fs')
-const jsonApi = require('@docmirror/mitmproxy/src/json')
+const fs = require('node:fs')
 const DevSidecar = require('@docmirror/dev-sidecar')
+const jsonApi = require('@docmirror/mitmproxy/src/json')
 
 // 启动服务
 const mitmproxyPath = './src/mitmproxy'

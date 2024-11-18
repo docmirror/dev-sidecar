@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require('node:fs')
 const forge = require('node-forge')
 const log = require('../../../utils/util.log')
 const FakeServersCenter = require('../tls/FakeServersCenter')
@@ -20,7 +20,8 @@ module.exports = function createFakeServerCenter ({
     const caKeyPem = fs.readFileSync(caKeyPath)
     caCert = forge.pki.certificateFromPem(caCertPem)
     caKey = forge.pki.privateKeyFromPem(caKeyPem)
-  } catch (e) {
+  }
+  catch (e) {
     log.error('Can not find `CA certificate` or `CA key`:', e)
     process.exit(1)
   }

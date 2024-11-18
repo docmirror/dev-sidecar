@@ -4,8 +4,8 @@ import DevSidecar from '@docmirror/dev-sidecar'
 import { ipcMain } from 'electron'
 import lodash from 'lodash'
 
-const pk = require('../../../package.json')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
+const pk = require('../../../package.json')
 const log = require('../../utils/util.log')
 
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
@@ -66,7 +66,8 @@ const localApi = {
         try {
           setting = jsonApi.parse(file.toString())
           log.info('读取 setting.json 成功:', settingPath)
-        } catch (e) {
+        }
+        catch (e) {
           log.error('读取 setting.json 失败:', settingPath, ', error:', e)
         }
         if (setting == null) {
@@ -130,7 +131,8 @@ function _deepFindFunction (list, parent, parentKey) {
     const item = parent[key]
     if (item instanceof Function) {
       list.push(parentKey + key)
-    } else if (item instanceof Object) {
+    }
+    else if (item instanceof Object) {
       _deepFindFunction(list, item, `${parentKey + key}.`)
     }
   }
@@ -140,7 +142,8 @@ function _getSettingsPath () {
   const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
-  } else {
+  }
+  else {
     // 兼容1.7.3及以下版本的配置文件处理逻辑
     const newFilePath = path.join(dir, '/setting.json')
     const oldFilePath = path.join(dir, '/setting.json5')

@@ -33,7 +33,8 @@ const ProxyPlugin = function (context) {
         event.fire('status', { key: 'proxy.enabled', value: false })
         log.info('关闭系统代理成功')
         return true
-      } catch (err) {
+      }
+      catch (err) {
         log.error('关闭系统代理失败:', err)
         return false
       }

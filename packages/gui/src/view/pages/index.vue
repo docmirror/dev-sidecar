@@ -21,7 +21,8 @@ export default {
         doClick: () => {
           if (this.status.server.enabled) {
             this.apiCall(this.startup, this.$api.shutdown)
-          } else {
+          }
+          else {
             this.apiCall(this.startup, this.$api.startup)
           }
         },
@@ -75,11 +76,13 @@ export default {
         this.config.server.intercept.enabled = false
         this.config.server.dns.speedTest.enabled = true
         this.config.plugin.overwall.enabled = false
-      } else if (mode === 'default') {
+      }
+      else if (mode === 'default') {
         this.config.server.intercept.enabled = true
         this.config.server.dns.speedTest.enabled = true
         this.config.plugin.overwall.enabled = false
-      } else if (mode === 'ow') {
+      }
+      else if (mode === 'ow') {
         console.log('event', event)
         if (!this.setting.overwall) {
           this.wantOW()
@@ -201,10 +204,12 @@ export default {
         const ret = await api(param)
         console.log('this status', this.status)
         return ret
-      } catch (err) {
+      }
+      catch (err) {
         btn.loading = false // 有时候记录日志会卡死，先设置为false
         console.log('api invoke error:', err)
-      } finally {
+      }
+      finally {
         btn.loading = false
       }
     },
@@ -212,7 +217,8 @@ export default {
     onSwitchClick (btn, openApi, closeApi, checked) {
       if (checked) {
         return this.apiCall(btn, openApi)
-      } else {
+      }
+      else {
         return this.apiCall(btn, closeApi)
       }
     },
@@ -386,7 +392,7 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding:10px;
+    padding: 10px;
     .donate {
       cursor: pointer;
     }

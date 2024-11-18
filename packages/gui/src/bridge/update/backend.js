@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import DevSidecar from '@docmirror/dev-sidecar'
 import AdmZip from 'adm-zip'
 import { ipcMain } from 'electron'
@@ -85,14 +85,16 @@ function isNewVersion (version, curVersion) {
             if (versionObj.suffix > curVersionObj.suffix) {
               return 41
             }
-          } else if (!versionObj.suffix && curVersionObj.suffix) {
+          }
+          else if (!versionObj.suffix && curVersionObj.suffix) {
             // 线上版本号没有后缀版本号，说明为正式版本，为更新版本
             return 42
           }
         }
       }
     }
-  } catch (e) {
+  }
+  catch (e) {
     log.error(`比对版本失败，当前版本号：${curVersion}，比对版本号：${version}, error:`, e)
     return -99
   }
@@ -125,9 +127,11 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     // })
     if (isMac) {
       autoUpdater.updateConfigPath = path.join(__dirname, 'mac/dev-sidecar.app/Contents/Resources/app-update.yml')
-    } else if (isLinux) {
+    }
+    else if (isLinux) {
       autoUpdater.updateConfigPath = path.join(__dirname, 'linux-unpacked/resources/app-update.yml')
-    } else {
+    }
+    else {
       autoUpdater.updateConfigPath = path.join(__dirname, 'win-unpacked/resources/app-update.yml')
     }
   }
@@ -159,7 +163,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
           let data
           try {
             data = JSON.parse(body)
-          } catch (e) {
+          }
+          catch (e) {
             log.error('检查更新失败，github API返回数据格式不正确:', body)
             win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新失败，github API返回数据格式不正确' })
             return
@@ -206,7 +211,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
                     : '无',
                 },
               })
-            } else {
+            }
+            else {
               log.info(`检查更新：没有新版本，最近发布的版本号为 '${version}'，而当前版本号为 '${curVersion}'`)
               win.webContents.send('update', { key: 'notAvailable' })
             }
@@ -216,25 +222,29 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
 
           log.info('检查更新-没有正式版本数据')
           win.webContents.send('update', { key: 'notAvailable' })
-        } else {
+        }
+        else {
           log.error('检查更新失败, status:', response.statusCode, ', body:', body)
 
           let bodyObj
           try {
             bodyObj = JSON.parse(body)
-          } catch (e) {
+          }
+          catch (e) {
             bodyObj = null
           }
 
           let message
           if (response) {
             message = `检查更新失败: ${bodyObj && bodyObj.message ? bodyObj.message : response.message}, code: ${response.statusCode}`
-          } else {
+          }
+          else {
             message = `检查更新失败: ${bodyObj && bodyObj.message ? bodyObj.message : body}`
           }
           win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: message })
         }
-      } catch (e) {
+      }
+      catch (e) {
         log.error('检查更新失败:', e)
         win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: `检查更新失败:${e.message}` })
       }
@@ -248,7 +258,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     log.info('download dir:', fileDir)
     try {
       fs.accessSync(fileDir, fs.constants.F_OK)
-    } catch (e) {
+    }
+    catch (e) {
       fs.mkdirSync(fileDir)
     }
     const filePath = path.join(fileDir, `${value.version}.zip`)
@@ -288,7 +299,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
       const zip = new AdmZip(partPackagePath)
       zip.extractAllTo(target, true)
       log.info('安装完成，重启app')
-    } finally {
+    }
+    finally {
       app.exit(0)
     }
   }
@@ -339,18 +351,21 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
           }, 1000)
         }
       })
-    } else if (arg.key === 'checkForUpdate') {
+    }
+    else if (arg.key === 'checkForUpdate') {
       // 执行自动更新检查
       log.info('autoUpdater checkForUpdates:', arg.fromUser)
 
       // 调用 github API，获取release数据，来检查更新
       // autoUpdater.checkForUpdates()
       checkForUpdatesFromGitHub()
-    } else if (arg.key === 'downloadUpdate') {
+    }
+    else if (arg.key === 'downloadUpdate') {
       // 下载新版本
       log.info('autoUpdater downloadUpdate')
       autoUpdater.downloadUpdate()
-    } else if (arg.key === 'downloadPart') {
+    }
+    else if (arg.key === 'downloadPart') {
       // 下载增量更新版本
       log.info('autoUpdater downloadPart')
       downloadPart(app, arg.value)

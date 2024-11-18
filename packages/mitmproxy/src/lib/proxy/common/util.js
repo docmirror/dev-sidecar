@@ -1,4 +1,4 @@
-const url = require('url')
+const url = require('node:url')
 const tunnelAgent = require('tunnel-agent')
 const log = require('../../../utils/util.log')
 const matchUtil = require('../../../utils/util.match')
@@ -83,7 +83,8 @@ util.parseHostnameAndPort = (host, defaultPort) => {
     if (arr[1]) {
       arr[1] = Number.parseInt(arr[1], 10)
     }
-  } else {
+  }
+  else {
     arr = host.split(':')
     if (arr.length > 1) {
       arr[1] = Number.parseInt(arr[1], 10)
@@ -92,7 +93,8 @@ util.parseHostnameAndPort = (host, defaultPort) => {
 
   if (defaultPort > 0 && (arr.length === 1 || arr[1] === undefined)) {
     arr[1] = defaultPort
-  } else if (arr.length === 2 && arr[1] === undefined) {
+  }
+  else if (arr.length === 2 && arr[1] === undefined) {
     arr.pop()
   }
 
@@ -110,10 +112,12 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
   if (externalProxy) {
     if (typeof externalProxy === 'string') {
       externalProxyUrl = externalProxy
-    } else if (typeof externalProxy === 'function') {
+    }
+    else if (typeof externalProxy === 'function') {
       try {
         externalProxyUrl = externalProxy(req, ssl)
-      } catch (e) {
+      }
+      catch (e) {
         log.error('externalProxy error:', e)
       }
     }
@@ -133,10 +137,12 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
       // log.info(`get timeoutConfig '${hostname}':`, timeoutConfig)
       agent = createAgent(protocol, timeoutConfig, serverSetting.verifySsl)
       headers.connection = 'keep-alive'
-    } else {
+    }
+    else {
       agent = false
     }
-  } else {
+  }
+  else {
     agent = util.getTunnelAgent(protocol === 'https:', externalProxyUrl)
   }
 
@@ -166,7 +172,8 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
   // mark a socketId for Agent to bind socket for NTLM
   if (req.socket.customSocketId) {
     options.customSocketId = req.socket.customSocketId
-  } else if (headers.authorization) {
+  }
+  else if (headers.authorization) {
     options.customSocketId = req.socket.customSocketId = socketId++
   }
 
@@ -194,7 +201,8 @@ util.getTunnelAgent = (requestIsSSL, externalProxyUrl) => {
         })
       }
       return httpsOverHttpAgent
-    } else {
+    }
+    else {
       if (!httpsOverHttpsAgent) {
         httpsOverHttpsAgent = tunnelAgent.httpsOverHttps({
           proxy: {
@@ -205,7 +213,8 @@ util.getTunnelAgent = (requestIsSSL, externalProxyUrl) => {
       }
       return httpsOverHttpsAgent
     }
-  } else {
+  }
+  else {
     if (protocol === 'http:') {
       // if (!httpOverHttpAgent) {
       //     httpOverHttpAgent = tunnelAgent.httpOverHttp({
@@ -216,7 +225,8 @@ util.getTunnelAgent = (requestIsSSL, externalProxyUrl) => {
       //     })
       // }
       return false
-    } else {
+    }
+    else {
       if (!httpOverHttpsAgent) {
         httpOverHttpsAgent = tunnelAgent.httpOverHttps({
           proxy: {

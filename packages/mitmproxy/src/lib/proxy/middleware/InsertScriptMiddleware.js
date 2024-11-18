@@ -1,4 +1,4 @@
-const zlib = require('zlib')
+const zlib = require('node:zlib')
 const through = require('through2')
 const log = require('../../../utils/util.log')
 
@@ -181,10 +181,12 @@ module.exports = {
           }))
           .pipe(codec.createCompressor()) // 编码
           .pipe(res)
-      } else {
+      }
+      else {
         log.error(`InsertScriptMiddleware.responseInterceptor(): 暂不支持编码方式 ${encoding}, 目前支持:`, httpUtil.supportedEncodingsStr())
       }
-    } else {
+    }
+    else {
       proxyRes
         .pipe(through(function (chunk, enc, callback) {
           chunkByteReplace(this, chunk, enc, callback, append)

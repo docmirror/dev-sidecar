@@ -2,9 +2,9 @@ const lodash = require('lodash')
 const config = require('../../config')
 const event = require('../../event')
 const status = require('../../status')
-const fork = require('child_process').fork
-const fs = require('fs')
-const path = require('path')
+const fork = require('node:child_process').fork
+const fs = require('node:fs')
+const path = require('node:path')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
 const log = require('../../utils/util.log')
 
@@ -102,14 +102,16 @@ const serverApi = {
       log.info('收到子进程消息:', JSON.stringify(msg))
       if (msg.type === 'status') {
         fireStatus(msg.event)
-      } else if (msg.type === 'error') {
+      }
+      else if (msg.type === 'error') {
         let code = ''
         if (msg.event.code) {
           code = msg.event.code
         }
         fireStatus(false) // 启动失败
         event.fire('error', { key: 'server', value: code, error: msg.event, message: msg.message })
-      } else if (msg.type === 'speed') {
+      }
+      else if (msg.type === 'speed') {
         event.fire('speed', msg.event)
       }
     })
@@ -139,12 +141,14 @@ const serverApi = {
             }
             log.warn('代理服务关闭失败:', err)
             reject(err)
-          } else {
+          }
+          else {
             log.info('代理服务关闭成功')
             resolve()
           }
         })
-      } else {
+      }
+      else {
         log.info('server is null')
         resolve()
       }

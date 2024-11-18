@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const server = require('@docmirror/mitmproxy')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
 const log = require('../src/utils/util.log')
@@ -9,7 +9,8 @@ const home = process.env.USER_HOME || process.env.HOME || 'C:/Users/Administrato
 let configPath
 if (process.argv && process.argv.length > 3) {
   configPath = process.argv[2]
-} else {
+}
+else {
   configPath = path.join(home, '.dev-sidecar/running.json')
 }
 

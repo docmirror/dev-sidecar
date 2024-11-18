@@ -1,4 +1,4 @@
-const url = require('url')
+const url = require('node:url')
 const lodash = require('lodash')
 
 // 替换占位符
@@ -27,9 +27,11 @@ function buildTargetUrl (rOptions, urlConf, interceptOpt, matched) {
   if (interceptOpt && interceptOpt.replace) {
     const regexp = new RegExp(interceptOpt.replace)
     targetUrl = rOptions.path.replace(regexp, urlConf)
-  } else if (urlConf.indexOf('http:') === 0 || urlConf.indexOf('https:') === 0) {
+  }
+  else if (urlConf.indexOf('http:') === 0 || urlConf.indexOf('https:') === 0) {
     targetUrl = urlConf
-  } else {
+  }
+  else {
     let uri = rOptions.path
     if (uri.indexOf('http:') === 0 || uri.indexOf('https:') === 0) {
       // eslint-disable-next-line node/no-deprecated-api
@@ -95,7 +97,8 @@ module.exports = {
       }
       if (count.value == null) {
         log.error('`count.value` is null, the count:', count)
-      } else {
+      }
+      else {
         count.doCount(count.value)
         proxyConf = count.value
         context.requestCount = {
@@ -124,7 +127,8 @@ module.exports = {
       }
       res.setHeader('DS-Interceptor', `proxy: ${proxyTarget}, sni: ${interceptOpt.sni}${unVerifySsl ? ', unVerifySsl' : ''}`)
       log.info('proxy intercept: hostname:', originHostname, ', target：', proxyTarget, ', sni replace servername:', rOptions.servername, (unVerifySsl ? ', unVerifySsl' : ''))
-    } else {
+    }
+    else {
       res.setHeader('DS-Interceptor', `proxy: ${proxyTarget}`)
       log.info('proxy intercept: hostname:', originHostname, ', target：', proxyTarget)
     }

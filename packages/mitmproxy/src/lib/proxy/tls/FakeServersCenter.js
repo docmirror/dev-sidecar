@@ -1,12 +1,12 @@
-const http = require('http')
-const https = require('https')
+const http = require('node:http')
+const https = require('node:https')
 const forge = require('node-forge')
 const CertAndKeyContainer = require('./CertAndKeyContainer')
 const tlsUtils = require('./tlsUtils')
 
 const pki = forge.pki
 // const colors = require('colors')
-const tls = require('tls')
+const tls = require('node:tls')
 const log = require('../../../utils/util.log')
 const compatible = require('../compatible/compatible')
 
@@ -38,7 +38,8 @@ module.exports = class FakeServersCenter {
       try {
         log.info('超过最大服务数量，删除旧服务。delServerObj:', delServerObj)
         delServerObj.serverObj.server.close()
-      } catch (e) {
+      }
+      catch (e) {
         log.error('`delServerObj.serverObj.server.close()` error:', e)
       }
     }
@@ -49,7 +50,8 @@ module.exports = class FakeServersCenter {
   getServerPromise (hostname, port, ssl, manualCompatibleConfig) {
     if (port === 443 || port === 80) {
       ssl = port === 443
-    } else if (ssl) {
+    }
+    else if (ssl) {
       // 自动兼容程序：1
       const compatibleConfig = compatible.getConnectCompatibleConfig(hostname, port, manualCompatibleConfig)
       if (compatibleConfig && compatibleConfig.ssl != null) {
@@ -105,7 +107,8 @@ module.exports = class FakeServersCenter {
               })()
             },
           })
-        } else {
+        }
+        else {
           fakeServer = new http.Server()
         }
         const serverObj = {
@@ -146,7 +149,8 @@ module.exports = class FakeServersCenter {
         fakeServer.on('upgrade', (req, socket, head) => {
           if (printDebugLog) {
             log.debug(`【fakeServer upgrade - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- socket -----\r\n', socket, '\r\n----- head -----\r\n', head)
-          } else {
+          }
+          else {
             log.info(`【fakeServer upgrade - ${hostname}:${port}】`, req.url)
           }
           this.upgradeHandler(req, socket, head, ssl)
@@ -165,7 +169,8 @@ module.exports = class FakeServersCenter {
             if (ssl === true && err.code.indexOf('ERR_SSL_') === 0) {
               compatible.setConnectSsl(hostname, port, false)
               log.error(`自动兼容程序：SSL异常，现设置为禁用ssl: ${hostname}:${port}, ssl = false`)
-            } else if (ssl === false && err.code === 'HPE_INVALID_METHOD') {
+            }
+            else if (ssl === false && err.code === 'HPE_INVALID_METHOD') {
               compatible.setConnectSsl(hostname, port, true)
               log.error(`自动兼容程序：${err.code}，现设置为启用ssl: ${hostname}:${port}, ssl = true`)
             }

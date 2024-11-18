@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const _ = require('lodash')
 const forge = require('node-forge')
 const log = require('../../../utils/util.log')
@@ -244,7 +244,8 @@ utils.initCA = function ({ caCertPath, caKeyPath }) {
       caKeyPath,
       create: false,
     }
-  } catch (e) {
+  }
+  catch (e) {
     const caObj = utils.createCA(config.caName)
 
     const caCert = caObj.cert

@@ -1,4 +1,4 @@
-const http = require('http')
+const http = require('node:http')
 const log = require('../../../utils/util.log')
 const speedTest = require('../../speed/index.js')
 const config = require('../common/config')
@@ -104,7 +104,8 @@ module.exports = {
         server.on('upgrade', (req, cltSocket, head) => {
           if (printDebugLog) {
             log.debug(`【server upgrade, ssl: ${ssl}】\r\n----- req -----\r\n`, req)
-          } else {
+          }
+          else {
             log.info(`【server upgrade, ssl: ${ssl}】`, req.url)
           }
           upgradeHandler(req, cltSocket, head, ssl)

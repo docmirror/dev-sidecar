@@ -1,7 +1,7 @@
-const { Buffer } = require('buffer')
-const fs = require('fs')
-const path = require('path')
-const url = require('url')
+const { Buffer } = require('node:buffer')
+const fs = require('node:fs')
+const path = require('node:path')
+const url = require('node:url')
 const lodash = require('lodash')
 const request = require('request')
 const log = require('../../../utils/util.log')
@@ -15,7 +15,8 @@ function matched (hostname, overWallTargetMap) {
   const ret1 = matchUtil.matchHostname(overWallTargetMap, hostname, 'matched overwall')
   if (ret1) {
     return 'in config'
-  } else if (ret1 === false || ret1 === 'false') {
+  }
+  else if (ret1 === false || ret1 === 'false') {
     log.debug(`域名 ${hostname} 的overwall配置为 false，跳过增强功能，即使它在 pac.txt 里`)
     return null
   }
@@ -28,7 +29,8 @@ function matched (hostname, overWallTargetMap) {
   if (ret && ret.indexOf('PROXY ') === 0) {
     log.info(`matchHostname: matched overwall: '${hostname}' -> '${ret}' in pac.txt`)
     return 'in pac.txt'
-  } else {
+  }
+  else {
     log.debug(`matchHostname: matched overwall: Not-Matched '${hostname}' -> '${ret}' in pac.txt`)
     return null
   }
@@ -49,7 +51,8 @@ function loadPacLastModifiedTime (pacTxt) {
   if (matched && matched.length > 0) {
     try {
       return new Date(matched[0])
-    } catch (ignore) {
+    }
+    catch {
       return null
     }
   }
@@ -74,7 +77,7 @@ function savePacFile (pacTxt) {
   // 尝试解析和修改 pac.txt 文件时间
   const lastModifiedTime = loadPacLastModifiedTime(pacTxt)
   if (lastModifiedTime) {
-    fs.stat(pacFilePath, (err, stats) => {
+    fs.stat(pacFilePath, (err, _stats) => {
       if (err) {
         log.error('修改 pac.txt 文件时间失败:', err)
         return
@@ -84,7 +87,8 @@ function savePacFile (pacTxt) {
       fs.utimes(pacFilePath, lastModifiedTime, lastModifiedTime, (utimesErr) => {
         if (utimesErr) {
           log.error('修改 pac.txt 文件时间失败:', utimesErr)
-        } else {
+        }
+        else {
           log.info(`'${pacFilePath}' 文件的修改时间已更新为其最近更新时间 '${formatDate(lastModifiedTime)}'`)
         }
       })
@@ -107,7 +111,8 @@ async function downloadPacAsync (pacConfig) {
       if (body == null || body.length < 100) {
         log.warn('下载远程 pac.txt 文件成功，但内容为空或内容太短，判断为无效的 pax.txt 文件:', remotePacFileUrl, ', body:', body)
         return
-      } else {
+      }
+      else {
         log.info('下载远程 pac.txt 文件成功:', remotePacFileUrl)
       }
 
@@ -118,7 +123,8 @@ async function downloadPacAsync (pacConfig) {
           pacTxt = Buffer.from(pacTxt, 'base64').toString('utf8')
           // log.debug('解析 base64 后的 pax:', pacTxt)
         }
-      } catch (e) {
+      }
+      catch {
         if (!pacTxt.includes('!---------------------EOF')) {
           log.error(`远程 pac.txt 文件内容即不是base64格式，也不是要求的格式，url: ${remotePacFileUrl}，body: ${body}`)
           return
@@ -127,7 +133,8 @@ async function downloadPacAsync (pacConfig) {
 
       // 保存到本地
       savePacFile(pacTxt)
-    } else {
+    }
+    else {
       log.error(`下载远程 pac.txt 文件失败: ${remotePacFileUrl}, response:`, response, ', body:', body)
     }
   })
@@ -153,11 +160,11 @@ function createOverwallMiddleware (overWallConfig) {
   }
   const overWallTargetMap = matchUtil.domainMapRegexply(overWallConfig.targets)
   return {
-    sslConnectInterceptor: (req, cltSocket, head) => {
+    sslConnectInterceptor: (req, _cltSocket, _head) => {
       const hostname = req.url.split(':')[0]
       return matched(hostname, overWallTargetMap)
     },
-    requestIntercept (context, req, res, ssl, next) {
+    requestIntercept (context, req, res, _ssl, _next) {
       const { rOptions, log, RequestCounter } = context
       if (rOptions.protocol === 'http:') {
         return
@@ -176,7 +183,8 @@ function createOverwallMiddleware (overWallConfig) {
         }
         if (count.value == null) {
           log.error('`count.value` is null, the count:', count)
-        } else {
+        }
+        else {
           count.doCount(count.value)
           proxyServer = count.value
           context.requestCount = {

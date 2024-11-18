@@ -42,7 +42,8 @@ function getLastModifiedTimeFromIfModifiedSince (rOptions, log) {
   try {
     // 尝试解析 lastModified，并获取time
     return new Date(lastModified).getTime()
-  } catch (e) {
+  }
+  catch (e) {
     // 为数字时，直接返回
     if (/\\d+/.test(lastModified)) {
       return lastModified - 0

@@ -407,8 +407,12 @@ export default {
             <a-divider />
             <a-row :gutter="10" class="mt10">
               <a-col span="24">
-                <a-button type="primary" icon="plus" @click="reSpeedTest()">立即重新测速</a-button>
-                <a-button class="md-ml-10" type="primary" icon="reload" @click="reloadAllSpeedTester()">刷新</a-button>
+                <a-button type="primary" icon="plus" @click="reSpeedTest()">
+                  立即重新测速
+                </a-button>
+                <a-button class="md-ml-10" type="primary" icon="reload" @click="reloadAllSpeedTester()">
+                  刷新
+                </a-button>
               </a-col>
             </a-row>
 
@@ -434,8 +438,12 @@ export default {
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">恢复默认</a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">应用</a-button>
+        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">
+          恢复默认
+        </a-button>
+        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
+          应用
+        </a-button>
       </div>
     </template>
   </ds-container>
@@ -454,7 +462,7 @@ export default {
   }
 
   .jsoneditor-vue {
-    height: 100%
+    height: 100%;
   }
 
   .ant-tabs {

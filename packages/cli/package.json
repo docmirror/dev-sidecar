@@ -11,8 +11,8 @@
     "google加速",
     "代理"
   ],
-  "bin": "./cli.js",
   "main": "src/index.js",
+  "bin": "./cli.js",
   "scripts": {
     "start": "node ./src"
   },
