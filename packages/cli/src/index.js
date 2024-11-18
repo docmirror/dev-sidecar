@@ -3,7 +3,7 @@ const DevSidecar = require('@docmirror/dev-sidecar')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
 
 // 启动服务
-const mitmproxyPath = './src/mitmproxy'
+const mitmproxyPath = './mitmproxy'
 async function startup () {
   const banner = fs.readFileSync('./src/banner.txt')
   console.log(banner.toString())
