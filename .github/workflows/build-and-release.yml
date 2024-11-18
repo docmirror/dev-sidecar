@@ -1,4 +1,4 @@
-name: 'Build And Release'
+name: Build And Release
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
         node:
           - 22
     steps:
-      - name: 'Checkout'
+      - name: Checkout
         uses: actions/checkout@v4.1.7
 
       - name: 'Setup Node.js "${{ matrix.node }}.x" environment'
@@ -30,22 +30,22 @@ jobs:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
 
-      - name: 'Setup pnpm'
+      - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: 'Setup Python environment (Mac) Because of electron-builder install-app-deps requires Python setup tools'
+      - name: Setup Python environment (Mac) Because of electron-builder install-app-deps requires Python setup tools
         if: matrix.os == 'macos'
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: 'Get package info'
+      - name: Get package info
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
         with:
           path: ./packages/mitmproxy
 
-      - name: 'Print'
+      - name: Print
         run: |
           echo "version = ${{ steps.package-info.outputs.version }}";
           echo "github.ref_type = ${{ github.ref_type }}";
@@ -69,7 +69,7 @@ jobs:
           echo "--------------------";
           python --version;
 
-      - name: 'pnpm install'
+      - name: pnpm install
         run: |
           echo "======================================================================";
           dir || ls -lah;
@@ -139,10 +139,10 @@ jobs:
     needs:
       - build-and-upload
     steps:
-      - name: 'Checkout'
+      - name: Checkout
         uses: actions/checkout@v4.1.7
 
-      - name: 'Get package info'
+      - name: Get package info
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
         with:
@@ -177,7 +177,7 @@ jobs:
         run: |
           ls -lah release;
 
-      - name: 'Create a draft release'
+      - name: Create a draft release
         uses: wangliang181230/github-action-ghr@master
         env:
           GITHUB_TOKEN: ${{ github.token }}
