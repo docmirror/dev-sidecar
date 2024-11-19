@@ -346,6 +346,7 @@ export default {
         <div class="right" />
       </div>
       <div v-if="setting.development == null || !setting.development" class="star">
+        <div class="donate" />
         <div class="right">
           <div>
             如果它解决了你的问题，请不要吝啬你的star哟！点这里
