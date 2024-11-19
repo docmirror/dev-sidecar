@@ -44,7 +44,7 @@
     "@vue/babel-preset-jsx": "^1.4.0",
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
-    "electron": "^33.2.0",
+    "electron": "^19.1.9",
     "electron-builder": "^25.1.8",
     "electron-icon-builder": "^2.0.1",
     "json5-loader": "^4.0.1",
