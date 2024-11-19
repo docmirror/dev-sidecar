@@ -45,7 +45,7 @@
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
     "electron": "^19.1.9",
-    "electron-builder": "^25.0.6",
+    "electron-builder": "^25.1.8",
     "electron-icon-builder": "^2.0.1",
     "json5-loader": "^4.0.1",
     "vue-cli-plugin-electron-builder": "^3.0.0-alpha.4"
