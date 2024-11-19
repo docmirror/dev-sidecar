@@ -11,7 +11,6 @@ export default {
   },
   data () {
     return {
-      donateModal: false,
       status: undefined,
       startup: {
         loading: false,
@@ -347,10 +346,6 @@ export default {
         <div class="right" />
       </div>
       <div v-if="setting.development == null || !setting.development" class="star">
-        <div class="donate" @click="donateModal = true">
-          <a-icon type="like" theme="outlined" />
-          捐赠
-        </div>
         <div class="right">
           <div>
             如果它解决了你的问题，请不要吝啬你的star哟！点这里
@@ -362,14 +357,6 @@ export default {
           ></a>
         </div>
       </div>
-
-      <a-modal v-if="setting.development == null || !setting.development" v-model="donateModal" title="捐赠" width="550px" cancel-text="不了" ok-text="果断支持" @ok="goDonate">
-        <div>* 本应用完全免费，如果觉得好用，可以给予捐赠。</div>
-        <div>* 开源项目持续发展离不开您的支持，感谢</div>
-        <div class="payQrcode">
-          <img height="200px" src="/pay.jpg">
-        </div>
-      </a-modal>
     </div>
   </DsContainer>
 </template>
