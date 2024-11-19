@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - run
+    tags:
+      - '*'
 
 jobs:
   npm-run-electron:
