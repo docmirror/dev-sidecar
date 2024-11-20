@@ -29,7 +29,7 @@ const Plugin = function (context) {
 
     async setProxy (ip, port) {
       const cmds = [
-        `git config --global http.proxy  http://${ip}:${port} `,
+        `git config --global http.proxy  http://${ip}:${port - 1} `,
         `git config --global https.proxy http://${ip}:${port} `,
       ]
 
