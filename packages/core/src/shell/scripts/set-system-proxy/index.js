@@ -97,7 +97,7 @@ function loadLastModifiedTimeFromTxt (fileTxt) {
   if (matched && matched.length > 0) {
     try {
       return new Date(matched[0])
-    } catch (ignore) {
+    } catch {
       return null
     }
   }
