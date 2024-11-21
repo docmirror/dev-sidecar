@@ -1,5 +1,6 @@
 import { ipcRenderer, shell } from 'electron'
 import lodash from 'lodash'
+import path from 'node:path'
 
 let inited = false
 let apiObj = null
@@ -31,7 +32,7 @@ export function apiInit (app) {
         await shell.openExternal(href)
       },
       openPath (file) {
-        shell.openPath(file)
+        shell.openPath(path.resolve(file))
       },
     },
   }
