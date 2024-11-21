@@ -7,45 +7,14 @@ const request = require('request')
 const Registry = require('winreg')
 const log = require('../../../utils/util.log')
 const Shell = require('../../shell')
-const extraPath = require('../extra-path/index')
+const sysproxy = require('@mihomo-party/sysproxy')
 
 const execute = Shell.execute
-const execFile = Shell.execFile
 
 let config = null
 function loadConfig () {
   if (config == null) {
     config = require('../../../config.js')
-  }
-}
-
-async function _winUnsetProxy (exec, setEnv) {
-  const proxyPath = extraPath.getProxyExePath()
-  await execFile(proxyPath, ['set', '1'])
-
-  try {
-    await exec('echo \'删除环境变量 HTTPS_PROXY、HTTP_PROXY\'')
-    const regKey = new Registry({ // new operator is optional
-      hive: Registry.HKCU, // open registry hive HKEY_CURRENT_USER
-      key: '\\Environment', // key containing autostart programs
-    })
-    regKey.get('HTTPS_PROXY', (err) => {
-      if (!err) {
-        regKey.remove('HTTPS_PROXY', async (err) => {
-          log.warn('删除环境变量 HTTPS_PROXY 失败:', err)
-          await exec('setx DS_REFRESH "1"')
-        })
-      }
-    })
-    regKey.get('HTTP_PROXY', (err) => {
-      if (!err) {
-        regKey.remove('HTTP_PROXY', async (err) => {
-          log.warn('删除环境变量 HTTP_PROXY 失败:', err)
-        })
-      }
-    })
-  } catch (e) {
-    log.error('删除环境变量 HTTPS_PROXY、HTTP_PROXY 失败:', e)
   }
 }
 
@@ -212,57 +181,68 @@ function getProxyExcludeIpStr (split) {
   return excludeIpStr
 }
 
-async function _winSetProxy (exec, ip, port, setEnv) {
-  // 延迟加载config
-  loadConfig()
-
-  const proxyPath = extraPath.getProxyExePath()
-  const execFun = 'global'
-
-  // https
-  let proxyAddr = `https=http://${ip}:${port}`
-  // http
-  if (config.get().proxy.proxyHttp) {
-    proxyAddr = `http=http://${ip}:${port - 1};${proxyAddr}`
-  }
-
-  // 读取排除域名
-  const excludeIpStr = getProxyExcludeIpStr(';')
-  // 设置代理，同时设置排除域名
-  log.info(`执行“设置系统代理”的程序: ${proxyPath} ${execFun} ${proxyAddr} ......(省略排除IP列表)`)
-  await execFile(proxyPath, [execFun, proxyAddr, excludeIpStr])
-
-  if (setEnv) {
-    // 设置全局代理所需的环境变量
-    try {
-      await exec(`echo '设置环境变量 HTTPS_PROXY${config.get().proxy.proxyHttp ? '、HTTP_PROXY' : ''}'`)
-
-      log.info(`开启系统代理的同时设置环境变量：HTTPS_PROXY = "http://${ip}:${port}/"`)
-      await exec(`setx HTTPS_PROXY "http://${ip}:${port}/"`)
-
-      if (config.get().proxy.proxyHttp) {
-        log.info(`开启系统代理的同时设置环境变量：HTTP_PROXY = "http://${ip}:${port - 1}/"`)
-        await exec(`setx HTTP_PROXY "http://${ip}:${port - 1}/"`)
-      }
-
-      //  await addClearScriptIni()
-    } catch (e) {
-      log.error('设置环境变量 HTTPS_PROXY、HTTP_PROXY 失败:', e)
-    }
-  }
-
-  return true
-}
-
 const executor = {
   async windows (exec, params = {}) {
     const { ip, port, setEnv } = params
     if (ip != null) { // 设置代理
+      // 延迟加载config
+      loadConfig()
       log.info('设置windows系统代理:', ip, port, setEnv)
-      return _winSetProxy(exec, ip, port, setEnv)
+      // 读取排除域名
+      const excludeIpStr = getProxyExcludeIpStr(';')
+
+      sysproxy.triggerAutoProxy(true, ip, port, excludeIpStr)
+
+      if (setEnv) {
+        // 设置全局代理所需的环境变量
+        try {
+          await exec(`echo '设置环境变量 HTTPS_PROXY${config.get().proxy.proxyHttp ? '、HTTP_PROXY' : ''}'`)
+
+          log.info(`开启系统代理的同时设置环境变量：HTTPS_PROXY = "http://${ip}:${port}/"`)
+          await exec(`setx HTTPS_PROXY "http://${ip}:${port}/"`)
+
+          if (config.get().proxy.proxyHttp) {
+            log.info(`开启系统代理的同时设置环境变量：HTTP_PROXY = "http://${ip}:${port - 1}/"`)
+            await exec(`setx HTTP_PROXY "http://${ip}:${port - 1}/"`)
+          }
+
+          //  await addClearScriptIni()
+        } catch (e) {
+          log.error('设置环境变量 HTTPS_PROXY、HTTP_PROXY 失败:', e)
+        }
+      }
+
+      return true
     } else { // 关闭代理
       log.info('关闭windows系统代理')
-      return _winUnsetProxy(exec, setEnv)
+      sysproxy.triggerManualProxy(false, '', 0, '')
+
+      try {
+        await exec('echo \'删除环境变量 HTTPS_PROXY、HTTP_PROXY\'')
+        const regKey = new Registry({ // new operator is optional
+          hive: Registry.HKCU, // open registry hive HKEY_CURRENT_USER
+          key: '\\Environment', // key containing autostart programs
+        })
+        regKey.get('HTTPS_PROXY', (err) => {
+          if (!err) {
+            regKey.remove('HTTPS_PROXY', async (err) => {
+              log.warn('删除环境变量 HTTPS_PROXY 失败:', err)
+              await exec('setx DS_REFRESH "1"')
+            })
+          }
+        })
+        regKey.get('HTTP_PROXY', (err) => {
+          if (!err) {
+            regKey.remove('HTTP_PROXY', async (err) => {
+              log.warn('删除环境变量 HTTP_PROXY 失败:', err)
+            })
+          }
+        })
+      } catch (e) {
+        log.error('删除环境变量 HTTPS_PROXY、HTTP_PROXY 失败:', e)
+      }
+
+      return true
     }
   },
   async linux (exec, params = {}) {

@@ -16,6 +16,7 @@
     "test": "mocha"
   },
   "dependencies": {
+    "@mihomo-party/sysproxy": "^2.0.4",
     "fix-path": "^3.0.0",
     "iconv-lite": "^0.6.3",
     "lodash": "^4.17.21",

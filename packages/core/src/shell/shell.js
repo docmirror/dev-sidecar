@@ -1,11 +1,8 @@
 const childProcess = require('node:child_process')
 const os = require('node:os')
 const fixPath = require('fix-path')
-const iconv = require('iconv-lite')
 const PowerShell = require('node-powershell')
 const log = require('../utils/util.log')
-
-const _execFile = childProcess.execFile
 
 fixPath()
 
@@ -64,7 +61,7 @@ class WindowsSystemShell extends SystemShell {
         ps.dispose()
       }
     } else {
-      let compose = 'echo  "test" ' // 'chcp 65001  '
+      let compose = 'chcp 65001' // 'chcp 65001  '
       for (const cmd of cmds) {
         compose += ` && ${cmd}`
       }
@@ -76,9 +73,8 @@ class WindowsSystemShell extends SystemShell {
   }
 }
 
-function _childExec (composeCmds, options = {}) {
+function childExec (composeCmds, options = {}) {
   return new Promise((resolve, reject) => {
-    const childProcess = require('node:child_process')
     log.info('shell:', composeCmds)
     childProcess.exec(composeCmds, options, (error, stdout, stderr) => {
       if (error) {
@@ -89,32 +85,6 @@ function _childExec (composeCmds, options = {}) {
       } else {
         // log.info('cmd 命令完成：', stdout)
         resolve(stdout)
-      }
-      // log.info('关闭 cmd')
-      // ps.kill('SIGINT')
-    })
-  })
-}
-
-function childExec (composeCmds, options = {}) {
-  return new Promise((resolve, reject) => {
-    const encoding = 'cp936'
-    const binaryEncoding = 'binary'
-
-    const childProcess = require('node:child_process')
-    log.info('shell:', composeCmds)
-    childProcess.exec(composeCmds, { encoding: binaryEncoding }, (error, stdout, stderr) => {
-      if (error) {
-        // console.log('------', decoder.decode(stderr))
-        const message = iconv.decode(Buffer.from(stderr, binaryEncoding), encoding)
-        if (options.printErrorLog !== false) {
-          log.error('cmd 命令执行错误：\n------------------------------\ncommands:', composeCmds, '\n message:', message, '\n   error:', error, '\n------------------------------')
-        }
-        reject(new Error(message))
-      } else {
-        // log.info('cmd 命令完成：', stdout)
-        const message = iconv.decode(Buffer.from(stdout, binaryEncoding), encoding)
-        resolve(message)
       }
       // log.info('关闭 cmd')
       // ps.kill('SIGINT')
@@ -135,6 +105,7 @@ function getSystemShell () {
       throw new Error(`UNKNOWN OS TYPE ${os.platform()}`)
   }
 }
+
 function getSystemPlatform () {
   switch (os.platform()) {
     case 'darwin':
@@ -158,7 +129,7 @@ async function execute (executor, args) {
 async function execFile (file, args, options) {
   return new Promise((resolve, reject) => {
     try {
-      _execFile(file, args, options, (err, stdout) => {
+      childProcess.execFile(file, args, options, (err, stdout) => {
         if (err) {
           log.error('文件执行出错：', file, err)
           reject(err)
