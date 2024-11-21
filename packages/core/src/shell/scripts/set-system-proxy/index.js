@@ -191,7 +191,7 @@ const executor = {
       // 读取排除域名
       const excludeIpStr = getProxyExcludeIpStr(';')
 
-      sysproxy.triggerAutoProxy(true, ip, port, excludeIpStr)
+      sysproxy.triggerManualProxy(true, ip, port, excludeIpStr)
 
       if (setEnv) {
         // 设置全局代理所需的环境变量
