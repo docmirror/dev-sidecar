@@ -129,12 +129,12 @@ jobs:
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe'
           if-no-files-found: error
 
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.deb - Ubuntu'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb - Ubuntu'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.deb
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.deb'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb'
           if-no-files-found: error
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb - Ubuntu'
         uses: actions/upload-artifact@v4.4.0
