@@ -23,14 +23,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.1.7
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: 'Setup Node.js "${{ matrix.node }}.x" environment'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+          cache: pnpm
 
       - name: Setup Python environment (Mac) Because of electron-builder install-app-deps requires Python setup tools
         if: matrix.os == 'macos'
@@ -68,6 +69,22 @@ jobs:
           echo "--------------------";
           python --version;
 
+      - name: Setup electron cahce
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.HOME }}/.cache/electron
+          key: ${{ runner.os }}-electron-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-electron-cache-
+
+      - name: Setup electron-builder cahce
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.HOME }}/.cache/electron-builder
+          key: ${{ runner.os }}-electron-builder-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-electron-builder-cache-
+
       - name: pnpm install
         run: |
           echo "======================================================================";
@@ -78,7 +95,7 @@ jobs:
           echo "--------------------";
           pnpm install;
 
-      - name: 'npm run electron'
+      - name: npm run electron
         run: |
           echo "======================================================================";
           echo "cd packages/gui";
