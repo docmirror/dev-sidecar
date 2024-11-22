@@ -69,6 +69,22 @@ jobs:
           echo "--------------------";
           python --version;
 
+      - name: Setup electron cahce
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.HOME }}/.cache/electron
+          key: ${{ runner.os }}-electron-cache-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-electron-cache-
+
+      - name: Setup electron-builder cahce
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.HOME }}/.cache/electron-builder
+          key: ${{ runner.os }}-electron-builder-cache-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-electron-builder-cache-
+
       - name: pnpm install
         run: |
           echo "======================================================================";
