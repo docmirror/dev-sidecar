@@ -113,6 +113,7 @@ jobs:
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-*.exe
           # name: 'DevSidecar-${{ steps.package-info.outputs.version }}.exe'
+          name: Windows
           if-no-files-found: error
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}.deb - Ubuntu'
         uses: actions/upload-artifact@v4.4.0
@@ -120,6 +121,7 @@ jobs:
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-*.deb
           # name: 'DevSidecar-${{ steps.package-info.outputs.version }}.deb'
+          name: Linux
           if-no-files-found: error
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}.AppImage - Ubuntu'
         uses: actions/upload-artifact@v4.4.0
@@ -127,6 +129,7 @@ jobs:
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-*.AppImage
           # name: 'DevSidecar-${{ steps.package-info.outputs.version }}.AppImage'
+          name: Linux
           if-no-files-found: error
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}.dmg - Mac'
         uses: actions/upload-artifact@v4.4.0
@@ -134,4 +137,5 @@ jobs:
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-*.dmg
           # name: 'DevSidecar-${{ steps.package-info.outputs.version }}.dmg'
+          name: MacOS
           if-no-files-found: error
