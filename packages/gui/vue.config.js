@@ -92,6 +92,7 @@ module.exports = defineConfig({
             arch: 'universal',
             target: 'dmg',
           },
+          category: 'public.app-category.developer-tools',
         },
         win: {
           icon: 'build/icons/',
@@ -115,6 +116,7 @@ module.exports = defineConfig({
               arch: ['x64', 'arm64'],
             },
           ],
+          category: 'System',
         },
         publish: {
           provider: publishProvider,
