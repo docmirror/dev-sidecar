@@ -29,6 +29,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
+          cache: pnpm
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -73,7 +74,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.HOME }}/.cache/electron
-          key: ${{ runner.os }}-electron-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.os }}-electron-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-electron-cache-
 
@@ -81,7 +82,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.HOME }}/.cache/electron-builder
-          key: ${{ runner.os }}-electron-builder-cache-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.os }}-electron-builder-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-electron-builder-cache-
 
