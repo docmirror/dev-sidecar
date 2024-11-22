@@ -77,7 +77,7 @@ module.exports = defineConfig({
         appId: 'dev-sidecar',
         productName: 'dev-sidecar',
         // eslint-disable-next-line no-template-curly-in-string
-        artifactName: 'DevSidecar-${version}.${ext}',
+        artifactName: 'DevSidecar-${version}-${arch}.${ext}',
         copyright: 'Copyright © 2020-2024 Greper, WangLiang',
         nsis: {
           oneClick: false,
@@ -95,13 +95,25 @@ module.exports = defineConfig({
         },
         win: {
           icon: 'build/icons/',
+          target: [
+            {
+              target: 'nsis',
+              arch: ['x64', 'ia32', 'arm64'],
+            },
+          ],
           // requestedExecutionLevel: 'highestAvailable' // 加了这个无法开机自启
         },
         linux: {
           icon: 'build/mac/',
           target: [
-            'deb',
-            'AppImage',
+            {
+              target: 'deb',
+              arch: ['x64', 'arm64'],
+            },
+            {
+              target: 'AppImage',
+              arch: ['x64', 'arm64'],
+            },
           ],
         },
         publish: {
