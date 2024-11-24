@@ -18,7 +18,7 @@ class LinuxSystemShell extends SystemShell {
       cmds = [cmds]
     }
     for (const cmd of cmds) {
-      await _childExec(cmd, { shell: '/bin/bash' })
+      await childExec(cmd, { shell: '/bin/bash' })
     }
   }
 }
@@ -30,7 +30,7 @@ class DarwinSystemShell extends SystemShell {
     }
     let ret
     for (const cmd of cmds) {
-      ret = await _childExec(cmd)
+      ret = await childExec(cmd)
     }
     return ret
   }
