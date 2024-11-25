@@ -32,6 +32,9 @@ importers:
       '@mihomo-party/sysproxy':
         specifier: ^2.0.4
         version: 2.0.4
+      '@vscode/sudo-prompt':
+        specifier: ^9.3.1
+        version: 9.3.1
       fix-path:
         specifier: ^3.0.0
         version: 3.0.0
