@@ -75,6 +75,9 @@ importers:
       '@natmri/platform-napi':
         specifier: ^0.0.7
         version: 0.0.7
+      '@vscode/sudo-prompt':
+        specifier: ^9.3.1
+        version: 9.3.1
       adm-zip:
         specifier: ^0.5.16
         version: 0.5.16
@@ -84,9 +87,6 @@ importers:
       electron-baidu-tongji:
         specifier: ^1.0.5
         version: 1.0.5
-      electron-sudo:
-        specifier: ^4.0.12
-        version: 4.0.12
       electron-updater:
         specifier: ^6.3.9
         version: 6.3.9
@@ -1772,6 +1772,9 @@ packages:
         optional: true
       vitest:
         optional: true
+
+  '@vscode/sudo-prompt@9.3.1':
+    resolution: {integrity: sha512-9ORTwwS74VaTn38tNbQhsA5U44zkJfcb0BdTSyyG6frP4e8KMtHuTXYmwefe5dpL8XB1aGSIVTaLjD3BbWb5iA==}
 
   '@vue/babel-helper-vue-jsx-merge-props@1.4.0':
     resolution: {integrity: sha512-JkqXfCkUDp4PIlFdDQ0TdXoIejMtTHP67/pvxlgeY+u5k3LEdKuWZ3LK6xkxo52uDoABIVyRwqVkfLQJhk7VBA==}
@@ -8939,6 +8942,8 @@ snapshots:
       eslint: 9.15.0
     optionalDependencies:
       typescript: 5.6.3
+
+  '@vscode/sudo-prompt@9.3.1': {}
 
   '@vue/babel-helper-vue-jsx-merge-props@1.4.0': {}
 
