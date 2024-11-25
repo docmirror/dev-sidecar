@@ -12,9 +12,11 @@ export default {
       env: { PARAM: 'VALUE' },
     }
     const exeFile = DevSidecar.api.shell.extraPath.getEnableLoopbackPath()
+    const sudoCommand = [`"${exeFile}"`]
+
     return new Promise((resolve, reject) => {
       sudoPrompt.exec(
-        exeFile,
+        sudoCommand.join(' '),
         options,
         (error, _, stderr) => {
           if (stderr) {

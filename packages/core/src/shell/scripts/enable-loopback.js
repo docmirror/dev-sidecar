@@ -9,13 +9,14 @@ const execute = Shell.execute
 const executor = {
   windows (exec) {
     const loopbackPath = extraPath.getEnableLoopbackPath()
+    const sudoCommand = [`"${loopbackPath}"`]
 
     const options = {
       name: 'EnableLoopback',
     }
     return new Promise((resolve, reject) => {
       sudoPrompt.exec(
-        loopbackPath,
+        sudoCommand.join(' '),
         options,
         (error, _, stderr) => {
           if (stderr) {
