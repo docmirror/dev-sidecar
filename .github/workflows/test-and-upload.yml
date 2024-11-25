@@ -79,7 +79,7 @@ jobs:
           path: ${{ env.HOME }}/.cache/electron
           key: ${{ runner.os }}-electron-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-electron-cache-
+            ${{ runner.os }}-electron-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Setup electron-builder cahce
         uses: actions/cache@v4
@@ -87,7 +87,7 @@ jobs:
           path: ${{ env.HOME }}/.cache/electron-builder
           key: ${{ runner.os }}-electron-builder-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-electron-builder-cache-
+            ${{ runner.os }}-electron-builder-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: pnpm install
         run: |
