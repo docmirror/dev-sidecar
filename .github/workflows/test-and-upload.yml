@@ -124,12 +124,12 @@ jobs:
           cd ../../../;
           dir || ls -lah;
 
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-x86.exe - Windows'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe - Windows'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-x86.exe'
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe'
           if-no-files-found: error
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe - Windows'
         uses: actions/upload-artifact@v4.4.0
@@ -180,5 +180,5 @@ jobs:
         if: ${{ matrix.os == 'macos' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}.dmg'
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg'
           if-no-files-found: error

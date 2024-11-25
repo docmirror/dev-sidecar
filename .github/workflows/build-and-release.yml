@@ -121,12 +121,12 @@ jobs:
           cd ../../../;
           dir || ls -lah;
 
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-x86.exe - Windows'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe - Windows'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-x86.exe'
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe'
           if-no-files-found: error
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe - Windows'
         uses: actions/upload-artifact@v4.4.0
@@ -177,7 +177,7 @@ jobs:
         if: ${{ matrix.os == 'macos' }}
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}.dmg'
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg'
           if-no-files-found: error
 
   # job 2
@@ -199,10 +199,10 @@ jobs:
         run: mkdir release
 
       # Download artifacts
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-x86.exe - Windows'
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe - Windows'
         uses: actions/download-artifact@v4.1.8
         with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}-x86.exe
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe
           path: release
       - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe - Windows'
         uses: actions/download-artifact@v4.1.8
@@ -236,10 +236,10 @@ jobs:
           name: DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage
           path: release
 
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}.dmg - Mac'
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg - Mac'
         uses: actions/download-artifact@v4.1.8
         with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.dmg
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg
           path: release
 
       - name: 'Print files from "release" dir'
