@@ -2,10 +2,12 @@
 import DevSidecar from '@docmirror/dev-sidecar'
 import sudoPrompt from '@vscode/sudo-prompt'
 import { join } from 'node:path'
-import { log } from '../../utils/util.log'
+import log from '../../utils/util.log'
 
 export default {
   open () {
+    log.debug(`[sudo-prompt] 测试开启 loopback`)
+
     const options = {
       name: '设置loopback',
       icns: process.platform === 'darwin' ? join(__static, 'icon.icns') : undefined,
