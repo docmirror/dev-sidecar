@@ -11,6 +11,9 @@ jobs:
   # job 1
   build-and-upload:
     runs-on: ${{ matrix.os }}-latest
+    env:
+      ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
+      ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
     strategy:
       fail-fast: false
       matrix:

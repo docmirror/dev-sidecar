@@ -10,6 +10,9 @@ on:
 jobs:
   npm-run-electron:
     runs-on: ${{ matrix.os }}-latest
+    env:
+      ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
+      ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
     strategy:
       fail-fast: false
       matrix:
@@ -72,7 +75,7 @@ jobs:
       - name: Setup electron cahce
         uses: actions/cache@v4
         with:
-          path: ${{ env.HOME }}/.cache/electron
+          path: ${{ github.workspace }}/.cache/electron
           key: ${{ runner.os }}-electron-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-electron-cache-
@@ -80,7 +83,7 @@ jobs:
       - name: Setup electron-builder cahce
         uses: actions/cache@v4
         with:
-          path: ${{ env.HOME }}/.cache/electron-builder
+          path: ${{ github.workspace }}/.cache/electron-builder
           key: ${{ runner.os }}-electron-builder-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-electron-builder-cache-
