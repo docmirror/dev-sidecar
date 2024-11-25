@@ -264,7 +264,7 @@ export default {
       this.$confirm({
         title: '确定要恢复出厂设置吗？',
         width: 610,
-        content: (h) => (
+        content: h => (
           <div class="restore-factory-settings">
             <hr />
             <p>
@@ -329,9 +329,6 @@ export default {
         <a-button class="md-mr-10" icon="profile" @click="openLog()">
           日志
         </a-button>
-        <div class="form-help">
-          windows下建议开启开机自启。<a @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">更多说明参考</a>
-        </div>
       </a-form-item>
       <a-form-item v-if="systemPlatform === 'mac'" label="隐藏Dock图标" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.app.dock.hideWhenWinClose">
