@@ -11,7 +11,7 @@ const executor = {
     const loopbackPath = extraPath.getEnableLoopbackPath()
 
     const options = {
-      name: '设置loopback',
+      name: 'EnableLoopback',
     }
     return new Promise((resolve, reject) => {
       sudoPrompt.exec(

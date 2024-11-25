@@ -7,7 +7,7 @@ import log from '../../utils/util.log'
 export default {
   open () {
     const options = {
-      name: '设置loopback',
+      name: 'EnableLoopback',
       icns: process.platform === 'darwin' ? join(__static, 'icon.icns') : undefined,
       env: { PARAM: 'VALUE' },
     }
