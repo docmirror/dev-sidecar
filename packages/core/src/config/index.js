@@ -68,7 +68,7 @@ module.exports = {
       },
 
       // 慢速IP延迟时间：测速超过该值时，则视为延迟高，显示为橙色
-      lowSpeedDelay: 150,
+      lowSpeedDelay: 200,
     },
     compatible: {
       // **** 自定义兼容配置 **** //
