@@ -1,6 +1,7 @@
 <script>
 import createMenus from '@/view/router/menu'
 import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
+import { colorTheme } from './composables/theme'
 
 export default {
   name: 'App',
@@ -16,11 +17,19 @@ export default {
   },
   computed: {
     themeClass () {
-      return `theme-${this.config.app.theme}`
+      return `theme-${colorTheme.value}`
     },
     theme () {
-      return this.config.app.theme
+      return colorTheme.value
     },
+  },
+  mounted () {
+    let theme = this.config.app.theme
+    if (this.config.app.theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    }
+
+    colorTheme.value = theme
   },
   created () {
     this.menus = createMenus(this)
