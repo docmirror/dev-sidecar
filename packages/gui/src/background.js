@@ -211,8 +211,8 @@ function createWindow (startHideWindow) {
     hideWin()
   }
 
-  win.on('closed', async () => {
-    log.info('win closed:', arguments)
+  win.on('closed', async (...args) => {
+    log.info('win closed:', ...args)
     win = null
     tray = null
   })
@@ -225,8 +225,8 @@ function createWindow (startHideWindow) {
     }
   })
 
-  win.on('close', (e) => {
-    log.info('win close:', arguments)
+  win.on('close', (e, ...args) => {
+    log.info('win close:', e, ...args)
     if (forceClose) {
       return
     }
@@ -249,8 +249,8 @@ function createWindow (startHideWindow) {
     }
   })
 
-  win.on('session-end', async (e) => {
-    log.info('win session-end:', arguments)
+  win.on('session-end', async (e, ...args) => {
+    log.info('win session-end:', e, ...args)
     await quit()
   })
 
@@ -289,8 +289,8 @@ function createWindow (startHideWindow) {
   })
 
   // 监听渲染进程发送过来的消息
-  win.webContents.on('ipc-message', (event, channel, message) => {
-    console.info('win ipc-message:', arguments)
+  win.webContents.on('ipc-message', (event, channel, message, ...args) => {
+    console.info('win ipc-message:', event, channel, message, ...args)
     if (channel === 'change-showHideShortcut') {
       registerShowHideShortcut(message)
     }
@@ -454,10 +454,7 @@ if (!isFirstInstance) {
         e.preventDefault()
       }
       log.info('系统关机，恢复代理设置')
-      if (isWindows) {
-        const Sysproxy = require('@mihomo-party/sysproxy')
-        Sysproxy.triggerManualProxy(false, '', 0, '')
-      }
+
       await quit()
     })
   })

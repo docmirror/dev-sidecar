@@ -11,6 +11,9 @@ jobs:
   # job 1
   build-and-upload:
     runs-on: ${{ matrix.os }}-latest
+    env:
+      ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
+      ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
     strategy:
       fail-fast: false
       matrix:
@@ -24,14 +27,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.1.7
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: 'Setup Node.js "${{ matrix.node }}.x" environment'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+          cache: pnpm
 
       - name: Setup Python environment (Mac) Because of electron-builder install-app-deps requires Python setup tools
         if: matrix.os == 'macos'
@@ -69,15 +73,31 @@ jobs:
           echo "--------------------";
           python --version;
 
-      - name: pnpm install
+      - name: Setup electron cahce
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.cache/electron
+          key: ${{ runner.os }}-electron-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-electron-cache-
+
+      - name: Setup electron-builder cahce
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.cache/electron-builder
+          key: ${{ runner.os }}-electron-builder-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-electron-builder-cache-
+
+      - name: "'pnpm install --force' Because we need to install optional dependencies"
         run: |
           echo "======================================================================";
           dir || ls -lah;
 
           echo "======================================================================";
-          echo "pnpm install";
+          echo "pnpm install --force";
           echo "--------------------";
-          pnpm install;
+          pnpm install --force;
 
       - name: 'npm run electron:build'
         run: |
@@ -104,33 +124,63 @@ jobs:
           cd ../../../;
           dir || ls -lah;
 
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}.exe - Windows'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe - Windows'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.exe
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}.exe'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe'
           if-no-files-found: error
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}.deb - Ubuntu'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe - Windows'
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'windows' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe'
+          if-no-files-found: error
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe - Windows'
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'windows' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe'
+          if-no-files-found: error
+
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb - Ubuntu'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.deb
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}.deb'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb'
           if-no-files-found: error
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}.AppImage - Ubuntu'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb - Ubuntu'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}.AppImage'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb'
           if-no-files-found: error
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}.dmg - Mac'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage - Ubuntu'
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage'
+          if-no-files-found: error
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage - Ubuntu'
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage'
+          if-no-files-found: error
+
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg - Mac'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'macos' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}.dmg
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}.dmg'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg'
           if-no-files-found: error
 
   # job 2
@@ -152,25 +202,47 @@ jobs:
         run: mkdir release
 
       # Download artifacts
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}.exe - Windows'
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe - Windows'
         uses: actions/download-artifact@v4.1.8
         with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.exe
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe
           path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}.deb - Ubuntu'
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe - Windows'
         uses: actions/download-artifact@v4.1.8
         with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.deb
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe
           path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}.AppImage - Ubuntu'
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe - Windows'
         uses: actions/download-artifact@v4.1.8
         with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.AppImage
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe
           path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}.dmg - Mac'
+
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb - Ubuntu'
         uses: actions/download-artifact@v4.1.8
         with:
-          name: DevSidecar-${{ steps.package-info.outputs.version }}.dmg
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb
+          path: release
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb - Ubuntu'
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb
+          path: release
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage - Ubuntu'
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage
+          path: release
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage - Ubuntu'
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage
+          path: release
+
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg - Mac'
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg
           path: release
 
       - name: 'Print files from "release" dir'

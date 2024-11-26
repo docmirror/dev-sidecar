@@ -37,14 +37,14 @@ module.exports = defineConfig({
       // Ref: https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/1891
       customFileProtocol: './',
       externals: [
-        '@mihomo-party/sysproxy',
-        '@mihomo-party/sysproxy-win32-ia32-msvc',
-        '@mihomo-party/sysproxy-win32-x64-msvc',
-        '@mihomo-party/sysproxy-win32-arm64-msvc',
-        '@mihomo-party/sysproxy-linux-x64-gnu',
-        '@mihomo-party/sysproxy-linux-arm64-gnu',
-        '@mihomo-party/sysproxy-darwin-x64',
-        '@mihomo-party/sysproxy-darwin-arm64',
+        '@starknt/sysproxy',
+        '@starknt/sysproxy-win32-ia32-msvc',
+        '@starknt/sysproxy-win32-x64-msvc',
+        '@starknt/sysproxy-win32-arm64-msvc',
+        '@starknt/sysproxy-linux-x64-gnu',
+        '@starknt/sysproxy-linux-arm64-gnu',
+        '@starknt/sysproxy-darwin-x64',
+        '@starknt/sysproxy-darwin-arm64',
         '@natmri/platform-napi',
         '@natmri/platform-napi-win32-ia32-msvc',
         '@natmri/platform-napi-win32-x64-msvc',
@@ -77,7 +77,7 @@ module.exports = defineConfig({
         appId: 'dev-sidecar',
         productName: 'dev-sidecar',
         // eslint-disable-next-line no-template-curly-in-string
-        artifactName: 'DevSidecar-${version}.${ext}',
+        artifactName: 'DevSidecar-${version}-${arch}.${ext}',
         copyright: 'Copyright © 2020-2024 Greper, WangLiang',
         nsis: {
           oneClick: false,
@@ -92,17 +92,31 @@ module.exports = defineConfig({
             arch: 'universal',
             target: 'dmg',
           },
+          category: 'public.app-category.developer-tools',
         },
         win: {
           icon: 'build/icons/',
+          target: [
+            {
+              target: 'nsis',
+              arch: ['x64', 'ia32', 'arm64'],
+            },
+          ],
           // requestedExecutionLevel: 'highestAvailable', // 加了这个无法开机自启
         },
         linux: {
           icon: 'build/mac/',
           target: [
-            'deb',
-            'AppImage',
+            {
+              target: 'deb',
+              arch: ['x64', 'arm64'],
+            },
+            {
+              target: 'AppImage',
+              arch: ['x64', 'arm64'],
+            },
           ],
+          category: 'System',
         },
         publish: {
           provider: publishProvider,
