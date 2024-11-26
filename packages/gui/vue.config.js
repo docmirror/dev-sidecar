@@ -102,7 +102,7 @@ module.exports = defineConfig({
               arch: ['x64', 'ia32', 'arm64'],
             },
           ],
-          // requestedExecutionLevel: 'highestAvailable' // 加了这个无法开机自启
+          // requestedExecutionLevel: 'highestAvailable', // 加了这个无法开机自启
         },
         linux: {
           icon: 'build/mac/',
@@ -121,7 +121,7 @@ module.exports = defineConfig({
         publish: {
           provider: publishProvider,
           url: publishUrl,
-          // url: 'http://dev-sidecar.docmirror.cn/update/preview/'
+          // url: 'http://dev-sidecar.docmirror.cn/update/preview/',
         },
       },
       chainWebpackMainProcess (config) {
