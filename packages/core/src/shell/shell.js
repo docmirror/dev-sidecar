@@ -84,7 +84,7 @@ function childExec (composeCmds, options = {}) {
         reject(new Error(stderr))
       } else {
         // log.info('cmd 命令完成：', stdout)
-        resolve(stdout)
+        resolve(stdout.replace('Active code page: 65001\r\n', ''))
       }
       // log.info('关闭 cmd')
       // ps.kill('SIGINT')
