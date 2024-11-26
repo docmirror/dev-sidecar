@@ -16,7 +16,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@mihomo-party/sysproxy": "^2.0.4",
+    "@starknt/sysproxy": "^0.0.1",
     "@vscode/sudo-prompt": "^9.3.1",
     "fix-path": "^3.0.0",
     "iconv-lite": "^0.6.3",

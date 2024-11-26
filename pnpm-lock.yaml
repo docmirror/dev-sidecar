@@ -29,9 +29,9 @@ importers:
 
   packages/core:
     dependencies:
-      '@mihomo-party/sysproxy':
-        specifier: ^2.0.4
-        version: 2.0.4
+      '@starknt/sysproxy':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@vscode/sudo-prompt':
         specifier: ^9.3.1
         version: 9.3.1
@@ -72,12 +72,12 @@ importers:
       '@docmirror/mitmproxy':
         specifier: workspace:*
         version: link:../mitmproxy
-      '@mihomo-party/sysproxy':
-        specifier: ^2.0.4
-        version: 2.0.4
       '@natmri/platform-napi':
         specifier: ^0.0.7
         version: 0.0.7
+      '@starknt/sysproxy':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@vscode/sudo-prompt':
         specifier: ^9.3.1
         version: 9.3.1
@@ -262,7 +262,7 @@ importers:
         specifier: ^19.1.9
         version: 19.1.9
       electron-builder:
-        specifier: ^25.0.6
+        specifier: ^25.1.8
         version: 25.1.8(electron-builder-squirrel-windows@25.1.8(dmg-builder@25.1.8))
       electron-icon-builder:
         specifier: ^2.0.1
@@ -1536,6 +1536,46 @@ packages:
 
   '@soda/get-current-script@1.0.2':
     resolution: {integrity: sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==}
+
+  '@starknt/sysproxy-darwin-arm64@0.0.1':
+    resolution: {integrity: sha512-8o8QP888Wpe+vwfz6vbWRpO8bLcEzXAuA8j9PE6h27CmAty/P4/9zgaTXq18lBcVNGDpPdriDYcbOYN+26Q8dw==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@starknt/sysproxy-linux-arm64-gnu@0.0.1':
+    resolution: {integrity: sha512-dfoga7fITnYbgurCfheWKAhru9/kEf4MMmjkHjVRUgbsp517Smulj6BC01f4xphsAbZsBaSPyln4Q8rjhb64lQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@starknt/sysproxy-linux-x64-gnu@0.0.1':
+    resolution: {integrity: sha512-v6lJeOpGPfVGp52H0fmirlgM1OWgSJ7xJatakiw3Vh9J07F9137Jb3RaL0CYCXup4JYA7H0MtCgGN0uzxAVz8w==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@starknt/sysproxy-win32-arm64-msvc@0.0.1':
+    resolution: {integrity: sha512-MSP07YYX2ETwZ0UryD2zMp/UiDFLvOqFKHBY2u8C5KRXSw/HQhnVqK79BzOhlvD76u15RNIrqXOUiRSibQaD3A==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@starknt/sysproxy-win32-ia32-msvc@0.0.1':
+    resolution: {integrity: sha512-Yo9LpUX51MVujEXi7X1lboa2g8jw/YmhuTTE6tAbBIXOm/7Yg4LlaU1JjS1LmalMr7I/3osb7btAyt//tUfJ7Q==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+
+  '@starknt/sysproxy-win32-x64-msvc@0.0.1':
+    resolution: {integrity: sha512-gjpSEpiq9S1KPdGbY02AA4nlWeH/HyfxMJaqjy7xXEBskb0Vb3teCtke+FH9olErnvOdkKcyT4Dp5UK1dMDv/Q==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
+  '@starknt/sysproxy@0.0.1':
+    resolution: {integrity: sha512-oOGGSs/wRZXbIlK4wokD3fGK5f7QRfY49XbZEhsBUx5ClNG0JrJVB/mGaJ1y7rVZuTh6pWMj5g19atZE1z1oYQ==}
+    engines: {node: '>= 10'}
 
   '@stylistic/eslint-plugin@2.10.1':
     resolution: {integrity: sha512-U+4yzNXElTf9q0kEfnloI9XbOyD4cnEQCxjUI94q0+W++0GAEQvJ/slwEj9lwjDHfGADRSr+Tco/z0XJvmDfCQ==}
@@ -8653,6 +8693,33 @@ snapshots:
       webpack: 5.96.1
 
   '@soda/get-current-script@1.0.2': {}
+
+  '@starknt/sysproxy-darwin-arm64@0.0.1':
+    optional: true
+
+  '@starknt/sysproxy-linux-arm64-gnu@0.0.1':
+    optional: true
+
+  '@starknt/sysproxy-linux-x64-gnu@0.0.1':
+    optional: true
+
+  '@starknt/sysproxy-win32-arm64-msvc@0.0.1':
+    optional: true
+
+  '@starknt/sysproxy-win32-ia32-msvc@0.0.1':
+    optional: true
+
+  '@starknt/sysproxy-win32-x64-msvc@0.0.1':
+    optional: true
+
+  '@starknt/sysproxy@0.0.1':
+    optionalDependencies:
+      '@starknt/sysproxy-darwin-arm64': 0.0.1
+      '@starknt/sysproxy-linux-arm64-gnu': 0.0.1
+      '@starknt/sysproxy-linux-x64-gnu': 0.0.1
+      '@starknt/sysproxy-win32-arm64-msvc': 0.0.1
+      '@starknt/sysproxy-win32-ia32-msvc': 0.0.1
+      '@starknt/sysproxy-win32-x64-msvc': 0.0.1
 
   '@stylistic/eslint-plugin@2.10.1(eslint@9.15.0)(typescript@5.6.3)':
     dependencies:

@@ -182,17 +182,25 @@ function getProxyExcludeIpStr (split) {
 
 const executor = {
   async windows (exec, params = {}) {
-    const sysproxy = require('@mihomo-party/sysproxy')
+    const sysproxy = require('@starknt/sysproxy')
 
     const { ip, port, setEnv } = params
     if (ip != null) { // 设置代理
       // 延迟加载config
       loadConfig()
       log.info('设置windows系统代理:', ip, port, setEnv)
+
+      // https
+      let proxyAddr = `https=http://${ip}:${port}`
+      // http
+      if (config.get().proxy.proxyHttp) {
+        proxyAddr = `http=http://${ip}:${port - 1};${proxyAddr}`
+      }
+
       // 读取排除域名
       const excludeIpStr = getProxyExcludeIpStr(';')
-
-      sysproxy.triggerManualProxy(true, ip, port, excludeIpStr)
+      // 设置代理，同时设置排除域名
+      sysproxy.triggerManualProxyByUrl(true, proxyAddr, excludeIpStr)
 
       if (setEnv) {
         // 设置全局代理所需的环境变量
