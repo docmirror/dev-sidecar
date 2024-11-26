@@ -1,6 +1,7 @@
 <script>
 import { ipcRenderer } from 'electron'
 import Plugin from '../mixins/plugin'
+import { colorTheme } from '../composables/theme'
 
 export default {
   name: 'Setting',
@@ -10,19 +11,12 @@ export default {
       key: 'app',
       removeUserConfigLoading: false,
       reloadLoading: false,
-      themeBackup: null,
       urlBackup: null,
       personalUrlBackup: null,
     }
   },
-  created () {
-
-  },
-  mounted () {
-  },
   methods: {
     ready (config) {
-      this.themeBackup = config.app.theme
       this.urlBackup = config.app.remoteConfig.url
       this.personalUrlBackup = config.app.remoteConfig.personalUrl
     },
@@ -187,15 +181,17 @@ export default {
     async applyAfter () {
       let reloadLazy = 10
 
+      let theme = this.config.app.theme
+      if (theme === 'system') {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      }
+      colorTheme.value = theme
+
       // 判断远程配置地址是否变更过，如果是则重载远程配置并重启服务
       if (this.config.app.remoteConfig.url !== this.urlBackup || this.config.app.remoteConfig.personalUrl !== this.personalUrlBackup) {
         await this.$api.config.downloadRemoteConfig()
         await this.reloadConfigAndRestart()
         reloadLazy = 300
-      }
-
-      // 判断是否切换了主题，如果是，则刷新页面
-      if (this.config.app.theme !== this.themeBackup) {
         setTimeout(() => window.location.reload(), reloadLazy)
       }
 
@@ -372,6 +368,9 @@ export default {
           </a-radio-button>
           <a-radio-button value="dark" title="dark">
             暗色
+          </a-radio-button>
+          <a-radio-button value="system" title="system">
+            跟随系统
           </a-radio-button>
         </a-radio-group>
       </a-form-item>
