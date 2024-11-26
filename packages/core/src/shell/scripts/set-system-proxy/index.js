@@ -7,7 +7,6 @@ const request = require('request')
 const Registry = require('winreg')
 const log = require('../../../utils/util.log')
 const Shell = require('../../shell')
-const sysproxy = require('@mihomo-party/sysproxy')
 
 const execute = Shell.execute
 
@@ -183,6 +182,8 @@ function getProxyExcludeIpStr (split) {
 
 const executor = {
   async windows (exec, params = {}) {
+    const sysproxy = require('@mihomo-party/sysproxy')
+
     const { ip, port, setEnv } = params
     if (ip != null) { // 设置代理
       // 延迟加载config
