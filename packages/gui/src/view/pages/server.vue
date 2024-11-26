@@ -419,7 +419,7 @@ export default {
             <a-row :gutter="20">
               <a-col v-for="(item, key) of speedTestList" :key="key" span="12">
                 <a-card size="small" class="md-mt-10" :title="key">
-                  <a slot="extra" href="#">
+                  <a slot="extra" href="javascript:void(0)" :title="key" style="cursor:default">
                     <a-icon v-if="item.alive.length > 0" type="check" />
                     <a-icon v-else type="info-circle" />
                   </a>
