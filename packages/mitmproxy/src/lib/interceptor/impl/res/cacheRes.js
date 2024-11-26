@@ -63,10 +63,10 @@ module.exports = {
 
     // 判断原max-age是否大于新max-age
     if (originalHeaders.cacheControl) {
-      const maxAgeMatch = originalHeaders.cacheControl.value.match(/max-age=(\d+)/)
-      if (maxAgeMatch && maxAgeMatch[1] > maxAge) {
+      const maxAgeMatch = originalHeaders.cacheControl.value.match(/max-age=(\d+)/i)
+      if (maxAgeMatch && Number.parseInt(maxAgeMatch[1]) > maxAge) {
         if (interceptOpt.cacheImmutable !== false && !originalHeaders.cacheControl.value.includes('immutable')) {
-          maxAge = maxAgeMatch[1]
+          maxAge = Number.parseInt(maxAgeMatch[1])
         } else {
           const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`
           res.setHeader('DS-Cache-Response-Interceptor', `skip: ${maxAgeMatch[1]} > ${maxAge}`)
