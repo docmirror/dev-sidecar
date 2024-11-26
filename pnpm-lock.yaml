@@ -182,7 +182,7 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       lodash:
-        specifier: ^4.17.20
+        specifier: ^4.17.21
         version: 4.17.21
       request-progress:
         specifier: ^3.0.0
@@ -222,7 +222,7 @@ importers:
         specifier: ^19.1.9
         version: 19.1.9
       electron-builder:
-        specifier: ^25.0.6
+        specifier: ^25.1.8
         version: 25.1.8(electron-builder-squirrel-windows@25.1.8(dmg-builder@25.1.8))
       electron-icon-builder:
         specifier: ^2.0.1

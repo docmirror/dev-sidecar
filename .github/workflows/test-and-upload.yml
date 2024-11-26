@@ -92,15 +92,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-electron-builder-cache-
 
-      - name: pnpm install
+      - name: "'pnpm install --force' Because we need to install optional dependencies"
         run: |
           echo "======================================================================";
           dir || ls -lah;
 
           echo "======================================================================";
-          echo "pnpm install";
+          echo "pnpm install --force";
           echo "--------------------";
-          pnpm install;
+          pnpm install --force;
 
       - name: 'npm run electron:build'
         run: |
