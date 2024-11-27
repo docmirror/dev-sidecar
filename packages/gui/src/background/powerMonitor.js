@@ -1,4 +1,4 @@
-import { acquireShutdownBlock, insertWndProcHook, releaseShutdownBlock, removeWndProcHook, setMainWindowHandle } from '@natmri/platform-napi'
+import { acquireShutdownBlock, insertWndProcHook, releaseShutdownBlock, removeWndProcHook, setMainWindowHandle } from '@starknt/shutdown-handler-napi'
 import { powerMonitor as _powerMonitor } from 'electron'
 
 class PowerMonitor {

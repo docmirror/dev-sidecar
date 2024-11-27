@@ -22,7 +22,7 @@
   "dependencies": {
     "@docmirror/dev-sidecar": "workspace:*",
     "@docmirror/mitmproxy": "workspace:*",
-    "@natmri/platform-napi": "^0.0.7",
+    "@starknt/shutdown-handler-napi": "^0.0.1",
     "@starknt/sysproxy": "^0.0.1",
     "@vscode/sudo-prompt": "^9.3.1",
     "adm-zip": "^0.5.16",
