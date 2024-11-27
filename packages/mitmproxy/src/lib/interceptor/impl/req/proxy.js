@@ -113,7 +113,7 @@ module.exports = {
       log.info('proxy choice:', JSON.stringify(context.requestCount))
     }
 
-    if (interceptOpt.sni != null) {
+    if (interceptOpt.sni) {
       let unVerifySsl = rOptions.agent.options.rejectUnauthorized === false
 
       rOptions.servername = interceptOpt.sni
