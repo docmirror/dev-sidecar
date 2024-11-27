@@ -84,7 +84,6 @@ module.exports = defineConfig({
           perMachine: true,
           allowElevation: true,
           allowToChangeInstallationDirectory: true,
-          include: './build/installer.nsh',
         },
         mac: {
           icon: './build/mac/icon.icns',

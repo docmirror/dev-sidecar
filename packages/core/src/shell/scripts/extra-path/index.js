@@ -10,22 +10,11 @@ function getExtraPath () {
   return extraPath
 }
 
-function getProxyExePath () {
-  const extraPath = getExtraPath()
-  return path.join(extraPath, 'sysproxy.exe')
-}
-
-function getClearBatPath () {
-  const extraPath = getExtraPath()
-  return path.join(extraPath, 'clear.bat')
-}
-
 function getEnableLoopbackPath () {
   const extraPath = getExtraPath()
   return path.join(extraPath, 'EnableLoopback.exe')
 }
+
 module.exports = {
-  getProxyExePath,
   getEnableLoopbackPath,
-  getClearBatPath,
 }
