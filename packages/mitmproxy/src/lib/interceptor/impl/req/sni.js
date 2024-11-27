@@ -12,9 +12,11 @@ module.exports = {
       rOptions.agent = rOptions.agent.unVerifySslAgent
       unVerifySsl = true
     }
-    res.setHeader('DS-Interceptor', `sni: ${interceptOpt.sni}${unVerifySsl ? ', unVerifySsl' : ''}`)
 
-    log.info('sni intercept: sni replace servername:', rOptions.hostname, '➜', rOptions.servername, (unVerifySsl ? ', unVerifySsl' : ''))
+    const unVerifySslStr = unVerifySsl ? ', unVerifySsl' : ''
+    res.setHeader('DS-Interceptor', `sni: ${interceptOpt.sni}${unVerifySslStr}`)
+
+    log.info(`sni intercept: sni replace servername: ${rOptions.hostname} ➜ ${rOptions.servername}${unVerifySslStr}`)
     return true
   },
   is (interceptOpt) {

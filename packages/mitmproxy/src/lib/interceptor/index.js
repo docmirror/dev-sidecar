@@ -10,6 +10,7 @@ const requestReplace = require('./impl/req/requestReplace')
 
 const proxy = require('./impl/req/proxy')
 const sni = require('./impl/req/sni')
+const unVerifySsl = require('./impl/req/unVerifySsl')
 
 const baiduOcr = require('./impl/req/baiduOcr')
 
@@ -25,7 +26,7 @@ module.exports = [
   OPTIONS,
   success, redirect, abort, cacheReq,
   requestReplace,
-  proxy, sni,
+  proxy, sni, unVerifySsl,
   baiduOcr,
 
   // response interceptor impls
