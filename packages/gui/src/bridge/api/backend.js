@@ -30,7 +30,7 @@ const getDateTimeStr = function () {
 const localApi = {
   /**
    * 返回所有api列表，供vue来ipc调用
-   * @returns {[]}
+   * @returns {[]} api列表
    */
   getApiList () {
     const core = lodash.cloneDeep(DevSidecar.api)
@@ -50,8 +50,8 @@ const localApi = {
     getConfigDir () {
       return getDefaultConfigBasePath()
     },
-    getSystemPlatform () {
-      return DevSidecar.api.shell.getSystemPlatform()
+    getSystemPlatform (throwIfUnknown = false) {
+      return DevSidecar.api.shell.getSystemPlatform(throwIfUnknown)
     },
   },
   /**

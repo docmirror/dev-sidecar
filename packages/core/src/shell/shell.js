@@ -93,20 +93,19 @@ function childExec (composeCmds, options = {}) {
 }
 
 function getSystemShell () {
-  switch (getSystemPlatform()) {
+  switch (getSystemPlatform(true)) {
     case 'mac':
       return DarwinSystemShell
     case 'linux':
       return LinuxSystemShell
     case 'windows':
       return WindowsSystemShell
-    case 'unknown os':
     default:
       throw new Error(`UNKNOWN OS TYPE ${os.platform()}`)
   }
 }
 
-function getSystemPlatform () {
+function getSystemPlatform (throwIfUnknown = false) {
   switch (os.platform()) {
     case 'darwin':
       return 'mac'
@@ -116,14 +115,18 @@ function getSystemPlatform () {
       return 'windows'
     case 'win64':
       return 'windows'
-    case 'unknown os':
     default:
-      throw new Error(`UNKNOWN OS TYPE ${os.platform()}`)
+      log.error(`UNKNOWN OS TYPE: ${os.platform()}`)
+      if (throwIfUnknown) {
+        throw new Error(`UNKNOWN OS TYPE '${os.platform()}'`)
+      } else {
+        return 'unknown-os'
+      }
   }
 }
 
 async function execute (executor, args) {
-  return executor[getSystemPlatform()](getSystemShell().exec, args)
+  return executor[getSystemPlatform(true)](getSystemShell().exec, args)
 }
 
 async function execFile (file, args, options) {

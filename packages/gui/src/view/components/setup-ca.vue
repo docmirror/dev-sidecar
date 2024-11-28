@@ -30,8 +30,7 @@ export default {
     },
   },
   async created () {
-    const platform = await this.$api.info.getSystemPlatform()
-    this.systemPlatform = platform
+    this.systemPlatform = await this.$api.info.getSystemPlatform()
   },
   methods: {
     async openExternal (url) {

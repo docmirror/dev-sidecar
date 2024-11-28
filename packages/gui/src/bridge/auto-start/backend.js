@@ -26,9 +26,7 @@ EOF
 }
 export default {
   install (context) {
-    const { ipcMain, dialog, log, app } = context
-
-    const ex = app.getPath('exe')
+    const { ipcMain, app } = context
 
     // 定义事件，渲染进程中直接使用
 
