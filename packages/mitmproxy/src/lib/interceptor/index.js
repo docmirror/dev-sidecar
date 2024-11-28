@@ -15,7 +15,7 @@ const unVerifySsl = require('./impl/req/unVerifySsl')
 const baiduOcr = require('./impl/req/baiduOcr')
 
 // response interceptor impls
-const OPTIONSHeaders = require('./impl/res/AfterOPTIONSHeaders')
+const AfterOPTIONSHeaders = require('./impl/res/AfterOPTIONSHeaders')
 const cacheRes = require('./impl/res/cacheRes')
 const responseReplace = require('./impl/res/responseReplace')
 
@@ -30,6 +30,6 @@ module.exports = [
   baiduOcr,
 
   // response interceptor impls
-  OPTIONSHeaders, cacheRes, responseReplace,
+  AfterOPTIONSHeaders, cacheRes, responseReplace,
   script,
 ]

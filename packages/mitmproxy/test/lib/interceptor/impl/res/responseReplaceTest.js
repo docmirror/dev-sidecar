@@ -13,8 +13,8 @@ const proxyRes = {
     'Content-Length', '2',
     'ETag', 'W/"2"',
     'Date', 'Thu, 01 Jan 1970 00:00:00 GMT',
-    'Connection', 'keep-alive'
-  ]
+    'Connection', 'keep-alive',
+  ],
 }
 
 const newHeaders = {
