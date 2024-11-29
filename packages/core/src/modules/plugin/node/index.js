@@ -125,7 +125,7 @@ const NodePlugin = function (context) {
       const command = config.get().plugin.node.setting.command || 'npm'
 
       const cmds = [
-        `${command} config set proxy=http://${ip}:${port}`,
+        `${command} config set proxy=http://${ip}:${port - 1}`,
         `${command} config set https-proxy=http://${ip}:${port}`,
       ]
 
