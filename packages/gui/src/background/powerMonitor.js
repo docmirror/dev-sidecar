@@ -9,11 +9,11 @@ class PowerMonitor {
   }
 
   /**
-   * @param {BrowserWindow} window
+   * @param {import('electron').BrowserWindow} window
    */
   setupMainWindow (window) {
     if (!this.setup) {
-      setMainWindowHandle(window.getNativeWindowHandle().readBigInt64LE())
+      setMainWindowHandle(window.getNativeWindowHandle())
       this.setup = true
     }
   }
