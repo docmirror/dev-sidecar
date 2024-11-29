@@ -19,7 +19,7 @@ if (isWindows) {
   try {
     _powerMonitor = require('./background/powerMonitor').powerMonitor
   } catch (e) {
-    log.error(`加载 './background/powerMonitor' 失败，现使用默认的 powerMonitor:`, e)
+    log.error(`加载 './background/powerMonitor' 失败，现捕获异常并使用默认的 powerMonitor。目前，启动着DS重启电脑时，将无法正常关闭系统代理，届时请自行关闭系统代理！ --- 捕获的异常信息:\n`, e)
   }
 }
 
