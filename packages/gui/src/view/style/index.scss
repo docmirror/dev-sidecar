@@ -138,3 +138,29 @@ hr {
     margin: 0 5px 5px 5px;
   }
 }
+
+.help-list {
+  ul {
+    padding-left: 10px;
+    li {
+      list-style: none;
+      line-height: 35px;
+
+      span {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+    }
+
+    // 嵌套列表
+    ul {
+      padding-left: 20px;
+    }
+  }
+}
