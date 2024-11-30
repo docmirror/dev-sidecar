@@ -42,11 +42,11 @@ export default {
     handleClick (e) {
       console.log('click', e)
     },
-    titleClick (e) {
-      console.log('titleClick', e)
+    titleClick (item) {
+      console.log('title click:', item)
     },
     menuClick (item) {
-      console.log('menu click', item)
+      console.log('menu click:', item)
       this.$router.replace(item.path)
     },
   },
