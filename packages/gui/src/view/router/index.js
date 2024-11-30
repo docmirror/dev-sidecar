@@ -14,11 +14,11 @@ const routes = [
   { path: '/server', component: Server },
   { path: '/proxy', component: Proxy },
   { path: '/setting', component: Setting },
-  { path: '/help', component: Help },
   { path: '/plugin/node', component: Node },
   { path: '/plugin/git', component: Git },
   { path: '/plugin/pip', component: Pip },
   { path: '/plugin/overwall', component: Overwall },
+  { path: '/help', component: Help },
 ]
 
 export default routes
