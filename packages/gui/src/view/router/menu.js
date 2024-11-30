@@ -15,6 +15,7 @@ export default function createMenus (app) {
       icon: 'api',
       children: plugins,
     },
+    { title: '帮助中心', path: '/help', icon: 'help' },
   ]
   if (app.$global && app.$global.setting && app.$global.setting.overwall) {
     plugins.push({ title: '功能增强', path: '/plugin/overwall', icon: 'global' })
