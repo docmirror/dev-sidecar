@@ -7,8 +7,10 @@ const request = require('request')
 const Registry = require('winreg')
 const log = require('../../../utils/util.log')
 const Shell = require('../../shell')
+const extraPath = require('../extra-path/index')
 
 const execute = Shell.execute
+const execFile = Shell.execFile
 
 let config = null
 function loadConfig () {
@@ -45,7 +47,7 @@ async function downloadDomesticDomainAllowListAsync () {
           fileTxt = Buffer.from(fileTxt, 'base64').toString('utf8')
           // log.debug('解析 base64 后的 domestic-domain-allowlist:', fileTxt)
         }
-      } catch (e) {
+      } catch {
         if (!fileTxt.includes('*.')) {
           log.error(`远程 domestic-domain-allowlist.txt 文件内容即不是base64格式，也不是要求的格式，url: ${remoteFileUrl}，body: ${body}`)
           return
@@ -80,7 +82,7 @@ function saveDomesticDomainAllowListFile (fileTxt) {
   // 尝试解析和修改 domestic-domain-allowlist.txt 文件时间
   const lastModifiedTime = loadLastModifiedTimeFromTxt(fileTxt)
   if (lastModifiedTime) {
-    fs.stat(filePath, (err, stats) => {
+    fs.stat(filePath, (err, _stats) => {
       if (err) {
         log.error('修改 domestic-domain-allowlist.txt 文件时间失败:', err)
         return
@@ -182,13 +184,11 @@ function getProxyExcludeIpStr (split) {
 
 const executor = {
   async windows (exec, params = {}) {
-    const sysproxy = require('@starknt/sysproxy')
-
     const { ip, port, setEnv } = params
     if (ip != null) { // 设置代理
       // 延迟加载config
       loadConfig()
-      log.info('设置windows系统代理:', ip, port, setEnv)
+      log.info('开始设置windows系统代理:', ip, port, setEnv)
 
       // https
       let proxyAddr = `https=http://${ip}:${port}`
@@ -200,7 +200,22 @@ const executor = {
       // 读取排除域名
       const excludeIpStr = getProxyExcludeIpStr(';')
       // 设置代理，同时设置排除域名
-      sysproxy.triggerManualProxyByUrl(true, proxyAddr, excludeIpStr)
+      try {
+        require('@starknt/sysproxy').triggerManualProxyByUrl(true, proxyAddr, excludeIpStr)
+        log.info(`设置windows系统代理成功: ${proxyAddr} ......(省略排除IP列表)`)
+      } catch (e1) {
+        const proxyPath = extraPath.getProxyExePath()
+        const execFun = 'global'
+
+        try {
+          await execFile(proxyPath, [execFun, proxyAddr, excludeIpStr])
+          log.info(`执行“设置系统代理”的程序成功: ${proxyPath} ${execFun} ${proxyAddr} ......(省略排除IP列表)`)
+        } catch (e2) {
+          log.error('加载 `@starknt/sysproxy` 失败，尝试通过执行 `sysproxy.exe` 来设置系统代理:\r\n捕获的异常:', e1)
+          log.error(`执行“设置系统代理”的程序失败: ${proxyPath} ${execFun} ${proxyAddr} ......(省略排除IP列表)`, e2)
+          throw e2
+        }
+      }
 
       if (setEnv) {
         // 设置全局代理所需的环境变量
@@ -223,8 +238,21 @@ const executor = {
 
       return true
     } else { // 关闭代理
-      log.info('关闭windows系统代理')
-      sysproxy.triggerManualProxy(false, '', 0, '')
+      try {
+        log.info('开始关闭windows系统代理')
+        require('@starknt/sysproxy').triggerManualProxy(false, '', 0, '')
+        log.info('关闭windows系统代理成功')
+      } catch (e1) {
+        try {
+          const proxyPath = extraPath.getProxyExePath()
+          await execFile(proxyPath, ['set', '1'])
+          log.info('关闭windows系统代理成功')
+        } catch (e2) {
+          log.error('加载 `@starknt/sysproxy` 失败，尝试通过执行 `sysproxy.exe set 1` 来关闭系统代理:\r\n捕获的异常:', e1)
+          log.error('执行 `sysproxy.exe set 1` 来关闭系统代理:\r\n', e1)
+          throw e2
+        }
+      }
 
       try {
         await exec('echo \'删除环境变量 HTTPS_PROXY、HTTP_PROXY\'')
