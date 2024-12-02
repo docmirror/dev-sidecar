@@ -249,7 +249,7 @@ const executor = {
           log.info('关闭windows系统代理成功')
         } catch (e2) {
           log.error('加载 `@starknt/sysproxy` 失败，尝试通过执行 `sysproxy.exe set 1` 来关闭系统代理:\r\n捕获的异常:', e1)
-          log.error('执行 `sysproxy.exe set 1` 来关闭系统代理:\r\n', e1)
+          log.error('执行 `sysproxy.exe set 1` 来关闭系统代理:\r\n', e2)
           throw e2
         }
       }
