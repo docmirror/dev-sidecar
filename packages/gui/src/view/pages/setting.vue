@@ -20,10 +20,6 @@ export default {
       this.urlBackup = config.app.remoteConfig.url
       this.personalUrlBackup = config.app.remoteConfig.personalUrl
     },
-    async openLog () {
-      const dir = await this.$api.info.getConfigDir()
-      this.$api.ipc.openPath(`${dir}/logs/`)
-    },
     getEventKey (event) {
       // 忽略以下键
       switch (event.key) {
@@ -315,6 +311,9 @@ export default {
   <ds-container>
     <template slot="header">
       设置
+      <span>
+        <a-button class="md-mr-10" icon="profile" @click="openLog()">查看日志</a-button>
+      </span>
     </template>
 
     <div v-if="config">
@@ -322,9 +321,6 @@ export default {
         <a-checkbox v-model="config.app.autoStart.enabled" @change="onAutoStartChange">
           本应用开机自启
         </a-checkbox>
-        <a-button class="md-mr-10" icon="profile" @click="openLog()">
-          日志
-        </a-button>
       </a-form-item>
       <a-form-item v-if="systemPlatform === 'mac'" label="隐藏Dock图标" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.app.dock.hideWhenWinClose">
@@ -410,7 +406,7 @@ export default {
           部分快捷键已被占用：F5=刷新页面，F12=开发者工具（DevTools）
         </div>
       </a-form-item>
-      <a-form-item label="启动时打开窗口" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-item label="启动时窗口状态" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model="config.app.startShowWindow" default-value="true" button-style="solid">
           <a-radio-button :value="true">
             打开窗口

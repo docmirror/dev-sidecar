@@ -138,5 +138,9 @@ export default {
     isLinux () {
       return this.systemPlatform === 'linux'
     },
+    async openLog () {
+      const dir = await this.$api.info.getConfigDir()
+      this.$api.ipc.openPath(`${dir}/logs/`)
+    },
   },
 }
