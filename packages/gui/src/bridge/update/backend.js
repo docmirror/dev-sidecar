@@ -171,20 +171,28 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
             return
           }
 
-          // log.info('github api返回的release数据：', JSON.stringify(data, null, '\t'))
+          log.debug('github api返回的release数据：', JSON.stringify(data, null, '\t'))
 
           // 检查更新
           for (let i = 0; i < data.length; i++) {
             const versionData = data[i]
 
+            // log.debug('版本数据：', versionData)
+
             if (!versionData.assets || versionData.assets.length === 0) {
+              log.info('跳过空版本，即未上传过安装包：', versionData.name)
               continue // 跳过空版本，即未上传过安装包
             }
+            if (!versionData.name.match(/^v?\d+(\.\d+)*(-.+)?$/g)) {
+              log.info('跳过即 “不是正式，又不是预发布” 的版本:', versionData.name)
+              continue // 跳过即 “不是正式，又不是预发布” 的版本
+            }
             if (!isPreRelease && DevSidecar.api.config.get().app.skipPreRelease && versionData.name.includes('-')) {
+              log.info('跳过预发布版本:', versionData.name)
               continue // 跳过预发布版本
             }
 
-            // log.info('最近正式版本数据：', versionData)
+            log.info('最近正式版本：', versionData.name)
 
             // 获取版本号
             let version = versionData.name
