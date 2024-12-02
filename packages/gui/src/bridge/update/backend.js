@@ -187,7 +187,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
               log.info('跳过即 “不是正式，又不是预发布” 的版本:', versionData.name)
               continue // 跳过即 “不是正式，又不是预发布” 的版本
             }
-            if (!isPreRelease && DevSidecar.api.config.get().app.skipPreRelease && versionData.name.includes('-')) {
+            if (!isPreRelease && DevSidecar.api.config.get().app.skipPreRelease && (versionData.name.includes('-') || versionData.prerelease)) {
               log.info('跳过预发布版本:', versionData.name)
               continue // 跳过预发布版本
             }
