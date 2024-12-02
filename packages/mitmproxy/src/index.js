@@ -7,48 +7,6 @@ const { fireError, fireStatus } = require('./utils/util.process')
 
 let servers = []
 
-function registerProcessListener () {
-  process.on('message', (msg) => {
-    log.info('child get msg:', JSON.stringify(msg))
-    if (msg.type === 'action') {
-      api[msg.event.key](msg.event.params)
-    } else if (msg.type === 'speed') {
-      speedTest.action(msg.event)
-    }
-  })
-
-  process.on('SIGINT', () => {
-    log.info('on sigint : closed ')
-    process.exit(0)
-  })
-
-  // 避免异常崩溃
-  process.on('uncaughtException', (err) => {
-    if (err.code === 'ECONNABORTED') {
-      //  log.error(err.errno)
-      return
-    }
-    log.error('Process uncaughtException:', err)
-  })
-
-  process.on('unhandledRejection', (err, p) => {
-    log.info('Process unhandledRejection at: Promise', p, 'err:', err)
-    // application specific logging, throwing an error, or other logic here
-  })
-  process.on('uncaughtExceptionMonitor', (err, origin) => {
-    log.info('Process uncaughtExceptionMonitor:', err, origin)
-  })
-  process.on('exit', (code, signal) => {
-    log.info('代理服务进程被关闭:', code, signal)
-  })
-  process.on('beforeExit', (code, signal) => {
-    console.log('Process beforeExit event with code: ', code, signal)
-  })
-  process.on('SIGPIPE', (code, signal) => {
-    log.warn('sub Process SIGPIPE', code, signal)
-  })
-}
-
 const api = {
   async start (config) {
     const proxyOptions = ProxyOptions(config)
@@ -117,6 +75,48 @@ const api = {
       }
     })
   },
+}
+
+function registerProcessListener () {
+  process.on('message', (msg) => {
+    log.info('child get msg:', JSON.stringify(msg))
+    if (msg.type === 'action') {
+      api[msg.event.key](msg.event.params)
+    } else if (msg.type === 'speed') {
+      speedTest.action(msg.event)
+    }
+  })
+
+  process.on('SIGINT', () => {
+    log.info('on sigint : closed ')
+    process.exit(0)
+  })
+
+  // 避免异常崩溃
+  process.on('uncaughtException', (err) => {
+    if (err.code === 'ECONNABORTED') {
+      //  log.error(err.errno)
+      return
+    }
+    log.error('Process uncaughtException:', err)
+  })
+
+  process.on('unhandledRejection', (err, p) => {
+    log.info('Process unhandledRejection at: Promise', p, 'err:', err)
+    // application specific logging, throwing an error, or other logic here
+  })
+  process.on('uncaughtExceptionMonitor', (err, origin) => {
+    log.info('Process uncaughtExceptionMonitor:', err, origin)
+  })
+  process.on('exit', (code, signal) => {
+    log.info('代理服务进程被关闭:', code, signal)
+  })
+  process.on('beforeExit', (code, signal) => {
+    console.log('Process beforeExit event with code: ', code, signal)
+  })
+  process.on('SIGPIPE', (code, signal) => {
+    log.warn('sub Process SIGPIPE', code, signal)
+  })
 }
 
 module.exports = {

@@ -6,6 +6,7 @@ import Pip from '../pages/plugin/pip'
 import Proxy from '../pages/proxy'
 import Server from '../pages/server'
 import Setting from '../pages/setting'
+import Help from '../pages/help'
 
 const routes = [
   { path: '/', redirect: '/index' },
@@ -17,6 +18,7 @@ const routes = [
   { path: '/plugin/git', component: Git },
   { path: '/plugin/pip', component: Pip },
   { path: '/plugin/overwall', component: Overwall },
+  { path: '/help', component: Help },
 ]
 
 export default routes
