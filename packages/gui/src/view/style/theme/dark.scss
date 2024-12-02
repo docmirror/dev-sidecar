@@ -69,6 +69,10 @@ $dark-input: #777; //输入框：背景色
     background: $dark-bd;
   }
 
+  .help-list .help-title-h1 {
+    border-bottom-color: $dark-bd;
+  }
+
   /* 左侧 */
   /** 背景色 **/
   .ant-layout-sider {

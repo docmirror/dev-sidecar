@@ -30,6 +30,9 @@
   margin-right: 20px;
 }
 
+.md-mt-0 {
+  margin-top: 0;
+}
 .md-mt-5 {
   margin-top: 5px;
 }
@@ -151,10 +154,15 @@ hr {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        font-size: 14px;
       }
 
+      a {
+        color: #3990e0;
+      }
       a:hover {
         text-decoration: underline;
+        color: #2c9be5;
       }
     }
 
@@ -162,5 +170,29 @@ hr {
     ul {
       padding-left: 20px;
     }
+  }
+
+  .help-title-h1 {
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+
+    &.md-mt-0 {
+      margin-top: 0;
+    }
+  }
+
+  .help-title-h2 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  .console {
+    font-family: Consolas, arial, serif;
   }
 }
