@@ -1,4 +1,4 @@
-import { acquireShutdownBlock, insertWndProcHook, releaseShutdownBlock, removeWndProcHook, setMainWindowHandle } from '@natmri/platform-napi'
+import { acquireShutdownBlock, insertWndProcHook, releaseShutdownBlock, removeWndProcHook, setMainWindowHandle } from '@starknt/shutdown-handler-napi'
 import { powerMonitor as _powerMonitor } from 'electron'
 
 class PowerMonitor {
@@ -9,11 +9,11 @@ class PowerMonitor {
   }
 
   /**
-   * @param {BrowserWindow} window
+   * @param {import('electron').BrowserWindow} window
    */
   setupMainWindow (window) {
     if (!this.setup) {
-      setMainWindowHandle(window.getNativeWindowHandle().readBigInt64LE())
+      setMainWindowHandle(window.getNativeWindowHandle())
       this.setup = true
     }
   }
