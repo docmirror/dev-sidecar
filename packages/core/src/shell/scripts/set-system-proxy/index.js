@@ -188,6 +188,7 @@ const executor = {
     if (ip != null) { // 设置代理
       // 延迟加载config
       loadConfig()
+
       log.info('开始设置windows系统代理:', ip, port, setEnv)
 
       // https
@@ -204,16 +205,16 @@ const executor = {
         require('@starknt/sysproxy').triggerManualProxyByUrl(true, proxyAddr, excludeIpStr)
         log.info(`设置windows系统代理成功: ${proxyAddr} ......(省略排除IP列表)`)
       } catch (e1) {
+        log.warn('设置windows系统代理失败：执行 `@starknt/sysproxy` 失败，现尝试通过执行 `sysproxy.exe global ...` 来设置系统代理！\r\n捕获的异常:', e1)
+
         const proxyPath = extraPath.getProxyExePath()
         const execFun = 'global'
-
         try {
           await execFile(proxyPath, [execFun, proxyAddr, excludeIpStr])
-          log.info(`执行“设置系统代理”的程序成功: ${proxyPath} ${execFun} ${proxyAddr} ......(省略排除IP列表)`)
+          log.info(`设置windows系统代理成功，执行的命令：${proxyPath} ${execFun} ${proxyAddr} ......(省略排除IP列表)`)
         } catch (e2) {
-          log.error('加载 `@starknt/sysproxy` 失败，尝试通过执行 `sysproxy.exe` 来设置系统代理:\r\n捕获的异常:', e1)
-          log.error(`执行“设置系统代理”的程序失败: ${proxyPath} ${execFun} ${proxyAddr} ......(省略排除IP列表)`, e2)
-          throw e2
+          log.error(`设置windows系统代理失败，执行的命令：${proxyPath} ${execFun} ${proxyAddr} ......(省略排除IP列表), error:`, e2)
+          throw e1 // 将上面的异常抛出
         }
       }
 
@@ -243,14 +244,15 @@ const executor = {
         require('@starknt/sysproxy').triggerManualProxy(false, '', 0, '')
         log.info('关闭windows系统代理成功')
       } catch (e1) {
+        log.error('关闭windows系统代理失败：执行 `@starknt/sysproxy` 失败，现尝试通过执行 `sysproxy.exe set 1` 来关闭系统代理！\r\n捕获的异常:', e1)
+
         try {
           const proxyPath = extraPath.getProxyExePath()
           await execFile(proxyPath, ['set', '1'])
-          log.info('关闭windows系统代理成功')
+          log.info('关闭windows系统代理成功，执行的命令：sysproxy.exe set 1')
         } catch (e2) {
-          log.error('加载 `@starknt/sysproxy` 失败，尝试通过执行 `sysproxy.exe set 1` 来关闭系统代理:\r\n捕获的异常:', e1)
-          log.error('执行 `sysproxy.exe set 1` 来关闭系统代理:\r\n', e2)
-          throw e2
+          log.error('关闭windows系统代理失败，执行的命令：sysproxy.exe set 1, error:', e2)
+          throw e1 // 将上面的异常抛出
         }
       }
 
