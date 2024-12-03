@@ -2,7 +2,7 @@ const proxyApi = require('./proxy')
 
 module.exports = {
   name: 'redirect',
-  priority: 102,
+  priority: 105,
   requestIntercept (context, interceptOpt, req, res, ssl, next, matched) {
     const { rOptions, log } = context
 

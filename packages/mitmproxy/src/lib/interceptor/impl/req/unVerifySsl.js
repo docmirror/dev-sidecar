@@ -1,6 +1,6 @@
 module.exports = {
   name: 'unVerifySsl',
-  priority: 123,
+  priority: 124,
   requestIntercept (context, interceptOpt, req, res, ssl, next) {
     const { rOptions, log } = context
 

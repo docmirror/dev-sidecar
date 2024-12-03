@@ -1,10 +1,9 @@
 // request interceptor impls
 const OPTIONS = require('./impl/req/OPTIONS.js')
-
 const success = require('./impl/req/success')
-const redirect = require('./impl/req/redirect')
 const abort = require('./impl/req/abort')
-const cacheReq = require('./impl/req/cacheReq')
+const cacheRequest = require('./impl/req/cacheRequest')
+const redirect = require('./impl/req/redirect')
 
 const requestReplace = require('./impl/req/requestReplace')
 
@@ -16,20 +15,19 @@ const baiduOcr = require('./impl/req/baiduOcr')
 
 // response interceptor impls
 const AfterOPTIONSHeaders = require('./impl/res/AfterOPTIONSHeaders')
-const cacheRes = require('./impl/res/cacheRes')
+const cacheResponse = require('./impl/res/cacheResponse')
 const responseReplace = require('./impl/res/responseReplace')
 
 const script = require('./impl/res/script')
 
 module.exports = [
   // request interceptor impls
-  OPTIONS,
-  success, redirect, abort, cacheReq,
+  OPTIONS, success, abort, cacheRequest, redirect,
   requestReplace,
   proxy, sni, unVerifySsl,
   baiduOcr,
 
   // response interceptor impls
-  AfterOPTIONSHeaders, cacheRes, responseReplace,
+  AfterOPTIONSHeaders, cacheResponse, responseReplace,
   script,
 ]
