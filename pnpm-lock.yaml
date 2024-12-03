@@ -72,9 +72,9 @@ importers:
       '@docmirror/mitmproxy':
         specifier: workspace:*
         version: link:../mitmproxy
-      '@natmri/platform-napi':
-        specifier: ^0.0.7
-        version: 0.0.7
+      '@starknt/shutdown-handler-napi':
+        specifier: ^0.0.2
+        version: 0.0.2
       '@starknt/sysproxy':
         specifier: ^0.0.1
         version: 0.0.1
@@ -133,131 +133,6 @@ importers:
       '@vue/cli-service':
         specifier: ^5.0.8
         version: 5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(lodash@4.17.21)(sass-loader@16.0.3(sass@1.81.0)(webpack@5.96.1))(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3)
-      electron:
-        specifier: ^19.1.9
-        version: 19.1.9
-      electron-builder:
-        specifier: ^25.1.8
-        version: 25.1.8(electron-builder-squirrel-windows@25.1.8(dmg-builder@25.1.8))
-      electron-icon-builder:
-        specifier: ^2.0.1
-        version: 2.0.1
-      json5-loader:
-        specifier: ^4.0.1
-        version: 4.0.1(webpack@5.96.1)
-      vue-cli-plugin-electron-builder:
-        specifier: ^3.0.0-alpha.4
-        version: 3.0.0-alpha.4(encoding@0.1.13)
-
-  packages/gui/dist_electron:
-    dependencies:
-      '@docmirror/dev-sidecar':
-        specifier: workspace:*
-        version: link:../../core
-      '@docmirror/mitmproxy':
-        specifier: workspace:*
-        version: link:../../mitmproxy
-      '@mihomo-party/sysproxy':
-        specifier: ^2.0.4
-        version: 2.0.4
-      '@natmri/platform-napi':
-        specifier: ^0.0.7
-        version: 0.0.7
-      adm-zip:
-        specifier: ^0.5.16
-        version: 0.5.16
-      ant-design-vue:
-        specifier: ^1.7.8
-        version: 1.7.8(vue-template-compiler@2.7.16)(vue@2.7.16)
-      electron-baidu-tongji:
-        specifier: ^1.0.5
-        version: 1.0.5
-      electron-sudo:
-        specifier: ^4.0.12
-        version: 4.0.12
-      electron-updater:
-        specifier: ^6.3.9
-        version: 6.3.9
-      json5:
-        specifier: ^2.2.3
-        version: 2.2.3
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      request-progress:
-        specifier: ^3.0.0
-        version: 3.0.0
-      sass:
-        specifier: ^1.81.0
-        version: 1.81.0
-      sass-loader:
-        specifier: ^16.0.3
-        version: 16.0.3(sass@1.81.0)(webpack@5.96.1)
-      vue:
-        specifier: ^2.7.16
-        version: 2.7.16
-      vue-json-editor-fix-cn:
-        specifier: ^1.4.3
-        version: 1.4.3
-      vue-router:
-        specifier: ^3.6.5
-        version: 3.6.5(vue@2.7.16)
-    devDependencies:
-      '@babel/plugin-syntax-jsx':
-        specifier: ^7.25.9
-        version: 7.25.9(@babel/core@7.26.0)
-      '@vue/babel-helper-vue-jsx-merge-props':
-        specifier: ^1.4.0
-        version: 1.4.0
-      '@vue/babel-preset-jsx':
-        specifier: ^1.4.0
-        version: 1.4.0(@babel/core@7.26.0)(vue@2.7.16)
-      '@vue/cli-plugin-babel':
-        specifier: ^5.0.8
-        version: 5.0.8(@vue/cli-service@5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(lodash@4.17.21)(sass-loader@16.0.3(sass@1.81.0)(webpack@5.96.1))(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3))(core-js@3.39.0)(encoding@0.1.13)(vue@2.7.16)
-      '@vue/cli-service':
-        specifier: ^5.0.8
-        version: 5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(lodash@4.17.21)(sass-loader@16.0.3(sass@1.81.0)(webpack@5.96.1))(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3)
-      electron:
-        specifier: ^19.1.9
-        version: 19.1.9
-      electron-builder:
-        specifier: ^25.1.8
-        version: 25.1.8(electron-builder-squirrel-windows@25.1.8(dmg-builder@25.1.8))
-      electron-icon-builder:
-        specifier: ^2.0.1
-        version: 2.0.1
-      json5-loader:
-        specifier: ^4.0.1
-        version: 4.0.1(webpack@5.96.1)
-      vue-cli-plugin-electron-builder:
-        specifier: ^3.0.0-alpha.4
-        version: 3.0.0-alpha.4(encoding@0.1.13)
-
-  packages/gui/dist_electron/bundled:
-    dependencies:
-      '@mihomo-party/sysproxy':
-        specifier: ^2.0.4
-        version: 2.0.4
-      '@natmri/platform-napi':
-        specifier: ^0.0.7
-        version: 0.0.7
-    devDependencies:
-      '@babel/plugin-syntax-jsx':
-        specifier: ^7.25.9
-        version: 7.25.9(@babel/core@7.26.0)
-      '@vue/babel-helper-vue-jsx-merge-props':
-        specifier: ^1.4.0
-        version: 1.4.0
-      '@vue/babel-preset-jsx':
-        specifier: ^1.4.0
-        version: 1.4.0(@babel/core@7.26.0)(vue@2.7.16)
-      '@vue/cli-plugin-babel':
-        specifier: ^5.0.8
-        version: 5.0.8(@vue/cli-service@5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3))(core-js@3.39.0)(encoding@0.1.13)(vue@2.7.16)
-      '@vue/cli-service':
-        specifier: ^5.0.8
-        version: 5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3)
       electron:
         specifier: ^19.1.9
         version: 19.1.9
@@ -1280,116 +1155,6 @@ packages:
     resolution: {integrity: sha512-9QOtNffcOF/c1seMCDnjckb3R9WHcG34tky+FHpNKKCW0wc/scYLwMtO+ptyGUfMW0/b/n4qRiALlaFHc9Oj7Q==}
     engines: {node: '>= 10.0.0'}
 
-  '@mihomo-party/sysproxy-darwin-arm64@2.0.4':
-    resolution: {integrity: sha512-s3MOKABzIl2oNxVFYdhFk7NY77aZhF1L7lTSZWc2BCy6dU6CnDxIpVjS+AKGK9qAXLZQVAFdKW1lqgHA30OsmA==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@mihomo-party/sysproxy-darwin-x64@2.0.4':
-    resolution: {integrity: sha512-aBrdrucV4umh0dClrDk+X7i9lZGojKoEfK/pes12TxXltjtBIEEKtd5uKfAdESMCtPi7Wi0i40bOve3/PE2ZTQ==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [darwin]
-
-  '@mihomo-party/sysproxy-linux-arm64-gnu@2.0.4':
-    resolution: {integrity: sha512-FR9oSSMHyK/eCyE0ggOXAlaxUeemk8mOld3jd0951AsbmgwCdw9qBMXET9HDheYzA+9wOiqzzOsru6BWiUjFWw==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-
-  '@mihomo-party/sysproxy-linux-x64-gnu@2.0.4':
-    resolution: {integrity: sha512-hZV7bUWuv9nea8X60zBk4xiDFNEDINxBMCRlm4gtOlNvCfrQPEjDozWTcOhbR74SGrMj+zLKXEDQZtlV2y3pVg==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-
-  '@mihomo-party/sysproxy-win32-arm64-msvc@2.0.4':
-    resolution: {integrity: sha512-LrL5EOW9xzUKiJg3mZ6KAEyoVbLG/jiQUxAjdvWBg+GnbqbRL4pjvdZqxH0cymPqRBl8iMLis04XY7+thX6bPA==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [win32]
-
-  '@mihomo-party/sysproxy-win32-ia32-msvc@2.0.4':
-    resolution: {integrity: sha512-IwIWKRqX2ugMVxxdsQzzJ/jQ2+AnLjgyVqfYeAkAmv5djBWxJKx3bBjHJh6Kzy1iMLIMGbOAsCG6GILyEn4f8Q==}
-    engines: {node: '>= 10'}
-    cpu: [ia32]
-    os: [win32]
-
-  '@mihomo-party/sysproxy-win32-x64-msvc@2.0.4':
-    resolution: {integrity: sha512-0WCRSEtL4XRcoKpzjArMoUEwScCquC8MyWd1/GJ+p9WqxtuMMlzEgNpplD2f6ug40iY/vTovP8+Ni8ikOQTRjQ==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [win32]
-
-  '@mihomo-party/sysproxy@2.0.4':
-    resolution: {integrity: sha512-/Viitid0aUxJCQh6ldNA816PNmNyrSGI73D369CnA+JI5ZcVQlmTZeMEGAYebndPybhUwsrnSglPTNd3a8gVcQ==}
-    engines: {node: '>= 10'}
-
-  '@natmri/platform-napi-darwin-arm64@0.0.7':
-    resolution: {integrity: sha512-7m3SiujKkkwxy/7/4+oYzhwLxL5z6hrG6/p1cZFRdHQ60aehaXgvdPwKZi94onmJ4T5mwwqwMb2LsUM2dnYDOw==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@natmri/platform-napi-darwin-x64@0.0.7':
-    resolution: {integrity: sha512-PMaAT3sDEjCYNfrENXeWzuL3J8aEsEdUvNYp7YjeMo/IgUqCHeWUHbcwn5D6IxAVDfb4cM5F3kaTQ5qO36LnYA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [darwin]
-
-  '@natmri/platform-napi-linux-arm-gnueabihf@0.0.7':
-    resolution: {integrity: sha512-gESojCac5CURQ/UhmM2nj/chmd9j+s/YN7r4b5bEjTfSXtxzgIK5C4+cqSdz+J/dYTryYzSoETL+JuOABhlBQg==}
-    engines: {node: '>= 10'}
-    cpu: [arm]
-    os: [linux]
-
-  '@natmri/platform-napi-linux-arm64-gnu@0.0.7':
-    resolution: {integrity: sha512-/gxJhY4FkbnsF6c4lsPf7fVzJ27nFlXQoT1RDgF5IouLZtgThtL7LYIPnWeNyp5o5DGzcIqDaHurxzdaLOh9CQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-
-  '@natmri/platform-napi-linux-arm64-musl@0.0.7':
-    resolution: {integrity: sha512-z7Hd3aJVJqC78fyqnGOJyJ+qoFaJhP693tUbf3VeG+cqhdWGhahTM1ke1y3jCokOoSLlRy0ZpbA9UIwIRm1HFA==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-
-  '@natmri/platform-napi-linux-x64-gnu@0.0.7':
-    resolution: {integrity: sha512-9AQSvE2BWYF7inzOe51U+441DVyesBZgUp1biMKwH4icuMUWCGeNHIKM02uhzZIlIk11KgAscpO15qBRsP0MSA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-
-  '@natmri/platform-napi-linux-x64-musl@0.0.7':
-    resolution: {integrity: sha512-Ac9ojvWjpJ0n8VpR8jfjFUS/+TCIj117snAxcOqYQBvfvci2wVztB6ObwjyJSG71err2a3hcfoju9pIbaOKhgg==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-
-  '@natmri/platform-napi-win32-arm64-msvc@0.0.7':
-    resolution: {integrity: sha512-0WckViWqxrp4cQG2rmHSprjPSVTYsdBHTrtgbqYKgtF8VtdSnufv2GHIsCRLXRRCDsKIx5pydH31vZa5pPlvMA==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [win32]
-
-  '@natmri/platform-napi-win32-ia32-msvc@0.0.7':
-    resolution: {integrity: sha512-Wsz3wgiK5mLQ6uGdVfGb0m/3hmvW/Ibu2ZyxmH47ywYTDnIIdkNXDWe3H1bP2K6QTVdxmTf2d31Wfg3gl6KCUg==}
-    engines: {node: '>= 10'}
-    cpu: [ia32]
-    os: [win32]
-
-  '@natmri/platform-napi-win32-x64-msvc@0.0.7':
-    resolution: {integrity: sha512-m+lhqfcPCivrgPLsGR6qYJlTWqHLmeBYABnb2NNDO8QTH/8xWyNaC9PjKWHjJJZ5e6UQEEA531lPuD7QXME17g==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [win32]
-
-  '@natmri/platform-napi@0.0.7':
-    resolution: {integrity: sha512-1HTgVG9BkAzPq63gx4n7kshMScsPGiv9w1DEE4fj1/7K8VCLHpCNflPqXB6EceOFFsGKNaG9RZ2AQQDDNdMFGw==}
-    engines: {node: '>= 10'}
-
   '@node-ipc/js-queue@2.0.3':
     resolution: {integrity: sha512-fL1wpr8hhD5gT2dA1qifeVaoDFlQR5es8tFuKqjHX+kdOtdNHnxkVZbtIrR2rxnMFvehkjaZRNV2H/gPXlb0hw==}
     engines: {node: '>=1.0.0'}
@@ -1536,6 +1301,46 @@ packages:
 
   '@soda/get-current-script@1.0.2':
     resolution: {integrity: sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==}
+
+  '@starknt/shutdown-handler-napi-darwin-arm64@0.0.2':
+    resolution: {integrity: sha512-OGQMm3ZVgCETB564kLPFh7oidRGmFT5e4l7XLwyn/VfgGyvbJ1pdVfPb4Fi75ZXUwvmFaWXpgNA/dgzgVq88gw==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@starknt/shutdown-handler-napi-linux-arm64-gnu@0.0.2':
+    resolution: {integrity: sha512-qLDJWjlM25xEmWBjznd1yYYfvl3mhg8To35V0oI6SQ9HSYPALrqfIrGvYATaPExYuWeWf99OIhhJJ8o0XgvQaQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@starknt/shutdown-handler-napi-linux-x64-gnu@0.0.2':
+    resolution: {integrity: sha512-5ay2P6B3H8ASJuuySRehnpEYt0UFN8yvKq9gHfTTY0NIr7ot/cUNaYWG1/TUpFrkBpfGKyTvJH6iieYslyzIDg==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@starknt/shutdown-handler-napi-win32-arm64-msvc@0.0.2':
+    resolution: {integrity: sha512-ybr9bYa+gTNh1AkSq3AguRJpp0FHMzbmnMB4MdnhuZs03GMPM2pKvH1ebCAFaBAuP/ZlafNfr5+oC6Sg3AgepA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@starknt/shutdown-handler-napi-win32-ia32-msvc@0.0.2':
+    resolution: {integrity: sha512-dL8Ggnj/ZlErjoL6713y90YRIB+h4tKwQw/VLPlqfWV7s2/h6NB+udny90+BFJXRccwV97C2LILdAzEep71mVg==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+
+  '@starknt/shutdown-handler-napi-win32-x64-msvc@0.0.2':
+    resolution: {integrity: sha512-dUXZsmWWsPgws28FrIH9IVK2q8TB86n90YSK55nnoH3TmgdbFMhM969Hn6kKp8agtBIifavneiv5sjGvUmfgFA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
+  '@starknt/shutdown-handler-napi@0.0.2':
+    resolution: {integrity: sha512-HunVBQZiACZWHOerye1oL6zFGm5kRqKqRFLuHwj5oH9zKrtQ2VW0wwkeiVmMT40qOibBcsesU7Glp6Pfu4ky1w==}
+    engines: {node: '>= 10'}
 
   '@starknt/sysproxy-darwin-arm64@0.0.1':
     resolution: {integrity: sha512-8o8QP888Wpe+vwfz6vbWRpO8bLcEzXAuA8j9PE6h27CmAty/P4/9zgaTXq18lBcVNGDpPdriDYcbOYN+26Q8dw==}
@@ -3387,9 +3192,6 @@ packages:
 
   electron-publish@25.1.7:
     resolution: {integrity: sha512-+jbTkR9m39eDBMP4gfbqglDd6UvBC7RLh5Y0MhFSsc6UkGHj9Vj9TWobxevHYMMqmoujL11ZLjfPpMX+Pt6YEg==}
-
-  electron-sudo@4.0.12:
-    resolution: {integrity: sha512-CDsJaLwi1vm3/Hs9NGLb/Eb0B1Q/UNx27OyUesthg0S+dy3g6hnfqXiiC3bjCkCypy1VDV/nk2WCKkq6Xq9TbA==}
 
   electron-to-chromium@1.5.56:
     resolution: {integrity: sha512-7lXb9dAvimCFdvUMTyucD4mnIndt/xhRKFAlky0CyFogdnNmdPQNoHI23msF/2V4mpTxMzgMdjK4+YRlFlRQZw==}
@@ -8499,80 +8301,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@mihomo-party/sysproxy-darwin-arm64@2.0.4':
-    optional: true
-
-  '@mihomo-party/sysproxy-darwin-x64@2.0.4':
-    optional: true
-
-  '@mihomo-party/sysproxy-linux-arm64-gnu@2.0.4':
-    optional: true
-
-  '@mihomo-party/sysproxy-linux-x64-gnu@2.0.4':
-    optional: true
-
-  '@mihomo-party/sysproxy-win32-arm64-msvc@2.0.4':
-    optional: true
-
-  '@mihomo-party/sysproxy-win32-ia32-msvc@2.0.4':
-    optional: true
-
-  '@mihomo-party/sysproxy-win32-x64-msvc@2.0.4':
-    optional: true
-
-  '@mihomo-party/sysproxy@2.0.4':
-    optionalDependencies:
-      '@mihomo-party/sysproxy-darwin-arm64': 2.0.4
-      '@mihomo-party/sysproxy-darwin-x64': 2.0.4
-      '@mihomo-party/sysproxy-linux-arm64-gnu': 2.0.4
-      '@mihomo-party/sysproxy-linux-x64-gnu': 2.0.4
-      '@mihomo-party/sysproxy-win32-arm64-msvc': 2.0.4
-      '@mihomo-party/sysproxy-win32-ia32-msvc': 2.0.4
-      '@mihomo-party/sysproxy-win32-x64-msvc': 2.0.4
-
-  '@natmri/platform-napi-darwin-arm64@0.0.7':
-    optional: true
-
-  '@natmri/platform-napi-darwin-x64@0.0.7':
-    optional: true
-
-  '@natmri/platform-napi-linux-arm-gnueabihf@0.0.7':
-    optional: true
-
-  '@natmri/platform-napi-linux-arm64-gnu@0.0.7':
-    optional: true
-
-  '@natmri/platform-napi-linux-arm64-musl@0.0.7':
-    optional: true
-
-  '@natmri/platform-napi-linux-x64-gnu@0.0.7':
-    optional: true
-
-  '@natmri/platform-napi-linux-x64-musl@0.0.7':
-    optional: true
-
-  '@natmri/platform-napi-win32-arm64-msvc@0.0.7':
-    optional: true
-
-  '@natmri/platform-napi-win32-ia32-msvc@0.0.7':
-    optional: true
-
-  '@natmri/platform-napi-win32-x64-msvc@0.0.7':
-    optional: true
-
-  '@natmri/platform-napi@0.0.7':
-    optionalDependencies:
-      '@natmri/platform-napi-darwin-arm64': 0.0.7
-      '@natmri/platform-napi-darwin-x64': 0.0.7
-      '@natmri/platform-napi-linux-arm-gnueabihf': 0.0.7
-      '@natmri/platform-napi-linux-arm64-gnu': 0.0.7
-      '@natmri/platform-napi-linux-arm64-musl': 0.0.7
-      '@natmri/platform-napi-linux-x64-gnu': 0.0.7
-      '@natmri/platform-napi-linux-x64-musl': 0.0.7
-      '@natmri/platform-napi-win32-arm64-msvc': 0.0.7
-      '@natmri/platform-napi-win32-ia32-msvc': 0.0.7
-      '@natmri/platform-napi-win32-x64-msvc': 0.0.7
-
   '@node-ipc/js-queue@2.0.3':
     dependencies:
       easy-stack: 1.0.1
@@ -8693,6 +8421,33 @@ snapshots:
       webpack: 5.96.1
 
   '@soda/get-current-script@1.0.2': {}
+
+  '@starknt/shutdown-handler-napi-darwin-arm64@0.0.2':
+    optional: true
+
+  '@starknt/shutdown-handler-napi-linux-arm64-gnu@0.0.2':
+    optional: true
+
+  '@starknt/shutdown-handler-napi-linux-x64-gnu@0.0.2':
+    optional: true
+
+  '@starknt/shutdown-handler-napi-win32-arm64-msvc@0.0.2':
+    optional: true
+
+  '@starknt/shutdown-handler-napi-win32-ia32-msvc@0.0.2':
+    optional: true
+
+  '@starknt/shutdown-handler-napi-win32-x64-msvc@0.0.2':
+    optional: true
+
+  '@starknt/shutdown-handler-napi@0.0.2':
+    optionalDependencies:
+      '@starknt/shutdown-handler-napi-darwin-arm64': 0.0.2
+      '@starknt/shutdown-handler-napi-linux-arm64-gnu': 0.0.2
+      '@starknt/shutdown-handler-napi-linux-x64-gnu': 0.0.2
+      '@starknt/shutdown-handler-napi-win32-arm64-msvc': 0.0.2
+      '@starknt/shutdown-handler-napi-win32-ia32-msvc': 0.0.2
+      '@starknt/shutdown-handler-napi-win32-x64-msvc': 0.0.2
 
   '@starknt/sysproxy-darwin-arm64@0.0.1':
     optional: true
@@ -9160,25 +8915,6 @@ snapshots:
       - vue
       - webpack-cli
 
-  '@vue/cli-plugin-babel@5.0.8(@vue/cli-service@5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3))(core-js@3.39.0)(encoding@0.1.13)(vue@2.7.16)':
-    dependencies:
-      '@babel/core': 7.26.0
-      '@vue/babel-preset-app': 5.0.8(@babel/core@7.26.0)(core-js@3.39.0)(vue@2.7.16)
-      '@vue/cli-service': 5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3)
-      '@vue/cli-shared-utils': 5.0.8(encoding@0.1.13)
-      babel-loader: 8.4.1(@babel/core@7.26.0)(webpack@5.96.1)
-      thread-loader: 3.0.4(webpack@5.96.1)
-      webpack: 5.96.1
-    transitivePeerDependencies:
-      - '@swc/core'
-      - core-js
-      - encoding
-      - esbuild
-      - supports-color
-      - uglify-js
-      - vue
-      - webpack-cli
-
   '@vue/cli-plugin-router@5.0.8(@vue/cli-service@5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(lodash@4.17.21)(sass-loader@16.0.3(sass@1.81.0)(webpack@5.96.1))(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3))(encoding@0.1.13)':
     dependencies:
       '@vue/cli-service': 5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(lodash@4.17.21)(sass-loader@16.0.3(sass@1.81.0)(webpack@5.96.1))(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3)
@@ -9186,20 +8922,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@vue/cli-plugin-router@5.0.8(@vue/cli-service@5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3))(encoding@0.1.13)':
-    dependencies:
-      '@vue/cli-service': 5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3)
-      '@vue/cli-shared-utils': 5.0.8(encoding@0.1.13)
-    transitivePeerDependencies:
-      - encoding
-
   '@vue/cli-plugin-vuex@5.0.8(@vue/cli-service@5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(lodash@4.17.21)(sass-loader@16.0.3(sass@1.81.0)(webpack@5.96.1))(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3))':
     dependencies:
       '@vue/cli-service': 5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(lodash@4.17.21)(sass-loader@16.0.3(sass@1.81.0)(webpack@5.96.1))(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3)
-
-  '@vue/cli-plugin-vuex@5.0.8(@vue/cli-service@5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3))':
-    dependencies:
-      '@vue/cli-service': 5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3)
 
   '@vue/cli-service@5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(lodash@4.17.21)(sass-loader@16.0.3(sass@1.81.0)(webpack@5.96.1))(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3)':
     dependencies:
@@ -9260,136 +8985,6 @@ snapshots:
       whatwg-fetch: 3.6.20
     optionalDependencies:
       sass-loader: 16.0.3(sass@1.81.0)(webpack@5.96.1)
-      vue-template-compiler: 2.7.16
-      webpack-sources: 3.2.3
-    transitivePeerDependencies:
-      - '@parcel/css'
-      - '@rspack/core'
-      - '@swc/core'
-      - '@vue/compiler-sfc'
-      - arc-templates
-      - atpl
-      - babel-core
-      - bracket-template
-      - bufferutil
-      - clean-css
-      - coffee-script
-      - csso
-      - dot
-      - dust
-      - dustjs-helpers
-      - dustjs-linkedin
-      - eco
-      - ect
-      - ejs
-      - encoding
-      - esbuild
-      - haml-coffee
-      - hamlet
-      - hamljs
-      - handlebars
-      - hogan.js
-      - htmling
-      - jade
-      - jazz
-      - jqtpl
-      - just
-      - liquid-node
-      - liquor
-      - lodash
-      - marko
-      - mote
-      - mustache
-      - nunjucks
-      - plates
-      - prettier
-      - pug
-      - qejs
-      - ractive
-      - razor-tmpl
-      - react
-      - react-dom
-      - slm
-      - squirrelly
-      - supports-color
-      - swig
-      - swig-templates
-      - teacup
-      - templayed
-      - then-jade
-      - then-pug
-      - tinyliquid
-      - toffee
-      - twig
-      - twing
-      - uglify-js
-      - underscore
-      - utf-8-validate
-      - vash
-      - velocityjs
-      - vue
-      - walrus
-      - webpack-cli
-      - whiskers
-
-  '@vue/cli-service@5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3)':
-    dependencies:
-      '@babel/helper-compilation-targets': 7.25.9
-      '@soda/friendly-errors-webpack-plugin': 1.8.1(webpack@5.96.1)
-      '@soda/get-current-script': 1.0.2
-      '@types/minimist': 1.2.5
-      '@vue/cli-overlay': 5.0.8
-      '@vue/cli-plugin-router': 5.0.8(@vue/cli-service@5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3))(encoding@0.1.13)
-      '@vue/cli-plugin-vuex': 5.0.8(@vue/cli-service@5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3))
-      '@vue/cli-shared-utils': 5.0.8(encoding@0.1.13)
-      '@vue/component-compiler-utils': 3.3.0(ejs@3.1.10)(handlebars@4.7.8)(lodash@4.17.21)(underscore@1.13.7)
-      '@vue/vue-loader-v15': vue-loader@15.11.1(@vue/compiler-sfc@3.5.12)(css-loader@6.11.0(webpack@5.96.1))(ejs@3.1.10)(handlebars@4.7.8)(lodash@4.17.21)(underscore@1.13.7)(vue-template-compiler@2.7.16)(webpack@5.96.1)
-      '@vue/web-component-wrapper': 1.3.0
-      acorn: 8.14.0
-      acorn-walk: 8.3.4
-      address: 1.2.2
-      autoprefixer: 10.4.20(postcss@8.4.49)
-      browserslist: 4.24.2
-      case-sensitive-paths-webpack-plugin: 2.4.0
-      cli-highlight: 2.1.11
-      clipboardy: 2.3.0
-      cliui: 7.0.4
-      copy-webpack-plugin: 9.1.0(webpack@5.96.1)
-      css-loader: 6.11.0(webpack@5.96.1)
-      css-minimizer-webpack-plugin: 3.4.1(webpack@5.96.1)
-      cssnano: 5.1.15(postcss@8.4.49)
-      debug: 4.3.7
-      default-gateway: 6.0.3
-      dotenv: 10.0.0
-      dotenv-expand: 5.1.0
-      fs-extra: 9.1.0
-      globby: 11.1.0
-      hash-sum: 2.0.0
-      html-webpack-plugin: 5.6.3(webpack@5.96.1)
-      is-file-esm: 1.0.0
-      launch-editor-middleware: 2.9.1
-      lodash.defaultsdeep: 4.6.1
-      lodash.mapvalues: 4.6.0
-      mini-css-extract-plugin: 2.9.2(webpack@5.96.1)
-      minimist: 1.2.8
-      module-alias: 2.2.3
-      portfinder: 1.0.32
-      postcss: 8.4.49
-      postcss-loader: 6.2.1(postcss@8.4.49)(webpack@5.96.1)
-      progress-webpack-plugin: 1.0.16(webpack@5.96.1)
-      ssri: 8.0.1
-      terser-webpack-plugin: 5.3.10(webpack@5.96.1)
-      thread-loader: 3.0.4(webpack@5.96.1)
-      vue-loader: 17.4.2(@vue/compiler-sfc@3.5.12)(vue@2.7.16)(webpack@5.96.1)
-      vue-style-loader: 4.1.3
-      webpack: 5.96.1
-      webpack-bundle-analyzer: 4.10.2
-      webpack-chain: 6.5.1
-      webpack-dev-server: 4.15.2(debug@4.3.7)(webpack@5.96.1)
-      webpack-merge: 5.10.0
-      webpack-virtual-modules: 0.4.6
-      whatwg-fetch: 3.6.20
-    optionalDependencies:
       vue-template-compiler: 2.7.16
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -11169,11 +10764,6 @@ snapshots:
       mime: 2.6.0
     transitivePeerDependencies:
       - supports-color
-
-  electron-sudo@4.0.12:
-    dependencies:
-      babel-runtime: 6.26.0
-      bluebird: 3.7.2
 
   electron-to-chromium@1.5.56: {}
 

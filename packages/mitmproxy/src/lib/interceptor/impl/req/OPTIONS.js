@@ -14,7 +14,7 @@ function readConfig (config, defaultConfig) {
 
 module.exports = {
   name: 'options',
-  priority: 1,
+  priority: 101,
   requestIntercept (context, interceptOpt, req, res, ssl, next) {
     const { rOptions, log } = context
 

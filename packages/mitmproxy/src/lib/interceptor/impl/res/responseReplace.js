@@ -1,5 +1,5 @@
 const lodash = require('lodash')
-const cacheReq = require('../req/cacheReq')
+const cacheReq = require('../req/cacheRequest')
 
 const REMOVE = '[remove]'
 
