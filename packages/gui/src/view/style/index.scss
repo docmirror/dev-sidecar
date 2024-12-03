@@ -145,12 +145,12 @@ hr {
 .help-list {
   ul {
     padding-left: 10px;
+
     li {
       list-style: none;
       line-height: 30px;
 
-      span {
-        display: block;
+      div {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -172,21 +172,21 @@ hr {
     }
   }
 
-  .help-title-h1 {
+  ul:first-child li:first-child div:first-child.title1 {
+    margin-top: 0;
+  }
+
+  .title1 {
     font-size: 18px;
     font-weight: bold;
     border-bottom: 1px solid #eee;
-    margin-top: 20px;
+    margin-top: 12px;
     margin-bottom: 5px;
     padding-bottom: 5px;
     padding-left: 5px;
-
-    &.md-mt-0 {
-      margin-top: 0;
-    }
   }
 
-  .help-title-h2 {
+  .title2 {
     font-size: 16px;
     font-weight: bold;
     margin-top: 10px;

@@ -420,7 +420,7 @@ module.exports = {
   proxy: {},
   plugin: {},
   help: {
-    data: [
+    dataList: [
       {
         title: '查看DevSidecar的说明文档（Wiki）',
         url: 'https://github.com/docmirror/dev-sidecar/wiki',

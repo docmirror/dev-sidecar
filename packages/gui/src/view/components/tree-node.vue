@@ -15,12 +15,12 @@ export default {
 <template>
   <ul>
     <li v-for="node in treeData" :key="node.title">
-      <span v-if="node.url && (node.url.startsWith('http://') || node.url.startsWith('https://'))">
-        <a :title="node.tip || node.title" :class="node.class" :style="node.style" @click="openExternal(node.url)">{{ node.title }}</a>
-      </span>
-      <span v-else>
-        <label :title="node.tip || node.title" :class="node.class" :style="node.style">{{ node.title }}</label>
-      </span>
+      <div v-if="node.url && (node.url.startsWith('http://') || node.url.startsWith('https://'))" :class="node.rowClass" :style="node.rowStyle">
+        <a :title="node.tip || node.title" :class="node.labelClass" :style="node.labelStyle" @click="openExternal(node.url)">{{ node.title }}</a>
+      </div>
+      <div v-else :class="node.rowClass" :style="node.rowStyle">
+        <label :title="node.tip || node.title" :class="node.labelClass" :style="node.labelStyle">{{ node.title }}</label>
+      </div>
       <tree-node v-if="node.children && node.children.length > 0" :tree-data="node.children" class="child-node" />
     </li>
   </ul>
