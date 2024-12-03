@@ -14,7 +14,14 @@ const isMac = process.platform === 'darwin'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // 避免其他系统出现异常，只有 Windows 使用 './background/powerMonitor'
-const _powerMonitor = isWindows ? require('./background/powerMonitor').powerMonitor : powerMonitor
+let _powerMonitor = powerMonitor
+if (isWindows) {
+  try {
+    _powerMonitor = require('./background/powerMonitor').powerMonitor
+  } catch (e) {
+    log.error(`加载 './background/powerMonitor' 失败，现捕获异常并使用默认的 powerMonitor。\r\n目前，启动着DS重启电脑时，将无法正常关闭系统代理，届时请自行关闭系统代理！\r\n捕获的异常信息:`, e)
+  }
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -191,7 +198,7 @@ function createWindow (startHideWindow) {
   win.setMenu(null)
 
   // !!IMPORTANT
-  if (isWindows) {
+  if (isWindows && typeof _powerMonitor.setupMainWindow === 'function') {
     _powerMonitor.setupMainWindow(win)
   }
 
@@ -261,6 +268,7 @@ function createWindow (startHideWindow) {
       event.preventDefault()
       // 切换开发者工具显示状态
       switchDevTools()
+      // eslint-disable-next-line style/brace-style
     }
     // 按 F5，刷新页面
     else if (input.key === 'F5') {
@@ -454,7 +462,6 @@ if (!isFirstInstance) {
         e.preventDefault()
       }
       log.info('系统关机，恢复代理设置')
-
       await quit()
     })
   })
