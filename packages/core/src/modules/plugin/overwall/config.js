@@ -10,6 +10,8 @@ module.exports = {
     },
   },
   targets: {
+    '*.gitbook.io': true,
+    '*.github.dev': true,
     '*.github.com': true,
     '*github*.com': true,
     '*.wikimedia.org': true,
