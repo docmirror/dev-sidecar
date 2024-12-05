@@ -18,8 +18,8 @@ function mapToList (ipMap) {
 }
 
 module.exports = class DNSOverHTTPS extends BaseDNS {
-  constructor (dnsServer, preSetIpList) {
-    super()
+  constructor (dnsName, dnsServer, preSetIpList) {
+    super(dnsName)
     this.dnsServer = dnsServer
     this.preSetIpList = preSetIpList
   }
@@ -44,20 +44,21 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
     const start = new Date()
     try {
       const result = await dohQueryAsync({ url: this.dnsServer }, [{ type: 'A', name: hostname }])
+      const cost = new Date() - start
       if (result.answers.length === 0) {
         // 说明没有获取到ip
-        log.info('该域名没有ip地址解析:', hostname, ', cost:', (new Date() - start), 'ms')
+        log.info(`DNS '${this.dnsName}' 没有该域名的IP地址: ${hostname}, cost: ${cost} ms`)
         return []
       }
       const ret = result.answers.filter(item => item.type === 'A').map(item => item.data)
       if (ret.length === 0) {
-        log.info('该域名没有IPv4地址解析:', hostname, ', cost:', (new Date() - start), 'ms')
+        log.info(`DNS '${this.dnsName}' 没有该域名的IPv4地址: ${hostname}, cost: ${cost} ms`)
       } else {
-        log.info('获取到域名地址：', hostname, JSON.stringify(ret), ', cost:', (new Date() - start), 'ms')
+        log.info(`DNS '${this.dnsName}' 获取到该域名的IPv4地址： ${hostname} ${JSON.stringify(ret)}, cost: ${cost} ms`)
       }
       return ret
     } catch (e) {
-      log.warn('DNS query error:', hostname, ', dns:', this.dnsServer, ', cost:', (new Date() - start), 'ms, error:', e)
+      log.warn(`DNS query error: ${hostname}, dns: ${this.dnsName}, dnsServer: ${this.dnsServer}, cost: ${new Date() - start} ms, error:`, e)
       return []
     }
   }

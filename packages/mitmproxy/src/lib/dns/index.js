@@ -13,11 +13,11 @@ module.exports = {
       const conf = dnsProviders[provider]
 
       if (conf.type === 'ipaddress') {
-        dnsMap[provider] = new DNSOverIpAddress(conf.server)
+        dnsMap[provider] = new DNSOverIpAddress(provider)
       } else if (conf.type === 'https') {
-        dnsMap[provider] = new DNSOverHTTPS(conf.server, preSetIpList)
+        dnsMap[provider] = new DNSOverHTTPS(provider, conf.server, preSetIpList)
       } else {
-        dnsMap[provider] = new DNSOverTLS(conf.server)
+        dnsMap[provider] = new DNSOverTLS(provider)
       }
 
       // 设置DNS名称到name属性中
