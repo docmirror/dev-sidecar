@@ -108,7 +108,7 @@ export default {
           注意：当前已打开的命令行并不会实时生效，需要重新打开一个新的命令行窗口
         </div>
       </a-form-item>
-      <a-form-item v-if="isWindows()" label="设置loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-item v-if="isWindows()" label="设置Loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-button @click="loopbackVisible = true">
           去设置
         </a-button>
