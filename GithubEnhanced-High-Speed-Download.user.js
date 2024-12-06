@@ -15,7 +15,7 @@
  * @homepageURL     https://github.com/XIU2/UserScript
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
-const ds_github_monkey_version = "2.6.9_1";
+const ds_github_monkey_version = "2.6.10_1";
 document.addEventListener("DOMContentLoaded", () => {
 	const DS_init = (window.__ds_global__ || {})['DS_init']
 	if (typeof DS_init === 'function') {
