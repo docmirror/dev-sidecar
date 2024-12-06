@@ -246,7 +246,7 @@ export default {
                 启用拦截
               </a-checkbox>
               <div class="form-help">
-                关闭拦截，且关闭功能增强时，就不需要安装根证书，退化为安全模式
+                关闭拦截，且关闭增强功能时，就不需要安装根证书，退化为安全模式
               </div>
             </a-form-item>
             <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">

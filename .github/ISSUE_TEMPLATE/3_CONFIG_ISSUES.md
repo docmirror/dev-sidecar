@@ -17,14 +17,16 @@ labels: Config Issue
   - [ ] cache
   - [ ] options
   - [ ] script
+  - [ ] requestReplace
+  - [ ] responseReplace
 - [ ] DNS设置和IP测速
 - [ ] 系统代理
 - [ ] 远程配置
 - [ ] 应用：
-  - [ ] npm加速
+  - [ ] NPM加速
   - [ ] Git代理
-  - [ ] pip加速
-  - [ ] 梯子
+  - [ ] PIP加速
+  - [ ] 增强功能
 
 ### Ⅱ. 请详细描述你的问题：
 
