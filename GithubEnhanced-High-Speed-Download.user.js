@@ -4,8 +4,8 @@
  *
  * @name            Github 增强 - 高速下载（Github油猴脚本）
  * @name:en         Github Enhancement - High Speed Download（Github Greasemonkey Script）
- * @version         2.6.9_1
- * @since           2024-10-15 14:23
+ * @version         2.6.10_1
+ * @since           2024-12-06 16:44
  * @author          X.I.U
  * @description     高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
  * @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			['https://hub.whtrys.space', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [FastGit 群组成员] 提供'],
 			['https://dgithub.xyz', '美国', '[美国 西雅图] - 该公益加速源由 [dgithub.xyz] 提供'],
 			['https://gh-proxy.ygxz.in/https://github.com', '美国', '[美国 洛杉矶] - 该公益加速源由 [@一个小站 www.ygxz.in] 提供'],
-			['https://download.ixnic.net', '美国', '[美国 洛杉矶] - 该公益加速源由 [@黃埔興國] 提供']
+			['https://download.ixnic.net', '美国', '[美国 洛杉矶] - 该公益加速源由 [@黃埔興國] 提供'],
 		], download_url = [
 			['https://ghproxy.net/https://github.com', '英国', '[英国伦敦] - 该公益加速源由 [ghproxy] 提供&#10;&#10;提示：希望大家尽量多使用美国节点（每次随机 负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~'],
 			['https://ghp.ci/https://github.com', '韩国', '[日本、韩国、新加坡、美国、德国等]（CDN 不固定） - 该公益加速源由 [ghproxy] 提供&#10;&#10;提示：希望大家尽量多使用美国节点（每次随机 负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~'],
@@ -207,17 +207,15 @@ document.addEventListener("DOMContentLoaded", () => {
 				for (const mutation of mutationsList) {
 					for (const target of mutation.addedNodes) {
 						if (target.nodeType !== 1) return
-						if (target.tagName === 'DIV' && target.parentElement.id === '__primerPortalRoot__') {
+						if (target.tagName === 'DIV' && target.parentElement && target.parentElement.id === '__primerPortalRoot__') {
 							addDownloadZIP(target);
-							if (addGitClone(target) === false) return;
-							if (addGitCloneSSH(target) === false) return;
-						} else if (target.tagName === 'DIV' && target.className.indexOf('Box-sc-') !== -1) {
+							addGitClone(target);
+							addGitCloneSSH(target);
+						} else if (target.tagName === 'DIV' && target.className.indexOf('Box-sc-') != -1) {
 							if (target.querySelector('input[value^="https:"]')) {
-								addGitCloneClear('.XIU2-GCS');
-								if (addGitClone(target) === false) return;
+								addGitCloneClear('.XIU2-GCS'); addGitClone(target);
 							} else if (target.querySelector('input[value^="git@"]')) {
-								addGitCloneClear('.XIU2-GC');
-								if (addGitCloneSSH(target) === false) return;
+								addGitCloneClear('.XIU2-GC'); addGitCloneSSH(target);
 							} else if (target.querySelector('input[value^="gh "]')) {
 								addGitCloneClear('.XIU2-GC, .XIU2-GCS');
 							}
@@ -299,12 +297,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Git Clone
 		function addGitClone(target) {
-			let html = target.querySelector('input[value^="https:"]');if (!html) return
-			if (!html.nextElementSibling) return false;
+            let html = target.querySelector('input[value^="https:"]:not([title])');if (!html) return
 			let href_split = html.value.split(location.host)[1],
 				html_parent = '<div style="margin-top: 4px;" class="XIU2-GC ' + html.parentElement.className + '">',
 				url = '', _html = '', _gitClone = '';
-			html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮（考虑到能直接点击复制，就不再重复实现复制按钮事件了）
+            if (html.nextElementSibling) html.nextElementSibling.hidden = true; // 隐藏右侧复制按钮（考虑到能直接点击复制，就不再重复实现复制按钮事件了）
 			if (html.parentElement.nextElementSibling.tagName === 'SPAN'){
 				html.parentElement.nextElementSibling.textContent += ' (↑点击上面文字可复制)'
 			}
@@ -331,8 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Git Clone SSH
 		function addGitCloneSSH(target) {
-			let html = target.querySelector('input[value^="git@"]');if (!html) return
-			if (!html.nextElementSibling) return false;
+        let html = target.querySelector('input[value^="git@"]:not([title])');if (!html) return
 			let href_split = html.value.split(':')[1],
 				html_parent = '<div style="margin-top: 4px;" class="XIU2-GCS ' + html.parentElement.className + '">',
 				url = '', _html = '', _gitClone = '';
