@@ -30,8 +30,8 @@ importers:
   packages/core:
     dependencies:
       '@starknt/sysproxy':
-        specifier: ^0.0.1
-        version: 0.0.1
+        specifier: ^0.0.2
+        version: 0.0.2
       '@vscode/sudo-prompt':
         specifier: ^9.3.1
         version: 9.3.1
@@ -73,11 +73,11 @@ importers:
         specifier: workspace:*
         version: link:../mitmproxy
       '@starknt/shutdown-handler-napi':
+        specifier: ^0.0.3
+        version: 0.0.3
+      '@starknt/sysproxy':
         specifier: ^0.0.2
         version: 0.0.2
-      '@starknt/sysproxy':
-        specifier: ^0.0.1
-        version: 0.0.1
       '@vscode/sudo-prompt':
         specifier: ^9.3.1
         version: 9.3.1
@@ -1302,84 +1302,84 @@ packages:
   '@soda/get-current-script@1.0.2':
     resolution: {integrity: sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==}
 
-  '@starknt/shutdown-handler-napi-darwin-arm64@0.0.2':
-    resolution: {integrity: sha512-OGQMm3ZVgCETB564kLPFh7oidRGmFT5e4l7XLwyn/VfgGyvbJ1pdVfPb4Fi75ZXUwvmFaWXpgNA/dgzgVq88gw==}
+  '@starknt/shutdown-handler-napi-darwin-arm64@0.0.3':
+    resolution: {integrity: sha512-OHiUW6oFxdvk8/dDzbLQklopwMak+qMkjbBS0Ja990J0rozgl2viwnkZQQlsX6ptmGiloveqTUcIe95c6ZNkeQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
 
-  '@starknt/shutdown-handler-napi-linux-arm64-gnu@0.0.2':
-    resolution: {integrity: sha512-qLDJWjlM25xEmWBjznd1yYYfvl3mhg8To35V0oI6SQ9HSYPALrqfIrGvYATaPExYuWeWf99OIhhJJ8o0XgvQaQ==}
+  '@starknt/shutdown-handler-napi-linux-arm64-gnu@0.0.3':
+    resolution: {integrity: sha512-g0WOV52y34HzIUnSl9pCY4ahlaAfyLpyscHtKGl11y9TED/0JvB0QFfp5QeAzMhHMtOjZVf89UXr+mJ5MpQJvA==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
 
-  '@starknt/shutdown-handler-napi-linux-x64-gnu@0.0.2':
-    resolution: {integrity: sha512-5ay2P6B3H8ASJuuySRehnpEYt0UFN8yvKq9gHfTTY0NIr7ot/cUNaYWG1/TUpFrkBpfGKyTvJH6iieYslyzIDg==}
+  '@starknt/shutdown-handler-napi-linux-x64-gnu@0.0.3':
+    resolution: {integrity: sha512-FouZPbEINGuYBNY4p/pAzLbH2PenL3XGxUIu788cjwiHNv8hTxTcIm8cjVpqpGOQUcXxJjedOHpeqLUROfehNw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
 
-  '@starknt/shutdown-handler-napi-win32-arm64-msvc@0.0.2':
-    resolution: {integrity: sha512-ybr9bYa+gTNh1AkSq3AguRJpp0FHMzbmnMB4MdnhuZs03GMPM2pKvH1ebCAFaBAuP/ZlafNfr5+oC6Sg3AgepA==}
+  '@starknt/shutdown-handler-napi-win32-arm64-msvc@0.0.3':
+    resolution: {integrity: sha512-FaZrau5jTmD1FgEokL3QKVKbyO4hdloRf6eMJVJVrfnNbq/Go69Lv431pH0G/QrVd3OpCJmyKvWjc6LUm4zFLw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
 
-  '@starknt/shutdown-handler-napi-win32-ia32-msvc@0.0.2':
-    resolution: {integrity: sha512-dL8Ggnj/ZlErjoL6713y90YRIB+h4tKwQw/VLPlqfWV7s2/h6NB+udny90+BFJXRccwV97C2LILdAzEep71mVg==}
+  '@starknt/shutdown-handler-napi-win32-ia32-msvc@0.0.3':
+    resolution: {integrity: sha512-QqzUKjXsUT5BM8o9CQzl7sYspARGsabZLaQlPVXi4b1w2xSjCI1NsNsTkjuLBacWZNGnA/OZoseMF1DZ+kERpA==}
     engines: {node: '>= 10'}
     cpu: [ia32]
     os: [win32]
 
-  '@starknt/shutdown-handler-napi-win32-x64-msvc@0.0.2':
-    resolution: {integrity: sha512-dUXZsmWWsPgws28FrIH9IVK2q8TB86n90YSK55nnoH3TmgdbFMhM969Hn6kKp8agtBIifavneiv5sjGvUmfgFA==}
+  '@starknt/shutdown-handler-napi-win32-x64-msvc@0.0.3':
+    resolution: {integrity: sha512-8OIiUGg75Apsqx2o40ng124UiSioauoYGuyMpIhRlt9V3KKjeS9TJAVUzbsaPnWN7kTmn7UDzFViDacY1Q94fQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
 
-  '@starknt/shutdown-handler-napi@0.0.2':
-    resolution: {integrity: sha512-HunVBQZiACZWHOerye1oL6zFGm5kRqKqRFLuHwj5oH9zKrtQ2VW0wwkeiVmMT40qOibBcsesU7Glp6Pfu4ky1w==}
+  '@starknt/shutdown-handler-napi@0.0.3':
+    resolution: {integrity: sha512-Zx2zXJeM2rCUgdbHcMFfvpvwswIuXMU1qWhqGUD1+b7Fgqoz/MM57XjjZJqqktpAfrN876haJBxxaDWIqIMIsw==}
     engines: {node: '>= 10'}
 
-  '@starknt/sysproxy-darwin-arm64@0.0.1':
-    resolution: {integrity: sha512-8o8QP888Wpe+vwfz6vbWRpO8bLcEzXAuA8j9PE6h27CmAty/P4/9zgaTXq18lBcVNGDpPdriDYcbOYN+26Q8dw==}
+  '@starknt/sysproxy-darwin-arm64@0.0.2':
+    resolution: {integrity: sha512-ZSKm8FBWJJv//Ypc513A7+hqG6GQxFmxsHX+tgclvwKK7S0tNgaMgCdKjQ5rCDWTJufDq6BE3QPmSlUfeukD2Q==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
 
-  '@starknt/sysproxy-linux-arm64-gnu@0.0.1':
-    resolution: {integrity: sha512-dfoga7fITnYbgurCfheWKAhru9/kEf4MMmjkHjVRUgbsp517Smulj6BC01f4xphsAbZsBaSPyln4Q8rjhb64lQ==}
+  '@starknt/sysproxy-linux-arm64-gnu@0.0.2':
+    resolution: {integrity: sha512-WedSH4rsD30hKfcEqV+zF2GJc0q545WAKDMaXtMMRrRJZcOy9IFFRajkOuo+1TFzlPqjF/edsjLa294FcYWMIw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
 
-  '@starknt/sysproxy-linux-x64-gnu@0.0.1':
-    resolution: {integrity: sha512-v6lJeOpGPfVGp52H0fmirlgM1OWgSJ7xJatakiw3Vh9J07F9137Jb3RaL0CYCXup4JYA7H0MtCgGN0uzxAVz8w==}
+  '@starknt/sysproxy-linux-x64-gnu@0.0.2':
+    resolution: {integrity: sha512-/rSsvLOmCjkwYqzJqkq7Y31X3D1FneZiAG4HBcr9/wjSiuXq6beUiRAe6X5mjc2LisvFOZPPHd7zIHytplyGEw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
 
-  '@starknt/sysproxy-win32-arm64-msvc@0.0.1':
-    resolution: {integrity: sha512-MSP07YYX2ETwZ0UryD2zMp/UiDFLvOqFKHBY2u8C5KRXSw/HQhnVqK79BzOhlvD76u15RNIrqXOUiRSibQaD3A==}
+  '@starknt/sysproxy-win32-arm64-msvc@0.0.2':
+    resolution: {integrity: sha512-iaUI/9i47LhIKh5XR/tLA6GovPevR3joYSsa4ZBj17uS/B+epli35iSf+QpCwdviXSXTWQqPlEZNeS3hVz/Jhg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
 
-  '@starknt/sysproxy-win32-ia32-msvc@0.0.1':
-    resolution: {integrity: sha512-Yo9LpUX51MVujEXi7X1lboa2g8jw/YmhuTTE6tAbBIXOm/7Yg4LlaU1JjS1LmalMr7I/3osb7btAyt//tUfJ7Q==}
+  '@starknt/sysproxy-win32-ia32-msvc@0.0.2':
+    resolution: {integrity: sha512-gpKNYN79rVY6YKwEGouFKjMoShh24peK67BkgaGGmlKx9t/Uv3qkzdfFRuqnYumZQt4MVB8wFHMBDgn/M/Jh0g==}
     engines: {node: '>= 10'}
     cpu: [ia32]
     os: [win32]
 
-  '@starknt/sysproxy-win32-x64-msvc@0.0.1':
-    resolution: {integrity: sha512-gjpSEpiq9S1KPdGbY02AA4nlWeH/HyfxMJaqjy7xXEBskb0Vb3teCtke+FH9olErnvOdkKcyT4Dp5UK1dMDv/Q==}
+  '@starknt/sysproxy-win32-x64-msvc@0.0.2':
+    resolution: {integrity: sha512-DUaRzGu7I9CpTKterqsHPzfYgwsdh7eAxOBfmF9/K100KDHYf57sRhfUVTZfDTqBz0jVmxYBX/tIYkqhlf5ldA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
 
-  '@starknt/sysproxy@0.0.1':
-    resolution: {integrity: sha512-oOGGSs/wRZXbIlK4wokD3fGK5f7QRfY49XbZEhsBUx5ClNG0JrJVB/mGaJ1y7rVZuTh6pWMj5g19atZE1z1oYQ==}
+  '@starknt/sysproxy@0.0.2':
+    resolution: {integrity: sha512-pb5+FcRV6H60maLwTZxwGWD6lw9DM5FsPaQ5TzovSTwqigwBSv1YsQ5jUdm/hXjdALW9tjLVpYwOtO1Ft371ng==}
     engines: {node: '>= 10'}
 
   '@stylistic/eslint-plugin@2.10.1':
@@ -8422,59 +8422,59 @@ snapshots:
 
   '@soda/get-current-script@1.0.2': {}
 
-  '@starknt/shutdown-handler-napi-darwin-arm64@0.0.2':
+  '@starknt/shutdown-handler-napi-darwin-arm64@0.0.3':
     optional: true
 
-  '@starknt/shutdown-handler-napi-linux-arm64-gnu@0.0.2':
+  '@starknt/shutdown-handler-napi-linux-arm64-gnu@0.0.3':
     optional: true
 
-  '@starknt/shutdown-handler-napi-linux-x64-gnu@0.0.2':
+  '@starknt/shutdown-handler-napi-linux-x64-gnu@0.0.3':
     optional: true
 
-  '@starknt/shutdown-handler-napi-win32-arm64-msvc@0.0.2':
+  '@starknt/shutdown-handler-napi-win32-arm64-msvc@0.0.3':
     optional: true
 
-  '@starknt/shutdown-handler-napi-win32-ia32-msvc@0.0.2':
+  '@starknt/shutdown-handler-napi-win32-ia32-msvc@0.0.3':
     optional: true
 
-  '@starknt/shutdown-handler-napi-win32-x64-msvc@0.0.2':
+  '@starknt/shutdown-handler-napi-win32-x64-msvc@0.0.3':
     optional: true
 
-  '@starknt/shutdown-handler-napi@0.0.2':
+  '@starknt/shutdown-handler-napi@0.0.3':
     optionalDependencies:
-      '@starknt/shutdown-handler-napi-darwin-arm64': 0.0.2
-      '@starknt/shutdown-handler-napi-linux-arm64-gnu': 0.0.2
-      '@starknt/shutdown-handler-napi-linux-x64-gnu': 0.0.2
-      '@starknt/shutdown-handler-napi-win32-arm64-msvc': 0.0.2
-      '@starknt/shutdown-handler-napi-win32-ia32-msvc': 0.0.2
-      '@starknt/shutdown-handler-napi-win32-x64-msvc': 0.0.2
+      '@starknt/shutdown-handler-napi-darwin-arm64': 0.0.3
+      '@starknt/shutdown-handler-napi-linux-arm64-gnu': 0.0.3
+      '@starknt/shutdown-handler-napi-linux-x64-gnu': 0.0.3
+      '@starknt/shutdown-handler-napi-win32-arm64-msvc': 0.0.3
+      '@starknt/shutdown-handler-napi-win32-ia32-msvc': 0.0.3
+      '@starknt/shutdown-handler-napi-win32-x64-msvc': 0.0.3
 
-  '@starknt/sysproxy-darwin-arm64@0.0.1':
+  '@starknt/sysproxy-darwin-arm64@0.0.2':
     optional: true
 
-  '@starknt/sysproxy-linux-arm64-gnu@0.0.1':
+  '@starknt/sysproxy-linux-arm64-gnu@0.0.2':
     optional: true
 
-  '@starknt/sysproxy-linux-x64-gnu@0.0.1':
+  '@starknt/sysproxy-linux-x64-gnu@0.0.2':
     optional: true
 
-  '@starknt/sysproxy-win32-arm64-msvc@0.0.1':
+  '@starknt/sysproxy-win32-arm64-msvc@0.0.2':
     optional: true
 
-  '@starknt/sysproxy-win32-ia32-msvc@0.0.1':
+  '@starknt/sysproxy-win32-ia32-msvc@0.0.2':
     optional: true
 
-  '@starknt/sysproxy-win32-x64-msvc@0.0.1':
+  '@starknt/sysproxy-win32-x64-msvc@0.0.2':
     optional: true
 
-  '@starknt/sysproxy@0.0.1':
+  '@starknt/sysproxy@0.0.2':
     optionalDependencies:
-      '@starknt/sysproxy-darwin-arm64': 0.0.1
-      '@starknt/sysproxy-linux-arm64-gnu': 0.0.1
-      '@starknt/sysproxy-linux-x64-gnu': 0.0.1
-      '@starknt/sysproxy-win32-arm64-msvc': 0.0.1
-      '@starknt/sysproxy-win32-ia32-msvc': 0.0.1
-      '@starknt/sysproxy-win32-x64-msvc': 0.0.1
+      '@starknt/sysproxy-darwin-arm64': 0.0.2
+      '@starknt/sysproxy-linux-arm64-gnu': 0.0.2
+      '@starknt/sysproxy-linux-x64-gnu': 0.0.2
+      '@starknt/sysproxy-win32-arm64-msvc': 0.0.2
+      '@starknt/sysproxy-win32-ia32-msvc': 0.0.2
+      '@starknt/sysproxy-win32-x64-msvc': 0.0.2
 
   '@stylistic/eslint-plugin@2.10.1(eslint@9.15.0)(typescript@5.6.3)':
     dependencies:
