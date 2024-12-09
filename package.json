@@ -13,5 +13,11 @@
     "@antfu/eslint-config": "^3.9.1",
     "eslint": "^9.15.0",
     "eslint-plugin-format": "^0.1.2"
+  },
+  "pnpm": {
+    "supportedArchitectures": {
+      "os": ["current"],
+      "cpu": ["x64", "arm64", "ia32"]
+    }
   }
 }

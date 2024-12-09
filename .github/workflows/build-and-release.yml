@@ -95,9 +95,9 @@ jobs:
           dir || ls -lah;
 
           echo "======================================================================";
-          echo "pnpm install --force";
+          echo "pnpm install";
           echo "--------------------";
-          pnpm install --force;
+          pnpm install;
 
       - name: 'npm run electron:build'
         run: |
