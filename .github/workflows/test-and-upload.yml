@@ -6,7 +6,6 @@ on:
       - master
       - 1.x
       - test
-      - release*
   pull_request:
     branches:
       - master
