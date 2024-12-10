@@ -66,7 +66,7 @@ export default {
 <template>
   <ds-container>
     <template slot="header">
-      Git代理设置
+      Git.exe代理设置
       <span style="color:#999;">
         仅针对git命令行的代理设置，github网站的访问无需设置
       </span>
