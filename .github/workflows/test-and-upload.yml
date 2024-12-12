@@ -12,7 +12,7 @@ on:
       - 1.x
 
 jobs:
-  test-and-upload:
+  test-and-and-upload:
     runs-on: ${{ matrix.os }}-latest
     env:
       ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
@@ -115,73 +115,99 @@ jobs:
           echo "--------------------";
           npm run electron:build;
 
+      - name: 'Print dir "packages/gui/dist_electron/"'
+        run: |
           echo "======================================================================";
-          echo "cd dist_electron";
+          echo "cd packages/gui/dist_electron";
           echo "--------------------";
-          cd dist_electron;
+          cd packages/gui/dist_electron;
           dir || ls -lah;
 
-          echo "======================================================================";
-          echo "cd ../../../";
-          echo "--------------------";
-          cd ../../../;
-          dir || ls -lah;
+      # Rename artifacts
+      - name: 'Rename artifacts - Windows'
+        if: ${{ matrix.os == 'windows' }}
+        run: |
+          cd packages/gui/dist_electron;
+          ren DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe  DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe;
+          ren DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe   DevSidecar-${{ steps.package-info.outputs.version }}-windows-x64.exe;
+          ren DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe;
+          dir;
+      - name: 'Rename artifacts - Linux'
+        if: ${{ matrix.os == 'ubuntu' }}
+        run: |
+          cd packages/gui/dist_electron;
+          mv DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-amd64.deb;
+          mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb;
+          mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage;
+          mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage  DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage;
+          ls -lah;
+      - name: 'Rename artifacts - macOS'
+        if: ${{ matrix.os == 'macos' }}
+        run: |
+          cd packages/gui/dist_electron;
+          mv DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg  DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg;
+          ls -lah;
 
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe - Windows'
+      #region Upload artifacts - Windows
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe'
           if-no-files-found: error
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe - Windows'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-windows-x64.exe'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-windows-x64.exe
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-windows-x64.exe'
           if-no-files-found: error
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe - Windows'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe'
           if-no-files-found: error
+      #endregion Upload artifacts - Windows
 
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb - Ubuntu'
+      #region Upload artifacts - Linux
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-amd64.deb'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-amd64.deb
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-amd64.deb'
           if-no-files-found: error
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb - Ubuntu'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb'
           if-no-files-found: error
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage - Ubuntu'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage'
           if-no-files-found: error
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage - Ubuntu'
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage'
           if-no-files-found: error
+      #endregion Upload artifacts - Linux
 
-      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg - Mac'
+      # Upload artifacts - macOS
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'macos' }}
         with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg'
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg'
           if-no-files-found: error
