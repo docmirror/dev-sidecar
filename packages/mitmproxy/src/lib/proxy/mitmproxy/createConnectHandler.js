@@ -39,7 +39,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
       // 需要拦截，代替目标服务器，让客户端连接DS在本地启动的代理服务
       fakeServerCenter.getServerPromise(hostname, port, ssl, compatibleConfig).then((serverObj) => {
         log.info(`----- fakeServer connect: ${localIP}:${serverObj.port} ➜ ${req.url} -----`)
-        connect(req, cltSocket, head, localIP, serverObj.port)
+        connect(req, cltSocket, head, localIP, serverObj.port, null, false, hostname)
       }, (e) => {
         log.error(`----- fakeServer getServerPromise error: ${hostname}:${port}, error:`, e)
       }).catch((e) => {
@@ -52,19 +52,23 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
   }
 }
 
-function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDirect = false) {
+function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDirect = false, target = null) {
   // tunneling https
   // log.info('connect:', hostname, port)
   const start = new Date()
   const isDnsIntercept = {}
   const hostport = `${hostname}:${port}`
+
+  // 用于记录日志
+  const connectInfo = isDirect ? hostport : `fakeServer: ${hostport}, target: ${target}`
+
   try {
     // 客户端的连接事件监听
     cltSocket.on('timeout', (e) => {
-      log.error(`cltSocket timeout: ${hostport}, errorMsg: ${e.message}`)
+      log.error(`cltSocket timeout: ${connectInfo}, errorMsg: ${e.message}`)
     })
     cltSocket.on('error', (e) => {
-      log.error(`cltSocket error:   ${hostport}, errorMsg: ${e.message}`)
+      log.error(`cltSocket error:   ${connectInfo}, errorMsg: ${e.message}`)
     })
     // 开发过程中，如有需要可以将此参数临时改为true，打印所有事件的日志
     const printDebugLog = false && process.env.NODE_ENV === 'development'
@@ -76,27 +80,27 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
         log.debug('【cltSocket connect】')
       })
       cltSocket.on('connectionAttempt', (ip, port, family) => {
-        log.debug(`【cltSocket connectionAttempt】${ip}:${port}, family:`, family)
+        log.debug(`【cltSocket connectionAttempt】${ip}:${port}: ${connectInfo}, family:`, family)
       })
       cltSocket.on('connectionAttemptFailed', (ip, port, family) => {
-        log.debug(`【cltSocket connectionAttemptFailed】${ip}:${port}, family:`, family)
+        log.debug(`【cltSocket connectionAttemptFailed】${ip}:${port}: ${connectInfo}, family:`, family)
       })
       cltSocket.on('connectionAttemptTimeout', (ip, port, family) => {
-        log.debug(`【cltSocket connectionAttemptTimeout】${ip}:${port}, family:`, family)
+        log.debug(`【cltSocket connectionAttemptTimeout】${ip}:${port}: ${connectInfo}, family:`, family)
       })
       cltSocket.on('data', (data) => {
-        log.debug('【cltSocket data】')
+        log.debug(`【cltSocket data】${connectInfo}`)
       })
       cltSocket.on('drain', () => {
-        log.debug('【cltSocket drain】')
+        log.debug(`【cltSocket drain】${connectInfo}`)
       })
       cltSocket.on('end', () => {
-        log.debug('【cltSocket end】')
+        log.debug(`【cltSocket end】${connectInfo}`)
       })
       // cltSocket.on('lookup', (err, address, family, host) => {
       // })
       cltSocket.on('ready', () => {
-        log.debug('【cltSocket ready】')
+        log.debug(`【cltSocket ready】${connectInfo}`)
       })
     }
 
@@ -116,7 +120,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
     // 代理连接事件监听
     const proxySocket = net.connect(options, () => {
       if (!isDirect) {
-        log.info('Proxy connect start:', hostport)
+        log.info(`Proxy connect start: ${hostport}`)
       } else {
         log.debug('Direct connect start:', hostport)
       }
