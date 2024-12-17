@@ -44,8 +44,15 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Get package info
+        id: package-info
+        uses: luizfelipelaviola/get-package-info@v1
+        with:
+          path: ./packages/mitmproxy
+
       - name: Print
         run: |
+          echo "version = ${{ steps.package-info.outputs.version }}";
           echo "github.ref_type = ${{ github.ref_type }}";
           echo "github.ref = ${{ github.ref }}";
           echo "github.ref_name = ${{ github.ref_name }}";
