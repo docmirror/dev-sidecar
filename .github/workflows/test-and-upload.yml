@@ -12,7 +12,7 @@ on:
       - 1.x
 
 jobs:
-  test-and-and-upload:
+  test-and-upload:
     runs-on: ${{ matrix.os }}-latest
     env:
       ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
