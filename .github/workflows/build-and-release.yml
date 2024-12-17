@@ -45,7 +45,7 @@ jobs:
 
       - name: Get package info
         id: package-info
-        uses: luizfelipelaviola/get-package-info@v1
+        uses: luizfelipelaviola/get-package-info@v2
         with:
           path: ./packages/mitmproxy
 
@@ -221,7 +221,7 @@ jobs:
 
       - name: Get package info
         id: package-info
-        uses: luizfelipelaviola/get-package-info@v1
+        uses: luizfelipelaviola/get-package-info@v2
         with:
           path: ./packages/mitmproxy
 
