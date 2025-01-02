@@ -9,10 +9,9 @@ const dohQueryAsync = promisify(doh.query)
 function mapToList (ipMap) {
   const ipList = []
   for (const key in ipMap) {
-    if (!ipMap[key]) {
-      continue
+    if (ipMap[key]) { // 配置为 ture 时才生效
+      ipList.push(key)
     }
-    ipList.push(key)
   }
   return ipList
 }
