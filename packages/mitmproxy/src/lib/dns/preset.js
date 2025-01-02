@@ -7,7 +7,7 @@ function mapToList (ipMap) {
     if (!ipMap[key]) {
       continue
     }
-    ipList.push(ipMap[key])
+    ipList.push(key)
   }
   return ipList
 }
