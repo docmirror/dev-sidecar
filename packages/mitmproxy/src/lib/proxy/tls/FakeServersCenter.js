@@ -9,13 +9,24 @@ const compatible = require('../compatible/compatible')
 
 const pki = forge.pki
 
-function arraysHaveSameElements (arr1, arr2) {
-  if (arr1.length !== arr2.length) {
-    return false
+// 获取DNS名称
+function getDnsName (hostname) {
+  if (!hostname.includes('.')) {
+    return hostname // 可能是IPv6地址，直接返回
   }
-  const sortedArr1 = [...arr1].sort()
-  const sortedArr2 = [...arr2].sort()
-  return sortedArr1.every((value, index) => value === sortedArr2[index])
+
+  // 判断是否为IP
+  if (hostname.match(/\b(25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\b){3}/g)) {
+    return hostname // 为IP，直接返回
+  }
+
+  // 判断是否是一级域名
+  if (hostname.indexOf('.') === hostname.lastIndexOf('.')) {
+    return `*.${hostname}`
+  }
+
+  // 获取域名
+  return `*${hostname.substring(hostname.indexOf('.'))}`
 }
 
 module.exports = class FakeServersCenter {
@@ -35,7 +46,7 @@ module.exports = class FakeServersCenter {
     if (this.queue.length >= this.maxLength) {
       const delServerObj = this.queue.shift()
       try {
-        log.info('超过最大服务数量，删除旧服务。delServerObj:', delServerObj)
+        log.info(`超过最大服务数量${this.maxLength}，删除旧服务。delServerObj:`, delServerObj)
         delServerObj.serverObj.server.close()
       } catch (e) {
         log.error('`delServerObj.serverObj.server.close()` error:', e)
@@ -66,26 +77,35 @@ module.exports = class FakeServersCenter {
           const DNSName = mappingHostNames[j]
           if (tlsUtils.isMappingHostName(DNSName, hostname)) {
             this.reRankServer(i)
-            log.info(`Load promise from cache, hostname: ${hostname}:${port}, ssl: ${ssl}, serverPromiseObj: {"ssl":${serverPromiseObj.ssl},"port":${serverPromiseObj.port},"mappingHostNames":${JSON.stringify(serverPromiseObj.mappingHostNames)}}`)
+            log.info(`Load fakeServerPromise from cache, hostname: ${hostname}:${port}, ssl: ${ssl}, serverPromiseObj: {"ssl":${serverPromiseObj.ssl},"port":${serverPromiseObj.port},"mappingHostNames":${JSON.stringify(serverPromiseObj.mappingHostNames)}}`)
             return serverPromiseObj.promise
           }
         }
       }
     }
 
+    const dnsName = getDnsName(hostname)
+    const mappingHostNames = [dnsName]
+    if (dnsName.startsWith('*.')) {
+      mappingHostNames.push(dnsName.replace('*.', ''))
+    }
+
     const serverPromiseObj = {
       port,
       ssl,
-      mappingHostNames: [hostname], // temporary hostname
+      mappingHostNames,
     }
 
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, _reject) => {
       (async () => {
         let fakeServer
         let cert
         let key
+
+        log.info(`【CreateFakeServer】hostname: ${hostname}:${port}, ssl: ${ssl}, protocol: ${ssl ? 'https' : 'http'}`)
+
         if (ssl) {
-          const certObj = await this.certAndKeyContainer.getCertPromise(hostname, port)
+          const certObj = await this.certAndKeyContainer.getCertPromise(hostname, port, dnsName, mappingHostNames)
           cert = certObj.cert
           key = certObj.key
           const certPem = pki.certificateToPem(cert)
@@ -95,7 +115,6 @@ module.exports = class FakeServersCenter {
             cert: certPem,
             SNICallback: (hostname, done) => {
               (async () => {
-                const certObj = await this.certAndKeyContainer.getCertPromise(hostname, port)
                 log.info(`fakeServer SNICallback: ${hostname}:${port}`)
                 done(null, tls.createSecureContext({
                   key: pki.privateKeyToPem(certObj.key),
@@ -115,7 +134,7 @@ module.exports = class FakeServersCenter {
         }
         serverPromiseObj.serverObj = serverObj
 
-        const printDebugLog = false && process.env.NODE_ENV === 'development' // 开发过程中，如有需要可以将此参数临时改为true，打印所有事件的日志
+        const printDebugLog = process.env.NODE_ENV === 'development' && false // 开发过程中，如有需要可以将此参数临时改为true，打印所有事件的日志
         fakeServer.listen(0, () => {
           const address = fakeServer.address()
           serverObj.port = address.port
@@ -126,19 +145,9 @@ module.exports = class FakeServersCenter {
           }
           this.requestHandler(req, res, ssl)
         })
-        let once = true
         fakeServer.on('listening', () => {
           if (printDebugLog) {
             log.debug(`【fakeServer listening - ${hostname}:${port}】no arguments...`)
-          }
-          if (cert && once) {
-            once = false
-            let newMappingHostNames = tlsUtils.getMappingHostNamesFromCert(cert)
-            newMappingHostNames = [...new Set(newMappingHostNames)]
-            if (!arraysHaveSameElements(serverPromiseObj.mappingHostNames, newMappingHostNames)) {
-              log.info(`【fakeServer listening - ${hostname}:${port}】Reset mappingHostNames: `, serverPromiseObj.mappingHostNames, '变更为', newMappingHostNames)
-              serverPromiseObj.mappingHostNames = newMappingHostNames
-            }
           }
           resolve(serverObj)
         })
@@ -155,7 +164,7 @@ module.exports = class FakeServersCenter {
         fakeServer.on('error', (e) => {
           log.error(`【fakeServer error - ${hostname}:${port}】\r\n----- error -----\r\n`, e)
         })
-        fakeServer.on('clientError', (err, socket) => {
+        fakeServer.on('clientError', (err, _socket) => {
           // log.error(`【fakeServer clientError - ${hostname}:${port}】\r\n----- error -----\r\n`, err, '\r\n----- socket -----\r\n', socket)
           log.error(`【fakeServer clientError - ${hostname}:${port}】\r\n`, err)
 
@@ -171,7 +180,7 @@ module.exports = class FakeServersCenter {
           }
         })
         if (ssl) {
-          fakeServer.on('tlsClientError', (err, tlsSocket) => {
+          fakeServer.on('tlsClientError', (err, _tlsSocket) => {
             if (err.code === 'ECONNRESET' || err.code === 'ETIMEDOUT') {
               return // 在tlsClientError事件中，以上异常不记录日志
             }
@@ -219,8 +228,9 @@ module.exports = class FakeServersCenter {
     })
 
     serverPromiseObj.promise = promise
+    this.addServerPromise(serverPromiseObj)
 
-    return (this.addServerPromise(serverPromiseObj)).promise
+    return promise
   }
 
   reRankServer (index) {
