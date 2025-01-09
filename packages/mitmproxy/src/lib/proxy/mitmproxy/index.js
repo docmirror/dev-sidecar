@@ -83,7 +83,7 @@ module.exports = {
     )
 
     // 创建监听方法，用于监听 http 和 https 两个端口
-    const printDebugLog = false && process.env.NODE_ENV === 'development' // 开发过程中，如有需要可以将此参数临时改为true，打印所有事件的日志
+    const printDebugLog = process.env.NODE_ENV === 'development' && false // 开发过程中，如有需要可以将此参数临时改为true，打印所有事件的日志
     const serverListen = (server, ssl, port, host) => {
       server.listen(port, host, () => {
         log.info(`dev-sidecar启动 ${ssl ? 'https' : 'http'} 端口: ${host}:${port}`)

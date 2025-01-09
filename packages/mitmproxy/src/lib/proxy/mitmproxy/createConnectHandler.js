@@ -71,7 +71,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
       log.error(`cltSocket error:   ${connectInfo}, errorMsg: ${e.message}`)
     })
     // 开发过程中，如有需要可以将此参数临时改为true，打印所有事件的日志
-    const printDebugLog = false && process.env.NODE_ENV === 'development'
+    const printDebugLog = process.env.NODE_ENV === 'development' && false
     if (printDebugLog) {
       cltSocket.on('close', (hadError) => {
         log.debug('【cltSocket close】', hadError)
@@ -88,7 +88,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
       cltSocket.on('connectionAttemptTimeout', (ip, port, family) => {
         log.debug(`【cltSocket connectionAttemptTimeout】${ip}:${port}: ${connectInfo}, family:`, family)
       })
-      cltSocket.on('data', (data) => {
+      cltSocket.on('data', (_data) => {
         log.debug(`【cltSocket data】${connectInfo}`)
       })
       cltSocket.on('drain', () => {
@@ -177,7 +177,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
       proxySocket.on('connectionAttemptTimeout', (ip, port, family) => {
         log.debug(`【proxySocket connectionAttemptTimeout】${ip}:${port}, family:`, family)
       })
-      proxySocket.on('data', (data) => {
+      proxySocket.on('data', (_data) => {
         log.debug('【proxySocket data】')
       })
       proxySocket.on('drain', () => {
