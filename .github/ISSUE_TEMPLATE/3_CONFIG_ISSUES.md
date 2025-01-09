@@ -34,6 +34,10 @@ labels: Config Issue
 
 <!-- 请将 'running.json' 文件的内容粘贴在这里，方便我们排查问题是否由配置错误导致。 -->
 
+<details>
+<summary>点击查看运行参数</summary>
+
 ```json
 
 ```
+</details>

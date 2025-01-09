@@ -25,14 +25,22 @@ labels: Bug
 
 ### Ⅴ. 请提供相关的错误日志，尽可能的详细：（日志文件在 `${user.home}/.dev-sidecar/logs/` 目录下）
 
+<details>
+<summary>点击查看日志</summary>
+
 ```log
 
 ```
+</details>
 
 ### Ⅵ. 有必要时，请提供 `${user.home}/.dev-sidecar/running.json` 文件内容：
 
 <!-- 请将 'running.json' 文件的内容粘贴在这里，方便我们排查问题是否由配置错误导致。 -->
 
+<details>
+<summary>点击查看运行参数</summary>
+
 ```json
 
 ```
+</details>
