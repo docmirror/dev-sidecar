@@ -144,11 +144,6 @@ module.exports = {
           desc: '仓库内脚本，重定向改为代理，并设置响应头Content-Type。作用：方便script拦截器直接使用，避免引起跨域问题和脚本内容限制问题。',
         },
       },
-      'github-releases.githubusercontent.com': {
-        '.*': {
-          sni: 'baidu.com',
-        },
-      },
       'github.githubassets.com': {
         '.*': {
           sni: 'baidu.com',
@@ -159,9 +154,6 @@ module.exports = {
           cacheDays: 365,
           desc: '图片，缓存1年',
         },
-        '.*': {
-          sni: 'baidu.com',
-        },
       },
       'collector.github.com': {
         '.*': {
@@ -171,33 +163,20 @@ module.exports = {
       'customer-stories-feed.github.com': {
         '.*': { proxy: 'customer-stories-feed.fastgit.org' },
       },
-      'raw.githubusercontent.com': {
-        '.*': {
-          sni: 'baidu.com',
-        },
-      },
       'user-images.githubusercontent.com': {
-        '.*': {
-          sni: 'baidu.com',
-        },
         '^/.*\\.png(\\?.*)?$': {
           cacheDays: 365,
           desc: '用户在PR或issue等内容中上传的图片，缓存1年。注：每张图片都有唯一的ID，不会重复，可以安心缓存',
         },
       },
       'private-user-images.githubusercontent.com': {
-        '.*': {
-          sni: 'baidu.com',
-        },
         '^/.*\\.png(\\?.*)?$': {
-          cacheHours: 1,
-          desc: '用户在PR或issue等内容中上传的图片，缓存1小时就够了，因为每次刷新页面都是不一样的链接。',
+          cacheDays: 30,
+          cacheHours: null,
+          desc: '用户在PR或issue等内容中上传的图片，缓存30天',
         },
       },
       'avatars.githubusercontent.com': {
-        '.*': {
-          sni: 'baidu.com',
-        },
         '^/u/\\d+(\\?.*)?$': {
           cacheDays: 365,
           desc: '用户头像，缓存1年',
@@ -244,8 +223,7 @@ module.exports = {
       },
       'fonts.googleapis.com': {
         '.*': {
-          proxy: 'fonts.geekzu.org',
-          backup: ['fonts.loli.net'],
+          proxy: 'fonts.loli.net',
           test: 'https://fonts.googleapis.com/css?family=Oswald',
         },
       },
@@ -336,22 +314,51 @@ module.exports = {
         '140.82.121.9': true,
       },
       '*.githubusercontent.com': {
-        '185.199.108.133': true,
-        '185.199.109.133': true,
-        '185.199.110.133': true,
-        '185.199.111.133': true,
+        '146.75.92.133': true,
+        '199.232.88.133': true,
+        '199.232.144.133': true,
       },
-      'github.githubassets.com': {
-        '185.199.108.154': true,
-        '185.199.109.154': true,
-        '185.199.110.154': true,
-        '185.199.111.154': true,
+      'viewscreen.githubusercontent.com': {
+        '140.82.112.21': true,
+        '140.82.112.22': true,
+        '140.82.113.21': true,
+        '140.82.113.22': true,
+        '140.82.114.21': true,
+        '140.82.114.22': true,
       },
       'github.io': {
         '185.199.108.153': true,
         '185.199.109.153': true,
         '185.199.110.153': true,
         '185.199.111.153': true,
+      },
+      '*.githubassets.com': {
+        '185.199.108.154': true,
+        '185.199.109.154': true,
+        '185.199.110.154': true,
+        '185.199.111.154': true,
+      },
+      '^(analytics|ghcc)\\.githubassets\\.com$': {
+        '185.199.108.153': true,
+        '185.199.110.153': true,
+        '185.199.109.153': true,
+        '185.199.111.153': true,
+      },
+      '*.pixiv.net': {
+        // 以下为 `cdn-origin.pixiv.net` 域名的IP
+        '210.140.139.154': true,
+        '210.140.139.157': true,
+        '210.140.139.160': true,
+      },
+      'hub.docker.com': {
+        '44.221.37.199': true,
+        '52.44.227.212': true,
+        '54.156.140.159': true,
+      },
+      'sessions-bugsnag.docker.com': {
+        '44.221.37.199': true,
+        '52.44.227.212': true,
+        '54.156.140.159': true,
       },
     },
     whiteList: {
