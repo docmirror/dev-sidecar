@@ -87,7 +87,7 @@ export default {
           </a-layout-content>
           <a-layout-footer>
             <div class="footer">
-              ©2020-2024 docmirror.cn by Greper, WangLiang  <span>{{ info.version }}</span>
+              ©2020-2024 docmirror.cn by Greper, WangLiang  <span>{{ info.version }}-RC2</span>
             </div>
           </a-layout-footer>
         </a-layout>
