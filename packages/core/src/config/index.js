@@ -69,6 +69,10 @@ module.exports = {
 
       // 慢速IP延迟时间：测速超过该值时，则视为延迟高，显示为橙色
       lowSpeedDelay: 200,
+
+      // 日志相关配置
+      logFileSavePath: path.join(getUserBasePath(), '/logs'), // 日志文件保存路径
+      keepLogFileCount: 15, // 保留日志文件数
     },
     compatible: {
       // **** 自定义兼容配置 **** //
