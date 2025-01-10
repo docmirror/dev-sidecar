@@ -3,7 +3,7 @@ const request = require('request')
 
 const options = {
   url: 'https://raw.githubusercontent.com/docmirror/dev-sidecar/refs/heads/master/packages/core/src/config/remote_config.json5',
-  // url: 'https://gitee.com/wangliang181230/dev-sidecar/raw/docmirror/packages/core/src/config/remote_config.json5',
+  // url: 'https://gitee.com/wangliang181230/dev-sidecar/raw/docmirror2.x/packages/core/src/config/remote_config.json',
   servername: 'baidu.com',
   agent: new HttpsAgent({
     keepAlive: true,
