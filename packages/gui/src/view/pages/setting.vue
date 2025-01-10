@@ -451,11 +451,18 @@ export default {
         </div>
       </a-form-item>
       <hr>
-      <a-form-item label="日志文件保存路径" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.server.setting.logFileSavePath" />
+      <a-form-item label="日志文件保存目录" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-input v-model="config.app.logFileSavePath" />
+        <div class="form-help">
+          修改后，重启DS才生效！<br>
+          注意：原目录中的文件不会自动转移到新的目录，请自行转移或删除。
+        </div>
       </a-form-item>
       <a-form-item label="保留日志文件数" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number v-model="config.server.setting.keepLogFileCount" :step="1" :min="0" />
+        <a-input-number v-model="config.app.keepLogFileCount" :step="1" :min="0" />
+        <div class="form-help">
+          修改后，重启DS才生效！
+        </div>
       </a-form-item>
     </div>
     <template slot="footer">

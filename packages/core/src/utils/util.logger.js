@@ -1,19 +1,19 @@
 const path = require('node:path')
 const log4js = require('log4js')
-const config = require('../config/index')
+const configFromFiles = require('../config/index').configFromFiles
 
 const level = process.env.NODE_ENV === 'development' ? 'debug' : 'info'
 
 function getDefaultConfigBasePath () {
-  if (config.server.setting.logFileSavePath) {
-    let logFileSavePath = config.server.setting.logFileSavePath
+  if (configFromFiles.app.logFileSavePath) {
+    let logFileSavePath = configFromFiles.app.logFileSavePath
     if (logFileSavePath.endsWith('/') || logFileSavePath.endsWith('\\')) {
       logFileSavePath = logFileSavePath.slice(0, -1)
     }
     // eslint-disable-next-line no-template-curly-in-string
-    return logFileSavePath.replace('${userBasePath}', config.server.setting.userBasePath)
+    return logFileSavePath.replace('${userBasePath}', configFromFiles.server.setting.userBasePath)
   } else {
-    return path.join(config.server.setting.userBasePath, '/logs')
+    return path.join(configFromFiles.server.setting.userBasePath, '/logs')
   }
 }
 
@@ -23,7 +23,7 @@ const guiLogFilename = path.join(getDefaultConfigBasePath(), '/gui.log')
 const serverLogFilename = path.join(getDefaultConfigBasePath(), '/server.log')
 
 // 日志相关配置
-const backups = config.server.setting.keepLogFileCount // 保留日志文件数
+const backups = configFromFiles.app.keepLogFileCount // 保留日志文件数
 const appenderConfig = {
   type: 'file',
   pattern: 'yyyy-MM-dd',

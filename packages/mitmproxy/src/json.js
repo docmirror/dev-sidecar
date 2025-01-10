@@ -1,5 +1,4 @@
 let JSON5 = require('json5')
-const log = require('./utils/util.log')
 
 if (JSON5.default) {
   JSON5 = JSON5.default
@@ -17,11 +16,10 @@ module.exports = {
   stringify2 (obj) {
     try {
       return JSON.stringify(obj)
-    } catch (e) {
+    } catch {
       try {
         return JSON5.stringify(obj)
-      } catch (e2) {
-        log.debug('转换为JSON字符串失败, error:', e, ', obj:', obj)
+      } catch {
         return obj
       }
     }

@@ -6,6 +6,7 @@ import lodash from 'lodash'
 
 const jsonApi = require('@docmirror/mitmproxy/src/json')
 const pk = require('../../../package.json')
+const configFromFiles = require('@docmirror/dev-sidecar/src/config/index.js').configFromFiles
 const log = require('../../utils/util.log')
 
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
@@ -49,6 +50,9 @@ const localApi = {
     },
     getConfigDir () {
       return getDefaultConfigBasePath()
+    },
+    getLogDir () {
+      return configFromFiles.app.logFileSavePath || path.join(getDefaultConfigBasePath(), '/logs/')
     },
     getSystemPlatform (throwIfUnknown = false) {
       return DevSidecar.api.shell.getSystemPlatform(throwIfUnknown)
