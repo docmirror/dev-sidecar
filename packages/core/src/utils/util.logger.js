@@ -52,6 +52,8 @@ function log4jsConfigure (categories) {
 
   // 拿第一个日志类型来logger并设置到log变量中
   log = log4js.getLogger(categories[0])
+
+  log.info('设置日志配置完成：', config)
 }
 
 module.exports = {
