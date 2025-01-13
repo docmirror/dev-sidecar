@@ -58,6 +58,13 @@ function log4jsConfigure (categories) {
 
 module.exports = {
   getLogger (category) {
+    if (!category) {
+      if (log) {
+        log.error('未指定日志类型，无法配置并获取日志对象！！！')
+      }
+      throw new Error('未指定日志类型，无法配置并获取日志对象！！！')
+    }
+
     if (category === 'core' || category === 'gui') {
       // core 和 gui 的日志配置，因为它们在同一进程中，所以一起配置，且只能配置一次
       if (log == null) {
