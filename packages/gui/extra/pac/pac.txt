@@ -1,9 +1,9 @@
 [AutoProxy 0.2.9]
-! Checksum: j9+lCGr2eTNyrwZCFg8ZzQ
+! Checksum: BZUefB22itmhAjqqdpvRkA
 ! Expires: 6h
 ! Title: GFWList4LL
 ! GFWList with EVERYTHING included
-! Last Modified: Mon, 07 Oct 2024 11:39:43 -0400
+! Last Modified: Sun, 12 Jan 2025 11:56:36 -0500
 !
 ! HomePage: https://github.com/gfwlist/gfwlist
 ! License: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
@@ -49,6 +49,7 @@
 ||ciciai.com
 ||claude.ai
 ||clearsurance.com
+||cnbeta.com.tw
 ||images.comico.tw
 ||static.comico.tw
 ||counter.social
@@ -156,6 +157,7 @@ share.dmhy.org
 ||mattwilcox.net
 ||metarthunter.com
 ||mfxmedia.com
+||miraheze.org
 ||mojim.com
 ||kb.monitorware.com
 ||monster.com
@@ -241,7 +243,6 @@ share.dmhy.org
 ||terabox.com
 ||thinkgeek.com
 ||thebodyshop-usa.com
-||tiktok.com
 ||tma.co.jp
 ||tracfone.com
 ||tryheart.jp
@@ -1375,6 +1376,7 @@ blogspot.com
 ||digisfera.com
 ||dns.google
 ||hub.docker.com
+||docs.new
 ||domains.google
 ||duck.com
 ||environment.google
@@ -1526,6 +1528,9 @@ blogspot.com
 ||schema.org
 ||shattered.io
 |http://sipml5.org/
+||sheets.new
+||slides.new
+||snapseed.com
 ||stories.google
 ||sustainability.google
 ||synergyse.com
@@ -1545,6 +1550,7 @@ blogspot.com
 ||webpkgcache.com
 ||webrtc.org
 ||whatbrowser.org
+||whats.new
 ||widevine.com
 ||withgoogle.com
 ||withyoutube.com
@@ -1618,13 +1624,19 @@ cn.nytstyle.com
 ||telesco.pe
 !!!---IP---
 
+!!---Tiktok---
+||tiktok.com
+||tiktokv.com
+||tiktokv.us
+||tiktokcdn-us.com
+
 !!---Twitch---
 ||jtvnw.net
 ||ttvnw.net
 ||twitch.tv
 ||twitchcdn.net
 
-!!---Twitter---
+!!---Twitter/X---
 ||periscope.tv
 .pscp.tv
 ||pscp.tv
@@ -1962,17 +1974,15 @@ zhao.1984.city
 .1eew.com
 .1mobile.com
 |http://*.1mobile.tw
+||1point3acres.com
 ||1pondo.tv
 .2-hand.info
 .2000fun.com/bbs
-.2008xianzhang.info
 ||2008xianzhang.info
 ||2017.hk
 ||2021hkcharter.com
 ||2047.name
 21andy.com/blog
-.21join.com
-.21pron.com
 21sextury.com
 .228.net.tw
 ||233abc.com
@@ -2044,6 +2054,7 @@ taiwannation.50webs.com
 .9001700.com
 |http://908taiwan.org/
 ||91porn.com
+||91porny.com
 ||91vps.club
 .92ccav.com
 .991.com
@@ -2332,6 +2343,7 @@ atgfw.org
 ||atlanta168.com
 .atnext.com
 ||atnext.com
+||audacy.com
 ice.audionow.com
 .av.com
 ||av.movie
@@ -2386,7 +2398,7 @@ badoo.com
 ||bakgeekhome.tk
 .banana-vpn.com
 ||banana-vpn.com
-.band.us
+||band.us
 ||bandcamp.com
 .bandwagonhost.com
 ||bandwagonhost.com
@@ -2619,7 +2631,8 @@ bbs.brockbbs.com
 brucewang.net
 .brutaltgp.com
 ||brutaltgp.com
-.bt2mag.com
+||bsky.app
+||bsky.social
 ||bt95.com
 .btaia.com
 .btbtav.com
@@ -2789,14 +2802,13 @@ cdp1998.org
 cdp2006.org
 ||cdp2006.org
 .cdpa.url.tw
-cdpeu.org
-cdpusa.org
-cdpweb.org
+||cdpeu.org
+||cdpuk.co.uk
+||cdpusa.org
 ||cdpweb.org
-cdpwu.org
+||cdpweb.org
 ||cdpwu.org
 ||cdw.com
-.cecc.gov
 ||cecc.gov
 ||cellulo.info
 ||cenews.eu
@@ -3193,15 +3205,16 @@ daxa.cn
 cn.dayabook.com
 .daylife.com/topic/dalai_lama
 ||db.tt
-.dbc.hk/main
 ||dbgjd.com
 ||dcard.tw
 dcmilitary.com
-.ddc.com.tw
+||ddc.com.tw
 .ddhw.info
 ||de-sci.org
 .de-sci.org
+||deadhouse.org
 ||deadline.com
+||deepai.org
 ||decodet.co
 
 !--Origin:cdn-i30$_
@@ -3695,6 +3708,7 @@ finler.net
 ||firetweet.io
 ||firstpost.com
 ||firstrade.com
+||fish.audio
 !--||flagfox.net
 .flagsonline.it
 fleshbot.com
@@ -4112,6 +4126,7 @@ greatzhonghua.org
 ||greenvpn.net
 .greenvpn.org
 ||grindr.com
+||ground.news
 ||grotty-monday.com
 gs-discuss.com
 ||gsearch.media
@@ -4386,21 +4401,12 @@ guruonline.hk
 .h-moe.com
 |http://h-moe.com
 h1n1china.org
-.hacg.club
-||hacg.club
-.hacg.in
-|http://hacg.in
-.hacg.li
-|http://hacg.li
-.hacg.me
-|http://hacg.me
-.hacg.red
-|http://hacg.red
 .hacken.cc/bbs
 .hacker.org
 ||hackmd.io
 ||hackthatphone.net
 hahlo.com
+||haijiao.com
 ||hakkatv.org.tw
 .handcraftedsoftware.org
 |http://bbs.hanminzu.org/
@@ -4468,8 +4474,8 @@ hentaitube.tv
 !--@@||f.cl.ly
 !--EC2 DNS Poisoned
 ||id.heroku.com
+||herokuapp.com
 
-heqinglian.net
 ||heqinglian.net
 ||heritage.org
 ||heungkongdiscuss.com
@@ -4630,6 +4636,7 @@ hotpot.hk
 ||hougaige.com
 ||howtoforge.com
 ||hoxx.com
+||hpjav.com
 .hqcdp.org
 ||hqcdp.org
 ||hqjapanesesex.com
@@ -4644,9 +4651,10 @@ hqmovies.com
 .hrw.org
 ||hrw.org
 hrweb.org
+||hsex.men
 ||hsjp.net
 ||hsselite.com
-|http://hst.net.tw
+||hst.net.tw
 .hstern.net
 .hstt.net
 .htkou.net
@@ -4710,6 +4718,7 @@ iask.ca
 iask.bz
 ||iask.bz
 .iav19.com
+||iavian.net
 ibiblio.org/pub/packages/ccic
 ||ibit.am
 .iblist.com
@@ -4821,6 +4830,7 @@ in-disguise.com
 ||indiemerch.com
 ||info-graf.fr
 website.informer.com
+||inherit.live
 ||initiativesforchina.org
 ||inkbunny.net
 ||inkui.com
@@ -4837,7 +4847,7 @@ website.informer.com
 ||interactivebrokers.com
 ||internet.org
 internetdefenseleague.org
-internetfreedom.org
+||internetfreedom.org
 !--||interpol.int
 ||internetpopculture.com
 .inthenameofconfuciusmovie.com
@@ -5541,9 +5551,9 @@ wiki.moegirl.org
 ||mog.com
 ||mohu.rocks
 molihua.org
+||momoshop.com.tw
 ||mondex.org
-.money-link.com.tw
-|http://money-link.com.tw
+||money-link.com.tw
 |http://www.monlamit.org
 ||moon.fm
 .moonbbs.com
@@ -6048,8 +6058,9 @@ pbwiki.com
 ||pbxes.com
 ||pbxes.org
 pcdvd.com.tw
+||pcgamestorrents.com
 .pchome.com.tw
-|http://pcij.org
+||pcij.org
 .pcstore.com.tw
 ||pct.org.tw
 pdetails.com
@@ -6354,6 +6365,7 @@ qxbbs.org
 !--------------------RR-------------------------
 ||r0.ru
 ||radio-canada.ca
+||radio-en-ligne.fr
 ||rael.org
 radicalparty.org
 ||radio.garden
@@ -6765,6 +6777,7 @@ bbs.skykiwi.com
 m.slandr.net
 .slaytizle.com
 .sleazydream.com
+||sleazyfork.org
 ||slheng.com
 ||slideshare.net
 forum.slime.com.tw
@@ -6870,6 +6883,7 @@ spem.at
 .spike.com
 .spotflux.com
 ||spotflux.com
+||spreaker.com
 .spring4u.info
 ||spring4u.info
 ||springwood.me
@@ -7295,7 +7309,6 @@ tibetoffice.eu
 .ticket.com.tw
 .tigervpn.com
 ||tigervpn.com
-||tiktokv.com
 .timdir.com
 |http://timdir.com
 .time.com
@@ -7891,6 +7904,7 @@ vpnjack.com
 .vpser.net
 @@||vpser.net
 vraiesagesse.net
+||vrchat.com
 .vrmtr.com
 ||vtunnel.com
 ||vuku.cc
@@ -8337,6 +8351,7 @@ yx51.net
 ||yzzk.com
 
 !--------------------ZZ-------------------------
+||z-lib.io
 ||z-lib.org
 zacebook.com
 .zalmos.com
@@ -8344,7 +8359,6 @@ zacebook.com
 ||zannel.com
 .zaobao.com
 ||zaobao.com
-|http://zaobao.com.sg
 ||zaobao.com.sg
 .zaozon.com
 ||zdnet.com.tw
