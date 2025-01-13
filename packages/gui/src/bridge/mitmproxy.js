@@ -2,7 +2,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const server = require('@docmirror/mitmproxy')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
-const log = require('../utils/util.log')
+const log = require('@docmirror/mitmproxy/src/utils/util.log') // 当前脚本是在 server 的进程中执行的，所以使用 mitmproxy 中的logger
 
 const configPath = process.argv[2]
 const configJson = fs.readFileSync(configPath)
@@ -13,5 +13,5 @@ const config = jsonApi.parse(configJson.toString())
 // const pacFilePath = '../extra/pac/pac.txt'
 // config.plugin.overwall.pac.customPacFilePath = path.join(__dirname, pacFilePath)
 config.setting.rootDir = path.join(__dirname, '../')
-log.info(`start mitmproxy config by gui bridge: ${configPath}`)
+log.info(`start mitmproxy by gui bridge, configPath: ${configPath}`)
 server.start(config)

@@ -2,6 +2,7 @@ const path = require('node:path')
 const log4js = require('log4js')
 const configFromFiles = require('../config/index').configFromFiles
 
+// 日志级别
 const level = process.env.NODE_ENV === 'development' ? 'debug' : 'info'
 
 function getDefaultConfigBasePath () {
@@ -17,39 +18,54 @@ function getDefaultConfigBasePath () {
   }
 }
 
-// 日志文件名
-const coreLogFilename = path.join(getDefaultConfigBasePath(), '/core.log')
-const guiLogFilename = path.join(getDefaultConfigBasePath(), '/gui.log')
-const serverLogFilename = path.join(getDefaultConfigBasePath(), '/server.log')
+// 日志文件目录
+const basePath = getDefaultConfigBasePath()
 
-// 日志相关配置
-const backups = configFromFiles.app.keepLogFileCount // 保留日志文件数
+// 通用日志配置
 const appenderConfig = {
   type: 'file',
   pattern: 'yyyy-MM-dd',
-  keepFileExt: true, // 保留日志文件扩展名
   compress: true, // 压缩日志文件
-
-  // 以下三个配置都设置，兼容新旧版本
-  backups,
-  numBackups: backups,
-  daysToKeep: backups,
+  keepFileExt: true, // 保留日志文件扩展名为 .log
+  backups: configFromFiles.app.keepLogFileCount, // 保留日志文件数
 }
 
-// 设置日志配置
-log4js.configure({
-  appenders: {
-    std: { type: 'stdout' },
-    core: { ...appenderConfig, filename: coreLogFilename },
-    gui: { ...appenderConfig, filename: guiLogFilename },
-    server: { ...appenderConfig, filename: serverLogFilename },
-  },
-  categories: {
-    default: { appenders: ['std'], level },
-    core: { appenders: ['core', 'std'], level },
-    gui: { appenders: ['gui', 'std'], level },
-    server: { appenders: ['server', 'std'], level },
-  },
-})
+// 设置一组日志配置
+function log4jsConfigure (categories) {
+  const config = {
+    appenders: {
+      std: { type: 'stdout' },
+    },
+    categories: {
+      default: { appenders: ['std'], level },
+    },
+  }
 
-module.exports = log4js
+  for (const category of categories) {
+    config.appenders[category] = { ...appenderConfig, filename: path.join(basePath, `/${category}.log`) }
+    config.categories[category] = { appenders: [category, 'std'], level }
+  }
+
+  log4js.configure(config)
+}
+
+function getLogger (category) {
+  if (category === 'core' || category === 'gui') {
+    // core 和 gui 的日志配置，因为它们在同一进程中，所以一起配置，且只能配置一次
+    if (!log4js.isConfigured()) {
+      log4jsConfigure(['core', 'gui'])
+    }
+  } else {
+    if (!log4js.isConfigured()) {
+      log4jsConfigure([category])
+    } else {
+      throw new Error(`当前进程已经设置过日志配置，无法设置 "${category}" 的配置，如果与其他类型的日志在同一进程是写入，请参照 core 和 gui 单独设置`)
+    }
+  }
+
+  return log4js.getLogger(category)
+}
+
+module.exports = {
+  getLogger,
+}
