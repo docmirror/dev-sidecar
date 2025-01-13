@@ -21,5 +21,5 @@ const config = jsonApi.parse(configJson.toString())
 // const pacFilePath = '../../gui/extra/pac/pac.txt'
 // config.plugin.overwall.pac.customPacFilePath = path.join(__dirname, pacFilePath)
 config.setting.rootDir = path.join(__dirname, '../../gui/')
-log.info(`start mitmproxy config by core: 读取配置文件: ${configPath}`)
+log.info(`start mitmproxy config by cli: 读取配置文件: ${configPath}`)
 server.start(config)

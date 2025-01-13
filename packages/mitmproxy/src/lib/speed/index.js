@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const log = require('../../utils/util.log.js')
+const log = require('../../utils/util.log')
 const config = require('./config')
 const SpeedTester = require('./SpeedTester.js')
 
