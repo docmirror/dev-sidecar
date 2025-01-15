@@ -30,6 +30,7 @@ function _getConfigPath () {
   const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir)
+    return path.join(dir, '/config.json')
   } else {
     // 兼容1.7.3及以下版本的配置文件处理逻辑
     const newFilePath = path.join(dir, '/config.json')
@@ -39,7 +40,6 @@ function _getConfigPath () {
     }
     return newFilePath
   }
-  return path.join(dir, '/config.json')
 }
 
 let timer
