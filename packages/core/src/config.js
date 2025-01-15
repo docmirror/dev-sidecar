@@ -110,7 +110,7 @@ const configApi = {
           let remoteConfig
           try {
             remoteConfig = jsonApi.parse(body)
-          } catch (e) {
+          } catch {
             log.error(`远程配置内容格式不正确, url: ${remoteConfigUrl}, body: ${body}`)
             remoteConfig = null
           }
@@ -212,7 +212,6 @@ const configApi = {
   doDiff: mergeApi.doDiff,
   /**
    * 读取 config.json 后，合并配置
-   * @returns {*}
    */
   reload () {
     const configPath = _getConfigPath()
