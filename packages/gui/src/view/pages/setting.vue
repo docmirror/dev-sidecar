@@ -458,10 +458,10 @@ export default {
           注意：原目录中的文件不会自动转移到新的目录，请自行转移或删除。
         </div>
       </a-form-item>
-      <a-form-item label="保留日志文件数" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-item label="保留历史日志文件数" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input-number v-model="config.app.keepLogFileCount" :step="1" :min="0" />
         <div class="form-help">
-          修改后，重启DS才生效！
+          修改后，隔天启动DS才会清理多余的历史日志文件！
         </div>
       </a-form-item>
     </div>
