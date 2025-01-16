@@ -6,6 +6,9 @@ if (JSON5.default) {
 
 module.exports = {
   parse (str) {
+    if (str == null || str.length < 2) {
+      return {}
+    }
     return JSON5.parse(str)
   },
   stringify (obj) {

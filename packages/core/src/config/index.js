@@ -475,6 +475,10 @@ function _getConfig () {
     return {}
   }
 
+  if (!fs.existsSync(configFilePath)) {
+    return {}
+  }
+
   return jsonApi.parse(fs.readFileSync(configFilePath))
 }
 
