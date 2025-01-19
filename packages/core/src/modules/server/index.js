@@ -30,7 +30,7 @@ const serverApi = {
       return this.close()
     }
   },
-  async start ({ mitmproxyPath, plugins }) {
+  async start ({ mitmproxyPath, plugins, options }) {
     const allConfig = config.get()
     const serverConfig = lodash.cloneDeep(allConfig.server)
 
@@ -78,7 +78,7 @@ const serverApi = {
     const runningConfigPath = path.join(basePath, '/running.json')
     fs.writeFileSync(runningConfigPath, jsonApi.stringify(serverConfig))
     log.info('保存 running.json 运行时配置文件成功:', runningConfigPath)
-    const serverProcess = fork(mitmproxyPath, [runningConfigPath])
+    const serverProcess = fork(mitmproxyPath, [runningConfigPath], options)
     server = {
       id: serverProcess.pid,
       process: serverProcess,
@@ -86,6 +86,7 @@ const serverApi = {
         serverProcess.send({ type: 'action', event: { key: 'close' } })
       },
     }
+
     serverProcess.on('beforeExit', (code) => {
       log.warn('server process beforeExit, code:', code)
     })
@@ -113,7 +114,8 @@ const serverApi = {
         event.fire('speed', msg.event)
       }
     })
-    return { port: serverConfig.port }
+
+    return { port: serverConfig.port, server }
   },
   async kill () {
     if (server) {

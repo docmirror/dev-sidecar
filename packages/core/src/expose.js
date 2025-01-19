@@ -42,14 +42,17 @@ function newServerStart ({ mitmproxyPath }) {
 }
 server.start = newServerStart
 async function startup ({ mitmproxyPath }) {
+  let server
   const conf = config.get()
+
   if (conf.server.enabled) {
     try {
-      await server.start({ mitmproxyPath })
+      server = await server.start({ mitmproxyPath })
     } catch (err) {
       log.error('代理服务启动失败：', err)
     }
   }
+
   if (conf.proxy.enabled) {
     try {
       await proxy.start()
@@ -57,8 +60,10 @@ async function startup ({ mitmproxyPath }) {
       log.error('开启系统代理失败：', err)
     }
   }
+
   try {
     const plugins = []
+
     for (const key in plugin) {
       if (conf.plugin[key].enabled) {
         const start = async () => {
@@ -72,12 +77,15 @@ async function startup ({ mitmproxyPath }) {
         plugins.push(start())
       }
     }
+
     if (plugins && plugins.length > 0) {
       await Promise.all(plugins)
     }
   } catch (err) {
     log.error('开启插件失败：', err)
   }
+
+  return server
 }
 
 async function shutdown () {
