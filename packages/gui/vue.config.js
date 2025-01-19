@@ -122,6 +122,7 @@ module.exports = defineConfig({
       },
       chainWebpackMainProcess (config) {
         config.entry('mitmproxy').add(path.join(__dirname, 'src/bridge/mitmproxy.js'))
+        config.entry('dev-sidecar-cli').add(path.join(__dirname, 'src/background/cli.js'))
       },
     },
   },

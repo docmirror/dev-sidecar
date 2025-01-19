@@ -45,7 +45,7 @@ function log4jsConfigure (categories) {
 
   for (const category of categories) {
     config.appenders[category] = { ...appenderConfig, filename: path.join(basePath, `/${category}.log`) }
-    config.categories[category] = { appenders: [category, 'std'], level }
+    config.categories[category] = { appenders: [category, ...process.env.NO_CONSOLE_LOG ? [] : ['std']], level }
   }
 
   log4js.configure(config)
