@@ -62,12 +62,17 @@ function _loadFromFile (defaultConfig) {
     const file = fs.readFileSync(configPath)
     log.info('读取 automaticCompatibleConfig.json 成功:', configPath)
     const fileStr = file.toString()
-    config = fileStr && fileStr.length > 2 ? jsonApi.parse(fileStr) : defaultConfig
-    if (config.connect == null) {
-      config.connect = defaultConfig.connect
-    }
-    if (config.request == null) {
-      config.request = defaultConfig.request
+    try {
+      config = jsonApi.parse(fileStr)
+      if (config.connect == null) {
+        config.connect = defaultConfig.connect
+      }
+      if (config.request == null) {
+        config.request = defaultConfig.request
+      }
+    } catch (e) {
+      log.error('解析 automaticCompatibleConfig.json 成功:', configPath, ', error:', e)
+      return defaultConfig
     }
   }
 

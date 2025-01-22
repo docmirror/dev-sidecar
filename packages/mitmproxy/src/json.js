@@ -5,11 +5,19 @@ if (JSON5.default) {
 }
 
 module.exports = {
-  parse (str) {
+  parse (str, defaultValue) {
     if (str == null || str.length < 2) {
-      return {}
+      return defaultValue || {}
     }
-    return JSON5.parse(str)
+    if (defaultValue != null) {
+      try {
+        return JSON5.parse(str)
+      } catch {
+        return defaultValue
+      }
+    } else {
+      return JSON5.parse(str)
+    }
   },
   stringify (obj) {
     return JSON.stringify(obj, null, '\t')

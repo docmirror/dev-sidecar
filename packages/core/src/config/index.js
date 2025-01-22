@@ -479,7 +479,12 @@ function _getConfig () {
     return {}
   }
 
-  return jsonApi.parse(fs.readFileSync(configFilePath))
+  try {
+    return jsonApi.parse(fs.readFileSync(configFilePath))
+  } catch (e) {
+    console.error('读取配置文件失败：', configFilePath, e)
+    return {}
+  }
 }
 
 function _getRemoteSavePath (suffix = '') {
@@ -516,7 +521,12 @@ function _readRemoteConfigStr (suffix = '') {
 }
 
 function _readRemoteConfig (suffix = '') {
-  return jsonApi.parse(_readRemoteConfigStr(suffix))
+  try {
+    return jsonApi.parse(_readRemoteConfigStr(suffix))
+  } catch (e) {
+    console.error(`读取远程配置失败，suffix: ${suffix}`, e)
+    return {}
+  }
 }
 
 function _getConfigFromFiles () {

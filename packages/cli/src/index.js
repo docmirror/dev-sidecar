@@ -11,8 +11,14 @@ async function startup () {
   const configPath = './user_config.json5'
   if (fs.existsSync(configPath)) {
     const file = fs.readFileSync(configPath)
-    const userConfig = jsonApi.parse(file.toString())
-    console.info('读取 user_config.json5 成功:', configPath)
+    let userConfig
+    try {
+      userConfig = jsonApi.parse(file.toString())
+      console.info(`读取和解析 user_config.json5 成功:${configPath}`)
+    } catch (e) {
+      console.error(`读取或解析 user_config.json5 失败: ${configPath}, error:`, e)
+      userConfig = {}
+    }
     DevSidecar.api.config.set(userConfig)
   }
 

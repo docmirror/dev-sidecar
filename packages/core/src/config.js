@@ -146,7 +146,12 @@ const configApi = {
     }
   },
   readRemoteConfig (suffix = '') {
-    return jsonApi.parse(configApi.readRemoteConfigStr(suffix))
+    try {
+      return jsonApi.parse(configApi.readRemoteConfigStr(suffix))
+    } catch (e) {
+      log.error(`读取远程配置失败，suffix: ${suffix}`, e)
+      return {}
+    }
   },
   readRemoteConfigStr (suffix = '') {
     if (get().app.remoteConfig.enabled !== true) {
@@ -223,7 +228,12 @@ const configApi = {
       const file = fs.readFileSync(configPath)
       log.info('读取 config.json 成功:', configPath)
       const fileStr = file.toString()
-      userConfig = fileStr && fileStr.length > 2 ? jsonApi.parse(fileStr) : {}
+      try {
+        userConfig = jsonApi.parse(fileStr)
+      } catch (e) {
+        log.error(`config.json 文件内容格式不正确，文件路径：${configPath}，文件内容: ${fileStr}, error:`, e)
+        userConfig = {}
+      }
     }
 
     const config = configApi.set(userConfig)

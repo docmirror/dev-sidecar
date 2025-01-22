@@ -15,7 +15,13 @@ if (process.argv && process.argv.length > 3) {
 
 const configJson = fs.readFileSync(configPath)
 log.info('读取 running.json by core 成功:', configPath)
-const config = jsonApi.parse(configJson.toString())
+let config
+try {
+  config = jsonApi.parse(configJson.toString())
+} catch (e) {
+  log.error(`running.json 文件内容格式不正确，文件路径：${configPath}，文件内容: ${configJson.toString()}, error:`, e)
+  config = {}
+}
 // const scriptDir = '../../gui/extra/scripts/'
 // config.setting.script.defaultDir = path.join(__dirname, scriptDir)
 // const pacFilePath = '../../gui/extra/pac/pac.txt'
