@@ -23,7 +23,7 @@ module.exports = class DNSOverIpAddress extends BaseDNS {
       log.info(`[dns] get ${hostname} ipaddress:${ip}`)
       return [ip]
     }
-    log.info(`[dns] get ${hostname} ipaddress: error`)
+    log.warn(`[dns] get ${hostname} ipaddress: error`)
     return null
 
     // const { answers } = await dnstls.query(hostname)

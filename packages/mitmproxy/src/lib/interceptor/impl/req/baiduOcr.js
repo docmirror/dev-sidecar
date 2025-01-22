@@ -175,7 +175,7 @@ module.exports = {
         next() // 异步执行完继续next
       }
     }).catch((err) => {
-      log.info('baiduOcr error:', err)
+      log.error('baiduOcr error:', err)
       res.writeHead(200, headers)
       res.write(`{"error_code": 999500, "error_msg": "${err}"}`) // 格式如：{"words_result":[{"words":"6525"}],"words_result_num":1,"log_id":1818877093747960000}
       res.end()

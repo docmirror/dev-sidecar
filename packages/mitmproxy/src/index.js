@@ -38,7 +38,7 @@ const api = {
         }
       })
       newServer.on('error', (e) => {
-        log.info('server error', e)
+        log.error('server error', e)
         // newServer = null
         fireError(e)
       })

@@ -173,7 +173,7 @@ const configApi = {
         log.info('读取远程配置文件内容成功:', path)
         return file.toString()
       } else {
-        log.warn('远程配置文件不存在:', path)
+        log.info('远程配置文件不存在:', path)
       }
     } catch (e) {
       log.error('读取远程配置文件内容失败:', e)
