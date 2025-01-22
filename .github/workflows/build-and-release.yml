@@ -11,9 +11,6 @@ jobs:
   # job 1
   build-and-upload:
     runs-on: ${{ matrix.os }}-latest
-    env:
-      ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
-      ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
     strategy:
       fail-fast: false
       matrix:
@@ -35,7 +32,6 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
-          cache: pnpm
 
       - name: Setup Python environment (Mac) Because of electron-builder install-app-deps requires Python setup tools
         if: matrix.os == 'macos'
@@ -72,22 +68,6 @@ jobs:
           echo "python --version";
           echo "--------------------";
           python --version;
-
-      - name: Setup electron cahce
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/.cache/electron
-          key: ${{ runner.os }}-electron-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-electron-cache-
-
-      - name: Setup electron-builder cahce
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/.cache/electron-builder
-          key: ${{ runner.os }}-electron-builder-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-electron-builder-cache-
 
       - name: 'pnpm install'
         run: |
