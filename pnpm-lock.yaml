@@ -134,8 +134,8 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8(@vue/compiler-sfc@3.5.12)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(lodash@4.17.21)(sass-loader@16.0.3(sass@1.81.0)(webpack@5.96.1))(underscore@1.13.7)(vue-template-compiler@2.7.16)(vue@2.7.16)(webpack-sources@3.2.3)
       electron:
-        specifier: ^19.1.9
-        version: 19.1.9
+        specifier: ^33.3.1
+        version: 33.3.1
       electron-builder:
         specifier: ^25.1.8
         version: 25.1.8(electron-builder-squirrel-windows@25.1.8(dmg-builder@25.1.8))
@@ -3199,7 +3199,7 @@ packages:
   electron-updater@6.3.9:
     resolution: {integrity: sha512-2PJNONi+iBidkoC5D1nzT9XqsE8Q1X28Fn6xRQhO3YX8qRRyJ3mkV4F1aQsuRnYPqq6Hw+E51y27W75WgDoofw==}
 
-  electron@19.1.9:
+  electron@33.3.1:
     resolution: {integrity: sha512-XT5LkTzIHB+ZtD3dTmNnKjVBWrDWReCKt9G1uAFLz6uJMEVcIUiYO+fph5pLXETiBw/QZBx8egduMEfIccLx+g==}
     engines: {node: '>= 8.6'}
     hasBin: true
@@ -10780,7 +10780,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@19.1.9:
+  electron@33.3.1:
     dependencies:
       '@electron/get': 1.14.1
       '@types/node': 16.18.119
