@@ -501,6 +501,8 @@ try {
     log.info('进程结束，退出app')
     quit()
   })
+
+  log.info('background finished')
 } catch (e) {
   log.error('应用启动过程中，出现未知异常：', e)
 }
