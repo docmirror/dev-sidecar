@@ -179,25 +179,35 @@ function changeAppConfig (config) {
   }
 }
 
-function createWindow (startHideWindow) {
+function createWindow (startHideWindow, autoQuitIfError = true) {
   // Create the browser window.
   const windowSize = DevSidecar.api.config.get().app.windowSize || {}
-  win = new BrowserWindow({
-    width: windowSize.width || 900,
-    height: windowSize.height || 750,
-    title: 'DevSidecar',
-    webPreferences: {
-      enableRemoteModule: true,
-      contextIsolation: false,
-      nativeWindowOpen: true, // ADD THIS
-      // preload: path.join(__dirname, 'preload.js'),
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: true, // process.env.ELECTRON_NODE_INTEGRATION
-    },
-    show: !startHideWindow,
-    icon: path.join(__static, 'icon.png'),
-  })
+
+  try {
+    win = new BrowserWindow({
+      width: windowSize.width || 900,
+      height: windowSize.height || 750,
+      title: 'DevSidecar',
+      webPreferences: {
+        enableRemoteModule: true,
+        contextIsolation: false,
+        nativeWindowOpen: true, // ADD THIS
+        // preload: path.join(__dirname, 'preload.js'),
+        // Use pluginOptions.nodeIntegration, leave this alone
+        // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
+        nodeIntegration: true, // process.env.ELECTRON_NODE_INTEGRATION
+      },
+      show: !startHideWindow,
+      icon: path.join(__static, 'icon.png'),
+    })
+  } catch (e) {
+    log.error('创建窗口失败:', e)
+    dialog.showErrorBox('错误', `创建窗口失败: ${e.message}`)
+    if (autoQuitIfError) {
+      quit()
+    }
+    return false
+  }
   winIsHidden = !!startHideWindow
 
   Menu.setApplicationMenu(null)
@@ -309,6 +319,8 @@ function createWindow (startHideWindow) {
       registerShowHideShortcut(message)
     }
   })
+
+  return true
 }
 
 async function beforeQuit () {
@@ -429,7 +441,7 @@ try {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (win == null) {
-        createWindow(false)
+        createWindow(false, false)
       } else {
         showWin()
       }
@@ -451,7 +463,9 @@ try {
       }
 
       try {
-        createWindow(startHideWindow)
+        if (!createWindow(startHideWindow)) {
+          return // 创建窗口失败，应用将关闭
+        }
       } catch (err) {
         log.error('createWindow error:', err)
       }
