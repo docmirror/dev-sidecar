@@ -6,10 +6,10 @@
  * @author WangLiang
  */
 const fs = require('node:fs')
-const path = require('node:path')
 const jsonApi = require('../../../json')
 const log = require('../../../utils/util.log')
 const matchUtil = require('../../../utils/util.match')
+const configLoader = require('@docmirror/dev-sidecar/src/config/local-config-loader')
 
 const defaultConfig = {
   // connect阶段所需的兼容性配置
@@ -43,17 +43,8 @@ function _getRequestConfig (hostname, port) {
 
 // region 本地配置文件所需函数
 
-function _getConfigPath () {
-  const userHome = process.env.USERPROFILE || process.env.HOME || '/'
-  const dir = path.resolve(userHome, './.dev-sidecar')
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir)
-  }
-  return path.join(dir, '/automaticCompatibleConfig.json')
-}
-
 function _loadFromFile (defaultConfig) {
-  const configPath = _getConfigPath()
+  const configPath = configLoader.getAutomaticCompatibleConfigPath()
   let config
   if (!fs.existsSync(configPath)) {
     config = defaultConfig
@@ -80,7 +71,7 @@ function _loadFromFile (defaultConfig) {
 }
 
 function _saveConfigToFile () {
-  const filePath = _getConfigPath()
+  const filePath = configLoader.getAutomaticCompatibleConfigPath()
   try {
     fs.writeFileSync(filePath, jsonApi.stringify(config))
     log.info('保存 automaticCompatibleConfig.json 成功:', filePath)

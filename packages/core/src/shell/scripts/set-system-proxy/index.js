@@ -160,6 +160,7 @@ function getProxyExcludeIpStr (split) {
   }
 
   // 排除国内域名
+  // log.debug('系统代理排除域名（excludeIpStr）:', excludeIpStr)
   if (config.get().proxy.excludeDomesticDomainAllowList) {
     try {
       let domesticDomainAllowList = getDomesticDomainAllowList()
@@ -176,8 +177,6 @@ function getProxyExcludeIpStr (split) {
       log.error('系统代理排除列表拼接国内域名失败:', e)
     }
   }
-
-  log.debug('系统代理排除域名（excludeIpStr）:', excludeIpStr)
 
   return excludeIpStr
 }

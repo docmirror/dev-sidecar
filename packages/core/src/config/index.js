@@ -1,20 +1,12 @@
-const fs = require('node:fs')
 const path = require('node:path')
-const lodash = require('lodash')
-const jsonApi = require('@docmirror/mitmproxy/src/json')
-const mergeApi = require('../merge')
-
-function getUserBasePath () {
-  const userHome = process.env.USERPROFILE || process.env.HOME || '/'
-  return path.resolve(userHome, './.dev-sidecar')
-}
+const configLoader = require('./local-config-loader')
 
 function getRootCaCertPath () {
-  return path.join(getUserBasePath(), '/dev-sidecar.ca.crt')
+  return path.join(configLoader.getUserBasePath(), '/dev-sidecar.ca.crt')
 }
 
 function getRootCaKeyPath () {
-  return path.join(getUserBasePath(), '/dev-sidecar.ca.key.pem')
+  return path.join(configLoader.getUserBasePath(), '/dev-sidecar.ca.key.pem')
 }
 
 const defaultConfig = {
@@ -43,7 +35,7 @@ const defaultConfig = {
     showShutdownTip: true,
 
     // 日志相关配置
-    logFileSavePath: path.join(getUserBasePath(), '/logs'), // 日志文件保存路径
+    logFileSavePath: path.join(configLoader.getUserBasePath(), '/logs'), // 日志文件保存路径
     keepLogFileCount: 15, // 保留日志文件数
   },
   server: {
@@ -57,7 +49,7 @@ const defaultConfig = {
         enabled: true,
         defaultDir: './extra/scripts/',
       },
-      userBasePath: getUserBasePath(),
+      userBasePath: configLoader.getUserBasePath(),
       rootCaFile: {
         certPath: getRootCaCertPath(),
         keyPath: getRootCaKeyPath(),
@@ -447,126 +439,7 @@ const defaultConfig = {
   },
 }
 
-// region 加载本地配置文件所需的方法
-
-function _getConfigPath () {
-  const dir = defaultConfig.server.setting.userBasePath
-  if (!fs.existsSync(dir)) {
-    return null
-  }
-
-  // 兼容1.7.3及以下版本的配置文件处理逻辑
-  const newFilePath = path.join(dir, '/config.json')
-  const oldFilePath = path.join(dir, '/config.json5')
-  if (!fs.existsSync(newFilePath)) {
-    if (fs.existsSync(oldFilePath)) {
-      return oldFilePath // 如果新文件不存在，且旧文件存在，则返回旧文件路径
-    } else {
-      return null // 两个文件都不存在
-    }
-  }
-
-  return newFilePath
-}
-
-function _getConfig () {
-  const configFilePath = _getConfigPath()
-  if (configFilePath == null) {
-    return {}
-  }
-
-  if (!fs.existsSync(configFilePath)) {
-    return {}
-  }
-
-  try {
-    return jsonApi.parse(fs.readFileSync(configFilePath))
-  } catch (e) {
-    console.error('读取配置文件失败：', configFilePath, e)
-    return {}
-  }
-}
-
-function _getRemoteSavePath (suffix = '') {
-  const dir = defaultConfig.server.setting.userBasePath
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir)
-  }
-  return path.join(dir, `/remote_config${suffix}.json5`)
-}
-
-function _readRemoteConfigStr (suffix = '') {
-  if (defaultConfig.app.remoteConfig.enabled !== true) {
-    if (suffix === '_personal') {
-      if (!defaultConfig.app.remoteConfig.personalUrl) {
-        return '{}'
-      }
-    } else if (suffix === '') {
-      if (!defaultConfig.app.remoteConfig.url) {
-        return '{}'
-      }
-    }
-    return '{}'
-  }
-  try {
-    const path = _getRemoteSavePath(suffix)
-    if (fs.existsSync(path)) {
-      const file = fs.readFileSync(path)
-      return file.toString()
-    }
-  } catch {
-  }
-
-  return '{}'
-}
-
-function _readRemoteConfig (suffix = '') {
-  try {
-    return jsonApi.parse(_readRemoteConfigStr(suffix))
-  } catch (e) {
-    console.error(`读取远程配置失败，suffix: ${suffix}`, e)
-    return {}
-  }
-}
-
-function _getConfigFromFiles () {
-  const newConfig = _getConfig()
-
-  const merged = newConfig != null ? lodash.cloneDeep(newConfig) : {}
-
-  if (defaultConfig.app.remoteConfig.enabled === true) {
-    let personalRemoteConfig = null
-    let shareRemoteConfig = null
-
-    if (defaultConfig.app.remoteConfig.personalUrl) {
-      personalRemoteConfig = _readRemoteConfig('_personal')
-      mergeApi.doMerge(merged, personalRemoteConfig) // 先合并一次个人远程配置，使配置顺序在前
-    }
-    if (defaultConfig.app.remoteConfig.url) {
-      shareRemoteConfig = _readRemoteConfig()
-      mergeApi.doMerge(merged, shareRemoteConfig) // 先合并一次共享远程配置，使配置顺序在前
-    }
-    mergeApi.doMerge(merged, defaultConfig) // 合并默认配置，顺序排在最后
-    if (defaultConfig.app.remoteConfig.url) {
-      mergeApi.doMerge(merged, shareRemoteConfig) // 再合并一次共享远程配置，使配置生效
-    }
-    if (defaultConfig.app.remoteConfig.personalUrl) {
-      mergeApi.doMerge(merged, personalRemoteConfig) // 再合并一次个人远程配置，使配置生效
-    }
-  } else {
-    mergeApi.doMerge(merged, defaultConfig) // 合并默认配置
-  }
-  if (newConfig != null) {
-    mergeApi.doMerge(merged, newConfig) // 再合并一次用户配置，使用户配置重新生效
-  }
-  mergeApi.deleteNullItems(merged) // 删除为null及[delete]的项
-
-  return merged
-}
-
-// endregion
-
 // 从本地文件中加载配置
-defaultConfig.configFromFiles = _getConfigFromFiles()
+defaultConfig.configFromFiles = configLoader.getConfigFromFiles(configLoader.getUserConfig(), defaultConfig)
 
 module.exports = defaultConfig

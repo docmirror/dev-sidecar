@@ -1,5 +1,6 @@
 const path = require('node:path')
 const log4js = require('log4js')
+const configLoader = require('../config/local-config-loader')
 const configFromFiles = require('../config/index').configFromFiles
 
 // 日志级别
@@ -52,6 +53,7 @@ function log4jsConfigure (categories) {
 
   // 拿第一个日志类型来logger并设置到log变量中
   log = log4js.getLogger(categories[0])
+  configLoader.setLogger(log)
 
   log.info('设置日志配置完成：', config)
 }
