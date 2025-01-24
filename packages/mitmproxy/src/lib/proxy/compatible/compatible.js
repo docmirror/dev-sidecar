@@ -76,7 +76,7 @@ function _saveConfigToFile () {
     fs.writeFileSync(filePath, jsonApi.stringify(config))
     log.info('保存 automaticCompatibleConfig.json 成功:', filePath)
   } catch (e) {
-    log.error('保存 automaticCompatibleConfig.json 失败:', filePath, e)
+    log.error('保存 automaticCompatibleConfig.json 失败:', filePath, ', error:', e)
   }
 }
 

@@ -76,8 +76,13 @@ function loadLastModifiedTimeFromTxt (fileTxt) {
 // 保存 国内域名白名单 内容到 `~/domestic-domain-allowlist.txt` 文件中
 function saveDomesticDomainAllowListFile (fileTxt) {
   const filePath = getDomesticDomainAllowListTmpFilePath()
-  fs.writeFileSync(filePath, fileTxt.replaceAll(/\r\n?/g, '\n'))
-  log.info('保存 domestic-domain-allowlist.txt 文件成功:', filePath)
+  try {
+    fs.writeFileSync(filePath, fileTxt.replaceAll(/\r\n?/g, '\n'))
+    log.info('保存 domestic-domain-allowlist.txt 文件成功:', filePath)
+  } catch (e) {
+    log.error('保存 domestic-domain-allowlist.txt 文件失败:', filePath, ', error:', e)
+    return
+  }
 
   // 尝试解析和修改 domestic-domain-allowlist.txt 文件时间
   const lastModifiedTime = loadLastModifiedTimeFromTxt(fileTxt)
@@ -98,8 +103,6 @@ function saveDomesticDomainAllowListFile (fileTxt) {
       })
     })
   }
-
-  return filePath
 }
 
 function formatDate (date) {

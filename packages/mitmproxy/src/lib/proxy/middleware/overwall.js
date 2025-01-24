@@ -68,8 +68,13 @@ function formatDate (date) {
 // 保存 pac 内容到 `~/pac.txt` 文件中
 function savePacFile (pacTxt) {
   const pacFilePath = getTmpPacFilePath()
-  fs.writeFileSync(pacFilePath, pacTxt)
-  log.info('保存 pac.txt 文件成功:', pacFilePath)
+  try {
+    fs.writeFileSync(pacFilePath, pacTxt)
+    log.info('保存 pac.txt 文件成功:', pacFilePath)
+  } catch (e) {
+    log.error('保存 pac.txt 文件失败:', pacFilePath, ', error:', e)
+    return
+  }
 
   // 尝试解析和修改 pac.txt 文件时间
   const lastModifiedTime = loadPacLastModifiedTime(pacTxt)
@@ -90,8 +95,6 @@ function savePacFile (pacTxt) {
       })
     })
   }
-
-  return pacFilePath
 }
 
 // 异步下载 pac.txt ，避免影响代理服务的启动速度

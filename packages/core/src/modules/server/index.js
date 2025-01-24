@@ -76,8 +76,13 @@ const serverApi = {
     // fireStatus('ing') // 启动中
     const basePath = serverConfig.setting.userBasePath
     const runningConfigPath = path.join(basePath, '/running.json')
-    fs.writeFileSync(runningConfigPath, jsonApi.stringify(serverConfig))
-    log.info('保存 running.json 运行时配置文件成功:', runningConfigPath)
+    try {
+      fs.writeFileSync(runningConfigPath, jsonApi.stringify(serverConfig))
+      log.info('保存 running.json 运行时配置文件成功:', runningConfigPath)
+    } catch (e) {
+      log.error('保存 running.json 运行时配置文件失败:', runningConfigPath, ', error:', e)
+      throw e
+    }
     const serverProcess = fork(mitmproxyPath, [runningConfigPath])
     server = {
       id: serverProcess.pid,

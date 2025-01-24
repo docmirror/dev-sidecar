@@ -104,7 +104,7 @@ const localApi = {
         fs.writeFileSync(settingPath, jsonApi.stringify(setting))
         log.info('保存 setting.json 配置文件成功:', settingPath)
       } catch (e) {
-        log.error('保存 setting.json 配置文件失败:', settingPath, e)
+        log.error('保存 setting.json 配置文件失败:', settingPath, ', error:', e)
       }
     },
   },

@@ -86,8 +86,14 @@ const configApi = {
 
           if (remoteConfig != null) {
             const remoteSavePath = configLoader.getRemoteConfigPath(suffix)
-            fs.writeFileSync(remoteSavePath, body)
-            log.info('保存远程配置文件成功:', remoteSavePath)
+            try {
+              fs.writeFileSync(remoteSavePath, body)
+              log.info('保存远程配置文件成功:', remoteSavePath)
+            } catch (e) {
+              log.error('保存远程配置文件失败:', remoteSavePath, ', error:', e)
+              reject(new Error(`保存远程配置文件失败: ${e.message}`))
+              return
+            }
           } else {
             log.warn('远程配置对象为空:', remoteConfigUrl)
           }
@@ -153,8 +159,13 @@ const configApi = {
 
     // 将差异作为用户配置保存到 config.json 中
     const configPath = configLoader.getUserConfigPath()
-    fs.writeFileSync(configPath, jsonApi.stringify(diffConfig))
-    log.info('保存 config.json 自定义配置文件成功:', configPath)
+    try {
+      fs.writeFileSync(configPath, jsonApi.stringify(diffConfig))
+      log.info('保存 config.json 自定义配置文件成功:', configPath)
+    } catch (e) {
+      log.error('保存 config.json 自定义配置文件失败:', configPath, ', error:', e)
+      throw e
+    }
 
     // 重载配置
     const allConfig = configApi.set(diffConfig)
@@ -206,14 +217,30 @@ const configApi = {
       // 判断文件内容是否为空或空配置
       const fileStr = fileOriginalStr.replace(/\s/g, '')
       if (fileStr.length < 5) {
-        fs.writeFileSync(configPath, '{}')
+        try {
+          fs.writeFileSync(configPath, '{}')
+        } catch (e) {
+          log.warn('简化用户配置文件失败:', configPath, ', error:', e)
+        }
         return false // config.json 内容为空，或为空json
       }
 
       // 备份用户自定义配置文件
-      fs.writeFileSync(`${configPath}.${Date.now()}.bak.json`, fileOriginalStr)
+      const bakConfigPath = `${configPath}.${Date.now()}.bak.json`
+      try {
+        fs.writeFileSync(bakConfigPath, fileOriginalStr)
+        log.info('备份用户配置文件成功:', bakConfigPath)
+      } catch (e) {
+        log.error('备份用户配置文件失败:', bakConfigPath, ', error:', e)
+        throw e
+      }
       // 原配置文件内容设为空
-      fs.writeFileSync(configPath, '{}')
+      try {
+        fs.writeFileSync(configPath, '{}')
+      } catch (e) {
+        log.error('初始化用户配置文件失败:', configPath, ', error:', e)
+        throw e
+      }
 
       // 重新加载配置
       configApi.load(null)
