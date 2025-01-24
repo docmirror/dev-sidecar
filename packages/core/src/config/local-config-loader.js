@@ -59,12 +59,8 @@ function getUserConfigPath () {
   // 兼容1.7.3及以下版本的配置文件处理逻辑
   const newFilePath = path.join(dir, '/config.json')
   const oldFilePath = path.join(dir, '/config.json5')
-  if (!fs.existsSync(newFilePath)) {
-    if (fs.existsSync(oldFilePath)) {
-      return oldFilePath // 如果新文件不存在，但旧文件存在，则返回旧文件路径
-    } else {
-      return null // 两个文件都不存在
-    }
+  if (!fs.existsSync(newFilePath) && fs.existsSync(oldFilePath)) {
+    return oldFilePath // 如果新文件不存在，但旧文件存在，则返回旧文件路径
   }
 
   return newFilePath
