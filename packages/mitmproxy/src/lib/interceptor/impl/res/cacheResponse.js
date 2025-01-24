@@ -34,7 +34,7 @@ module.exports = {
     // public 或 private
     const cacheControlType = `${interceptOpt.cacheControlType || 'public'}, `
     // immutable属性
-    const cacheImmutable = interceptOpt.cacheImmutable !== false ? ', immutable' : ''
+    const cacheImmutable = interceptOpt.cacheImmutable !== false && interceptOpt.cacheImmutable !== 'false' ? ', immutable' : ''
 
     // 获取原响应头中的cache-control、last-modified、expires
     const originalHeaders = {
