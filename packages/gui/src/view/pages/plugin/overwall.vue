@@ -11,12 +11,12 @@ export default {
       servers: undefined,
       overwallOptions: [
         {
-          value: true,
           label: '启用',
+          value: 'true',
         },
         {
-          value: false,
           label: '禁用',
+          value: 'false',
         },
       ],
     }
@@ -49,8 +49,8 @@ export default {
       for (const key in targetsMap) {
         const value = targetsMap[key]
         this.targets.push({
-          key,
-          value,
+          key: key || '',
+          value: value === true ? 'true' : 'false',
         })
       }
     },
@@ -58,13 +58,13 @@ export default {
       this.targets.splice(index, 1)
     },
     addTarget () {
-      this.targets.unshift({ key: '', value: true })
+      this.targets.unshift({ key: '', value: 'true' })
     },
     saveTarget () {
       const map = {}
       for (const item of this.targets) {
         if (item.key) {
-          map[item.key] = item.value
+          map[item.key] = item.value === 'true'
         }
       }
       this.config.plugin.overwall.targets = map
@@ -165,8 +165,8 @@ export default {
               </a-col>
               <a-col :span="4">
                 <a-select v-model="item.value" style="width:100%">
-                  <a-select-option v-for="(item) of overwallOptions" :key="item.value" :value="item.value">
-                    {{ item.label }}
+                  <a-select-option v-for="(item2) of overwallOptions" :key="item2.value" :value="item2.value">
+                    {{ item2.label }}
                   </a-select-option>
                 </a-select>
               </a-col>

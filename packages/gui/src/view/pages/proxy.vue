@@ -9,6 +9,16 @@ export default {
       key: 'proxy',
       loopbackVisible: false,
       excludeIpList: [],
+      excludeIpOptions: [
+        {
+          label: '排除',
+          value: 'true',
+        },
+        {
+          label: '不排除',
+          value: 'false',
+        },
+      ],
     }
   },
   async created () {
@@ -43,13 +53,13 @@ export default {
       for (const key in this.config.proxy.excludeIpList) {
         const value = this.config.proxy.excludeIpList[key]
         this.excludeIpList.push({
-          key,
-          value,
+          key: key || '',
+          value: value === true ? 'true' : 'false',
         })
       }
     },
     addExcludeIp () {
-      this.excludeIpList.unshift({ key: '', value: true })
+      this.excludeIpList.unshift({ key: '', value: 'true' })
     },
     delExcludeIp (item, index) {
       this.excludeIpList.splice(index, 1)
@@ -58,7 +68,7 @@ export default {
       const excludeIpList = {}
       for (const item of this.excludeIpList) {
         if (item.key) {
-          excludeIpList[item.key] = item.value
+          excludeIpList[item.key] = item.value === 'true'
         }
       }
       this.config.proxy.excludeIpList = excludeIpList
@@ -122,6 +132,9 @@ export default {
         <a-checkbox v-model="config.proxy.excludeDomesticDomainAllowList">
           是否排除国内域名白名单
         </a-checkbox>
+        <div class="form-help">
+          国内域名白名单内收录了国内可直接访问的域名，这些域名将不被代理<br>当里面某些域名你希望代理时，你可以配置这些域名为<code>不排除</code>，也可以关闭国内域名白名单
+        </div>
       </a-form-item>
       <a-form-item label="自动更新国内域名" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model="config.proxy.autoUpdateDomesticDomainAllowList">
@@ -142,15 +155,22 @@ export default {
       <a-form-item label="自定义排除域名" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-row :gutter="10">
           <a-col :span="22">
-            <span>访问的域名或IP符合下列配置时，将跳过系统代理</span>
+            <span>国内域名不包含的域名，可以在此处定义；配置为 <code>不排除</code>时，将被代理</span>
           </a-col>
           <a-col :span="2">
             <a-button type="primary" icon="plus" @click="addExcludeIp()" />
           </a-col>
         </a-row>
         <a-row v-for="(item, index) of excludeIpList" :key="index" :gutter="10">
-          <a-col :span="22">
-            <a-input v-model="item.key" :disabled="item.value === false" />
+          <a-col :span="17">
+            <a-input v-model="item.key" />
+          </a-col>
+          <a-col :span="5">
+            <a-select v-model="item.value" style="width:100%">
+              <a-select-option v-for="(item2) of excludeIpOptions" :key="item2.value" :value="item2.value">
+                {{ item2.label }}
+              </a-select-option>
+            </a-select>
           </a-col>
           <a-col :span="2">
             <a-button type="danger" icon="minus" @click="delExcludeIp(item, index)" />

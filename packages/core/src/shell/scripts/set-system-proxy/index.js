@@ -155,9 +155,11 @@ function getDomesticDomainAllowList () {
 }
 
 function getProxyExcludeIpStr (split) {
+  const proxyExcludeIpConfig = config.get().proxy.excludeIpList
+
   let excludeIpStr = ''
-  for (const ip in config.get().proxy.excludeIpList) {
-    if (config.get().proxy.excludeIpList[ip] === true) {
+  for (const ip in proxyExcludeIpConfig) {
+    if (proxyExcludeIpConfig[ip] === true) {
       excludeIpStr += ip + split
     }
   }
@@ -166,12 +168,18 @@ function getProxyExcludeIpStr (split) {
   // log.debug('系统代理排除域名（excludeIpStr）:', excludeIpStr)
   if (config.get().proxy.excludeDomesticDomainAllowList) {
     try {
-      let domesticDomainAllowList = getDomesticDomainAllowList()
+      const domesticDomainAllowList = getDomesticDomainAllowList()
       if (domesticDomainAllowList) {
-        domesticDomainAllowList = (`${domesticDomainAllowList}\n`).replaceAll(/[\r\n]+/g, '\n').replaceAll(/[\d*\-.A-Z]*[^\d\n*\-.A-Z][^\n]*\n/gi, '').trim().replaceAll(/\s*\n\s*/g, split)
-        if (domesticDomainAllowList) {
-          excludeIpStr += domesticDomainAllowList
-          log.info('系统代理排除列表拼接国内域名')
+        const domesticDomainList = (`\n${domesticDomainAllowList}`).replaceAll(/[\r\n]+/g, '\n').match(/(?<=\n)(?:[\w\-.*]+|\[[\w:]+\])(?=\n)/g)
+        if (domesticDomainList && domesticDomainList.length > 0) {
+          for (const domesticDomain of domesticDomainList) {
+            if (proxyExcludeIpConfig[domesticDomain] !== false) {
+              excludeIpStr += domesticDomain + split
+            } else {
+              log.info('系统代理排除列表拼接国内域名时，跳过域名，系统代理将继续代理它:', domesticDomain)
+            }
+          }
+          log.info('系统代理排除列表拼接国内域名成功')
         } else {
           log.info('国内域名为空，不进行系统代理排除列表拼接国内域名')
         }
