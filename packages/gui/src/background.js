@@ -516,7 +516,7 @@ try {
     quit()
   })
 
-  log.info('background finished')
+  log.info('background.js finished')
 } catch (e) {
   log.error('应用启动过程中，出现未知异常：', e)
 }

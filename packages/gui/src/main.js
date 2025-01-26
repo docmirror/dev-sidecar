@@ -39,6 +39,8 @@ try {
   VueRouter.prototype.replace = function replace (location) {
     return VueRouterReplace.call(this, location).catch(err => err)
   }
+
+  console.info('main.js finished')
 } catch (e) {
   console.error('页面加载出现未知异常：', e)
 }
