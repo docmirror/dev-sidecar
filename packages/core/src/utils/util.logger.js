@@ -1,6 +1,6 @@
 const path = require('node:path')
 const log4js = require('log4js')
-const configLoader = require('../config/local-config-loader')
+const logOrConsole = require('./util.log-or-console')
 const configFromFiles = require('../config/index').configFromFiles
 
 // 日志级别
@@ -35,6 +35,11 @@ let log = null
 
 // 设置一组日志配置
 function log4jsConfigure (categories) {
+  if (log != null) {
+    log.error('当前进程已经设置过日志配置，无法再设置更多日志配置:', categories)
+    return
+  }
+
   const config = {
     appenders: {
       std: { type: 'stdout' },
@@ -53,9 +58,9 @@ function log4jsConfigure (categories) {
 
   // 拿第一个日志类型来logger并设置到log变量中
   log = log4js.getLogger(categories[0])
-  configLoader.setLogger(log)
+  logOrConsole.setLogger(log)
 
-  log.info('设置日志配置完成：', config)
+  log.info(`设置日志配置完成，进程ID: ${process.pid}，配置:`, config)
 }
 
 module.exports = {
@@ -77,8 +82,8 @@ module.exports = {
     } else {
       if (log == null) {
         log4jsConfigure([category])
-      } else {
-        log.error(`当前进程已经设置过日志配置，无法设置 "${category}" 的配置，先临时返回 "${log.category}" 的 log 进行日志记录。如果与其他类型的日志在同一进程中写入，请参照 core 和 gui 一起配置`)
+      } else if (category !== log.category) {
+        log.error(`当前进程已经设置过日志配置，无法再设置 "${category}" 的配置，先临时返回 "${log.category}" 的 log 进行日志记录。如果与其他类型的日志在同一进程中写入，请参照 core 和 gui 一起配置`)
       }
 
       return log

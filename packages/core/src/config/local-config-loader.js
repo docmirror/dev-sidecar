@@ -3,12 +3,7 @@ const path = require('node:path')
 const lodash = require('lodash')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
 const mergeApi = require('../merge')
-
-let log = console // 默认使用console，日志系统初始化完成后，设置为 logger
-function setLogger (logger) {
-  log = logger
-  jsonApi.setLogger(logger)
-}
+const logOrConsole = require('../utils/util.log-or-console')
 
 function getUserBasePath (autoCreate = true) {
   const userHome = process.env.USERPROFILE || process.env.HOME || '/'
@@ -24,12 +19,12 @@ function getUserBasePath (autoCreate = true) {
 
 function loadConfigFromFile (configFilePath) {
   if (configFilePath == null) {
-    log.warn('配置文件地址为空')
+    logOrConsole.warn('配置文件地址为空')
     return {}
   }
 
   if (!fs.existsSync(configFilePath)) {
-    log.info('配置文件不存在:', configFilePath)
+    logOrConsole.info('配置文件不存在:', configFilePath)
     return {} // 文件不存在，返回空配置
   }
 
@@ -38,17 +33,17 @@ function loadConfigFromFile (configFilePath) {
   try {
     configStr = fs.readFileSync(configFilePath)
   } catch (e) {
-    log.error('读取配置文件失败:', configFilePath, ', error:', e)
+    logOrConsole.error('读取配置文件失败:', configFilePath, ', error:', e)
     return {}
   }
 
   // 解析配置文件
   try {
     const config = jsonApi.parse(configStr)
-    log.info('读取配置文件成功:', configFilePath)
+    logOrConsole.info('读取配置文件成功:', configFilePath)
     return config
   } catch (e) {
-    log.error(`解析配置文件失败，文件内容格式不正确，文件路径: ${configFilePath}，文件内容：${configStr}，error:`, e)
+    logOrConsole.error(`解析配置文件失败，文件内容格式不正确，文件路径: ${configFilePath}，文件内容：${configStr}，error:`, e)
     return {}
   }
 }
@@ -111,13 +106,11 @@ function getConfigFromFiles (userConfig, defaultConfig) {
   // 删除为null及[delete]的项
   mergeApi.deleteNullItems(merged)
 
-  log.info('加载及合并远程配置完成')
+  logOrConsole.info('加载及合并远程配置完成')
   return merged
 }
 
 module.exports = {
-  setLogger,
-
   getUserBasePath,
 
   loadConfigFromFile,
