@@ -305,7 +305,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
     }
     win.webContents.executeJavaScript('config')
       .then((value) => {
-        log.info('window.config:', value, ', key:', input.key)
+        console.info('window.config:', value, ', key:', input.key)
         if (!value || (value.disableBeforeInputEvent !== true && value.disableBeforeInputEvent !== 'true')) {
           shortcut(event, input)
         }
