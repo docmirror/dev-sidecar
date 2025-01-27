@@ -11,6 +11,14 @@ import './view/style/index.scss'
 import './view/style/theme/dark.scss' // 暗色主题
 
 try {
+  window.onerror = (message, source, lineno, colno, error) => {
+    ipcRenderer.send(`[ERROR] JavaScript脚本异常：Error in ${source} at line ${lineno}: ${message}`, error)
+  }
+} catch (e) {
+  console.error('监听 window.onerror 出现异常:', e)
+}
+
+try {
   Vue.config.productionTip = false
   Vue.use(antd)
   Vue.use(VueRouter)
@@ -51,12 +59,4 @@ try {
 } catch (e) {
   console.error('页面加载出现未知异常：', e)
   ipcRenderer.send('[ERROR] 页面加载出现未知异常：', e)
-}
-
-try {
-  window.onerror = (message, source, lineno, colno, error) => {
-    ipcRenderer.send(`[ERROR] JavaScript脚本异常：Error in ${source} at line ${lineno}: ${message}`, error)
-  }
-} catch (e) {
-  console.error('监听 window.onerror 出现异常:', e)
 }
