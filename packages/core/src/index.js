@@ -4,10 +4,6 @@ const log = require('./utils/util.log')
 
 // 避免异常崩溃
 process.on('uncaughtException', (err) => {
-  if (err.code === 'ECONNABORTED') {
-    //  console.error(err.errno)
-    return
-  }
   log.error('Process Uncaught Exception:', err)
 })
 

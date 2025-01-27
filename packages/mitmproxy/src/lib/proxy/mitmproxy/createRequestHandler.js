@@ -160,7 +160,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             } else {
               log.info(`请求返回: 【${proxyRes.statusCode}】${url}, cost: ${cost} ms`)
             }
-            // console.log('request:', proxyReq, proxyReq.socket)
+            // log.info('request:', proxyReq, proxyReq.socket)
 
             if (cost > MAX_SLOW_TIME) {
               countSlow(isDnsIntercept, `代理请求成功但太慢, cost: ${cost} ms > ${MAX_SLOW_TIME} ms`)
@@ -246,7 +246,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       const proxyRes = await proxyRequestPromise()
 
       // proxyRes.on('data', (chunk) => {
-      //   // console.log('BODY: ')
+      //   // log.info('BODY: ')
       // })
       proxyRes.on('error', (error) => {
         countSlow(null, `error: ${error.message}`)

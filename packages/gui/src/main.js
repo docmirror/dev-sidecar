@@ -1,6 +1,7 @@
 import antd from 'ant-design-vue'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { ipcRenderer } from 'electron'
 import view from './view'
 import App from './view/App.vue'
 import DsContainer from './view/components/container'
@@ -25,9 +26,14 @@ try {
   })
   view.initApi(app).then(async (api) => {
     // 初始化status
-    await view.initPre(Vue, api)
-    app.$mount('#app')
-    view.initModules(app, router)
+    try {
+      await view.initPre(Vue, api)
+      app.$mount('#app')
+      view.initModules(app, router)
+    } catch (e) {
+      console.error('view初始化出现未知异常：', e)
+      ipcRenderer.send('view初始化出现未知异常：', e)
+    }
   })
 
   // fix vue-router NavigationDuplicated
@@ -41,6 +47,16 @@ try {
   }
 
   console.info('main.js finished')
+  ipcRenderer.send('main.js finished')
 } catch (e) {
   console.error('页面加载出现未知异常：', e)
+  ipcRenderer.send('[ERROR] 页面加载出现未知异常：', e)
+}
+
+try {
+  window.onerror = (message, source, lineno, colno, error) => {
+    ipcRenderer.send(`[ERROR] JavaScript脚本异常：Error in ${source} at line ${lineno}: ${message}`, error)
+  }
+} catch (e) {
+  console.error('监听 window.onerror 出现异常:', e)
 }

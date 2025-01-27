@@ -15,7 +15,7 @@ const pki = forge.pki
 //   const user = os.userInfo()
 //   username = user.username
 // } catch (e) {
-//   console.log('get userinfo error', e)
+//   log.info('get userinfo error', e)
 // }
 
 utils.createCA = function (CN) {
