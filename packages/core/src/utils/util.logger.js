@@ -1,7 +1,7 @@
 const path = require('node:path')
 const log4js = require('log4js')
 const logOrConsole = require('./util.log-or-console')
-const configFromFiles = require('../config/index').configFromFiles
+const configFromFiles = require('../config/index.js').configFromFiles
 
 // 日志级别
 const level = process.env.NODE_ENV === 'development' ? 'debug' : 'info'

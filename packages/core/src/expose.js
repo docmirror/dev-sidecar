@@ -1,5 +1,5 @@
 const lodash = require('lodash')
-const config = require('./config')
+const config = require('./config-api')
 const event = require('./event')
 const modules = require('./modules')
 const shell = require('./shell')

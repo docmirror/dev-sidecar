@@ -1,4 +1,4 @@
-// const config = require('../src/config')
+// const config = require('../src/config-api')
 //
 // config.set({
 //   server: {
