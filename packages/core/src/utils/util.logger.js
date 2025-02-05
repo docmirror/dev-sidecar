@@ -29,6 +29,7 @@ const appenderConfig = {
   compress: true, // 压缩日志文件
   keepFileExt: true, // 保留日志文件扩展名为 .log
   backups: configFromFiles.app.keepLogFileCount, // 保留日志文件数
+  maxLogSize: (configFromFiles.app.maxLogFileSize || 0) * 1024 * 1024 * (configFromFiles.app.maxLogFileSizeUnit === 'GB' ? 1024 : 1), // 目前单位只有GB和MB
 }
 
 let log = null
