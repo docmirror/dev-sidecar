@@ -13,6 +13,16 @@ export default {
       reloadLoading: false,
       urlBackup: null,
       personalUrlBackup: null,
+      maxLogFileSizeUnit: [
+        {
+          label: 'GB',
+          value: 'GB',
+        },
+        {
+          label: 'MB',
+          value: 'MB',
+        },
+      ],
     }
   },
   methods: {
@@ -458,10 +468,22 @@ export default {
           注意：原目录中的文件不会自动转移到新的目录，请自行转移或删除。
         </div>
       </a-form-item>
+      <a-form-item label="最大日志文件大小" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-input-number v-model="config.app.maxLogFileSize" :step="1" :min="0" />
+        <a-select v-model="config.app.maxLogFileSizeUnit" class="md-ml-5">
+          <a-select-option v-for="(item) of maxLogFileSizeUnit" :key="item.value" :value="item.value">
+            {{ item.label }}
+          </a-select-option>
+        </a-select>
+        <div class="form-help">
+          修改后，重启DS才生效！<br>
+          单个日志文件的大小限制，达到限制时会执行备份和清理程序；配置为0时，表示不限制大小。
+        </div>
+      </a-form-item>
       <a-form-item label="保留日志文件数" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input-number v-model="config.app.keepLogFileCount" :step="1" :min="0" />
         <div class="form-help">
-          修改后，重启DS才生效，隔天才会清理多余的历史日志文件！
+          修改后，重启DS才生效，<code>隔天</code>或<code>达到日志大小限制</code>时，才会触发清理程序！
         </div>
       </a-form-item>
     </div>
