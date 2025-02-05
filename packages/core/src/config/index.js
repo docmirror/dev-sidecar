@@ -37,7 +37,7 @@ const defaultConfig = {
     // 日志相关配置
     logFileSavePath: path.join(configLoader.getUserBasePath(), '/logs'), // 日志文件保存路径
     keepLogFileCount: 15, // 保留日志文件数
-    maxLogFileSize: 0, // 最大日志文件大小
+    maxLogFileSize: 1, // 最大日志文件大小
     maxLogFileSizeUnit: 'GB', // 最大日志文件大小单位
   },
   server: {
