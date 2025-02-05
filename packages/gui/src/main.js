@@ -19,6 +19,9 @@ try {
 }
 
 try {
+  console.info('main.js start')
+  ipcRenderer.send('main.js start')
+
   Vue.config.productionTip = false
   Vue.use(antd)
   Vue.use(VueRouter)

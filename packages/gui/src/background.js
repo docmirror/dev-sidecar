@@ -9,6 +9,8 @@ import backend from './bridge/backend'
 import jsonApi from '@docmirror/mitmproxy/src/json'
 import log from './utils/util.log'
 
+log.info('background.js start')
+
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
 const isDevelopment = process.env.NODE_ENV !== 'production'
