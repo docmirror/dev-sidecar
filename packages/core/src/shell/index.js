@@ -5,7 +5,7 @@ const getSystemEnv = require('./scripts/get-system-env')
 const killByPort = require('./scripts/kill-by-port')
 const setNpmEnv = require('./scripts/set-npm-env')
 const setSystemEnv = require('./scripts/set-system-env')
-const setSystemProxy = require('./scripts/set-system-proxy/index')
+const setSystemProxy = require('./scripts/set-system-proxy')
 const setupCa = require('./scripts/setup-ca')
 const shell = require('./shell')
 

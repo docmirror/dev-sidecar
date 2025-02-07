@@ -7,7 +7,7 @@ const request = require('request')
 const Registry = require('winreg')
 const log = require('../../../utils/util.log')
 const Shell = require('../../shell')
-const extraPath = require('../extra-path/index')
+const extraPath = require('../extra-path')
 
 const execute = Shell.execute
 const execFile = Shell.execFile
