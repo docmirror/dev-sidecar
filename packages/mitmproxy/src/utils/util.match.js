@@ -12,7 +12,7 @@ function isMatched (url, regexp) {
       urlRegexp = `.${regexp}`
     }
     return url.match(urlRegexp)
-  } catch (e) {
+  } catch {
     log.error('匹配串有问题:', regexp)
     return null
   }
@@ -32,6 +32,11 @@ function domainMapRegexply (hostMap) {
   const regexpMap = {}
   const origin = {} // 用于快速匹配，见matchHostname、matchHostnameAll方法
   lodash.each(hostMap, (value, domain) => {
+    // 将域名匹配串格式如 `.xxx.com` 转换为 `*.xxx.com`
+    if (domain[0] === '.' && lodash.isEmpty(hostMap[`*${domain}`])) {
+      domain = `*${domain}`
+    }
+
     if (domain.includes('*') || domain[0] === '^') {
       const regDomain = domain[0] !== '^' ? domainRegexply(domain) : domain
       regexpMap[regDomain] = value
@@ -59,20 +64,21 @@ function matchHostname (hostMap, hostname, action) {
     return null
   }
 
-  // 域名快速匹配：直接匹配 或者 两种前缀通配符匹配
+  // 域名快速匹配：直接匹配（优先级最高）
   let value = hostMap.origin[hostname]
   if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "${hostname}": ${JSON.stringify(value)} }`)
     return value // 快速匹配成功
   }
-  value = hostMap.origin[`*${hostname}`]
-  if (value != null) {
-    log.info(`matchHostname: ${action}: '${hostname}' -> { "*${hostname}": ${JSON.stringify(value)} }`)
-    return value // 快速匹配成功
-  }
+  // 域名快速匹配：三种前缀通配符匹配
   value = hostMap.origin[`*.${hostname}`]
   if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "*.${hostname}": ${JSON.stringify(value)} }`)
+    return value // 快速匹配成功
+  }
+  value = hostMap.origin[`*${hostname}`]
+  if (value != null) {
+    log.info(`matchHostname: ${action}: '${hostname}' -> { "*${hostname}": ${JSON.stringify(value)} }`)
     return value // 快速匹配成功
   }
 
