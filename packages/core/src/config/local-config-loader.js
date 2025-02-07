@@ -19,7 +19,7 @@ function getUserBasePath (autoCreate = true) {
 
 function loadConfigFromFile (configFilePath) {
   if (configFilePath == null) {
-    logOrConsole.warn('配置文件地址为空')
+    logOrConsole.error('配置文件地址为空')
     return {}
   }
 
