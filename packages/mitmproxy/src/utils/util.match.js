@@ -32,6 +32,10 @@ function domainMapRegexply (hostMap) {
   const regexpMap = {}
   const origin = {} // 用于快速匹配，见matchHostname、matchHostnameAll方法
   lodash.each(hostMap, (value, domain) => {
+    if (lodash.isEmpty(value)) {
+      return
+    }
+
     // 将域名匹配串格式如 `.xxx.com` 转换为 `*.xxx.com`
     if (domain[0] === '.' && lodash.isEmpty(hostMap[`*${domain}`])) {
       domain = `*${domain}`
