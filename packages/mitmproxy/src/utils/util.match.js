@@ -32,23 +32,27 @@ function domainMapRegexply (hostMap) {
   const regexpMap = {}
   const origin = {} // 用于快速匹配，见matchHostname、matchHostnameAll方法
   lodash.each(hostMap, (value, domain) => {
-    // 将域名匹配串格式如 `.xxx.com` 转换为 `*.xxx.com`
-    if (domain[0] === '.') {
-      if (hostMap[`*${domain}`] != null) {
-        return // 如果已经有匹配串 `*.xxx.com`，则忽略 `.xxx.com`
+    try {
+      // 将域名匹配串格式如 `.xxx.com` 转换为 `*.xxx.com`
+      if (domain[0] === '.') {
+        if (hostMap[`*${domain}`] != null) {
+          return // 如果已经有匹配串 `*.xxx.com`，则忽略 `.xxx.com`
+        }
+        domain = `*${domain}`
       }
-      domain = `*${domain}`
-    }
 
-    if (domain.includes('*') || domain[0] === '^') {
-      const regDomain = domain[0] !== '^' ? domainRegexply(domain) : domain
-      regexpMap[regDomain] = value
+      if (domain.includes('*') || domain[0] === '^') {
+        const regDomain = domain[0] !== '^' ? domainRegexply(domain) : domain
+        regexpMap[regDomain] = value
 
-      if (domain.indexOf('*') === 0 && domain.lastIndexOf('*') === 0) {
+        if (domain.indexOf('*') === 0 && domain.lastIndexOf('*') === 0) {
+          origin[domain] = value
+        }
+      } else {
         origin[domain] = value
       }
-    } else {
-      origin[domain] = value
+    } catch (e) {
+      log.error('匹配串有问题:', domain, e)
     }
   })
   regexpMap.origin = origin
