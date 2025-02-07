@@ -483,7 +483,7 @@ export default {
       <a-form-item label="保留日志文件数" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input-number v-model="config.app.keepLogFileCount" :step="1" :min="0" />
         <div class="form-help">
-          修改后，重启DS才生效，<code>隔天</code>或<code>达到日志大小限制</code>时，才会触发清理程序！
+          修改后，重启DS才生效，<code>隔天</code>或<code>达到日志文件大小限制</code>时，才会触发清理程序！
         </div>
       </a-form-item>
     </div>
