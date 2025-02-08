@@ -130,6 +130,7 @@ jobs:
           ren DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe   DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-x64.exe;
           ren DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe  DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-ia32.exe;
           ren DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-arm64.exe;
+          ren DevSidecar-${{ steps.package-info.outputs.version }}.exe       DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-universal.exe;
           dir;
       - name: 'Rename artifacts - Linux'
         if: ${{ matrix.os == 'ubuntu' }}
@@ -172,6 +173,13 @@ jobs:
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-arm64.exe
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-arm64.exe'
+          if-no-files-found: error
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-universal.exe'
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'windows' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-universal.exe
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-universal.exe'
           if-no-files-found: error
       #endregion Upload artifacts - Windows
 
@@ -282,6 +290,11 @@ jobs:
         uses: actions/download-artifact@v4.1.8
         with:
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-arm64.exe'
+          path: release
+      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-universal.exe'
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-universal.exe'
           path: release
 
       - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-amd64.deb'
