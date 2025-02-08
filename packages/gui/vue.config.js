@@ -82,14 +82,6 @@ module.exports = defineConfig({
           allowElevation: true,
           allowToChangeInstallationDirectory: true,
         },
-        mac: {
-          icon: './build/mac/icon.icns',
-          target: {
-            arch: 'universal',
-            target: 'dmg',
-          },
-          category: 'public.app-category.developer-tools',
-        },
         win: {
           icon: 'build/icons/',
           target: [
@@ -105,14 +97,22 @@ module.exports = defineConfig({
           target: [
             {
               target: 'deb',
-              arch: ['x64', 'arm64'],
+              arch: ['x64', 'arm64', 'armv7l'],
             },
             {
               target: 'AppImage',
-              arch: ['x64', 'arm64'],
+              arch: ['x64', 'arm64', 'armv7l'],
             },
           ],
           category: 'System',
+        },
+        mac: {
+          icon: './build/mac/icon.icns',
+          target: {
+            target: 'dmg',
+            arch: ['x64', 'arm64', 'universal'],
+          },
+          category: 'public.app-category.developer-tools',
         },
         publish: {
           provider: publishProvider,
