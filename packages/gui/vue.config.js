@@ -110,7 +110,7 @@ module.exports = defineConfig({
           icon: './build/mac/icon.icns',
           target: {
             target: 'dmg',
-            arch: ['x64', 'arm64', 'universal'],
+            arch: ['universal', 'x64', 'arm64', 'xxx'],
           },
           category: 'public.app-category.developer-tools',
         },
