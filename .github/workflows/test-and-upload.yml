@@ -1,15 +1,18 @@
-name: Build And Release
+name: Test And Upload
 
 on:
   push:
     branches:
-      - release*
-    tags:
-      - '*'
+      - master
+      - 1.x
+      - test
+  pull_request:
+    branches:
+      - master
+      - 1.x
 
 jobs:
-  # job 1
-  build-and-upload:
+  test-and-upload:
     runs-on: ${{ matrix.os }}-latest
     env:
       ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
@@ -242,104 +245,3 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-macos-universal.dmg
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-macos-universal.dmg'
           if-no-files-found: error
-
-
-  # job 2
-  download-and-release:
-    runs-on: ubuntu-latest
-    needs:
-      - build-and-upload
-    strategy:
-      fail-fast: false
-      matrix:
-        preReleaseVersion:
-          - ''
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.7
-
-      - name: Get package info
-        id: package-info
-        uses: luizfelipelaviola/get-package-info@v1
-        with:
-          path: ./packages/mitmproxy
-
-      - name: 'Make "release" dir'
-        run: mkdir release
-
-      # Download artifacts
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-x64.exe'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-x64.exe'
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-ia32.exe'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-ia32.exe'
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-arm64.exe'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-windows-arm64.exe'
-          path: release
-
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-amd64.deb'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-amd64.deb'
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-x86_64.AppImage'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-x86_64.AppImage'
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-arm64.deb'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-arm64.deb'
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-arm64.AppImage'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-arm64.AppImage'
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-armv7l.deb'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-armv7l.deb'
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-armv7l.AppImage'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-linux-armv7l.AppImage'
-          path: release
-
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-macos-x64.dmg'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-macos-x64.dmg'
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-macos-arm64.dmg'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-macos-arm64.dmg'
-          path: release
-      - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-macos-universal.dmg'
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: 'DevSidecar-${{ steps.package-info.outputs.version }}${{ matrix.preReleaseVersion }}-macos-universal.dmg'
-          path: release
-
-      - name: 'Print files from "release" dir'
-        run: |
-          ls -lah release;
-
-      - name: Create a draft release
-        uses: wangliang181230/github-action-ghr@master
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          GHR_PATH: release/
-          GHR_TITLE: ${{ github.ref_name }}
-          GHR_REPLACE: true
-          GHR_DRAFT: true
