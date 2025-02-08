@@ -97,11 +97,11 @@ module.exports = defineConfig({
           target: [
             {
               target: 'deb',
-              arch: ['x64', 'arm64', 'armv7l', 'universal'],
+              arch: ['x64', 'arm64', 'armv7l'],
             },
             {
               target: 'AppImage',
-              arch: ['x64', 'arm64', 'armv7l', 'universal'],
+              arch: ['x64', 'arm64', 'armv7l'],
             },
           ],
           category: 'System',
