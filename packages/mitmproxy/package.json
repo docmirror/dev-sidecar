@@ -9,7 +9,9 @@
     "dev-sidecar"
   ],
   "main": "src/index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha"
+  },
   "dependencies": {
     "@docmirror/dev-sidecar": "workspace:*",
     "agentkeepalive": "^4.5.0",

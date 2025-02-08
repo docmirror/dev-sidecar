@@ -1,5 +1,4 @@
-cd ../packages/core
-
 node -v
 
+cd ../packages/core
 pnpm run test

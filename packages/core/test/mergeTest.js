@@ -1,3 +1,4 @@
+const assert = require('node:assert')
 const lodash = require('lodash')
 const mergeApi = require('../src/merge.js')
 
@@ -84,5 +85,8 @@ const doMergeExpect = {
   f: {},
   g: [1, 2],
 }
-console.log('check merge result:', lodash.isEqual(doMergeResult, doMergeExpect))
+
+const result = lodash.isEqual(doMergeResult, doMergeExpect)
+console.log('check merge result:', result)
 console.log('\r')
+assert.strictEqual(result, true)

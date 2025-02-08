@@ -1,3 +1,5 @@
+const assert = require('node:assert')
+
 // const childProcess = require('child_process')
 // const util = require('util')
 // const exec = util.promisify(childProcess.exec)
@@ -14,3 +16,4 @@
 let wifiAdaptor = '(151) test'
 wifiAdaptor = wifiAdaptor.substring(wifiAdaptor.indexOf(' ')).trim()
 console.log(wifiAdaptor)
+assert.strictEqual(wifiAdaptor, 'test')

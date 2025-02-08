@@ -33,6 +33,6 @@ const dnsMap = dns.initDNS({
 SpeedTest.initSpeedTest({ hostnameList: {}, dnsMap })
 
 const tester = new SpeedTester({ hostname: 'github.com' })
-tester.test().then((ret) => {
-  console.log(tester.alive)
+tester.test().then(() => {
+  console.log('github.com  tester.alive = ', tester.alive)
 })

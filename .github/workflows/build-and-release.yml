@@ -101,6 +101,16 @@ jobs:
           echo "--------------------";
           pnpm install;
 
+      - name: 'test packages/core'
+        run: |
+          cd packages/core;
+          pnpm run test;
+
+      - name: 'test packages/mitmproxy'
+        run: |
+          cd packages/mitmproxy;
+          pnpm run test;
+
       - name: 'npm run electron:build'
         run: |
           echo "======================================================================";
