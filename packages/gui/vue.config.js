@@ -87,7 +87,7 @@ module.exports = defineConfig({
           target: [
             {
               target: 'nsis',
-              arch: ['x64', 'ia32', 'arm64', 'universal'],
+              arch: ['x64', 'ia32', 'arm64'],
             },
           ],
           // requestedExecutionLevel: 'highestAvailable', // 加了这个无法开机自启
@@ -97,11 +97,11 @@ module.exports = defineConfig({
           target: [
             {
               target: 'deb',
-              arch: ['x64', 'ia32', 'arm64', 'armv7l', 'universal'],
+              arch: ['x64', 'arm64', 'armv7l', 'universal'],
             },
             {
               target: 'AppImage',
-              arch: ['x64', 'ia32', 'arm64', 'armv7l', 'universal'],
+              arch: ['x64', 'arm64', 'armv7l', 'universal'],
             },
           ],
           category: 'System',
@@ -110,7 +110,7 @@ module.exports = defineConfig({
           icon: './build/mac/icon.icns',
           target: {
             target: 'dmg',
-            arch: ['x64', 'ia32', 'arm64', 'universal'],
+            arch: ['x64', 'arm64', 'universal'],
           },
           category: 'public.app-category.developer-tools',
         },
