@@ -24,7 +24,7 @@ jobs:
         node:
           - 22
         preReleaseVersion:
-          - ''
+          - '-RC5.1'
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
@@ -253,7 +253,7 @@ jobs:
       fail-fast: false
       matrix:
         preReleaseVersion:
-          - ''
+          - '-RC5.1'
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
