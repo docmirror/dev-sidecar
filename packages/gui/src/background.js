@@ -170,7 +170,7 @@ function checkHideWin () {
   return true
 }
 
-function hideWin (reason = '', needCheck = true) {
+function hideWin (reason = '', needCheck = false) {
   if (win) {
     if (needCheck && !checkHideWin()) {
       return
@@ -255,7 +255,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
   }
 
   if (startHideWindow) {
-    hideWin('startHideWindow', false)
+    hideWin('startHideWindow')
   }
 
   win.on('closed', async (...args) => {
@@ -268,7 +268,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
     if (message.value === 1) {
       quit('ipc receive "close"')
     } else {
-      hideWin('ipc receive "close"')
+      hideWin('ipc receive "close"', true)
     }
   })
 
@@ -285,7 +285,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
       quit('win close')
     } else if (closeStrategy === 2) {
       // 隐藏窗口
-      hideWin('win close')
+      hideWin('win close', true)
     } else {
       // 弹窗提示，选择关闭策略
       win.webContents.send('close.showTip', { closeStrategy, showHideShortcut: config.app.showHideShortcut })
@@ -381,7 +381,7 @@ function registerShowHideShortcut (showHideShortcut) {
           if (!win.isFocused()) {
             win.focus() // 如果窗口打开着，但没有获取焦点，则获取焦点，而不是hide
           } else {
-            hideWin('shortcut', false) // 快捷键隐藏窗口，不需要提示
+            hideWin('shortcut')
           }
         }
       })
