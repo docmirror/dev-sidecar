@@ -9,10 +9,12 @@ import backend from './bridge/backend'
 import jsonApi from '@docmirror/mitmproxy/src/json'
 import log from './utils/util.log'
 
-log.info('background.js start')
+log.info(`background.js start, platform is ${process.platform}`)
 
 const isWindows = process.platform === 'win32'
+const isLinux = process.platform === 'linux'
 const isMac = process.platform === 'darwin'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // 避免其他系统出现异常，只有 Windows 使用 './background/powerMonitor'
@@ -146,24 +148,41 @@ function setTray () {
   return appTray
 }
 
-function isLinux () {
-  const platform = DevSidecar.api.shell.getSystemPlatform()
-  return platform === 'linux'
+function checkHideWin () {
+  const config = DevSidecar.api.config.get()
+
+  // 配置为false时，不需要校验
+  if (!config.app.needCheckHideWindow) {
+    return true
+  }
+
+  // 如果是linux，且没有设置快捷键，则提示先设置快捷键
+  if (isLinux && !hasShortcut(config.app.showHideShortcut)) {
+    dialog.showMessageBox({
+      type: 'info',
+      title: '提示：请先设置快捷键',
+      message: '由于大部分 Linux 系统没有系统托盘，所以需使用快捷键呼出窗口。\n但您还未设置快捷键，请先到 “设置” 页面中设置好快捷键，再关闭窗口。',
+      buttons: ['确定'],
+    })
+    return false
+  }
+
+  return true
 }
 
-function hideWin (reason = '') {
+function hideWin (reason = '', needCheck = false) {
   if (win) {
-    if (isLinux()) {
-      quit(`is linux, not hide win, do quit, ${reason}`)
+    if (needCheck && !checkHideWin()) {
       return
     }
+
     win.hide()
     if (isMac && hideDockWhenWinClose) {
       app.dock.hide()
     }
     winIsHidden = true
   } else {
-    log.warn('win is null, do not hide win')
+    log.warn(`win is null, do not hide win, reason: ${reason}`)
   }
 }
 
@@ -249,7 +268,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
     if (message.value === 1) {
       quit('ipc receive "close"')
     } else {
-      hideWin('ipc receive "close"')
+      hideWin('ipc receive "close"', true)
     }
   })
 
@@ -259,21 +278,17 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
       return
     }
     e.preventDefault()
-    if (isLinux()) {
-      quit('win close')
-      return
-    }
     const config = DevSidecar.api.config.get()
     const closeStrategy = config.app.closeStrategy
-    if (closeStrategy === 0) {
-      // 弹窗提示，选择关闭策略
-      win.webContents.send('close.showTip', closeStrategy)
-    } else if (closeStrategy === 1) {
+    if (closeStrategy === 1) {
       // 直接退出
       quit('win close')
     } else if (closeStrategy === 2) {
       // 隐藏窗口
-      hideWin('win close')
+      hideWin('win close', true)
+    } else {
+      // 弹窗提示，选择关闭策略
+      win.webContents.send('close.showTip', { closeStrategy, showHideShortcut: config.app.showHideShortcut })
     }
   })
 
@@ -351,22 +366,22 @@ async function quit (reason) {
   app.quit()
 }
 
+function hasShortcut (showHideShortcut) {
+  return showHideShortcut && showHideShortcut.length > 1
+}
+
 function registerShowHideShortcut (showHideShortcut) {
   globalShortcut.unregisterAll()
-  if (showHideShortcut && showHideShortcut !== '无' && showHideShortcut.length > 1) {
+  if (hasShortcut(showHideShortcut)) {
     try {
       const registerSuccess = globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, () => {
-        if (winIsHidden || !win.isFocused()) {
-          if (!win.isFocused()) {
-            win.focus()
-          }
-          if (winIsHidden) {
-            showWin()
-          }
+        if (winIsHidden) {
+          showWin()
         } else {
-          // linux，快捷键不关闭窗口
-          if (!isLinux()) {
-            hideWin()
+          if (!win.isFocused()) {
+            win.focus() // 如果窗口打开着，但没有获取焦点，则获取焦点，而不是hide
+          } else {
+            hideWin('shortcut')
           }
         }
       })

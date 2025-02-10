@@ -1,4 +1,4 @@
-let closeType = 1
+let closeType = 2
 let doSave = false
 
 function install (app, api) {
@@ -25,10 +25,14 @@ function install (app, api) {
               记住本次选择，不再提示
             </a-checkbox>
           </div>
+          <div style="margin-top:20px">
+            提示：打开窗口的快捷键为
+            <code>{message.showHideShortcut || '无'}</code>
+          </div>
         </div>
       ),
       async onOk () {
-        console.log('OK. closeType=', closeType)
+        console.log('OK. closeType=', closeType, ', doSave:', doSave)
         if (doSave) {
           await api.config.update({ app: { closeStrategy: closeType } })
         }
