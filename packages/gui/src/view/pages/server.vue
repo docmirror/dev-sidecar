@@ -281,7 +281,7 @@ export default {
         </a-tab-pane>
         <a-tab-pane key="4" tab="域名白名单">
           <a-row style="margin-top:10px">
-            <a-col span="19">
+            <a-col span="21">
               <div>这里配置的域名不会通过代理</div>
             </a-col>
             <a-col span="3">
@@ -289,7 +289,7 @@ export default {
             </a-col>
           </a-row>
           <a-row v-for="(item, index) of whiteList" :key="index" :gutter="10" style="margin-top: 5px">
-            <a-col :span="19">
+            <a-col :span="21">
               <a-input v-model="item.key" :disabled="item.value === false" />
             </a-col>
             <a-col :span="3">
@@ -329,7 +329,7 @@ export default {
         <a-tab-pane key="8" tab="DNS设置">
           <div>
             <a-row style="margin-top:10px">
-              <a-col span="19">
+              <a-col span="21">
                 <div>这里配置哪些域名需要通过国外DNS服务器获取IP进行访问</div>
               </a-col>
               <a-col span="3">
@@ -337,10 +337,10 @@ export default {
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of dnsMappings" :key="index" :gutter="10" style="margin-top: 5px">
-              <a-col :span="14">
+              <a-col :span="15">
                 <a-input v-model="item.key" :disabled="item.value === false" />
               </a-col>
-              <a-col :span="5">
+              <a-col :span="6">
                 <a-select v-model="item.value" :disabled="item.value === false" style="width: 100%">
                   <a-select-option v-for="(item) of speedDnsOptions" :key="item.value" :value="item.value">
                     {{ item.value }}
