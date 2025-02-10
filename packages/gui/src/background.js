@@ -255,7 +255,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
   }
 
   if (startHideWindow) {
-    hideWin('startHideWindow')
+    hideWin('startHideWindow', false)
   }
 
   win.on('closed', async (...args) => {
