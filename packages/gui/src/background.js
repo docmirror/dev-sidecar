@@ -148,8 +148,34 @@ function setTray () {
   return appTray
 }
 
-function hideWin (reason = '') {
+function checkHideWin () {
+  const config = DevSidecar.api.config.get()
+
+  // 配置为false时，不需要校验
+  if (!config.app.needCheckHideWindow) {
+    return true
+  }
+
+  // 如果是linux，且没有设置快捷键，则提示先设置快捷键
+  if (isLinux && (!config.app.showHideShortcut || config.app.showHideShortcut.length <= 1)) {
+    dialog.showMessageBox({
+      type: 'info',
+      title: '提示：请先设置快捷键',
+      message: '由于大部分 Linux 系统没有系统托盘，所以需使用快捷键呼出窗口。\n但您还未设置快捷键，请先到 “设置” 页面中设置好快捷键，再关闭窗口。',
+      buttons: ['确定'],
+    })
+    return false
+  }
+
+  return true
+}
+
+function hideWin (reason = '', needCheck = true) {
   if (win) {
+    if (needCheck && !checkHideWin()) {
+      return
+    }
+
     win.hide()
     if (isMac && hideDockWhenWinClose) {
       app.dock.hide()
@@ -258,17 +284,6 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
       // 直接退出
       quit('win close')
     } else if (closeStrategy === 2) {
-      // 如果是linux，且没有设置快捷键，则提示先设置快捷键
-      if (isLinux && (!config.app.showHideShortcut || config.app.showHideShortcut.length <= 1)) {
-        dialog.showMessageBox({
-          type: 'warning',
-          title: '提示',
-          message: '由于大部分 Linux 系统没有系统托盘，所以需使用快捷键呼出窗口。\n但您还未设置快捷键，请先到 `设置` 页面中设置好快捷键，再关闭窗口。',
-          buttons: ['确定'],
-        })
-        return
-      }
-
       // 隐藏窗口
       hideWin('win close')
     } else {
@@ -356,7 +371,7 @@ function registerShowHideShortcut (showHideShortcut) {
   if (showHideShortcut && showHideShortcut.length > 1) {
     try {
       const registerSuccess = globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, () => {
-        // 使用快捷键时，
+        // 使用快捷键时，如果窗口没有获取焦点，则只需获取焦点
         if (!winIsHidden && !win.isFocused()) {
           win.focus()
           return
@@ -365,7 +380,7 @@ function registerShowHideShortcut (showHideShortcut) {
         if (winIsHidden) {
           showWin()
         } else {
-          hideWin('shortcut')
+          hideWin('shortcut', false) // 快捷键隐藏窗口，不需要提示
         }
       })
 
