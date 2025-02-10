@@ -157,7 +157,7 @@ function checkHideWin () {
   }
 
   // 如果是linux，且没有设置快捷键，则提示先设置快捷键
-  if (isLinux && (!config.app.showHideShortcut || config.app.showHideShortcut.length <= 1)) {
+  if (isLinux && !hasShortcut(config.app.showHideShortcut)) {
     dialog.showMessageBox({
       type: 'info',
       title: '提示：请先设置快捷键',
@@ -170,7 +170,7 @@ function checkHideWin () {
   return true
 }
 
-function hideWin (reason = '', needCheck = true) {
+function hideWin (reason = '', needCheck = false) {
   if (win) {
     if (needCheck && !checkHideWin()) {
       return
@@ -268,7 +268,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
     if (message.value === 1) {
       quit('ipc receive "close"')
     } else {
-      hideWin('ipc receive "close"')
+      hideWin('ipc receive "close"', true)
     }
   })
 
@@ -285,7 +285,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
       quit('win close')
     } else if (closeStrategy === 2) {
       // 隐藏窗口
-      hideWin('win close')
+      hideWin('win close', true)
     } else {
       // 弹窗提示，选择关闭策略
       win.webContents.send('close.showTip', { closeStrategy, showHideShortcut: config.app.showHideShortcut })
@@ -366,21 +366,23 @@ async function quit (reason) {
   app.quit()
 }
 
+function hasShortcut (showHideShortcut) {
+  return showHideShortcut && showHideShortcut.length > 1
+}
+
 function registerShowHideShortcut (showHideShortcut) {
   globalShortcut.unregisterAll()
-  if (showHideShortcut && showHideShortcut.length > 1) {
+  if (hasShortcut(showHideShortcut)) {
     try {
       const registerSuccess = globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, () => {
-        // 使用快捷键时，如果窗口没有获取焦点，则只需获取焦点
-        if (!winIsHidden && !win.isFocused()) {
-          win.focus()
-          return
-        }
-
         if (winIsHidden) {
           showWin()
         } else {
-          hideWin('shortcut', false) // 快捷键隐藏窗口，不需要提示
+          if (!win.isFocused()) {
+            win.focus() // 如果窗口打开着，但没有获取焦点，则获取焦点，而不是hide
+          } else {
+            hideWin('shortcut')
+          }
         }
       })
 
