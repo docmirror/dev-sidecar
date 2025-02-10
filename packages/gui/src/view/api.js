@@ -14,7 +14,7 @@ export function apiInit (app) {
     })
   }
   const send = (channel, message) => {
-    console.log('do send,', channel, message)
+    console.log('ipcRenderer.send, channel=', channel, ', message=', message)
     return ipcRenderer.send(channel, message)
   }
 
