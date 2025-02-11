@@ -400,7 +400,7 @@ function registerShowHideShortcut (showHideShortcut) {
 function initApp () {
   if (isMac) {
     app.whenReady().then(() => {
-      app.dock.setIcon(path.join(__dirname, '../build/mac/512x512.png'))
+      app.dock.setIcon(path.join(__dirname, '../extra/icons/512x512.png'))
     })
   }
 
