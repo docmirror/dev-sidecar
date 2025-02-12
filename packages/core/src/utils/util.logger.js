@@ -1,7 +1,8 @@
 const path = require('node:path')
 const log4js = require('log4js')
 const logOrConsole = require('./util.log-or-console')
-const configFromFiles = require('../config/index.js').configFromFiles
+const defaultConfig = require('../config/index.js')
+const configFromFiles = defaultConfig.configFromFiles
 
 // 日志级别
 const level = process.env.NODE_ENV === 'development' ? 'debug' : 'info'
@@ -28,8 +29,8 @@ const appenderConfig = {
   pattern: 'yyyy-MM-dd',
   compress: true, // 压缩日志文件
   keepFileExt: true, // 保留日志文件扩展名为 .log
-  backups: Math.ceil(configFromFiles.app.keepLogFileCount) || 15, // 保留日志文件数
-  maxLogSize: Math.ceil((configFromFiles.app.maxLogFileSize || 0) * 1024 * 1024 * (configFromFiles.app.maxLogFileSizeUnit === 'GB' ? 1024 : 1)), // 目前单位只有GB和MB
+  backups: Math.ceil(configFromFiles.app.keepLogFileCount) || defaultConfig.app.keepLogFileCount, // 保留日志文件数
+  maxLogSize: Math.ceil((configFromFiles.app.maxLogFileSize || defaultConfig.app.maxLogFileSize) * 1024 * 1024 * (configFromFiles.app.maxLogFileSizeUnit === 'GB' ? 1024 : 1)), // 目前单位只有GB和MB
 }
 
 let log = null
