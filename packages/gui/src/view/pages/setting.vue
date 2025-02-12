@@ -313,6 +313,14 @@ export default {
         onCancel () {},
       })
     },
+    async onMaxLogFileSizeUnitChange (value) {
+      if (value === 'MB') {
+        this.config.app.maxLogFileSize = (this.config.app.maxLogFileSize || 1) * 1024
+      } else {
+        this.config.app.maxLogFileSize = ((this.config.app.maxLogFileSize || 1024) / 1024).toFixed(2) - 0
+      }
+      this.$refs.maxLogFileSize.focus()
+    },
   },
 }
 </script>
@@ -430,8 +438,8 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="启动时窗口大小" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number v-model="config.app.windowSize.width" :step="50" :min="600" :max="2400" />&nbsp;×
-        <a-input-number v-model="config.app.windowSize.height" :step="50" :min="500" :max="2000" />
+        <a-input-number v-model="config.app.windowSize.width" :step="50" :min="600" :max="2400" :precision="0" />&nbsp;×
+        <a-input-number v-model="config.app.windowSize.height" :step="50" :min="500" :max="2000" :precision="0" />
       </a-form-item>
       <hr>
       <a-form-item label="自动检查更新" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -469,8 +477,8 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="最大日志文件大小" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number v-model="config.app.maxLogFileSize" :step="1" :min="0" />
-        <a-select v-model="config.app.maxLogFileSizeUnit" class="md-ml-5">
+        <a-input-number ref="maxLogFileSize" v-model="config.app.maxLogFileSize" :step="1" :min="0" />
+        <a-select v-model="config.app.maxLogFileSizeUnit" class="md-ml-5" @change="onMaxLogFileSizeUnitChange">
           <a-select-option v-for="(item) of maxLogFileSizeUnit" :key="item.value" :value="item.value">
             {{ item.label }}
           </a-select-option>
@@ -481,7 +489,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="保留日志文件数" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number v-model="config.app.keepLogFileCount" :step="1" :min="0" />
+        <a-input-number v-model="config.app.keepLogFileCount" :step="1" :min="0" :precision="0" />
         <div class="form-help">
           修改后，重启DS才生效，<code>隔天</code>或<code>达到日志文件大小限制</code>时，才会触发清理程序！
         </div>

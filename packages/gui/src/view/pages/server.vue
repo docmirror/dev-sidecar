@@ -206,7 +206,7 @@ export default {
               </div>
             </a-form-item>
             <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number v-model="config.server.port" :min="0" :max="65535" />
+              <a-input-number v-model="config.server.port" :min="0" :max="65535" :precision="0" />
               <div class="form-help">
                 修改后需要重启应用
               </div>
@@ -268,8 +268,8 @@ export default {
         <a-tab-pane key="3" tab="超时时间设置">
           <div style="height:100%;display:flex;flex-direction:column">
             <a-form-item label="默认超时时间" :label-col="labelCol" :wrapper-col="wrapperCol">
-              请求：<a-input-number v-model="config.server.setting.defaultTimeout" :step="1000" :min="1000" /> ms，对应<code>timeout</code>配置<br>
-              连接：<a-input-number v-model="config.server.setting.defaultKeepAliveTimeout" :step="1000" :min="1000" /> ms，对应<code>keepAliveTimeout</code>配置
+              请求：<a-input-number v-model="config.server.setting.defaultTimeout" :step="1000" :min="1000" :precision="0" /> ms，对应<code>timeout</code>配置<br>
+              连接：<a-input-number v-model="config.server.setting.defaultKeepAliveTimeout" :step="1000" :min="1000" :precision="0" /> ms，对应<code>keepAliveTimeout</code>配置
             </a-form-item>
             <hr style="margin-bottom:15px">
             <div>这里指定域名的超时时间：<span class="form-help">（域名配置可使用通配符或正则）</span></div>
@@ -363,10 +363,10 @@ export default {
               </a-checkbox>
             </a-form-item>
             <a-form-item label="自动测试间隔" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number v-model="getSpeedTestConfig().interval" :step="1000" :min="1" /> ms
+              <a-input-number v-model="getSpeedTestConfig().interval" :step="1000" :min="1" :precision="0" /> ms
             </a-form-item>
             <!-- <a-form-item label="慢速IP阈值" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number v-model="config.server.setting.lowSpeedDelay" :step="10" :min="100"/> ms
+              <a-input-number v-model="config.server.setting.lowSpeedDelay" :step="10" :min="100" :precision="0" /> ms
             </a-form-item> -->
             <div>使用以下DNS获取IP进行测速</div>
             <a-row style="margin-top:10px">
