@@ -39,13 +39,13 @@ export default {
   },
   methods: {
     async onCrtSelect () {
-      const value = await this.$api.fileSelector.open()
+      const value = await this.$api.fileSelector.open(this.config.server.setting.rootCaFile.certPath, 'file')
       if (value != null && value.length > 0) {
         this.config.server.setting.rootCaFile.certPath = value[0]
       }
     },
     async onKeySelect () {
-      const value = await this.$api.fileSelector.open()
+      const value = await this.$api.fileSelector.open(this.config.server.setting.rootCaFile.keyPath, 'file')
       if (value != null && value.length > 0) {
         this.config.server.setting.rootCaFile.keyPath = value[0]
       }

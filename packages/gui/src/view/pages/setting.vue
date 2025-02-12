@@ -321,6 +321,12 @@ export default {
       }
       this.$refs.maxLogFileSize.focus()
     },
+    async onLogFileSavePathSelect () {
+      const value = await this.$api.fileSelector.open(this.config.app.logFileSavePath, 'dir')
+      if (value != null && value.length > 0) {
+        this.config.app.logFileSavePath = value[0]
+      }
+    },
   },
 }
 </script>
@@ -470,7 +476,11 @@ export default {
       </a-form-item>
       <hr>
       <a-form-item label="日志文件保存目录" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.app.logFileSavePath" />
+        <a-input-search
+          v-model="config.app.logFileSavePath" enter-button="选择"
+          :title="config.app.logFileSavePath"
+          @search="onLogFileSavePathSelect"
+        />
         <div class="form-help">
           修改后，重启DS才生效！<br>
           注意：原目录中的文件不会自动转移到新的目录，请自行转移或删除。

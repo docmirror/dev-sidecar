@@ -3,10 +3,12 @@ export default {
     const { ipcMain, dialog, log } = context
     ipcMain.on('file-selector', (event, message) => {
       if (message.key === 'open') {
-        dialog.showOpenDialog({
-          properties: ['openFile'],
-          ...message,
-        }).then((result) => {
+        const options = message.options || {}
+        if (options.properties == null || options.properties.length === 0) {
+          options.properties = ['openFile']
+        }
+
+        dialog.showOpenDialog(options).then((result) => {
           if (result.canceled) {
             event.sender.send('file-selector', { key: 'canceled' })
           } else {
@@ -14,6 +16,7 @@ export default {
           }
         }).catch((err) => {
           log.error('选择文件失败:', err)
+          event.sender.send('file-selector', { key: 'error', error: err })
         })
       }
     })
