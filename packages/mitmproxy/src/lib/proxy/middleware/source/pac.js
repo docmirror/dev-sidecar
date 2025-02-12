@@ -1,6 +1,6 @@
 const fs = require('node:fs')
 const path = require('node:path')
-const log = require('../../../../utils/util.log')
+const log = require('../../../../utils/util.log.server')
 
 function createPacClient (pacFilePath) {
   const __PROXY__ = 'PROXY 127.0.0.1:1080;'

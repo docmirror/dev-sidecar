@@ -1,7 +1,7 @@
 // 1个小时不访问，取消获取
 const net = require('node:net')
 const _ = require('lodash')
-const log = require('../../utils/util.log')
+const log = require('../../utils/util.log.server')
 const config = require('./config.js')
 
 const DISABLE_TIMEOUT = 60 * 60 * 1000

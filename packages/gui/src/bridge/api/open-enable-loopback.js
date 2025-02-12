@@ -2,7 +2,7 @@
 import DevSidecar from '@docmirror/dev-sidecar'
 import sudoPrompt from '@vscode/sudo-prompt'
 import { join } from 'node:path'
-import log from '../../utils/util.log'
+import log from '../../utils/util.log.gui'
 
 export default {
   open () {

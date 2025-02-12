@@ -2,7 +2,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const server = require('@docmirror/mitmproxy')
 const jsonApi = require('@docmirror/mitmproxy/src/json')
-const log = require('@docmirror/mitmproxy/src/utils/util.log') // 当前脚本是在 server 的进程中执行的，所以使用 mitmproxy 中的logger
+const log = require('@docmirror/mitmproxy/src/utils/util.log.server') // 当前脚本是在 server 的进程中执行的，所以使用 mitmproxy 中的logger
 
 const home = process.env.USER_HOME || process.env.HOME || 'C:/Users/Administrator/'
 
@@ -14,7 +14,7 @@ if (process.argv && process.argv.length > 3) {
 }
 
 const configJson = fs.readFileSync(configPath)
-log.info('读取 running.json by core 成功:', configPath)
+log.info('读取 running.json by cli 成功:', configPath)
 let config
 try {
   config = jsonApi.parse(configJson.toString())

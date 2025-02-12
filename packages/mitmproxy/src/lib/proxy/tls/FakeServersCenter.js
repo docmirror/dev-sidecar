@@ -4,7 +4,7 @@ const tls = require('node:tls')
 const forge = require('node-forge')
 const CertAndKeyContainer = require('./CertAndKeyContainer')
 const tlsUtils = require('./tlsUtils')
-const log = require('../../../utils/util.log')
+const log = require('../../../utils/util.log.server')
 const compatible = require('../compatible/compatible')
 
 const pki = forge.pki

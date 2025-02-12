@@ -1,5 +1,5 @@
 const axios = require('axios')
-const log = require('../../utils/util.log')
+const log = require('../../utils/util.log.server')
 const BaseDNS = require('./base')
 
 module.exports = class DNSOverIpAddress extends BaseDNS {

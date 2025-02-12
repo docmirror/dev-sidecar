@@ -1,5 +1,5 @@
 const expose = require('./expose.js')
-const log = require('./utils/util.log')
+const log = require('./utils/util.log.core')
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 // 避免异常崩溃

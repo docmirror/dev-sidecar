@@ -1,5 +1,5 @@
 const path = require('node:path')
-const log = require('../../../utils/util.log')
+const log = require('../../../utils/util.log.core')
 
 function getExtraPath () {
   let extraPath = process.env.DS_EXTRA_PATH

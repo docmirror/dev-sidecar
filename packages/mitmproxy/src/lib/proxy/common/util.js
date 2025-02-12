@@ -1,6 +1,6 @@
 const url = require('node:url')
 const tunnelAgent = require('tunnel-agent')
-const log = require('../../../utils/util.log')
+const log = require('../../../utils/util.log.server')
 const matchUtil = require('../../../utils/util.match')
 const Agent = require('./ProxyHttpAgent')
 const HttpsAgent = require('./ProxyHttpsAgent')

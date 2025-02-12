@@ -1,7 +1,7 @@
 const http = require('node:http')
 const https = require('node:https')
 const jsonApi = require('../../../json')
-const log = require('../../../utils/util.log')
+const log = require('../../../utils/util.log.server')
 const RequestCounter = require('../../choice/RequestCounter')
 const commonUtil = require('../common/util')
 // const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i

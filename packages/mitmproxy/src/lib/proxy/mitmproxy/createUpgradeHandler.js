@@ -1,6 +1,6 @@
 const http = require('node:http')
 const https = require('node:https')
-const log = require('../../../utils/util.log')
+const log = require('../../../utils/util.log.server')
 const util = require('../common/util')
 
 // copy from node-http-proxy.  ^_^

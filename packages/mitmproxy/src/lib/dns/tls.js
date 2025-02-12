@@ -1,5 +1,5 @@
 const dnstls = require('dns-over-tls')
-const log = require('../../utils/util.log')
+const log = require('../../utils/util.log.server')
 const BaseDNS = require('./base')
 
 module.exports = class DNSOverTLS extends BaseDNS {

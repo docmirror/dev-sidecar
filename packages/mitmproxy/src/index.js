@@ -2,7 +2,7 @@ const mitmproxy = require('./lib/proxy')
 const proxyConfig = require('./lib/proxy/common/config')
 const speedTest = require('./lib/speed/index.js')
 const ProxyOptions = require('./options')
-const log = require('./utils/util.log')
+const log = require('./utils/util.log.server')
 const { fireError, fireStatus } = require('./utils/util.process')
 
 let servers = []

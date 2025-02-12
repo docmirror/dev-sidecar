@@ -1,5 +1,5 @@
 const defaultDns = require('node:dns')
-const log = require('../../../utils/util.log')
+const log = require('../../../utils/util.log.server')
 const speedTest = require('../../speed')
 
 module.exports = {

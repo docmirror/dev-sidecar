@@ -1,6 +1,6 @@
 const tlsUtils = require('./tlsUtils')
 // const https = require('https')
-const log = require('../../../utils/util.log')
+const log = require('../../../utils/util.log.server')
 
 module.exports = class CertAndKeyContainer {
   constructor ({

@@ -3,7 +3,7 @@
 const Shell = require('../shell')
 const extraPath = require('./extra-path')
 const sudoPrompt = require('@vscode/sudo-prompt')
-const log = require('../../utils/util.log')
+const log = require('../../utils/util.log.core')
 const execute = Shell.execute
 
 const executor = {

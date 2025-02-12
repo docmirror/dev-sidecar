@@ -7,7 +7,7 @@
  */
 const fs = require('node:fs')
 const jsonApi = require('../../../json')
-const log = require('../../../utils/util.log')
+const log = require('../../../utils/util.log.server')
 const matchUtil = require('../../../utils/util.match')
 const configLoader = require('@docmirror/dev-sidecar/src/config/local-config-loader')
 

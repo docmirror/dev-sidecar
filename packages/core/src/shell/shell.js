@@ -2,7 +2,7 @@ const childProcess = require('node:child_process')
 const os = require('node:os')
 const fixPath = require('fix-path')
 const PowerShell = require('node-powershell')
-const log = require('../utils/util.log')
+const log = require('../utils/util.log.core')
 
 fixPath()
 

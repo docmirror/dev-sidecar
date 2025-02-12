@@ -7,7 +7,7 @@ import minimist from 'minimist'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
 import jsonApi from '@docmirror/mitmproxy/src/json'
-import log from './utils/util.log'
+import log from './utils/util.log.gui'
 
 log.info(`background.js start, platform is ${process.platform}`)
 
@@ -435,7 +435,7 @@ try {
   // 禁止双开
   const isFirstInstance = app.requestSingleInstanceLock()
   if (!isFirstInstance) {
-    log.info('app quit: is second instance')
+    log.info('app quit: is second instance（禁止双开）')
     setTimeout(() => {
       app.quit()
     }, 1000)

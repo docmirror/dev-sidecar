@@ -6,7 +6,7 @@ const dnsUtil = require('./lib/dns')
 const interceptorImpls = require('./lib/interceptor')
 const scriptInterceptor = require('./lib/interceptor/impl/res/script')
 const { getTmpPacFilePath, downloadPacAsync, createOverwallMiddleware } = require('./lib/proxy/middleware/overwall')
-const log = require('./utils/util.log')
+const log = require('./utils/util.log.server')
 const matchUtil = require('./utils/util.match')
 
 // 处理拦截配置

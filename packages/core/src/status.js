@@ -1,6 +1,6 @@
 const lodash = require('lodash')
 const event = require('./event')
-const log = require('./utils/util.log')
+const log = require('./utils/util.log.core')
 
 const status = {
   server: { enabled: false },

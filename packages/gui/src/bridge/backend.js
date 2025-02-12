@@ -3,7 +3,7 @@ import autoStart from './auto-start/backend'
 import fileSelector from './file-selector/backend'
 import tongji from './tongji/backend'
 import update from './update/backend'
-import log from '../utils/util.log'
+import log from '../utils/util.log.gui'
 
 const modules = {
   api, // 核心接口模块

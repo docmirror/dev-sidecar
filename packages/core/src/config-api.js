@@ -5,7 +5,7 @@ const request = require('request')
 const defConfig = require('./config/index.js')
 const mergeApi = require('./merge.js')
 const Shell = require('./shell')
-const log = require('./utils/util.log')
+const log = require('./utils/util.log.core')
 const configLoader = require('./config/local-config-loader')
 
 let configTarget = lodash.cloneDeep(defConfig)

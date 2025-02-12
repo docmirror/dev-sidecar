@@ -8,7 +8,7 @@ import request from 'request'
 import progress from 'request-progress'
 import pkg from '../../../package.json'
 import appPathUtil from '../../utils/util.apppath'
-import log from '../../utils/util.log'
+import log from '../../utils/util.log.gui'
 
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'

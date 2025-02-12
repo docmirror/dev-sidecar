@@ -1,6 +1,6 @@
 const zlib = require('node:zlib')
 const through = require('through2')
-const log = require('../../../utils/util.log')
+const log = require('../../../utils/util.log.server')
 
 // 编解码器
 const codecMap = {

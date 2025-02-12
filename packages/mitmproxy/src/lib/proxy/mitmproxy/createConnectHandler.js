@@ -1,7 +1,7 @@
 const net = require('node:net')
 const url = require('node:url')
 const jsonApi = require('../../../json')
-const log = require('../../../utils/util.log')
+const log = require('../../../utils/util.log.server')
 const DnsUtil = require('../../dns')
 const dnsLookup = require('./dnsLookup')
 

@@ -1,6 +1,6 @@
 const fs = require('node:fs')
 const path = require('node:path')
-const log = require('../../utils/util.log')
+const log = require('../../utils/util.log.server')
 
 let scripts
 

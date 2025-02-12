@@ -7,7 +7,7 @@ import lodash from 'lodash'
 const jsonApi = require('@docmirror/mitmproxy/src/json')
 const pk = require('../../../package.json')
 const configFromFiles = require('@docmirror/dev-sidecar/src/config/index.js').configFromFiles
-const log = require('../../utils/util.log')
+const log = require('../../utils/util.log.gui')
 const dateUtil = require('@docmirror/dev-sidecar/src/utils/util.date')
 
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
