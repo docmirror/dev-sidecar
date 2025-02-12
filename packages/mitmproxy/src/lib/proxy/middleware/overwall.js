@@ -7,6 +7,7 @@ const request = require('request')
 const log = require('../../../utils/util.log')
 const matchUtil = require('../../../utils/util.match')
 const pac = require('./source/pac')
+const dateUtil = require('@docmirror/dev-sidecar/src/utils/util.date')
 
 let pacClient = null
 
@@ -55,16 +56,6 @@ function loadPacLastModifiedTime (pacTxt) {
   }
 }
 
-function formatDate (date) {
-  const year = date.getFullYear()
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const day = date.getDate().toString().padStart(2, '0')
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  const seconds = date.getSeconds().toString().padStart(2, '0')
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
-}
-
 // 保存 pac 内容到 `~/pac.txt` 文件中
 function savePacFile (pacTxt) {
   const pacFilePath = getTmpPacFilePath()
@@ -90,7 +81,7 @@ function savePacFile (pacTxt) {
         if (utimesErr) {
           log.error('修改 pac.txt 文件时间失败:', utimesErr)
         } else {
-          log.info(`'${pacFilePath}' 文件的修改时间已更新为其最近更新时间 '${formatDate(lastModifiedTime)}'`)
+          log.info(`'${pacFilePath}' 文件的修改时间已更新为其最近更新时间 '${dateUtil.format(lastModifiedTime, false)}'`)
         }
       })
     })
