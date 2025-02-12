@@ -57,14 +57,20 @@ module.exports = {
       return
     }
 
+    if (logger === log) {
+      return
+    }
+
     log = logger
 
-    try {
-      if (backupLogs && backupLogs.length > 0) {
-        log.info('[util.log-or-console.js] 日志系统已初始化完成，现开始将历史控制台信息记录到日志文件中：')
-        printBackups()
+    if (log !== console) {
+      try {
+        if (backupLogs && backupLogs.length > 0) {
+          log.info('[util.log-or-console.js] 日志系统已初始化完成，现开始将历史控制台信息记录到日志文件中：')
+          printBackups()
+        }
+      } catch {
       }
-    } catch {
     }
   },
 
