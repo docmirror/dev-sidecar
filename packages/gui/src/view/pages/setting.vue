@@ -13,6 +13,7 @@ export default {
       reloadLoading: false,
       urlBackup: null,
       personalUrlBackup: null,
+      maxLogFileSizeStep: 1, // 单位不同，值不同：GB=1，MB=100
       maxLogFileSizeUnit: [
         {
           label: 'GB',
@@ -315,9 +316,11 @@ export default {
     },
     async onMaxLogFileSizeUnitChange (value) {
       if (value === 'MB') {
-        this.config.app.maxLogFileSize = (this.config.app.maxLogFileSize || 1) * 1024
+        this.config.app.maxLogFileSize = Math.ceil((this.config.app.maxLogFileSize || 1024) * 1024) // 转为整数
+        this.maxLogFileSizeStep = 100
       } else {
-        this.config.app.maxLogFileSize = ((this.config.app.maxLogFileSize || 1024) / 1024).toFixed(2) - 0
+        this.config.app.maxLogFileSize = ((this.config.app.maxLogFileSize || 1024) / 1024).toFixed(2) - 0 // 最多保留2位小数
+        this.maxLogFileSizeStep = 1
       }
       this.$refs.maxLogFileSize.focus()
     },
@@ -487,7 +490,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="最大日志文件大小" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number ref="maxLogFileSize" v-model="config.app.maxLogFileSize" :step="1" :min="0" />
+        <a-input-number ref="maxLogFileSize" v-model="config.app.maxLogFileSize" :step="maxLogFileSizeStep" :min="0" />
         <a-select v-model="config.app.maxLogFileSizeUnit" class="md-ml-5" @change="onMaxLogFileSizeUnitChange">
           <a-select-option v-for="(item) of maxLogFileSizeUnit" :key="item.value" :value="item.value">
             {{ item.label }}
