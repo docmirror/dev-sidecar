@@ -62,7 +62,7 @@ function log4jsConfigure (categories) {
   log = log4js.getLogger(categories[0])
   logOrConsole.setLogger(log)
 
-  log.info(`设置日志配置完成，进程ID: ${process.pid}，配置:`, config)
+  log.info(`设置日志配置完成，进程ID: ${process.pid}，categories：[${categories}]，config:`, JSON.stringify(config))
 }
 
 module.exports = {
