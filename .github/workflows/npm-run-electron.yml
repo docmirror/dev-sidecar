@@ -3,9 +3,11 @@ name: npm run electron
 on:
   push:
     branches:
-      - run
-      - test
+      - run*
+      - test*
       - release*
+      - v1*
+      - v2*
     tags:
       - '*'
 
