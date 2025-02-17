@@ -16,6 +16,6 @@ module.exports = {
     return true
   },
   is (interceptOpt) {
-    return interceptOpt.unVerifySsl === true
+    return interceptOpt.unVerifySsl === true || interceptOpt.ssl === false
   },
 }
