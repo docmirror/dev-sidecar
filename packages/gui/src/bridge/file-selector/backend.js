@@ -3,6 +3,9 @@ export default {
     const { ipcMain, dialog, log } = context
     ipcMain.on('file-selector', (event, message) => {
       if (message.key === 'open') {
+        /**
+         * @type {Electron.OpenDialogOptions}
+         */
         const options = message.options || {}
         if (options.properties == null || options.properties.length === 0) {
           options.properties = ['openFile']
