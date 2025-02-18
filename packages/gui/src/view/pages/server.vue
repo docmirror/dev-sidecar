@@ -15,6 +15,16 @@ export default {
       dnsMappings: [],
       speedTestList: [],
       whiteList: [],
+      whiteListOptions: [
+        {
+          label: '不代理',
+          value: 'true',
+        },
+        {
+          label: '代理',
+          value: 'false',
+        },
+      ],
     }
   },
   computed: {
@@ -102,25 +112,25 @@ export default {
       for (const key in this.config.server.whiteList) {
         const value = this.config.server.whiteList[key]
         this.whiteList.push({
-          key,
-          value,
+          key: key || '',
+          value: value === true ? 'true' : 'false',
         })
       }
+    },
+    addWhiteList () {
+      this.whiteList.unshift({ key: '', value: 'true' })
+    },
+    deleteWhiteList (item, index) {
+      this.whiteList.splice(index, 1)
     },
     submitWhiteList () {
       const whiteList = {}
       for (const item of this.whiteList) {
         if (item.key) {
-          whiteList[item.key] = item.value
+          whiteList[item.key] = item.value === 'true'
         }
       }
       this.config.server.whiteList = whiteList
-    },
-    deleteWhiteList (item, index) {
-      this.whiteList.splice(index, 1)
-    },
-    addWhiteList () {
-      this.whiteList.unshift({ key: '', value: true })
     },
     getSpeedTestConfig () {
       return this.config.server.dns.speedTest
@@ -289,11 +299,18 @@ export default {
             </a-col>
           </a-row>
           <a-row v-for="(item, index) of whiteList" :key="index" :gutter="10" style="margin-top: 5px">
-            <a-col :span="21">
-              <a-input v-model="item.key" :disabled="item.value === false" />
+            <a-col :span="16">
+              <a-input v-model="item.key" />
+            </a-col>
+            <a-col :span="5">
+              <a-select v-model="item.value" style="width:100%">
+                <a-select-option v-for="(item2) of whiteListOptions" :key="item2.value" :value="item2.value">
+                  {{ item2.label }}
+                </a-select-option>
+              </a-select>
             </a-col>
             <a-col :span="3">
-              <a-button v-if="item.value !== false" type="danger" icon="minus" @click="deleteWhiteList(item, index)" />
+              <a-button type="danger" icon="minus" @click="deleteWhiteList(item, index)" />
             </a-col>
           </a-row>
         </a-tab-pane>

@@ -54,11 +54,11 @@ export default {
         })
       }
     },
-    deleteTarget (item, index) {
-      this.targets.splice(index, 1)
-    },
     addTarget () {
       this.targets.unshift({ key: '', value: 'true' })
+    },
+    deleteTarget (item, index) {
+      this.targets.splice(index, 1)
     },
     saveTarget () {
       const map = {}
