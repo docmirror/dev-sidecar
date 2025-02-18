@@ -8,8 +8,6 @@ on:
       - release*
       - v1*
       - v2*
-    tags:
-      - '*'
 
 jobs:
   npm-run-electron:
