@@ -192,7 +192,7 @@ export default {
               <a-checkbox v-model="config.server.enabled">
                 随应用启动
               </a-checkbox>
-              <a-tag v-if="status.proxy.enabled" color="green">
+              <a-tag v-if="status.server.enabled" color="green">
                 当前已启动
               </a-tag>
               <a-tag v-else color="red">
