@@ -1,5 +1,5 @@
 // const os = require('os')
-const log = require('packages/mitmproxy/src/utils/util.log.server')
+const log = require('./util.log.server')
 
 const util = {
   getNodeVersion () {
