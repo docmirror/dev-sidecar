@@ -27,6 +27,9 @@ export function apiInit (app) {
         ipcRenderer.removeAllListeners(channel)
       },
       invoke,
+      postMessage (channel, ...args) {
+        ipcRenderer.postMessage(channel, ...args)
+      },
       send,
       async openExternal (href) {
         await shell.openExternal(href)

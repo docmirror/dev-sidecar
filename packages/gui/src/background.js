@@ -298,28 +298,38 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
   })
 
   const shortcut = (event, input) => {
-    // 按 F12，打开/关闭 开发者工具
-    if (input.key === 'F12') {
-      // 阻止默认的按键事件行为
+    if (input.key === 'F12' && input.type === 'keyUp' && !input.control && !input.shift && !input.alt && !input.meta) {
+      // 按 F12，打开/关闭 开发者工具
       event.preventDefault()
-      // 切换开发者工具显示状态
       switchDevTools()
-      // eslint-disable-next-line style/brace-style
-    }
-    // 按 F5，刷新页面
-    else if (input.key === 'F5') {
-      // 阻止默认的按键事件行为
+    } else if (input.key === 'F5' && input.type === 'keyUp' && !input.control && !input.shift && !input.alt && !input.meta) {
+      // 按 F5，刷新页面
       event.preventDefault()
-      // 刷新页面
       win.webContents.reload()
+    } else {
+      // 全文检索框（SearchBar）相关快捷键
+      if ((input.key === 'F' || input.key === 'f') && input.type === 'keyDown' && input.control && !input.shift && !input.alt && !input.meta) {
+        // 按 Ctrl + F，显示或隐藏全文检索框（SearchBar）
+        event.preventDefault()
+        win.webContents.send('search-bar', { key: 'show-hide' })
+      } else if (input.key === 'Escape' && input.type === 'keyUp' && !input.control && !input.shift && !input.alt && !input.meta) {
+        // 按 ESC，隐藏全文检索框（SearchBar）
+        event.preventDefault()
+        win.webContents.send('search-bar', { key: 'show-hide', hideSearchBar: true })
+      } else if (input.key === 'F3' && input.type === 'keyDown' && !input.control && !input.shift && !input.alt && !input.meta) {
+        // 按 F3，全文检索框（SearchBar）定位到下一个
+        event.preventDefault()
+        win.webContents.send('search-bar', { key: 'next' })
+      } else if (input.key === 'F3' && input.type === 'keyDown' && !input.control && input.shift && !input.alt && !input.meta) {
+        // 按 Shift + F3，全文检索框（SearchBar）定位到上一个
+        event.preventDefault()
+        win.webContents.send('search-bar', { key: 'previous' })
+      }
     }
   }
 
   // 监听键盘事件
   win.webContents.on('before-input-event', (event, input) => {
-    if (input.type !== 'keyUp' || input.control || input.alt || input.shift || input.meta) {
-      return
-    }
     win.webContents.executeJavaScript('config')
       .then((value) => {
         console.info('window.config:', value, ', key:', input.key)

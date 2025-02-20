@@ -48,24 +48,18 @@ export default {
         case 'ArrowDown':
         case 'ArrowLeft':
         case 'ArrowRight':
-          return ''
+          return '无'
+
+        // 不支持监听以下几个键，返回空
+        case 'NumpadDivide': // return 'Num/'
+        case 'NumpadMultiply': // return 'Num*'
+        case 'NumpadDecimal': // return 'Num.'
+        case 'NumpadSubtract': // return 'Num-'
+        case 'NumpadAdd': // return 'Num+'
+          return '无'
       }
 
       switch (event.code) {
-        // F1 ~ F12
-        case 'F1': return 'F1'
-        case 'F2': return 'F2'
-        case 'F3': return 'F3'
-        case 'F4': return 'F4'
-        case 'F5': return 'F5'
-        case 'F6': return 'F6'
-        case 'F7': return 'F7'
-        case 'F8': return 'F8'
-        case 'F9': return 'F9'
-        case 'F10': return 'F10'
-        case 'F11': return 'F11'
-        case 'F12': return 'F12'
-
         // 0 ~ 9
         case 'Digit0': return '0'
         case 'Digit1': return '1'
@@ -110,14 +104,6 @@ export default {
         case 'Numpad8': return 'Num8'
         case 'Numpad9': return 'Num9'
         case 'Numpad0': return 'Num0'
-
-        // 不支持监听以下几个键，返回空
-        case 'NumpadDivide': // return 'Num/'
-        case 'NumpadMultiply': // return 'Num*'
-        case 'NumpadDecimal': // return 'Num.'
-        case 'NumpadSubtract': // return 'Num-'
-        case 'NumpadAdd': // return 'Num+'
-          return ''
       }
 
       // 字母
@@ -126,7 +112,7 @@ export default {
       }
 
       console.error(`未能识别的按键：key=${event.key}, code=${event.code}, keyCode=${event.keyCode}`)
-      return ''
+      return '无'
     },
     async disableBeforeInputEvent () {
       clearTimeout(window.enableBeforeInputEventTimeout)
@@ -169,14 +155,18 @@ export default {
         shortcut += 'Meta + '
       }
 
-      // 如果以上按钮都没有按下，并且当前键不是F1~F4、F6~F11时，则直接返回（注：F5已经是刷新页面快捷键、F12已经是打开DevTools的快捷键了）
-      if (shortcut === '' && !key.match(/^F([1-46-9]|1[01])$/g)) {
+      // 如果以上按钮都没有按下，并且当前键不是F1、F2、F4、F6~F11时，则直接返回（注：F5已经是刷新页面快捷键、F12已经是打开DevTools的快捷键了）
+      if (shortcut === '' && !key.match(/^F([1246-9]|1[01])$/g)) {
         this.config.app.showHideShortcut = '无'
         return
       }
 
       // 拼接键值
       shortcut += key
+
+      if (shortcut === 'Ctrl + F' || shortcut === 'Shift + F3') {
+        shortcut = '无' // 如果是其他已被占用快捷键，则设置为 '无'
+      }
 
       this.config.app.showHideShortcut = shortcut
     },
@@ -430,7 +420,7 @@ export default {
       <a-form-item label="打开窗口快捷键" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input v-model="config.app.showHideShortcut" @change="shortcutChange" @keydown="shortcutKeyDown" @keyup="shortcutKeyUp" />
         <div class="form-help">
-          部分快捷键已被占用：F5=刷新页面，F12=开发者工具（DevTools）
+          部分快捷键已被占用：<code>F5</code>、<code>F12</code>、<code>Ctrl+F</code>、<code>F3</code>、<code>Shift+F3</code>
         </div>
       </a-form-item>
       <a-form-item label="启动时窗口状态" :label-col="labelCol" :wrapper-col="wrapperCol">

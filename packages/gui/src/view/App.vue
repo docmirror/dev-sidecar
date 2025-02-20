@@ -1,4 +1,6 @@
 <script>
+import { ipcRenderer } from 'electron'
+import { SearchBar } from 'search-bar-vue2'
 import createMenus from '@/view/router/menu'
 import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 import { colorTheme } from './composables/theme'
@@ -6,6 +8,7 @@ import { colorTheme } from './composables/theme'
 export default {
   name: 'App',
   components: {
+    SearchBar,
   },
   data () {
     return {
@@ -13,6 +16,7 @@ export default {
       info: {},
       menus: undefined,
       config: undefined,
+      hideSearchBar: true,
     }
   },
   computed: {
@@ -37,16 +41,48 @@ export default {
     this.$api.info.get().then((ret) => {
       this.info = ret
     })
+
+    ipcRenderer.on('search-bar', (_, message) => {
+      console.info(_, message)
+      if (message.key === 'show-hide') {
+        if (window.config.disableSearchBar) {
+          this.hideSearchBar = true
+          return
+        }
+
+        this.hideSearchBar = message.hideSearchBar != null ? message.hideSearchBar : !this.hideSearchBar
+
+        // 显示后，获取输入框焦点
+        if (!this.hideSearchBar) {
+          setTimeout(() => {
+            try {
+              this.$refs.searchBar.$el.querySelector('input').focus()
+            } catch {
+            }
+          }, 100)
+        }
+      } else {
+        // 如果还未显示检索框，先显示出来
+        if (this.hideSearchBar) {
+          this.hideSearchBar = false
+          return
+        }
+
+        if (message.key === 'next' && !this.hideSearchBar) {
+          this.$refs.searchBar.next()
+        } else if (message.key === 'previous' && !this.hideSearchBar) {
+          this.$refs.searchBar.previous()
+        }
+      }
+    })
   },
   methods: {
-    handleClick (e) {
-      console.log('click', e)
-    },
     titleClick (item) {
       console.log('title click:', item)
     },
     menuClick (item) {
       console.log('menu click:', item)
+      window.config.disableSearchBar = false
       this.$router.replace(item.path)
     },
   },
@@ -56,6 +92,12 @@ export default {
 <template>
   <a-config-provider :locale="locale">
     <div class="ds_layout" :class="themeClass">
+      <SearchBar ref="searchBar"
+                 :root="'#document'"
+                 :highlightClass="'search-bar-highlight'"
+                 :selectedClass="'selected-highlight'"
+                 :hiden.sync="hideSearchBar"
+      />
       <a-layout>
         <a-layout-sider :theme="theme">
           <div class="logo" />
@@ -82,7 +124,7 @@ export default {
         </a-layout-sider>
         <a-layout>
           <!-- <a-layout-header>Header</a-layout-header> -->
-          <a-layout-content>
+          <a-layout-content id="document">
             <router-view />
           </a-layout-content>
           <a-layout-footer>
@@ -142,6 +184,13 @@ body {
   .ant-menu-vertical,
   .ant-menu-vertical-left {
     border: 0;
+  }
+}
+.search-bar-highlight {
+  background-color: #ef0fff;
+
+  &.selected-highlight {
+    background-color: #38d878;
   }
 }
 </style>

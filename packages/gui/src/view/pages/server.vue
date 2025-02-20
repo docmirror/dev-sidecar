@@ -170,13 +170,18 @@ export default {
     },
     async handleTabChange (key) {
       if (key !== '2' && key !== '3' && key !== '5' && key !== '6' && key !== '7') {
-        return
-      }
+        // 没有 JsonEditor
+        window.config.disableSearchBar = false
+      } else {
+        // 有 JsonEditor
+        window.config.disableSearchBar = true
+        this.$api.ipc.postMessage('search-bar', { key: 'show-hide', hideSearchBar: true })
 
-      // 规避 vue-json-editor 内容只填充输入框一半的问题
-      setTimeout(() => {
-        window.dispatchEvent(new Event('resize'))
-      }, 10)
+        // 规避 vue-json-editor 内容只填充输入框一半的问题
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'))
+        }, 10)
+      }
     },
   },
 }
@@ -271,7 +276,7 @@ export default {
         </a-tab-pane>
         <a-tab-pane key="2" tab="拦截设置">
           <VueJsonEditor
-            ref="editor" v-model="config.server.intercepts" style="height:100%" mode="code"
+            ref="editor2" v-model="config.server.intercepts" style="height:100%" mode="code"
             :show-btns="false" :expanded-on-start="true"
           />
         </a-tab-pane>
@@ -284,7 +289,7 @@ export default {
             <hr style="margin-bottom:15px">
             <div>这里指定域名的超时时间：<span class="form-help">（域名配置可使用通配符或正则）</span></div>
             <VueJsonEditor
-              ref="editor" v-model="config.server.setting.timeoutMapping" style="flex-grow:1;min-height:300px;margin-top:10px" mode="code"
+              ref="editor3" v-model="config.server.setting.timeoutMapping" style="flex-grow:1;min-height:300px;margin-top:10px" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
           </div>
@@ -320,7 +325,7 @@ export default {
               说明：<code>自动兼容程序</code>会自动根据错误信息进行兼容性调整，并将兼容设置保存在 <code>~/.dev-sidecar/automaticCompatibleConfig.json</code> 文件中。但并不是所有的兼容设置都是正确的，所以需要通过以下配置来覆盖错误的兼容设置。
             </div>
             <VueJsonEditor
-              ref="editor" v-model="config.server.compatible" style="flex-grow:1;min-height:300px;margin-top:10px;" mode="code"
+              ref="editor5" v-model="config.server.compatible" style="flex-grow:1;min-height:300px;margin-top:10px;" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
           </div>
@@ -332,14 +337,14 @@ export default {
               <span class="form-help">（域名配置可使用通配符或正则）</span>
             </div>
             <VueJsonEditor
-              ref="editor" v-model="config.server.preSetIpList" style="flex-grow:1;min-height:300px;margin-top:10px;" mode="code"
+              ref="editor6" v-model="config.server.preSetIpList" style="flex-grow:1;min-height:300px;margin-top:10px;" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
           </div>
         </a-tab-pane>
         <a-tab-pane key="7" tab="DNS服务管理">
           <VueJsonEditor
-            ref="editor" v-model="config.server.dns.providers" style="height:100%" mode="code"
+            ref="editor7" v-model="config.server.dns.providers" style="height:100%" mode="code"
             :show-btns="false" :expanded-on-start="true"
           />
         </a-tab-pane>
