@@ -43,13 +43,17 @@ export default {
     })
 
     ipcRenderer.on('search-bar', (_, message) => {
-      console.info(_, message)
-      if (message.key === 'show-hide') {
-        if (window.config.disableSearchBar) {
-          this.hideSearchBar = true
-          return
-        }
+      if (window.config.disableSearchBar) {
+        this.hideSearchBar = true
+        return
+      }
 
+      // 如果不是显示/隐藏操作，并且还未显示检索框，先按显示操作处理
+      if (message.key !== 'show-hide' && this.hideSearchBar) {
+        message = { key: 'show-hide' }
+      }
+
+      if (message.key === 'show-hide') { // 显示/隐藏
         this.hideSearchBar = message.hideSearchBar != null ? message.hideSearchBar : !this.hideSearchBar
 
         // 显示后，获取输入框焦点
@@ -61,18 +65,10 @@ export default {
             }
           }, 100)
         }
-      } else {
-        // 如果还未显示检索框，先显示出来
-        if (this.hideSearchBar) {
-          this.hideSearchBar = false
-          return
-        }
-
-        if (message.key === 'next' && !this.hideSearchBar) {
-          this.$refs.searchBar.next()
-        } else if (message.key === 'previous' && !this.hideSearchBar) {
-          this.$refs.searchBar.previous()
-        }
+      } else if (message.key === 'next') { // 下一项
+        this.$refs.searchBar.next()
+      } else if (message.key === 'previous') { // 上一项
+        this.$refs.searchBar.previous()
       }
     })
   },
