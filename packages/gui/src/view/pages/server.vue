@@ -14,6 +14,7 @@ export default {
   data () {
     return {
       key: 'server',
+      activeTabKey: '1',
       dnsMappings: [],
       speedTestList: [],
       whiteList: [],
@@ -105,9 +106,6 @@ export default {
     deleteDnsMapping (item, index) {
       this.dnsMappings.splice(index, 1)
     },
-    restoreDefDnsMapping (item, index) {
-
-    },
     addDnsMapping () {
       this.dnsMappings.unshift({ key: '', value: 'quad9' })
     },
@@ -186,18 +184,13 @@ export default {
       }, 5000)
     },
     async handleTabChange (key) {
+      this.activeTabKey = key
       if (key !== '2' && key !== '3' && key !== '5' && key !== '6' && key !== '7') {
-        // 没有 JsonEditor
+        // 没有 JsonEditor，启用SearchBar
         window.config.disableSearchBar = false
       } else {
-        // 有 JsonEditor
+        // 有 JsonEditor，禁用SearchBar
         window.config.disableSearchBar = true
-        this.$api.ipc.postMessage('search-bar', { key: 'show-hide', hideSearchBar: true })
-
-        // 规避 vue-json-editor 内容只填充输入框一半的问题
-        setTimeout(() => {
-          window.dispatchEvent(new Event('resize'))
-        }, 10)
       }
     },
   },
@@ -213,13 +206,13 @@ export default {
     <div style="height: 100%" class="json-wrapper">
       <a-tabs
         v-if="config"
-        default-active-key="1"
+        :default-active-key="activeTabKey"
         tab-position="left"
         :style="{ height: '100%' }"
         @change="handleTabChange"
       >
         <a-tab-pane key="1" tab="基本设置">
-          <div style="padding-right:10px">
+          <div v-if="activeTabKey === '1'" style="padding-right:10px">
             <a-form-item label="代理服务:" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-checkbox v-model="config.server.enabled">
                 随应用启动
@@ -292,13 +285,15 @@ export default {
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="拦截设置">
-          <VueJsonEditor
-            ref="editor2" v-model="config.server.intercepts" style="height:100%" mode="code"
-            :show-btns="false" :expanded-on-start="true"
-          />
+          <div v-if="activeTabKey === '2'" style="height:100%">
+            <VueJsonEditor
+              v-model="config.server.intercepts" style="height:100%" mode="code"
+              :show-btns="false" :expanded-on-start="true"
+            />
+          </div>
         </a-tab-pane>
         <a-tab-pane key="3" tab="超时时间设置">
-          <div style="height:100%;display:flex;flex-direction:column">
+          <div v-if="activeTabKey === '3'" style="height:100%;display:flex;flex-direction:column">
             <a-form-item label="默认超时时间" :label-col="labelCol" :wrapper-col="wrapperCol">
               请求：<a-input-number v-model="config.server.setting.defaultTimeout" :step="1000" :min="1000" :precision="0" /> ms，对应<code>timeout</code>配置<br>
               连接：<a-input-number v-model="config.server.setting.defaultKeepAliveTimeout" :step="1000" :min="1000" :precision="0" /> ms，对应<code>keepAliveTimeout</code>配置
@@ -306,67 +301,71 @@ export default {
             <hr style="margin-bottom:15px">
             <div>这里指定域名的超时时间：<span class="form-help">（域名配置可使用通配符或正则）</span></div>
             <VueJsonEditor
-              ref="editor3" v-model="config.server.setting.timeoutMapping" style="flex-grow:1;min-height:300px;margin-top:10px" mode="code"
+              v-model="config.server.setting.timeoutMapping" style="flex-grow:1;min-height:300px;margin-top:10px" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
           </div>
         </a-tab-pane>
         <a-tab-pane key="4" tab="域名白名单">
-          <a-row style="margin-top:10px">
-            <a-col span="21">
-              <div>这里配置的域名不会通过代理</div>
-            </a-col>
-            <a-col span="3">
-              <a-button style="margin-left:8px" type="primary" icon="plus" @click="addWhiteList()" />
-            </a-col>
-          </a-row>
-          <a-row v-for="(item, index) of whiteList" :key="index" :gutter="10" style="margin-top: 5px">
-            <a-col :span="16">
-              <MockInput v-model="item.key" />
-            </a-col>
-            <a-col :span="5">
-              <a-select v-model="item.value" style="width:100%">
-                <a-select-option v-for="(item2) of whiteListOptions" :key="item2.value" :value="item2.value">
-                  {{ item2.label }}
-                </a-select-option>
-              </a-select>
-            </a-col>
-            <a-col :span="3">
-              <a-button type="danger" icon="minus" @click="deleteWhiteList(item, index)" />
-            </a-col>
-          </a-row>
+          <div v-if="activeTabKey === '4'">
+            <a-row style="margin-top:10px">
+              <a-col span="21">
+                <div>这里配置的域名不会通过代理</div>
+              </a-col>
+              <a-col span="3">
+                <a-button style="margin-left:8px" type="primary" icon="plus" @click="addWhiteList()" />
+              </a-col>
+            </a-row>
+            <a-row v-for="(item, index) of whiteList" :key="index" :gutter="10" style="margin-top: 5px">
+              <a-col :span="16">
+                <MockInput v-model="item.key" />
+              </a-col>
+              <a-col :span="5">
+                <a-select v-model="item.value" style="width:100%">
+                  <a-select-option v-for="(item2) of whiteListOptions" :key="item2.value" :value="item2.value">
+                    {{ item2.label }}
+                  </a-select-option>
+                </a-select>
+              </a-col>
+              <a-col :span="3">
+                <a-button type="danger" icon="minus" @click="deleteWhiteList(item, index)" />
+              </a-col>
+            </a-row>
+          </div>
         </a-tab-pane>
         <a-tab-pane key="5" tab="自动兼容程序">
-          <div style="height:100%;display:flex;flex-direction:column">
+          <div v-if="activeTabKey === '5'" style="height:100%;display:flex;flex-direction:column">
             <div>
               说明：<code>自动兼容程序</code>会自动根据错误信息进行兼容性调整，并将兼容设置保存在 <code>~/.dev-sidecar/automaticCompatibleConfig.json</code> 文件中。但并不是所有的兼容设置都是正确的，所以需要通过以下配置来覆盖错误的兼容设置。
             </div>
             <VueJsonEditor
-              ref="editor5" v-model="config.server.compatible" style="flex-grow:1;min-height:300px;margin-top:10px;" mode="code"
+              v-model="config.server.compatible" style="flex-grow:1;min-height:300px;margin-top:10px;" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
           </div>
         </a-tab-pane>
         <a-tab-pane key="6" tab="IP预设置">
-          <div style="height:100%;display:flex;flex-direction:column">
+          <div v-if="activeTabKey === '6'" style="height:100%;display:flex;flex-direction:column">
             <div>
               提示：<code>IP预设置</code>功能，优先级高于 <code>DNS设置</code>
               <span class="form-help">（域名配置可使用通配符或正则）</span>
             </div>
             <VueJsonEditor
-              ref="editor6" v-model="config.server.preSetIpList" style="flex-grow:1;min-height:300px;margin-top:10px;" mode="code"
+              v-model="config.server.preSetIpList" style="flex-grow:1;min-height:300px;margin-top:10px;" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
           </div>
         </a-tab-pane>
         <a-tab-pane key="7" tab="DNS服务管理">
-          <VueJsonEditor
-            ref="editor7" v-model="config.server.dns.providers" style="height:100%" mode="code"
-            :show-btns="false" :expanded-on-start="true"
-          />
+          <div v-if="activeTabKey === '7'" style="height:100%">
+            <VueJsonEditor
+              v-model="config.server.dns.providers" style="height:100%" mode="code"
+              :show-btns="false" :expanded-on-start="true"
+            />
+          </div>
         </a-tab-pane>
         <a-tab-pane key="8" tab="DNS设置">
-          <div>
+          <div v-if="activeTabKey === '8'">
             <a-row style="margin-top:10px">
               <a-col span="21">
                 <div>这里配置哪些域名需要通过国外DNS服务器获取IP进行访问</div>
@@ -387,14 +386,13 @@ export default {
                 </a-select>
               </a-col>
               <a-col :span="3">
-                <a-button v-if="item.value !== false" type="danger" icon="minus" @click="deleteDnsMapping(item, index)" />
-                <a-button v-if="item.value === false" type="primary" icon="checked" @click="restoreDefDnsMapping(item, index)" />
+                <a-button type="danger" icon="minus" @click="deleteDnsMapping(item, index)" />
               </a-col>
             </a-row>
           </div>
         </a-tab-pane>
         <a-tab-pane key="9" tab="IP测速">
-          <div class="ip-tester" style="padding-right: 10px">
+          <div v-if="activeTabKey === '9'" class="ip-tester" style="padding-right: 10px">
             <a-alert type="info" message="对从DNS获取到的IP进行测速，使用速度最快的IP进行访问（注意：对使用了增强功能的域名没啥用）" />
             <a-form-item label="开启DNS测速" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-checkbox v-model="getSpeedTestConfig().enabled">

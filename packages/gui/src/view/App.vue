@@ -116,8 +116,8 @@ export default {
         </a-layout-sider>
         <a-layout>
           <!-- <a-layout-header>Header</a-layout-header> -->
-          <a-layout-content id="document">
-            <router-view />
+          <a-layout-content>
+            <router-view id="document" />
           </a-layout-content>
           <a-layout-footer>
             <div class="footer">
