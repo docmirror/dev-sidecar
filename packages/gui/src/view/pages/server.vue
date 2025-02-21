@@ -153,7 +153,7 @@ export default {
     delEmptySpeedHostname () {
       for (let i = this.getSpeedTestConfig().hostnameList.length - 1; i >= 0; i--) {
         const hostname = this.handleHostname(this.getSpeedTestConfig().hostnameList[i])
-        if (hostname) {
+        if (!hostname) {
           this.getSpeedTestConfig().hostnameList.splice(i, 1)
         }
       }

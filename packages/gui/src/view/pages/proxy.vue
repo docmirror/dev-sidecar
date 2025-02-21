@@ -167,7 +167,7 @@ export default {
           </a-col>
         </a-row>
         <a-row v-for="(item, index) of excludeIpList" :key="index" :gutter="10">
-          <a-col :span="17">
+          <a-col :span="17" class="fine-tuning">
             <MockInput v-model="item.key" />
           </a-col>
           <a-col :span="5">

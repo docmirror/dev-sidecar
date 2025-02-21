@@ -168,7 +168,7 @@ export default {
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of targets" :key="index" :gutter="10">
-              <a-col :span="18">
+              <a-col :span="18" class="fine-tuning">
                 <MockInput v-model="item.key" />
               </a-col>
               <a-col :span="4">

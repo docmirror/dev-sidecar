@@ -38,9 +38,9 @@ export default {
   cursor: text;
 
   /* 内容不换行 */
-  overflow-y: auto;
-  /*white-space: nowrap;
-  vertical-align: middle;*/
+  white-space: nowrap;
+  overflow: hidden;
+  vertical-align: middle;
 
   /* 复制 ant-input 样式 */
   box-sizing: border-box;
@@ -61,5 +61,8 @@ export default {
   border: 1px solid #d9d9d9;
   border-radius: 4px;
   transition: all 0.3s;
+}
+.fine-tuning .fake-input {
+  margin-top: -2px;
 }
 </style>
