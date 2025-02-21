@@ -17,11 +17,10 @@ module.exports = {
       'Cross-Origin-Resource-Policy': interceptOpt.optionsCrossPolicy || 'cross-origin',
     }
 
-    res.setHeader('DS-AfterOPTIONSHeaders-Interceptor', '1')
-
     // 替换响应头
     if (responseReplaceApi.replaceResponseHeaders({ ...headers }, res, proxyRes)) {
       log.info('AfterOPTIONSHeaders intercept:', JSON.stringify(headers))
+      res.setHeader('DS-AfterOPTIONSHeaders-Interceptor', '1')
     } else {
       res.setHeader('DS-AfterOPTIONSHeaders-Interceptor', '0')
     }
