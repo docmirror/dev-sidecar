@@ -7,6 +7,8 @@ export default {
   data () {
     return {
       key: 'plugin.pip',
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
       npmVariables: undefined,
       registry: false,
       trustedHostList: [],

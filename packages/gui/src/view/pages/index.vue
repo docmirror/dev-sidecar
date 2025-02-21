@@ -259,20 +259,20 @@ export default {
   <DsContainer class="page_index">
     <template slot="header">
       给开发者的辅助工具
-      <span>
-        <a-button style="margin-right:10px" @click="openSetupCa">
-          <a-badge :count="_rootCaSetuped ? 0 : 1" dot>安装根证书</a-badge>
-        </a-button>
+    </template>
+    <template slot="header-right">
+      <a-button style="margin-right:10px" @click="openSetupCa">
+        <a-badge :count="_rootCaSetuped ? 0 : 1" dot>安装根证书</a-badge>
+      </a-button>
 
-        <a-button
-          style="margin-right:10px" :loading="update.downloading || update.checking" :title="`当前版本:${info.version}`"
-          @click="doCheckUpdate(true)"
-        >
-          <a-badge :count="update.newVersion ? 1 : 0" dot>
-            <span v-if="update.downloading">{{ update.progress }}%</span>{{ update.downloading ? '新版本下载中' : (`检查更新${update.checking ? '中' : ''}`) }}
-          </a-badge>
-        </a-button>
-      </span>
+      <a-button
+        style="margin-right:10px" :loading="update.downloading || update.checking" :title="`当前版本:${info.version}`"
+        @click="doCheckUpdate(true)"
+      >
+        <a-badge :count="update.newVersion ? 1 : 0" dot>
+          <span v-if="update.downloading">{{ update.progress }}%</span>{{ update.downloading ? '新版本下载中' : (`检查更新${update.checking ? '中' : ''}`) }}
+        </a-badge>
+      </a-button>
     </template>
 
     <div class="box">

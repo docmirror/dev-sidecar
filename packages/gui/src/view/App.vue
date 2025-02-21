@@ -49,22 +49,26 @@ export default {
         message = { key: 'show-hide' }
       }
 
-      if (message.key === 'show-hide') { // 显示/隐藏
-        this.hideSearchBar = message.hideSearchBar != null ? message.hideSearchBar : !this.hideSearchBar
+      try {
+        if (message.key === 'show-hide') { // 显示/隐藏
+          this.hideSearchBar = message.hideSearchBar != null ? message.hideSearchBar : !this.hideSearchBar
 
-        // 显示后，获取输入框焦点
-        if (!this.hideSearchBar) {
-          setTimeout(() => {
-            try {
-              this.$refs.searchBar.$el.querySelector('input').focus()
-            } catch {
-            }
-          }, 100)
+          // 显示后，获取输入框焦点
+          if (!this.hideSearchBar) {
+            setTimeout(() => {
+              try {
+                this.$refs.searchBar.$el.querySelector('input').focus()
+              } catch {
+              }
+            }, 100)
+          }
+        } else if (message.key === 'next') { // 下一项
+          this.$refs.searchBar.next()
+        } else if (message.key === 'previous') { // 上一项
+          this.$refs.searchBar.previous()
         }
-      } else if (message.key === 'next') { // 下一项
-        this.$refs.searchBar.next()
-      } else if (message.key === 'previous') { // 上一项
-        this.$refs.searchBar.previous()
+      } catch (e) {
+        console.error('操作SearchBar出现异常：', e)
       }
     })
   },
@@ -89,6 +93,7 @@ export default {
                  :highlightClass="'search-bar-highlight'"
                  :selectedClass="'selected-highlight'"
                  :hiden.sync="hideSearchBar"
+                 style="top:auto;right:auto;left:160px;bottom:52px;background-color:#ddd"
       />
       <a-layout>
         <a-layout-sider :theme="theme">
@@ -180,9 +185,10 @@ body {
 }
 .search-bar-highlight {
   background-color: #ef0fff;
+  color: #fdfdfd;
 
   &.selected-highlight {
-    background-color: #38d878;
+    background-color: #17a450;
   }
 }
 </style>

@@ -8,7 +8,8 @@ export default {
   <div class="ds-container">
     <div class="body-wrapper">
       <div v-if="$slots.header" class="container-header">
-        <slot name="header" />
+        <span><slot name="header" /></span>
+        <span style="color:#999"><slot name="header-right" /></span>
       </div>
       <div class="container-body">
         <slot />

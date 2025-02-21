@@ -342,9 +342,9 @@ export default {
   <ds-container>
     <template slot="header">
       设置
-      <span>
-        <a-button class="md-mr-10" icon="profile" @click="openLog()">查看日志</a-button>
-      </span>
+    </template>
+    <template slot="header-right">
+      <a-button class="md-mr-10" icon="profile" @click="openLog()">查看日志</a-button>
     </template>
 
     <div v-if="config">

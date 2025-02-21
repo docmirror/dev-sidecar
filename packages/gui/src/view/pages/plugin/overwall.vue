@@ -9,6 +9,8 @@ export default {
   data () {
     return {
       key: 'plugin.overwall',
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
       targets: undefined,
       servers: undefined,
       overwallOptions: [
@@ -115,9 +117,9 @@ export default {
   <ds-container>
     <template slot="header">
       梯子
-      <span>
-        <a-button type="primary" @click="openExternal('https://github.com/docmirror/dev-sidecar-doc/blob/main/ow.md')">原理说明</a-button>
-      </span>
+    </template>
+    <template slot="header-right">
+      <a-button type="primary" @click="openExternal('https://github.com/docmirror/dev-sidecar-doc/blob/main/ow.md')">原理说明</a-button>
     </template>
 
     <div v-if="config">
@@ -150,7 +152,7 @@ export default {
             注：只要下载成功后，即使关闭自动更新功能，也会优先读取最近下载的文件！
           </div>
         </a-form-item>
-        <a-form-item label="远程PAC文件地址" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item label="远程PAC文件" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-input v-model="config.plugin.overwall.pac.pacFileUpdateUrl" :title="config.plugin.overwall.pac.pacFileUpdateUrl" />
           <div class="form-help">
             远程PAC文件内容可以是<code>base64</code>编码格式，也可以是未经过编码的
