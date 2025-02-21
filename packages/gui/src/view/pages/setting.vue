@@ -48,18 +48,24 @@ export default {
         case 'ArrowDown':
         case 'ArrowLeft':
         case 'ArrowRight':
-          return '无'
-
-        // 不支持监听以下几个键，返回空
-        case 'NumpadDivide': // return 'Num/'
-        case 'NumpadMultiply': // return 'Num*'
-        case 'NumpadDecimal': // return 'Num.'
-        case 'NumpadSubtract': // return 'Num-'
-        case 'NumpadAdd': // return 'Num+'
-          return '无'
+          return ''
       }
 
       switch (event.code) {
+        // F1 ~ F12
+        case 'F1': return 'F1'
+        case 'F2': return 'F2'
+        case 'F3': return 'F3'
+        case 'F4': return 'F4'
+        case 'F5': return 'F5'
+        case 'F6': return 'F6'
+        case 'F7': return 'F7'
+        case 'F8': return 'F8'
+        case 'F9': return 'F9'
+        case 'F10': return 'F10'
+        case 'F11': return 'F11'
+        case 'F12': return 'F12'
+
         // 0 ~ 9
         case 'Digit0': return '0'
         case 'Digit1': return '1'
@@ -104,6 +110,14 @@ export default {
         case 'Numpad8': return 'Num8'
         case 'Numpad9': return 'Num9'
         case 'Numpad0': return 'Num0'
+
+        // 不支持监听以下几个键，返回空
+        case 'NumpadDivide': // return 'Num/'
+        case 'NumpadMultiply': // return 'Num*'
+        case 'NumpadDecimal': // return 'Num.'
+        case 'NumpadSubtract': // return 'Num-'
+        case 'NumpadAdd': // return 'Num+'
+          return ''
       }
 
       // 字母
@@ -112,7 +126,7 @@ export default {
       }
 
       console.error(`未能识别的按键：key=${event.key}, code=${event.code}, keyCode=${event.keyCode}`)
-      return '无'
+      return ''
     },
     async disableBeforeInputEvent () {
       clearTimeout(window.enableBeforeInputEventTimeout)

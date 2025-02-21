@@ -2,11 +2,13 @@
 import _ from 'lodash'
 import VueJsonEditor from 'vue-json-editor-fix-cn'
 import Plugin from '../mixins/plugin'
+import MockInput from '@/view/components/mock-input.vue'
 
 export default {
   name: 'Server',
   components: {
     VueJsonEditor,
+    MockInput,
   },
   mixins: [Plugin],
   data () {
@@ -68,8 +70,9 @@ export default {
       }
     },
     async applyBefore () {
-      this.submitDnsMapping()
+      this.submitDnsMappings()
       this.submitWhiteList()
+      this.delEmptySpeedHostname()
     },
     async applyAfter () {
       if (this.status.server.enabled) {
@@ -87,11 +90,14 @@ export default {
         })
       }
     },
-    submitDnsMapping () {
+    submitDnsMappings () {
       const dnsMapping = {}
       for (const item of this.dnsMappings) {
         if (item.key) {
-          dnsMapping[item.key] = item.value
+          const hostname = this.handleHostname(item.key)
+          if (hostname) {
+            dnsMapping[hostname] = item.value
+          }
         }
       }
       this.config.server.dns.mapping = dnsMapping
@@ -127,7 +133,10 @@ export default {
       const whiteList = {}
       for (const item of this.whiteList) {
         if (item.key) {
-          whiteList[item.key] = item.value === 'true'
+          const hostname = this.handleHostname(item.key)
+          if (hostname) {
+            whiteList[hostname] = (item.value === 'true')
+          }
         }
       }
       this.config.server.whiteList = whiteList
@@ -140,6 +149,14 @@ export default {
     },
     delSpeedHostname (item, index) {
       this.getSpeedTestConfig().hostnameList.splice(index, 1)
+    },
+    delEmptySpeedHostname () {
+      for (let i = this.getSpeedTestConfig().hostnameList.length - 1; i >= 0; i--) {
+        const hostname = this.handleHostname(this.getSpeedTestConfig().hostnameList[i])
+        if (hostname) {
+          this.getSpeedTestConfig().hostnameList.splice(i, 1)
+        }
+      }
     },
     reSpeedTest () {
       this.$api.server.reSpeedTest()
@@ -305,7 +322,7 @@ export default {
           </a-row>
           <a-row v-for="(item, index) of whiteList" :key="index" :gutter="10" style="margin-top: 5px">
             <a-col :span="16">
-              <a-input v-model="item.key" />
+              <MockInput v-model="item.key" />
             </a-col>
             <a-col :span="5">
               <a-select v-model="item.value" style="width:100%">
@@ -360,7 +377,7 @@ export default {
             </a-row>
             <a-row v-for="(item, index) of dnsMappings" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="15">
-                <a-input v-model="item.key" :disabled="item.value === false" />
+                <MockInput v-model="item.key" />
               </a-col>
               <a-col :span="6">
                 <a-select v-model="item.value" :disabled="item.value === false" style="width: 100%">
@@ -407,12 +424,9 @@ export default {
                 <a-button style="margin-left:10px" type="primary" icon="plus" @click="addSpeedHostname()" />
               </a-col>
             </a-row>
-            <a-row
-              v-for="(item, index) of getSpeedTestConfig().hostnameList" :key="index" :gutter="10"
-              style="margin-top: 5px"
-            >
+            <a-row v-for="(item, index) of getSpeedTestConfig().hostnameList" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="21">
-                <a-input v-model="getSpeedTestConfig().hostnameList[index]" />
+                <MockInput v-model="getSpeedTestConfig().hostnameList[index]" />
               </a-col>
               <a-col :span="2">
                 <a-button style="margin-left:10px" type="danger" icon="minus" @click="delSpeedHostname(item, index)" />
@@ -492,6 +506,9 @@ export default {
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+  }
+  .ant-input-group-addon:first-child {
+    width: 50px;
   }
 }
 </style>

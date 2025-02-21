@@ -1,8 +1,10 @@
 <script>
 import Plugin from '../mixins/plugin'
+import MockInput from '@/view/components/mock-input.vue'
 
 export default {
   name: 'Proxy',
+  components: { MockInput },
   mixins: [Plugin],
   data () {
     return {
@@ -68,7 +70,10 @@ export default {
       const excludeIpList = {}
       for (const item of this.excludeIpList) {
         if (item.key) {
-          excludeIpList[item.key] = item.value === 'true'
+          const hostname = this.handleHostname(item.key)
+          if (hostname) {
+            excludeIpList[hostname] = (item.value === 'true')
+          }
         }
       }
       this.config.proxy.excludeIpList = excludeIpList
@@ -163,7 +168,7 @@ export default {
         </a-row>
         <a-row v-for="(item, index) of excludeIpList" :key="index" :gutter="10">
           <a-col :span="17">
-            <a-input v-model="item.key" />
+            <MockInput v-model="item.key" />
           </a-col>
           <a-col :span="5">
             <a-select v-model="item.value" style="width:100%">

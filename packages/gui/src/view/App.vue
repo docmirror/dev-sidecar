@@ -1,15 +1,11 @@
 <script>
 import { ipcRenderer } from 'electron'
-import { SearchBar } from 'search-bar-vue2'
 import createMenus from '@/view/router/menu'
 import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 import { colorTheme } from './composables/theme'
 
 export default {
   name: 'App',
-  components: {
-    SearchBar,
-  },
   data () {
     return {
       locale: zhCN,

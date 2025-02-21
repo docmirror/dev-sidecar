@@ -1,8 +1,10 @@
 <script>
 import Plugin from '../../mixins/plugin'
+import MockInput from '@/view/components/mock-input.vue'
 
 export default {
   name: 'Overwall',
+  components: { MockInput },
   mixins: [Plugin],
   data () {
     return {
@@ -40,8 +42,8 @@ export default {
       this.initServer()
     },
     async applyBefore () {
-      this.saveTarget()
-      this.saveServer()
+      this.submitTarget()
+      this.submitServer()
     },
     initTarget () {
       this.targets = []
@@ -60,11 +62,14 @@ export default {
     deleteTarget (item, index) {
       this.targets.splice(index, 1)
     },
-    saveTarget () {
+    submitTarget () {
       const map = {}
       for (const item of this.targets) {
         if (item.key) {
-          map[item.key] = item.value === 'true'
+          const hostname = this.handleHostname(item.key)
+          if (hostname) {
+            map[hostname] = (item.value === 'true')
+          }
         }
       }
       this.config.plugin.overwall.targets = map
@@ -90,11 +95,14 @@ export default {
     addServer () {
       this.servers.unshift({ key: '', value: { type: 'path' } })
     },
-    saveServer () {
+    submitServer () {
       const map = {}
       for (const item of this.servers) {
         if (item.key) {
-          map[item.key] = item.value
+          const hostname = this.handleHostname(item.key)
+          if (hostname) {
+            map[hostname] = item.value
+          }
         }
       }
       this.config.plugin.overwall.server = map
@@ -161,7 +169,7 @@ export default {
             </a-row>
             <a-row v-for="(item, index) of targets" :key="index" :gutter="10">
               <a-col :span="18">
-                <a-input v-model="item.key" />
+                <MockInput v-model="item.key" />
               </a-col>
               <a-col :span="4">
                 <a-select v-model="item.value" style="width:100%">

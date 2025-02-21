@@ -1,8 +1,10 @@
 <script>
 import Plugin from '../../mixins/plugin'
+import MockInput from '@/view/components/mock-input.vue'
 
 export default {
   name: 'Git',
+  components: { MockInput },
   mixins: [Plugin],
   data () {
     return {
@@ -45,7 +47,7 @@ export default {
       }
     },
     addNoProxyUrl () {
-      this.noProxyUrls.unshift({ key: '', value: true })
+      this.noProxyUrls.unshift({ key: '' })
     },
     delNoProxyUrl (item, index) {
       this.noProxyUrls.splice(index, 1)
@@ -54,7 +56,10 @@ export default {
       const noProxyUrls = {}
       for (const item of this.noProxyUrls) {
         if (item.key) {
-          noProxyUrls[item.key] = item.value
+          const hostname = this.handleHostname(item.key)
+          if (hostname) {
+            noProxyUrls[hostname] = true
+          }
         }
       }
       this.config.plugin.git.setting.noProxyUrls = noProxyUrls
@@ -103,7 +108,7 @@ export default {
             </a-row>
             <a-row v-for="(item, index) of noProxyUrls" :key="index" :gutter="10">
               <a-col :span="22">
-                <a-input v-model="item.key" :disabled="item.value === false" />
+                <MockInput v-model="item.key" />
               </a-col>
               <a-col :span="2">
                 <a-button type="danger" icon="minus" @click="delNoProxyUrl(item, index)" />
