@@ -93,7 +93,7 @@ export default {
                  :highlightClass="'search-bar-highlight'"
                  :selectedClass="'selected-highlight'"
                  :hiden.sync="hideSearchBar"
-                 style="top:auto;right:auto;left:45px;bottom:45px;background-color:#ddd"
+                 style="top:auto;right:auto;left:210px;bottom:54px;background-color:#ddd"
       />
       <a-layout>
         <a-layout-sider :theme="theme">
