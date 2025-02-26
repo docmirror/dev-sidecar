@@ -13,6 +13,8 @@ export default {
       menus: undefined,
       config: undefined,
       hideSearchBar: true,
+      searchBarIsFocused: false,
+      searchBarInputKeyupTimeout: null,
     }
   },
   computed: {
@@ -45,23 +47,31 @@ export default {
       }
 
       // 如果不是显示/隐藏操作，并且还未显示检索框，先按显示操作处理
-      if (message.key !== 'show-hide' && this.hideSearchBar) {
+      if (!message.key.includes('hide') && this.hideSearchBar) {
         message = { key: 'show-hide' }
       }
 
       try {
         if (message.key === 'show-hide') { // 显示/隐藏
-          this.hideSearchBar = message.hideSearchBar != null ? message.hideSearchBar : !this.hideSearchBar
+          const hide = message.hideSearchBar != null ? message.hideSearchBar : !this.hideSearchBar
+
+          // 如果为隐藏操作，但SearchBar未隐藏且未获取焦点，则获取焦点
+          if (hide && !this.hideSearchBar && !this.searchBarIsFocused) {
+            this.doSearchBarInputFocus()
+            return
+          }
+
+          this.hideSearchBar = hide
 
           // 显示后，获取输入框焦点
           if (!this.hideSearchBar) {
-            setTimeout(() => {
-              try {
-                this.$refs.searchBar.$el.querySelector('input').focus()
-              } catch {
-              }
-            }, 100)
+            this.doSearchBarInputFocus()
+          } else {
+            this.searchBarIsFocused = false
           }
+        } else if (message.key === 'hide') { // 隐藏
+          this.hideSearchBar = true
+          this.searchBarIsFocused = false
         } else if (message.key === 'next') { // 下一项
           this.$refs.searchBar.next()
         } else if (message.key === 'previous') { // 上一项
@@ -70,9 +80,48 @@ export default {
       } catch (e) {
         console.error('操作SearchBar出现异常：', e)
       }
+
+      const input = this.getSearchBarInput()
+      if (input) {
+        input.addEventListener('focus', this.onSearchBarInputFocus)
+        input.addEventListener('blur', this.onSearchBarInputBlur)
+        input.addEventListener('keydown', this.onSearchBarInputKeydown)
+        input.addEventListener('keyup', this.onSearchBarInputKeyup)
+      }
     })
   },
   methods: {
+    getSearchBarInput () {
+      return this.$refs.searchBar.$el.querySelector('input[type=text]')
+    },
+    onSearchBarInputFocus () {
+      this.searchBarIsFocused = true
+    },
+    onSearchBarInputBlur () {
+      this.searchBarIsFocused = false
+    },
+    onSearchBarInputKeydown () {
+      clearTimeout(this.searchBarInputKeyupTimeout)
+    },
+    onSearchBarInputKeyup (e) {
+      if (!this.$refs.searchBar || e.key === 'Enter' || e.key === 'F3') {
+        return
+      }
+      clearTimeout(this.searchBarInputKeyupTimeout)
+      this.searchBarInputKeyupTimeout = setTimeout(() => {
+        // 连续调用以下两个方法，为了获取检索结果中的第一项
+        this.$refs.searchBar.next()
+        this.$refs.searchBar.previous()
+      }, 150)
+    },
+    doSearchBarInputFocus () {
+      setTimeout(() => {
+        const input = this.getSearchBarInput()
+        if (input) {
+          input.focus()
+        }
+      }, 100)
+    },
     titleClick (item) {
       console.log('title click:', item)
     },

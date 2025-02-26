@@ -315,7 +315,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
       } else if (input.key === 'Escape' && input.type === 'keyUp' && !input.control && !input.shift && !input.alt && !input.meta) {
         // 按 ESC，隐藏全文检索框（SearchBar）
         event.preventDefault()
-        win.webContents.send('search-bar', { key: 'show-hide', hideSearchBar: true })
+        win.webContents.send('search-bar', { key: 'hide' })
       } else if (input.key === 'F3' && input.type === 'keyDown' && !input.control && !input.shift && !input.alt && !input.meta) {
         // 按 F3，全文检索框（SearchBar）定位到下一个
         event.preventDefault()
