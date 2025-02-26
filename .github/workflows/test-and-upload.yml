@@ -10,6 +10,7 @@ on:
   pull_request:
     branches:
       - master
+      - develop
       - 1.x
 
 jobs:

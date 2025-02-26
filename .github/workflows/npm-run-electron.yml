@@ -6,8 +6,6 @@ on:
       - run*
       - test*
       - release*
-      - v1*
-      - v2*
 
 jobs:
   npm-run-electron:

@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - release*
-      - v1*
-      - v2*
 
 jobs:
   # job 1
