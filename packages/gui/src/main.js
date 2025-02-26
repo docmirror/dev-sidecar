@@ -1,6 +1,7 @@
 import antd from 'ant-design-vue'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import SearchBar from 'search-bar-vue2'
 import { ipcRenderer } from 'electron'
 import view from './view'
 import App from './view/App.vue'
@@ -25,6 +26,7 @@ try {
   Vue.config.productionTip = false
   Vue.use(antd)
   Vue.use(VueRouter)
+  Vue.use(SearchBar)
   Vue.component(DsContainer)
   // 3. 创建 router 实例，然后传 `routes` 配置
   // 你还可以传别的配置参数, 不过先这么简单着吧。

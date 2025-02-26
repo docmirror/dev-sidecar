@@ -108,6 +108,9 @@ importers:
       sass-loader:
         specifier: ^16.0.3
         version: 16.0.3(sass@1.81.0)(webpack@5.96.1)
+      search-bar-vue2:
+        specifier: ^1.0.0
+        version: 1.0.0(vue@2.7.16)
       vue:
         specifier: ^2.7.16
         version: 2.7.16
@@ -6010,6 +6013,11 @@ packages:
   scslre@0.3.0:
     resolution: {integrity: sha512-3A6sD0WYP7+QrjbfNA2FN3FsOaGGFoekCVgTyypy53gPxhbkCIjtO6YWgdrfM+n/8sI8JeXZOIxsHjMTNxQ4nQ==}
     engines: {node: ^14.0.0 || >=16.0.0}
+
+  search-bar-vue2@1.0.0:
+    resolution: {integrity: sha512-e65f34kiWo/ub6fOsXGC7SU1A2HWyTUhQUn3AhZfO/f002XcCOaRghkWM0sADE8/OaL5MWHZ1sxDjzq2T9vWIQ==}
+    peerDependencies:
+      vue: ^2.6.14
 
   select-hose@2.0.0:
     resolution: {integrity: sha512-mEugaLK+YfkijB4fx0e6kImuJdCIt2LxCRcbEYPqRGCs4F2ogyfZU5IAZRdjCP8JPq2AtdNoC/Dux63d9Kiryg==}
@@ -13909,6 +13917,10 @@ snapshots:
       '@eslint-community/regexpp': 4.12.1
       refa: 0.12.1
       regexp-ast-analysis: 0.7.1
+
+  search-bar-vue2@1.0.0(vue@2.7.16):
+    dependencies:
+      vue: 2.7.16
 
   select-hose@2.0.0: {}
 

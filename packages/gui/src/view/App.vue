@@ -1,4 +1,5 @@
 <script>
+import { ipcRenderer } from 'electron'
 import createMenus from '@/view/router/menu'
 import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 import { colorTheme } from './composables/theme'
@@ -11,6 +12,9 @@ export default {
       info: {},
       menus: undefined,
       config: undefined,
+      hideSearchBar: true,
+      searchBarIsFocused: false,
+      searchBarInputKeyupTimeout: null,
     }
   },
   computed: {
@@ -35,13 +39,95 @@ export default {
     this.$api.info.get().then((ret) => {
       this.info = ret
     })
+
+    ipcRenderer.on('search-bar', (_, message) => {
+      if (window.config.disableSearchBar) {
+        this.hideSearchBar = true
+        return
+      }
+
+      // 如果不是显示/隐藏操作，并且还未显示检索框，先按显示操作处理
+      if (!message.key.includes('hide') && this.hideSearchBar) {
+        message = { key: 'show-hide' }
+      }
+
+      try {
+        if (message.key === 'show-hide') { // 显示/隐藏
+          const hide = message.hideSearchBar != null ? message.hideSearchBar : !this.hideSearchBar
+
+          // 如果为隐藏操作，但SearchBar未隐藏且未获取焦点，则获取焦点
+          if (hide && !this.hideSearchBar && !this.searchBarIsFocused) {
+            this.doSearchBarInputFocus()
+            return
+          }
+
+          this.hideSearchBar = hide
+
+          // 显示后，获取输入框焦点
+          if (!this.hideSearchBar) {
+            this.doSearchBarInputFocus()
+          } else {
+            this.searchBarIsFocused = false
+          }
+        } else if (message.key === 'hide') { // 隐藏
+          this.hideSearchBar = true
+          this.searchBarIsFocused = false
+        } else if (message.key === 'next') { // 下一项
+          this.$refs.searchBar.next()
+        } else if (message.key === 'previous') { // 上一项
+          this.$refs.searchBar.previous()
+        }
+      } catch (e) {
+        console.error('操作SearchBar出现异常：', e)
+      }
+
+      const input = this.getSearchBarInput()
+      if (input) {
+        input.addEventListener('focus', this.onSearchBarInputFocus)
+        input.addEventListener('blur', this.onSearchBarInputBlur)
+        input.addEventListener('keydown', this.onSearchBarInputKeydown)
+        input.addEventListener('keyup', this.onSearchBarInputKeyup)
+      }
+    })
   },
   methods: {
+    getSearchBarInput () {
+      return this.$refs.searchBar.$el.querySelector('input[type=text]')
+    },
+    onSearchBarInputFocus () {
+      this.searchBarIsFocused = true
+    },
+    onSearchBarInputBlur () {
+      this.searchBarIsFocused = false
+    },
+    onSearchBarInputKeydown () {
+      clearTimeout(this.searchBarInputKeyupTimeout)
+    },
+    onSearchBarInputKeyup (e) {
+      if (!this.$refs.searchBar || e.key === 'Enter' || e.key === 'F3') {
+        return
+      }
+      clearTimeout(this.searchBarInputKeyupTimeout)
+      this.searchBarInputKeyupTimeout = setTimeout(() => {
+        // 连续调用以下两个方法，为了获取检索结果中的第一项
+        this.$refs.searchBar.next()
+        this.$refs.searchBar.previous()
+      }, 150)
+    },
+    doSearchBarInputFocus () {
+      setTimeout(() => {
+        const input = this.getSearchBarInput()
+        if (input) {
+          input.focus()
+        }
+      }, 100)
+    },
     titleClick (item) {
       console.log('title click:', item)
     },
     menuClick (item) {
       console.log('menu click:', item)
+      window.config.disableSearchBar = false
       this.$router.replace(item.path)
     },
   },
@@ -51,6 +137,13 @@ export default {
 <template>
   <a-config-provider :locale="locale">
     <div class="ds_layout" :class="themeClass">
+      <SearchBar ref="searchBar"
+                 :root="'#document'"
+                 :highlightClass="'search-bar-highlight'"
+                 :selectedClass="'selected-highlight'"
+                 :hiden.sync="hideSearchBar"
+                 style="inset:auto auto 53px 210px; background-color:#ddd"
+      />
       <a-layout>
         <a-layout-sider :theme="theme">
           <div class="logo" />
@@ -78,7 +171,7 @@ export default {
         <a-layout>
           <!-- <a-layout-header>Header</a-layout-header> -->
           <a-layout-content>
-            <router-view />
+            <router-view id="document" />
           </a-layout-content>
           <a-layout-footer>
             <div class="footer">
@@ -137,6 +230,14 @@ body {
   .ant-menu-vertical,
   .ant-menu-vertical-left {
     border: 0;
+  }
+}
+.search-bar-highlight {
+  background-color: #ef0fff;
+  color: #fdfdfd;
+
+  &.selected-highlight {
+    background-color: #17a450;
   }
 }
 </style>

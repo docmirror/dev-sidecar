@@ -34,6 +34,7 @@
     "request-progress": "^3.0.0",
     "sass": "^1.81.0",
     "sass-loader": "^16.0.3",
+    "search-bar-vue2": "^1.0.0",
     "vue": "^2.7.16",
     "vue-json-editor-fix-cn": "^1.4.3",
     "vue-router": "^3.6.5"
