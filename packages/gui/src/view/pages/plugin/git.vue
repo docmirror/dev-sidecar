@@ -1,8 +1,10 @@
 <script>
 import Plugin from '../../mixins/plugin'
+import MockInput from '@/view/components/mock-input.vue'
 
 export default {
   name: 'Git',
+  components: { MockInput },
   mixins: [Plugin],
   data () {
     return {
@@ -107,8 +109,8 @@ export default {
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of noProxyUrls" :key="index" :gutter="10">
-              <a-col :span="22">
-                <a-input v-model="item.key" />
+              <a-col :span="22" class="fine-tuning">
+                <MockInput v-model="item.key" />
               </a-col>
               <a-col :span="2">
                 <a-button type="danger" icon="minus" @click="delNoProxyUrl(item, index)" />

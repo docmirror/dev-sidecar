@@ -1,8 +1,10 @@
 <script>
 import Plugin from '../../mixins/plugin'
+import MockInput from '@/view/components/mock-input.vue'
 
 export default {
   name: 'Overwall',
+  components: { MockInput },
   mixins: [Plugin],
   data () {
     return {
@@ -168,8 +170,8 @@ export default {
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of targets" :key="index" :gutter="10">
-              <a-col :span="18">
-                <a-input v-model="item.key" />
+              <a-col :span="18" class="fine-tuning">
+                <MockInput v-model="item.key" />
               </a-col>
               <a-col :span="4">
                 <a-select v-model="item.value" style="width:100%">

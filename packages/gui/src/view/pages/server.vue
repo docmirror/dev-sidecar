@@ -2,11 +2,13 @@
 import _ from 'lodash'
 import VueJsonEditor from 'vue-json-editor-fix-cn'
 import Plugin from '../mixins/plugin'
+import MockInput from '@/view/components/mock-input.vue'
 
 export default {
   name: 'Server',
   components: {
     VueJsonEditor,
+    MockInput,
   },
   mixins: [Plugin],
   data () {
@@ -316,7 +318,7 @@ export default {
             </a-row>
             <a-row v-for="(item, index) of whiteList" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="16">
-                <a-input v-model="item.key" />
+                <MockInput v-model="item.key" />
               </a-col>
               <a-col :span="5">
                 <a-select v-model="item.value" style="width:100%">
@@ -374,7 +376,7 @@ export default {
             </a-row>
             <a-row v-for="(item, index) of dnsMappings" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="15">
-                <a-input v-model="item.key" />
+                <MockInput v-model="item.key" />
               </a-col>
               <a-col :span="6">
                 <a-select v-model="item.value" :disabled="item.value === false" style="width: 100%">
@@ -422,7 +424,7 @@ export default {
             </a-row>
             <a-row v-for="(item, index) of getSpeedTestConfig().hostnameList" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="21">
-                <a-input v-model="getSpeedTestConfig().hostnameList[index]" />
+                <MockInput v-model="getSpeedTestConfig().hostnameList[index]" />
               </a-col>
               <a-col :span="2">
                 <a-button style="margin-left:10px" type="danger" icon="minus" @click="delSpeedHostname(item, index)" />

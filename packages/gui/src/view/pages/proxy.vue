@@ -1,8 +1,10 @@
 <script>
 import Plugin from '../mixins/plugin'
+import MockInput from '@/view/components/mock-input.vue'
 
 export default {
   name: 'Proxy',
+  components: { MockInput },
   mixins: [Plugin],
   data () {
     return {
@@ -164,9 +166,9 @@ export default {
             <a-button type="primary" icon="plus" @click="addExcludeIp()" />
           </a-col>
         </a-row>
-        <a-row v-for="(item, index) of excludeIpList" :key="index" :gutter="10">
+        <a-row v-for="(item, index) of excludeIpList" :key="index" :gutter="10" class="fine-tuning">
           <a-col :span="17">
-            <a-input v-model="item.key" />
+            <MockInput v-model="item.key" />
           </a-col>
           <a-col :span="5">
             <a-select v-model="item.value" style="width:100%">
@@ -216,3 +218,10 @@ export default {
     </a-drawer>
   </ds-container>
 </template>
+
+<style lang="scss">
+/*样式微调*/
+.fine-tuning .ant-btn-danger {
+  margin-top: 3px;
+}
+</style>
