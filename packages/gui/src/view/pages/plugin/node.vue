@@ -7,6 +7,8 @@ export default {
   data () {
     return {
       key: 'plugin.node',
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
       npmVariables: undefined,
       registry: false,
     }
@@ -51,9 +53,9 @@ export default {
   <ds-container>
     <template slot="header">
       NPM加速
-      <span style="color:#999;">
-        由于nodejs不走系统证书，所以npm加速不是很好用，可以用淘宝registry
-      </span>
+    </template>
+    <template slot="header-right">
+      由于nodejs不走系统证书，所以npm加速不是很好用，可以用淘宝registry
     </template>
 
     <div v-if="config">
@@ -97,7 +99,6 @@ export default {
             设置后立即生效，即使关闭 ds 也会继续保持
           </div>
         </a-form-item>
-
         <a-form-item label="yarn仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group v-model="config.plugin.node.setting.yarnRegistry" default-value="null" button-style="solid" @change="onSwitchYarnRegistry">
             <a-radio-button value="default" title="https://registry.yarnpkg.com">
@@ -111,7 +112,6 @@ export default {
             设置后立即生效，即使关闭 ds 也会继续保持
           </div>
         </a-form-item>
-
         <a-form-item label="镜像变量设置" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-checkbox v-model="config.plugin.node.startup.variables">
             自动设置，启动npm加速开关时将会设置如下环境变量
@@ -123,10 +123,10 @@ export default {
             <a-col :span="10">
               <a-input v-model="item.key" :title="item.key" read-only />
             </a-col>
-            <a-col :span="10">
+            <a-col :span="13">
               <a-input v-model="item.value" :title="item.value" read-only />
             </a-col>
-            <a-col :span="4">
+            <a-col :span="1">
               <a-icon v-if="item.exists && item.hadSet" title="已设置" style="color:green" type="check" />
               <a-icon v-else title="还未设置" style="color:red" type="exclamation-circle" />
             </a-col>

@@ -17,7 +17,7 @@ $dark-input: #777; //输入框：背景色
   .ds-container,
   .ds-container .container-header,
   .ant-layout-footer {
-    background: $dark-bg;
+    background-color: $dark-bg;
     color: $dark-text;
   }
   div,
@@ -36,7 +36,7 @@ $dark-input: #777; //输入框：背景色
   /* 高亮块：背景色和字体颜色 */
   /* 警告类型 */
   .ant-alert-warning {
-    background: $dark-bg-highlight;
+    background-color: $dark-bg-highlight;
     border-color: $dark-bg-highlight;
     color: $dark-text;
     /* 关闭图标颜色 */
@@ -46,7 +46,7 @@ $dark-input: #777; //输入框：背景色
   }
   /* 消息类型 */
   .ant-alert-info {
-    background: $dark-bg-highlight;
+    background-color: $dark-bg-highlight;
     border-color: $dark-bg-highlight;
     color: $dark-text;
   }
@@ -66,7 +66,7 @@ $dark-input: #777; //输入框：背景色
     background-color: #666;
   }
   .ant-divider {
-    background: $dark-bd;
+    background-color: $dark-bd;
   }
 
   .help-list .title1 {
@@ -76,7 +76,7 @@ $dark-input: #777; //输入框：背景色
   /* 左侧 */
   /** 背景色 **/
   .ant-layout-sider {
-    background: $dark-bg;
+    background-color: $dark-bg;
   }
   /** Logo **/
   .logo {
@@ -84,14 +84,14 @@ $dark-input: #777; //输入框：背景色
   }
   /** 菜单 **/
   .ant-menu {
-    background: $dark-bg;
+    background-color: $dark-bg;
     color: $dark-text;
   }
   /* 菜单选中时，或鼠标移到菜单上时的样式 */
   .ant-menu-item:hover,
   .ant-menu-submenu .ant-menu-submenu-title:hover,
   .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-    background: $dark-bg-highlight;
+    background-color: $dark-bg-highlight;
     color: #1890ff;
     span {
       color: #1890ff;
@@ -104,7 +104,7 @@ $dark-input: #777; //输入框：背景色
   .ant-input-number,
   .ant-select-selection,
   .ant-input-group-addon {
-    background: $dark-input;
+    background-color: $dark-input;
     border-color: #aaa;
     color: $dark-text;
     &:hover,
@@ -115,7 +115,7 @@ $dark-input: #777; //输入框：背景色
 
   /* 卡片消息：IP测速 */
   .ant-card {
-    background: $dark-input;
+    background-color: $dark-input;
     border-color: $dark-input;
     .ant-card-head {
       border-bottom-color: #929292;
@@ -124,26 +124,26 @@ $dark-input: #777; //输入框：背景色
 
   /* 标签：未启用 */
   .ant-tag-red {
-    background: #4f4749;
+    background-color: #4f4749;
     border-color: #4f4749;
     color: #bf8285;
   }
   /* 标签：已启用 */
   .ant-tag-green {
-    background: #505f5f;
+    background-color: #505f5f;
     border-color: #505f5f;
     color: #90cb9f;
   }
   /* 标签：警告 */
   .ant-tag-orange {
-    background: #5a5750;
+    background-color: #5a5750;
     border-color: #5a5750;
     color: #cfa572;
   }
 
   /* 按钮 */
   .ant-btn:not(.ant-btn-danger, .ant-btn-primary) {
-    background: $dark-btn;
+    background-color: $dark-btn;
     border-color: $dark-btn;
     color: $dark-text;
     &:hover {
@@ -153,7 +153,7 @@ $dark-input: #777; //输入框：背景色
 
   /* 单选框：开关式 */
   .ant-switch:not(.ant-switch-checked) {
-    background: $dark-btn;
+    background-color: $dark-btn;
     border-color: $dark-btn;
     &:hover {
       opacity: 0.8;
@@ -161,7 +161,7 @@ $dark-input: #777; //输入框：背景色
   }
   /* 单选框：按钮式 */
   .ant-radio-button-wrapper {
-    background: $dark-btn;
+    background-color: $dark-btn;
     border-color: $dark-btn;
     color: $dark-text;
     &:hover {
@@ -173,24 +173,24 @@ $dark-input: #777; //输入框：背景色
   .jsoneditor-vue {
     /*整个编辑框：背景色和边框*/
     div.jsoneditor {
-      background: $dark-bg-highlight;
+      background-color: $dark-bg-highlight;
       border: none;
     }
     /* 头部菜单栏：边框  */
     div.jsoneditor-menu {
-      background: $dark-bg-highlight;
+      background-color: $dark-bg-highlight;
       border-color: $dark-bg-highlight;
     }
     /* 内容区域左边：行号 */
     .ace_gutter {
-      background: #444;
+      background-color: #444;
       .ace_gutter-cell {
         color: #aaa;
       }
     }
     /* 内容区域右边：JSON内容 */
     .ace_scroller {
-      background: #555;
+      background-color: #555;
     }
     /* key的颜色 */
     .ace_variable,
@@ -215,12 +215,12 @@ $dark-input: #777; //输入框：背景色
     /* 当前行高亮样式 */
     .ace_gutter-active-line,
     .ace_marker-layer .ace_active-line {
-      background: #838774;
+      background-color: #838774;
     }
     /* 选中行高亮样式 */
     .ace-jsoneditor {
       .ace_marker-layer .ace_selection {
-        background: #8b2929; /* 同时应用于当前选中的搜索结果项的背景色，建议与搜索结果边框颜色保持一致 */
+        background-color: #8b2929; /* 同时应用于当前选中的搜索结果项的背景色，建议与搜索结果边框颜色保持一致 */
       }
 
       /* 光标颜色 */

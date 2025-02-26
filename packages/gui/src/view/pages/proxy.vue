@@ -68,7 +68,10 @@ export default {
       const excludeIpList = {}
       for (const item of this.excludeIpList) {
         if (item.key) {
-          excludeIpList[item.key] = item.value === 'true'
+          const hostname = this.handleHostname(item.key)
+          if (hostname) {
+            excludeIpList[hostname] = (item.value === 'true')
+          }
         }
       }
       this.config.proxy.excludeIpList = excludeIpList

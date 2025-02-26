@@ -7,6 +7,8 @@ export default {
   data () {
     return {
       key: 'plugin.git',
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
       noProxyUrls: [],
       needRestart: false,
     }
@@ -45,7 +47,7 @@ export default {
       }
     },
     addNoProxyUrl () {
-      this.noProxyUrls.unshift({ key: '', value: true })
+      this.noProxyUrls.unshift({ key: '' })
     },
     delNoProxyUrl (item, index) {
       this.noProxyUrls.splice(index, 1)
@@ -54,7 +56,10 @@ export default {
       const noProxyUrls = {}
       for (const item of this.noProxyUrls) {
         if (item.key) {
-          noProxyUrls[item.key] = item.value
+          const hostname = this.handleHostname(item.key)
+          if (hostname) {
+            noProxyUrls[hostname] = true
+          }
         }
       }
       this.config.plugin.git.setting.noProxyUrls = noProxyUrls
@@ -67,9 +72,9 @@ export default {
   <ds-container>
     <template slot="header">
       Git.exe代理设置
-      <span style="color:#999;">
-        仅针对git命令行的代理设置，github网站的访问无需设置
-      </span>
+    </template>
+    <template slot="header-right">
+      仅针对git命令行的代理设置，github网站的访问无需设置
     </template>
 
     <div v-if="config">
@@ -103,7 +108,7 @@ export default {
             </a-row>
             <a-row v-for="(item, index) of noProxyUrls" :key="index" :gutter="10">
               <a-col :span="22">
-                <a-input v-model="item.key" :disabled="item.value === false" />
+                <a-input v-model="item.key" />
               </a-col>
               <a-col :span="2">
                 <a-button type="danger" icon="minus" @click="delNoProxyUrl(item, index)" />

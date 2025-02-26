@@ -5,8 +5,6 @@ import { colorTheme } from './composables/theme'
 
 export default {
   name: 'App',
-  components: {
-  },
   data () {
     return {
       locale: zhCN,
@@ -39,9 +37,6 @@ export default {
     })
   },
   methods: {
-    handleClick (e) {
-      console.log('click', e)
-    },
     titleClick (item) {
       console.log('title click:', item)
     },

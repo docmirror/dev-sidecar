@@ -142,5 +142,17 @@ export default {
       const dir = await this.$api.info.getLogDir()
       this.$api.ipc.openPath(dir)
     },
+    handleHostname (hostname) {
+      if (this.isNotHostname(hostname)) {
+        return ''
+      }
+
+      // 移除所有空白符
+      return hostname.replaceAll(/\s+/g, '')
+    },
+    isNotHostname (hostname) {
+      // 暂时只判断数字
+      return !hostname || /^[\d\s]+$/.test(hostname)
+    },
   },
 }
