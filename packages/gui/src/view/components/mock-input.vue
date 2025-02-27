@@ -29,40 +29,5 @@ export default {
 </script>
 
 <template>
-  <span ref="input" class="fake-input" contenteditable="true" spellcheck="false" :title="value" @blur="onBlur" @keydown="onKeydown" v-html="value" />
+  <span ref="input" class="ant-input" contenteditable="true" spellcheck="false" :title="value" @blur="onBlur" @keydown="onKeydown" v-html="value" />
 </template>
-
-<style lang="scss">
-.fake-input {
-  /* 鼠标样式 */
-  cursor: text;
-
-  /* 内容不换行 */
-  white-space: nowrap;
-  overflow: hidden;
-  vertical-align: middle;
-
-  /* 复制 ant-input 样式 */
-  box-sizing: border-box;
-  margin: 0;
-  padding: 4px 11px;
-  font-variant: tabular-nums;
-  list-style: none;
-  font-feature-settings: 'tnum';
-  position: relative;
-  display: inline-block;
-  width: 100%;
-  height: 32px;
-  color: rgba(0, 0, 0, 0.65);
-  font-size: 14px;
-  line-height: 1.5;
-  background-color: #fff;
-  background-image: none;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  transition: all 0.3s;
-}
-.fine-tuning .fake-input {
-  margin-top: -2px;
-}
-</style>

@@ -191,15 +191,6 @@ export default {
 body {
   height: 100%;
 }
-.mt10 {
-  margin-top: 10px;
-}
-.mt5 {
-  margin-top: 5px;
-}
-.mt20 {
-  margin-top: 20px;
-}
 .ds_layout {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

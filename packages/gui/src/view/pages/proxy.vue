@@ -168,7 +168,7 @@ export default {
         </a-row>
         <a-row v-for="(item, index) of excludeIpList" :key="index" :gutter="10" class="fine-tuning">
           <a-col :span="17">
-            <MockInput v-model="item.key" />
+            <MockInput v-model="item.key" class="mt-1" />
           </a-col>
           <a-col :span="5">
             <a-select v-model="item.value" style="width:100%">
@@ -185,7 +185,7 @@ export default {
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">
+        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
           恢复默认
         </a-button>
         <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
