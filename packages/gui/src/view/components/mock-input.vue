@@ -19,7 +19,7 @@ export default {
         event.preventDefault()
       }
     },
-    onChange () {
+    onBlur () {
       if (this.$refs.input.textContent !== this.value) {
         this.$emit('input', this.$refs.input.textContent)
       }
@@ -29,7 +29,7 @@ export default {
 </script>
 
 <template>
-  <span ref="input" class="fake-input" contenteditable="true" :title="value" @focus="onChange" @blur="onChange" @keydown="onKeydown" v-html="value" />
+  <span ref="input" class="fake-input" contenteditable="true" spellcheck="false" :title="value" @blur="onBlur" @keydown="onKeydown" v-html="value" />
 </template>
 
 <style lang="scss">

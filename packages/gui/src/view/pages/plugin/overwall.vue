@@ -153,13 +153,13 @@ export default {
           </div>
         </a-form-item>
         <a-form-item label="远程PAC文件" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.overwall.pac.pacFileUpdateUrl" :title="config.plugin.overwall.pac.pacFileUpdateUrl" />
+          <a-input v-model="config.plugin.overwall.pac.pacFileUpdateUrl" :title="config.plugin.overwall.pac.pacFileUpdateUrl" spellcheck="false" />
           <div class="form-help">
             远程PAC文件内容可以是<code>base64</code>编码格式，也可以是未经过编码的
           </div>
         </a-form-item>
         <hr>
-        <a-form-item label="自定义域名" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item label="自定义域名" :label-col="labelCol" :wrapper-col="wrapperCol" class="fine-tuning2">
           <div>
             <a-row :gutter="10" style="">
               <a-col :span="22">
@@ -198,16 +198,16 @@ export default {
             </a-row>
             <a-row v-for="(item, index) of servers" :key="index" :gutter="10">
               <a-col :span="6">
-                <a-input v-model="item.key" addon-before="域名" placeholder="yourdomain.com" />
+                <a-input v-model="item.key" addon-before="域名" placeholder="yourdomain.com" spellcheck="false" />
               </a-col>
               <a-col :span="5">
-                <a-input v-model="item.value.port" addon-before="端口" placeholder="443" />
+                <a-input v-model="item.value.port" addon-before="端口" placeholder="443" spellcheck="false" />
               </a-col>
               <a-col :span="6">
-                <a-input v-model="item.value.path" addon-before="路径" placeholder="xxxxxx" />
+                <a-input v-model="item.value.path" addon-before="路径" placeholder="xxxxxx" spellcheck="false" />
               </a-col>
               <a-col :span="5">
-                <a-input v-model="item.value.password" addon-before="密码" type="password" placeholder="password" />
+                <a-input v-model="item.value.password" addon-before="密码" type="password" placeholder="password" spellcheck="false" />
               </a-col>
               <a-col :span="2">
                 <a-button type="danger" icon="minus" @click="deleteServer(item, index)" />
@@ -233,3 +233,13 @@ export default {
     </template>
   </ds-container>
 </template>
+
+<style lang="scss">
+/*样式微调*/
+.fine-tuning2 .ant-btn-danger {
+  margin-top: 2px !important;
+}
+.ant-input-group-addon {
+  padding: 0 6px !important;
+}
+</style>

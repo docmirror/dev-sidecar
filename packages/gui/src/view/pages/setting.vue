@@ -373,10 +373,10 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="共享远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.app.remoteConfig.url" :title="config.app.remoteConfig.url" />
+        <a-input v-model="config.app.remoteConfig.url" :title="config.app.remoteConfig.url" spellcheck="false" />
       </a-form-item>
       <a-form-item label="个人远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.app.remoteConfig.personalUrl" :title="config.app.remoteConfig.personalUrl" />
+        <a-input v-model="config.app.remoteConfig.personalUrl" :title="config.app.remoteConfig.personalUrl" spellcheck="false" />
       </a-form-item>
       <a-form-item label="重载远程配置" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-button :disabled="config.app.remoteConfig.enabled === false" :loading="reloadLoading" icon="sync" @click="reloadRemoteConfig()">
@@ -432,7 +432,7 @@ export default {
       </a-form-item>
       <hr>
       <a-form-item label="打开窗口快捷键" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.app.showHideShortcut" @change="shortcutChange" @keydown="shortcutKeyDown" @keyup="shortcutKeyUp" />
+        <a-input v-model="config.app.showHideShortcut" spellcheck="false" @change="shortcutChange" @keydown="shortcutKeyDown" @keyup="shortcutKeyUp" />
         <div class="form-help">
           部分快捷键已被占用：<code>F5</code>、<code>F12</code>、<code>Ctrl+F</code>、<code>F3</code>、<code>Shift+F3</code>
         </div>
@@ -451,8 +451,8 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="启动时窗口大小" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number v-model="config.app.windowSize.width" :step="50" :min="600" :max="2400" :precision="0" />&nbsp;×
-        <a-input-number v-model="config.app.windowSize.height" :step="50" :min="500" :max="2000" :precision="0" />
+        <a-input-number v-model="config.app.windowSize.width" :step="50" :min="600" :max="2400" :precision="0" spellcheck="false" />&nbsp;×
+        <a-input-number v-model="config.app.windowSize.height" :step="50" :min="500" :max="2000" :precision="0" spellcheck="false" />
       </a-form-item>
       <hr>
       <a-form-item label="自动检查更新" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -485,7 +485,7 @@ export default {
       <a-form-item label="日志文件保存目录" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input-search
           v-model="config.app.logFileSavePath" enter-button="选择"
-          :title="config.app.logFileSavePath"
+          :title="config.app.logFileSavePath" spellcheck="false"
           @search="onLogFileSavePathSelect"
         />
         <div class="form-help">
@@ -494,7 +494,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="最大日志文件大小" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number ref="maxLogFileSize" v-model="config.app.maxLogFileSize" :step="maxLogFileSizeStep" :min="0" />
+        <a-input-number ref="maxLogFileSize" v-model="config.app.maxLogFileSize" :step="maxLogFileSizeStep" :min="0" spellcheck="false" />
         <a-select v-model="config.app.maxLogFileSizeUnit" class="md-ml-5" @change="onMaxLogFileSizeUnitChange">
           <a-select-option v-for="(item) of maxLogFileSizeUnit" :key="item.value" :value="item.value">
             {{ item.label }}
@@ -506,7 +506,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="保留日志文件数" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number v-model="config.app.keepLogFileCount" :step="1" :min="0" :precision="0" />
+        <a-input-number v-model="config.app.keepLogFileCount" :step="1" :min="0" :precision="0" spellcheck="false" />
         <div class="form-help">
           修改后，重启DS才生效，<code>隔天</code>或<code>达到日志文件大小限制</code>时，才会触发清理程序！
         </div>
