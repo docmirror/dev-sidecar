@@ -1,22 +1,38 @@
-# linux 支持
+# Linux 支持
 
-`linux`使用说明，目前仅支持`ubuntu_x64（GNOME）`，其他`linux`未测试
+`Linux`使用说明，目前仅官方支持`Ubuntu x86_64 GNOME桌面版（原版）`，其他`Linux`未测试
 
-> 注意：需要开启[sudo免密支持](https://www.jianshu.com/p/5d02428f313d)
+> 注意：需要开启[sudo免密支持](https://www.jianshu.com/p/5d02428f313d)，否则请自行安装证书
 
 ## 一、安装
 
-### 1.1. ubuntu
+### 1.1. Ubuntu / Debian或其衍生版（未测试）
 
 - 下载`DevSidecar-x.x.x.deb`
 - 执行命令安装 `dpkg -i DevSidecar-x.x.x.deb`
 - 去应用列表里面找到dev-sidecar应用，打开即可
 
-### 1.2. 其他linux系统（未测试）
+### 1.2. 其他基于glibc的Linux系统（未测试）
 
 - 下载 `DevSidecar-x.x.x.AppImage`
 - 设置可执行权限 `sudo chmod +X DevSidecar-x.x.x.AppImage`
 - 双击运行
+
+### 1.3. 特殊的Linux系统（如Alpine和Chimera Linux）
+
+> 此处默认用户有较专业的Linux知识，故不详细描述，请参考并自行试验
+- 创建Debian（最方便且省空间）容器，可使用distrobox（推荐），接下来以此为例说明
+- 下载deb包并在容器内安装
+- 穿透系统设置：
+ 在容器内/usr/bin/gsettings文件写入：
+```bash
+#!/bin/sh
+distrobox-host-exec gsettings "$@"
+```
+并设置可执行权限
+简化版命令（请在容器内执行）:
+`echo -e '#!/bin/sh\n/distrobox-host-exec gsettings "$@"' >/usr/bin/gsettings`
+- 使用命令启动应用，使用“自动安装证书”功能，回到终端，找到输出里含有sudo的两句命令，复制到主系统执行，如失败，请自行安装证书
 
 ### 1.3. 版本选择
 
@@ -26,7 +42,7 @@
 ## 二、证书安装
 
 默认模式和增强模式需要系统信任CA证书。
-由于linux上火狐和chrome都不走系统证书，所以除了安装系统证书之外，还需要给浏览器安装证书
+由于Linux上火狐和Chrome都不走系统证书，所以除了安装系统证书之外，还需要给浏览器安装证书
 
 ### 2.1. 系统证书安装
 
@@ -43,7 +59,7 @@
 - 选择证书文件在`~/.dev-sidecar`目录下
 - 勾选信任由此证书颁发机构来标识网站，确定即可
 
-### 2.3. chrome浏览器安装证书
+### 2.3. Chrome浏览器安装证书
 
 证书文件目录为`~/.dev-sidecar`
 ![](../packages/gui/public/setup-linux.png)
