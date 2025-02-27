@@ -72,7 +72,7 @@ export default {
           </a-tag>
         </a-form-item>
         <a-form-item label="npm命令名" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.node.setting.command" />
+          <a-input v-model="config.plugin.node.setting.command" spellcheck="false" />
           <div class="form-help">
             如果你的npm命令改成了其他名字，或者想设置绿色版npm程序路径，可在此处修改
           </div>
@@ -121,10 +121,10 @@ export default {
           </div>
           <a-row v-for="(item, index) of npmVariables" :key="index" :gutter="10" style="margin-top: 2px">
             <a-col :span="10">
-              <a-input v-model="item.key" :title="item.key" read-only />
+              <a-input v-model="item.key" :title="item.key" read-only spellcheck="false" />
             </a-col>
             <a-col :span="13">
-              <a-input v-model="item.value" :title="item.value" read-only />
+              <a-input v-model="item.value" :title="item.value" read-only spellcheck="false" />
             </a-col>
             <a-col :span="1">
               <a-icon v-if="item.exists && item.hadSet" title="已设置" style="color:green" type="check" />
