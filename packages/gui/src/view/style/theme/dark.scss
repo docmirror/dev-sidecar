@@ -111,6 +111,10 @@ $dark-input: #777; //输入框：背景色
     &:focus {
       border-color: #fff;
     }
+
+    &:focus {
+      box-shadow: 0 0 0 2px rgb(255 255 255 / 50%);
+    }
   }
 
   /* 卡片消息：IP测速 */
