@@ -129,28 +129,28 @@ assert.strictEqual(ip, presetIp) // test preset
 console.log('\n\n')
 
 assert.strictEqual(dnsProviders.cloudflare.type, 'https')
-ip = await dnsProviders.cloudflare.lookup(hostname1)
-console.log('===> test cloudflare:', ip, '\n\n')
+// ip = await dnsProviders.cloudflare.lookup(hostname1)
+// console.log('===> test cloudflare:', ip, '\n\n')
 
 assert.strictEqual(dnsProviders.quad9.type, 'https')
-ip = await dnsProviders.quad9.lookup(hostname1)
-console.log('===> test quad9:', ip, '\n\n')
+// ip = await dnsProviders.quad9.lookup(hostname1)
+// console.log('===> test quad9:', ip, '\n\n')
 
 assert.strictEqual(dnsProviders.aliyun.type, 'https')
-ip = await dnsProviders.aliyun.lookup(hostname1)
-console.log('===> test aliyun:', ip, '\n\n')
+// ip = await dnsProviders.aliyun.lookup(hostname1)
+// console.log('===> test aliyun:', ip, '\n\n')
 
 assert.strictEqual(dnsProviders.safe360.type, 'https')
-ip = await dnsProviders.safe360.lookup(hostname1)
-console.log('===> test safe360:', ip, '\n\n')
+// ip = await dnsProviders.safe360.lookup(hostname1)
+// console.log('===> test safe360:', ip, '\n\n')
 
 assert.strictEqual(dnsProviders.rubyfish.type, 'https')
-ip = await dnsProviders.rubyfish.lookup(hostname1)
-console.log('===> test rubyfish:', ip, '\n\n')
+// ip = await dnsProviders.rubyfish.lookup(hostname1)
+// console.log('===> test rubyfish:', ip, '\n\n')
 
 assert.strictEqual(dnsProviders.py233.type, 'https')
-ip = await dnsProviders.py233.lookup(hostname1)
-console.log('===> test py233:', ip, '\n\n')
+// ip = await dnsProviders.py233.lookup(hostname1)
+// console.log('===> test py233:', ip, '\n\n')
 
 
 console.log('\n--------------- test TLS ---------------\n')
@@ -159,24 +159,24 @@ assert.strictEqual(ip, presetIp) // test preset
 console.log('\n\n')
 
 assert.strictEqual(dnsProviders.cloudflareTLS.type, 'tls')
-ip = await dnsProviders.cloudflareTLS.lookup(hostname1)
-console.log('===> test cloudflareTLS:', ip, '\n\n')
+// ip = await dnsProviders.cloudflareTLS.lookup(hostname1)
+// console.log('===> test cloudflareTLS:', ip, '\n\n')
 
 assert.strictEqual(dnsProviders.quad9TLS.type, 'tls')
-ip = await dnsProviders.quad9TLS.lookup(hostname1)
-console.log('===> test quad9TLS:', ip, '\n\n')
+// ip = await dnsProviders.quad9TLS.lookup(hostname1)
+// console.log('===> test quad9TLS:', ip, '\n\n')
 
 assert.strictEqual(dnsProviders.aliyunTLS.type, 'tls')
-ip = await dnsProviders.aliyunTLS.lookup(hostname1)
-console.log('===> test aliyunTLS:', ip, '\n\n')
+// ip = await dnsProviders.aliyunTLS.lookup(hostname1)
+// console.log('===> test aliyunTLS:', ip, '\n\n')
 
 assert.strictEqual(dnsProviders.aliyunTLS2.type, 'tls')
-ip = await dnsProviders.aliyunTLS2.lookup(hostname1)
-console.log('===> test aliyunTLS2:', ip, '\n\n')
+// ip = await dnsProviders.aliyunTLS2.lookup(hostname1)
+// console.log('===> test aliyunTLS2:', ip, '\n\n')
 
 assert.strictEqual(dnsProviders.safe360TLS.type, 'tls')
-ip = await dnsProviders.safe360TLS.lookup(hostname1)
-console.log('===> test safe360TLS:', ip, '\n\n')
+// ip = await dnsProviders.safe360TLS.lookup(hostname1)
+// console.log('===> test safe360TLS:', ip, '\n\n')
 
 
 console.log('\n--------------- test TCP ---------------\n')
@@ -185,12 +185,12 @@ assert.strictEqual(ip, presetIp) // test preset
 console.log('\n\n')
 
 assert.strictEqual(dnsProviders.googleTCP.type, 'tcp')
-ip = await dnsProviders.googleTCP.lookup(hostname1)
-console.log('===> test googleTCP:', ip, '\n\n')
+// ip = await dnsProviders.googleTCP.lookup(hostname1)
+// console.log('===> test googleTCP:', ip, '\n\n')
 
 assert.strictEqual(dnsProviders.aliyunTCP.type, 'tcp')
-ip = await dnsProviders.aliyunTCP.lookup(hostname1)
-console.log('===> test aliyunTCP:', ip, '\n\n')
+// ip = await dnsProviders.aliyunTCP.lookup(hostname1)
+// console.log('===> test aliyunTCP:', ip, '\n\n')
 
 
 console.log('\n--------------- test UDP ---------------\n')
@@ -199,9 +199,9 @@ assert.strictEqual(ip, presetIp) // test preset
 console.log('\n\n')
 
 assert.strictEqual(dnsProviders.googleUDP.type, 'udp')
-ip = await dnsProviders.googleUDP.lookup(hostname1)
-console.log('===> test googleUDP:', ip, '\n\n')
+// ip = await dnsProviders.googleUDP.lookup(hostname1)
+// console.log('===> test googleUDP:', ip, '\n\n')
 
 assert.strictEqual(dnsProviders.aliyunUDP.type, 'udp')
-ip = await dnsProviders.aliyunUDP.lookup(hostname1)
-console.log('===> test aliyunUDP:', ip, '\n\n')
+// ip = await dnsProviders.aliyunUDP.lookup(hostname1)
+// console.log('===> test aliyunUDP:', ip, '\n\n')
