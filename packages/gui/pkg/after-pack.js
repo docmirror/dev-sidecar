@@ -18,9 +18,8 @@ updaterCacheDirName: '@docmirrordev-sidecar-gui-updater'
   fs.writeFileSync(filePath, fileContent)
 }
 exports.default = async function (context) {
-  // console.log('context', context)
   let targetPath
-  let systemType = ''
+  let systemType
   if (context.packager.platform.nodeName === 'darwin') {
     targetPath = path.join(context.appOutDir, `${context.packager.appInfo.productName}.app/Contents/Resources`)
     systemType = 'mac'

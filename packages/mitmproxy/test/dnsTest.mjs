@@ -80,5 +80,5 @@ let ip
 // console.log('ip:', ip)
 
 // console.log('test ipaddress')
-// ip = await dnsProviders.ipaddress.lookup(hostname0)
+// ip = await dnsProviders.ipaddress.lookup(hostname1)
 // console.log('ip:', ip)

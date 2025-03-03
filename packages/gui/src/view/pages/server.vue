@@ -506,7 +506,7 @@ export default {
     overflow-x: hidden;
   }
   .ant-input-group-addon:first-child {
-    width: 50px;
+    width: 45px;
   }
 }
 </style>

@@ -198,13 +198,13 @@ export default {
             </a-row>
             <a-row v-for="(item, index) of servers" :key="index" :gutter="10">
               <a-col :span="6">
-                <a-input v-model="item.key" addon-before="域名" placeholder="yourdomain.com" spellcheck="false" />
+                <a-input v-model="item.key" :title="item.key" addon-before="域名" placeholder="yourdomain.com" spellcheck="false" />
               </a-col>
               <a-col :span="5">
-                <a-input v-model="item.value.port" addon-before="端口" placeholder="443" spellcheck="false" />
+                <a-input v-model="item.value.port" :title="item.value.port" addon-before="端口" placeholder="443" spellcheck="false" />
               </a-col>
               <a-col :span="6">
-                <a-input v-model="item.value.path" addon-before="路径" placeholder="xxxxxx" spellcheck="false" />
+                <a-input v-model="item.value.path" :title="item.value.path" addon-before="路径" placeholder="xxxxxx" spellcheck="false" />
               </a-col>
               <a-col :span="5">
                 <a-input v-model="item.value.password" addon-before="密码" type="password" placeholder="password" spellcheck="false" />
@@ -239,7 +239,7 @@ export default {
 .fine-tuning2 .ant-btn-danger {
   margin-top: 2px !important;
 }
-.ant-input-group-addon {
-  padding: 0 6px !important;
+.ant-input-group-addon:first-child {
+  padding: 0 5px !important;
 }
 </style>

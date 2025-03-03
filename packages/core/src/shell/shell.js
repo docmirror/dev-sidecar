@@ -54,9 +54,7 @@ class WindowsSystemShell extends SystemShell {
       }
 
       try {
-        const ret = await ps.invoke()
-        // log.info('ps complete', cmds)
-        return ret
+        return await ps.invoke()
       } finally {
         ps.dispose()
       }
@@ -66,9 +64,7 @@ class WindowsSystemShell extends SystemShell {
         compose += ` && ${cmd}`
       }
       // compose += '&& exit'
-      const ret = await childExec(compose, args)
-      // log.info('cmd complete:', compose)
-      return ret
+      return await childExec(compose, args)
     }
   }
 }

@@ -52,8 +52,7 @@ const PipPlugin = function (context) {
           cmds.push(`${command} config unset  global.${item.key}`)
         }
       }
-      const ret = await shell.exec(cmds, { type: 'cmd' })
-      return ret
+      return await shell.exec(cmds, { type: 'cmd' })
     },
 
     async unsetPipEnv (list) {
@@ -62,8 +61,7 @@ const PipPlugin = function (context) {
       for (const item of list) {
         cmds.push(`${command} config unset  global.${item} `)
       }
-      const ret = await shell.exec(cmds, { type: 'cmd' })
-      return ret
+      return await shell.exec(cmds, { type: 'cmd' })
     },
 
     async setRegistry ({ registry }) {

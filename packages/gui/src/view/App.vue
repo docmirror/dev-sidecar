@@ -148,7 +148,7 @@ export default {
                  style="inset:auto auto 53px 210px; background-color:#ddd"
       />
       <a-layout>
-        <a-layout-sider :theme="theme">
+        <a-layout-sider :theme="theme" style="overflow-y: auto">
           <div class="logo" />
           <div class="aside">
             <a-menu
