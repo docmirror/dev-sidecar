@@ -25,14 +25,5 @@ module.exports = class DNSOverIpAddress extends BaseDNS {
     }
     log.warn(`[dns] get ${hostname} ipaddress: error`)
     return null
-
-    // const { answers } = await dnstls.query(hostname)
-    //
-    // const answer = answers.find(answer => answer.type === 'A' && answer.class === 'IN')
-    //
-    // log.info('dns lookup：', hostname, answer)
-    // if (answer) {
-    //   return answer.data
-    // }
   }
 }
