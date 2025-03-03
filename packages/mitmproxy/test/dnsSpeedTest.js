@@ -3,11 +3,6 @@ const SpeedTest = require('../src/lib/speed/index.js')
 const SpeedTester = require('../src/lib/speed/SpeedTester.js')
 
 const dnsMap = dns.initDNS({
-  // ipaddress: {
-  //   type: 'ipaddress',
-  //   server: 'ipaddress',
-  //   cacheSize: 1000
-  // },
   cloudflare: {
     type: 'https',
     server: 'https://1.1.1.1/dns-query',

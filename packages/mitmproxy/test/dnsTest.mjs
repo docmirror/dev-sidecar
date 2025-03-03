@@ -4,12 +4,6 @@ import dns from '../src/lib/dns/index.js'
 const presetIp = '100.100.100.100'
 
 const dnsProviders = dns.initDNS({
-  ipaddress: {
-    type: 'ipaddress',
-    server: 'ipaddress',
-    cacheSize: 1000,
-  },
-
   // https
   cloudflare: {
     type: 'https',
@@ -93,6 +87,7 @@ const dnsProviders = dns.initDNS({
   }
 })
 
+
 const presetHostname = 'xxx.com'
 const hostname1 = 'github.com'
 const hostname2 = 'api.github.com'
@@ -102,18 +97,6 @@ const hostname5 = 'gh.docmirror.top'
 const hostname6 = 'gh2.docmirror.top'
 
 let ip
-
-// const test = '111<tr><th>IP Address</th><td><ul class="comma-separated"><li>140.82.113.4</li></ul></td></tr>2222'
-// // <tr><th>IP Address</th><td><ul class="comma-separated"><li>140.82.113.4</li></ul></td></tr>
-// // <tr><th>IP Address</th><td><ul class="comma-separated"><li>(.*)</li></ul></td></tr>
-// const regexp = /<tr><th>IP Address<\/th><td><ul class="comma-separated"><li>(.*)<\/li><\/ul><\/td><\/tr>/
-// const matched = regexp.exec(test)
-// console.log('data:', matched)
-//
-// console.log('\n--------------- test ipaddress ---------------\n')
-// ip = await dnsProviders.ipaddress.lookup(hostname1)
-// console.log('===> test ipaddress:', ip, '\n\n')
-assert.strictEqual(dnsProviders.ipaddress.type, 'ipaddress')
 
 
 console.log('\n--------------- test PreSet ---------------\n')

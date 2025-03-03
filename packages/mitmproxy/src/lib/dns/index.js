@@ -1,6 +1,5 @@
 const matchUtil = require('../../utils/util.match')
 const DNSOverPreSetIpList = require('./preset.js')
-const DNSOverIpAddress = require('./ipaddress.js')
 const DNSOverHTTPS = require('./https.js')
 const DNSOverTLS = require('./tls.js')
 const DNSOverTCP = require('./tcp.js')
@@ -39,9 +38,7 @@ module.exports = {
         conf.type = conf.type.toLowerCase()
       }
 
-      if (conf.type === 'ipaddress') {
-        dnsMap[provider] = new DNSOverIpAddress(provider, conf.cacheSize, preSetIpList)
-      } else if (conf.type === 'https') {
+      if (conf.type === 'https') {
         dnsMap[provider] = new DNSOverHTTPS(provider, conf.cacheSize, preSetIpList, server)
       } else if (conf.type === 'tls') {
         if (server.startsWith('tls://')) {
