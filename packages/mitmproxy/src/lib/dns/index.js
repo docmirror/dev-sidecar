@@ -23,7 +23,7 @@ module.exports = {
 
       // 获取DNS类型
       if (conf.type == null) {
-        if (server.startsWith('https://')) {
+        if (server.startsWith('https://') || server.startsWith('http://')) {
           conf.type = 'https'
         } else if (server.startsWith('tls://')) {
           conf.type = 'tls'
