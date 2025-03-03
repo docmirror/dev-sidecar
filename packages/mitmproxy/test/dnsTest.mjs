@@ -77,7 +77,7 @@ const dnsProviders = dns.initDNS({
 
   // udp
   googleUDP: {
-    type: 'udp',
+    // type: 'udp', // 默认是udp可以不用标
     server: '8.8.8.8',
     cacheSize: 1000,
   },
