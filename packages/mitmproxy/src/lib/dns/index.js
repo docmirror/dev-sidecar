@@ -68,16 +68,14 @@ module.exports = {
     return dnsMap
   },
   hasDnsLookup (dnsConfig, hostname) {
-    let providerName = null
-
     // 先匹配 预设IP配置
-    const hostnamePreSetIpList = matchUtil.matchHostname(dnsConfig.preSetIpList, hostname, 'matched preSetIpList')
+    const hostnamePreSetIpList = matchUtil.matchHostname(dnsConfig.preSetIpList, hostname, 'matched preSetIpList(hasDnsLookup)')
     if (hostnamePreSetIpList) {
       return dnsConfig.dnsMap.PreSet
     }
 
     // 再匹配 DNS映射配置
-    providerName = matchUtil.matchHostname(dnsConfig.mapping, hostname, 'get dns providerName')
+    const providerName = matchUtil.matchHostname(dnsConfig.mapping, hostname, 'get dns providerName')
 
     // 由于DNS中的usa已重命名为cloudflare，所以做以下处理，为了向下兼容
     if (providerName === 'usa' && dnsConfig.dnsMap.usa == null && dnsConfig.dnsMap.cloudflare != null) {

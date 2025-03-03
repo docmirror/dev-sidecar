@@ -84,7 +84,7 @@ module.exports = class BaseDNS {
 
   async _lookupInternal (hostname) {
     // 获取当前域名的预设IP列表
-    let hostnamePreSetIpList = matchUtil.matchHostname(this.preSetIpList, hostname, 'matched preSetIpList')
+    let hostnamePreSetIpList = matchUtil.matchHostname(this.preSetIpList, hostname, `matched preSetIpList(${this.dnsName})`)
     if (hostnamePreSetIpList && (hostnamePreSetIpList.length > 0 || hostnamePreSetIpList.length === undefined)) {
       if (hostnamePreSetIpList.length > 0) {
         hostnamePreSetIpList = hostnamePreSetIpList.slice()

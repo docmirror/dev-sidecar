@@ -79,7 +79,7 @@ class SpeedTester {
   }
 
   async getFromOneDns (dns) {
-    return await dns._lookup(this.hostname)
+    return await dns._lookupInternal(this.hostname)
   }
 
   async test () {
