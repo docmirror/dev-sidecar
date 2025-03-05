@@ -11,8 +11,7 @@ const executor = {
     for (const item of list) {
       cmds.push(`npm config set ${item.key}  ${item.value}`)
     }
-    const ret = await exec(cmds, { type: 'cmd' })
-    return ret
+    return await exec(cmds, { type: 'cmd' })
   },
   async linux (exec, { port }) {
     throw new Error('暂未实现此功能')

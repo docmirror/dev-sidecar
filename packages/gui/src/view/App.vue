@@ -148,7 +148,7 @@ export default {
                  style="inset:auto auto 53px 210px; background-color:#ddd"
       />
       <a-layout>
-        <a-layout-sider :theme="theme">
+        <a-layout-sider :theme="theme" style="overflow-y: auto">
           <div class="logo" />
           <div class="aside">
             <a-menu
@@ -190,15 +190,6 @@ export default {
 <style lang="scss">
 body {
   height: 100%;
-}
-.mt10 {
-  margin-top: 10px;
-}
-.mt5 {
-  margin-top: 5px;
-}
-.mt20 {
-  margin-top: 20px;
 }
 .ds_layout {
   font-family: Avenir, Helvetica, Arial, sans-serif;

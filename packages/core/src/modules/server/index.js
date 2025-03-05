@@ -104,7 +104,7 @@ const serverApi = {
       log.error('server process uncaughtException:', err)
     })
     serverProcess.on('message', (msg) => {
-      log.info('收到子进程消息:', JSON.stringify(msg))
+      log.debug('收到子进程消息:', JSON.stringify(msg))
       if (msg.type === 'status') {
         fireStatus(msg.event)
       } else if (msg.type === 'error') {

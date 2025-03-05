@@ -109,8 +109,8 @@ export default {
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of noProxyUrls" :key="index" :gutter="10">
-              <a-col :span="22" class="fine-tuning">
-                <MockInput v-model="item.key" />
+              <a-col :span="22">
+                <MockInput v-model="item.key" class="mt-2" />
               </a-col>
               <a-col :span="2">
                 <a-button type="danger" icon="minus" @click="delNoProxyUrl(item, index)" />
@@ -122,7 +122,7 @@ export default {
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">
+        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
           恢复默认
         </a-button>
         <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">

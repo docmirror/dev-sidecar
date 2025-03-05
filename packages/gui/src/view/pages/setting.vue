@@ -344,7 +344,7 @@ export default {
       设置
     </template>
     <template slot="header-right">
-      <a-button class="md-mr-10" icon="profile" @click="openLog()">查看日志</a-button>
+      <a-button class="mr10" icon="profile" @click="openLog()">查看日志</a-button>
     </template>
 
     <div v-if="config">
@@ -495,7 +495,7 @@ export default {
       </a-form-item>
       <a-form-item label="最大日志文件大小" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input-number ref="maxLogFileSize" v-model="config.app.maxLogFileSize" :step="maxLogFileSizeStep" :min="0" spellcheck="false" />
-        <a-select v-model="config.app.maxLogFileSizeUnit" class="md-ml-5" @change="onMaxLogFileSizeUnitChange">
+        <a-select v-model="config.app.maxLogFileSizeUnit" class="ml5" @change="onMaxLogFileSizeUnitChange">
           <a-select-option v-for="(item) of maxLogFileSizeUnit" :key="item.value" :value="item.value">
             {{ item.label }}
           </a-select-option>
@@ -514,10 +514,10 @@ export default {
     </div>
     <template slot="footer">
       <div class="footer-bar">
-        <a-button :loading="removeUserConfigLoading" class="md-mr-10" icon="sync" @click="restoreFactorySettings()">
+        <a-button :loading="removeUserConfigLoading" class="mr10" icon="sync" @click="restoreFactorySettings()">
           恢复出厂设置
         </a-button>
-        <a-button :loading="resetDefaultLoading" class="md-mr-10" icon="sync" @click="resetDefault()">
+        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
           恢复默认
         </a-button>
         <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">

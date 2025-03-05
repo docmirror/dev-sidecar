@@ -99,7 +99,7 @@ $dark-input: #777; //输入框：背景色
   }
 
   /* 输入框、下拉框 */
-  .ant-input, .fake-input,
+  .ant-input,
   .ant-input-number-input,
   .ant-input-number,
   .ant-select-selection,
@@ -109,7 +109,19 @@ $dark-input: #777; //输入框：背景色
     color: $dark-text;
     &:hover,
     &:focus {
-      border-color: #fff;
+      border-color: #eee;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 2px rgb(255 255 255 / 35%);
+    }
+  }
+
+  /* 选中的下拉框 */
+  .ant-select-open,
+  .ant-select-focused {
+    .ant-select-selection {
+      box-shadow: 0 0 0 2px rgb(255 255 255 / 35%);
     }
   }
 

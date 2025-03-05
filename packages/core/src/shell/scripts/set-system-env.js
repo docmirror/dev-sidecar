@@ -19,8 +19,7 @@ const executor = {
       // [Environment]::SetEnvironmentVariable('FOO', 'bar', 'Machine')
       cmds2.push(`set ${item.key}=""`)
     }
-    // eslint-disable-next-line no-unused-vars
-    const ret2 = await exec(cmds2, { type: 'cmd' })
+    await exec(cmds2, { type: 'cmd' })
     return ret
   },
   async linux (exec, { port }) {
