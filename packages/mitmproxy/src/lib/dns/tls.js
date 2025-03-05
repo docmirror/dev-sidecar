@@ -1,16 +1,27 @@
 const dnstls = require('dns-over-tls')
-const log = require('../../utils/util.log.server')
 const BaseDNS = require('./base')
 
+const defaultPort = 853
+
 module.exports = class DNSOverTLS extends BaseDNS {
-  async _lookup (hostname) {
-    const { answers } = await dnstls.query(hostname)
+  constructor (dnsName, cacheSize, preSetIpList, dnsServer, dnsServerPort, dnsServerName) {
+    super(dnsName, 'TLS', cacheSize, preSetIpList)
+    this.dnsServer = dnsServer
+    this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort
+    this.dnsServerName = dnsServerName
+  }
 
-    const answer = answers.find(answer => answer.type === 'A' && answer.class === 'IN')
+  async _doDnsQuery (hostname) {
+    const options = {
+      host: this.dnsServer,
+      port: this.dnsServerPort,
+      servername: this.dnsServerName || this.dnsServer,
 
-    log.info('DNS lookup：', hostname, answer)
-    if (answer) {
-      return answer.data
+      name: hostname,
+      klass: 'IN',
+      type: 'A',
     }
+
+    return await dnstls.query(options)
   }
 }

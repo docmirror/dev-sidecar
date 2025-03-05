@@ -84,7 +84,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       if (isDnsIntercept && isDnsIntercept.dns && isDnsIntercept.ip !== isDnsIntercept.hostname) {
         const { dns, ip, hostname } = isDnsIntercept
         dns.count(hostname, ip, true)
-        log.error(`记录ip失败次数，用于优选ip！ hostname: ${hostname}, ip: ${ip}, reason: ${reason}, dns: ${dns.name}`)
+        log.error(`记录ip失败次数，用于优选ip！ hostname: ${hostname}, ip: ${ip}, reason: ${reason}, dns: ${dns.dnsName}`)
       }
       const counter = context.requestCount
       if (counter != null) {
@@ -123,8 +123,8 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             }
             if (dns) {
               rOptions.lookup = dnsLookup.createLookupFunc(res, dns, 'request url', url, isDnsIntercept)
-              log.debug(`域名 ${rOptions.hostname} DNS: ${dns.name}`)
-              res.setHeader('DS-DNS', dns.name)
+              log.debug(`域名 ${rOptions.hostname} DNS: ${dns.dnsName}`)
+              res.setHeader('DS-DNS', dns.dnsName)
             } else {
               log.info(`域名 ${rOptions.hostname} 在DNS中未配置`)
             }

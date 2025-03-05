@@ -143,7 +143,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
       if (isDnsIntercept && isDnsIntercept.dns && isDnsIntercept.ip !== isDnsIntercept.hostname) {
         const { dns, ip, hostname } = isDnsIntercept
         dns.count(hostname, ip, true)
-        log.error(`记录ip失败次数，用于优选ip！ hostname: ${hostname}, ip: ${ip}, reason: ${errorMsg}, dns: ${dns.name}`)
+        log.error(`记录ip失败次数，用于优选ip！ hostname: ${hostname}, ip: ${ip}, reason: ${errorMsg}, dns: ${dns.dnsName}`)
       }
     })
     proxySocket.on('error', (e) => {
@@ -157,7 +157,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
       if (isDnsIntercept && isDnsIntercept.dns && isDnsIntercept.ip !== isDnsIntercept.hostname) {
         const { dns, ip, hostname } = isDnsIntercept
         dns.count(hostname, ip, true)
-        log.error(`记录ip失败次数，用于优选ip！ hostname: ${hostname}, ip: ${ip}, reason: ${errorMsg}, dns: ${dns.name}`)
+        log.error(`记录ip失败次数，用于优选ip！ hostname: ${hostname}, ip: ${ip}, reason: ${errorMsg}, dns: ${dns.dnsName}`)
       }
     })
 

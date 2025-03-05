@@ -1,8 +1,9 @@
 const matchUtil = require('../../utils/util.match')
-const DNSOverHTTPS = require('./https.js')
-const DNSOverIpAddress = require('./ipaddress.js')
 const DNSOverPreSetIpList = require('./preset.js')
+const DNSOverHTTPS = require('./https.js')
 const DNSOverTLS = require('./tls.js')
+const DNSOverTCP = require('./tcp.js')
+const DNSOverUDP = require('./udp.js')
 
 module.exports = {
   initDNS (dnsProviders, preSetIpList) {
@@ -12,17 +13,65 @@ module.exports = {
     for (const provider in dnsProviders) {
       const conf = dnsProviders[provider]
 
-      if (conf.type === 'ipaddress') {
-        dnsMap[provider] = new DNSOverIpAddress(provider)
-      } else if (conf.type === 'https') {
-        dnsMap[provider] = new DNSOverHTTPS(provider, conf.server, preSetIpList)
-      } else {
-        dnsMap[provider] = new DNSOverTLS(provider)
+      // 获取DNS服务器
+      let server = conf.server || conf.host
+      if (server != null) {
+        server = server.replace(/\s+/, '')
+      }
+      if (!server) {
+        continue
       }
 
-      // 设置DNS名称到name属性中
-      dnsMap[provider].name = provider
-      dnsMap[provider].type = conf.type
+      // 获取DNS类型
+      let type = conf.type
+      if (type == null) {
+        if (server.startsWith('https://') || server.startsWith('http://')) {
+          type = 'https'
+        } else if (server.startsWith('tls://')) {
+          type = 'tls'
+        } else if (server.startsWith('tcp://')) {
+          type = 'tcp'
+        } else if (server.includes('://') && !server.startsWith('udp://')) {
+          throw new Error(`Unknown type DNS: ${server}, provider: ${provider}`)
+        } else {
+          type = 'udp'
+        }
+      } else {
+        type = type.replace(/\s+/, '').toLowerCase()
+      }
+
+      // 创建DNS对象
+      if (type === 'https' || type === 'doh' || type === 'dns-over-https') {
+        if (!server.includes('/')) {
+          server = `https://${server}/dns-query`
+        }
+
+        // 基于 https
+        dnsMap[provider] = new DNSOverHTTPS(provider, conf.cacheSize, preSetIpList, server)
+      } else {
+        // 获取DNS端口
+        let port = conf.port
+
+        // 处理带协议的DNS服务地址
+        if (server.includes('://')) {
+          server = server.split('://')[1]
+        }
+        // 处理带端口的DNS服务地址
+        if (port == null && server.includes(':')) {
+          [server, port] = server.split(':')
+        }
+
+        if (type === 'tls' || type === 'dot' || type === 'dns-over-tls') {
+          // 基于 tls
+          dnsMap[provider] = new DNSOverTLS(provider, conf.cacheSize, preSetIpList, server, port, conf.servername)
+        } else if (type === 'tcp' || type === 'dns-over-tcp') {
+          // 基于 tcp
+          dnsMap[provider] = new DNSOverTCP(provider, conf.cacheSize, preSetIpList, server, port)
+        } else {
+          // 基于 udp
+          dnsMap[provider] = new DNSOverUDP(provider, conf.cacheSize, preSetIpList, server, port)
+        }
+      }
     }
 
     // 创建预设IP的DNS
@@ -31,16 +80,14 @@ module.exports = {
     return dnsMap
   },
   hasDnsLookup (dnsConfig, hostname) {
-    let providerName = null
-
     // 先匹配 预设IP配置
-    const hostnamePreSetIpList = matchUtil.matchHostname(dnsConfig.preSetIpList, hostname, 'matched preSetIpList')
+    const hostnamePreSetIpList = matchUtil.matchHostname(dnsConfig.preSetIpList, hostname, 'matched preSetIpList(hasDnsLookup)')
     if (hostnamePreSetIpList) {
       return dnsConfig.dnsMap.PreSet
     }
 
     // 再匹配 DNS映射配置
-    providerName = matchUtil.matchHostname(dnsConfig.mapping, hostname, 'get dns providerName')
+    const providerName = matchUtil.matchHostname(dnsConfig.mapping, hostname, 'get dns providerName')
 
     // 由于DNS中的usa已重命名为cloudflare，所以做以下处理，为了向下兼容
     if (providerName === 'usa' && dnsConfig.dnsMap.usa == null && dnsConfig.dnsMap.cloudflare != null) {
