@@ -94,7 +94,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-electron-builder-cache-
 
-      - name: "'pnpm install --force' Because we need to install optional dependencies"
+      - name: "'pnpm install' Because we need to install optional dependencies"
         run: |
           echo "======================================================================";
           dir || ls -lah;
@@ -151,10 +151,15 @@ jobs:
           cd packages/gui/dist_electron;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-amd64.deb;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage;
+          mv DevSidecar-${{ steps.package-info.outputs.version }}-x64.tar.gz      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.tar.gz;
+          #-------------------------------------------------------------------------------------------------------------------------
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage  DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage;
+          mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.tar.gz    DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz;
+          #-------------------------------------------------------------------------------------------------------------------------
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.deb      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.AppImage;
+          mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.tar.gz   DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz;
           ls -lah;
       - name: 'Rename artifacts - macOS'
         if: ${{ matrix.os == 'macos' }}
@@ -211,6 +216,14 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage'
           if-no-files-found: error
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.tar.gz'
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.tar.gz
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.tar.gz'
+          if-no-files-found: error
+      #-------------------------------------------------------------------------------------------------------------------------
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
@@ -225,6 +238,14 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage'
           if-no-files-found: error
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz'
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz'
+          if-no-files-found: error
+      #-------------------------------------------------------------------------------------------------------------------------
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
@@ -238,6 +259,13 @@ jobs:
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.AppImage
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.AppImage'
+          if-no-files-found: error
+      - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz'
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz
+          name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz'
           if-no-files-found: error
       #endregion Upload artifacts - Linux
 
