@@ -106,9 +106,9 @@ let ip
 
 console.log('\n--------------- test PreSet ---------------\n')
 ip = await dnsProviders.PreSet.lookup(presetHostname)
-assert.strictEqual(ip, presetIp) // test preset
 console.log('===> test PreSet:', ip, '\n\n')
 console.log('\n\n')
+assert.strictEqual(ip, presetIp) // test preset
 
 
 console.log('\n--------------- test https ---------------\n')

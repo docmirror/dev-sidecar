@@ -35,7 +35,7 @@ module.exports = class DNSOverUDP extends BaseDNS {
       })
 
       // 接收 UDP 响应
-      udpClient.on('message', (msg) => {
+      udpClient.once('message', (msg) => {
         const response = dnsPacket.decode(msg)
         resolve(response)
       })
