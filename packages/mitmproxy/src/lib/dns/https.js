@@ -6,7 +6,7 @@ const dohQueryAsync = promisify(doh.query)
 
 module.exports = class DNSOverHTTPS extends BaseDNS {
   constructor (dnsName, cacheSize, preSetIpList, dnsServer) {
-    super(dnsName, cacheSize, preSetIpList)
+    super(dnsName, 'HTTPS', cacheSize, preSetIpList)
     this.dnsServer = dnsServer
   }
 

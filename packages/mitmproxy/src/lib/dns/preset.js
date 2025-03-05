@@ -2,9 +2,7 @@ const BaseDNS = require('./base')
 
 module.exports = class DNSOverPreSetIpList extends BaseDNS {
   constructor (preSetIpList) {
-    super('PreSet', null, preSetIpList)
-    this.name = 'PreSet'
-    this.type = 'PreSet'
+    super('PreSet', 'PreSet', null, preSetIpList)
   }
 
   async _lookup (_hostname) {

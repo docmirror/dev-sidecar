@@ -43,15 +43,15 @@ module.exports = {
             }
           }
           if (isTestFailedIp === false) {
-            log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.name}': ${ip}${target} -----`)
+            log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.dnsName}': ${ip}${target} -----`)
             if (res) {
-              res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.name === '预设IP' ? 'PreSet' : dns.name}`)
+              res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
             }
             callback(null, ip, 4)
             return
           } else {
             // 使用默认dns
-            log.info(`----- ${action}: ${hostname}, use hostname by default DNS: ${hostname}, skip test failed ip from dns '${dns.name}: ${ip}'${target}, options:`, options)
+            log.info(`----- ${action}: ${hostname}, use hostname by default DNS: ${hostname}, skip test failed ip from dns '${dns.dnsName}: ${ip}'${target}, options:`, options)
           }
         } else {
           // 使用默认dns

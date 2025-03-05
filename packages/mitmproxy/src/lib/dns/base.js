@@ -33,8 +33,9 @@ class IpCache extends DynamicChoice {
 }
 
 module.exports = class BaseDNS {
-  constructor (dnsName, cacheSize, preSetIpList) {
+  constructor (dnsName, dnsType, cacheSize, preSetIpList) {
     this.dnsName = dnsName
+    this.dnsType = dnsType
     this.preSetIpList = preSetIpList
     this.cache = new LRUCache({
       maxSize: (cacheSize > 0 ? cacheSize : defaultCacheSize),
@@ -73,11 +74,11 @@ module.exports = class BaseDNS {
       ipList.push(hostname) // 把原域名加入到统计里去
 
       ipCache.setBackupList(ipList)
-      log.info(`[DNS '${this.dnsName}']: ${hostname} ➜ ${ipCache.value} (${new Date() - t} ms), ipList: ${JSON.stringify(ipList)}, ipCache:`, JSON.stringify(ipCache))
+      log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] ${hostname} ➜ ${ipCache.value} (${new Date() - t} ms), ipList: ${JSON.stringify(ipList)}, ipCache:`, JSON.stringify(ipCache))
 
       return ipCache.value
     } catch (error) {
-      log.error(`[DNS '${this.dnsName}'] cannot resolve hostname ${hostname}, error:`, error)
+      log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] cannot resolve hostname ${hostname}, error:`, error)
       return hostname
     }
   }
@@ -94,6 +95,7 @@ module.exports = class BaseDNS {
 
       if (hostnamePreSetIpList.length > 0) {
         hostnamePreSetIpList.isPreSet = true
+        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取到该域名的预设IP列表： ${hostname} - ${JSON.stringify(hostnamePreSetIpList)}`)
         return hostnamePreSetIpList
       }
     }
@@ -108,18 +110,18 @@ module.exports = class BaseDNS {
       const cost = Date.now() - start
       if (response == null || response.answers == null || response.answers.length == null || response.answers.length === 0) {
         // 说明没有获取到ip
-        log.warn(`DNS '${this.dnsName}' 没有该域名的IP地址: ${hostname}, cost: ${cost} ms, response:`, response)
+        log.warn(`[DNS-over-${this.dnsType} '${this.dnsName}'] 没有该域名的IP地址: ${hostname}, cost: ${cost} ms, response:`, response)
         return []
       }
       const ret = response.answers.filter(item => item.type === 'A').map(item => item.data)
       if (ret.length === 0) {
-        log.info(`DNS '${this.dnsName}' 没有该域名的IPv4地址: ${hostname}, cost: ${cost} ms`)
+        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 没有该域名的IPv4地址: ${hostname}, cost: ${cost} ms`)
       } else {
-        log.info(`DNS '${this.dnsName}' 获取到该域名的IPv4地址： ${hostname} - ${JSON.stringify(ret)}, cost: ${cost} ms`)
+        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取到该域名的IPv4地址： ${hostname} - ${JSON.stringify(ret)}, cost: ${cost} ms`)
       }
       return ret
     } catch (e) {
-      log.error(`DNS query error: ${hostname}, dns: ${this.dnsName}${this.dnsServer ? (`, dnsServer: ${this.dnsServer}`) : ''}, cost: ${Date.now() - start} ms, error:`, e)
+      log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] DNS query error, hostname: ${hostname}${this.dnsServer ? `, dnsServer: ${this.dnsServer}` : ''}, cost: ${Date.now() - start} ms, error:`, e)
       return []
     }
   }
