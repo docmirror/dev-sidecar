@@ -40,63 +40,81 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
 }
 
 function parseVersion (version) {
-  const matched = version.match(/^v?(\d+\.\d+\.\d+)(.*)$/)
+  const matched = version.match(/^v?(\d{1,2}\.\d{1,2}\.\d{1,3}(?:\.\d{1,2})?)(.*)$/)
   const versionArr = matched[1].split('.')
   return {
-    major: Number.parseInt(versionArr[0]),
-    minor: Number.parseInt(versionArr[1]),
-    patch: Number.parseInt(versionArr[2]),
-    suffix: matched[2],
+    major: Number.parseInt(versionArr[0]), // 大版本
+    minor: Number.parseInt(versionArr[1]), // 中版本
+    patch: Number.parseInt(versionArr[2]), // 小版本
+    temp: Number.parseInt(versionArr[3]) || 0, // 临时版本
+    pre: matched[2], // 预发布版本号
   }
 }
 
 /**
  * 比较版本号
  *
- * @param version     线上版本号
- * @param curVersion  当前版本号
+ * @param onlineVersion  线上版本号
+ * @param currentVersion 当前版本号
  * @returns {number} 比较线上版本号是否为更新版本，1=是|0=相等|-1=否|-99=出现异常，比较结果未知
  */
-function isNewVersion (version, curVersion) {
-  if (version === curVersion) {
+function isNewVersion (onlineVersion, currentVersion) {
+  if (onlineVersion === currentVersion) {
     return 0
   }
 
   try {
-    const versionObj = parseVersion(version)
-    const curVersionObj = parseVersion(curVersion)
+    const versionObj = parseVersion(onlineVersion)
+    const curVersionObj = parseVersion(currentVersion)
+
+    // 大版本
     if (versionObj.major > curVersionObj.major) {
-      return 1 // 大版本号更大，为更新版本
+      return 1 // 大版本号更大，为新版本，需要更新
+    } else if (versionObj.major < curVersionObj.major) {
+      return -1 // 大版本号更小，为旧版本，无需更新
     }
 
-    if (curVersionObj.major === versionObj.major) {
-      if (versionObj.minor > curVersionObj.minor) {
-        return 2 // 中版本号更大，为更新版本
-      }
+    // 中版本
+    if (versionObj.minor > curVersionObj.minor) {
+      return 2 // 中版本号更大，为新版本，需要更新
+    } else if (versionObj.minor < curVersionObj.minor) {
+      return -2 // 中版本号更小，为旧版本，无需更新
+    }
 
-      if (curVersionObj.minor === versionObj.minor) {
-        if (versionObj.patch > curVersionObj.patch) {
-          return 3 // 小版本号更大，为更新版本
-        }
+    // 小版本
+    if (versionObj.patch > curVersionObj.patch) {
+      return 3 // 小版本号更大，为新版本，需要更新
+    } else if (versionObj.patch < curVersionObj.patch) {
+      return -3 // 小版本号更小，为旧版本，无需更新
+    }
 
-        if (versionObj.patch === curVersionObj.patch) {
-          if (versionObj.suffix && curVersionObj.suffix) {
-            // 当两个后缀版本号都存在时，直接比较后缀版本号字符串的大小
-            if (versionObj.suffix > curVersionObj.suffix) {
-              return 41
-            }
-          } else if (!versionObj.suffix && curVersionObj.suffix) {
-            // 线上版本号没有后缀版本号，说明为正式版本，为更新版本
-            return 42
-          }
-        }
+    // 临时版本号
+    if (versionObj.temp > curVersionObj.temp) {
+      return 4 // 临时版本号更大，为新版本，需要更新
+    } else if (versionObj.temp < curVersionObj.temp) {
+      return -4 // 临时版本号更小，为旧版本，无需更新
+    }
+
+    // 预发布版本号
+    if (versionObj.pre && curVersionObj.pre) {
+      // 当两个后缀版本号都存在时，直接比较后缀版本号字符串的大小
+      if (versionObj.pre > curVersionObj.pre) {
+        return 51
+      } else if (versionObj.pre < curVersionObj.pre) {
+        return -51
       }
+    } else if (!versionObj.pre && curVersionObj.pre) {
+      // 线上版本号没有后缀版本号，说明为正式版本，为新版本，需要更新
+      return 52
+    } else if (versionObj.pre && !curVersionObj.pre) {
+      return -52
+    } else {
+      return -53 // 相同版本，无需更新（一般不会出现，除非例如 `2.0.0` 和 `2.0.0.0` 进行比较）
     }
   } catch (e) {
-    log.error(`比对版本失败，当前版本号：${curVersion}，比对版本号：${version}, error:`, e)
-    return -99
+    log.error(`比对版本失败，当前版本号：${currentVersion}，线上版本号：${onlineVersion}, error:`, e)
+    return -99 // 比对异常
   }
-  return -1
 }
 
 /**
@@ -159,7 +177,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
           let data
           try {
             data = JSON.parse(body)
-          } catch (e) {
+          } catch {
             log.error('检查更新失败，github API返回数据格式不正确:', body)
             win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新失败，github API返回数据格式不正确' })
             return
@@ -195,27 +213,27 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
             log.info('最近正式版本：', versionData.name)
 
             // 获取版本号
-            let version = versionData.name
-            if (version.indexOf('v') === 0) {
-              version = version.substring(1)
+            let onlineVersion = versionData.name
+            if (onlineVersion.indexOf('v') === 0) {
+              onlineVersion = onlineVersion.substring(1)
             }
 
             // 比对版本号，是否为新版本
-            const isNew = isNewVersion(version, curVersion)
-            log.info(`版本比对结果：isNewVersion('${version}', '${curVersion}') = ${isNew}`)
+            const isNew = isNewVersion(onlineVersion, curVersion)
+            log.info(`版本比对结果：isNewVersion('${onlineVersion}', '${curVersion}') = ${isNew}`)
             if (isNew > 0) {
-              log.info(`检查更新：发现新版本 '${version}'，当前版本号为 '${curVersion}'`)
+              log.info(`检查更新：发现新版本 '${onlineVersion}'，当前版本号为 '${curVersion}'`)
               win.webContents.send('update', {
                 key: 'available',
                 value: {
-                  version,
+                  version: onlineVersion,
                   releaseNotes: versionData.body
                     ? (versionData.body.replace(/\r\n/g, '\n').replace(/https:\/\/github.com\/docmirror\/dev-sidecar/g, '').replace(/(?<=(^|\n))[ \t]*(?:#[ #]*)?#\s*/g, '') || '无')
                     : '无',
                 },
               })
             } else {
-              log.info(`检查更新：没有新版本，最近发布的版本号为 '${version}'，而当前版本号为 '${curVersion}'`)
+              log.info(`检查更新：没有新版本，最近发布的版本号为 '${onlineVersion}'，而当前版本号为 '${curVersion}'`)
               win.webContents.send('update', { key: 'notAvailable' })
             }
 
@@ -230,7 +248,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
           let bodyObj
           try {
             bodyObj = JSON.parse(body)
-          } catch (e) {
+          } catch {
             bodyObj = null
           }
 
@@ -256,7 +274,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     log.info('download dir:', fileDir)
     try {
       fs.accessSync(fileDir, fs.constants.F_OK)
-    } catch (e) {
+    } catch {
       fs.mkdirSync(fileDir)
     }
     const filePath = path.join(fileDir, `${value.version}.zip`)
