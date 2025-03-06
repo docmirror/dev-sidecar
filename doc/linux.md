@@ -34,7 +34,7 @@ distrobox-host-exec gsettings "$@"
 `echo -e '#!/bin/sh\n/distrobox-host-exec gsettings "$@"' >/usr/bin/gsettings`
 - 使用命令启动应用，使用“自动安装证书”功能，回到终端，找到输出里含有sudo的两句命令，复制到主系统执行，如失败，请自行安装证书
 
-### 1.3. 版本选择
+### 1.4. 版本选择
 
 不同CPU架构，选择对应的版本，如果安装失败，请下载 `universal` 版本
 
