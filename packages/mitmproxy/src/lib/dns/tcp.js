@@ -37,14 +37,16 @@ module.exports = class DNSOverTCP extends BaseDNS {
         tcpClient.write(Buffer.concat([lengthBuffer, packet]))
       })
 
-      tcpClient.on('data', (data) => {
+      tcpClient.once('data', (data) => {
         const length = data.readUInt16BE(0)
         const response = dnsPacket.decode(data.subarray(2, 2 + length))
         resolve(response)
+        tcpClient.end()
       })
 
-      tcpClient.on('error', (err) => {
+      tcpClient.once('error', (err) => {
         reject(err)
+        tcpClient.end()
       })
     })
   }
