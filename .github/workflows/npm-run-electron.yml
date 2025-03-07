@@ -6,6 +6,12 @@ on:
       - run*
       - test*
       - release*
+    paths-ignore:
+      - '_script/**'
+      - 'doc/**'
+      - '**/*.md'
+      - '**/.gitignore'
+      - '**/LICENSE'
 
 jobs:
   npm-run-electron:

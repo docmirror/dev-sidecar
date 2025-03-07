@@ -7,11 +7,23 @@ on:
       - 1.x
       - develop
       - test*
+    paths-ignore:
+      - '_script/**'
+      - 'doc/**'
+      - '**/*.md'
+      - '**/.gitignore'
+      - '**/LICENSE'
   pull_request:
     branches:
       - master
       - develop
       - 1.x
+    paths-ignore:
+      - '_script/**'
+      - 'doc/**'
+      - '**/*.md'
+      - '**/.gitignore'
+      - '**/LICENSE'
 
 jobs:
   test-and-upload:
