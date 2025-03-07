@@ -108,6 +108,7 @@ export default {
     },
     addDnsMapping () {
       this.dnsMappings.unshift({ key: '', value: 'quad9' })
+      this.focusFirst(this.$refs.dnsMappings)
     },
 
     // whiteList
@@ -123,6 +124,7 @@ export default {
     },
     addWhiteList () {
       this.whiteList.unshift({ key: '', value: 'true' })
+      this.focusFirst(this.$refs.whiteList)
     },
     deleteWhiteList (item, index) {
       this.whiteList.splice(index, 1)
@@ -144,6 +146,7 @@ export default {
     },
     addSpeedHostname () {
       this.getSpeedTestConfig().hostnameList.unshift('')
+      this.focusFirst(this.$refs.hostnameList)
     },
     delSpeedHostname (item, index) {
       this.getSpeedTestConfig().hostnameList.splice(index, 1)
@@ -316,7 +319,7 @@ export default {
                 <a-button style="margin-left:8px" type="primary" icon="plus" @click="addWhiteList()" />
               </a-col>
             </a-row>
-            <a-row v-for="(item, index) of whiteList" :key="index" :gutter="10" style="margin-top: 5px">
+            <a-row v-for="(item, index) of whiteList" ref="whiteList" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="16">
                 <MockInput v-model="item.key" />
               </a-col>
@@ -374,7 +377,7 @@ export default {
                 <a-button style="margin-left:8px" type="primary" icon="plus" @click="addDnsMapping()" />
               </a-col>
             </a-row>
-            <a-row v-for="(item, index) of dnsMappings" :key="index" :gutter="10" style="margin-top: 5px">
+            <a-row v-for="(item, index) of dnsMappings" ref="dnsMappings" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="15">
                 <MockInput v-model="item.key" />
               </a-col>
@@ -422,7 +425,7 @@ export default {
                 <a-button style="margin-left:10px" type="primary" icon="plus" @click="addSpeedHostname()" />
               </a-col>
             </a-row>
-            <a-row v-for="(item, index) of getSpeedTestConfig().hostnameList" :key="index" :gutter="10" style="margin-top: 5px">
+            <a-row v-for="(item, index) of getSpeedTestConfig().hostnameList" ref="hostnameList" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="21">
                 <MockInput v-model="getSpeedTestConfig().hostnameList[index]" />
               </a-col>

@@ -50,6 +50,7 @@ export default {
     },
     addNoProxyUrl () {
       this.noProxyUrls.unshift({ key: '' })
+      this.focusFirst(this.$refs.noProxyUrls)
     },
     delNoProxyUrl (item, index) {
       this.noProxyUrls.splice(index, 1)
@@ -108,7 +109,7 @@ export default {
                 <a-button type="primary" icon="plus" @click="addNoProxyUrl()" />
               </a-col>
             </a-row>
-            <a-row v-for="(item, index) of noProxyUrls" :key="index" :gutter="10">
+            <a-row v-for="(item, index) of noProxyUrls" ref="noProxyUrls" :key="index" :gutter="10">
               <a-col :span="22">
                 <MockInput v-model="item.key" class="mt-2" />
               </a-col>

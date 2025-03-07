@@ -60,6 +60,7 @@ export default {
     },
     addTarget () {
       this.targets.unshift({ key: '', value: 'true' })
+      this.focusFirst(this.$refs.targets)
     },
     deleteTarget (item, index) {
       this.targets.splice(index, 1)
@@ -88,14 +89,17 @@ export default {
         })
       }
       if (this.servers.length === 0) {
-        this.addServer()
+        this.addServer(false)
       }
     },
     deleteServer (item, index) {
       this.servers.splice(index, 1)
     },
-    addServer () {
+    addServer (needFocus = true) {
       this.servers.unshift({ key: '', value: { type: 'path' } })
+      if (needFocus) {
+        this.focusFirst(this.$refs.servers)
+      }
     },
     submitServer () {
       const map = {}
@@ -169,7 +173,7 @@ export default {
                 <a-button type="primary" icon="plus" @click="addTarget()" />
               </a-col>
             </a-row>
-            <a-row v-for="(item, index) of targets" :key="index" :gutter="10">
+            <a-row v-for="(item, index) of targets" ref="targets" :key="index" :gutter="10">
               <a-col :span="18">
                 <MockInput v-model="item.key" class="mt-2" />
               </a-col>
@@ -196,7 +200,7 @@ export default {
                 <a-button type="primary" icon="plus" @click="addServer()" />
               </a-col>
             </a-row>
-            <a-row v-for="(item, index) of servers" :key="index" :gutter="10">
+            <a-row v-for="(item, index) of servers" ref="servers" :key="index" :gutter="10">
               <a-col :span="6">
                 <a-input v-model="item.key" :title="item.key" addon-before="域名" placeholder="yourdomain.com" spellcheck="false" />
               </a-col>
