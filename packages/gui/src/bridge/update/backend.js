@@ -9,6 +9,7 @@ import progress from 'request-progress'
 import pkg from '../../../package.json'
 import appPathUtil from '../../utils/util.apppath'
 import log from '../../utils/util.log.gui'
+import { isNewVersion } from '@docmirror/dev-sidecar/src/utils/util.version'
 
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
@@ -39,88 +40,8 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
     .pipe(fs.createWriteStream(filePath))
 }
 
-function parseVersion (version) {
-  const matched = version.match(/^v?(\d{1,2}\.\d{1,2}\.\d{1,3}(?:\.\d{1,2})?)(.*)$/)
-  const versionArr = matched[1].split('.')
-  return {
-    major: Number.parseInt(versionArr[0]), // 大版本
-    minor: Number.parseInt(versionArr[1]), // 中版本
-    patch: Number.parseInt(versionArr[2]), // 小版本
-    temp: Number.parseInt(versionArr[3]) || 0, // 临时版本
-    pre: matched[2], // 预发布版本号
-  }
-}
-
-/**
- * 比较版本号
- *
- * @param onlineVersion  线上版本号
- * @param currentVersion 当前版本号
- * @returns {number} 比较线上版本号是否为更新版本，1=是|0=相等|-1=否|-99=出现异常，比较结果未知
- */
-function isNewVersion (onlineVersion, currentVersion) {
-  if (onlineVersion === currentVersion) {
-    return 0
-  }
-
-  try {
-    const versionObj = parseVersion(onlineVersion)
-    const curVersionObj = parseVersion(currentVersion)
-
-    // 大版本
-    if (versionObj.major > curVersionObj.major) {
-      return 1 // 大版本号更大，为新版本，需要更新
-    } else if (versionObj.major < curVersionObj.major) {
-      return -1 // 大版本号更小，为旧版本，无需更新
-    }
-
-    // 中版本
-    if (versionObj.minor > curVersionObj.minor) {
-      return 2 // 中版本号更大，为新版本，需要更新
-    } else if (versionObj.minor < curVersionObj.minor) {
-      return -2 // 中版本号更小，为旧版本，无需更新
-    }
-
-    // 小版本
-    if (versionObj.patch > curVersionObj.patch) {
-      return 3 // 小版本号更大，为新版本，需要更新
-    } else if (versionObj.patch < curVersionObj.patch) {
-      return -3 // 小版本号更小，为旧版本，无需更新
-    }
-
-    // 临时版本号
-    if (versionObj.temp > curVersionObj.temp) {
-      return 4 // 临时版本号更大，为新版本，需要更新
-    } else if (versionObj.temp < curVersionObj.temp) {
-      return -4 // 临时版本号更小，为旧版本，无需更新
-    }
-
-    // 预发布版本号
-    if (versionObj.pre && curVersionObj.pre) {
-      // 当两个后缀版本号都存在时，直接比较后缀版本号字符串的大小
-      if (versionObj.pre > curVersionObj.pre) {
-        return 51
-      } else if (versionObj.pre < curVersionObj.pre) {
-        return -51
-      }
-    } else if (!versionObj.pre && curVersionObj.pre) {
-      // 线上版本号没有后缀版本号，说明为正式版本，为新版本，需要更新
-      return 52
-    } else if (versionObj.pre && !curVersionObj.pre) {
-      return -52
-    } else {
-      return -53 // 相同版本，无需更新（一般不会出现，除非例如 `2.0.0` 和 `2.0.0.0` 进行比较）
-    }
-  } catch (e) {
-    log.error(`比对版本失败，当前版本号：${currentVersion}，线上版本号：${onlineVersion}, error:`, e)
-    return -99 // 比对异常
-  }
-}
-
 /**
  * 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
- *
- * @param win win是所有窗口的引用
  */
 function updateHandle (app, api, win, beforeQuit, quit, log) {
   // // 更新前，删除本地安装包 ↓
@@ -219,7 +140,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
             }
 
             // 比对版本号，是否为新版本
-            const isNew = isNewVersion(onlineVersion, curVersion)
+            const isNew = isNewVersion(onlineVersion, curVersion, log)
             log.info(`版本比对结果：isNewVersion('${onlineVersion}', '${curVersion}') = ${isNew}`)
             if (isNew > 0) {
               log.info(`检查更新：发现新版本 '${onlineVersion}'，当前版本号为 '${curVersion}'`)
