@@ -116,9 +116,11 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           if (dnsConfig && dnsConfig.dnsMap) {
             let dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.hostname)
             if (!dns && rOptions.servername) {
-              dns = dnsConfig.dnsMap.quad9
+              dns = dnsConfig.dnsMap.ForSNI
               if (dns) {
-                log.info(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}, 必须使用dns，现默认使用 'quad9' DNS.`)
+                log.info(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}, 必须使用dns，现默认使用 '${dns.dnsName}' DNS.`)
+              } else {
+                log.warn(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}，且DNS服务管理中，也未指定SNI默认使用的DNS。`)
               }
             }
             if (dns) {
