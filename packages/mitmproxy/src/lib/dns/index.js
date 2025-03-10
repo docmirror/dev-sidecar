@@ -1,4 +1,5 @@
 const matchUtil = require('../../utils/util.match')
+const log = require('../../utils/util.log.server')
 const DNSOverPreSetIpList = require('./preset.js')
 const DNSOverHTTPS = require('./https.js')
 const DNSOverTLS = require('./tls.js')
@@ -72,10 +73,19 @@ module.exports = {
           dnsMap[provider] = new DNSOverUDP(provider, conf.cacheSize, preSetIpList, server, port)
         }
       }
+
+      if (conf.forSNI || conf.forSni) {
+        dnsMap.ForSNI = dnsMap[provider]
+      }
     }
 
     // 创建预设IP的DNS
     dnsMap.PreSet = new DNSOverPreSetIpList(preSetIpList)
+    if (dnsMap.ForSNI == null) {
+      dnsMap.ForSNI = dnsMap.PreSet
+    }
+
+    log.info(`设置SNI默认使用的DNS为 '${dnsMap.ForSNI.dnsName}'（注：当某个域名配置了SNI但未配置DNS时，将默认使用该DNS）`)
 
     return dnsMap
   },

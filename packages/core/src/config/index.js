@@ -393,6 +393,7 @@ const defaultConfig = {
           type: 'https',
           server: 'https://doh.360.cn/dns-query',
           cacheSize: 1000,
+          forSNI: true,
         },
         rubyfish: {
           type: 'https',
