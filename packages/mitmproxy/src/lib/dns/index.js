@@ -64,7 +64,7 @@ module.exports = {
 
         if (type === 'tls' || type === 'dot' || type === 'dns-over-tls') {
           // 基于 tls
-          dnsMap[provider] = new DNSOverTLS(provider, conf.cacheSize, preSetIpList, server, port, conf.servername)
+          dnsMap[provider] = new DNSOverTLS(provider, conf.cacheSize, preSetIpList, server, port, conf.servername || conf.sni)
         } else if (type === 'tcp' || type === 'dns-over-tcp') {
           // 基于 tcp
           dnsMap[provider] = new DNSOverTCP(provider, conf.cacheSize, preSetIpList, server, port)
