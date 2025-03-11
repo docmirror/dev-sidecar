@@ -4,8 +4,8 @@
  *
  * @name            Github 增强 - 高速下载（Github油猴脚本）
  * @name:en         Github Enhancement - High Speed Download（Github Greasemonkey Script）
- * @version         2.6.17_1
- * @since           2025-03-11 12:52
+ * @version         2.6.17_2
+ * @since           2025-03-11 13:50
  * @author          X.I.U
  * @description     High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
  * @description:zh-CN  高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)
@@ -16,7 +16,7 @@
  * @homepageURL     https://github.com/XIU2/UserScript
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
-const ds_github_monkey_version = "2.6.17_1";
+const ds_github_monkey_version = "2.6.17_2";
 document.addEventListener("DOMContentLoaded", () => {
 	const DS_init = (window.__ds_global__ || {})['DS_init']
 	if (typeof DS_init === 'function') {
@@ -241,9 +241,13 @@ document.addEventListener("DOMContentLoaded", () => {
 			let html = document.querySelectorAll('.Box-footer'); if (html.length == 0 || location.pathname.indexOf('/releases') == -1) return
 
 			// li:hover 鼠标悬停变色
-			let styleHover = document.createElement('style');
-			styleHover.innerHTML = '.Box-footer ul li.Box-row:hover { background-color: var(--bgColor-muted); }';
-			document.head.appendChild(styleHover);
+			let styleHover = document.getElementById('XIU2-hover-style');
+			if (!styleHover) {
+				styleHover = document.createElement('style');
+				styleHover.id = 'XIU2-hover-style';
+				styleHover.innerHTML = '.Box-footer ul { padding-top: 1px; } .Box-footer ul li.Box-row:hover { background-color: var(--bgColor-muted); }';
+				document.head.appendChild(styleHover);
+			}
 
 			let divDisplay = 'margin-left: -90px;', new_download_url = get_New_download_url();
 			if (document.documentElement.clientWidth > 755) {divDisplay = 'margin-top: -3px;margin-left: 8px;display: inherit;';}; // 调整小屏幕时的样式
