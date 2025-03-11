@@ -226,6 +226,12 @@ document.addEventListener("DOMContentLoaded", () => {
 		// Release
 		function addRelease() {
 			let html = document.querySelectorAll('.Box-footer'); if (html.length == 0 || location.pathname.indexOf('/releases') == -1) return
+
+			// li:hover 鼠标悬停变色
+			let style = document.createElement('style');
+			style.innerHTML = '.Box-footer ul li.Box-row:hover { background-color: var(--bgColor-muted); }';
+			document.head.appendChild(style);
+
 			let divDisplay = 'margin-left: -90px;', new_download_url = get_New_download_url();
 			if (document.documentElement.clientWidth > 755) {divDisplay = 'margin-top: -3px;margin-left: 8px;display: inherit;';}; // 调整小屏幕时的样式
 			for (const current of html) {
