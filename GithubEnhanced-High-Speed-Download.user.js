@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (!styleHover) {
 				styleHover = document.createElement('style');
 				styleHover.id = 'XIU2-hover-style';
-				styleHover.innerHTML = '.Box-footer ul { padding-top: 1px; } .Box-footer ul li.Box-row:hover { background-color: var(--bgColor-muted); }';
+				styleHover.innerHTML = '\n\t.Box-footer ul { padding-top: 1px; }\n\t.Box-footer ul li.Box-row:hover { background-color: var(--bgColor-muted); }';
 				document.head.appendChild(styleHover);
 			}
 
