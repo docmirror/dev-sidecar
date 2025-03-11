@@ -111,6 +111,14 @@ console.log('\n--------------- test ForSNI ---------------\n')
 console.log(`===> test ForSNI: ${dnsProviders.ForSNI.dnsName}`, '\n\n')
 assert.strictEqual(dnsProviders.ForSNI, dnsProviders.safe360)
 
+const dnsProviders2 = dns.initDNS({
+  aliyun: {
+    server: 'udp://223.5.5.5',
+  },
+}, {})
+console.log(`===> test ForSNI2: ${dnsProviders2.ForSNI.dnsName}`, '\n\n')
+assert.strictEqual(dnsProviders2.ForSNI, dnsProviders2.PreSet) // 未配置forSNI的DNS时，默认使用PreSet作为ForSNI
+
 
 console.log('\n--------------- test PreSet ---------------\n')
 ip = await dnsProviders.PreSet.lookup(hasPresetHostname)
