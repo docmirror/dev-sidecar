@@ -33,6 +33,7 @@ const dnsProviders = dns.initDNS({
   safe360: {
     server: 'https://doh.360.cn/dns-query',
     cacheSize: 1000,
+    forSNI: true,
   },
   rubyfish: {
     server: 'https://rubyfish.cn/dns-query',
@@ -93,7 +94,9 @@ const dnsProviders = dns.initDNS({
 }, preSetIpList)
 
 
-const presetHostname = 'xxx.com'
+const hasPresetHostname = 'xxx.com'
+const noPresetHostname = 'yyy.com'
+
 const hostname1 = 'github.com'
 const hostname2 = 'api.github.com'
 const hostname3 = 'hk.docmirror.cn'
@@ -104,15 +107,25 @@ const hostname6 = 'gh2.docmirror.top'
 let ip
 
 
+console.log('\n--------------- test ForSNI ---------------\n')
+console.log(`===> test ForSNI: ${dnsProviders.ForSNI.dnsName}`, '\n\n')
+assert.strictEqual(dnsProviders.ForSNI, dnsProviders.safe360)
+
+
 console.log('\n--------------- test PreSet ---------------\n')
-ip = await dnsProviders.PreSet.lookup(presetHostname)
-console.log('===> test PreSet:', ip, '\n\n')
+ip = await dnsProviders.PreSet.lookup(hasPresetHostname)
+console.log(`===> test PreSet: ${hasPresetHostname} ->`, ip, '\n\n')
 console.log('\n\n')
-assert.strictEqual(ip, presetIp) // test preset
+assert.strictEqual(ip, presetIp) // 预设过IP，等于预设的IP
+
+ip = await dnsProviders.PreSet.lookup(noPresetHostname)
+console.log(`===> test PreSet: ${noPresetHostname} ->`, ip, '\n\n')
+console.log('\n\n')
+assert.strictEqual(ip, noPresetHostname) // 未预设IP，等于域名自己
 
 
 console.log('\n--------------- test https ---------------\n')
-ip = await dnsProviders.cloudflare.lookup(presetHostname)
+ip = await dnsProviders.cloudflare.lookup(hasPresetHostname)
 assert.strictEqual(ip, presetIp) // test preset
 console.log('\n\n')
 
@@ -146,7 +159,7 @@ assert.strictEqual(dnsProviders.py233.dnsType, 'HTTPS')
 
 
 console.log('\n--------------- test TLS ---------------\n')
-ip = await dnsProviders.cloudflareTLS.lookup(presetHostname)
+ip = await dnsProviders.cloudflareTLS.lookup(hasPresetHostname)
 assert.strictEqual(ip, presetIp) // test preset
 console.log('\n\n')
 
@@ -172,7 +185,7 @@ console.log(`===> test safe360TLS: ${hostname1} ->`, ip, '\n\n')
 
 
 console.log('\n--------------- test TCP ---------------\n')
-ip = await dnsProviders.googleTCP.lookup(presetHostname)
+ip = await dnsProviders.googleTCP.lookup(hasPresetHostname)
 assert.strictEqual(ip, presetIp) // test preset
 console.log('\n\n')
 
@@ -186,7 +199,7 @@ console.log(`===> test aliyunTCP: ${hostname1} ->`, ip, '\n\n')
 
 
 console.log('\n--------------- test UDP ---------------\n')
-ip = await dnsProviders.googleUDP.lookup(presetHostname)
+ip = await dnsProviders.googleUDP.lookup(hasPresetHostname)
 assert.strictEqual(ip, presetIp) // test preset
 console.log('\n\n')
 
