@@ -1,7 +1,6 @@
 const fs = require('node:fs')
 const path = require('node:path')
 const lodash = require('lodash')
-const jsonApi = require('./json')
 const dnsUtil = require('./lib/dns')
 const interceptorImpls = require('./lib/interceptor')
 const scriptInterceptor = require('./lib/interceptor/impl/res/script')

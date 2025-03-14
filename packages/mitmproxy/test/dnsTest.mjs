@@ -9,17 +9,9 @@ const preSetIpList = matchUtil.domainMapRegexply({
   ]
 })
 
+// 常用DNS测试
 const dnsProviders = dns.initDNS({
   // https
-  cloudflare: {
-    type: 'https',
-    server: 'https://1.1.1.1/dns-query',
-    cacheSize: 1000,
-  },
-  quad9: {
-    server: 'https://9.9.9.9/dns-query',
-    cacheSize: 1000,
-  },
   aliyun: {
     type: 'https',
     server: 'https://dns.alidns.com/dns-query',
@@ -35,27 +27,8 @@ const dnsProviders = dns.initDNS({
     cacheSize: 1000,
     forSNI: true,
   },
-  rubyfish: {
-    server: 'https://rubyfish.cn/dns-query',
-    cacheSize: 1000,
-  },
-  py233: {
-    server: ' https://i.233py.com/dns-query',
-    cacheSize: 1000,
-  },
 
   // tls
-  cloudflareTLS: {
-    type: 'tls',
-    server: '1.1.1.1',
-    servername: 'cloudflare-dns.com',
-    cacheSize: 1000,
-  },
-  quad9TLS: {
-    server: 'tls://9.9.9.9',
-    servername: 'dns.quad9.net',
-    cacheSize: 1000,
-  },
   aliyunTLS: {
     server: 'tls://223.5.5.5:853',
     cacheSize: 1000,
@@ -133,17 +106,9 @@ assert.strictEqual(ip, noPresetHostname) // 未预设IP，等于域名自己
 
 
 console.log('\n--------------- test https ---------------\n')
-ip = await dnsProviders.cloudflare.lookup(hasPresetHostname)
+ip = await dnsProviders.aliyun.lookup(hasPresetHostname)
 assert.strictEqual(ip, presetIp) // test preset
 console.log('\n\n')
-
-assert.strictEqual(dnsProviders.cloudflare.dnsType, 'HTTPS')
-// ip = await dnsProviders.cloudflare.lookup(hostname1)
-// console.log(`===> test cloudflare: ${hostname1} ->`, ip, '\n\n')
-
-assert.strictEqual(dnsProviders.quad9.dnsType, 'HTTPS')
-// ip = await dnsProviders.quad9.lookup(hostname1)
-// console.log(`===> test quad9: ${hostname1} ->`, ip, '\n\n')
 
 assert.strictEqual(dnsProviders.aliyun.dnsType, 'HTTPS')
 ip = await dnsProviders.aliyun.lookup(hostname1)
@@ -157,27 +122,11 @@ assert.strictEqual(dnsProviders.safe360.dnsType, 'HTTPS')
 ip = await dnsProviders.safe360.lookup(hostname1)
 console.log(`===> test safe360: ${hostname1} ->`, ip, '\n\n')
 
-assert.strictEqual(dnsProviders.rubyfish.dnsType, 'HTTPS')
-// ip = await dnsProviders.rubyfish.lookup(hostname1)
-// console.log(`===> test rubyfish: ${hostname1} ->`, ip, '\n\n')
-
-assert.strictEqual(dnsProviders.py233.dnsType, 'HTTPS')
-// ip = await dnsProviders.py233.lookup(hostname1)
-// console.log(`===> test py233: ${hostname1} ->`, ip, '\n\n')
-
 
 console.log('\n--------------- test TLS ---------------\n')
-ip = await dnsProviders.cloudflareTLS.lookup(hasPresetHostname)
+ip = await dnsProviders.aliyunTLS.lookup(hasPresetHostname)
 assert.strictEqual(ip, presetIp) // test preset
 console.log('\n\n')
-
-assert.strictEqual(dnsProviders.cloudflareTLS.dnsType, 'TLS')
-// ip = await dnsProviders.cloudflareTLS.lookup(hostname1)
-// console.log(`===> test cloudflareTLS: ${hostname1} ->`, ip, '\n\n')
-
-assert.strictEqual(dnsProviders.quad9TLS.dnsType, 'TLS')
-// ip = await dnsProviders.quad9TLS.lookup(hostname1)
-// console.log(`===> test quad9TLS: ${hostname1} ->`, ip, '\n\n')
 
 assert.strictEqual(dnsProviders.aliyunTLS.dnsType, 'TLS')
 ip = await dnsProviders.aliyunTLS.lookup(hostname1)
