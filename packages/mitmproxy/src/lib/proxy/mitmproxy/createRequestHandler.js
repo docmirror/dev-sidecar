@@ -124,7 +124,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               }
             }
             if (dns) {
-              rOptions.lookup = dnsLookup.createLookupFunc(res, dns, 'request url', url, isDnsIntercept)
+              rOptions.lookup = dnsLookup.createLookupFunc(res, dns, 'request url', url, rOptions.port, isDnsIntercept)
               log.debug(`域名 ${rOptions.hostname} DNS: ${dns.dnsName}`)
               res.setHeader('DS-DNS', dns.dnsName)
             } else {

@@ -26,3 +26,12 @@ assert.strictEqual(isEmpty(0), false)
 assert.strictEqual(isEmpty(-1), false)
 assert.strictEqual(isEmpty(''), false)
 assert.strictEqual(isEmpty('1'), false)
+
+// test lodash.unionBy
+const list = [
+  { host: 1, port: 1, dns: 2 },
+  { host: 1, port: 1, dns: 3 },
+  { host: 1, port: 2, dns: 3 },
+  { host: 1, port: 2, dns: 3 },
+]
+console.info(lodash.unionBy(list, 'host', 'port'))

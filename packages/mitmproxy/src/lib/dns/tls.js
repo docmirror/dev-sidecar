@@ -11,7 +11,7 @@ module.exports = class DNSOverTLS extends BaseDNS {
     this.dnsServerName = dnsServerName
   }
 
-  async _doDnsQuery (hostname) {
+  _dnsQueryPromise (hostname, type = 'A') {
     const options = {
       host: this.dnsServer,
       port: this.dnsServerPort,
@@ -19,9 +19,9 @@ module.exports = class DNSOverTLS extends BaseDNS {
 
       name: hostname,
       klass: 'IN',
-      type: 'A',
+      type,
     }
 
-    return await dnstls.query(options)
+    return dnstls.query(options)
   }
 }
