@@ -10,7 +10,7 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
     this.dnsServer = dnsServer
   }
 
-  async _doDnsQuery (hostname) {
-    return await dohQueryAsync({ url: this.dnsServer }, [{ type: 'A', name: hostname }])
+  _dnsQueryPromise (hostname, type = 'A') {
+    return dohQueryAsync({ url: this.dnsServer }, [{ type, name: hostname }])
   }
 }

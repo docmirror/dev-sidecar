@@ -455,9 +455,9 @@ export default {
                   </a>
                   <a-tag
                     v-for="(element, index) of item.backupList" :key="index" style="margin:2px;"
-                    :title="element.dns" :color="element.time ? (element.time > config.server.setting.lowSpeedDelay ? 'orange' : 'green') : 'red'"
+                    :title="element.title || `测速中：${element.host}`" :color="element.time ? (element.time > config.server.setting.lowSpeedDelay ? 'orange' : 'green') : (element.title ? 'red' : '')"
                   >
-                    {{ element.host }} {{ element.time }}{{ element.time ? 'ms' : '' }} {{ element.dns }}
+                    {{ element.host }} {{ element.time ? `${element.time}ms` : (element.title ? '' : '测速中') }} {{ element.dns }}
                   </a-tag>
                 </a-card>
               </a-col>

@@ -114,7 +114,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
     if (dnsConfig && dnsConfig.dnsMap) {
       const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
       if (dns) {
-        options.lookup = dnsLookup.createLookupFunc(null, dns, 'connect', hostport, isDnsIntercept)
+        options.lookup = dnsLookup.createLookupFunc(null, dns, 'connect', hostport, port, isDnsIntercept)
       }
     }
     // 代理连接事件监听

@@ -2,12 +2,35 @@ const defaultDns = require('node:dns')
 const log = require('../../../utils/util.log.server')
 const speedTest = require('../../speed')
 
+function createIpChecker (tester) {
+  if (!tester || tester.backupList == null || tester.backupList.length === 0) {
+    return null
+  }
+
+  return (ip) => {
+    for (let i = 0; i < tester.backupList.length; i++) {
+      const item = tester.backupList[i]
+      if (item.host === ip) {
+        if (item.time > 0) {
+          return true // IP测速成功
+        }
+        if (item.status === 'failed') {
+          return false // IP测速失败
+        }
+        break
+      }
+    }
+
+    return true // IP测速未知
+  }
+}
+
 module.exports = {
-  createLookupFunc (res, dns, action, target, isDnsIntercept) {
+  createLookupFunc (res, dns, action, target, port, isDnsIntercept) {
     target = target ? (`, target: ${target}`) : ''
 
     return (hostname, options, callback) => {
-      const tester = speedTest.getSpeedTester(hostname)
+      const tester = speedTest.getSpeedTester(hostname, port)
       if (tester) {
         const aliveIpObj = tester.pickFastAliveIpObj()
         if (aliveIpObj) {
@@ -21,7 +44,10 @@ module.exports = {
           log.info(`----- ${action}: ${hostname}, no alive ip${target}, tester: { "ready": ${tester.ready}, "backupList": ${JSON.stringify(tester.backupList)} }`)
         }
       }
-      dns.lookup(hostname).then((ip) => {
+
+      const ipChecker = createIpChecker(tester)
+
+      dns.lookup(hostname, ipChecker).then((ip) => {
         if (isDnsIntercept) {
           isDnsIntercept.dns = dns
           isDnsIntercept.hostname = hostname
@@ -29,35 +55,16 @@ module.exports = {
         }
 
         if (ip !== hostname) {
-          // 判断是否为测速失败的IP，如果是，则不使用当前IP
-          let isTestFailedIp = false
-          if (tester && tester.ready && tester.backupList && tester.backupList.length > 0) {
-            for (let i = 0; i < tester.backupList.length; i++) {
-              const item = tester.backupList[i]
-              if (item.host === ip) {
-                if (item.time == null) {
-                  isTestFailedIp = true
-                }
-                break
-              }
-            }
+          log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.dnsName}': ${ip}${target} -----`)
+          if (res) {
+            res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
           }
-          if (isTestFailedIp === false) {
-            log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.dnsName}': ${ip}${target} -----`)
-            if (res) {
-              res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
-            }
-            callback(null, ip, 4)
-            return
-          } else {
-            // 使用默认dns
-            log.info(`----- ${action}: ${hostname}, use hostname by default DNS: ${hostname}, skip test failed ip from dns '${dns.dnsName}: ${ip}'${target}, options:`, options)
-          }
+          callback(null, ip, 4)
         } else {
           // 使用默认dns
-          log.info(`----- ${action}: ${hostname}, use hostname by default DNS: ${hostname}${target}, options:`, options, ', dns:', dns)
+          log.info(`----- ${action}: ${hostname}, use default DNS: ${hostname}${target}, options:`, options, ', dns:', dns)
+          defaultDns.lookup(hostname, options, callback)
         }
-        defaultDns.lookup(hostname, options, callback)
       })
     }
   },
