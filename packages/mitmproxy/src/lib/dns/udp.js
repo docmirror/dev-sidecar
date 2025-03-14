@@ -55,7 +55,7 @@ module.exports = class DNSOverUDP extends BaseDNS {
       // 设置超时任务
       timeoutId = setTimeout(() => {
         if (!isOver) {
-          reject(new Error('查询超时'))
+          reject(new Error('DNS查询超时'))
           udpClient.close()
         }
       }, timeout)
