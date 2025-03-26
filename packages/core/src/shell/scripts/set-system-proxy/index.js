@@ -203,7 +203,7 @@ const executor = {
       const excludeIpStr = getProxyExcludeIpStr(';')
       // 设置代理，同时设置排除域名
       try {
-        require('@starknt/sysproxy').triggerManualProxyByUrl(true, proxyAddr, excludeIpStr)
+        require('@starknt/sysproxy').triggerManualProxyByUrl(true, proxyAddr, excludeIpStr, true)
         log.info(`设置windows系统代理成功: ${proxyAddr} ......(省略排除IP列表)`)
       } catch (e1) {
         log.warn('设置windows系统代理失败：执行 `@starknt/sysproxy` 失败，现尝试通过执行 `sysproxy.exe global ...` 来设置系统代理！\r\n捕获的异常:', e1)
