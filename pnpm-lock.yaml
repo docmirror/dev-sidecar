@@ -76,8 +76,8 @@ importers:
         specifier: ^0.0.3
         version: 0.0.3
       '@starknt/sysproxy':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.3
+        version: 0.0.3
       '@vscode/sudo-prompt':
         specifier: ^9.3.1
         version: 9.3.1
@@ -1345,29 +1345,11 @@ packages:
     resolution: {integrity: sha512-Zx2zXJeM2rCUgdbHcMFfvpvwswIuXMU1qWhqGUD1+b7Fgqoz/MM57XjjZJqqktpAfrN876haJBxxaDWIqIMIsw==}
     engines: {node: '>= 10'}
 
-  '@starknt/sysproxy-darwin-arm64@0.0.2':
-    resolution: {integrity: sha512-ZSKm8FBWJJv//Ypc513A7+hqG6GQxFmxsHX+tgclvwKK7S0tNgaMgCdKjQ5rCDWTJufDq6BE3QPmSlUfeukD2Q==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [darwin]
-
   '@starknt/sysproxy-darwin-x64@0.0.3':
     resolution: {integrity: sha512-gXN1hqmyPY3/Y5iCAoN36rxszW0On9AJjmo+4REuct/boUh+yc8A+JjjcpNkcvGPWQED8TVQ6WjCNj36nXAHZA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
-
-  '@starknt/sysproxy-linux-arm64-gnu@0.0.2':
-    resolution: {integrity: sha512-WedSH4rsD30hKfcEqV+zF2GJc0q545WAKDMaXtMMRrRJZcOy9IFFRajkOuo+1TFzlPqjF/edsjLa294FcYWMIw==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-
-  '@starknt/sysproxy-linux-x64-gnu@0.0.2':
-    resolution: {integrity: sha512-/rSsvLOmCjkwYqzJqkq7Y31X3D1FneZiAG4HBcr9/wjSiuXq6beUiRAe6X5mjc2LisvFOZPPHd7zIHytplyGEw==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
 
   '@starknt/sysproxy-linux-x64-gnu@0.0.3':
     resolution: {integrity: sha512-HEWO00qfaakgHRkr6pg2bvJwk7aKPcxndTFEijX61qym+WIzepbUOQSQ1HGcYKsxmqJ3dDXT+cTLWshWdnQ5JA==}
@@ -1375,33 +1357,11 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@starknt/sysproxy-win32-arm64-msvc@0.0.2':
-    resolution: {integrity: sha512-iaUI/9i47LhIKh5XR/tLA6GovPevR3joYSsa4ZBj17uS/B+epli35iSf+QpCwdviXSXTWQqPlEZNeS3hVz/Jhg==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [win32]
-
-  '@starknt/sysproxy-win32-ia32-msvc@0.0.2':
-    resolution: {integrity: sha512-gpKNYN79rVY6YKwEGouFKjMoShh24peK67BkgaGGmlKx9t/Uv3qkzdfFRuqnYumZQt4MVB8wFHMBDgn/M/Jh0g==}
-    engines: {node: '>= 10'}
-    cpu: [ia32]
-    os: [win32]
-
-  '@starknt/sysproxy-win32-x64-msvc@0.0.2':
-    resolution: {integrity: sha512-DUaRzGu7I9CpTKterqsHPzfYgwsdh7eAxOBfmF9/K100KDHYf57sRhfUVTZfDTqBz0jVmxYBX/tIYkqhlf5ldA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [win32]
-
   '@starknt/sysproxy-win32-x64-msvc@0.0.3':
     resolution: {integrity: sha512-Lw6zsaZhxQWYsOss4Kgi0rt3Cj+jUn7DqNAVunCD+w3or/FUrGfrGkO+6UyqlVl5l4LaOi4cV3dtdJY91IbWug==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
-
-  '@starknt/sysproxy@0.0.2':
-    resolution: {integrity: sha512-pb5+FcRV6H60maLwTZxwGWD6lw9DM5FsPaQ5TzovSTwqigwBSv1YsQ5jUdm/hXjdALW9tjLVpYwOtO1Ft371ng==}
-    engines: {node: '>= 10'}
 
   '@starknt/sysproxy@0.0.3':
     resolution: {integrity: sha512-tFPqJEo7JWlDI07OGBn/q6+nhxVw/dvNkvb/wLJO6YFN6itWt9mThJE3SXXeogK3HCo5eBk0OnE0n9tZdoKcHQ==}
@@ -8479,41 +8439,14 @@ snapshots:
       '@starknt/shutdown-handler-napi-win32-ia32-msvc': 0.0.3
       '@starknt/shutdown-handler-napi-win32-x64-msvc': 0.0.3
 
-  '@starknt/sysproxy-darwin-arm64@0.0.2':
-    optional: true
-
   '@starknt/sysproxy-darwin-x64@0.0.3':
-    optional: true
-
-  '@starknt/sysproxy-linux-arm64-gnu@0.0.2':
-    optional: true
-
-  '@starknt/sysproxy-linux-x64-gnu@0.0.2':
     optional: true
 
   '@starknt/sysproxy-linux-x64-gnu@0.0.3':
     optional: true
 
-  '@starknt/sysproxy-win32-arm64-msvc@0.0.2':
-    optional: true
-
-  '@starknt/sysproxy-win32-ia32-msvc@0.0.2':
-    optional: true
-
-  '@starknt/sysproxy-win32-x64-msvc@0.0.2':
-    optional: true
-
   '@starknt/sysproxy-win32-x64-msvc@0.0.3':
     optional: true
-
-  '@starknt/sysproxy@0.0.2':
-    optionalDependencies:
-      '@starknt/sysproxy-darwin-arm64': 0.0.2
-      '@starknt/sysproxy-linux-arm64-gnu': 0.0.2
-      '@starknt/sysproxy-linux-x64-gnu': 0.0.2
-      '@starknt/sysproxy-win32-arm64-msvc': 0.0.2
-      '@starknt/sysproxy-win32-ia32-msvc': 0.0.2
-      '@starknt/sysproxy-win32-x64-msvc': 0.0.2
 
   '@starknt/sysproxy@0.0.3':
     optionalDependencies:
