@@ -11,6 +11,11 @@ function replacePlaceholder (url, rOptions, matched) {
       for (let i = 0; i < matched.length; i++) {
         url = url.replace(`\${m[${i}]}`, matched[i] == null ? '' : matched[i])
       }
+      if (matched.groups) {
+        for (const key in matched.groups) {
+          url = url.replace(`\${${key}}`, matched.groups[key] == null ? '' : matched.groups[key])
+        }
+      }
     }
 
     // 移除多余的占位符
