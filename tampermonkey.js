@@ -190,7 +190,7 @@
 		// 创建插件div
 		context.pluginElement = document.createElement("div");
 		context.pluginElement.id = PRE + "plugin";
-		context.pluginElement.title = "油猴插件" + (options.name ? "：" + options.name : "");
+		context.pluginElement.title = `油猴插件${options.name ? "：" + options.name : ""}\n注：此脚本由 dev-sidecar 注入`;
 		context.pluginElement.className = "___ds-tampermonkey___";
 		// 根据配置，设置显示或隐藏
 		const pluginHide = api.GM_getValue("ds_hide");
