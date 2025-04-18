@@ -145,7 +145,7 @@ module.exports = class BaseDNS {
 
       return ret
     } catch (e) {
-      log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] DNS query error, hostname: ${hostname}${this.dnsServer ? `, dnsServer: ${this.dnsServer}` : ''}, cost: ${Date.now() - start} ms, error:`, e)
+      log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] DNS query error, hostname: ${hostname}${this.dnsServer ? `, dnsServer: ${this.dnsServer}` : ''}${this.dnsServerPort ? `:${this.dnsServerPort}` : ''}, cost: ${Date.now() - start} ms, error:`, e)
       return []
     }
   }
