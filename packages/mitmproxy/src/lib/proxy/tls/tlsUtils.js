@@ -22,8 +22,8 @@ utils.createCA = function (CN) {
   const keys = pki.rsa.generateKeyPair(2048)
   const cert = pki.createCertificate()
   cert.publicKey = keys.publicKey
-  cert.serialNumber = `${(new Date()).getTime()}`
-  cert.validity.notBefore = new Date(new Date() - (60 * 60 * 1000))
+  cert.serialNumber = `${Date.now()}`
+  cert.validity.notBefore = new Date(Date.now() - (60 * 60 * 1000))
   cert.validity.notAfter = new Date()
   cert.validity.notAfter.setFullYear(cert.validity.notAfter.getFullYear() + 20)
   const attrs = [{
@@ -87,7 +87,7 @@ utils.createFakeCertificateByDomain = function (caKey, caCert, domain, mappingHo
   const cert = pki.createCertificate()
   cert.publicKey = keys.publicKey
 
-  cert.serialNumber = `${(new Date()).getTime()}`
+  cert.serialNumber = `${Date.now()}`
   cert.validity.notBefore = new Date()
   cert.validity.notBefore.setFullYear(cert.validity.notBefore.getFullYear() - 1)
   cert.validity.notAfter = new Date()
