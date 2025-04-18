@@ -70,7 +70,7 @@ module.exports = class BaseDNS {
         this.cache.set(hostname, ipCache)
       }
 
-      const t = new Date()
+      const t = Date.now()
       let ipList = await this._lookupWithPreSetIpList(hostname)
       if (ipList == null) {
         // 没有获取到ipv4地址
@@ -81,7 +81,7 @@ module.exports = class BaseDNS {
       ipCache.setBackupList(ipList)
 
       const ip = ipCache.value
-      log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] ${hostname} ➜ ${ip} (${new Date() - t} ms), ipList: ${JSON.stringify(ipList)}, ipCache:`, JSON.stringify(ipCache))
+      log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] ${hostname} ➜ ${ip} (${Date.now() - t} ms), ipList: ${JSON.stringify(ipList)}, ipCache:`, JSON.stringify(ipCache))
 
       if (ipChecker) {
         if (ip != null && ip !== hostname && ipChecker(ip)) {
