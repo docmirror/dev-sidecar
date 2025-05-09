@@ -9,10 +9,18 @@ module.exports = {
     // 获取重定向目标地址
     const redirect = proxyApi.buildTargetUrl(rOptions, interceptOpt.redirect, interceptOpt, matched)
 
-    res.writeHead(302, {
+    const headers = {
       'Location': redirect,
       'DS-Interceptor': 'redirect',
-    })
+    }
+
+    // headers.Access-Control-Allow-*：避免跨域问题
+    if (rOptions.headers.origin) {
+      headers['Access-Control-Allow-Credentials'] = 'true'
+      headers['Access-Control-Allow-Origin'] = rOptions.headers.origin
+    }
+
+    res.writeHead(302, headers)
     res.end()
 
     const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`
