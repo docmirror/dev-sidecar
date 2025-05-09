@@ -5,10 +5,18 @@ module.exports = {
     const { rOptions, log } = context
 
     if (interceptOpt.abort === true || interceptOpt.abort === 'true') {
-      res.writeHead(403, {
+      const headers = {
         'Content-Type': 'text/plain; charset=utf-8',
         'DS-Interceptor': 'abort',
-      })
+      }
+
+      // headers.Access-Control-Allow-*：避免跨域问题
+      if (rOptions.headers.origin) {
+        headers['Access-Control-Allow-Credentials'] = 'true'
+        headers['Access-Control-Allow-Origin'] = rOptions.headers.origin
+      }
+
+      res.writeHead(403, headers)
       res.write(
         'DevSidecar 403: Request abort.\n\n'
         + '  This request is matched by abort intercept.\n\n'
