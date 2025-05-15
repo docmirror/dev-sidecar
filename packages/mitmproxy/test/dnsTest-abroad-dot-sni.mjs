@@ -2,8 +2,18 @@ import DNSOverTLS from "../src/lib/dns/tls.js";
 
 // 境外DNS的DoT配置sni测试
 const servers = [
+	'1dot1dot1dot1.cloudflare-dns.com',
+	'cloudflare-dns.com',
 	'one.one.one.one',
 	// '1.1.1.1', // 可直连，无需SNI
+
+	'dot.sb',
+	'185.222.222.222',
+	'45.11.45.11',
+
+	'dns.adguard.com',
+	'dns-family.adguard.com',
+	'dns-unfiltered.adguard.com',
 ]
 
 const hostnames = [
