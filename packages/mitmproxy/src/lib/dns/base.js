@@ -103,19 +103,21 @@ module.exports = class BaseDNS {
   }
 
   async _lookupWithPreSetIpList (hostname) {
-    // 获取当前域名的预设IP列表
-    let hostnamePreSetIpList = matchUtil.matchHostname(this.preSetIpList, hostname, `matched preSetIpList(${this.dnsName})`)
-    if (hostnamePreSetIpList && (hostnamePreSetIpList.length > 0 || hostnamePreSetIpList.length === undefined)) {
-      if (hostnamePreSetIpList.length > 0) {
-        hostnamePreSetIpList = hostnamePreSetIpList.slice() // 复制一份列表数据，避免配置数据被覆盖
-      } else {
-        hostnamePreSetIpList = mapToList(hostnamePreSetIpList)
-      }
+    if (this.preSetIpList) {
+      // 获取当前域名的预设IP列表
+      let hostnamePreSetIpList = matchUtil.matchHostname(this.preSetIpList, hostname, `matched preSetIpList(${this.dnsName})`)
+      if (hostnamePreSetIpList && (hostnamePreSetIpList.length > 0 || hostnamePreSetIpList.length === undefined)) {
+        if (hostnamePreSetIpList.length > 0) {
+          hostnamePreSetIpList = hostnamePreSetIpList.slice() // 复制一份列表数据，避免配置数据被覆盖
+        } else {
+          hostnamePreSetIpList = mapToList(hostnamePreSetIpList)
+        }
 
-      if (hostnamePreSetIpList.length > 0) {
-        hostnamePreSetIpList.isPreSet = true
-        log.info(`[DNS-over-PreSet '${this.dnsName}'] 获取到该域名的预设IP列表： ${hostname} - ${JSON.stringify(hostnamePreSetIpList)}`)
-        return hostnamePreSetIpList
+        if (hostnamePreSetIpList.length > 0) {
+          hostnamePreSetIpList.isPreSet = true
+          log.info(`[DNS-over-PreSet '${this.dnsName}'] 获取到该域名的预设IP列表： ${hostname} - ${JSON.stringify(hostnamePreSetIpList)}`)
+          return hostnamePreSetIpList
+        }
       }
     }
 
@@ -159,6 +161,10 @@ module.exports = class BaseDNS {
   }
 
   _doDnsQuery (hostname, type = 'A', start) {
+    if (start == null) {
+      start = Date.now()
+    }
+
     return new Promise((resolve, reject) => {
       // 设置超时任务
       let isOver = false

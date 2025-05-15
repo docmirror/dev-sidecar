@@ -9,7 +9,7 @@ const defaultPort = 53 // TCP类型的DNS服务默认端口号
 module.exports = class DNSOverTCP extends BaseDNS {
   constructor (dnsName, cacheSize, preSetIpList, dnsServer, dnsServerPort) {
     super(dnsName, 'TCP', cacheSize, preSetIpList)
-    this.dnsServer = dnsServer
+    this.dnsServer = dnsServer.replace(/\s+/, '')
     this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort
   }
 
