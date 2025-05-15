@@ -1,34 +1,9 @@
-import DNSOverHTTPS from "../src/lib/dns/https.js";
+import DNSOverTLS from "../src/lib/dns/tls.js";
 
-// 境外DNS的DoH配置sni测试
+// 境外DNS的DoT配置sni测试
 const servers = [
-	'https://dns.quad9.net/dns-query',
-	'https://max.rethinkdns.com/dns-query',
-	'https://sky.rethinkdns.com/dns-query',
-	'https://doh.opendns.com/dns-query',
-	'https://cloudflare-dns.com/dns-query',
-	'https://dns.google/dns-query',
-	'https://dns.bebasid.com/unfiltered',
-	'https://0ms.dev/dns-query',
-	'https://dns.decloudus.com/dns-query',
-	'https://wikimedia-dns.org/dns-query',
-	'https://doh.applied-privacy.net/query',
-	'https://private.canadianshield.cira.ca/dns-query',
-	// 'https://dns.controld.com/comss', // 可直连，无需SNI
-	'https://kaitain.restena.lu/dns-query',
-	'https://doh.libredns.gr/dns-query',
-	'https://doh.libredns.gr/ads',
-	'https://dns.switch.ch/dns-query',
-	'https://doh.nl.ahadns.net/dns-query',
-	'https://doh.la.ahadns.net/dns-query',
-	'https://dns.dnswarden.com/uncensored',
-	'https://doh.ffmuc.net/dns-query',
-	'https://dns.oszx.co/dns-query',
-	'https://doh.tiarap.org/dns-query',
-	'https://jp.tiarap.org/dns-query',
-	'https://dns.adguard.com/dns-query',
-	'https://rubyfish.cn/dns-query',
-	'https://i.233py.com/dns-query',
+	'one.one.one.one',
+	// '1.1.1.1', // 可直连，无需SNI
 ]
 
 const hostnames = [
@@ -38,7 +13,7 @@ const hostnames = [
 const sni = 'baidu.com'
 // const sni = ''
 
-console.log(`\n--------------- 测试DoH的SNI功能：共 ${servers.length} 个服务，${hostnames.length} 个域名 ---------------\n`)
+console.log(`\n--------------- 测试DoT的SNI功能：共 ${servers.length} 个服务，${hostnames.length} 个域名 ---------------\n`)
 
 let n = 0
 let success = 0
@@ -73,7 +48,7 @@ function count (isSuccess, hostname, idx, dns, result, cost) {
 let x = 0;
 for (let i = 0; i < servers.length; i++) {
 	for (const hostname of hostnames) {
-		const dns = new DNSOverHTTPS(`dns-${i}-${hostname}`, null, null, servers[i], sni)
+		const dns = new DNSOverTLS(`dns-${i}-${hostname}`, null, null, servers[i], null, sni)
 		const start = Date.now()
 		const idx = x;
 		dns._doDnsQuery(hostname)
