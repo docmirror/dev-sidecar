@@ -48,7 +48,7 @@ module.exports = {
         }
 
         // 基于 https
-        dnsMap[provider] = new DNSOverHTTPS(provider, conf.cacheSize, preSetIpList, server)
+        dnsMap[provider] = new DNSOverHTTPS(provider, conf.cacheSize, preSetIpList, server, conf.sni || conf.servername)
       } else {
         // 获取DNS端口
         let port = conf.port
@@ -64,7 +64,7 @@ module.exports = {
 
         if (type === 'tls' || type === 'dot' || type === 'dns-over-tls') {
           // 基于 tls
-          dnsMap[provider] = new DNSOverTLS(provider, conf.cacheSize, preSetIpList, server, port, conf.servername || conf.sni)
+          dnsMap[provider] = new DNSOverTLS(provider, conf.cacheSize, preSetIpList, server, port, conf.sni || conf.servername)
         } else if (type === 'tcp' || type === 'dns-over-tcp') {
           // 基于 tcp
           dnsMap[provider] = new DNSOverTCP(provider, conf.cacheSize, preSetIpList, server, port)

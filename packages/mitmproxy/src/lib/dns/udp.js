@@ -8,7 +8,7 @@ const defaultPort = 53 // UDP类型的DNS服务默认端口号
 module.exports = class DNSOverUDP extends BaseDNS {
   constructor (dnsName, cacheSize, preSetIpList, dnsServer, dnsServerPort) {
     super(dnsName, 'UDP', cacheSize, preSetIpList)
-    this.dnsServer = dnsServer
+    this.dnsServer = dnsServer.replace(/\s+/, '')
     this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort
 
     this.isIPv6 = dnsServer.includes(':') && dnsServer.includes('[') && dnsServer.includes(']')

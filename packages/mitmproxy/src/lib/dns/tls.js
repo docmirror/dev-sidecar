@@ -6,7 +6,7 @@ const defaultPort = 853
 module.exports = class DNSOverTLS extends BaseDNS {
   constructor (dnsName, cacheSize, preSetIpList, dnsServer, dnsServerPort, dnsServerName) {
     super(dnsName, 'TLS', cacheSize, preSetIpList)
-    this.dnsServer = dnsServer
+    this.dnsServer = dnsServer.replace(/\s+/, '')
     this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort
     this.dnsServerName = dnsServerName
   }
