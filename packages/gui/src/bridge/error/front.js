@@ -18,9 +18,6 @@ function handleServerStartError (message, err, app, api) {
     // 避免重复弹窗
     const now = Date.now()
     if (latestConfirmTime != null && now - latestConfirmTime < 1000) {
-      if (now - latestConfirmTime > 5000) {
-        latestConfirmTime = null
-      }
       return
     }
     latestConfirmTime = now
