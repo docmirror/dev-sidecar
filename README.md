@@ -319,14 +319,14 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 对于此问题有如下几种解决方案可供选择：
 
 1. 重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）
-2. 如果应用被卸载了，此时需要[手动关闭系统代理设置](https://github.com/docmirror/dev-sidecar/wiki/恢复网络.md)
+2. 如果应用被卸载了，此时需要[手动关闭系统代理设置](https://github.com/docmirror/dev-sidecar/wiki/恢复网络)
 3. 如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启
 
 ### 6.8、卸载应用后上不了网，git请求不了
 
 如果你在卸载应用前，没有正常退出app，就有可能无法上网。请按如下步骤操作恢复您的网络：
 
-1、关闭系统代理设置，参见：[手动关闭系统代理设置](https://github.com/docmirror/dev-sidecar/wiki/恢复网络.md)
+1、关闭系统代理设置，参见：[手动关闭系统代理设置](https://github.com/docmirror/dev-sidecar/wiki/恢复网络)
 2、执行下面的命令关闭git的代理设置（如果你开启过 `Git.exe代理` 的开关）
 
 ```shell
@@ -344,7 +344,7 @@ npm config delete https-proxy
 
 ## 七、在其他程序使用
 
-- [java程序使用](https://github.com/docmirror/dev-sidecar/wiki/其他程序使用.md#Java程序使用)
+- [java程序使用](https://github.com/docmirror/dev-sidecar/wiki/其他程序使用#Java程序使用)
 
 ## 八、贡献代码
 
