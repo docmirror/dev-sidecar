@@ -100,7 +100,7 @@ export default {
           当前未启动
         </a-tag>
         <div class="form-help">
-          <a @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/recover.md')">卸载与恢复网络说明</a>
+          <a @click="openExternal('https://github.com/docmirror/dev-sidecar/wiki/恢复网络')">卸载与恢复网络说明</a>
         </div>
       </a-form-item>
       <a-form-item label="代理HTTP请求" :label-col="labelCol" :wrapper-col="wrapperCol">
