@@ -37,7 +37,7 @@ const servers = [
 const hostname1 = 'github.com'
 const sni = 'baidu.com'
 
-console.log(`\n--------------- 测试DoH的SNI功能：共 ${servers.length} 个DoH服务 ---------------\n`)
+console.log(`\n--------------- 测试DoH的SNI功能：共 ${servers.length} 个服务，${hostnames.length} 个域名，SNI: ${sni || '无'} ---------------\n`)
 
 let n = 0
 let success = 0

@@ -9,7 +9,7 @@ const dohQueryAsync = promisify(doh.query)
 function createAgent (dnsServer) {
   return new (dnsServer.startsWith('https:') ? HttpsAgent : Agent)({
     keepAlive: true,
-    timeout: 20000,
+    timeout: 4000,
   })
 }
 

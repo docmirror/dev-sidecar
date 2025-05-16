@@ -18,7 +18,6 @@
     "axios": "^1.7.7",
     "baidu-aip-sdk": "^4.16.16",
     "dns-over-http": "^0.2.0",
-    "dns-over-tls": "^0.0.9",
     "is-browser": "^2.1.0",
     "json5": "^2.2.3",
     "lodash": "^4.17.21",

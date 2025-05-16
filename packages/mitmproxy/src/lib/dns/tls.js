@@ -1,4 +1,4 @@
-const dnstls = require('dns-over-tls')
+const dnstls = require('./util/dns-over-tls')
 const BaseDNS = require('./base')
 
 const defaultPort = 853
@@ -16,10 +16,13 @@ module.exports = class DNSOverTLS extends BaseDNS {
       host: this.dnsServer,
       port: this.dnsServerPort,
       servername: this.dnsServerName || this.dnsServer,
+      rejectUnauthorized: !this.dnsServerName,
 
       name: hostname,
       klass: 'IN',
       type,
+
+      timeout: 4000,
     }
 
     return dnstls.query(options)
