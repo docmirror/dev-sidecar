@@ -168,7 +168,7 @@ module.exports = class BaseDNS {
     return new Promise((resolve, reject) => {
       // 设置超时任务
       let isOver = false
-      const timeout = 6000
+      const timeout = 8000
       const timeoutId = setTimeout(() => {
         if (!isOver) {
           log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] DNS查询超时, hostname: ${hostname}, sni: ${this.dnsServerName || '无'}, type: ${type}${this.dnsServer ? `, dnsServer: ${this.dnsServer}` : ''}${this.dnsServerPort ? `:${this.dnsServerPort}` : ''}, cost: ${Date.now() - start} ms`)

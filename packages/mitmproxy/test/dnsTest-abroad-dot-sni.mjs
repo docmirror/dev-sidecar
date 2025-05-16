@@ -2,18 +2,50 @@ import DNSOverTLS from "../src/lib/dns/tls.js";
 
 // 境外DNS的DoT配置sni测试
 const servers = [
-	'1dot1dot1dot1.cloudflare-dns.com',
-	'cloudflare-dns.com',
+	// 'dot.360.cn',
+
+	'1.1.1.1', // 可直连，无需SNI（有时候可以，有时候不行）
 	'one.one.one.one',
-	// '1.1.1.1', // 可直连，无需SNI
+	'cloudflare-dns.com',
+	'security.cloudflare-dns.com',
+	'family.cloudflare-dns.com',
+	'1dot1dot1dot1.cloudflare-dns.com',
 
 	'dot.sb',
 	'185.222.222.222',
 	'45.11.45.11',
 
 	'dns.adguard.com',
+	'dns.adguard-dns.com',
 	'dns-family.adguard.com',
+	'family.adguard-dns.com',
 	'dns-unfiltered.adguard.com',
+	'unfiltered.adguard-dns.com',
+	'dns.bebasid.com',
+	'unfiltered.dns.bebasid.com',
+	'antivirus.bebasid.com',
+	'internetsehat.bebasid.com',
+	'family-adblock.bebasid.com',
+	'oisd.dns.bebasid.com',
+	'hagezi.dns.bebasid.com',
+	'dns.cfiec.net',
+	'dns.opendns.com',
+	'familyshield.opendns.com',
+	'sandbox.opendns.com',
+	'family-filter-dns.cleanbrowsing.org',
+	'adult-filter-dns.cleanbrowsing.org',
+	'security-filter-dns.cleanbrowsing.org',
+	'p0.freedns.controld.com',
+	'p1.freedns.controld.com',
+	'p2.freedns.controld.com',
+	'p3.freedns.controld.com',
+	'dns.decloudus.com',
+	'getdnsapi.net',
+	'dnsovertls.sinodun.com',
+	'dnsovertls1.sinodun.com',
+	'dns.de.futuredns.eu.org',
+	'dns.us.futuredns.eu.org',
+	'unicast.censurfridns.dk',
 ]
 
 const hostnames = [
@@ -23,7 +55,7 @@ const hostnames = [
 const sni = 'baidu.com'
 // const sni = ''
 
-console.log(`\n--------------- 测试DoT的SNI功能：共 ${servers.length} 个服务，${hostnames.length} 个域名 ---------------\n`)
+console.log(`\n--------------- 测试DoT的SNI功能：共 ${servers.length} 个服务，${hostnames.length} 个域名，SNI: ${sni || '无'} ---------------\n`)
 
 let n = 0
 let success = 0

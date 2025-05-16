@@ -38,7 +38,7 @@ const hostnames = [
 const sni = 'baidu.com'
 // const sni = ''
 
-console.log(`\n--------------- 测试DoH的SNI功能：共 ${servers.length} 个服务，${hostnames.length} 个域名 ---------------\n`)
+console.log(`\n--------------- 测试DoH的SNI功能：共 ${servers.length} 个服务，${hostnames.length} 个域名，SNI: ${sni || '无'} ---------------\n`)
 
 let n = 0
 let success = 0
