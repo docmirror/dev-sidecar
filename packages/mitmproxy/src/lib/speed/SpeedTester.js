@@ -272,7 +272,7 @@ class SpeedTester {
           //     reject(new Error(`TCP测速失败：${e.message}；PING测速失败：${e2.message}；`))
           //   })
 
-          reject(new Error(`TCP测速失败：${e.message}`))
+          reject(new Error(`TCP测速失败：${item.host}:${this.port} ${e.message}`))
         })
     })
   }
