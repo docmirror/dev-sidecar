@@ -1,10 +1,10 @@
 const assert = require('node:assert')
 
-const name = '/docmirror/dev-sidecar/raw/master/doc/index.png'
-// https://raw.fastgit.org/docmirror/dev-sidecar/master/doc/index.png
+const name = '/docmirror/dev-sidecar/raw/master/doc/figures/open-after-installed.png'
+// https://raw.fastgit.org/docmirror/dev-sidecar/master/doc/figures/open-after-installed.png
 const ret = name.replace(/^(.+)\/raw\/(.+)$/, 'raw.fastgit.org$1/$2')
 console.log(ret)
-assert.strictEqual(ret, 'raw.fastgit.org/docmirror/dev-sidecar/master/doc/index.png')
+assert.strictEqual(ret, 'raw.fastgit.org/docmirror/dev-sidecar/master/doc/figures/open-after-installed.png')
 
 const reg = /^\/[^/]+\/[^/]+$/
 console.log('/greper/d2-crud-plus/blob/master/.eslintignore'.match(reg))

@@ -21,11 +21,11 @@ export default {
   computed: {
     setupImage () {
       if (this.systemPlatform === 'mac') {
-        return '/setup-mac.png'
+        return '/setup-on-mac.png'
       } else if (this.systemPlatform === 'linux') {
-        return '/setup-linux.png'
+        return '/setup-chrome-on-linux.png'
       } else {
-        return '/setup.png'
+        return '/setup-on-windows.png'
       }
     },
   },
@@ -71,7 +71,7 @@ export default {
       <a-button type="primary" style="float:right" @click="doSetup()">
         点此去安装
       </a-button>
-      <a-button style="float:right;margin-right:10px;" @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/caroot.md')">
+      <a-button style="float:right;margin-right:10px;" @click="openExternal('https://github.com/docmirror/dev-sidecar/wiki/关于信任根证书的说明')">
         为什么要安装证书？
       </a-button>
     </template>
