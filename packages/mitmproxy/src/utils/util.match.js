@@ -141,10 +141,29 @@ function matchHostnameAll (hostMap, hostname, action) {
     // }
 
     // 正则表达式匹配
-    if (hostname.match(regexp)) {
+    const matched = hostname.match(regexp)
+    if (matched) {
       value = hostMap[regexp]
       log.debug(`matchHostname-one: ${action}: '${hostname}' -> { "${regexp}": ${JSON.stringify(value)} }`)
       values = merge(values, value)
+
+      // 设置matched
+      if (matched.length > 1) {
+        if (values.matched) {
+          // 合并array
+          matched.shift()
+          values.matched = [...values.matched, ...matched] // 拼接上多个matched
+
+          // 合并groups
+          if (matched.groups) {
+            values.matched.groups = merge(values.matched.groups, matched.groups)
+          } else {
+            values.matched.groups = matched.groups
+          }
+        } else {
+          values.matched = matched
+        }
+      }
     }
   }
 

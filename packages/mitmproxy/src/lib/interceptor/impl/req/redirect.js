@@ -3,11 +3,11 @@ const proxyApi = require('./proxy')
 module.exports = {
   name: 'redirect',
   priority: 105,
-  requestIntercept (context, interceptOpt, req, res, ssl, next, matched) {
+  requestIntercept (context, interceptOpt, req, res, ssl, next, matched, hostnameMatched) {
     const { rOptions, log } = context
 
     // 获取重定向目标地址
-    const redirect = proxyApi.buildTargetUrl(rOptions, interceptOpt.redirect, interceptOpt, matched)
+    const redirect = proxyApi.buildTargetUrl(rOptions, interceptOpt.redirect, interceptOpt, matched, hostnameMatched)
 
     const headers = {
       'Location': redirect,
