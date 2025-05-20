@@ -187,12 +187,12 @@ module.exports = (serverConfig) => {
             if (impl.requestIntercept) {
               // req拦截器
               interceptor.requestIntercept = (context, req, res, ssl, next) => {
-                return impl.requestIntercept(context, interceptOpt, req, res, ssl, next, matched)
+                return impl.requestIntercept(context, interceptOpt, req, res, ssl, next, matched, interceptOpts.matched)
               }
             } else if (impl.responseIntercept) {
               // res拦截器
               interceptor.responseIntercept = (context, req, res, proxyReq, proxyRes, ssl, next) => {
-                return impl.responseIntercept(context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next, matched)
+                return impl.responseIntercept(context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next, matched, interceptOpts.matched)
               }
             }
 

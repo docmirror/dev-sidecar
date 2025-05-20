@@ -1,21 +1,29 @@
 const url = require('node:url')
 const lodash = require('lodash')
 
+function replacePlaceholder0 (url, matched, pre) {
+  if (matched) {
+    for (let i = 0; i < matched.length; i++) {
+      url = url.replace(`\${${pre}[${i}]}`, matched[i] || '')
+    }
+    if (matched.groups) {
+      for (const key in matched.groups) {
+        url = url.replace(`\${${key}}`, matched.groups[key] || '')
+      }
+    }
+  }
+  return url
+}
+
 // 替换占位符
-function replacePlaceholder (url, rOptions, matched) {
+function replacePlaceholder (url, rOptions, pathMatched, hostnameMatched) {
   if (url.includes('${')) {
     // eslint-disable-next-line no-template-curly-in-string
     url = url.replace('${host}', rOptions.hostname)
 
-    if (matched && url.includes('${')) {
-      for (let i = 0; i < matched.length; i++) {
-        url = url.replace(`\${m[${i}]}`, matched[i] == null ? '' : matched[i])
-      }
-      if (matched.groups) {
-        for (const key in matched.groups) {
-          url = url.replace(`\${${key}}`, matched.groups[key] == null ? '' : matched.groups[key])
-        }
-      }
+    if (url.includes('${')) {
+      url = replacePlaceholder0(url, pathMatched, 'p')
+      url = replacePlaceholder0(url, hostnameMatched, 'h')
     }
 
     // 移除多余的占位符
@@ -27,7 +35,7 @@ function replacePlaceholder (url, rOptions, matched) {
   return url
 }
 
-function buildTargetUrl (rOptions, urlConf, interceptOpt, matched) {
+function buildTargetUrl (rOptions, urlConf, interceptOpt, matched, hostnameMatched) {
   let targetUrl
   if (interceptOpt && interceptOpt.replace) {
     const regexp = new RegExp(interceptOpt.replace)
@@ -45,7 +53,7 @@ function buildTargetUrl (rOptions, urlConf, interceptOpt, matched) {
   }
 
   // 替换占位符
-  targetUrl = replacePlaceholder(targetUrl, rOptions, matched)
+  targetUrl = replacePlaceholder(targetUrl, rOptions, matched, hostnameMatched)
 
   // 拼接协议
   targetUrl = targetUrl.indexOf('http:') === 0 || targetUrl.indexOf('https:') === 0 ? targetUrl : `${rOptions.protocol}//${targetUrl}`
@@ -53,9 +61,9 @@ function buildTargetUrl (rOptions, urlConf, interceptOpt, matched) {
   return targetUrl
 }
 
-function doProxy (proxyConf, rOptions, req, interceptOpt, matched) {
+function doProxy (proxyConf, rOptions, req, interceptOpt, matched, hostnameMatched) {
   // 获取代理目标地址
-  const proxyTarget = buildTargetUrl(rOptions, proxyConf, interceptOpt, matched)
+  const proxyTarget = buildTargetUrl(rOptions, proxyConf, interceptOpt, matched, hostnameMatched)
 
   // 替换rOptions的属性
   // eslint-disable-next-line node/no-deprecated-api
@@ -81,7 +89,7 @@ module.exports = {
   replacePlaceholder,
   buildTargetUrl,
   doProxy,
-  requestIntercept (context, interceptOpt, req, res, ssl, next, matched) {
+  requestIntercept (context, interceptOpt, req, res, ssl, next, matched, hostnameMatched) {
     const { rOptions, log, RequestCounter } = context
 
     const originHostname = rOptions.hostname
@@ -112,7 +120,7 @@ module.exports = {
     }
 
     // 替换 rOptions 中的地址，并返回代理目标地址
-    const proxyTarget = doProxy(proxyConf, rOptions, req, interceptOpt, matched)
+    const proxyTarget = doProxy(proxyConf, rOptions, req, interceptOpt, matched, hostnameMatched)
 
     if (context.requestCount) {
       log.info('proxy choice:', JSON.stringify(context.requestCount))
