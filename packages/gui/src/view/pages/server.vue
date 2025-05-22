@@ -163,7 +163,43 @@ export default {
       const listener = async (event, message) => {
         console.log('get speed event', event, message)
         if (message.key === 'getList') {
-          this.speedTestList = message.value
+          // 详细记录接收到的原始数据
+          console.log('speedTestList raw data:', JSON.stringify(message.value, null, 2))
+          
+          // 数据验证和标准化
+          const validatedData = {}
+          for (const hostname in message.value) {
+            const item = message.value[hostname]
+            if (!item.backupList) {
+              console.warn(`Missing backupList for ${hostname}`)
+              continue
+            }
+
+            validatedData[hostname] = {
+              alive: item.alive || [],
+              backupList: item.backupList.map(ipObj => {
+                // 标准化IP地址格式
+                const standardized = {
+                  host: ipObj.host,
+                  port: ipObj.port || 443,
+                  dns: ipObj.dns || 'unknown',
+                  time: ipObj.time || null
+                }
+
+                // 特殊处理IPv6地址
+                if (ipObj.host.includes(':')) {
+                  console.log('Found IPv6 address:', {
+                    original: ipObj.host,
+                    standardized: standardized.host
+                  })
+                }
+                return standardized
+              })
+            }
+          }
+
+          this.speedTestList = validatedData
+          console.log('Validated speed test data:', JSON.stringify(validatedData, null, 2))
         }
       }
       this.$api.ipc.on('speed', listener)
@@ -453,8 +489,10 @@ export default {
                   <a-tag
                     v-for="(element, index) of item.backupList" :key="index" style="margin:2px;"
                     :title="element.dns" :color="element.time ? (element.time > config.server.setting.lowSpeedDelay ? 'orange' : 'green') : 'red'"
+                    :class="{'ipv6-tag': element.host.includes(':')}"
                   >
                     {{ element.host }} {{ element.time }}{{ element.time ? 'ms' : '' }} {{ element.dns }}
+                    <span v-if="element.host.includes(':')" class="ipv6-badge">IPv6</span>
                   </a-tag>
                 </a-card>
               </a-col>
@@ -508,5 +546,19 @@ export default {
   .ant-input-group-addon:first-child {
     width: 45px;
   }
+}
+.ipv6-tag {
+  position: relative;
+  padding-right: 40px;
+}
+.ipv6-badge {
+  position: absolute;
+  right: 5px;
+  top: 2px;
+  font-size: 10px;
+  background: #1890ff;
+  color: white;
+  padding: 0 4px;
+  border-radius: 3px;
 }
 </style>
