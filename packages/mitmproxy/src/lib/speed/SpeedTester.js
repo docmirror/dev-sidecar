@@ -79,6 +79,8 @@ class SpeedTester {
   }
 
   async getFromOneDns (dns) {
+    const results = []
+    
     // 优先尝试IPv6查询
     try {
       const ipv6Result = await dns._lookupInternal(this.hostname, { family: 6 })
@@ -91,19 +93,23 @@ class SpeedTester {
           }
           return ip
         })
-        log.debug(`[dns] Got IPv6 addresses for ${this.hostname}:`, standardized)
-        return standardized
+        results.push(...standardized)
       }
     } catch (e) {
-      log.debug(`[dns] IPv6 lookup failed for ${this.hostname}: ${e.message}`)
+      // IPv6查询失败，继续尝试IPv4
     }
     
-    // 回退到IPv4查询
-    const ipv4Result = await dns._lookupInternal(this.hostname)
-    if (ipv4Result) {
-      log.debug(`[dns] Got IPv4 addresses for ${this.hostname}:`, ipv4Result)
+    // 尝试IPv4查询
+    try {
+      const ipv4Result = await dns._lookupInternal(this.hostname)
+      if (ipv4Result) {
+        results.push(...ipv4Result)
+      }
+    } catch (e) {
+      // IPv4查询失败
     }
-    return ipv4Result
+    
+    return results
   }
 
   async test () {
@@ -111,13 +117,6 @@ class SpeedTester {
     const newBackupList = [...newList, ...this.backupList]
     this.backupList = _.unionBy(newBackupList, 'host')
     this.testCount++
-
-    // 详细记录IPv6地址
-    const ipv6List = this.backupList.filter(item => item.host.includes(':'))
-    if (ipv6List.length > 0) {
-      log.info('[speed] IPv6 addresses found for', this.hostname, ':', ipv6List)
-    }
-    log.info('[speed]', this.hostname, '➜ ip-list:', this.backupList)
     await this.testBackups()
     if (config.notify) {
       config.notify({ key: 'test' })

@@ -15,7 +15,7 @@ module.exports = class DNSOverUDP extends BaseDNS {
     this.socketType = this.isIPv6 ? 'udp6' : 'udp4'
   }
 
-  _doDnsQuery (hostname) {
+  _doDnsQuery (hostname, options = {}) {
     return new Promise((resolve, reject) => {
       // 构造 DNS 查询报文
       const packet = dnsPacket.encode({
@@ -23,7 +23,7 @@ module.exports = class DNSOverUDP extends BaseDNS {
         type: 'query',
         id: randi(0x0, 0xFFFF),
         questions: [{
-          type: 'A',
+          type: options.family === 6 ? 'AAAA' : 'A',
           name: hostname,
         }],
       })

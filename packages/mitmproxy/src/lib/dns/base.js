@@ -52,7 +52,7 @@ module.exports = class BaseDNS {
     }
   }
 
-  async lookup (hostname) {
+  async lookup (hostname, options = {}) {
     try {
       let ipCache = this.cache.get(hostname)
       if (ipCache) {
@@ -66,9 +66,9 @@ module.exports = class BaseDNS {
       }
 
       const t = new Date()
-      let ipList = await this._lookupInternal(hostname)
+      let ipList = await this._lookupInternal(hostname, options)
       if (ipList == null) {
-        // 没有获取到ipv4地址
+        // 没有获取到ip
         ipList = []
       }
       ipList.push(hostname) // 把原域名加入到统计里去
@@ -83,7 +83,7 @@ module.exports = class BaseDNS {
     }
   }
 
-  async _lookupInternal (hostname) {
+  async _lookupInternal (hostname, options = {}) {
     // 获取当前域名的预设IP列表
     let hostnamePreSetIpList = matchUtil.matchHostname(this.preSetIpList, hostname, `matched preSetIpList(${this.dnsName})`)
     if (hostnamePreSetIpList && (hostnamePreSetIpList.length > 0 || hostnamePreSetIpList.length === undefined)) {
@@ -100,24 +100,28 @@ module.exports = class BaseDNS {
       }
     }
 
-    return await this._lookup(hostname)
+    return await this._lookup(hostname, options)
   }
 
-  async _lookup (hostname) {
+  async _lookup (hostname, options = {}) {
     const start = Date.now()
     try {
-      const response = await this._doDnsQuery(hostname)
+      const response = await this._doDnsQuery(hostname, options)
       const cost = Date.now() - start
       if (response == null || response.answers == null || response.answers.length == null || response.answers.length === 0) {
         // 说明没有获取到ip
         log.warn(`[DNS-over-${this.dnsType} '${this.dnsName}'] 没有该域名的IP地址: ${hostname}, cost: ${cost} ms, response:`, response)
         return []
       }
-      const ret = response.answers.filter(item => item.type === 'A').map(item => item.data)
+
+      // 根据查询类型过滤结果
+      const type = options.family === 6 ? 'AAAA' : 'A'
+      const ret = response.answers.filter(item => item.type === type).map(item => item.data)
+      
       if (ret.length === 0) {
-        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 没有该域名的IPv4地址: ${hostname}, cost: ${cost} ms`)
+        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 没有该域名的IPv${options.family === 6 ? '6' : '4'}地址: ${hostname}, cost: ${cost} ms`)
       } else {
-        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取到该域名的IPv4地址： ${hostname} - ${JSON.stringify(ret)}, cost: ${cost} ms`)
+        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取到该域名的IPv${options.family === 6 ? '6' : '4'}地址： ${hostname} - ${JSON.stringify(ret)}, cost: ${cost} ms`)
       }
       return ret
     } catch (e) {

@@ -12,14 +12,11 @@ module.exports = {
         const aliveIpObj = tester.pickFastAliveIpObj()
         if (aliveIpObj) {
           const family = aliveIpObj.host.includes(':') ? 6 : 4
-          log.info(`----- ${action}: ${hostname}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host}${target} -----`)
           if (res) {
             res.setHeader('DS-DNS-Lookup', `IpTester: ${aliveIpObj.host} ${aliveIpObj.dns === '预设IP' ? 'PreSet' : aliveIpObj.dns}`)
           }
           callback(null, aliveIpObj.host, family)
           return
-        } else {
-          log.info(`----- ${action}: ${hostname}, no alive ip${target}, tester: { "ready": ${tester.ready}, "backupList": ${JSON.stringify(tester.backupList)} }`)
         }
       }
       
@@ -31,7 +28,6 @@ module.exports = {
             isDnsIntercept.hostname = hostname
             isDnsIntercept.ip = ip
           }
-          log.info(`----- ${action}: ${hostname}, use ipv6 from dns '${dns.dnsName}': ${ip}${target} -----`)
           if (res) {
             res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
           }
@@ -44,7 +40,6 @@ module.exports = {
       }).then((ip) => {
         if (!ip || ip === hostname) {
           // 使用默认dns
-          log.info(`----- ${action}: ${hostname}, use hostname by default DNS: ${hostname}${target}, options:`, options, ', dns:', dns)
           return defaultDns.lookup(hostname, options, callback)
         }
 
@@ -70,14 +65,12 @@ module.exports = {
 
         if (!isTestFailedIp) {
           const family = ip.includes(':') ? 6 : 4
-          log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.dnsName}': ${ip}${target} -----`)
           if (res) {
             res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
           }
           callback(null, ip, family)
         } else {
           // 使用默认dns
-          log.info(`----- ${action}: ${hostname}, use hostname by default DNS: ${hostname}, skip test failed ip from dns '${dns.dnsName}: ${ip}'${target}, options:`, options)
           defaultDns.lookup(hostname, options, callback)
         }
       }).catch((e) => {
