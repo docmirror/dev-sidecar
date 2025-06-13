@@ -1,4 +1,5 @@
 const LRUCache = require('lru-cache')
+const net = require('node:net')
 const log = require('../../utils/util.log.server')
 const matchUtil = require('../../utils/util.match')
 const { DynamicChoice } = require('../choice/index')
@@ -94,9 +95,29 @@ module.exports = class BaseDNS {
       }
 
       if (hostnamePreSetIpList.length > 0) {
-        hostnamePreSetIpList.isPreSet = true
-        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取到该域名的预设IP列表： ${hostname} - ${JSON.stringify(hostnamePreSetIpList)}`)
-        return hostnamePreSetIpList
+        const result = []
+        for (const item of hostnamePreSetIpList) {
+          if (net.isIP(item)) {
+            // 如果是IP地址，直接使用
+            result.push(item)
+          } else {
+            // 如果是域名，进行DNS解析
+            try {
+              const resolved = await this._lookup(item, options)
+              if (resolved && resolved.length > 0) {
+                result.push(...resolved)
+              }
+            } catch (e) {
+              log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] 解析预设域名失败: ${item}`, e)
+            }
+          }
+        }
+
+        if (result.length > 0) {
+          result.isPreSet = true
+          log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取到该域名的预设IP列表： ${hostname} - ${JSON.stringify(result)}`)
+          return result
+        }
       }
     }
 

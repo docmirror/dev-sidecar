@@ -80,11 +80,13 @@ class SpeedTester {
 
   async getFromOneDns (dns) {
     const results = []
+    let isPreSet = false
     
     // 优先尝试IPv6查询
     try {
       const ipv6Result = await dns._lookupInternal(this.hostname, { family: 6 })
       if (ipv6Result && ipv6Result.length > 0) {
+        isPreSet = ipv6Result.isPreSet === true
         // 标准化IPv6地址格式
         const standardized = ipv6Result.map(ip => {
           // 确保IPv6地址格式统一
@@ -103,12 +105,16 @@ class SpeedTester {
     try {
       const ipv4Result = await dns._lookupInternal(this.hostname)
       if (ipv4Result) {
+        isPreSet = isPreSet || ipv4Result.isPreSet === true
         results.push(...ipv4Result)
       }
     } catch (e) {
       // IPv4查询失败
     }
     
+    if (isPreSet) {
+      results.isPreSet = true
+    }
     return results
   }
 
