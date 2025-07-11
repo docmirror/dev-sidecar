@@ -1,7 +1,7 @@
 export default function createMenus (app) {
   const plugins = [
     { title: 'NPM加速', path: '/plugin/node', icon: 'like' },
-    { title: 'Git.exe代理', path: '/plugin/git', icon: 'github' },
+    { title: 'Git代理', path: '/plugin/git', icon: 'github' },
     { title: 'PIP加速', path: '/plugin/pip', icon: 'bulb' },
   ]
   const menus = [

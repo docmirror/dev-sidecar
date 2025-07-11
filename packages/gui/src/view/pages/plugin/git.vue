@@ -73,7 +73,7 @@ export default {
 <template>
   <ds-container>
     <template slot="header">
-      Git.exe代理设置
+      Git代理设置
     </template>
     <template slot="header-right">
       仅针对git命令行的代理设置，github网站的访问无需设置
@@ -102,7 +102,7 @@ export default {
           <div>
             <a-row :gutter="10">
               <a-col :span="22">
-                <span><code>Git.exe</code>将不代理以下仓库；可以是根地址、组织/机构地址、完整地址</span>
+                <span><code>Git</code>将不代理以下仓库；可以是根地址、组织/机构地址、完整地址</span>
               </a-col>
               <a-col :span="2">
                 <a-button type="primary" icon="plus" @click="addNoProxyUrl()" />

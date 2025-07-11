@@ -323,7 +323,7 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 如果你在卸载应用前，没有正常退出app，就有可能无法上网。请按如下步骤操作恢复您的网络：
 
 1、关闭系统代理设置，参见：[手动关闭系统代理设置](./doc/recover.md)
-2、执行下面的命令关闭git的代理设置（如果你开启过 `Git.exe代理` 的开关）
+2、执行下面的命令关闭git的代理设置（如果你开启过 `Git代理` 的开关）
 
 ```shell
 git config --global --unset http.proxy
