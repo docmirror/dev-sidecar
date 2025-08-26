@@ -4,7 +4,7 @@ const dnsPacket = require('dns-packet')
 const randi = require('random-int')
 const BaseDNS = require('./base')
 
-const defaultPort = 53 // UDP类型的DNS服务默认端口号
+const defaultPort = 53 // TCP类型的DNS服务默认端口号
 
 module.exports = class DNSOverTCP extends BaseDNS {
   constructor (dnsName, cacheSize, preSetIpList, dnsServer, dnsServerPort) {

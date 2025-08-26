@@ -6,8 +6,6 @@ const servers = [
 	'https://max.rethinkdns.com/dns-query',
 	'https://sky.rethinkdns.com/dns-query',
 	'https://doh.opendns.com/dns-query',
-	'https://1.1.1.1/dns-query',
-	'https://dns.cloudflare.com/dns-query',
 	'https://cloudflare-dns.com/dns-query',
 	'https://dns.google/dns-query',
 	'https://dns.bebasid.com/unfiltered',
@@ -30,12 +28,15 @@ const servers = [
 	'https://jp.tiarap.org/dns-query',
 	'https://dns.adguard.com/dns-query',
 	'https://rubyfish.cn/dns-query',
-	'https://i.233py.com/dns-query'
-
+	'https://i.233py.com/dns-query',
 ]
 
-const hostname1 = 'github.com'
+const hostnames = [
+	'github.com',
+	'mvnrepository.com',
+]
 const sni = 'baidu.com'
+// const sni = ''
 
 console.log(`\n--------------- 测试DoH的SNI功能：共 ${servers.length} 个服务，${hostnames.length} 个域名，SNI: ${sni || '无'} ---------------\n`)
 
@@ -44,15 +45,22 @@ let success = 0
 let error = 0
 const arr = []
 
-function count (isSuccess, i, doh, result) {
-	n++
+function count (isSuccess, hostname, idx, dns, result, cost) {
 	if (isSuccess) {
 		success++
-		arr[i] = `${doh.dnsServer} : ${hostname1} -> ${result.answers[0].data}`;
-	} else error++
+		const ipList = []
+		for (const answer of result.answers) {
+			ipList[ipList.length] = answer.data;
+		}
+		arr[idx] = `${dns.dnsServer} : ${hostname} -> [ ${ipList.join(', ')} ] , cost: ${cost} ms`;
+	} else {
+		error++
+	}
 
-	if (n === servers.length) {
-		console.info(`\n\n=============================================================================\n全部测完：总计：${servers.length}, 成功：${success}，失败：${error}`);
+	n++
+
+	if (n === servers.length * hostnames.length) {
+		console.info(`\n\n=============================================================================\n全部测完：总计：${servers.length * hostnames.length}, 成功：${success}，失败：${error}`);
 		for (const item of arr) {
 			if (item) {
 				console.info(item);
@@ -62,16 +70,21 @@ function count (isSuccess, i, doh, result) {
 	}
 }
 
+let x = 0;
 for (let i = 0; i < servers.length; i++) {
-	const n = i;
-	const doh = new DNSOverHTTPS(`dns${i}`, null, null, servers[i], sni)
-	doh._doDnsQuery(hostname1)
-		.then((result) => {
-			// console.info(`===> test testDoH '${doh.dnsServer}': ${hostname1} ->`, result.answers, '\n\n')
-			count(true, n, doh, result)
-		})
-		.catch((e) => {
-			// console.error(`===> test testDoH '${doh.dnsServer}': ${hostname1} 失败：`, e, '\n\n')
-			count(false)
-		})
+	for (const hostname of hostnames) {
+		const dns = new DNSOverHTTPS(`dns-${i}-${hostname}`, null, null, servers[i], sni)
+		const start = Date.now()
+		const idx = x;
+		dns._doDnsQuery(hostname)
+			.then((result) => {
+				console.info(`===> ${dns.dnsServer}: ${hostname} ->`, result.answers, '\n\n')
+				count(true, hostname, idx, dns, result, Date.now() - start)
+			})
+			.catch((e) => {
+				console.error(`===> ${dns.dnsServer}: ${hostname} 失败：`, e, '\n\n')
+				count(false, hostname)
+			})
+		x++;
+	}
 }

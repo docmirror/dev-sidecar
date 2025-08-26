@@ -126,10 +126,18 @@ module.exports = class BaseDNS {
 
   async _lookup (hostname) {
     const start = Date.now()
+
+    let response
     try {
       // 执行DNS查询
       log.debug(`[DNS-over-${this.dnsType} '${this.dnsName}'] query start: ${hostname}`)
-      const response = await this._doDnsQuery(hostname)
+      response = await this._doDnsQuery(hostname, 'A', start)
+    } catch {
+      // 异常日志在 _doDnsQuery已经打印过，这里就不再打印了
+      return []
+    }
+
+    try {
       const cost = Date.now() - start
       log.debug(`[DNS-over-${this.dnsType} '${this.dnsName}'] query end: ${hostname}, cost: ${cost} ms, response:`, response)
 
@@ -147,21 +155,23 @@ module.exports = class BaseDNS {
 
       return ret
     } catch (e) {
-      log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] DNS query error, hostname: ${hostname}${this.dnsServer ? `, dnsServer: ${this.dnsServer}` : ''}, cost: ${Date.now() - start} ms, error:`, e)
+      log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] 解读响应失败，response:`, response, ', error:', e)
       return []
     }
   }
 
-  _doDnsQuery (hostname, type) {
+  _doDnsQuery (hostname, type = 'A', start) {
     if (start == null) {
       start = Date.now()
     }
+
     return new Promise((resolve, reject) => {
       // 设置超时任务
       let isOver = false
       const timeout = 8000
       const timeoutId = setTimeout(() => {
         if (!isOver) {
+          log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] DNS查询超时, hostname: ${hostname}, sni: ${this.dnsServerName || '无'}, type: ${type}${this.dnsServer ? `, dnsServer: ${this.dnsServer}` : ''}${this.dnsServerPort ? `:${this.dnsServerPort}` : ''}, cost: ${Date.now() - start} ms`)
           reject(new Error('DNS查询超时'))
         }
       }, timeout)
@@ -176,11 +186,17 @@ module.exports = class BaseDNS {
           .catch((e) => {
             isOver = true
             clearTimeout(timeoutId)
+            if (e.message === 'DNS查询超时') {
+              log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] DNS查询超时. hostname: ${hostname}, sni: ${this.dnsServerName || '无'}, type: ${type}${this.dnsServer ? `, dnsServer: ${this.dnsServer}` : ''}${this.dnsServerPort ? `:${this.dnsServerPort}` : ''}, cost: ${Date.now() - start} ms`)
+            } else {
+              log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] DNS查询错误, hostname: ${hostname}, sni: ${this.dnsServerName || '无'}, type: ${type}${this.dnsServer ? `, dnsServer: ${this.dnsServer}` : ''}${this.dnsServerPort ? `:${this.dnsServerPort}` : ''}, cost: ${Date.now() - start} ms, error:`, e)
+            }
             reject(e)
           })
       } catch (e) {
         isOver = true
         clearTimeout(timeoutId)
+        log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] DNS查询异常, hostname: ${hostname}, type: ${type}${this.dnsServer ? `, dnsServer: ${this.dnsServer}` : ''}${this.dnsServerPort ? `:${this.dnsServerPort}` : ''}, cost: ${Date.now() - start} ms, error:`, e)
         reject(e)
       }
     })

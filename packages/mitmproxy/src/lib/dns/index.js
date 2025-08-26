@@ -28,7 +28,7 @@ module.exports = {
       if (type == null) {
         if (server.startsWith('https://') || server.startsWith('http://')) {
           type = 'https'
-        } else if (server.startsWith('tls://')) {
+        } else if (server.startsWith('tls://') || server.startsWith('dot://')) {
           type = 'tls'
         } else if (server.startsWith('tcp://')) {
           type = 'tcp'
@@ -65,7 +65,7 @@ module.exports = {
         if (type === 'tls' || type === 'dot' || type === 'dns-over-tls') {
           // 基于 tls
           dnsMap[provider] = new DNSOverTLS(provider, conf.cacheSize, preSetIpList, server, port, conf.sni || conf.servername)
-        } else if (type === 'tcp' || type === 'dns-over-tcp') {
+        } else if (type === 'tcp') {
           // 基于 tcp
           dnsMap[provider] = new DNSOverTCP(provider, conf.cacheSize, preSetIpList, server, port)
         } else {

@@ -133,7 +133,7 @@ class SpeedTester {
   async doTest (item, aliveList) {
     try {
       const ret = await this.testOne(item)
-      item.title = `${ret.by}测速成功：${item.host}`
+      item.title = `${ret.by}测速成功：${ret.target}`
       log.info(`[speed] test success: ${this.hostname} ➜ ${item.host}:${this.port} from DNS '${item.dns}'`)
       _.merge(item, ret)
       aliveList.push({ ...ret, ...item })
@@ -175,7 +175,7 @@ class SpeedTester {
         clearTimeout(timeoutId)
 
         const connectionTime = Date.now()
-        resolve({ status: 'success', by: 'TCP', time: connectionTime - startTime })
+        resolve({ status: 'success', by: 'TCP', target: `${host}:${this.port}`, time: connectionTime - startTime })
         client.end()
       })
       client.on('error', (e) => {
@@ -249,7 +249,7 @@ class SpeedTester {
   //       } else {
   //         // 计算平均延迟
   //         const avg = times.reduce((a, b) => a + b, 0) / times.length
-  //         resolve({ status: 'success', by: 'PING', time: Math.round(avg) })
+  //         resolve({ status: 'success', by: 'PING', target: host, time: Math.round(avg) })
   //       }
   //     })
   //   })
@@ -272,7 +272,7 @@ class SpeedTester {
           //     reject(new Error(`TCP测速失败：${e.message}；PING测速失败：${e2.message}；`))
           //   })
 
-          reject(new Error(`TCP测速失败：${e.message}`))
+          reject(new Error(`TCP测速失败：${item.host}:${this.port} ${e.message}`))
         })
     })
   }

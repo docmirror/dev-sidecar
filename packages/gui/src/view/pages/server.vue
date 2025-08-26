@@ -313,7 +313,7 @@ export default {
           <div v-if="activeTabKey === '4'">
             <a-row style="margin-top:10px">
               <a-col span="21">
-                <div>这里配置的域名不会通过代理</div>
+                <div>配置为<code>不代理</code>的域名不会通过代理</div>
               </a-col>
               <a-col span="3">
                 <a-button style="margin-left:8px" type="primary" icon="plus" @click="addWhiteList()" />

@@ -1,7 +1,6 @@
 const fs = require('node:fs')
 const path = require('node:path')
 const lodash = require('lodash')
-const jsonApi = require('./json')
 const dnsUtil = require('./lib/dns')
 const interceptorImpls = require('./lib/interceptor')
 const scriptInterceptor = require('./lib/interceptor/impl/res/script')
@@ -110,7 +109,7 @@ module.exports = (serverConfig) => {
       // 配置了白名单的域名，将跳过代理
       const inWhiteList = !!matchUtil.matchHostname(whiteList, hostname, 'in whiteList')
       if (inWhiteList) {
-        log.info(`为白名单域名，不拦截: ${hostname}, headers:`, jsonApi.stringify2(req.headers))
+        log.info(`为白名单域名，不拦截: ${hostname}`)
         return false // 不拦截
       }
 

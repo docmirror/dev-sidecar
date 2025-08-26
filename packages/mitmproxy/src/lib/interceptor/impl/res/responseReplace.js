@@ -92,9 +92,9 @@ module.exports = {
       // 如果未手动配置需要缓存，则不允许使用缓存
       const maxAge = cacheReq.getMaxAge(interceptOpt)
       if (maxAge == null || maxAge <= 0) {
-        replaceHeaders['cache-control'] = '[remove]'
-        replaceHeaders['last-modified'] = '[remove]'
-        replaceHeaders.expires = '[remove]'
+        replaceHeaders['cache-control'] = REMOVE
+        replaceHeaders['last-modified'] = REMOVE
+        replaceHeaders.expires = REMOVE
       }
 
       actions += `${actions ? ',' : ''}download:${filename}`
