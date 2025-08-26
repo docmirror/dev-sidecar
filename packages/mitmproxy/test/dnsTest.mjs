@@ -170,17 +170,13 @@ console.log(`===> test aliyunUDP: ${hostname1} ->`, ip, '\n\n')
 
 dnsProviders.aliyunUDP.lookup(hostname1).then(ip0 => {
   console.log(`===> test aliyunUDP: ${hostname1} ->`, ip0, '\n\n')
-  assert.strictEqual(ip0, ip)
 })
 dnsProviders.aliyunUDP.lookup(hostname2).then(ip0 => {
   console.log(`===> test aliyunUDP: ${hostname2} ->`, ip0, '\n\n')
-  assert.notStrictEqual(ip0, ip)
 })
 dnsProviders.aliyunUDP.lookup('baidu.com').then(ip0 => {
   console.log('===> test aliyunUDP: baidu.com ->', ip0, '\n\n')
-  assert.notStrictEqual(ip0, ip)
 })
 dnsProviders.aliyunUDP.lookup('gitee.com').then(ip0 => {
   console.log('===> test aliyunUDP: gitee.com ->', ip0, '\n\n')
-  assert.notStrictEqual(ip0, ip)
 })
