@@ -1,3 +1,5 @@
+let latestConfirmTime = null
+
 function install (app, api) {
   api.ipc.on('error.core', (event, message) => {
     console.error('view on error', message)
@@ -13,11 +15,17 @@ function install (app, api) {
 
 function handleServerStartError (message, err, app, api) {
   if (message.value === 'EADDRINUSE') {
+    // 避免重复弹窗
+    const now = Date.now()
+    if (latestConfirmTime != null && now - latestConfirmTime < 1000) {
+      return
+    }
+    latestConfirmTime = now
+
     app.$confirm({
       title: '端口被占用，代理服务启动失败',
       content: '是否要杀掉占用进程？您也可以点击取消，然后前往加速服务->基本设置中修改代理端口',
       onOk () {
-        // TODO 杀掉进程
         api.config.get().then((config) => {
           console.log('config:', config)
           api.shell.killByPort({ port: config.server.port }).then((ret) => {

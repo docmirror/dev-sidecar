@@ -62,6 +62,7 @@ export default {
     },
     addExcludeIp () {
       this.excludeIpList.unshift({ key: '', value: 'true' })
+      this.focusFirst(this.$refs.excludeIpList)
     },
     delExcludeIp (item, index) {
       this.excludeIpList.splice(index, 1)
@@ -166,7 +167,7 @@ export default {
             <a-button type="primary" icon="plus" @click="addExcludeIp()" />
           </a-col>
         </a-row>
-        <a-row v-for="(item, index) of excludeIpList" :key="index" :gutter="10" class="fine-tuning">
+        <a-row v-for="(item, index) of excludeIpList" ref="excludeIpList" :key="index" :gutter="10" class="fine-tuning">
           <a-col :span="17">
             <MockInput v-model="item.key" class="mt-1" />
           </a-col>

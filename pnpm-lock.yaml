@@ -169,9 +169,6 @@ importers:
       dns-over-http:
         specifier: ^0.2.0
         version: 0.2.0
-      dns-over-tls:
-        specifier: ^0.0.9
-        version: 0.0.9
       is-browser:
         specifier: ^2.1.0
         version: 2.1.0
@@ -3044,9 +3041,6 @@ packages:
 
   dns-over-http@0.2.0:
     resolution: {integrity: sha512-K+SyN2L3ljxJ2MFtOv/vRS+3/YEMLvOuH7MrmO5ejaubi4w02/DLqzoK1kBGKlQrT9ND57pbapeDf+ue8AElEA==}
-
-  dns-over-tls@0.0.9:
-    resolution: {integrity: sha512-IdI/Qgku2KQPLtUBsC6HDdK6bWIZADQMOYWtqJzRivV5Z+EDKIVAaC+tWE6lJ9vn11qj5L39ZaIaTj/14Lzgkw==}
 
   dns-packet@4.2.0:
     resolution: {integrity: sha512-bn1AKpfkFbm0MIioOMHZ5qJzl2uypdBwI4nYNsqvhjsegBhcKJUlCrMPWLx6JEezRjxZmxhtIz/FkBEur2l8Cw==}
@@ -10552,10 +10546,6 @@ snapshots:
       random-int: 1.0.0
     transitivePeerDependencies:
       - supports-color
-
-  dns-over-tls@0.0.9:
-    dependencies:
-      dns-packet: 5.6.1
 
   dns-packet@4.2.0:
     dependencies:

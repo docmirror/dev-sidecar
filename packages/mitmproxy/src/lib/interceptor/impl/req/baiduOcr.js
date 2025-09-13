@@ -111,7 +111,7 @@ function checkIsLimitConfig (id, api) {
 module.exports = {
   name: 'baiduOcr',
   priority: 131,
-  requestIntercept (context, interceptOpt, req, res, ssl, next, matched) {
+  requestIntercept (context, interceptOpt, req, res, ssl, next) {
     const { rOptions, log } = context
 
     const headers = {

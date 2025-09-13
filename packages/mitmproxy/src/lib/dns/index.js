@@ -1,4 +1,5 @@
 const matchUtil = require('../../utils/util.match')
+const log = require('../../utils/util.log.server')
 const DNSOverPreSetIpList = require('./preset.js')
 const DNSOverHTTPS = require('./https.js')
 const DNSOverTLS = require('./tls.js')
@@ -27,7 +28,7 @@ module.exports = {
       if (type == null) {
         if (server.startsWith('https://') || server.startsWith('http://')) {
           type = 'https'
-        } else if (server.startsWith('tls://')) {
+        } else if (server.startsWith('tls://') || server.startsWith('dot://')) {
           type = 'tls'
         } else if (server.startsWith('tcp://')) {
           type = 'tcp'
@@ -47,7 +48,7 @@ module.exports = {
         }
 
         // 基于 https
-        dnsMap[provider] = new DNSOverHTTPS(provider, conf.cacheSize, preSetIpList, server)
+        dnsMap[provider] = new DNSOverHTTPS(provider, conf.cacheSize, preSetIpList, server, conf.sni || conf.servername)
       } else {
         // 获取DNS端口
         let port = conf.port
@@ -63,8 +64,8 @@ module.exports = {
 
         if (type === 'tls' || type === 'dot' || type === 'dns-over-tls') {
           // 基于 tls
-          dnsMap[provider] = new DNSOverTLS(provider, conf.cacheSize, preSetIpList, server, port, conf.servername)
-        } else if (type === 'tcp' || type === 'dns-over-tcp') {
+          dnsMap[provider] = new DNSOverTLS(provider, conf.cacheSize, preSetIpList, server, port, conf.sni || conf.servername)
+        } else if (type === 'tcp') {
           // 基于 tcp
           dnsMap[provider] = new DNSOverTCP(provider, conf.cacheSize, preSetIpList, server, port)
         } else {
@@ -72,10 +73,19 @@ module.exports = {
           dnsMap[provider] = new DNSOverUDP(provider, conf.cacheSize, preSetIpList, server, port)
         }
       }
+
+      if (conf.forSNI || conf.forSni) {
+        dnsMap.ForSNI = dnsMap[provider]
+      }
     }
 
     // 创建预设IP的DNS
     dnsMap.PreSet = new DNSOverPreSetIpList(preSetIpList)
+    if (dnsMap.ForSNI == null) {
+      dnsMap.ForSNI = dnsMap.PreSet
+    }
+
+    log.info(`设置SNI默认使用的DNS为 '${dnsMap.ForSNI.dnsName}'（注：当某个域名配置了SNI但未配置DNS时，将默认使用该DNS）`)
 
     return dnsMap
   },

@@ -142,6 +142,19 @@ export default {
       const dir = await this.$api.info.getLogDir()
       this.$api.ipc.openPath(dir)
     },
+    async focusFirst (ref) {
+      if (ref && ref.length != null) {
+        setTimeout(() => {
+          if (ref.length > 0) {
+            try {
+              ref[0].$el.querySelector('.ant-input').focus()
+            } catch (e) {
+              console.error('获取输入框焦点失败：', e)
+            }
+          }
+        }, 100)
+      }
+    },
     handleHostname (hostname) {
       if (this.isNotHostname(hostname)) {
         return ''

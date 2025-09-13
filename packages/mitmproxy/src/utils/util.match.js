@@ -1,5 +1,6 @@
 const lodash = require('lodash')
 const log = require('./util.log.server')
+const mergeApi = require('@docmirror/dev-sidecar/src/merge')
 
 function isMatched (url, regexp) {
   if (regexp === '.*' || regexp === '*' || regexp === 'true' || regexp === true) {
@@ -113,16 +114,6 @@ function merge (oldObj, newObj) {
     }
   })
 }
-function deleteNullItems (target) {
-  lodash.forEach(target, (item, key) => {
-    if (item == null || item === '[delete]') {
-      delete target[key]
-    }
-    if (lodash.isObject(item)) {
-      deleteNullItems(item)
-    }
-  })
-}
 
 function matchHostnameAll (hostMap, hostname, action) {
   // log.debug('matchHostname-all:', action, hostMap)
@@ -150,10 +141,29 @@ function matchHostnameAll (hostMap, hostname, action) {
     // }
 
     // 正则表达式匹配
-    if (hostname.match(regexp)) {
+    const matched = hostname.match(regexp)
+    if (matched) {
       value = hostMap[regexp]
       log.debug(`matchHostname-one: ${action}: '${hostname}' -> { "${regexp}": ${JSON.stringify(value)} }`)
       values = merge(values, value)
+
+      // 设置matched
+      if (matched.length > 1) {
+        if (values.matched) {
+          // 合并array
+          matched.shift()
+          values.matched = [...values.matched, ...matched] // 拼接上多个matched
+
+          // 合并groups
+          if (matched.groups) {
+            values.matched.groups = merge(values.matched.groups, matched.groups)
+          } else {
+            values.matched.groups = matched.groups
+          }
+        } else {
+          values.matched = matched
+        }
+      }
     }
   }
 
@@ -178,7 +188,7 @@ function matchHostnameAll (hostMap, hostname, action) {
   }
 
   if (!lodash.isEmpty(values)) {
-    deleteNullItems(values)
+    mergeApi.deleteNullItems(values)
     log.info(`matchHostname-all: ${action}: '${hostname}':`, JSON.stringify(values))
     return values
   } else {

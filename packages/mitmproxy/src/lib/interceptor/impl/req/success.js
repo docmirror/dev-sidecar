@@ -5,10 +5,18 @@ module.exports = {
     const { rOptions, log } = context
 
     if (interceptOpt.success === true || interceptOpt.success === 'true') {
-      res.writeHead(200, {
+      const headers = {
         'Content-Type': 'text/plain; charset=utf-8',
         'DS-Interceptor': 'success',
-      })
+      }
+
+      // headers.Access-Control-Allow-*：避免跨域问题
+      if (rOptions.headers.origin) {
+        headers['Access-Control-Allow-Credentials'] = 'true'
+        headers['Access-Control-Allow-Origin'] = rOptions.headers.origin
+      }
+
+      res.writeHead(200, headers)
       res.write(
         'DevSidecar 200: Request success.\n\n'
         + '  This request is matched by success intercept.\n\n'

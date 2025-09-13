@@ -55,7 +55,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
 function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDirect = false, target = null) {
   // tunneling https
   // log.info('connect:', hostname, port)
-  const start = new Date()
+  const start = Date.now()
   const isDnsIntercept = {}
   const hostport = `${hostname}:${port}`
 
@@ -114,7 +114,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
     if (dnsConfig && dnsConfig.dnsMap) {
       const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
       if (dns) {
-        options.lookup = dnsLookup.createLookupFunc(null, dns, 'connect', hostport, isDnsIntercept)
+        options.lookup = dnsLookup.createLookupFunc(null, dns, 'connect', hostport, port, isDnsIntercept)
       }
     }
     // 代理连接事件监听
@@ -134,7 +134,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
       cltSocket.pipe(proxySocket)
     })
     proxySocket.on('timeout', () => {
-      const cost = new Date() - start
+      const cost = Date.now() - start
       const errorMsg = `${isDirect ? '直连' : '代理连接'}超时: ${hostport}, cost: ${cost} ms`
       log.error(errorMsg)
 
@@ -148,7 +148,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
     })
     proxySocket.on('error', (e) => {
       // 连接失败，可能被GFW拦截，或者服务端拥挤
-      const cost = new Date() - start
+      const cost = Date.now() - start
       const errorMsg = `${isDirect ? '直连' : '代理连接'}失败: ${hostport}, cost: ${cost} ms, errorMsg: ${e.message}`
       log.error(`${errorMsg}\r\n`, e)
 
