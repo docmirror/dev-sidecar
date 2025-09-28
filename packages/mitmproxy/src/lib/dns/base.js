@@ -6,7 +6,8 @@ const { DynamicChoice } = require('../choice/index')
 function mapToList (ipMap) {
   const ipList = []
   for (const key in ipMap) {
-    if (ipMap[key]) { // 配置为 ture 时才生效
+    const value = ipMap[key]
+    if (value && value !== 'false' && value !== '0') { // 配置为 ture 时才生效
       ipList.push(key)
     }
   }
