@@ -4,7 +4,7 @@
  *
  * @name            Github 增强 - 高速下载（Github油猴脚本）
  * @name:en         Github Enhancement - High Speed Download（Github Greasemonkey Script）
- * @version         2.6.29
+ * @version         2.6.30
  * @since           2025-09-04 11:24
  * @author          X.I.U
  * @description     High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
@@ -16,7 +16,7 @@
  * @homepageURL     https://github.com/XIU2/UserScript
  * @sourceURL       https://github.com/XIU2/UserScript/blob/master/GithubEnhanced-High-Speed-Download.user.js
  */
-const ds_github_monkey_version = "2.6.29_1";
+const ds_github_monkey_version = "2.6.30_1";
 document.addEventListener("DOMContentLoaded", () => {
 	const DS_init = (window.__ds_global__ || {})['DS_init']
 	if (typeof DS_init === 'function') {
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			['https://ghfast.top/https://github.com', '韩国', '[日本、韩国、新加坡、美国、德国等]（CDN 不固定） - 该公益加速源由 [ghproxy] 提供'],
 			//['https://gh.catmak.name/https://raw.githubusercontent.com', '韩国', '[韩国 首尔] - 该公益加速源由 [gh.catmak.name] 提供'],
 			['https://githubfast.com', '韩国', '[韩国] - 该公益加速源由 [Github Fast] 提供'],
-			['https://ghproxy.net/https://github.com', '日本', '[日本 大阪] - 该公益加速源由 [ghproxy.net] 提供'],
+			//['https://ghproxy.net/https://github.com', '日本', '[日本 大阪] - 该公益加速源由 [ghproxy.net] 提供'], // 挂了
 			//['https://proxy.yaoyaoling.net/https://github.com', '日本', '[日本 东京] - 该公益加速源由 [proxy.yaoyaoling.net] 提供'],
 			//['https://g.blfrp.cn/https://github.com', '日本', '[日本 东京] - 该公益加速源由 [g.blfrp.cn] 提供'],
 			//['https://github.3x25.com/https://github.com', '新加坡', '[新加坡] - 该公益加速源由 [github.3x25.com] 提供'],
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			//['https://raw.ihtw.moe/github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [raw.ihtw.moe] 提供'],
 			//['https://xget.xi-xu.me/gh', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [github.com/xixu-me/Xget] 提供'],
 			//['https://dgithub.xyz', '美国', '[美国 西雅图] - 该公益加速源由 [dgithub.xyz] 提供'],
-			//['https://gh-proxy.ygxz.in/https://github.com', '美国', '[美国 洛杉矶] - 该公益加速源由 [@一个小站 www.ygxz.in] 提供'],
+			//['https://gh-proxy.ygxz.in/https://github.com', '美国', '[美国 洛杉矶] - 该公益加速源由 [@一个小站 www.ygxz.in] 提供'], // 被蔷
 			//['https://hub.scholar.rr.nu', '美国', '[美国 纽约] - 该公益加速源由 [FastGit 群组成员] 提供'], // 证书到期
 		], clone_ssh_url = [
 			['ssh://git@ssh.github.com:443/', 'Github 原生', '[日本、新加坡等] - Github 官方提供的 443 端口的 SSH（依然是 SSH 协议），适用于限制访问 22 端口的网络环境'],
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			//['https://gitdl.cn/https://raw.githubusercontent.com', '香港 3', '[中国香港] - 该公益加速源由 [gitdl] 提供&#10;&#10; - 缓存：有'], // 输出文件错误
 			['https://ghfast.top/https://raw.githubusercontent.com', '韩国', '[日本、韩国、新加坡、美国、德国等]（CDN 不固定） - 该公益加速源由 [ghproxy.link] 提供&#10;&#10; - 缓存：无（或很短）'],
 			['https://gh.catmak.name/https://raw.githubusercontent.com', '韩国', '[韩国 首尔] - 该公益加速源由 [gh.catmak.name] 提供'],
-			['https://ghproxy.net/https://raw.githubusercontent.com', '日本 1', '[日本 大阪] - 该公益加速源由 [ghproxy.net] 提供&#10;&#10; - 缓存：有（约 10 分钟）'],
+			//['https://ghproxy.net/https://raw.githubusercontent.com', '日本 1', '[日本 大阪] - 该公益加速源由 [ghproxy.net] 提供&#10;&#10; - 缓存：有（约 10 分钟）'], // 挂了
 			['https://fastly.jsdelivr.net/gh', '日本 2', '[日本 东京] - 该公益加速源由 [JSDelivr CDN] 提供&#10;&#10; - 缓存：有&#10; - 不支持大小超过 50 MB 的文件&#10; - 不支持版本号格式的分支名（如 v1.2.3）'],
 			//['https://jsdelivr.pai233.top/gh', '日本 3', '[日本 东京]（Vercel Anycast） - 该公益加速源由 [blog.pai233.top] 提供&#10;&#10; - 缓存：有'], // This deployment is temporarily paused
 			//['https://proxy.yaoyaoling.net/https://raw.githubusercontent.com', '日本', '[日本 东京] - 该公益加速源由 [proxy.yaoyaoling.net] 提供'], // 空白
@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			//['https://gh-proxy.com/https://raw.githubusercontent.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [gh-proxy.com] 提供&#10;&#10; - 缓存：有'],
 			//['https://cdn.githubraw.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [githubraw.com] 提供&#10;&#10; - 缓存：有（几乎永久）'],
 			//['https://raw.dgithub.xyz', '美国', '[美国 西雅图] - 该公益加速源由 [dgithub.xyz] 提供&#10;&#10; - 缓存：无（或很短）'],
-			//['https://gh-proxy.ygxz.in//https://raw.githubusercontent.com', '美国', '[美国 洛杉矶] - 该公益加速源由 [@一个小站 www.ygxz.in] 提供&#10;&#10; - 缓存：无（或很短）'],
+			//['https://gh-proxy.ygxz.in//https://raw.githubusercontent.com', '美国', '[美国 洛杉矶] - 该公益加速源由 [@一个小站 www.ygxz.in] 提供&#10;&#10; - 缓存：无（或很短）'], // 被蔷
 			//['https://raw.nuaa.cf', '美国', '[美国 洛杉矶] - 该公益加速源由 [FastGit 群组成员] 提供'], // 证书到期
 			//['https://raw.yzuu.cf', '美国', '[美国 纽约] - 该公益加速源由 [FastGit 群组成员] 提供'], // 证书到期
 			//['https://hub.gitmirror.com/raw.githubusercontent.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [GitMirror] 提供&#10;&#10; - 缓存：无（或很短）'],
