@@ -8,11 +8,13 @@
 > Gitee上的同步项目已被封禁，请认准本项目唯一官方仓库地址[https://github.com/docmirror/dev-sidecar](https://github.com/docmirror/dev-sidecar) 【狗头保命】
 >
 > 我将继续奋战在开源一线，为社区贡献更多更好的开源项目。
+> 
 > 感兴趣的可以关注我的主页 [【github】](https://github.com/greper) [【gitee】](https://gitee.com/greper)
 
 ## 打个广告
 
 > [https://github.com/certd/certd](https://github.com/certd/certd)
+> 
 > 我的开源证书管理工具项目，全自动申请和部署证书，有需求的可以去试试，帮忙点个star
 
 ## 重要提醒
@@ -28,8 +30,11 @@
 > ------------------------------重要提醒2---------------------------------
 >
 > 注意：本应用启动会自动修改系统代理，所以会与其他代理软件有冲突，一起使用时请谨慎使用。
+> 
 > 与Watt Toolkit（原Steam++）共用时，请以hosts模式启动Watt Toolkit
+> 
 > 与TUN网卡模式运行的游戏加速器可以共用
+> 
 > 本应用主要目的在于直连访问github，如果你已经有飞机了，那建议还是不要用这个自行车（ds）了
 
 ## 一、 特性
@@ -60,6 +65,7 @@
 > 以上部分功能通过 `X.I.U` 的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
 >
 > - [https://github.com/XIU2/UserScript](https://github.com/XIU2/UserScript)
+> 
 > - [https://greasyfork.org/scripts/412245](https://greasyfork.org/scripts/412245)
 >
 > 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过 `加速服务->基本设置->启用脚本` 进行关闭）。
@@ -99,7 +105,7 @@
 > 
 > 其他Linux: 请选择DevSidecar-x.x.x-linux-[架构].AppImage (未做测试，不保证能用)
 
-> Linux安装说明请参考 [linux安装文档](https://github.com/docmirror/dev-sidecar/wiki/Linux支持)
+> linux安装说明请参考 [linux安装文档](./doc/linux.md)
 
 > 注意：由于没有买应用证书，所以应用在下载安装时会有“未知发行者”等安全提示，选择保留即可。
 
@@ -108,15 +114,16 @@
 界面应大致如下图所示：
 > 注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
-![](./doc/figures/open-after-installed.png)
+![](./doc/index.png)
 
 #### 3）安装根证书
 
 第一次打开会提示安装证书，根据提示操作即可
 
-更多有关根证书的说明，请参考 [为什么要安装根证书?](https://github.com/docmirror/dev-sidecar/wiki/关于信任根证书的说明)
+更多有关根证书的说明，请参考 [为什么要安装根证书?](./doc/caroot.md)
 
 > 根证书是本地随机生成的，所以不用担心根证书的安全问题（本应用不收集任何用户信息）
+> 
 > 你也可以在加速服务设置中自定义根证书（PEM格式的证书与私钥）
 
 > 火狐浏览器需要[手动安装证书](#3浏览器打开提示证书不受信任)
@@ -127,11 +134,11 @@
 
 ### 2.2、开启前 vs 开启后
 
-|          | 开启前                                 | 开启后                                                   |
-|----------|----------------------------------------|----------------------------------------------------------|
-| 头像     | ![](./doc/figures/avatar-before.png)   | ![](./doc/figures/avatar.png)                            |
-| clone    | ![](./doc/figures/clone-before.png)    | ![](./doc/figures/clone.png)                             |
-| zip 下载 | ![](./doc/figures/download-before.png) | ![](./doc/figures/download.png)秒下的，实在截不到速度的图 |
+|          | 开启前                         | 开启后                                           |
+| -------- | ------------------------------ | ----------------------------------------------- |
+| 头像     | ![](./doc/avatar2.png)         | ![](./doc/avatar1.png)                          |
+| clone    | ![](./doc/clone-before.png)    | ![](./doc/clone.png)                            |
+| zip 下载 | ![](./doc/download-before.png) | ![](./doc/download.png)秒下的，实在截不到速度的图 |
 
 ## 三、模式说明
 
@@ -141,7 +148,7 @@
 - 最安全，无需安装证书，可以在浏览器地址栏左侧查看域名证书
 - 功能也最弱，只有特性1，相当于查询github的国外ip，手动改hosts一个意思。
 - github的可访问性不稳定，取决于IP测速，如果有绿色ip存在，就 `有可能` 可以直连访问。
-  ![](./doc/figures/speed.png)
+  ![](./doc/speed.png)
 
 ### 3.2、默认模式
 
@@ -260,6 +267,7 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 如果有上面的错误提示，请尝试如下方法：
 
 > 取消访问偏好设置需要管理员密码
+> 
 > 系统偏好设置—>安全性与隐私—> 通用—> 高级—> 访问系统范围的偏好设置需要输入管理员密码（取消勾选）
 
 ### 6.2、没有加速效果
@@ -275,7 +283,7 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 
 ### 6.3、浏览器打开提示证书不受信任
 
-![](./doc/figures/crt-error.png)
+![](./doc/crt-error.png)
 一般是证书安装位置不对，重新安装根证书后，重启浏览器
 
 #### 1）windows: 请确认证书已正确安装在“信任的根证书颁发机构”下
@@ -307,7 +315,7 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 如果还是不行，请在下方加官方QQ群或提issue，附上服务日志（server.log）以便进行分析
 日志打开方式：加速服务->右边日志按钮->打开日志文件夹
 
-![](./doc/figures/log.png)
+![](./doc/log.png)
 
 ### 6.6、某些原本可以打开的网站打不开了
 
@@ -322,14 +330,14 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 对于此问题有如下几种解决方案可供选择：
 
 1. 重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）
-2. 如果应用被卸载了，此时需要[手动关闭系统代理设置](https://github.com/docmirror/dev-sidecar/wiki/恢复网络)
+2. 如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
 3. 如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启
 
 ### 6.8、卸载应用后上不了网，git请求不了
 
 如果你在卸载应用前，没有正常退出app，就有可能无法上网。请按如下步骤操作恢复您的网络：
 
-1、关闭系统代理设置，参见：[手动关闭系统代理设置](https://github.com/docmirror/dev-sidecar/wiki/恢复网络)
+1、关闭系统代理设置，参见：[手动关闭系统代理设置](./doc/recover.md)
 2、执行下面的命令关闭git的代理设置（如果你开启过 `Git.exe代理` 的开关）
 
 ```shell
@@ -347,7 +355,7 @@ npm config delete https-proxy
 
 ## 七、在其他程序使用
 
-- [java程序使用](https://github.com/docmirror/dev-sidecar/wiki/其他程序使用#Java程序使用)
+- [java程序使用](./doc/other.md#Java程序使用)
 
 ## 八、贡献代码
 
