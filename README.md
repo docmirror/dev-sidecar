@@ -354,6 +354,10 @@ npm config delete proxy
 npm config delete https-proxy
 ```
 
+### 6.9、其他问题
+
+请查阅[值得参考的issue](https://github.com/docmirror/dev-sidecar/issues?q=is%3Aissue%20label%3A%E5%85%B6%E4%BB%96%E7%94%A8%E6%88%B7%E5%8F%AF%E5%8F%82%E8%80%83)
+
 ## 七、在其他程序使用
 
 - [java程序使用](./doc/other.md#Java程序使用)
