@@ -91,12 +91,15 @@
 - release下载
   [Github Release](https://github.com/docmirror/dev-sidecar/releases)
 
-> Windows: 请选择DevSidecar-x.x.x.exe
-> Mac: 请选择DevSidecar-x.x.x.dmg
-> Ubuntu: 请选择DevSidecar-x.x.x.deb
-> 其他linux: 请选择DevSidecar-x.x.x.AppImage (未做测试，不保证能用)
+> Windows: 请选择DevSidecar-x.x.x-windows-universal.exe 
+> 
+> Mac: 请选择DevSidecar-x.x.x-macos-universal.dmg 
+> 
+> Debian系及其他支持deb安装包的Linux: 请选择DevSidecar-x.x.x-linux-[架构].deb 
+> 
+> 其他Linux: 请选择DevSidecar-x.x.x-linux-[架构].AppImage (未做测试，不保证能用)
 
-> linux安装说明请参考 [linux安装文档](https://github.com/docmirror/dev-sidecar/wiki/Linux支持)
+> Linux安装说明请参考 [linux安装文档](https://github.com/docmirror/dev-sidecar/wiki/Linux支持)
 
 > 注意：由于没有买应用证书，所以应用在下载安装时会有“未知发行者”等安全提示，选择保留即可。
 
@@ -134,7 +137,7 @@
 
 ### 3.1、安全模式
 
-- 此模式：关闭拦截、关闭增强、开启dns优选、开启测速
+- 此模式：关闭拦截、关闭增强、不使用远程配置、开启dns优选、开启测速
 - 最安全，无需安装证书，可以在浏览器地址栏左侧查看域名证书
 - 功能也最弱，只有特性1，相当于查询github的国外ip，手动改hosts一个意思。
 - github的可访问性不稳定，取决于IP测速，如果有绿色ip存在，就 `有可能` 可以直连访问。
@@ -142,7 +145,7 @@
 
 ### 3.2、默认模式
 
-- 此模式：开启拦截、关闭增强、开启dns优选、开启测速
+- 此模式：开启拦截、关闭增强、使用远程配置、开启dns优选、开启测速
 - 需要安装证书，通过修改sni直连访问github
 - 功能上包含特性1/2/3/4。
 
