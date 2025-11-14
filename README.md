@@ -83,8 +83,8 @@
 
 **_安全警告_**：
 
-- 请勿使用来源不明的服务地址，有隐私和账号泄露风险
-- 本应用及服务端承诺不收集任何信息。介意者请使用安全模式。
+- 请勿使用来源不明的服务/远程配置地址，有隐私和账号泄露风险
+- 本应用及服务/默认远程配置端承诺不收集任何信息。介意者请使用安全模式。
 
 ## 二、快速开始
 
@@ -186,6 +186,7 @@
 ### 5.1、拦截配置
 
 没有配置域名的不会拦截，其他根据配置进行拦截处理。
+
 在【加速服务-拦截设置】中配置，格式如下：（更多内容参见[wiki](https://github.com/docmirror/dev-sidecar/wiki/%E5%8A%A0%E9%80%9F%E6%9C%8D%E5%8A%A1%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)）
 
 ```jsonc
@@ -228,6 +229,7 @@
 ### 5.2、DNS优选配置
 
 某些域名解析出来的ip会无法访问，（比如api.github.com会被解析到新加坡的ip上，新加坡的服务器在上午挺好，到了晚上就卡死，基本不可用）
+
 通过从dns上获取ip列表，切换不同的ip进行尝试，最终会挑选到一个最快的ip（该功能需要事先配置好所用DNS），更多说明参见[wiki](https://github.com/docmirror/dev-sidecar/wiki/%E5%8A%A0%E9%80%9F%E6%9C%8D%E5%8A%A1%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
 
 ```json
@@ -314,6 +316,7 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 ### 6.5、查看日志是否有报错
 
 如果还是不行，请在下方加官方QQ群或提issue，附上服务日志（server.log）以便进行分析
+
 日志打开方式：加速服务->右边日志按钮->打开日志文件夹
 
 ![](./doc/log.png)
@@ -356,7 +359,9 @@ npm config delete https-proxy
 
 ### 6.9、其他问题
 
-请查阅[值得参考的issue](https://github.com/docmirror/dev-sidecar/issues?q=is%3Aissue%20label%3A%E5%85%B6%E4%BB%96%E7%94%A8%E6%88%B7%E5%8F%AF%E5%8F%82%E8%80%83)
+请查阅[wiki](https://github.com/docmirror/dev-sidecar/wiki)
+
+也可以查阅[有文档tag的issue](https://github.com/docmirror/dev-sidecar/issues?q=is%3Aissue%20label%3ADocumentation)，它们被开发者认证为相当于文档级别的参考issue。
 
 ## 七、在其他程序使用
 
