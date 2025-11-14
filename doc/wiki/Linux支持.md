@@ -40,7 +40,7 @@
 
 ### 1.4. 版本选择
 
-不同CPU架构，选择对应的版本，如果安装失败，请下载 `universal` 版本
+针对CPU架构，选择对应的版本。如果安装失败，请下载 `universal` 版本
 
 
 ## 二、证书安装
@@ -67,4 +67,4 @@
 
 证书文件目录为 `~/.dev-sidecar`
 
-![](../packages/gui/public/setup-linux.png)
+![setup-chrome-on-linux](../packages/gui/public/setup-chrome-on-linux.png)

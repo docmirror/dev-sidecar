@@ -5,7 +5,7 @@
 
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
 
-> Gitee上的同步项目已被封禁，此项目将不再更新与维护 【狗头保命】
+> Gitee上的同步项目已被封禁，请认准本项目唯一官方仓库地址[https://github.com/docmirror/dev-sidecar](https://github.com/docmirror/dev-sidecar) 【狗头保命】
 >
 > 我将继续奋战在开源一线，为社区贡献更多更好的开源项目。
 > 感兴趣的可以关注我的主页 [【github】](https://github.com/greper) [【gitee】](https://gitee.com/greper)
@@ -27,7 +27,9 @@
 
 > ------------------------------重要提醒2---------------------------------
 >
-> 注意：本应用启动会自动修改系统代理，所以会与其他代理软件有冲突，请务必不要一起使用。
+> 注意：本应用启动会自动修改系统代理，所以会与其他代理软件有冲突，一起使用时请谨慎使用。
+> 与Watt Toolkit（原Steam++）共用时，请以hosts模式启动Watt Toolkit
+> 与TUN网卡模式运行的游戏加速器可以共用
 > 本应用主要目的在于直连访问github，如果你已经有飞机了，那建议还是不要用这个自行车（ds）了
 
 ## 一、 特性
@@ -89,26 +91,30 @@
 - release下载
   [Github Release](https://github.com/docmirror/dev-sidecar/releases)
 
-> Windows: 请选择DevSidecar-x.x.x.exe
-> Mac: 请选择DevSidecar-x.x.x.dmg
-> Ubuntu: 请选择DevSidecar-x.x.x.deb
-> 其他linux: 请选择DevSidecar-x.x.x.AppImage (未做测试，不保证能用)
+> Windows: 请选择DevSidecar-x.x.x-windows-universal.exe 
+> 
+> Mac: 请选择DevSidecar-x.x.x-macos-universal.dmg 
+> 
+> Debian系及其他支持deb安装包的Linux: 请选择DevSidecar-x.x.x-linux-[架构].deb 
+> 
+> 其他Linux: 请选择DevSidecar-x.x.x-linux-[架构].AppImage (未做测试，不保证能用)
 
-> linux安装说明请参考 [linux安装文档](./doc/linux.md)
+> Linux安装说明请参考 [linux安装文档](https://github.com/docmirror/dev-sidecar/wiki/Linux支持)
 
 > 注意：由于没有买应用证书，所以应用在下载安装时会有“未知发行者”等安全提示，选择保留即可。
 
 #### 2）安装后打开
 
+界面应大致如下图所示：
 > 注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
-![](./doc/index.png)
+![](./doc/figures/open-after-installed.png)
 
 #### 3）安装根证书
 
 第一次打开会提示安装证书，根据提示操作即可
 
-更多有关根证书的说明，请参考 [为什么要安装根证书?](./doc/caroot.md)
+更多有关根证书的说明，请参考 [为什么要安装根证书?](https://github.com/docmirror/dev-sidecar/wiki/关于信任根证书的说明)
 
 > 根证书是本地随机生成的，所以不用担心根证书的安全问题（本应用不收集任何用户信息）
 > 你也可以在加速服务设置中自定义根证书（PEM格式的证书与私钥）
@@ -117,35 +123,35 @@
 
 #### 4）开始加速吧
 
-去试试打开github
+去试试打开github、huggingface、docker hub吧
 
 ### 2.2、开启前 vs 开启后
 
-|          | 开启前                         | 开启后                                            |
-| -------- | ------------------------------ | ------------------------------------------------- |
-| 头像     | ![](./doc/avatar2.png)         | ![](./doc/avatar1.png)                            |
-| clone    | ![](./doc/clone-before.png)    | ![](./doc/clone.png)                              |
-| zip 下载 | ![](./doc/download-before.png) | ![](./doc/download.png)秒下的，实在截不到速度的图 |
+|          | 开启前                                 | 开启后                                                   |
+|----------|----------------------------------------|----------------------------------------------------------|
+| 头像     | ![](./doc/figures/avatar-before.png)   | ![](./doc/figures/avatar.png)                            |
+| clone    | ![](./doc/figures/clone-before.png)    | ![](./doc/figures/clone.png)                             |
+| zip 下载 | ![](./doc/figures/download-before.png) | ![](./doc/figures/download.png)秒下的，实在截不到速度的图 |
 
 ## 三、模式说明
 
 ### 3.1、安全模式
 
-- 此模式：关闭拦截、关闭增强、开启dns优选、开启测速
+- 此模式：关闭拦截、关闭增强、不使用远程配置、开启dns优选、开启测速
 - 最安全，无需安装证书，可以在浏览器地址栏左侧查看域名证书
 - 功能也最弱，只有特性1，相当于查询github的国外ip，手动改hosts一个意思。
 - github的可访问性不稳定，取决于IP测速，如果有绿色ip存在，就 `有可能` 可以直连访问。
-  ![](./doc/speed.png)
+  ![](./doc/figures/speed.png)
 
 ### 3.2、默认模式
 
-- 此模式：开启拦截、关闭增强、开启dns优选、开启测速
+- 此模式：开启拦截、关闭增强、使用远程配置、开启dns优选、开启测速
 - 需要安装证书，通过修改sni直连访问github
 - 功能上包含特性1/2/3/4。
 
 ## 四、 最佳实践
 
-- 把dev-sidecar一直开着就行了（注意windows下开着ds重启电脑，会无法上网，重新打开ds即可。）
+- 把dev-sidecar一直开着就行了
 - 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被\*\*\*封杀的无效）
 
 ### 其他加速
@@ -172,10 +178,11 @@
 
 ### 5.1、拦截配置
 
-没有配置域名的不会拦截，其他根据配置进行拦截处理
+没有配置域名的不会拦截，其他根据配置进行拦截处理。
+在【加速服务-拦截设置】中配置，格式如下：（更多内容参见[wiki](https://github.com/docmirror/dev-sidecar/wiki/%E5%8A%A0%E9%80%9F%E6%9C%8D%E5%8A%A1%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)）
 
-```js
-const intercepts = {
+```jsonc
+{
   // 要拦截的域名
   'github.com': {
     // 需要拦截url的正则表达式
@@ -214,7 +221,7 @@ const intercepts = {
 ### 5.2、DNS优选配置
 
 某些域名解析出来的ip会无法访问，（比如api.github.com会被解析到新加坡的ip上，新加坡的服务器在上午挺好，到了晚上就卡死，基本不可用）
-通过从dns上获取ip列表，切换不同的ip进行尝试，最终会挑选到一个最快的ip
+通过从dns上获取ip列表，切换不同的ip进行尝试，最终会挑选到一个最快的ip（该功能需要事先配置好所用DNS），更多说明参见[wiki](https://github.com/docmirror/dev-sidecar/wiki/%E5%8A%A0%E9%80%9F%E6%9C%8D%E5%8A%A1%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
 
 ```json
 {
@@ -257,11 +264,8 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 
 ### 6.2、没有加速效果
 
-> 本应用仅支持https加速，请务必确认你访问的网站地址是https开头的
-
-1. 本应用仅支持https加速
-   请务必确认你访问的地址是https开头的
-   比如： [https://github.com/](https://github.com/)
+1. 本应用默认仅开启https加速，一般足够覆盖需求。
+    如果你访问的是仅支持http协议的网站，请手动在【系统代理】中打开【代理HTTP请求】
 2. 检查浏览器是否装了什么插件，与ds有冲突
 3. 检查是否安装了其他代理软件，与ds有冲突
 4. 请确认浏览器的代理设置为使用IE代理/或者使用系统代理状态
@@ -271,8 +275,8 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 
 ### 6.3、浏览器打开提示证书不受信任
 
-![](./doc/crt-error.png)
-一般是证书安装位置不对，重新安装证书后，重启浏览器
+![](./doc/figures/crt-error.png)
+一般是证书安装位置不对，重新安装根证书后，重启浏览器
 
 #### 1）windows: 请确认证书已正确安装在“信任的根证书颁发机构”下
 
@@ -281,9 +285,12 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 #### 3）火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书
 
 1. 火狐浏览器->选项->隐私与安全->证书->查看证书
+![](./doc/figures/Firefox/1.png)
 2. 证书颁发机构->导入
 3. 选择证书文件 `C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为 `~/.dev-sidecar` 目录）
+![](./doc/figures/Firefox/2.png)
 4. 勾选信任由此证书颁发机构来标识网站，确定即可
+![](./doc/figures/Firefox/3.png)
 
 ### 6.4、打开github显示连接超时
 
@@ -297,10 +304,10 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 
 ### 6.5、查看日志是否有报错
 
-如果还是不行，请在下方加作者好友，将服务日志发送给作者进行分析
+如果还是不行，请在下方加官方QQ群或提issue，附上服务日志（server.log）以便进行分析
 日志打开方式：加速服务->右边日志按钮->打开日志文件夹
 
-![](./doc/log.png)
+![](./doc/figures/log.png)
 
 ### 6.6、某些原本可以打开的网站打不开了
 
@@ -315,14 +322,14 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 对于此问题有如下几种解决方案可供选择：
 
 1. 重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）
-2. 如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
+2. 如果应用被卸载了，此时需要[手动关闭系统代理设置](https://github.com/docmirror/dev-sidecar/wiki/恢复网络)
 3. 如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启
 
 ### 6.8、卸载应用后上不了网，git请求不了
 
 如果你在卸载应用前，没有正常退出app，就有可能无法上网。请按如下步骤操作恢复您的网络：
 
-1、关闭系统代理设置，参见：[手动关闭系统代理设置](./doc/recover.md)
+1、关闭系统代理设置，参见：[手动关闭系统代理设置](https://github.com/docmirror/dev-sidecar/wiki/恢复网络)
 2、执行下面的命令关闭git的代理设置（如果你开启过 `Git.exe代理` 的开关）
 
 ```shell
@@ -340,7 +347,7 @@ npm config delete https-proxy
 
 ## 七、在其他程序使用
 
-- [java程序使用](./doc/other.md#Java程序使用)
+- [java程序使用](https://github.com/docmirror/dev-sidecar/wiki/其他程序使用#Java程序使用)
 
 ## 八、贡献代码
 
@@ -395,13 +402,13 @@ npm run electron:build
 
 欢迎bug反馈，需求建议，技术交流等
 
-1、 加群（请备注dev-sidecar，或简称DS）
+加官方QQ群（请备注dev-sidecar，或简称DS）
 
-- QQ 1群：390691483，人数：500 / 500（满）
-- QQ 2群：[667666069](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=n4nksr4sji93vZtD5e8YEHRT6qbh6VyQ&authKey=XKBZnzmoiJrAFyOT4V%2BCrgX5c13ds59b84g%2FVRhXAIQd%2FlAiilsuwDRGWJct%2B570&noverify=0&group_code=667666069)，人数：447 / 500
-- QQ 3群：419807815，人数：500 / 500（满）
-- QQ 4群：[438148299](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=i_NCBB5f_Bkm2JsEV1tLs2TkQ79UlCID&authKey=nMsVJbJ6P%2FGNO7Q6vsVUadXRKnULUURwR8zvUZJnP3IgzhHYPhYdcBCHvoOh8vYr&noverify=0&group_code=438148299)，人数：203 / 1000
-- QQ 5群：[767622917](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nAWi_Rxj7mM4Unp5LMiatmUWhGimtbcB&authKey=aswmlWGjbt3GIWXtvjB2GJqqAKuv7hWjk6UBs3MTb%2Biyvr%2Fsbb1kA9CjF6sK7Hgg&noverify=0&group_code=767622917)，人数：016 / 200（new）
+- QQ 1群：390691483，人数：498 / 500（满）
+- QQ 2群：[667666069](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=n4nksr4sji93vZtD5e8YEHRT6qbh6VyQ&authKey=XKBZnzmoiJrAFyOT4V%2BCrgX5c13ds59b84g%2FVRhXAIQd%2FlAiilsuwDRGWJct%2B570&noverify=0&group_code=667666069)，人数：499 / 500（满）
+- QQ 3群：419807815，人数：496 / 500（满）
+- QQ 4群：[438148299](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=i_NCBB5f_Bkm2JsEV1tLs2TkQ79UlCID&authKey=nMsVJbJ6P%2FGNO7Q6vsVUadXRKnULUURwR8zvUZJnP3IgzhHYPhYdcBCHvoOh8vYr&noverify=0&group_code=438148299)，人数：433 / 500
+- QQ 5群：[767622917](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nAWi_Rxj7mM4Unp5LMiatmUWhGimtbcB&authKey=aswmlWGjbt3GIWXtvjB2GJqqAKuv7hWjk6UBs3MTb%2Biyvr%2Fsbb1kA9CjF6sK7Hgg&noverify=0&group_code=767622917)，人数：145 / 200（new）
 
 ## 十、求star
 
