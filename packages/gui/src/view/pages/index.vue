@@ -50,6 +50,11 @@ export default {
       }
       return false
     },
+    githubStarBadgeUrl () {
+      // 生成每天更新一次的缓存键，减少API调用频率
+      const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+      return `https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github&cacheSeconds=86400&t=${today}`
+    },
   },
   async created () {
     await this.doCheckRootCa()
@@ -352,11 +357,10 @@ export default {
             如果它解决了你的问题，请不要吝啬你的star哟！点这里
             <a-icon style="margin-right:10px;" type="arrow-right" theme="outlined" />
           </div>
-          <a @click="openExternal('https://github.com/docmirror/dev-sidecar')">
-            <a-button type="primary" icon="star">
-              Star on GitHub
-            </a-button>
-          </a>
+          <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img
+            alt="GitHub stars"
+            :src="githubStarBadgeUrl"
+          ></a>
         </div>
       </div>
     </div>
