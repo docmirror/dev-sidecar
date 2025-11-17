@@ -1,0 +1,3 @@
+[submodule "packages/core/src/modules/plugin/free-eye"]
+    path = packages/core/src/modules/plugin/free-eye
+    url = https://github.com/cute-omega/free-eye
