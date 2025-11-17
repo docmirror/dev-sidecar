@@ -5,8 +5,8 @@ import matchUtil from '../src/utils/util.match.js'
 const presetIp = '100.100.100.100'
 const preSetIpList = matchUtil.domainMapRegexply({
   'xxx.com': [
-    presetIp
-  ]
+    presetIp,
+  ],
 })
 
 // 境外DNS测试
@@ -54,7 +54,6 @@ const dnsProviders = dns.initDNS({
   },
 }, preSetIpList)
 
-
 const hasPresetHostname = 'xxx.com'
 const noPresetHostname = 'yyy.com'
 
@@ -67,11 +66,9 @@ const hostname6 = 'gh2.docmirror.top'
 
 let ip
 
-
 console.log('\n--------------- test ForSNI ---------------\n')
 console.log(`===> test ForSNI: ${dnsProviders.ForSNI.dnsName}`, '\n\n')
 assert.strictEqual(dnsProviders.ForSNI, dnsProviders.quad9)
-
 
 console.log('\n--------------- test PreSet ---------------\n')
 ip = await dnsProviders.PreSet.lookup(hasPresetHostname)
@@ -83,7 +80,6 @@ ip = await dnsProviders.PreSet.lookup(noPresetHostname)
 console.log(`===> test PreSet: ${noPresetHostname} ->`, ip, '\n\n')
 console.log('\n\n')
 assert.strictEqual(ip, noPresetHostname) // 未预设IP，等于域名自己
-
 
 console.log('\n--------------- test udp ---------------\n')
 ip = await dnsProviders.cloudflareUdp.lookup(hasPresetHostname)
@@ -98,7 +94,6 @@ assert.strictEqual(dnsProviders.quad9Udp.dnsType, 'UDP')
 ip = await dnsProviders.quad9Udp.lookup(hostname1)
 console.log(`===> test quad9: ${hostname1} ->`, ip, '\n\n')
 
-
 console.log('\n--------------- test tcp ---------------\n')
 ip = await dnsProviders.cloudflareTcp.lookup(hasPresetHostname)
 assert.strictEqual(ip, presetIp) // test preset
@@ -111,7 +106,6 @@ console.log(`===> test cloudflare: ${hostname1} ->`, ip, '\n\n')
 assert.strictEqual(dnsProviders.quad9Tcp.dnsType, 'TCP')
 ip = await dnsProviders.quad9Tcp.lookup(hostname1)
 console.log(`===> test quad9: ${hostname1} ->`, ip, '\n\n')
-
 
 console.log('\n--------------- test https ---------------\n')
 ip = await dnsProviders.cloudflare.lookup(hasPresetHostname)
@@ -133,7 +127,6 @@ console.log(`===> test rubyfish: ${hostname1} ->`, ip, '\n\n')
 assert.strictEqual(dnsProviders.py233.dnsType, 'HTTPS')
 ip = await dnsProviders.py233.lookup(hostname1)
 console.log(`===> test py233: ${hostname1} ->`, ip, '\n\n')
-
 
 console.log('\n--------------- test TLS ---------------\n')
 ip = await dnsProviders.cloudflareTLS.lookup(hasPresetHostname)

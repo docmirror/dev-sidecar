@@ -27,8 +27,12 @@ export default {
       帮助中心
     </template>
     <template slot="header-right">
-      <a-button class="mr10" @click="openExternal('https://github.com/docmirror/dev-sidecar/issues/new/choose')">反馈问题</a-button>
-      <a-button class="mr10" icon="profile" @click="openLog()">查看日志</a-button>
+      <a-button class="mr10" @click="openExternal('https://github.com/docmirror/dev-sidecar/issues/new/choose')">
+        反馈问题
+      </a-button>
+      <a-button class="mr10" icon="profile" @click="openLog()">
+        查看日志
+      </a-button>
     </template>
 
     <div v-if="config" class="help-list">

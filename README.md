@@ -10,13 +10,13 @@
 > Gitee上的同步项目已被封禁，请认准本项目唯一官方仓库地址[https://github.com/docmirror/dev-sidecar](https://github.com/docmirror/dev-sidecar) 【狗头保命】
 >
 > 我将继续奋战在开源一线，为社区贡献更多更好的开源项目。
-> 
+>
 > 感兴趣的可以关注我的主页 [【github】](https://github.com/greper) [【gitee】](https://gitee.com/greper)
 
 ## 打个广告
 
 > [https://github.com/certd/certd](https://github.com/certd/certd)
-> 
+>
 > 我的开源证书管理工具项目，全自动申请和部署证书，有需求的可以去试试，帮忙点个star
 
 ## 重要提醒
@@ -32,11 +32,11 @@
 > ------------------------------重要提醒2---------------------------------
 >
 > 注意：本应用启动会自动修改系统代理，所以会与其他代理软件有冲突，一起使用时请谨慎使用。
-> 
+>
 > 与Watt Toolkit（原Steam++）共用时，请以hosts模式启动Watt Toolkit
-> 
+>
 > 与TUN网卡模式运行的游戏加速器可以共用
-> 
+>
 > 本应用主要目的在于直连访问github，如果你已经有飞机了，那建议还是不要用这个自行车（ds）了
 
 ## 一、 特性
@@ -67,7 +67,6 @@
 > 以上部分功能通过 `X.I.U` 的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
 >
 > - [https://github.com/XIU2/UserScript](https://github.com/XIU2/UserScript)
-> 
 > - [https://greasyfork.org/scripts/412245](https://greasyfork.org/scripts/412245)
 >
 > 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过 `加速服务->基本设置->启用脚本` 进行关闭）。
@@ -99,12 +98,12 @@
 - release下载
   [Github Release](https://github.com/docmirror/dev-sidecar/releases)
 
-> Windows: 请选择DevSidecar-x.x.x-windows-universal.exe 
-> 
-> Mac: 请选择DevSidecar-x.x.x-macos-universal.dmg 
-> 
-> Debian系及其他支持deb安装包的Linux: 请选择DevSidecar-x.x.x-linux-[架构].deb 
-> 
+> Windows: 请选择DevSidecar-x.x.x-windows-universal.exe
+>
+> Mac: 请选择DevSidecar-x.x.x-macos-universal.dmg
+>
+> Debian系及其他支持deb安装包的Linux: 请选择DevSidecar-x.x.x-linux-[架构].deb
+>
 > 其他Linux: 请选择DevSidecar-x.x.x-linux-[架构].AppImage (未做测试，不保证能用)
 
 > linux安装说明请参考 [linux安装文档](./doc/linux.md)
@@ -114,6 +113,7 @@
 #### 2）安装后打开
 
 界面应大致如下图所示：
+
 > 注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
 ![](./doc/index.png)
@@ -125,7 +125,7 @@
 更多有关根证书的说明，请参考 [为什么要安装根证书?](./doc/caroot.md)
 
 > 根证书是本地随机生成的，所以不用担心根证书的安全问题（本应用不收集任何用户信息）
-> 
+>
 > 你也可以在加速服务设置中自定义根证书（PEM格式的证书与私钥）
 
 > 火狐浏览器需要[手动安装证书](#3火狐浏览器火狐浏览器不走系统的根证书需要在选项中添加根证书)
@@ -136,10 +136,10 @@
 
 ### 2.2、开启前 vs 开启后
 
-|          | 开启前                         | 开启后                                           |
-| -------- | ------------------------------ | ----------------------------------------------- |
-| 头像     | ![](./doc/avatar2.png)         | ![](./doc/avatar1.png)                          |
-| clone    | ![](./doc/clone-before.png)    | ![](./doc/clone.png)                            |
+|          | 开启前                         | 开启后                                            |
+| -------- | ------------------------------ | ------------------------------------------------- |
+| 头像     | ![](./doc/avatar2.png)         | ![](./doc/avatar1.png)                            |
+| clone    | ![](./doc/clone-before.png)    | ![](./doc/clone.png)                              |
 | zip 下载 | ![](./doc/download-before.png) | ![](./doc/download.png)秒下的，实在截不到速度的图 |
 
 ## 三、模式说明
@@ -194,9 +194,9 @@
 ```jsonc
 {
   // 要拦截的域名
-  'github.com': {
+  "github.com": {
     // 需要拦截url的正则表达式
-    '/.*/.*/releases/download/': {
+    "/.*/.*/releases/download/": {
       // 拦截类型
       // redirect: url,          // 临时重定向（url会变，一些下载资源可以通过此方式配置）
       // proxy: url,             // 代理（url不会变，没有跨域问题）
@@ -205,24 +205,24 @@
       // cacheDays: 1,           // GET请求的使用缓存，单位：天（常用于一些静态资源）
       // options: true,          // OPTIONS请求直接返回成功请求（该功能存在一定风险，请谨慎使用）
       // optionsMaxAge: 2592000, // OPTIONS请求缓存时间，默认：2592000（一个月）
-      redirect: 'download.fastgit.org'
+      "redirect": "download.fastgit.org"
     },
-    '.*': {
-      proxy: 'github.com',
-      sni: 'baidu.com' // 修改sni，规避***握手拦截
+    ".*": {
+      "proxy": "github.com",
+      "sni": "baidu.com" // 修改sni，规避***握手拦截
     }
   },
-  'ajax.googleapis.com': {
-    '.*': {
-      proxy: 'ajax.loli.net', // 代理请求，url不会变
-      backup: ['ajax.proxy.ustclug.org'], // 备份，当前代理请求失败后，将会切换到备用地址
-      test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
-      replace: '/(.*)/xxx'// 当加速地址的链接和原链接不是完全相同时，可以通过正则表达式replace，此时proxy通过$1$2来重组url， proxy:'ajax.loli.net/xxx/$1'
+  "ajax.googleapis.com": {
+    ".*": {
+      "proxy": "ajax.loli.net", // 代理请求，url不会变
+      "backup": ["ajax.proxy.ustclug.org"], // 备份，当前代理请求失败后，将会切换到备用地址
+      "test": "ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js",
+      "replace": "/(.*)/xxx"// 当加速地址的链接和原链接不是完全相同时，可以通过正则表达式replace，此时proxy通过$1$2来重组url， proxy:'ajax.loli.net/xxx/$1'
     }
   },
-  'clients*.google.com': {
-    '.*': {
-      abort: true // 取消请求，被***封锁的资源，找不到替代，直接取消请求，快速失败，节省时间
+  "clients*.google.com": {
+    ".*": {
+      "abort": true // 取消请求，被***封锁的资源，找不到替代，直接取消请求，快速失败，节省时间
     }
   }
 }
@@ -271,13 +271,13 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 如果有上面的错误提示，请尝试如下方法：
 
 > 取消访问偏好设置需要管理员密码
-> 
+>
 > 系统偏好设置—>安全性与隐私—> 通用—> 高级—> 访问系统范围的偏好设置需要输入管理员密码（取消勾选）
 
 ### 6.2、没有加速效果
 
 1. 本应用默认仅开启https加速，一般足够覆盖需求。
-    如果你访问的是仅支持http协议的网站，请手动在【系统代理】中打开【代理HTTP请求】
+   如果你访问的是仅支持http协议的网站，请手动在【系统代理】中打开【代理HTTP请求】
 2. 检查浏览器是否装了什么插件，与ds有冲突
 3. 检查是否安装了其他代理软件，与ds有冲突
 4. 请确认浏览器的代理设置为使用IE代理/或者使用系统代理状态
@@ -298,12 +298,12 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 #### 3）火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书
 
 1. 火狐浏览器->选项->隐私与安全->证书->查看证书
-![](./doc/figures/Firefox/1.png)
+   ![](./doc/figures/Firefox/1.png)
 2. 证书颁发机构->导入
 3. 选择证书文件 `C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为 `~/.dev-sidecar` 目录）
-![](./doc/figures/Firefox/2.png)
+   ![](./doc/figures/Firefox/2.png)
 4. 勾选信任由此证书颁发机构来标识网站，确定即可
-![](./doc/figures/Firefox/3.png)
+   ![](./doc/figures/Firefox/3.png)
 
 ### 6.4、打开github显示连接超时
 

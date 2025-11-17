@@ -10,6 +10,7 @@ const status = {
   },
   plugin: {
     node: {},
+    free_eye: {},
   },
 }
 async function install (api) {

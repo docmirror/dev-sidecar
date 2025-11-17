@@ -21,27 +21,30 @@
 ### 1.3. 特殊的Linux系统（如Alpine和Chimera Linux）
 
 > 此处默认用户有较专业的Linux知识，故不详细描述，请参考并自行试验
+
 - 创建Debian（最方便且省空间）容器，可使用distrobox（推荐），接下来以此为例说明
 - 下载deb包并在容器内安装
 - 穿透系统设置：
-    在容器内 `/usr/bin/gsettings` 文件写入：
+  在容器内 `/usr/bin/gsettings` 文件写入：
 
-    ```bash
-    #!/bin/sh
-    distrobox-host-exec gsettings "$@"
-    ```
-    并设置可执行权限
+  ```bash
+  #!/bin/sh
+  distrobox-host-exec gsettings "$@"
+  ```
 
-    简化版命令（请在容器内执行）:
-    ```
-    echo -e '#!/bin/sh\ndistrobox-host-exec gsettings "$@"' >/usr/bin/gsettings
-    ```
+  并设置可执行权限
+
+  简化版命令（请在容器内执行）:
+
+  ```
+  echo -e '#!/bin/sh\ndistrobox-host-exec gsettings "$@"' >/usr/bin/gsettings
+  ```
+
 - 使用命令启动应用，使用“自动安装证书”功能，回到终端，找到输出里含有 `sudo` 的两句命令，复制到主系统执行，如失败（或使用其他证书系统），请自行安装证书，可参考 [议题 #204](https://github.com/docmirror/dev-sidecar/issues/204)
 
 ### 1.4. 版本选择
 
 不同CPU架构，选择对应的版本，如果安装失败，请下载 `universal` 版本
-
 
 ## 二、证书安装
 

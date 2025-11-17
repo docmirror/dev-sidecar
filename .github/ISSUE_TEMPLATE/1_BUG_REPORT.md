@@ -31,6 +31,7 @@ labels: Bug
 ```log
 
 ```
+
 </details>
 
 ### Ⅵ. 有必要时，请提供 `${user.home}/.dev-sidecar/running.json` 文件内容：
@@ -43,4 +44,5 @@ labels: Bug
 ```json
 
 ```
+
 </details>

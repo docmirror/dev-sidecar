@@ -9,6 +9,7 @@
    ```shell
    keytool -import -alias dev-sidecar -keystore "jdk路径\security\cacerts" -file 用户目录\.dev-sidecar\dev-sidecar.ca.crt
    ```
+
    默认密码为 `changeit`
 
 2. 启动时还需要设置参数，例：
@@ -19,9 +20,9 @@
 
 3. Gradle还需在`用户目录/.gradle/gradle.properties`创建配置文件：
 
-    ```properties
-    systemProp.http.proxyHost=localhost
-    systemProp.http.proxyPort=31181
-    systemProp.https.proxyHost=localhost
-    systemProp.https.proxyPort=31181
-    ```
+   ```properties
+   systemProp.http.proxyHost=localhost
+   systemProp.http.proxyPort=31181
+   systemProp.https.proxyHost=localhost
+   systemProp.https.proxyPort=31181
+   ```

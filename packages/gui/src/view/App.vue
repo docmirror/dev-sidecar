@@ -140,12 +140,13 @@ export default {
 <template>
   <a-config-provider :locale="locale">
     <div class="ds_layout" :class="themeClass">
-      <SearchBar ref="searchBar"
-                 :root="'#document'"
-                 :highlightClass="'search-bar-highlight'"
-                 :selectedClass="'selected-highlight'"
-                 :hiden.sync="hideSearchBar"
-                 style="inset:auto auto 53px 210px; background-color:#ddd"
+      <SearchBar
+        ref="searchBar"
+        root="#document"
+        highlight-class="search-bar-highlight"
+        selected-class="selected-highlight"
+        :hiden.sync="hideSearchBar"
+        style="inset:auto auto 53px 210px; background-color:#ddd"
       />
       <a-layout>
         <a-layout-sider :theme="theme" style="overflow-y: auto">
@@ -178,7 +179,7 @@ export default {
           </a-layout-content>
           <a-layout-footer>
             <div class="footer">
-              ©2020-2025 docmirror.cn by <a @click="openExternal('https://github.com/greper')">Greper</a>, <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>  <span>{{ info.version }}</span>
+              ©2020-2025 docmirror.cn by <a @click="openExternal('https://github.com/greper')">Greper</a>, <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>, <a @click="openExternal('https://github.com/cute-omega')">CuteOmega</a>  <span>{{ info.version }}</span>
             </div>
           </a-layout-footer>
         </a-layout>

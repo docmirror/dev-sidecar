@@ -123,7 +123,9 @@ export default {
       梯子
     </template>
     <template slot="header-right">
-      <a-button type="primary" @click="openExternal('https://github.com/docmirror/dev-sidecar-doc/blob/main/ow.md')">原理说明</a-button>
+      <a-button type="primary" @click="openExternal('https://github.com/docmirror/dev-sidecar-doc/blob/main/ow.md')">
+        原理说明
+      </a-button>
     </template>
 
     <div v-if="config">

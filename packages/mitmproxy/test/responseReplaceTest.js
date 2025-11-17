@@ -10,11 +10,16 @@ const res = {
 
 const proxyRes = {
   rawHeaders: [
-    'Content-Type', 'application/json; charset=utf-8',
-    'Content-Length', '2',
-    'ETag', 'W/"2"',
-    'Date', 'Thu, 01 Jan 1970 00:00:00 GMT',
-    'Connection', 'keep-alive',
+    'Content-Type',
+    'application/json; charset=utf-8',
+    'Content-Length',
+    '2',
+    'ETag',
+    'W/"2"',
+    'Date',
+    'Thu, 01 Jan 1970 00:00:00 GMT',
+    'Connection',
+    'keep-alive',
   ],
 }
 
@@ -32,11 +37,16 @@ console.log(headers)
 console.log(result)
 
 assert.deepStrictEqual(proxyRes.rawHeaders, [
-  'Content-Type', 'application/json; charset=utf-8',
-  'Content-Length', '3',
-  'ETag', 'W/"2"',
-  'Date', '',
-  'Connection', 'keep-alive'
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '3',
+  'ETag',
+  'W/"2"',
+  'Date',
+  '',
+  'Connection',
+  'keep-alive',
 ])
 assert.deepStrictEqual(headers, {
   xxx: 1,

@@ -3,6 +3,7 @@ export default function createMenus (app) {
     { title: 'NPM加速', path: '/plugin/node', icon: 'like' },
     { title: 'Git.exe代理', path: '/plugin/git', icon: 'github' },
     { title: 'PIP加速', path: '/plugin/pip', icon: 'bulb' },
+    { title: '网络检测', path: '/plugin/free-eye', icon: 'eye' },
   ]
   const menus = [
     { title: '首页', path: '/index', icon: 'home' },

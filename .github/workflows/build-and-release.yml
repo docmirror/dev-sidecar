@@ -97,12 +97,12 @@ jobs:
           echo "--------------------";
           pnpm install;
 
-      - name: 'test packages/core'
+      - name: test packages/core
         run: |
           cd packages/core;
           pnpm run test;
 
-      - name: 'test packages/mitmproxy'
+      - name: test packages/mitmproxy
         run: |
           cd packages/mitmproxy;
           pnpm run test;
@@ -129,7 +129,7 @@ jobs:
           dir || ls -lah;
 
       # Rename artifacts
-      - name: 'Rename artifacts - Windows'
+      - name: Rename artifacts - Windows
         if: ${{ matrix.os == 'windows' }}
         run: |
           cd packages/gui/dist_electron;
@@ -138,7 +138,7 @@ jobs:
           ren DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe;
           ren DevSidecar-${{ steps.package-info.outputs.version }}.exe       DevSidecar-${{ steps.package-info.outputs.version }}-windows-universal.exe;
           dir;
-      - name: 'Rename artifacts - Linux'
+      - name: Rename artifacts - Linux
         if: ${{ matrix.os == 'ubuntu' }}
         run: |
           cd packages/gui/dist_electron;
@@ -154,7 +154,7 @@ jobs:
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.AppImage;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.tar.gz   DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz;
           ls -lah;
-      - name: 'Rename artifacts - macOS'
+      - name: Rename artifacts - macOS
         if: ${{ matrix.os == 'macos' }}
         run: |
           cd packages/gui/dist_electron;
@@ -163,7 +163,7 @@ jobs:
           mv DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg  DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg;
           ls -lah;
 
-      #region Upload artifacts - Windows
+      # region Upload artifacts - Windows
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-windows-x64.exe'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
@@ -192,9 +192,9 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-windows-universal.exe
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}-windows-universal.exe'
           if-no-files-found: error
-      #endregion Upload artifacts - Windows
+      # endregion Upload artifacts - Windows
 
-      #region Upload artifacts - Linux
+      # region Upload artifacts - Linux
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-amd64.deb'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
@@ -216,7 +216,7 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.tar.gz
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.tar.gz'
           if-no-files-found: error
-      #-------------------------------------------------------------------------------------------------------------------------
+      # -------------------------------------------------------------------------------------------------------------------------
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
@@ -238,7 +238,7 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz'
           if-no-files-found: error
-      #-------------------------------------------------------------------------------------------------------------------------
+      # -------------------------------------------------------------------------------------------------------------------------
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb'
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'ubuntu' }}
@@ -260,7 +260,7 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz'
           if-no-files-found: error
-      #endregion Upload artifacts - Linux
+      # endregion Upload artifacts - Linux
 
       # Upload artifacts - macOS
       - name: 'Upload DevSidecar-${{ steps.package-info.outputs.version }}-macos-x64.dmg'
@@ -284,7 +284,6 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg'
           if-no-files-found: error
-
 
   # job 2
   download-and-release:
@@ -341,7 +340,7 @@ jobs:
         with:
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.tar.gz'
           path: release
-      #-------------------------------------------------------------------------------------------------------------------------
+      # -------------------------------------------------------------------------------------------------------------------------
       - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb'
         uses: actions/download-artifact@v4.1.8
         with:
@@ -357,7 +356,7 @@ jobs:
         with:
           name: 'DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz'
           path: release
-      #-------------------------------------------------------------------------------------------------------------------------
+      # -------------------------------------------------------------------------------------------------------------------------
       - name: 'Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb'
         uses: actions/download-artifact@v4.1.8
         with:
