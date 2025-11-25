@@ -219,6 +219,13 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.tar.gz
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.tar.gz"
           if-no-files-found: error
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.rpm"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.rpm
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.rpm"
+          if-no-files-found: error
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb"
         uses: actions/upload-artifact@v4.4.0
@@ -241,6 +248,13 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz"
           if-no-files-found: error
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm"
+          if-no-files-found: error
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb"
         uses: actions/upload-artifact@v4.4.0
@@ -262,6 +276,13 @@ jobs:
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz"
+          if-no-files-found: error
+      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm"
           if-no-files-found: error
       # endregion Upload artifacts - Linux
 
@@ -343,6 +364,11 @@ jobs:
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.tar.gz"
           path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.rpm"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x64.rpm"
+          path: release
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb"
         uses: actions/download-artifact@v4.1.8
@@ -359,6 +385,11 @@ jobs:
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz"
           path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm"
+          path: release
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb"
         uses: actions/download-artifact@v4.1.8
@@ -374,6 +405,11 @@ jobs:
         uses: actions/download-artifact@v4.1.8
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz"
+          path: release
+      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm"
           path: release
 
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-macos-x64.dmg"
