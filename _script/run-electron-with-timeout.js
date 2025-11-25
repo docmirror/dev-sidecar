@@ -2,9 +2,9 @@
 import { spawn } from 'node:child_process'
 import path from 'node:path'
 
-const timeoutMs = Number(process.env.ELECTRON_TIMEOUT_MS ?? 30 * 60 * 1000) // 30 minutes
-const workdir = path.resolve(process.argv[2] ?? 'packages/gui')
 const command = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const workdir = path.resolve(process.argv[2] ?? 'packages/gui')
+const timeoutMs = Number(process.argv[3] ?? 5) * 60 * 1000 // 5 minutes
 
 console.log(`Starting npm run electron in ${workdir} with ${timeoutMs / 60000} minute timeout...`)
 
@@ -31,7 +31,7 @@ child.on('exit', (code, signal) => {
     console.log('✅ 程序运行正常')
     process.exit(0)
   } else {
-    console.log('❌ 程序运行不正常')
+    console.log(`❌ 程序运行不正常 (code: ${code}, signal: ${signal})`)
     process.exit(1)
   }
 })

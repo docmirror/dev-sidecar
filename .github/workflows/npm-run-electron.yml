@@ -103,10 +103,6 @@ jobs:
       - name: npm run electron (auto-exit after 30min)
         run: |
           echo "======================================================================";
-          echo "npm run electron with timeout";
+          echo "electron with timeout";
           echo "--------------------";
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            powershell _script/run-electron-with-timeout.ps1
-          else
-            bash _script/run-electron-with-timeout.sh
-          fi
+          node _script/run-electron-with-timeout.js packages/gui 5
