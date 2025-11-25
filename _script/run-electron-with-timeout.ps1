@@ -14,7 +14,7 @@ while ($timer.Elapsed.TotalSeconds -lt $TimeoutSeconds) {
         Write-Host "❌ 程序运行不正常"
         exit 1
     }
-    Start-Sleep -Seconds 1
+    Start-Sleep -Seconds 60
 }
 
 if (!$process.HasExited) {
