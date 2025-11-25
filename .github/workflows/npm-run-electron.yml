@@ -100,7 +100,7 @@ jobs:
           echo "--------------------";
           pnpm install;
 
-      - name: npm run electron
+      - name: npm run electron (auto-exit after 30min)
         run: |
           echo "======================================================================";
           echo "cd packages/gui";
@@ -109,6 +109,10 @@ jobs:
           dir || ls -lah;
 
           echo "======================================================================";
-          echo "npm run electron";
+          echo "npm run electron with timeout";
           echo "--------------------";
-          npm run electron;
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            powershell scripts/run-electron-with-timeout.ps1
+          else
+            bash scripts/run-electron-with-timeout.sh
+          fi
