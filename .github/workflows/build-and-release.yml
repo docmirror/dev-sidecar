@@ -48,7 +48,7 @@ jobs:
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
         with:
-          path: ./packages/mitmproxy
+          path: ./packages/gui
 
       - name: Print
         run: |
@@ -74,7 +74,7 @@ jobs:
           echo "--------------------";
           python --version;
 
-      - name: Setup electron cahce
+      - name: Setup electron cache
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.cache/electron
@@ -82,7 +82,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-electron-cache-
 
-      - name: Setup electron-builder cahce
+      - name: Setup electron-builder cache
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.cache/electron-builder

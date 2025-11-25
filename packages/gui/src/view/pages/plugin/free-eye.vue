@@ -184,9 +184,6 @@ export default {
         </a-table>
 
         <a-collapse class="mb16">
-          <a-collapse-panel key="formatted-results" header="格式化结果">
-            <pre class="raw-json">{{ JSON.stringify(lastResult.results, null, 2) }}</pre>
-          </a-collapse-panel>
           <a-collapse-panel key="raw-logs" header="原始日志">
             <a-textarea
               class="raw-log-textarea"
@@ -194,6 +191,9 @@ export default {
               :autosize="{ minRows: 10 }"
               readonly
             />
+          </a-collapse-panel>
+          <a-collapse-panel key="formatted-results" header="格式化结果">
+            <pre class="raw-json">{{ JSON.stringify(lastResult.results, null, 2) }}</pre>
           </a-collapse-panel>
         </a-collapse>
       </div>

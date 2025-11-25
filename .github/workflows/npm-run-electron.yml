@@ -7,11 +7,11 @@ on:
       - test*
       - release*
     paths-ignore:
-      - '_script/**'
-      - 'doc/**'
-      - '**/*.md'
-      - '**/.gitignore'
-      - '**/LICENSE'
+      - "_script/**"
+      - "doc/**"
+      - "**/*.md"
+      - "**/.gitignore"
+      - "**/LICENSE"
 
 jobs:
   npm-run-electron:
@@ -49,7 +49,7 @@ jobs:
         if: matrix.os == 'macos'
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Print
         run: |
@@ -57,7 +57,7 @@ jobs:
           echo "github.ref = ${{ github.ref }}";
           echo "github.ref_name = ${{ github.ref_name }}";
 
-      - name: 'npm -v | pnpm -v | python --version'
+      - name: "npm -v | pnpm -v | python --version"
         run: |
           echo "======================================================================";
           echo "npm -v";
@@ -74,7 +74,7 @@ jobs:
           echo "--------------------";
           python --version;
 
-      - name: Setup electron cahce
+      - name: Setup electron cache
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.cache/electron
@@ -82,7 +82,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-electron-cache-
 
-      - name: Setup electron-builder cahce
+      - name: Setup electron-builder cache
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.cache/electron-builder
