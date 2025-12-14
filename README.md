@@ -443,6 +443,18 @@ cd $HOME/dev-sidecar/packages/gui
 NODE_OPTIONS="--require ${HOME:-/data/data/com.termux/files/home}/dev-sidecar/packages/gui/src/utils/os-network-fallback.cjs" \
 ELECTRON_FORCE_NO_SANDBOX=1 ELECTRON_NO_SANDBOX=1 ELECTRON_DISABLE_SANDBOX=1 \
 npm run electron
+
+或使用简化命令（在 packages/gui 目录下）：
+
+```bash
+pnpm run electron:termux
+```
+
+若需在 Termux 尝试打包（不保证成功，缺少桌面依赖时可能失败）：
+
+```bash
+pnpm run electron:build:termux
+```
 ```
 
 - 说明：
