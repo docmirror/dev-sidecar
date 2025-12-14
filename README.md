@@ -450,6 +450,13 @@ npm run electron
   - `os-network-fallback.cjs` 会在 `uv_interface_addresses` 权限受限时返回回环接口，避免 node-ipc 崩溃。
   - 若仍需沙箱，只能在支持 setuid 的环境或 root 下运行。
 
+#### 5）需要特权操作的说明
+
+- 部分操作需要系统管理员权限（例如释放占用端口、修改系统网络设置、在 Windows 上启用 Loopback 等）。
+- 若权限不足，请手动以管理员权限运行相关命令或以管理员身份启动应用；在容器/受限环境中仅能执行当前用户可用的操作。
+- 开发者可在代码中统一通过 `DevSidecar.api.shell.sudo`（核心实现见 `packages/core/src/shell/sudo.js`）封装处理。
+
+
 ### 8.2、开发调试模式启动
 
 运行如下命令即可开发模式启动

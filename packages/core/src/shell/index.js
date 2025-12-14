@@ -8,6 +8,7 @@ const setSystemEnv = require('./scripts/set-system-env')
 const setSystemProxy = require('./scripts/set-system-proxy')
 const setupCa = require('./scripts/setup-ca')
 const shell = require('./shell')
+const sudo = require('./sudo')
 
 module.exports = {
   killByPort,
@@ -19,6 +20,7 @@ module.exports = {
   setSystemProxy,
   enableLoopback,
   extraPath,
+  sudo,
   async exec (cmds, args) {
     return shell.getSystemShell().exec(cmds, args)
   },

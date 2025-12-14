@@ -1,19 +1,19 @@
 const Shell = require('../shell')
+const sudo = require('../sudo')
 
 const execute = Shell.execute
 
 const executor = {
-  async windows (exec, { certPath }) {
+  async windows(exec, { certPath }) {
     const cmds = [`start "" "${certPath}"`]
     await exec(cmds, { type: 'cmd' })
     return true
   },
-  async linux (exec, { certPath }) {
-    const cmds = [`sudo cp ${certPath} /usr/local/share/ca-certificates`, 'sudo update-ca-certificates ']
-    await exec(cmds)
+  async linux(exec, { certPath }) {
+    await sudo(`cp ${certPath} /usr/local/share/ca-certificates && update-ca-certificates`, { name: 'DevSidecar CA Install' })
     return true
   },
-  async mac (exec, { certPath }) {
+  async mac(exec, { certPath }) {
     const cmds = [`open "${certPath}"`]
     await exec(cmds, { type: 'cmd' })
     return true
