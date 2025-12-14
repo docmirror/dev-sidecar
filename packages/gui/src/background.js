@@ -1,5 +1,6 @@
 'use strict'
 /* global __static */
+import './utils/os-network-fallback'
 import path from 'node:path'
 import DevSidecar from '@docmirror/dev-sidecar'
 import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, protocol, Tray } from 'electron'
@@ -47,7 +48,7 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
 ])
 
-function openDevTools () {
+function openDevTools() {
   try {
     log.debug('尝试打开 `开发者工具`')
     win.webContents.openDevTools()
@@ -57,7 +58,7 @@ function openDevTools () {
   }
 }
 
-function closeDevTools () {
+function closeDevTools() {
   try {
     log.debug('尝试关闭 `开发者工具`')
     win.webContents.closeDevTools()
@@ -67,7 +68,7 @@ function closeDevTools () {
   }
 }
 
-function switchDevTools () {
+function switchDevTools() {
   if (!win || !win.webContents) {
     return
   }
@@ -79,7 +80,7 @@ function switchDevTools () {
 }
 
 // 隐藏主窗口，并创建托盘，绑定关闭事件
-function setTray () {
+function setTray() {
   // const topMenu = Menu.buildFromTemplate({})
   // Menu.setApplicationMenu(topMenu)
   // 用一个 Tray 来表示一个图标,这个图标处于正在运行的系统的通知区
@@ -148,7 +149,7 @@ function setTray () {
   return appTray
 }
 
-function checkHideWin () {
+function checkHideWin() {
   const config = DevSidecar.api.config.get()
 
   // 配置为false时，不需要校验
@@ -170,7 +171,7 @@ function checkHideWin () {
   return true
 }
 
-function hideWin (reason = '', needCheck = false) {
+function hideWin(reason = '', needCheck = false) {
   if (win) {
     if (needCheck && !checkHideWin()) {
       return
@@ -186,7 +187,7 @@ function hideWin (reason = '', needCheck = false) {
   }
 }
 
-function showWin () {
+function showWin() {
   if (win) {
     win.show()
   } else {
@@ -198,13 +199,13 @@ function showWin () {
   winIsHidden = false
 }
 
-function changeAppConfig (config) {
+function changeAppConfig(config) {
   if (config.hideDockWhenWinClose != null) {
     hideDockWhenWinClose = config.hideDockWhenWinClose
   }
 }
 
-function createWindow (startHideWindow, autoQuitIfError = true) {
+function createWindow(startHideWindow, autoQuitIfError = true) {
   // Create the browser window.
   const windowSize = DevSidecar.api.config.get().app.windowSize || {}
 
@@ -361,11 +362,11 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
   return true
 }
 
-async function beforeQuit () {
+async function beforeQuit() {
   log.info('before quit')
   return DevSidecar.api.shutdown()
 }
-async function quit (reason) {
+async function quit(reason) {
   log.info('app quit:', reason)
 
   if (tray) {
@@ -376,11 +377,11 @@ async function quit (reason) {
   app.quit()
 }
 
-function hasShortcut (showHideShortcut) {
+function hasShortcut(showHideShortcut) {
   return showHideShortcut && showHideShortcut.length > 1
 }
 
-function registerShowHideShortcut (showHideShortcut) {
+function registerShowHideShortcut(showHideShortcut) {
   globalShortcut.unregisterAll()
   if (hasShortcut(showHideShortcut)) {
     try {
@@ -407,7 +408,7 @@ function registerShowHideShortcut (showHideShortcut) {
   }
 }
 
-function initApp () {
+function initApp() {
   if (isMac) {
     app.whenReady().then(() => {
       app.dock.setIcon(path.join(__dirname, '../extra/icons/512x512-2.png'))

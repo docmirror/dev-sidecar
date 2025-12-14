@@ -8,7 +8,7 @@ const { fireError, fireStatus } = require('./utils/util.process')
 let servers = []
 
 const api = {
-  async start (config) {
+  async start(config) {
     const proxyOptions = ProxyOptions(config)
     const setting = config.setting
     if (setting) {
@@ -47,7 +47,7 @@ const api = {
 
     registerProcessListener()
   },
-  async close () {
+  async close() {
     return new Promise((resolve, reject) => {
       if (servers && servers.length > 0) {
         for (const server of servers) {
@@ -77,7 +77,7 @@ const api = {
   },
 }
 
-function registerProcessListener () {
+function registerProcessListener() {
   process.on('message', (msg) => {
     log.info('child get msg:', JSON.stringify(msg))
     if (msg.type === 'action') {
@@ -111,9 +111,10 @@ function registerProcessListener () {
   process.on('exit', (code, signal) => {
     log.info('代理服务进程被关闭:', code, signal)
   })
-  process.on('beforeExit', (code, signal) => {
-    log.info('Process beforeExit event with code: ', code, signal)
-  })
+  // Aviod keeping print log before exit
+  // process.on('beforeExit', (code, signal) => {
+  //   log.info('Process beforeExit event with code: ', code, signal)
+  // })
   process.on('SIGPIPE', (code, signal) => {
     log.warn('sub Process SIGPIPE', code, signal)
   })
