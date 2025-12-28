@@ -1046,7 +1046,7 @@ const defaultConfig = {
     proxy: {
       excludeDomesticDomainAllowList: true,
       autoUpdateDomesticDomainAllowList: true,
-      remoteDomesticDomainAllowListFileUrl: 'https://ghproxy.net/https://raw.githubusercontent.com/pluwen/china-domain-allowlist/main/allow-list.sorl',
+      remoteDomesticDomainAllowListFileUrl: 'https://xget.xi-xu.me/gh/pluwen/china-domain-allowlist/raw/main/allow-list.sorl',
       excludeIpList: {
         // Github文件上传所使用的域名，被DS代理会导致文件上传经常失败，从系统代理中排除掉
         'objects-origin.githubusercontent.com': true,

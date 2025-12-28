@@ -136,10 +136,10 @@
 
 ### 2.2、开启前 vs 开启后
 
-|          | 开启前                         | 开启后                                           |
-|----------|--------------------------------|--------------------------------------------------|
-| 头像     | ![](./doc/avatar2.png)         | ![](./doc/avatar1.png)                           |
-| clone    | ![](./doc/clone-before.png)    | ![](./doc/clone.png)                             |
+|          |             开启前             |                      开启后                      |
+|:--------:|:------------------------------:|:------------------------------------------------:|
+|   头像   |     ![](./doc/avatar2.png)     |              ![](./doc/avatar1.png)              |
+|  clone   |  ![](./doc/clone-before.png)   |               ![](./doc/clone.png)               |
 | zip 下载 | ![](./doc/download-before.png) | ![](./doc/download.png)秒下的，实在截不到速度的图 |
 
 ## 三、模式说明
@@ -386,7 +386,70 @@ npm install -g pnpm --registry=https://registry.npmmirror.com
 
 ```
 
-#### 3）Linux arm64 环境（Electron 安装提示）
+### 8.2、开发调试模式启动
+
+运行如下命令即可开发模式启动
+
+```shell
+# 拉取代码
+git clone https://github.com/docmirror/dev-sidecar
+
+cd dev-sidecar
+
+# 注意不要使用 `npm install` 来安装依赖，因为 `pnpm` 会自动安装依赖
+pnpm install
+
+# 运行DevSidecar
+cd packages/gui
+npm run electron
+
+```
+
+> 如果electron依赖包下载不动，可以开启ds的npm加速
+
+### 8.3、打包成可执行文件
+
+```shell
+# 先执行上面的步骤，然后运行如下命令打包成可执行文件
+npm run electron:build
+```
+
+### 8.4、常见问题
+
+1. phantomjs 下载失败（Electron 安装提示）
+
+如果在安装依赖时报错（以下以Windows平台为例）：
+
+```shell
+node_modules/.pnpm/electron@29.4.6/node_modules/electron: Running postinstall script...
+node_modules/.pnpm/phantomjs-prebuilt@2.1.16/node_modules/phantomjs-prebuilt: Running install script, failed in 226ms
+.../node_modules/phantomjs-prebuilt install$ node install.js
+│ PhantomJS not found on PATH
+│ Downloading https://github.com/Medium/phantomjs/releases/download/v2.1.1/phantomjs-2.1.1-windows.zip
+│ Saving to %TEMP%\phantomjs\phantomjs-2.1.1-windows.zip
+│ Receiving...
+│ Error making request.
+│ Error: [各种网络错误]
+```
+
+可尝试手动从显示的URL下载并移动到目标位置
+
+2. `electron: Running postinstall script...` 卡死
+
+形如以下情况下卡死，请耐心等待。**不要删除node_modules后重新安装！**
+
+```shell
+> pnpm i
+Scope: all 5 workspace projects
+Lockfile is up to date, resolution step is skipped
+Packages: +1631
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 1631, reused 1631, downloaded 0, added 0, done
+node_modules/.pnpm/electron@29.4.6/node_modules/electron: Running postinstall script...
+node_modules/.pnpm/phantomjs-prebuilt@2.1.16/node_modules/phantomjs-prebuilt: Running install script, done in 487ms
+```
+
+3. Linux arm64 环境下Electron 安装提示错误（本节内容由AI生成，仅供参考）
 
 如果你在 Linux arm64 上为 GUI 安装依赖遇到 Electron `postinstall` 崩溃（`double free or corruption`）或无法下载二进制，可按下面流程处理：
 
@@ -394,49 +457,46 @@ npm install -g pnpm --registry=https://registry.npmmirror.com
 
 - `phantomjs-prebuilt`: Unexpected platform or architecture: linux/arm64，postinstall 失败。
 - `electron` postinstall: double free or corruption (out) / Aborted (core dumped)。
+  1. 使用与 Electron 安装脚本兼容的 Node 版本（建议 LTS 18）：
 
-1. 使用与 Electron 安装脚本兼容的 Node 版本（建议 LTS 18）：
+  ```shell
+  nvm install 18.20.8
+  nvm use 18.20.8
+  corepack enable
+  ```
 
-```shell
-nvm install 18.20.8
-nvm use 18.20.8
-corepack enable
-```
+  2. 修改 `.npmrc` 文件，添加如下内容：
+  - `phantomjs_skip_download=true`：避免旧版 `phantomjs-prebuilt` 在 arm64/容器环境拉取二进制导致安装失败，建议保留。
+  3. 正常安装 GUI 依赖（脚本需要开启）：
 
-1. 正常安装 GUI 依赖（脚本需要开启）：
+  ```shell
+  pnpm install --filter @docmirror/dev-sidecar-gui
+  ```
 
-```shell
-pnpm install --filter @docmirror/dev-sidecar-gui
-```
+  4. 若依旧在下载阶段崩溃，可手动下载并解压 Electron 二进制：
 
-1. 若依旧在下载阶段崩溃，可手动下载并解压 Electron 二进制：
+  ```shell
+  electron_dir="$(pwd)/node_modules/.pnpm/electron@29.4.6/node_modules/electron"
+  rm -rf "$electron_dir/dist"
+  curl -L --retry 3 --retry-delay 2 -o /tmp/electron-v29.4.6-linux-arm64.zip \
+    https://github.com/electron/electron/releases/download/v29.4.6/electron-v29.4.6-linux-arm64.zip
+  unzip -q /tmp/electron-v29.4.6-linux-arm64.zip -d "$electron_dir/dist"
+  if [ -f "$electron_dir/dist/electron.d.ts" ]; then mv "$electron_dir/dist/electron.d.ts" "$electron_dir/electron.d.ts"; fi
+  printf 'electron' > "$electron_dir/path.txt"
+  ```
 
-```shell
-electron_dir="$(pwd)/node_modules/.pnpm/electron@29.4.6/node_modules/electron"
-rm -rf "$electron_dir/dist"
-curl -L --retry 3 --retry-delay 2 -o /tmp/electron-v29.4.6-linux-arm64.zip \
-  https://github.com/electron/electron/releases/download/v29.4.6/electron-v29.4.6-linux-arm64.zip
-unzip -q /tmp/electron-v29.4.6-linux-arm64.zip -d "$electron_dir/dist"
-if [ -f "$electron_dir/dist/electron.d.ts" ]; then mv "$electron_dir/dist/electron.d.ts" "$electron_dir/electron.d.ts"; fi
-printf 'electron' > "$electron_dir/path.txt"
-```
-
-1. 首次运行若提示 `chrome-sandbox` 权限问题，可在本地开发时关闭沙箱，或设置 SUID 权限：
+4. 运行时提示 `chrome-sandbox` 权限问题，可在本地开发时关闭沙箱：
 
 ```shell
 # 开发/调试禁用沙箱（无需 root）
-ELECTRON_NO_SANDBOX=1 pnpm -F @docmirror/dev-sidecar-gui run electron:serve
+ELECTRON_NO_SANDBOX=1 pnpm -F @docmirror/dev-sidecar-gui run electron
 
 # 或为 chrome-sandbox 设置 SUID（需要 root）
 sudo chown root:root "$electron_dir/dist/chrome-sandbox"
 sudo chmod 4755 "$electron_dir/dist/chrome-sandbox"
 ```
 
-> `.npmrc` 建议
->
-> - `phantomjs_skip_download=true`：避免旧版 `phantomjs-prebuilt` 在 arm64/容器环境拉取二进制导致安装失败，建议保留。
-
-#### 4）Termux/Android ARM64 运行 GUI（无 root）
+5. Termux/Android ARM64 运行 GUI（无 root）
 
 - 预加载网络接口兜底、强制关闭 Electron 沙箱（无需 root，使用 HOME 路径）：
 
@@ -458,48 +518,12 @@ pnpm run electron:termux
 pnpm run electron:build:termux
 ```
 
-````
-
 - 说明：
   - Termux 缺少 setuid 能力，必须关闭沙箱，否则会提示 chrome-sandbox 权限错误。
   - `os-network-fallback.cjs` 会在 `uv_interface_addresses` 权限受限时返回回环接口，避免 node-ipc 崩溃。
   - 若仍需沙箱，只能在支持 setuid 的环境或 root 下运行。
 
-#### 5）需要特权操作的说明
-
-- 部分操作需要系统管理员权限（例如释放占用端口、修改系统网络设置、在 Windows 上启用 Loopback 等）。
-- 若权限不足，请手动以管理员权限运行相关命令或以管理员身份启动应用；在容器/受限环境中仅能执行当前用户可用的操作。
-- 开发者可在代码中统一通过 `DevSidecar.api.shell.sudo`（核心实现见 `packages/core/src/shell/sudo.js`）封装处理。
-
-### 8.2、开发调试模式启动
-
-运行如下命令即可开发模式启动
-
-```shell
-# 拉取代码
-git clone https://github.com/docmirror/dev-sidecar
-
-cd dev-sidecar
-
-# 注意不要使用 `npm install` 来安装依赖，因为 `pnpm` 会自动安装依赖
-pnpm install
-
-# 运行DevSidecar
-cd packages/gui
-npm run electron
-
-````
-
-> 如果electron依赖包下载不动，可以开启ds的npm加速
-
-### 8.3、打包成可执行文件
-
-```shell
-# 先执行上面的步骤，然后运行如下命令打包成可执行文件
-npm run electron:build
-```
-
-### 8.4、提交pr
+### 8.5、提交pr
 
 如果你想将你的修改贡献出来，请提交pr
 
@@ -525,7 +549,7 @@ npm run electron:build
 
 ## 十一、感谢
 
-本项目使用lerna包管理工具
+本项目曾使用lerna包管理工具
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
@@ -538,6 +562,7 @@ npm run electron:build
 
 - [github增强油猴脚本](https://greasyfork.org/zh-CN/scripts/412245-github-%E5%A2%9E%E5%BC%BA-%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD) 本项目部分加速功能完全复制该脚本。
 - [中国域名白名单](https://github.com/pluwen/china-domain-allowlist)，本项目的系统代理排除域名功能中，使用了该白名单。
+- [gfwlist](https://github.com/gfwlist/gfwlist)，本项目的pac功能中，使用了该名单。
 
 本项目部分加速资源由如下组织提供
 
