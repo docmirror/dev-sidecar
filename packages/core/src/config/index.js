@@ -1162,12 +1162,16 @@ const defaultConfig = {
     },
     plugin: {
       overwall: {
+        serverDefault: {
+          'ow-prod.docmirror.top': {
+            port: 443,
+            path: 'X2dvX292ZXJfd2FsbF8',
+            password: 'dev_sidecar_is_666',
+          },
+        },
         targets: {
           '*.github.com': true,
           '*github*.com': true,
-          '*.gitbook.io': true,
-          '*.nodejs.org': true,
-          '*.npmjs.com': true,
           '*.wikimedia.org': true,
           '*.v2ex.com': true,
           '*.azureedge.net': true,
@@ -1193,6 +1197,9 @@ const defaultConfig = {
           '*.segment.io': true,
           '*.shields.io': true,
           '*.jsdelivr.net': true,
+          '*.gitbook.io': true,
+          '*.nodejs.org': true,
+          '*.npmjs.com': true,
           '*.z-library.sk': true,
           '*.zlibrary*.se': true,
 
@@ -1216,7 +1223,52 @@ const defaultConfig = {
           '*.cn-greasyfork.org': true,
         },
         pac: {
-          pacFileUpdateUrl: 'https://ghproxy.net/https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt',
+          enabled: true,
+          autoUpdate: true,
+          // 'https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt'
+          pacFileUpdateUrl: 'https://xget.xi-xu.me/gh/gfwlist/gfwlist/raw/master/gfwlist.txt',
+          pacFileAbsolutePath: null, // 自定义 pac.txt 文件位置，可以是本地文件路径
+          pacFilePath: './extra/pac/pac.txt', // 内置 pac.txt 文件路径
+        },
+      },
+      free_eye: {
+        Route: {
+          timeout: 0.1,
+          addrs: {
+            IPv4: '8.8.8.8',
+            IPv6: '2001:4860:4860::8888',
+          },
+          port: 53,
+        },
+        DNS: {
+          timeout: 3,
+          allow: ['baidu.cn', 'taobao.com', 'www.gov.cn'],
+          block: ['wikipedia.org', 'youtube.com', 'facebook.com'],
+        },
+        TCP: {
+          timeout: 3,
+          addrs: {
+            IPv4: {
+              allow: ['114.114.114.114', '223.6.6.6'],
+              block: ['8.8.8.8', '1.1.1.1'],
+            },
+            IPv6: {
+              allow: ['2402:4e00::', '2400:3200:baba::1'],
+              block: ['2001:4860:4860::8888', '2606:4700:4700::1111'],
+            },
+          },
+          ports: [80, 443],
+        },
+        TLS: {
+          timeout: 3,
+          addrs: {
+            IPv4: '172.67.148.147',
+            IPv6: '2606:4700:3036::ac43:9493',
+          },
+          snis: {
+            allow: 'baidu.cn',
+            block: 'wikipedia.org',
+          },
         },
       },
     },

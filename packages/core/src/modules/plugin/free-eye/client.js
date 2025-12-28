@@ -16,7 +16,7 @@ const printHeader = (utils && utils.printHeader) || (utils && utils.default && u
 const TEST_PACKAGE_DIR = 'checkpoints'
 const PLUGIN_RELATIVE_PATH = path.join('packages', 'core', 'src', 'modules', 'plugin', 'free-eye')
 
-function locatePluginRoot() {
+function locatePluginRoot () {
   const localConfig = path.join(__dirname, 'config.json')
   if (fs.existsSync(localConfig)) {
     return __dirname
@@ -40,7 +40,7 @@ function locatePluginRoot() {
 const PLUGIN_ROOT = locatePluginRoot()
 const pluginRequire = createRequire(path.join(PLUGIN_ROOT, 'index.js'))
 
-function resolveTestsDir(customDir) {
+function resolveTestsDir (customDir) {
   const fallbackDir = path.join(PLUGIN_ROOT, TEST_PACKAGE_DIR)
   if (!customDir) {
     return fallbackDir
@@ -52,7 +52,7 @@ function resolveTestsDir(customDir) {
   return fs.existsSync(candidate) ? candidate : fallbackDir
 }
 
-async function loadAllTests(globalConfig, testsDir) {
+async function loadAllTests (globalConfig, testsDir) {
   const tests = []
   const resolvedDir = resolveTestsDir(testsDir)
   if (!fs.existsSync(resolvedDir)) {
@@ -76,7 +76,7 @@ async function loadAllTests(globalConfig, testsDir) {
   return tests
 }
 
-function getNextTest(todoTests, doneTests) {
+function getNextTest (todoTests, doneTests) {
   for (const testCls of todoTests) {
     let allPrereqsDone = true
     for (const testTag of testCls.getPrereqs()) {
@@ -92,7 +92,7 @@ function getNextTest(todoTests, doneTests) {
   return null
 }
 
-async function runTests(options = {}) {
+async function runTests (options = {}) {
   const { configPath, testsDir } = options
   const preferredConfigPath = configPath && configPath.length > 0
     ? (path.isAbsolute(configPath) ? configPath : path.join(PLUGIN_ROOT, configPath))

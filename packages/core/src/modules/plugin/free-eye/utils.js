@@ -29,7 +29,7 @@ class LogColors {
 
 const DISPLAY_WIDTH = 50
 
-function printHeader(title, isRes) { // test start, test res
+function printHeader (title, isRes) { // test start, test res
   const sep = `\n${'='.repeat(DISPLAY_WIDTH)}\n`
   console.log(
     (isRes ? LogColors.MAGENTA : LogColors.CYAN)
@@ -38,7 +38,7 @@ function printHeader(title, isRes) { // test start, test res
   )
 }
 
-function getResultIcon(success, infoStr = null) {
+function getResultIcon (success, infoStr = null) {
   let resColor, resIcon
   if (success === true) {
     resColor = LogColors.GREEN
@@ -56,7 +56,7 @@ function getResultIcon(success, infoStr = null) {
   return `(${resColor}${resIcon}${LogColors.RESET})`
 }
 
-function getCensorsString(censors) {
+function getCensorsString (censors) {
   let resStr = ''
   if (censors && censors.length > 0) {
     for (const c of censors) {

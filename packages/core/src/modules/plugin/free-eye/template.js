@@ -9,7 +9,7 @@ class TestThread {
    * A single test that should be run in its own thread and
    * preempted when its timeout is reached
    */
-  constructor(func, args, logHdr, timeout, results) {
+  constructor (func, args, logHdr, timeout, results) {
     this.logHdr = logHdr
     this.log('Starting test...')
 
@@ -22,11 +22,11 @@ class TestThread {
     this.runPromise = this.run(func, args)
   }
 
-  log(s) {
+  log (s) {
     console.log(this.logHdr + s)
   }
 
-  async run(func, args) {
+  async run (func, args) {
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => {
         this.timeoutEvent.isSet = true
@@ -53,7 +53,7 @@ class TestGroup {
   /**
    * A group of related tests that can be run in parallel.
    */
-  constructor(globalConfig, globalResults, testTag) {
+  constructor (globalConfig, globalResults, testTag) {
     this.testTag = testTag
     this.startTime = performance.now()
     this.config = globalConfig[testTag]
@@ -67,25 +67,25 @@ class TestGroup {
   /**
    * Return a string identifying this test group
    */
-  static getTestTag() {
+  static getTestTag () {
     return ''
   }
 
   /**
    * Return the tags of other tests this test relies on
    */
-  static getPrereqs() {
+  static getPrereqs () {
     return []
   }
 
   /**
    * Return this test's default (i.e. all failed) results
    */
-  getDefaultResults() {
+  getDefaultResults () {
     return {}
   }
 
-  checkIfShouldSkip(globalResults) {
+  checkIfShouldSkip (globalResults) {
     /**
      * If earlier results indicate this test shouldn't be run
      * return a string indicating why (otherwise return null)
@@ -93,7 +93,7 @@ class TestGroup {
     return null
   }
 
-  async runTest() {
+  async runTest () {
     /**
      * Wait for all running test threads to complete or
      * timeout, then log the results and return a summary.
@@ -106,14 +106,14 @@ class TestGroup {
     return [testTime, testResults]
   }
 
-  async startTest() {
+  async startTest () {
     /**
      * Implemented by subclasses to create the test threads
      */
     // To be implemented by subclasses
   }
 
-  startTestThread(func, args, logTag, timeout) {
+  startTestThread (func, args, logTag, timeout) {
     /**
      * Create a new test thread in this test group
      */
@@ -123,7 +123,7 @@ class TestGroup {
     this.threads.push(thread)
   }
 
-  logResults() {
+  logResults () {
     /**
      * Log the results of the completed test threads and
      * return a string summarizing the results.
@@ -132,7 +132,7 @@ class TestGroup {
   }
 }
 
-function getClientTests() {
+function getClientTests () {
   /**
    * Return a list of TestGroup classes defined in this
    * module that clients should run

@@ -64,7 +64,7 @@ npm start
 
 如果你想编写自定义测试，只需实现 `template.js` 中描述的接口，将测试模块保存到 `checkpoints/` 目录，并在 `config.json` 中添加该测试的参数。
 
-# 相关项目
+## 相关项目
 
 本项目受到来自 [wallpunch/wizard](https://github.com/wallpunch/wizard) 的启发；
 用作 [docmirror/dev-sidecar](https://github.com/docmirror/dev-sidecar) 中的网络检测插件。

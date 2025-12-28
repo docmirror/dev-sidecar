@@ -220,7 +220,7 @@
         "*.onesignal.com": true, // pixiv站点，会加载该域名下的js脚本
       },
       pac: {
-        pacFileUpdateUrl: "https://raw.kkgithub.com/gfwlist/gfwlist/master/gfwlist.txt",
+        pacFileUpdateUrl: "https://xget.xi-xu.me/gh/gfwlist/gfwlist/raw/master/gfwlist.txt",
       },
     },
   },

@@ -113,7 +113,7 @@ const FreeEyePlugin = function (context) {
   }
 
   const api = {
-    async start() {
+    async start () {
       emitStatus(`${PLUGIN_STATUS_KEY}.enabled`, true)
       log.info('启动【FreeEye】插件')
       try {
@@ -124,26 +124,26 @@ const FreeEyePlugin = function (context) {
       }
     },
 
-    async close() {
+    async close () {
       emitStatus(`${PLUGIN_STATUS_KEY}.enabled`, false)
       log.info('关闭【FreeEye】插件')
     },
 
-    async restart() {
+    async restart () {
       await api.close()
       return api.start()
     },
 
-    isEnabled() {
+    isEnabled () {
       const pluginConfig = config.get().plugin.free_eye
       return pluginConfig && pluginConfig.enabled
     },
 
-    async run() {
+    async run () {
       return executeTests()
     },
 
-    async getLastResult() {
+    async getLastResult () {
       return lastResult
     },
   }

@@ -47,12 +47,11 @@ const ProxyPlugin = function (context) {
   }
   return api
 }
-const mainConfig = require('../../config')
+const proxyConfig = require('./config')
 
 module.exports = {
   key: 'proxy',
-  // 复用主配置里的 proxy 默认值，避免重复维护两份配置
-  config: mainConfig.proxy,
+  config: proxyConfig,
   status: {
     enabled: false,
     proxyTarget: '',
