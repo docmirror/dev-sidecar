@@ -1,6 +1,6 @@
-const lodash = require('lodash')
-const log = require('./util.log.server')
-const mergeApi = require('@docmirror/dev-sidecar/src/merge')
+import { each, isArray, isEmpty, mergeWith } from 'lodash'
+import log from './util.log.server'
+import { deleteNullItems } from '@docmirror/dev-sidecar/src/merge.js'
 
 function isMatched (url, regexp) {
   if (regexp === '.*' || regexp === '*' || regexp === 'true' || regexp === true) {
@@ -32,7 +32,7 @@ function domainMapRegexply (hostMap) {
   }
   const regexpMap = {}
   const origin = {} // 用于快速匹配，见matchHostname、matchHostnameAll方法
-  lodash.each(hostMap, (value, domain) => {
+  each(hostMap, (value, domain) => {
     try {
       // 将域名匹配串格式如 `.xxx.com` 转换为 `*.xxx.com`
       if (domain[0] === '.') {
@@ -108,8 +108,8 @@ function matchHostname (hostMap, hostname, action) {
 }
 
 function merge (oldObj, newObj) {
-  return lodash.mergeWith(oldObj, newObj, (objValue, srcValue) => {
-    if (lodash.isArray(objValue)) {
+  return mergeWith(oldObj, newObj, (objValue, srcValue) => {
+    if (isArray(objValue)) {
       return srcValue
     }
   })
@@ -187,8 +187,8 @@ function matchHostnameAll (hostMap, hostname, action) {
     values = merge(values, value)
   }
 
-  if (!lodash.isEmpty(values)) {
-    mergeApi.deleteNullItems(values)
+  if (!isEmpty(values)) {
+    deleteNullItems(values)
     log.info(`matchHostname-all: ${action}: '${hostname}':`, JSON.stringify(values))
     return values
   } else {
@@ -196,7 +196,7 @@ function matchHostnameAll (hostMap, hostname, action) {
   }
 }
 
-module.exports = {
+export default {
   isMatched,
   domainRegexply,
   domainMapRegexply,

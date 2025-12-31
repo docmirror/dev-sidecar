@@ -1,5 +1,5 @@
-const matchUtil = require('../../utils/util.match')
-const log = require('../../utils/util.log.server')
+const matchUtil = require('../../utils/util.match').default
+const log = require('../../utils/util.log.server').default
 const DNSOverPreSetIpList = require('./preset.js')
 const DNSOverHTTPS = require('./https.js')
 const DNSOverTLS = require('./tls.js')

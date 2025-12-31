@@ -1,6 +1,6 @@
 const fs = require('node:fs')
 const forge = require('node-forge')
-const log = require('../../../utils/util.log.server')
+const log = require('../../../utils/util.log.server').default
 const FakeServersCenter = require('../tls/FakeServersCenter')
 
 module.exports = function createFakeServerCenter ({

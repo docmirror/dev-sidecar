@@ -1,14 +1,7 @@
-/**
- * For IPv4+6 versions of TCP and UDP, see if:
- *  1) We can create a socket
- *  2) The system can route to a non-local address
- */
-
-const { createSocket } = require('node:dgram')
-const { createConnection } = require('node:net')
-
-const { TestGroup } = require('../template')
-const { FAMILY_VALUES, getResultIcon, PROTOCOL_VALUES } = require('../utils')
+import { createSocket } from 'node:dgram';
+import { createConnection } from 'node:net';
+import { TestGroup } from '../template.js';
+import { FAMILY_VALUES, getResultIcon, PROTOCOL_VALUES } from '../utils.js';
 
 const ROUTE_TEST_DGRAM = Buffer.from('122401000000000000000006676f6f676c6503636f6d0000010001', 'hex')
 
@@ -143,7 +136,7 @@ function getClientTests() {
   return [RouteTester]
 }
 
-module.exports = {
+export default {
   RouteTester,
   getClientTests,
-}
+};

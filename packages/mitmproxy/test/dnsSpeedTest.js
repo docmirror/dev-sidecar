@@ -1,8 +1,8 @@
-const dns = require('../src/lib/dns/index.js')
-const SpeedTest = require('../src/lib/speed/index.js')
-const SpeedTester = require('../src/lib/speed/SpeedTester.js')
+import { initDNS } from '../src/lib/dns/index.js'
+import { initSpeedTest } from '../src/lib/speed/index.js'
+import SpeedTester from '../src/lib/speed/SpeedTester.js'
 
-const dnsMap = dns.initDNS({
+const dnsMap = initDNS({
   cloudflare: {
     type: 'https',
     server: 'https://1.1.1.1/dns-query',
@@ -25,7 +25,7 @@ const dnsMap = dns.initDNS({
   // }
 })
 
-SpeedTest.initSpeedTest({ hostnameList: {}, dnsMap })
+initSpeedTest({ hostnameList: {}, dnsMap })
 
 const tester = new SpeedTester({ hostname: 'github.com' })
 tester.test().then(() => {

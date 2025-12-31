@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'Git.exe代理',
   enabled: false,
   tip: '如果你没有安装git命令行则不需要启动它',
@@ -10,4 +10,4 @@ module.exports = {
       'https://codeup.aliyun.com': true, // 云效 Codeup (阿里云)
     },
   },
-}
+};

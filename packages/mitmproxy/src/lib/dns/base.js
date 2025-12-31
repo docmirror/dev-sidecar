@@ -1,6 +1,6 @@
 const LRUCache = require('lru-cache')
-const log = require('../../utils/util.log.server')
-const matchUtil = require('../../utils/util.match')
+const log = require('../../utils/util.log.server').default
+const matchUtil = require('../../utils/util.match').default
 const { DynamicChoice } = require('../choice/index')
 
 function mapToList (ipMap) {

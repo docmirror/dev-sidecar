@@ -1,4 +1,4 @@
-const pipConfig = require('./config')
+import pipConfig from './config.js';
 
 const PipPlugin = function (context) {
   const { config, shell, event, log } = context
@@ -85,11 +85,11 @@ const PipPlugin = function (context) {
   return api
 }
 
-module.exports = {
+export default {
   key: 'pip',
   config: pipConfig,
   status: {
     enabled: false,
   },
   plugin: PipPlugin,
-}
+};

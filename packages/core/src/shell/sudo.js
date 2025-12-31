@@ -1,8 +1,8 @@
 'use strict'
 
-const os = require('node:os')
-const sudoPrompt = require('@vscode/sudo-prompt')
-const log = require('../utils/util.log.core')
+import os from 'node:os';
+import sudoPrompt from '@vscode/sudo-prompt';
+import log from '../utils/util.log.core.js';
 
 function sudo(command, options = {}) {
     const { name = 'DevSidecar', onStdout, onStderr } = options
@@ -27,4 +27,4 @@ function sudo(command, options = {}) {
     })
 }
 
-module.exports = sudo
+export default sudo;

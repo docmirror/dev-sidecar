@@ -1,15 +1,7 @@
-/**
- * FreeEye - People's eyesight should be free everywhere.
- *
- * Runs on end-user devices. Assesses the device's internet
- * connectivity, checks for signs of internet censorship,
- * and tests corresponding circumvention methods.
- */
-
-const fs = require('node:fs')
-const { createRequire } = require('node:module')
-const path = require('node:path')
-const utils = require('./utils')
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import utils from './utils.js';
 
 const printHeader = (utils && utils.printHeader) || (utils && utils.default && utils.default.printHeader)
 
@@ -173,4 +165,4 @@ if (require.main === module) {
   })
 }
 
-module.exports = { runTests }
+export default { runTests };

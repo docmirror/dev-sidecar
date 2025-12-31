@@ -1,9 +1,9 @@
-const fs = require('node:fs')
-const path = require('node:path')
-const clientModule = require('./client')
+import fs from 'node:fs';
+import path from 'node:path';
+import clientModule from './client.js';
 
 const runTests = (clientModule && (clientModule.runTests || (clientModule.default && clientModule.default.runTests)))
-const freeEyeConfig = require('./config')
+import freeEyeConfig from './config.js';
 
 const PLUGIN_STATUS_KEY = 'plugin.free_eye'
 
@@ -150,7 +150,7 @@ const FreeEyePlugin = function (context) {
   return api
 }
 
-module.exports = {
+export default {
   key: 'free_eye',
   config: freeEyeConfig,
   status: {
@@ -158,4 +158,4 @@ module.exports = {
     result: null,
   },
   plugin: FreeEyePlugin,
-}
+};

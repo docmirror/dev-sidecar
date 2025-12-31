@@ -1,5 +1,5 @@
-const loggerFactory = require('./util.logger')
+import loggerFactory from './util.logger.js';
 
 const logger = loggerFactory.getLogger('core')
 
-module.exports = logger
+export default logger;

@@ -47,9 +47,9 @@ const ProxyPlugin = function (context) {
   }
   return api
 }
-const proxyConfig = require('./config')
+import proxyConfig from './config.js';
 
-module.exports = {
+export default {
   key: 'proxy',
   config: proxyConfig,
   status: {
@@ -57,4 +57,4 @@ module.exports = {
     proxyTarget: '',
   },
   plugin: ProxyPlugin,
-}
+};

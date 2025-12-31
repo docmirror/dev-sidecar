@@ -71,4 +71,5 @@ function isNewVersion (onlineVersion, currentVersion, log = null) {
   }
 }
 
-module.exports = { isNewVersion }
+export { isNewVersion }
+export default { isNewVersion }

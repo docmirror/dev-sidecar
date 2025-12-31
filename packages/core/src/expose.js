@@ -1,10 +1,10 @@
-const lodash = require('lodash')
-const config = require('./config-api')
-const event = require('./event')
-const modules = require('./modules')
-const shell = require('./shell')
-const status = require('./status')
-const log = require('./utils/util.log.core')
+import lodash from 'lodash';
+import config from './config-api.js';
+import event from './event.js';
+import modules from './modules.js';
+import shell from './shell.js';
+import status from './status.js';
+import log from './utils/util.log.core.js';
 
 const context = {
   config,
@@ -137,7 +137,8 @@ const api = {
   plugin,
   log,
 }
-module.exports = {
+
+export default {
   status,
   api,
-}
+};

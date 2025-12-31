@@ -4,11 +4,11 @@ import DevSidecar from '@docmirror/dev-sidecar'
 import { ipcMain } from 'electron'
 import lodash from 'lodash'
 
-const jsonApi = require('@docmirror/mitmproxy/src/json')
+const jsonApi = require('@docmirror/mitmproxy/src/json.js')
 const pk = require('../../../package.json')
 const configFromFiles = require('@docmirror/dev-sidecar/src/config/index.js').configFromFiles
 const log = require('../../utils/util.log.gui')
-const dateUtil = require('@docmirror/dev-sidecar/src/utils/util.date')
+const dateUtil = require('@docmirror/dev-sidecar/src/utils/util.date.js')
 
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
 process.env.DS_EXTRA_PATH = path.join(__dirname, '../extra/')

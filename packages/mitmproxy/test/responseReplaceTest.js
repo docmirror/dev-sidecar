@@ -1,5 +1,5 @@
-const assert = require('node:assert')
-const responseReplace = require('../src/lib/interceptor/impl/res/responseReplace')
+import { deepStrictEqual } from 'node:assert'
+import { replaceResponseHeaders } from '../src/lib/interceptor/impl/res/responseReplace'
 
 const headers = {}
 const res = {
@@ -31,12 +31,12 @@ const newHeaders = {
   'yyy': '[remove]',
 }
 
-const result = responseReplace.replaceResponseHeaders(newHeaders, res, proxyRes)
+const result = replaceResponseHeaders(newHeaders, res, proxyRes)
 console.log(proxyRes.rawHeaders)
 console.log(headers)
 console.log(result)
 
-assert.deepStrictEqual(proxyRes.rawHeaders, [
+deepStrictEqual(proxyRes.rawHeaders, [
   'Content-Type',
   'application/json; charset=utf-8',
   'Content-Length',
@@ -48,10 +48,10 @@ assert.deepStrictEqual(proxyRes.rawHeaders, [
   'Connection',
   'keep-alive',
 ])
-assert.deepStrictEqual(headers, {
+deepStrictEqual(headers, {
   xxx: 1,
 })
-assert.deepStrictEqual(result, {
+deepStrictEqual(result, {
   'content-length': '2',
   'date': 'Thu, 01 Jan 1970 00:00:00 GMT',
   'xxx': null,

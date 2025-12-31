@@ -1,9 +1,6 @@
-// 尝试从核心统一配置中读取 free_eye 的配置并与本地默认合并
+import mainConfig from '../../../config.js';
 
-// 相对路径到 packages/core/src/config/index.js
-const mainConfig = require('../../../config')
-
-module.exports = {
+export default {
   name: '网络检测',
   statusOff: true,
   enabled: false,
@@ -18,4 +15,4 @@ module.exports = {
   },
   // 复用主配置里的 free_eye 默认值，避免重复维护两份配置
   ...mainConfig.plugin.free_eye,
-}
+};

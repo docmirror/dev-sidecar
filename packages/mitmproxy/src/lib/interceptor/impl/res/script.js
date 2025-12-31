@@ -1,7 +1,7 @@
 const monkey = require('../../../monkey')
 // const CryptoJs = require('crypto-js')
 const lodash = require('lodash')
-const log = require('../../../../utils/util.log.server')
+const log = require('../../../../utils/util.log.server').default
 
 const SCRIPT_URL_PRE = '/____ds_script____/' // 内置脚本的请求地址前缀
 const SCRIPT_PROXY_URL_PRE = '/____ds_script_proxy____/' // 绝对地址脚本的伪脚本地址前缀

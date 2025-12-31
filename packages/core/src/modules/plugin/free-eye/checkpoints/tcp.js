@@ -1,12 +1,6 @@
-/**
- * Test if can complete TCP handshakes (ports 80+443) with:
- *  - IPs known to be allowed
- *  - IPs known to be blocked
- */
-
-const { createConnection } = require('node:net')
-const { TestGroup } = require('../template')
-const { FAMILY_VALUES, getCensorsString, getResultIcon } = require('../utils')
+import { createConnection } from 'node:net';
+import { TestGroup } from '../template.js';
+import { FAMILY_VALUES, getCensorsString, getResultIcon } from '../utils.js';
 
 class TcpTester extends TestGroup {
   /**
@@ -164,7 +158,7 @@ function getClientTests() {
   return [TcpTester]
 }
 
-module.exports = {
+export default {
   TcpTester,
   getClientTests,
-}
+};

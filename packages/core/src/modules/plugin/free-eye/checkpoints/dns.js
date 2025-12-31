@@ -1,16 +1,7 @@
-/**
- * Using the system's DNS resolver, try resolving both
- * allowed and blocked hostnames.
- *
- * Also test blocked hostnames for DNS cache poisoning by
- * trying to resolve a long, random (nonexisting) subdomain
- */
-
-const { randomBytes } = require('node:crypto')
-const { promises: dns } = require('node:dns')
-
-const { TestGroup } = require('../template')
-const { FAMILY_VALUES, getCensorsString, getResultIcon } = require('../utils')
+import { randomBytes } from 'node:crypto';
+import { promises as dns } from 'node:dns';
+import { TestGroup } from '../template.js';
+import { FAMILY_VALUES, getCensorsString, getResultIcon } from '../utils.js';
 
 class DnsTester extends TestGroup {
   /**
@@ -155,7 +146,7 @@ function getClientTests() {
   return [DnsTester]
 }
 
-module.exports = {
+export default {
   DnsTester,
   getClientTests,
-}
+};

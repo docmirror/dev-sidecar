@@ -1,8 +1,4 @@
-/**
- * Defines the interface test modules must follow
- */
-
-const { performance } = require('node:perf_hooks')
+import { performance } from 'node:perf_hooks';
 
 class TestThread {
   /**
@@ -140,8 +136,8 @@ function getClientTests () {
   return []
 }
 
-module.exports = {
+export default {
   TestThread,
   TestGroup,
   getClientTests,
-}
+};

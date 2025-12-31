@@ -1,9 +1,9 @@
-const fs = require('node:fs')
-const path = require('node:path')
-const lodash = require('lodash')
-const jsonApi = require('@docmirror/mitmproxy/src/json')
-const mergeApi = require('../merge')
-const logOrConsole = require('../utils/util.log-or-console')
+import fs from 'node:fs'
+import path from 'node:path'
+import lodash from 'lodash'
+import jsonApi from '@docmirror/mitmproxy/src/json.js'
+import mergeApi from '../merge.js'
+import logOrConsole from '../utils/util.log-or-console.js'
 
 function getUserBasePath (autoCreate = true) {
   const userHome = process.env.USERPROFILE || process.env.HOME || '/'
@@ -110,7 +110,7 @@ function getConfigFromFiles (userConfig, defaultConfig) {
   return merged
 }
 
-module.exports = {
+export default {
   getUserBasePath,
 
   loadConfigFromFile,

@@ -1,4 +1,4 @@
-const loggerFactory = require('@docmirror/dev-sidecar/src/utils/util.logger')
+const loggerFactory = require('@docmirror/dev-sidecar/src/utils/util.logger.js')
 
 const logger = loggerFactory.getLogger('gui')
 

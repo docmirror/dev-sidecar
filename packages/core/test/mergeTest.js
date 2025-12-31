@@ -1,6 +1,6 @@
-const assert = require('node:assert')
-const lodash = require('lodash')
-const mergeApi = require('../src/merge.js')
+import assert from 'node:assert';
+import lodash from 'lodash';
+import mergeApi from '../src/merge.js';
 
 // 默认配置
 const defConfig = {

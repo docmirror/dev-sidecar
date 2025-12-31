@@ -1,5 +1,5 @@
-const jsonApi = require('@docmirror/mitmproxy/src/json')
-const nodeConfig = require('./config')
+import jsonApi from '@docmirror/mitmproxy/src/json.js';
+import nodeConfig from './config.js';
 
 const NodePlugin = function (context) {
   const { config, shell, event, log } = context
@@ -184,11 +184,11 @@ const NodePlugin = function (context) {
   return nodeApi
 }
 
-module.exports = {
+export default {
   key: 'node',
   config: nodeConfig,
   status: {
     enabled: false,
   },
   plugin: NodePlugin,
-}
+};

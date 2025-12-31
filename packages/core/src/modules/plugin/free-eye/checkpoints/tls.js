@@ -1,16 +1,7 @@
-/**
- * Test if can complete TLS handshakes (port 443) with an IP
- * address that is allowed but subject to censorship. Test:
- *  - Handshake without any SNI
- *  - An SNI known to be allowed
- *  - An SNI known to be blocked
- *  - A known blocked SNI, but with ClientHello fragmenting
- */
-
-const net = require('node:net')
-const tls = require('node:tls')
-const { TestGroup } = require('../template')
-const { FAMILY_VALUES, getCensorsString, getResultIcon, LogColors } = require('../utils')
+import net from 'node:net';
+import tls from 'node:tls';
+import { TestGroup } from '../template.js';
+import { FAMILY_VALUES, getCensorsString, getResultIcon, LogColors } from '../utils.js';
 
 const SNI_TEST_STRATEGIES = ['none', 'allow', 'block', 'frag']
 
@@ -193,7 +184,7 @@ function getClientTests() {
   return [TlsTester]
 }
 
-module.exports = {
+export default {
   TlsTester,
   getClientTests,
-}
+};

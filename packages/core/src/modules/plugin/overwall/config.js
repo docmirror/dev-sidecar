@@ -1,8 +1,7 @@
-// 相对路径到 packages/core/src/config/index.js
-const mainConfig = require('../../../config')
+import mainConfig from '../../../config.js';
 
-module.exports = {
+export default {
   name: '梯子',
   enabled: false, // 默认关闭梯子
   ...mainConfig.server.plugin.overwall,
-}
+};

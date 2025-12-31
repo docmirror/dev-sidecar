@@ -1,4 +1,4 @@
-const dateUtil = require('./util.date')
+import dateUtil from './util.date.js';
 
 let log = console
 
@@ -50,7 +50,7 @@ function _doLog (fun, args) {
   }
 }
 
-module.exports = {
+export default {
   setLogger (logger) {
     if (logger == null) {
       log.error('logger 不能为空')
@@ -86,4 +86,4 @@ module.exports = {
   error (...args) {
     _doLog('error', args)
   },
-}
+};

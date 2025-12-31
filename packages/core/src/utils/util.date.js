@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 
   format (date, needMill = true) {
     if (date == null) {
@@ -20,4 +20,4 @@ module.exports = {
     return this.format(new Date(), needMill)
   },
 
-}
+};

@@ -1,12 +1,12 @@
 const fork = require('node:child_process').fork
-const fs = require('node:fs')
-const path = require('node:path')
-const lodash = require('lodash')
-const config = require('../../config-api')
-const event = require('../../event')
-const status = require('../../status')
-const jsonApi = require('@docmirror/mitmproxy/src/json')
-const log = require('../../utils/util.log.core')
+import fs from 'node:fs';
+import path from 'node:path';
+import lodash from 'lodash';
+import config from '../../config-api.js';
+import event from '../../event.js';
+import status from '../../status.js';
+import jsonApi from '@docmirror/mitmproxy/src/json.js';
+import log from '../../utils/util.log.core.js';
 
 let server = null
 function fireStatus (status) {
@@ -173,4 +173,4 @@ const serverApi = {
     }
   },
 }
-module.exports = serverApi
+export default serverApi;

@@ -7,7 +7,7 @@ import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage,
 import minimist from 'minimist'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import backend from './bridge/backend'
-import jsonApi from '@docmirror/mitmproxy/src/json'
+import jsonApi from '@docmirror/mitmproxy/src/json.js'
 import log from './utils/util.log.gui'
 
 log.info(`background.js start, platform is ${process.platform}`)

@@ -1,5 +1,5 @@
 const http = require('node:http')
-const log = require('../../../utils/util.log.server')
+const log = require('../../../utils/util.log.server').default
 const speedTest = require('../../speed/index.js')
 const config = require('../common/config')
 const tlsUtils = require('../tls/tlsUtils')

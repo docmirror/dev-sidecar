@@ -1,7 +1,9 @@
-const Shell = require('../shell')
-const sudo = require('../sudo')
+import Shell from '../shell.js';
+import sudo from '../sudo.js';
 
 const execute = Shell.execute
+
+let _sudo = sudo
 
 const executor = {
   async windows(exec, { port }) {
@@ -10,17 +12,24 @@ const executor = {
     return true
   },
   async linux(exec, { port }) {
-    const pidCmd = `lsof -i:${port} |grep 'dev-sidecar\\|electron\\|@docmirro' |awk '{print $2}'`
-    await sudo(`kill \`${pidCmd}\``, { name: `KillByPort ${port}` })
+    const pidCmd = `lsof -i:${port} |grep 'dev-sidecar\|electron\|@docmirro' |awk '{print $2}'`
+    await _sudo(`kill \`${pidCmd}\``, { name: `KillByPort ${port}` })
     return true
   },
   async mac(exec, { port }) {
     const pidCmd = `lsof -i:${port} |grep 'dev-side\\|Elect' |awk '{print $2}'`
-    await sudo(`kill \`${pidCmd}\``, { name: `KillByPort ${port}` })
+    await _sudo(`kill \`${pidCmd}\``, { name: `KillByPort ${port}` })
     return true
   },
 }
 
-module.exports = async function (args) {
+export default async function (args) {
   return execute(executor, args)
+};
+
+// Testing helpers: allow tests to inject a fake sudo implementation
+export function __setSudo (newSudo) {
+  _sudo = newSudo
 }
+
+export { executor }

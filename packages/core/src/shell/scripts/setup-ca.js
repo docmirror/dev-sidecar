@@ -1,5 +1,5 @@
-const Shell = require('../shell')
-const sudo = require('../sudo')
+import Shell from '../shell.js';
+import sudo from '../sudo.js';
 
 const execute = Shell.execute
 
@@ -20,6 +20,6 @@ const executor = {
   },
 }
 
-module.exports = async function (args) {
+export default async function (args) {
   return execute(executor, args)
-}
+};

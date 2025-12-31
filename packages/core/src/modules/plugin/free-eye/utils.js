@@ -68,7 +68,7 @@ function getCensorsString (censors) {
   return resStr
 }
 
-module.exports = {
+export default {
   FAMILY_VALUES,
   PROTOCOL_VALUES,
   LogColors,
@@ -76,4 +76,4 @@ module.exports = {
   printHeader,
   getResultIcon,
   getCensorsString,
-}
+};

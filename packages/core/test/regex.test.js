@@ -1,5 +1,5 @@
-const assert = require('node:assert')
-const expect = require('chai').expect
+import assert from 'node:assert'
+import { expect } from 'chai'
 // eslint-disable-next-line no-undef
 describe('test', () => {
   // eslint-disable-next-line no-undef

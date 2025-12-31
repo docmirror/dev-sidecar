@@ -1,4 +1,4 @@
-const assert = require('node:assert')
+import assert from 'node:assert';
 
 // const childProcess = require('child_process')
 // const util = require('util')

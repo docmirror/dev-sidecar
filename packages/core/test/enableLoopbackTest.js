@@ -1,10 +1,11 @@
-const assert = require('node:assert')
-const enableLoopback = require('../src/shell/scripts/enable-loopback')
+import assert from 'node:assert';
+import enableLoopback from '../src/shell/scripts/enable-loopback.js'
+import os from 'node:os'
 
 // lightweight dispatch test: ensures function executes and throws on non-windows
 (async () => {
   // mock Shell.execute via requiring module uses actual execute; here we just call and expect error on linux/mac
-  const platform = require('node:os').platform()
+  const platform = os.platform()
   try {
     await enableLoopback({ port: 0 })
     if (platform === 'linux' || platform === 'darwin') {

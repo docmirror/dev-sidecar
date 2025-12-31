@@ -4,10 +4,10 @@ const path = require('node:path')
 const url = require('node:url')
 const lodash = require('lodash')
 const request = require('request')
-const log = require('../../../utils/util.log.server')
-const matchUtil = require('../../../utils/util.match')
+const log = require('../../../utils/util.log.server').default
+const matchUtil = require('../../../utils/util.match').default
 const pac = require('./source/pac')
-const dateUtil = require('@docmirror/dev-sidecar/src/utils/util.date')
+const dateUtil = require('@docmirror/dev-sidecar/src/utils/util.date.js')
 
 let pacClient = null
 
