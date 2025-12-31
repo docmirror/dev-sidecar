@@ -373,11 +373,11 @@ npm config delete https-proxy
 
 ### 8.1、准备环境
 
-#### 1）安装 `nodejs`
+1. 安装 `nodejs`
 
 推荐安装 nodejs `22.x.x` 的版本，其他版本未做测试
 
-#### 2）安装 `pnpm`
+2. 安装 `pnpm`
 
 运行如下命令即可安装所需依赖：
 
@@ -385,6 +385,16 @@ npm config delete https-proxy
 npm install -g pnpm --registry=https://registry.npmmirror.com
 
 ```
+
+3. 安装 `git`, `Python3`
+
+请根据你的操作系统，安装好 `git` 和 `python3` 环境并添加到环境变量。
+
+**Windows用户请注意**，Windows系统自带一个占位用的Python.exe别名，用以在必要时下载Microsoft Store中的Python应用；该python.exe不能完成实际的Python运行。建议在设置-应用-高级应用设置-应用执行别名中关闭【应用安装程序-python.exe】与【应用安装程序-python3.exe】，然后手动安装Python，避免冲突。必要时可使用`where.exe python`命令确认python.exe的路径，形如`C:\Users\Nobody\AppData\Local\Microsoft\WindowsApps\python.exe`的即为虚假占位文件。
+
+4. （对于Windows）安装Visual Studio MSVC Build Tools
+
+**注意截止目前（2025年12月28日），node-gyp对Visual Studio 2025/18的支持还不完善**，建议安装Visual Studio 2022的Build Tools。直接在Visual Studio Installer中选择“使用C++的桌面开发”工作负载进行安装即可。
 
 ### 8.2、开发调试模式启动
 
