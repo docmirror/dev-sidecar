@@ -2,7 +2,7 @@
  * Append .js to relative import/export/source literal specifiers that lack extension.
  * Skips node: and absolute/package imports and json/vue/css etc.
  */
-module.exports = function (fileInfo, api) {
+export default function (fileInfo, api) {
   const j = api.jscodeshift
   const root = j(fileInfo.source)
 
