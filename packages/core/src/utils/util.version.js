@@ -14,7 +14,7 @@ function parseVersion (version) {
  * @param log            日志对象
  * @returns {number} 比较线上版本号是否为更新的版本，大于0=是|0=相等|小于0=否|-999=出现异常，比较结果未知
  */
-export function isNewVersion (onlineVersion, currentVersion, log = null) {
+function isNewVersion (onlineVersion, currentVersion, log = null) {
   if (onlineVersion === currentVersion) {
     return 0
   }
@@ -70,3 +70,5 @@ export function isNewVersion (onlineVersion, currentVersion, log = null) {
     return -999 // 比对异常
   }
 }
+
+module.exports = { isNewVersion }
