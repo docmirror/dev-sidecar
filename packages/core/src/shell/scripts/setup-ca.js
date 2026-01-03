@@ -1,4 +1,5 @@
 const Shell = require('../shell')
+const sudoPrompt = require('@vscode/sudo-prompt')
 
 const execute = Shell.execute
 
@@ -8,10 +9,16 @@ const executor = {
     await exec(cmds, { type: 'cmd' })
     return true
   },
-  async linux (exec, { certPath }) {
-    const cmds = [`sudo cp ${certPath} /usr/local/share/ca-certificates`, 'sudo update-ca-certificates ']
-    await exec(cmds)
-    return true
+  linux (exec, { certPath }) {
+    return new Promise((resolve, reject) => {
+      sudoPrompt.exec(`cp ${certPath} /usr/local/share/ca-certificates && update-ca-certificates`, { name: 'SetupCa' }, (error) => {
+        if (error) {
+          reject(new Error(`安装根证书失败：${error.message}`))
+        } else {
+          resolve(true)
+        }
+      })
+    })
   },
   async mac (exec, { certPath }) {
     const cmds = [`open "${certPath}"`]
