@@ -9,7 +9,7 @@ import progress from 'request-progress'
 import pkg from '../../../package.json'
 import appPathUtil from '../../utils/util.apppath'
 import log from '../../utils/util.log.gui'
-import { isNewVersion } from '@docmirror/dev-sidecar/src/utils/util.version'
+import { isNewVersion } from '@docmirror/dev-sidecar/src/utils/util.version.js'
 
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'

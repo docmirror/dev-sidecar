@@ -1,5 +1,5 @@
-const expose = require('./expose.js')
-const log = require('./utils/util.log.core')
+import expose from './expose.js';
+import log from './utils/util.log.core.js';
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 // 避免异常崩溃
@@ -12,4 +12,4 @@ process.on('unhandledRejection', (reason, p) => {
   // application specific logging, throwing an error, or other logic here
 })
 
-module.exports = expose
+export default expose;

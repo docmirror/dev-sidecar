@@ -1,7 +1,4 @@
-/**
- * 设置环境变量
- */
-const Shell = require('../shell')
+import Shell from '../shell.js';
 
 const execute = Shell.execute
 
@@ -21,6 +18,6 @@ const executor = {
   },
 }
 
-module.exports = async function (args) {
+export default async function (args) {
   return execute(executor, args)
-}
+};

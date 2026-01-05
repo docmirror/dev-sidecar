@@ -1,70 +1,71 @@
+// 样例配置，仅作测试用途
 {
-  "server": {
-    "compatible": {
-      "connect": {
+  server: {
+    compatible: {
+      connect: {
         "218.18.106.132:443": {
-          "ssl": true
-        }
+          ssl: true,
+        },
       },
-      "request": {
+      request: {
         "218.18.106.132:443": {
-          "rejectUnauthorized": false
-        }
-      }
+          rejectUnauthorized: false,
+        },
+      },
     },
-    "intercepts": {
+    intercepts: {
       "github.com": {
         "^(/[\\w-.]+){2,}/?(\\?.*)?$": {
-          "tampermonkeyScript": "https://gitee.com/wangliang181230/dev-sidecar/raw/scripts/tampermonkey.js",
-          "script": "https://gitee.com/wangliang181230/dev-sidecar/raw/scripts/GithubEnhanced-High-Speed-Download.user.js"
+          tampermonkeyScript: "https://gitee.com/wangliang181230/dev-sidecar/raw/scripts/tampermonkey.js",
+          script: "https://gitee.com/wangliang181230/dev-sidecar/raw/scripts/GithubEnhanced-High-Speed-Download.user.js",
         },
         "^(/[^/]+){2}/releases/download/.*$": {
-          "redirect": "ghp.ci/https://github.com",
-          "desc": "release文件加速下载重定向地址"
+          redirect: "ghp.ci/https://github.com",
+          desc: "release文件加速下载重定向地址",
         },
         "^(/[^/]+){2}/archive/.*\\.(zip|tar.gz)$": {
-          "redirect": "ghp.ci/https://github.com",
-          "desc": "release源代码加速下载重定向地址"
+          redirect: "ghp.ci/https://github.com",
+          desc: "release源代码加速下载重定向地址",
         },
         "^((/[^/]+){2,})/raw((/[^/]+)+\\.(jpg|jpeg|png|gif))(\\?.*)?$": {
-          "sni": "baidu.com" // proxy拦截器不会使用 .* 中的sni配置，故补充此配置
+          sni: "baidu.com", // proxy拦截器不会使用 .* 中的sni配置，故补充此配置
         },
         "^((/[^/]+){2,})/raw((/[^/]+)+\\.js)(\\?.*)?$": {
-          "sni": "baidu.com" // proxy拦截器不会使用 .* 中的sni配置，故补充此配置
-        }
+          sni: "baidu.com", // proxy拦截器不会使用 .* 中的sni配置，故补充此配置
+        },
       },
       "api.github.com": {
         ".*": {
-          "sni": "baidu.com"
-        }
+          sni: "baidu.com",
+        },
       },
       "github.githubassets.com": {
         ".*": {
-          "sni": "baidu.com"
-        }
+          sni: "baidu.com",
+        },
       },
       "avatars.githubusercontent.com": {
         ".*": {
-          "sni": "baidu.com"
-        }
+          sni: "baidu.com",
+        },
       },
       "camo.githubusercontent.com": {
         ".*": {
-          "sni": "baidu.com"
-        }
+          sni: "baidu.com",
+        },
       },
       "collector.github.com": {
         ".*": {
-          "sni": "baidu.com"
-        }
+          sni: "baidu.com",
+        },
       },
       "www.gstatic.com": {
         "/recaptcha/.*": {
-          "proxy": "www.recaptcha.net"
-        }
-      }
+          proxy: "www.recaptcha.net",
+        },
+      },
     },
-    "preSetIpList": {
+    preSetIpList: {
       "github.com": [
         "4.237.22.38",
         "20.26.156.215",
@@ -78,28 +79,28 @@
         "140.82.116.3",
         "140.82.116.4",
         "140.82.121.3",
-        "140.82.121.4"
+        "140.82.121.4",
       ],
-      "hub.docker.com": null // 1.8.2版本中，该域名的预设IP有问题，现在远程配置中删除
+      "hub.docker.com": null, // 1.8.2版本中，该域名的预设IP有问题，现在远程配置中删除
     },
-    "dns": {
-      "mapping": {
+    dns: {
+      mapping: {
         "*.jetbrains.com": "quad9",
         "*.azureedge.net": "quad9",
-        "*.stackoverflow.com": "quad9"
+        "*.stackoverflow.com": "quad9",
       },
-      "speedTest": {
-        "interval": 300000
-      }
+      speedTest: {
+        interval: 300000,
+      },
     },
-    "whiteList": {
+    whiteList: {
       "*.icloud.com": true,
-      "*.lenovo.net": true
-    }
+      "*.lenovo.net": true,
+    },
   },
-  "proxy": {
-    "remoteDomesticDomainAllowListFileUrl": "https://raw.kkgithub.com/pluwen/china-domain-allowlist/main/allow-list.sorl",
-    "excludeIpList": {
+  proxy: {
+    remoteDomesticDomainAllowListFileUrl: "https://xget.xi-xu.me/gh/pluwen/china-domain-allowlist/raw/main/allow-list.sorl",
+    excludeIpList: {
       // Github文件上传所使用的域名，被DS代理会导致文件上传经常失败，从系统代理中排除掉
       "objects-origin.githubusercontent.com": true,
       // Github通过Actions上传的文件，下载时所需的域名，从系统代理中排除掉，否则下载会失败
@@ -169,12 +170,12 @@
       "*.youdemai.com": true,
       "*.casualthink.com": true,
       "44.239.165.12": true,
-      "3.164.110.117": true
-    }
+      "3.164.110.117": true,
+    },
   },
-  "plugin": {
-    "overwall": {
-      "targets": {
+  plugin: {
+    overwall: {
+      targets: {
         "*.github.com": true,
         "*github*.com": true,
         "*.nodejs.org": true,
@@ -216,11 +217,11 @@
         // Pixiv相关
         "*.pixiv.org": true,
         "*.fanbox.cc": true,
-        "*.onesignal.com": true // pixiv站点，会加载该域名下的js脚本
+        "*.onesignal.com": true, // pixiv站点，会加载该域名下的js脚本
       },
-      "pac": {
-        "pacFileUpdateUrl": "https://raw.kkgithub.com/gfwlist/gfwlist/master/gfwlist.txt"
-      }
-    }
-  }
+      pac: {
+        pacFileUpdateUrl: "https://xget.xi-xu.me/gh/gfwlist/gfwlist/raw/master/gfwlist.txt",
+      },
+    },
+  },
 }

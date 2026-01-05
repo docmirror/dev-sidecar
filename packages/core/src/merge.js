@@ -1,4 +1,4 @@
-const lodash = require('lodash')
+import lodash from 'lodash';
 
 /**
  * 找出 newObj 相对于 oldObj 有差异的部分
@@ -74,7 +74,7 @@ function deleteNullItems (target) {
   })
 }
 
-module.exports = {
+export default {
   doMerge (oldObj, newObj) {
     return lodash.mergeWith(oldObj, newObj, (objValue, srcValue) => {
       if (lodash.isArray(objValue)) {
@@ -84,4 +84,4 @@ module.exports = {
   },
   doDiff,
   deleteNullItems,
-}
+};

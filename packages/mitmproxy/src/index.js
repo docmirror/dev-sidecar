@@ -1,9 +1,20 @@
-const mitmproxy = require('./lib/proxy')
-const proxyConfig = require('./lib/proxy/common/config')
-const speedTest = require('./lib/speed/index.js')
-const ProxyOptions = require('./options')
-const log = require('./utils/util.log.server')
-const { fireError, fireStatus } = require('./utils/util.process')
+import proxyLib from './lib/proxy/index.js'
+import proxyConfig, { setDefaultCABasePath } from './lib/proxy/common/config.js'
+import speedTest from './lib/speed/index.js'
+import ProxyOptions from './options.js'
+import log from './utils/util.log.server.js'
+import utilProcess from './utils/util.process.js'
+
+const { createProxy } = proxyLib
+const { action } = speedTest
+const { fireError, fireStatus } = utilProcess
+const { info, error, warn } = log
+// const mitmproxy = require('./lib/proxy')
+// const proxyConfig = require('./lib/proxy/common/config')
+// const speedTest = require('./lib/speed/index.js')
+// const ProxyOptions = require('./options')
+// const log = require('./utils/util.log.server')
+// const { fireError, fireStatus } = require('./utils/util.process')
 
 let servers = []
 
@@ -13,7 +24,7 @@ const api = {
     const setting = config.setting
     if (setting) {
       if (setting.userBasePath) {
-        proxyConfig.setDefaultCABasePath(setting.userBasePath)
+        setDefaultCABasePath(setting.userBasePath)
       }
     }
 
@@ -23,7 +34,7 @@ const api = {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
     }
     // log.info('启动代理服务时的配置:', JSON.stringify(proxyOptions, null, '\t'))
-    const newServers = mitmproxy.createProxy(proxyOptions, (server, port, host, ssl) => {
+    const newServers = createProxy(proxyOptions, (server, port, host, ssl) => {
       fireStatus(true)
       log.info(`代理服务已启动：${host}:${port}, ssl: ${ssl}`)
     })
@@ -54,22 +65,22 @@ const api = {
           server.close((err) => {
             if (err && err.code !== 'ERR_SERVER_NOT_RUNNING') {
               if (err.code === 'ERR_SERVER_NOT_RUNNING') {
-                log.info('代理服务未运行，无需关闭')
+                info('代理服务未运行，无需关闭')
                 resolve()
               } else {
-                log.error('代理服务关闭失败:', err)
+                error('代理服务关闭失败:', err)
                 reject(err)
               }
               return
             }
 
-            log.info('代理服务关闭成功')
+            info('代理服务关闭成功')
             resolve()
           })
         }
         servers = []
       } else {
-        log.info('server is null, no need to close.')
+        info('server is null, no need to close.')
         fireStatus(false)
         resolve()
       }
@@ -79,16 +90,16 @@ const api = {
 
 function registerProcessListener () {
   process.on('message', (msg) => {
-    log.info('child get msg:', JSON.stringify(msg))
+    info('child get msg:', JSON.stringify(msg))
     if (msg.type === 'action') {
       api[msg.event.key](msg.event.params)
     } else if (msg.type === 'speed') {
-      speedTest.action(msg.event)
+      action(msg.event)
     }
   })
 
   process.on('SIGINT', () => {
-    log.info('on sigint : closed ')
+    info('on sigint : closed ')
     process.exit(0)
   })
 
@@ -98,28 +109,29 @@ function registerProcessListener () {
       //  log.error(err.errno)
       return
     }
-    log.error('Process uncaughtException:', err)
+    error('Process uncaughtException:', err)
   })
 
   process.on('unhandledRejection', (err, p) => {
-    log.info('Process unhandledRejection at: Promise', p, 'err:', err)
+    info('Process unhandledRejection at: Promise', p, 'err:', err)
     // application specific logging, throwing an error, or other logic here
   })
   process.on('uncaughtExceptionMonitor', (err, origin) => {
-    log.info('Process uncaughtExceptionMonitor:', err, origin)
+    info('Process uncaughtExceptionMonitor:', err, origin)
   })
   process.on('exit', (code, signal) => {
-    log.info('代理服务进程被关闭:', code, signal)
+    info('代理服务进程被关闭:', code, signal)
   })
-  process.on('beforeExit', (code, signal) => {
-    log.info('Process beforeExit event with code: ', code, signal)
-  })
+  // Aviod keeping print log before exit
+  // process.on('beforeExit', (code, signal) => {
+  //   log.info('Process beforeExit event with code: ', code, signal)
+  // })
   process.on('SIGPIPE', (code, signal) => {
-    log.warn('sub Process SIGPIPE', code, signal)
+    warn('sub Process SIGPIPE', code, signal)
   })
 }
 
-module.exports = {
+export default {
   ...api,
   config: proxyConfig,
   log,

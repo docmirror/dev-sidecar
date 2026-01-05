@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'PIP加速',
   statusOff: true,
   enabled: null, // 没有开关
@@ -10,4 +10,4 @@ module.exports = {
     trustedHost: 'pypi.org',
     registry: 'https://pypi.org/simple/', // 可以选择切换官方或者淘宝镜像
   },
-}
+};

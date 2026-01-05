@@ -1,14 +1,11 @@
-/**
- * 获取环境变量
- */
-const fs = require('node:fs')
-const path = require('node:path')
-const request = require('request')
-const Registry = require('winreg')
-const log = require('../../../utils/util.log.core')
-const Shell = require('../../shell')
-const extraPath = require('../extra-path')
-const dateUtil = require('../../../utils/util.date')
+import fs from 'node:fs';
+import path from 'node:path';
+import request from 'request';
+import Registry from 'winreg';
+import log from '../../../utils/util.log.core.js';
+import Shell from '../../shell.js';
+import extraPath from '../extra-path/index.js';
+import dateUtil from '../../../utils/util.date.js';
 
 const execute = Shell.execute
 const execFile = Shell.execFile
@@ -364,6 +361,6 @@ const executor = {
   },
 }
 
-module.exports = async function (args) {
+export default async function (args) {
   return execute(executor, args)
-}
+};

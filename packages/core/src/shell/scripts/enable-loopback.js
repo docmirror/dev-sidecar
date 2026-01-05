@@ -1,36 +1,14 @@
-/**
- */
-const Shell = require('../shell')
-const extraPath = require('./extra-path')
-const sudoPrompt = require('@vscode/sudo-prompt')
-const log = require('../../utils/util.log.core')
+import Shell from '../shell.js'
+import extraPath from './extra-path/index.js'
+import sudo from '../sudo.js'
 const execute = Shell.execute
 
 const executor = {
   windows (exec) {
     const loopbackPath = extraPath.getEnableLoopbackPath()
-    const sudoCommand = [`"${loopbackPath}"`]
+    const sudoCommand = `"${loopbackPath}"`
 
-    const options = {
-      name: 'EnableLoopback',
-    }
-    return new Promise((resolve, reject) => {
-      sudoPrompt.exec(
-        sudoCommand.join(' '),
-        options,
-        (error, _, stderr) => {
-          if (stderr) {
-            log.error(`[sudo-prompt] 发生错误: ${stderr}`)
-          }
-
-          if (error) {
-            reject(error)
-          } else {
-            resolve(undefined)
-          }
-        },
-      )
-    })
+    return sudo(sudoCommand, { name: 'EnableLoopback' })
   },
   async linux (exec, { port }) {
     throw new Error('不支持此操作')
@@ -40,6 +18,6 @@ const executor = {
   },
 }
 
-module.exports = async function (args) {
+export default async function (args) {
   return execute(executor, args)
-}
+};

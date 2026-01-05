@@ -10,13 +10,13 @@
 > Gitee上的同步项目已被封禁，请认准本项目唯一官方仓库地址[https://github.com/docmirror/dev-sidecar](https://github.com/docmirror/dev-sidecar) 【狗头保命】
 >
 > 我将继续奋战在开源一线，为社区贡献更多更好的开源项目。
-> 
+>
 > 感兴趣的可以关注我的主页 [【github】](https://github.com/greper) [【gitee】](https://gitee.com/greper)
 
 ## 打个广告
 
 > [https://github.com/certd/certd](https://github.com/certd/certd)
-> 
+>
 > 我的开源证书管理工具项目，全自动申请和部署证书，有需求的可以去试试，帮忙点个star
 
 ## 重要提醒
@@ -32,11 +32,11 @@
 > ------------------------------重要提醒2---------------------------------
 >
 > 注意：本应用启动会自动修改系统代理，所以会与其他代理软件有冲突，一起使用时请谨慎使用。
-> 
+>
 > 与Watt Toolkit（原Steam++）共用时，请以hosts模式启动Watt Toolkit
-> 
+>
 > 与TUN网卡模式运行的游戏加速器可以共用
-> 
+>
 > 本应用主要目的在于直连访问github，如果你已经有飞机了，那建议还是不要用这个自行车（ds）了
 
 ## 一、 特性
@@ -67,7 +67,6 @@
 > 以上部分功能通过 `X.I.U` 的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
 >
 > - [https://github.com/XIU2/UserScript](https://github.com/XIU2/UserScript)
-> 
 > - [https://greasyfork.org/scripts/412245](https://greasyfork.org/scripts/412245)
 >
 > 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过 `加速服务->基本设置->启用脚本` 进行关闭）。
@@ -99,12 +98,12 @@
 - release下载
   [Github Release](https://github.com/docmirror/dev-sidecar/releases)
 
-> Windows: 请选择DevSidecar-x.x.x-windows-universal.exe 
-> 
-> Mac: 请选择DevSidecar-x.x.x-macos-universal.dmg 
-> 
-> Debian系及其他支持deb安装包的Linux: 请选择DevSidecar-x.x.x-linux-[架构].deb 
-> 
+> Windows: 请选择DevSidecar-x.x.x-windows-universal.exe
+>
+> Mac: 请选择DevSidecar-x.x.x-macos-universal.dmg
+>
+> Debian系及其他支持deb安装包的Linux: 请选择DevSidecar-x.x.x-linux-[架构].deb
+>
 > 其他Linux: 请选择DevSidecar-x.x.x-linux-[架构].AppImage (未做测试，不保证能用)
 
 > linux安装说明请参考 [linux安装文档](./doc/linux.md)
@@ -114,6 +113,7 @@
 #### 2）安装后打开
 
 界面应大致如下图所示：
+
 > 注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
 ![](./doc/index.png)
@@ -125,7 +125,7 @@
 更多有关根证书的说明，请参考 [为什么要安装根证书?](./doc/caroot.md)
 
 > 根证书是本地随机生成的，所以不用担心根证书的安全问题（本应用不收集任何用户信息）
-> 
+>
 > 你也可以在加速服务设置中自定义根证书（PEM格式的证书与私钥）
 
 > 火狐浏览器需要[手动安装证书](#3火狐浏览器火狐浏览器不走系统的根证书需要在选项中添加根证书)
@@ -136,10 +136,10 @@
 
 ### 2.2、开启前 vs 开启后
 
-|          | 开启前                         | 开启后                                           |
-| -------- | ------------------------------ | ----------------------------------------------- |
-| 头像     | ![](./doc/avatar2.png)         | ![](./doc/avatar1.png)                          |
-| clone    | ![](./doc/clone-before.png)    | ![](./doc/clone.png)                            |
+|          |             开启前             |                      开启后                      |
+|:--------:|:------------------------------:|:------------------------------------------------:|
+|   头像   |     ![](./doc/avatar2.png)     |              ![](./doc/avatar1.png)              |
+|  clone   |  ![](./doc/clone-before.png)   |               ![](./doc/clone.png)               |
 | zip 下载 | ![](./doc/download-before.png) | ![](./doc/download.png)秒下的，实在截不到速度的图 |
 
 ## 三、模式说明
@@ -194,9 +194,9 @@
 ```jsonc
 {
   // 要拦截的域名
-  'github.com': {
+  "github.com": {
     // 需要拦截url的正则表达式
-    '/.*/.*/releases/download/': {
+    "/.*/.*/releases/download/": {
       // 拦截类型
       // redirect: url,          // 临时重定向（url会变，一些下载资源可以通过此方式配置）
       // proxy: url,             // 代理（url不会变，没有跨域问题）
@@ -205,24 +205,24 @@
       // cacheDays: 1,           // GET请求的使用缓存，单位：天（常用于一些静态资源）
       // options: true,          // OPTIONS请求直接返回成功请求（该功能存在一定风险，请谨慎使用）
       // optionsMaxAge: 2592000, // OPTIONS请求缓存时间，默认：2592000（一个月）
-      redirect: 'download.fastgit.org'
+      "redirect": "download.fastgit.org"
     },
-    '.*': {
-      proxy: 'github.com',
-      sni: 'baidu.com' // 修改sni，规避***握手拦截
+    ".*": {
+      "proxy": "github.com",
+      "sni": "baidu.com" // 修改sni，规避***握手拦截
     }
   },
-  'ajax.googleapis.com': {
-    '.*': {
-      proxy: 'ajax.loli.net', // 代理请求，url不会变
-      backup: ['ajax.proxy.ustclug.org'], // 备份，当前代理请求失败后，将会切换到备用地址
-      test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
-      replace: '/(.*)/xxx'// 当加速地址的链接和原链接不是完全相同时，可以通过正则表达式replace，此时proxy通过$1$2来重组url， proxy:'ajax.loli.net/xxx/$1'
+  "ajax.googleapis.com": {
+    ".*": {
+      "proxy": "ajax.loli.net", // 代理请求，url不会变
+      "backup": ["ajax.proxy.ustclug.org"], // 备份，当前代理请求失败后，将会切换到备用地址
+      "test": "ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js",
+      "replace": "/(.*)/xxx"// 当加速地址的链接和原链接不是完全相同时，可以通过正则表达式replace，此时proxy通过$1$2来重组url， proxy:'ajax.loli.net/xxx/$1'
     }
   },
-  'clients*.google.com': {
-    '.*': {
-      abort: true // 取消请求，被***封锁的资源，找不到替代，直接取消请求，快速失败，节省时间
+  "clients*.google.com": {
+    ".*": {
+      "abort": true // 取消请求，被***封锁的资源，找不到替代，直接取消请求，快速失败，节省时间
     }
   }
 }
@@ -271,13 +271,13 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 如果有上面的错误提示，请尝试如下方法：
 
 > 取消访问偏好设置需要管理员密码
-> 
+>
 > 系统偏好设置—>安全性与隐私—> 通用—> 高级—> 访问系统范围的偏好设置需要输入管理员密码（取消勾选）
 
 ### 6.2、没有加速效果
 
 1. 本应用默认仅开启https加速，一般足够覆盖需求。
-    如果你访问的是仅支持http协议的网站，请手动在【系统代理】中打开【代理HTTP请求】
+   如果你访问的是仅支持http协议的网站，请手动在【系统代理】中打开【代理HTTP请求】
 2. 检查浏览器是否装了什么插件，与ds有冲突
 3. 检查是否安装了其他代理软件，与ds有冲突
 4. 请确认浏览器的代理设置为使用IE代理/或者使用系统代理状态
@@ -298,12 +298,12 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 #### 3）火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书
 
 1. 火狐浏览器->选项->隐私与安全->证书->查看证书
-![](./doc/figures/Firefox/1.png)
+   ![](./doc/figures/Firefox/1.png)
 2. 证书颁发机构->导入
 3. 选择证书文件 `C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为 `~/.dev-sidecar` 目录）
-![](./doc/figures/Firefox/2.png)
+   ![](./doc/figures/Firefox/2.png)
 4. 勾选信任由此证书颁发机构来标识网站，确定即可
-![](./doc/figures/Firefox/3.png)
+   ![](./doc/figures/Firefox/3.png)
 
 ### 6.4、打开github显示连接超时
 
@@ -373,11 +373,11 @@ npm config delete https-proxy
 
 ### 8.1、准备环境
 
-#### 1）安装 `nodejs`
+1. 安装 `nodejs`
 
 推荐安装 nodejs `22.x.x` 的版本，其他版本未做测试
 
-#### 2）安装 `pnpm`
+2. 安装 `pnpm`
 
 运行如下命令即可安装所需依赖：
 
@@ -385,6 +385,16 @@ npm config delete https-proxy
 npm install -g pnpm --registry=https://registry.npmmirror.com
 
 ```
+
+3. 安装 `git`, `Python3`
+
+请根据你的操作系统，安装好 `git` 和 `python3` 环境并添加到环境变量。
+
+**Windows用户请注意**，Windows系统自带一个占位用的Python.exe别名，用以在必要时下载Microsoft Store中的Python应用；该python.exe不能完成实际的Python运行。建议在设置-应用-高级应用设置-应用执行别名中关闭【应用安装程序-python.exe】与【应用安装程序-python3.exe】，然后手动安装Python，避免冲突。必要时可使用`where.exe python`命令确认python.exe的路径，形如`C:\Users\Nobody\AppData\Local\Microsoft\WindowsApps\python.exe`的即为虚假占位文件。
+
+4. （对于Windows）安装Visual Studio MSVC Build Tools
+
+**注意截止目前（2025年12月28日），node-gyp对Visual Studio 2025/18的支持还不完善**，建议安装Visual Studio 2022的Build Tools。直接在Visual Studio Installer中选择“使用C++的桌面开发”工作负载进行安装即可。
 
 ### 8.2、开发调试模式启动
 
@@ -414,7 +424,116 @@ npm run electron
 npm run electron:build
 ```
 
-### 8.4、提交pr
+### 8.4、常见问题
+
+1. phantomjs 下载失败（Electron 安装提示）
+
+如果在安装依赖时报错（以下以Windows平台为例）：
+
+```shell
+node_modules/.pnpm/electron@29.4.6/node_modules/electron: Running postinstall script...
+node_modules/.pnpm/phantomjs-prebuilt@2.1.16/node_modules/phantomjs-prebuilt: Running install script, failed in 226ms
+.../node_modules/phantomjs-prebuilt install$ node install.js
+│ PhantomJS not found on PATH
+│ Downloading https://github.com/Medium/phantomjs/releases/download/v2.1.1/phantomjs-2.1.1-windows.zip
+│ Saving to %TEMP%\phantomjs\phantomjs-2.1.1-windows.zip
+│ Receiving...
+│ Error making request.
+│ Error: [各种网络错误]
+```
+
+可尝试手动从显示的URL下载并移动到目标位置
+
+2. `electron: Running postinstall script...` 卡死
+
+形如以下情况下卡死，请耐心等待。**不要删除node_modules后重新安装！**
+
+```shell
+> pnpm i
+Scope: all 5 workspace projects
+Lockfile is up to date, resolution step is skipped
+Packages: +1631
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 1631, reused 1631, downloaded 0, added 0, done
+node_modules/.pnpm/electron@29.4.6/node_modules/electron: Running postinstall script...
+node_modules/.pnpm/phantomjs-prebuilt@2.1.16/node_modules/phantomjs-prebuilt: Running install script, done in 487ms
+```
+
+3. Linux arm64 环境下Electron 安装提示错误（本节内容由AI生成，仅供参考）
+
+如果你在 Linux arm64 上为 GUI 安装依赖遇到 Electron `postinstall` 崩溃（`double free or corruption`）或无法下载二进制，可按下面流程处理：
+
+常见错误提示：
+
+- `phantomjs-prebuilt`: Unexpected platform or architecture: linux/arm64，postinstall 失败。
+- `electron` postinstall: double free or corruption (out) / Aborted (core dumped)。
+  1. 使用与 Electron 安装脚本兼容的 Node 版本（建议 LTS 18）：
+
+  ```shell
+  nvm install 18.20.8
+  nvm use 18.20.8
+  corepack enable
+  ```
+
+  2. 修改 `.npmrc` 文件，添加如下内容：
+  - `phantomjs_skip_download=true`：避免旧版 `phantomjs-prebuilt` 在 arm64/容器环境拉取二进制导致安装失败，建议保留。
+  3. 正常安装 GUI 依赖（脚本需要开启）：
+
+  ```shell
+  pnpm install --filter @docmirror/dev-sidecar-gui
+  ```
+
+  4. 若依旧在下载阶段崩溃，可手动下载并解压 Electron 二进制：
+
+  ```shell
+  electron_dir="$(pwd)/node_modules/.pnpm/electron@29.4.6/node_modules/electron"
+  rm -rf "$electron_dir/dist"
+  curl -L --retry 3 --retry-delay 2 -o /tmp/electron-v29.4.6-linux-arm64.zip \
+    https://github.com/electron/electron/releases/download/v29.4.6/electron-v29.4.6-linux-arm64.zip
+  unzip -q /tmp/electron-v29.4.6-linux-arm64.zip -d "$electron_dir/dist"
+  if [ -f "$electron_dir/dist/electron.d.ts" ]; then mv "$electron_dir/dist/electron.d.ts" "$electron_dir/electron.d.ts"; fi
+  printf 'electron' > "$electron_dir/path.txt"
+  ```
+
+4. 运行时提示 `chrome-sandbox` 权限问题，可在本地开发时关闭沙箱：
+
+```shell
+# 开发/调试禁用沙箱（无需 root）
+ELECTRON_NO_SANDBOX=1 pnpm -F @docmirror/dev-sidecar-gui run electron
+
+# 或为 chrome-sandbox 设置 SUID（需要 root）
+sudo chown root:root "$electron_dir/dist/chrome-sandbox"
+sudo chmod 4755 "$electron_dir/dist/chrome-sandbox"
+```
+
+5. Termux/Android ARM64 运行 GUI（无 root）
+
+- 预加载网络接口兜底、强制关闭 Electron 沙箱（无需 root，使用 HOME 路径）：
+
+````bash
+cd $HOME/dev-sidecar/packages/gui
+NODE_OPTIONS="--require ${HOME:-/data/data/com.termux/files/home}/dev-sidecar/packages/gui/src/utils/os-network-fallback.cjs" \
+ELECTRON_FORCE_NO_SANDBOX=1 ELECTRON_NO_SANDBOX=1 ELECTRON_DISABLE_SANDBOX=1 \
+npm run electron
+
+或使用简化命令（在 packages/gui 目录下）：
+
+```bash
+pnpm run electron:termux
+````
+
+若需在 Termux 尝试打包（不保证成功，缺少桌面依赖时可能失败）：
+
+```bash
+pnpm run electron:build:termux
+```
+
+- 说明：
+  - Termux 缺少 setuid 能力，必须关闭沙箱，否则会提示 chrome-sandbox 权限错误。
+  - `os-network-fallback.cjs` 会在 `uv_interface_addresses` 权限受限时返回回环接口，避免 node-ipc 崩溃。
+  - 若仍需沙箱，只能在支持 setuid 的环境或 root 下运行。
+
+### 8.5、提交pr
 
 如果你想将你的修改贡献出来，请提交pr
 
@@ -440,7 +559,7 @@ npm run electron:build
 
 ## 十一、感谢
 
-本项目使用lerna包管理工具
+本项目曾使用lerna包管理工具
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
@@ -453,6 +572,7 @@ npm run electron:build
 
 - [github增强油猴脚本](https://greasyfork.org/zh-CN/scripts/412245-github-%E5%A2%9E%E5%BC%BA-%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD) 本项目部分加速功能完全复制该脚本。
 - [中国域名白名单](https://github.com/pluwen/china-domain-allowlist)，本项目的系统代理排除域名功能中，使用了该白名单。
+- [gfwlist](https://github.com/gfwlist/gfwlist)，本项目的pac功能中，使用了该名单。
 
 本项目部分加速资源由如下组织提供
 

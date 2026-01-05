@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'NPM加速',
   enabled: false,
   tip: '如果你没有安装nodejs则不需要启动它',
@@ -25,4 +25,4 @@ module.exports = {
     ELECTRON_BUILDER_BINARIES_MIRROR: 'https://npmmirror.com/mirrors/electron-builder-binaries/',
     PYTHON_MIRROR: 'https://npmmirror.com/mirrors/python',
   },
-}
+};

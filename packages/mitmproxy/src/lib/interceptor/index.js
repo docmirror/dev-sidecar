@@ -22,12 +22,20 @@ const script = require('./impl/res/script')
 
 module.exports = [
   // request interceptor impls
-  OPTIONS, success, abort, cacheRequest, redirect,
+  OPTIONS,
+  success,
+  abort,
+  cacheRequest,
+  redirect,
   requestReplace,
-  proxy, sni, unVerifySsl,
+  proxy,
+  sni,
+  unVerifySsl,
   baiduOcr,
 
   // response interceptor impls
-  AfterOPTIONSHeaders, cacheResponse, responseReplace,
+  AfterOPTIONSHeaders,
+  cacheResponse,
+  responseReplace,
   script,
 ]

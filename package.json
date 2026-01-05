@@ -7,17 +7,24 @@
   "license": "MPL-2.0",
   "scripts": {
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test:all": "pnpm -C packages/core test && pnpm -C packages/mitmproxy test && pnpm -C packages/cli test && pnpm -C packages/gui test"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.9.1",
-    "eslint": "^9.15.0",
-    "eslint-plugin-format": "^0.1.2"
+    "@antfu/eslint-config": "^3.16.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-format": "^0.1.3"
   },
   "pnpm": {
     "supportedArchitectures": {
-      "os": ["current"],
-      "cpu": ["x64", "arm64", "ia32"]
+      "os": [
+        "current"
+      ],
+      "cpu": [
+        "x64",
+        "arm64",
+        "ia32"
+      ]
     }
   }
 }

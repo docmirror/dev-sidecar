@@ -1,7 +1,7 @@
-const path = require('node:path')
-const log4js = require('log4js')
-const logOrConsole = require('./util.log-or-console')
-const defaultConfig = require('../config/index.js')
+import path from 'node:path';
+import log4js from 'log4js';
+import logOrConsole from './util.log-or-console.js';
+import defaultConfig from '../config/index.js';
 const configFromFiles = defaultConfig.configFromFiles
 
 // 日志级别
@@ -65,7 +65,7 @@ function log4jsConfigure (categories) {
   log.info(`设置日志配置完成，进程ID: ${process.pid}，categories：[${categories}]，config:`, JSON.stringify(config))
 }
 
-module.exports = {
+export default {
   getLogger (category) {
     if (!category) {
       if (log) {
@@ -91,4 +91,4 @@ module.exports = {
       return log
     }
   },
-}
+};

@@ -1,8 +1,8 @@
-const childProcess = require('node:child_process')
-const os = require('node:os')
-const fixPath = require('fix-path')
-const PowerShell = require('node-powershell')
-const log = require('../utils/util.log.core')
+import childProcess from 'node:child_process';
+import os from 'node:os';
+import fixPath from 'fix-path';
+import PowerShell from 'node-powershell';
+import log from '../utils/util.log.core.js';
 
 fixPath()
 
@@ -144,9 +144,9 @@ async function execFile (file, args, options) {
   })
 }
 
-module.exports = {
+export default {
   getSystemShell,
   getSystemPlatform,
   execute,
   execFile,
-}
+};

@@ -100,7 +100,7 @@ export default {
             <a-radio-button value="http://mirrors.sohu.com/Python/" title="http://mirrors.sohu.com/Python/">
               搜狐镜像
             </a-radio-button>
-            <a-radio-button value="https://pypi.hustunique.com/" title="https://pypi.hustunique.com/">
+            <a-radio-button value="https://mirrors.hust.edu.cn/pypi/web/simple/" title="https://mirrors.hust.edu.cn/pypi/web/simple/">
               华中科大镜像
             </a-radio-button>
             <a-radio-button value="http://pypi.sdutlinux.org/" title="http://pypi.sdutlinux.org/">

@@ -1,8 +1,8 @@
 const fs = require('node:fs')
 const path = require('node:path')
 const server = require('@docmirror/mitmproxy')
-const jsonApi = require('@docmirror/mitmproxy/src/json')
-const log = require('@docmirror/mitmproxy/src/utils/util.log.server') // 当前脚本是在 server 的进程中执行的，所以使用 mitmproxy 中的logger
+const jsonApi = require('@docmirror/mitmproxy/src/json.js')
+const log = require('@docmirror/mitmproxy/src/utils/util.log.server.js') // 当前脚本是在 server 的进程中执行的，所以使用 mitmproxy 中的logger
 
 const home = process.env.USER_HOME || process.env.HOME || 'C:/Users/Administrator/'
 

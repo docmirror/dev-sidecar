@@ -14,6 +14,9 @@ export default antfu(
       'node/prefer-global/buffer': 'off',
       'node/prefer-global/process': 'off',
       'no-console': 'off',
+      'unused-imports/no-unused-vars': 'off',
+      'antfu/no-top-level-await': 'off',
+      'no-unused-vars': 'off',
     },
     ignores: [
       '**/build/*',

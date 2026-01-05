@@ -1,15 +1,16 @@
-const enableLoopback = require('./scripts/enable-loopback')
-const extraPath = require('./scripts/extra-path')
-const getNpmEnv = require('./scripts/get-npm-env')
-const getSystemEnv = require('./scripts/get-system-env')
-const killByPort = require('./scripts/kill-by-port')
-const setNpmEnv = require('./scripts/set-npm-env')
-const setSystemEnv = require('./scripts/set-system-env')
-const setSystemProxy = require('./scripts/set-system-proxy')
-const setupCa = require('./scripts/setup-ca')
-const shell = require('./shell')
+import enableLoopback from './scripts/enable-loopback.js';
+import extraPath from './scripts/extra-path/index.js';
+import getNpmEnv from './scripts/get-npm-env.js';
+import getSystemEnv from './scripts/get-system-env.js';
+import killByPort from './scripts/kill-by-port.js';
+import setNpmEnv from './scripts/set-npm-env.js';
+import setSystemEnv from './scripts/set-system-env.js';
+import setSystemProxy from './scripts/set-system-proxy.js';
+import setupCa from './scripts/setup-ca.js';
+import shell from './shell.js';
+import sudo from './sudo.js';
 
-module.exports = {
+export default {
   killByPort,
   setupCa,
   getSystemEnv,
@@ -19,8 +20,9 @@ module.exports = {
   setSystemProxy,
   enableLoopback,
   extraPath,
+  sudo,
   async exec (cmds, args) {
     return shell.getSystemShell().exec(cmds, args)
   },
   getSystemPlatform: shell.getSystemPlatform,
-}
+};

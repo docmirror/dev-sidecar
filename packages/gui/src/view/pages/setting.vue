@@ -344,7 +344,9 @@ export default {
       设置
     </template>
     <template slot="header-right">
-      <a-button class="mr10" icon="profile" @click="openLog()">查看日志</a-button>
+      <a-button class="mr10" icon="profile" @click="openLog()">
+        查看日志
+      </a-button>
     </template>
 
     <div v-if="config">

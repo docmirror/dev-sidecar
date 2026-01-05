@@ -38,4 +38,4 @@ const EventHub = {
   fire,
   unregister,
 }
-module.exports = EventHub
+export default EventHub;

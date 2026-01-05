@@ -1,6 +1,6 @@
-const lodash = require('lodash')
-const event = require('./event')
-const log = require('./utils/util.log.core')
+import lodash from 'lodash';
+import event from './event.js';
+import log from './utils/util.log.core.js';
 
 const status = {
   server: { enabled: false },
@@ -13,4 +13,4 @@ event.register('status', (event) => {
   log.info('status changed:', event)
 }, -999)
 
-module.exports = status
+export default status;

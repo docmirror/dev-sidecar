@@ -1,5 +1,5 @@
-const assert = require('node:assert')
-const { isNewVersion } = require('../src/utils/util.version.js')
+import assert from 'node:assert';
+import { isNewVersion } from '../src/utils/util.version.js';
 
 function testIsNewVersion (onlineVersion, currentVersion, expected) {
   const ret = isNewVersion(onlineVersion, currentVersion)

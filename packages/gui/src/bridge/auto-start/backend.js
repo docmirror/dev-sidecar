@@ -20,8 +20,7 @@ EOF
 `
     await DevSidecar.api.shell.exec(cmd)
   } else {
-    const removeStart = 'sudo rm ~/.config/autostart/dev-sidecar.desktop -rf'
-    await DevSidecar.api.shell.exec(removeStart)
+    await DevSidecar.api.shell.sudo('rm ~/.config/autostart/dev-sidecar.desktop -rf', { name: 'Remove Autostart' })
   }
 }
 export default {

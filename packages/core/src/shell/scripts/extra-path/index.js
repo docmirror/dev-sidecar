@@ -1,5 +1,5 @@
-const path = require('node:path')
-const log = require('../../../utils/util.log.core')
+import path from 'node:path';
+import log from '../../../utils/util.log.core.js';
 
 function getExtraPath () {
   let extraPath = process.env.DS_EXTRA_PATH
@@ -20,7 +20,7 @@ function getEnableLoopbackPath () {
   return path.join(extraPath, 'EnableLoopback.exe')
 }
 
-module.exports = {
+export default {
   getProxyExePath,
   getEnableLoopbackPath,
-}
+};

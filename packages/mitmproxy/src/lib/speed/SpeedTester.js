@@ -1,7 +1,7 @@
 // const { exec } = require('node:child_process')
 const net = require('node:net')
 const _ = require('lodash')
-const log = require('../../utils/util.log.server')
+const log = require('../../utils/util.log.server').default
 const config = require('./config.js')
 
 // const isWindows = process.platform === 'win32'

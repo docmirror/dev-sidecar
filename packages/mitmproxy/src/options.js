@@ -1,17 +1,17 @@
-const fs = require('node:fs')
-const path = require('node:path')
-const lodash = require('lodash')
-const dnsUtil = require('./lib/dns')
-const interceptorImpls = require('./lib/interceptor')
-const scriptInterceptor = require('./lib/interceptor/impl/res/script')
-const { getTmpPacFilePath, downloadPacAsync, createOverwallMiddleware } = require('./lib/proxy/middleware/overwall')
-const log = require('./utils/util.log.server')
-const matchUtil = require('./utils/util.match')
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
+import { isObject } from 'lodash'
+import { initDNS } from './lib/dns'
+import interceptorImpls from './lib/interceptor'
+import { handleScriptInterceptConfig } from './lib/interceptor/impl/res/script'
+import { createOverwallMiddleware, downloadPacAsync, getTmpPacFilePath } from './lib/proxy/middleware/overwall'
+import { debug, error, info, warn } from './utils/util.log.server'
+import { domainMapRegexply, isMatched, matchHostname, matchHostnameAll } from './utils/util.match'
 
 // 处理拦截配置
 function buildIntercepts (intercepts) {
   // 自动生成script拦截器所需的辅助配置，降低使用`script拦截器`配置绝对地址和相对地址时的门槛
-  scriptInterceptor.handleScriptInterceptConfig(intercepts)
+  handleScriptInterceptConfig(intercepts)
 
   return intercepts
 }
@@ -23,7 +23,7 @@ function getExclusionArray (exclusions) {
     if (exclusions.length > 0) {
       ret = exclusions
     }
-  } else if (lodash.isObject(exclusions)) {
+  } else if (isObject(exclusions)) {
     ret = []
     for (const exclusion in exclusions) {
       ret.push(exclusion)
@@ -35,16 +35,16 @@ function getExclusionArray (exclusions) {
   return ret
 }
 
-module.exports = (serverConfig) => {
-  const intercepts = matchUtil.domainMapRegexply(buildIntercepts(serverConfig.intercepts))
-  const whiteList = matchUtil.domainMapRegexply(serverConfig.whiteList)
-  const timeoutMapping = matchUtil.domainMapRegexply(serverConfig.setting.timeoutMapping)
+export default (serverConfig) => {
+  const intercepts = domainMapRegexply(buildIntercepts(serverConfig.intercepts))
+  const whiteList = domainMapRegexply(serverConfig.whiteList)
+  const timeoutMapping = domainMapRegexply(serverConfig.setting.timeoutMapping)
 
   const dnsMapping = serverConfig.dns.mapping
   const setting = serverConfig.setting
 
   if (!setting.script.dirAbsolutePath) {
-    setting.script.dirAbsolutePath = path.join(setting.rootDir, setting.script.defaultDir)
+    setting.script.dirAbsolutePath = join(setting.rootDir, setting.script.defaultDir)
   }
   if (setting.verifySsl !== false) {
     setting.verifySsl = true
@@ -62,17 +62,17 @@ module.exports = (serverConfig) => {
     }
 
     // 优先使用本地已下载的 pac.txt 文件
-    if (!pacConfig.pacFileAbsolutePath && fs.existsSync(getTmpPacFilePath())) {
+    if (!pacConfig.pacFileAbsolutePath && existsSync(getTmpPacFilePath())) {
       pacConfig.pacFileAbsolutePath = getTmpPacFilePath()
-      log.info('读取已下载的 pac.txt 文件:', pacConfig.pacFileAbsolutePath)
+      info('读取已下载的 pac.txt 文件:', pacConfig.pacFileAbsolutePath)
     }
 
     if (!pacConfig.pacFileAbsolutePath) {
-      log.info('setting.rootDir:', setting.rootDir)
-      pacConfig.pacFileAbsolutePath = path.join(setting.rootDir, pacConfig.pacFilePath)
-      log.info('读取内置的 pac.txt 文件:', pacConfig.pacFileAbsolutePath)
+      info('setting.rootDir:', setting.rootDir)
+      pacConfig.pacFileAbsolutePath = join(setting.rootDir, pacConfig.pacFilePath)
+      info('读取内置的 pac.txt 文件:', pacConfig.pacFileAbsolutePath)
       if (pacConfig.autoUpdate) {
-        log.warn('远程 pac.txt 文件下载失败或还在下载中，现使用内置 pac.txt 文件:', pacConfig.pacFileAbsolutePath)
+        warn('远程 pac.txt 文件下载失败或还在下载中，现使用内置 pac.txt 文件:', pacConfig.pacFileAbsolutePath)
       }
     }
   }
@@ -86,37 +86,37 @@ module.exports = (serverConfig) => {
     middlewares.push(overwallMiddleware)
   }
 
-  const preSetIpList = matchUtil.domainMapRegexply(serverConfig.preSetIpList)
+  const preSetIpList = domainMapRegexply(serverConfig.preSetIpList)
 
   const options = {
     host: serverConfig.host,
     port: serverConfig.port,
     dnsConfig: {
       preSetIpList,
-      dnsMap: dnsUtil.initDNS(serverConfig.dns.providers, preSetIpList),
-      mapping: matchUtil.domainMapRegexply(dnsMapping),
+      dnsMap: initDNS(serverConfig.dns.providers, preSetIpList),
+      mapping: domainMapRegexply(dnsMapping),
       speedTest: serverConfig.dns.speedTest,
     },
     setting,
     compatibleConfig: {
-      connect: serverConfig.compatible ? matchUtil.domainMapRegexply(serverConfig.compatible.connect) : {},
-      request: serverConfig.compatible ? matchUtil.domainMapRegexply(serverConfig.compatible.request) : {},
+      connect: serverConfig.compatible ? domainMapRegexply(serverConfig.compatible.connect) : {},
+      request: serverConfig.compatible ? domainMapRegexply(serverConfig.compatible.request) : {},
     },
     middlewares,
     sslConnectInterceptor: (req, cltSocket, head) => {
       const hostname = req.url.split(':')[0]
 
       // 配置了白名单的域名，将跳过代理
-      const inWhiteList = !!matchUtil.matchHostname(whiteList, hostname, 'in whiteList')
+      const inWhiteList = !!matchHostname(whiteList, hostname, 'in whiteList')
       if (inWhiteList) {
-        log.info(`为白名单域名，不拦截: ${hostname}`)
+        info(`为白名单域名，不拦截: ${hostname}`)
         return false // 不拦截
       }
 
       // 配置了拦截的域名，将会被代理
-      const matched = matchUtil.matchHostname(intercepts, hostname, 'matched intercepts')
+      const matched = matchHostname(intercepts, hostname, 'matched intercepts')
       if ((!!matched) === true) {
-        log.debug(`拦截器拦截：${req.url}, matched:`, matched)
+        debug(`拦截器拦截：${req.url}, matched:`, matched)
         return matched // 拦截
       }
 
@@ -124,7 +124,7 @@ module.exports = (serverConfig) => {
     },
     createIntercepts: (context) => {
       const rOptions = context.rOptions
-      const interceptOpts = matchUtil.matchHostnameAll(intercepts, rOptions.hostname, 'get interceptOpts')
+      const interceptOpts = matchHostnameAll(intercepts, rOptions.hostname, 'get interceptOpts')
       if (!interceptOpts) { // 该域名没有配置拦截器，直接过
         return
       }
@@ -133,7 +133,7 @@ module.exports = (serverConfig) => {
       const matchInterceptsOpts = {}
       for (const regexp in interceptOpts) { // 遍历拦截配置
         // 判断是否匹配拦截器
-        const matched = matchUtil.isMatched(rOptions.path, regexp)
+        const matched = isMatched(rOptions.path, regexp)
         if (matched == null) { // 拦截器匹配失败
           continue
         }
@@ -150,21 +150,21 @@ module.exports = (serverConfig) => {
             const exclusions = getExclusionArray(interceptOpt.exclusions)
             if (exclusions) {
               for (const exclusion of exclusions) {
-                if (matchUtil.isMatched(rOptions.path, exclusion)) {
-                  log.debug(`拦截器配置排除了path：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}, exclusion: '${exclusion}', interceptOpt:`, interceptOpt)
+                if (isMatched(rOptions.path, exclusion)) {
+                  debug(`拦截器配置排除了path：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}, exclusion: '${exclusion}', interceptOpt:`, interceptOpt)
                   isExcluded = true
                 }
               }
             }
           } catch (e) {
-            log.error(`判断拦截器是否排除当前path时出现异常, path: ${rOptions.path}, interceptOpt:`, interceptOpt, ', error:', e)
+            error(`判断拦截器是否排除当前path时出现异常, path: ${rOptions.path}, interceptOpt:`, interceptOpt, ', error:', e)
           }
           if (isExcluded) {
             continue
           }
         }
 
-        log.debug(`拦截器匹配path成功：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}, regexp: ${regexp}, interceptOpt:`, interceptOpt)
+        debug(`拦截器匹配path成功：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}, regexp: ${regexp}, interceptOpt:`, interceptOpt)
 
         // log.info(`interceptor matched, regexp: '${regexp}' =>`, JSON.stringify(interceptOpt), ', url:', url)
         for (const impl of interceptorImpls) {
@@ -176,7 +176,7 @@ module.exports = (serverConfig) => {
             const matchedInterceptOpt = matchInterceptsOpts[impl.name]
             if (matchedInterceptOpt) {
               if (matchedInterceptOpt.order >= (interceptOpt.order || 0)) {
-                log.warn(`duplicate interceptor: ${impl.name}, hostname: ${rOptions.hostname}`)
+                warn(`duplicate interceptor: ${impl.name}, hostname: ${rOptions.hostname}`)
                 continue
               }
               action = 'replace'

@@ -1,4 +1,4 @@
-const pluginConfig = require('./config')
+import pluginConfig from './config.js';
 
 const Plugin = function (context) {
   const { config, shell, event, log } = context
@@ -82,11 +82,11 @@ const Plugin = function (context) {
   return pluginApi
 }
 
-module.exports = {
+export default {
   key: 'git',
   config: pluginConfig,
   status: {
     enabled: false,
   },
   plugin: Plugin,
-}
+};

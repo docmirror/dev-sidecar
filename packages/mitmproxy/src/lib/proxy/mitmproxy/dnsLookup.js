@@ -1,5 +1,5 @@
 const defaultDns = require('node:dns')
-const log = require('../../../utils/util.log.server')
+const log = require('../../../utils/util.log.server').default
 const speedTest = require('../../speed')
 
 function createIpChecker (tester) {

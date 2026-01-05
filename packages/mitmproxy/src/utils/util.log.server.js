@@ -1,5 +1,5 @@
-const loggerFactory = require('@docmirror/dev-sidecar/src/utils/util.logger')
+import { getLogger } from '@docmirror/dev-sidecar/src/utils/util.logger.js'
 
-const logger = loggerFactory.getLogger('server')
+const logger = getLogger('server')
 
-module.exports = logger
+export default logger

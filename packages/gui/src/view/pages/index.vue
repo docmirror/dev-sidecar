@@ -15,13 +15,74 @@ export default {
       startup: {
         loading: false,
         type: () => {
-          return (this.status.server && this.status.server.enabled) ? 'primary' : 'default'
+          return this.mainSwitchStatus ? 'primary' : 'default'
         },
-        doClick: () => {
-          if (this.status.server.enabled) {
-            this.apiCall(this.startup, this.$api.shutdown)
-          } else {
-            this.apiCall(this.startup, this.$api.startup)
+        doClick: async () => {
+          const targetStatus = !this.mainSwitchStatus
+          this.startup.loading = true
+          const errors = []
+
+          try {
+            // 定义基础服务顺序，确保开关顺序稳定
+            const baseServices = ['server', 'proxy']
+            // 收集所有实际可用的插件服务
+            const pluginServices = []
+            for (const key in this.switchBtns) {
+              if (key !== 'server' && key !== 'proxy') {
+                pluginServices.push(key)
+              }
+            }
+            // 合并服务列表：基础服务在前，插件服务在后
+            const serviceOrder = [...baseServices, ...pluginServices]
+
+            if (targetStatus) {
+              // 开启顺序：server → proxy → 可用插件
+              for (const key of serviceOrder) {
+                try {
+                  if (key === 'server') {
+                    await this.apiCall(this.server, this.$api.server.start)
+                  } else {
+                    // 只有当按钮实际存在时才调用
+                    if (this.switchBtns[key]) {
+                      await this.apiCall(this.switchBtns[key], this.switchBtns[key].apiTarget.start)
+                    }
+                  }
+                } catch (err) {
+                  errors.push(`${this.switchBtns[key]?.label || key} 开启失败`)
+                  break // 开启失败，停止后续操作
+                }
+              }
+            } else {
+              // 关闭顺序：可用插件 → proxy → server（反转服务列表）
+              const reverseOrder = [...serviceOrder].reverse()
+              for (const key of reverseOrder) {
+                try {
+                  if (key === 'server') {
+                    await this.apiCall(this.server, this.$api.server.close)
+                  } else {
+                    // 只有当按钮实际存在时才调用
+                    if (this.switchBtns[key]) {
+                      await this.apiCall(this.switchBtns[key], this.switchBtns[key].apiTarget.close)
+                    }
+                  }
+                } catch (err) {
+                  errors.push(`${this.switchBtns[key]?.label || key} 关闭失败`)
+                  // 关闭失败，继续尝试关闭后续服务
+                }
+              }
+            }
+
+            // 显示错误提示
+            if (errors.length > 0) {
+              this.$message.error(`操作失败：${errors.join('，')}`)
+            } else {
+              this.$message.success(targetStatus ? '所有服务已开启' : '所有服务已关闭')
+            }
+          } catch (err) {
+            console.error('大按钮操作失败:', err)
+            this.$message.error(`操作失败：${err.message || '未知错误'}`)
+          } finally {
+            this.startup.loading = false
           }
         },
       },
@@ -49,6 +110,29 @@ export default {
         return this.setting.rootCa.setuped === true
       }
       return false
+    },
+    githubStarBadgeUrl () {
+      // 生成每天更新一次的缓存键，减少API调用频率
+      const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+      return `https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github&cacheSeconds=86400&t=${today}`
+    },
+    mainSwitchStatus () {
+      if (!this.switchBtns)
+        return false
+      // 遍历所有实际可用的子开关，只有当所有可用子开关都开启时，主开关才开启
+      try {
+        for (const key in this.switchBtns) {
+          // 跳过服务器和代理服务以外的插件按钮？不，应该考虑所有实际可用的按钮
+          // 只检查 switchBtns 中实际存在的按钮
+          if (!this.switchBtns[key]?.status?.()) {
+            return false
+          }
+        }
+        return true
+      } catch (err) {
+        console.error('计算主开关状态失败:', err)
+        return false
+      }
     },
   },
   async created () {
@@ -186,8 +270,14 @@ export default {
         key,
         label,
         tip,
+        apiTarget, // 添加 apiTarget 属性，用于大按钮操作
         status: () => {
-          return statusParent[key].enabled
+          try {
+            return statusParent[key].enabled
+          } catch (err) {
+            console.error(`获取 ${key} 状态失败:`, err)
+            return false
+          }
         },
         doClick: (checked) => {
           this.onSwitchClick(this.switchBtns[key], apiTarget.start, apiTarget.close, checked)
@@ -262,7 +352,9 @@ export default {
     </template>
     <template slot="header-right">
       <a-button style="margin-right:10px" @click="openSetupCa">
-        <a-badge :count="_rootCaSetuped ? 0 : 1" dot>安装根证书</a-badge>
+        <a-badge :count="_rootCaSetuped ? 0 : 1" dot>
+          安装根证书
+        </a-badge>
       </a-button>
 
       <a-button
@@ -313,7 +405,7 @@ export default {
               <img v-if="!startup.loading && status.server.enabled" width="50" src="/logo/logo-fff.svg">
             </a-button>
             <div class="mt10">
-              {{ status.server.enabled ? '已开启' : '已关闭' }}
+              {{ mainSwitchStatus ? '已开启' : '已关闭' }}
             </div>
           </div>
         </div>
@@ -354,7 +446,7 @@ export default {
           </div>
           <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img
             alt="GitHub stars"
-            src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"
+            :src="githubStarBadgeUrl"
           ></a>
         </div>
       </div>
