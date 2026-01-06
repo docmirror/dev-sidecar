@@ -5,14 +5,18 @@
 
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
 
-> Gitee上的同步项目已被封禁，此项目将不再更新与维护 【狗头保命】
+[![Star History Chart](https://api.star-history.com/svg?repos=docmirror/dev-sidecar&type=date&legend=top-left)](https://www.star-history.com/#docmirror/dev-sidecar&type=date&legend=top-left)
+
+> Gitee上的同步项目已被封禁，请认准本项目唯一官方仓库地址[https://github.com/docmirror/dev-sidecar](https://github.com/docmirror/dev-sidecar) 【狗头保命】
 >
 > 我将继续奋战在开源一线，为社区贡献更多更好的开源项目。
+> 
 > 感兴趣的可以关注我的主页 [【github】](https://github.com/greper) [【gitee】](https://gitee.com/greper)
 
 ## 打个广告
 
 > [https://github.com/certd/certd](https://github.com/certd/certd)
+> 
 > 我的开源证书管理工具项目，全自动申请和部署证书，有需求的可以去试试，帮忙点个star
 
 ## 重要提醒
@@ -27,7 +31,12 @@
 
 > ------------------------------重要提醒2---------------------------------
 >
-> 注意：本应用启动会自动修改系统代理，所以会与其他代理软件有冲突，请务必不要一起使用。
+> 注意：本应用启动会自动修改系统代理，所以会与其他代理软件有冲突，一起使用时请谨慎使用。
+> 
+> 与Watt Toolkit（原Steam++）共用时，请以hosts模式启动Watt Toolkit
+> 
+> 与TUN网卡模式运行的游戏加速器可以共用
+> 
 > 本应用主要目的在于直连访问github，如果你已经有飞机了，那建议还是不要用这个自行车（ds）了
 
 ## 一、 特性
@@ -58,6 +67,7 @@
 > 以上部分功能通过 `X.I.U` 的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
 >
 > - [https://github.com/XIU2/UserScript](https://github.com/XIU2/UserScript)
+> 
 > - [https://greasyfork.org/scripts/412245](https://greasyfork.org/scripts/412245)
 >
 > 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过 `加速服务->基本设置->启用脚本` 进行关闭）。
@@ -75,8 +85,8 @@
 
 **_安全警告_**：
 
-- 请勿使用来源不明的服务地址，有隐私和账号泄露风险
-- 本应用及服务端承诺不收集任何信息。介意者请使用安全模式。
+- 请勿使用来源不明的服务/远程配置地址，有隐私和账号泄露风险
+- 本应用及服务/默认远程配置端承诺不收集任何信息。介意者请使用安全模式。
 
 ## 二、快速开始
 
@@ -89,10 +99,13 @@
 - release下载
   [Github Release](https://github.com/docmirror/dev-sidecar/releases)
 
-> Windows: 请选择DevSidecar-x.x.x.exe
-> Mac: 请选择DevSidecar-x.x.x.dmg
-> Ubuntu: 请选择DevSidecar-x.x.x.deb
-> 其他linux: 请选择DevSidecar-x.x.x.AppImage (未做测试，不保证能用)
+> Windows: 请选择DevSidecar-x.x.x-windows-universal.exe 
+> 
+> Mac: 请选择DevSidecar-x.x.x-macos-universal.dmg 
+> 
+> Debian系及其他支持deb安装包的Linux: 请选择DevSidecar-x.x.x-linux-[架构].deb 
+> 
+> 其他Linux: 请选择DevSidecar-x.x.x-linux-[架构].AppImage (未做测试，不保证能用)
 
 > linux安装说明请参考 [linux安装文档](./doc/linux.md)
 
@@ -100,6 +113,7 @@
 
 #### 2）安装后打开
 
+界面应大致如下图所示：
 > 注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
 ![](./doc/index.png)
@@ -111,27 +125,28 @@
 更多有关根证书的说明，请参考 [为什么要安装根证书?](./doc/caroot.md)
 
 > 根证书是本地随机生成的，所以不用担心根证书的安全问题（本应用不收集任何用户信息）
+> 
 > 你也可以在加速服务设置中自定义根证书（PEM格式的证书与私钥）
 
-> 火狐浏览器需要[手动安装证书](#3浏览器打开提示证书不受信任)
+> 火狐浏览器需要[手动安装证书](#3火狐浏览器火狐浏览器不走系统的根证书需要在选项中添加根证书)
 
 #### 4）开始加速吧
 
-去试试打开github
+去试试打开github、huggingface、docker hub吧
 
 ### 2.2、开启前 vs 开启后
 
-|          | 开启前                         | 开启后                                            |
-| -------- | ------------------------------ | ------------------------------------------------- |
-| 头像     | ![](./doc/avatar2.png)         | ![](./doc/avatar1.png)                            |
-| clone    | ![](./doc/clone-before.png)    | ![](./doc/clone.png)                              |
+|          | 开启前                         | 开启后                                           |
+| -------- | ------------------------------ | ----------------------------------------------- |
+| 头像     | ![](./doc/avatar2.png)         | ![](./doc/avatar1.png)                          |
+| clone    | ![](./doc/clone-before.png)    | ![](./doc/clone.png)                            |
 | zip 下载 | ![](./doc/download-before.png) | ![](./doc/download.png)秒下的，实在截不到速度的图 |
 
 ## 三、模式说明
 
 ### 3.1、安全模式
 
-- 此模式：关闭拦截、关闭增强、开启dns优选、开启测速
+- 此模式：关闭拦截、关闭增强、不使用远程配置、开启dns优选、开启测速
 - 最安全，无需安装证书，可以在浏览器地址栏左侧查看域名证书
 - 功能也最弱，只有特性1，相当于查询github的国外ip，手动改hosts一个意思。
 - github的可访问性不稳定，取决于IP测速，如果有绿色ip存在，就 `有可能` 可以直连访问。
@@ -139,13 +154,13 @@
 
 ### 3.2、默认模式
 
-- 此模式：开启拦截、关闭增强、开启dns优选、开启测速
+- 此模式：开启拦截、关闭增强、使用远程配置、开启dns优选、开启测速
 - 需要安装证书，通过修改sni直连访问github
 - 功能上包含特性1/2/3/4。
 
 ## 四、 最佳实践
 
-- 把dev-sidecar一直开着就行了（注意windows下开着ds重启电脑，会无法上网，重新打开ds即可。）
+- 把dev-sidecar一直开着就行了
 - 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被\*\*\*封杀的无效）
 
 ### 其他加速
@@ -172,10 +187,12 @@
 
 ### 5.1、拦截配置
 
-没有配置域名的不会拦截，其他根据配置进行拦截处理
+没有配置域名的不会拦截，其他根据配置进行拦截处理。
 
-```js
-const intercepts = {
+在【加速服务-拦截设置】中配置，格式如下：（更多内容参见[wiki](https://github.com/docmirror/dev-sidecar/wiki/%E5%8A%A0%E9%80%9F%E6%9C%8D%E5%8A%A1%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)）
+
+```jsonc
+{
   // 要拦截的域名
   'github.com': {
     // 需要拦截url的正则表达式
@@ -214,7 +231,8 @@ const intercepts = {
 ### 5.2、DNS优选配置
 
 某些域名解析出来的ip会无法访问，（比如api.github.com会被解析到新加坡的ip上，新加坡的服务器在上午挺好，到了晚上就卡死，基本不可用）
-通过从dns上获取ip列表，切换不同的ip进行尝试，最终会挑选到一个最快的ip
+
+通过从dns上获取ip列表，切换不同的ip进行尝试，最终会挑选到一个最快的ip（该功能需要事先配置好所用DNS），更多说明参见[wiki](https://github.com/docmirror/dev-sidecar/wiki/%E5%8A%A0%E9%80%9F%E6%9C%8D%E5%8A%A1%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
 
 ```json
 {
@@ -253,15 +271,13 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 如果有上面的错误提示，请尝试如下方法：
 
 > 取消访问偏好设置需要管理员密码
+> 
 > 系统偏好设置—>安全性与隐私—> 通用—> 高级—> 访问系统范围的偏好设置需要输入管理员密码（取消勾选）
 
 ### 6.2、没有加速效果
 
-> 本应用仅支持https加速，请务必确认你访问的网站地址是https开头的
-
-1. 本应用仅支持https加速
-   请务必确认你访问的地址是https开头的
-   比如： [https://github.com/](https://github.com/)
+1. 本应用默认仅开启https加速，一般足够覆盖需求。
+    如果你访问的是仅支持http协议的网站，请手动在【系统代理】中打开【代理HTTP请求】
 2. 检查浏览器是否装了什么插件，与ds有冲突
 3. 检查是否安装了其他代理软件，与ds有冲突
 4. 请确认浏览器的代理设置为使用IE代理/或者使用系统代理状态
@@ -272,18 +288,22 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 ### 6.3、浏览器打开提示证书不受信任
 
 ![](./doc/crt-error.png)
-一般是证书安装位置不对，重新安装证书后，重启浏览器
 
-#### 1）windows: 请确认证书已正确安装在“信任的根证书颁发机构”下
+一般是证书安装位置不对，重新安装根证书后，重启浏览器
+
+#### 1）windows: 请确认证书已正确安装在“本地计算机-将所有的证书都放入下列存储：受信任的根证书颁发机构”下
 
 #### 2）mac: 请确认证书已经被安装并已经设置信任
 
 #### 3）火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书
 
 1. 火狐浏览器->选项->隐私与安全->证书->查看证书
+![](./doc/figures/Firefox/1.png)
 2. 证书颁发机构->导入
 3. 选择证书文件 `C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为 `~/.dev-sidecar` 目录）
+![](./doc/figures/Firefox/2.png)
 4. 勾选信任由此证书颁发机构来标识网站，确定即可
+![](./doc/figures/Firefox/3.png)
 
 ### 6.4、打开github显示连接超时
 
@@ -297,7 +317,8 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 
 ### 6.5、查看日志是否有报错
 
-如果还是不行，请在下方加作者好友，将服务日志发送给作者进行分析
+如果还是不行，请在下方加官方QQ群或提issue，附上服务日志（server.log）以便进行分析
+
 日志打开方式：加速服务->右边日志按钮->打开日志文件夹
 
 ![](./doc/log.png)
@@ -337,6 +358,12 @@ git config --global --unset http.sslVerify
 npm config delete proxy
 npm config delete https-proxy
 ```
+
+### 6.9、其他问题
+
+请查阅[wiki](https://github.com/docmirror/dev-sidecar/wiki)
+
+也可以查阅[有文档tag的issue](https://github.com/docmirror/dev-sidecar/issues?q=is%3Aissue%20label%3ADocumentation)，它们被开发者认证为相当于文档级别的参考issue。
 
 ## 七、在其他程序使用
 
@@ -395,13 +422,13 @@ npm run electron:build
 
 欢迎bug反馈，需求建议，技术交流等
 
-1、 加群（请备注dev-sidecar，或简称DS）
+加官方QQ群（请备注dev-sidecar，或简称DS）
 
-- QQ 1群：390691483，人数：500 / 500（满）
-- QQ 2群：[667666069](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=n4nksr4sji93vZtD5e8YEHRT6qbh6VyQ&authKey=XKBZnzmoiJrAFyOT4V%2BCrgX5c13ds59b84g%2FVRhXAIQd%2FlAiilsuwDRGWJct%2B570&noverify=0&group_code=667666069)，人数：447 / 500
-- QQ 3群：419807815，人数：500 / 500（满）
-- QQ 4群：[438148299](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=i_NCBB5f_Bkm2JsEV1tLs2TkQ79UlCID&authKey=nMsVJbJ6P%2FGNO7Q6vsVUadXRKnULUURwR8zvUZJnP3IgzhHYPhYdcBCHvoOh8vYr&noverify=0&group_code=438148299)，人数：203 / 1000
-- QQ 5群：[767622917](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nAWi_Rxj7mM4Unp5LMiatmUWhGimtbcB&authKey=aswmlWGjbt3GIWXtvjB2GJqqAKuv7hWjk6UBs3MTb%2Biyvr%2Fsbb1kA9CjF6sK7Hgg&noverify=0&group_code=767622917)，人数：016 / 200（new）
+- QQ 1群：390691483，人数：499 / 500（满）
+- QQ 2群：667666069，人数：500 / 500（满）
+- QQ 3群：419807815，人数：493 / 500（满）
+- QQ 4群：[438148299](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=i_NCBB5f_Bkm2JsEV1tLs2TkQ79UlCID&authKey=nMsVJbJ6P%2FGNO7Q6vsVUadXRKnULUURwR8zvUZJnP3IgzhHYPhYdcBCHvoOh8vYr&noverify=0&group_code=438148299)，人数：700 / 1000
+- QQ 5群：[767622917](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nAWi_Rxj7mM4Unp5LMiatmUWhGimtbcB&authKey=aswmlWGjbt3GIWXtvjB2GJqqAKuv7hWjk6UBs3MTb%2Biyvr%2Fsbb1kA9CjF6sK7Hgg&noverify=0&group_code=767622917)，人数：200 / 200（new）
 
 ## 十、求star
 
