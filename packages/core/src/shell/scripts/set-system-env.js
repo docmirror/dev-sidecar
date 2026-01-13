@@ -1,4 +1,4 @@
-import Shell from '../shell.js';
+import Shell from '../shell.js'
 
 const execute = Shell.execute
 

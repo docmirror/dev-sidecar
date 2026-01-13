@@ -1,5 +1,5 @@
 import Shell from '../shell.js'
-import extraPath from './extra-path/index.js'
+import extraPath from './extra-path'
 import sudo from '../sudo.js'
 const execute = Shell.execute
 

@@ -1,7 +1,7 @@
-import path from 'node:path';
-import log4js from 'log4js';
-import logOrConsole from './util.log-or-console.js';
-import defaultConfig from '../config/index.js';
+import path from 'node:path'
+import log4js from 'log4js'
+import logOrConsole from './util.log-or-console.js'
+import defaultConfig from '../config'
 const configFromFiles = defaultConfig.configFromFiles
 
 // 日志级别
@@ -91,4 +91,4 @@ export default {
       return log
     }
   },
-};
+}

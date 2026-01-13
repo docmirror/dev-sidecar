@@ -1,5 +1,9 @@
+import Server from './server'
+import Proxy from './proxy'
+import Plugin from './plugin'
+
 export default {
-  server: require('./server.js'),
-  proxy: require('./proxy.js'),
-  plugin: require('./plugin.js'),
+  server: Server,
+  proxy: Proxy,
+  plugin: Plugin,
 }

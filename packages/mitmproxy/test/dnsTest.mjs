@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import dns from '../src/lib/dns/index.js'
+import dns from '../src/lib/dns'
 import matchUtil from '../src/utils/util.match.js'
 
 const presetIp = '100.100.100.100'

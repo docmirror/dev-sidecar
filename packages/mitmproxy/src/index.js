@@ -1,6 +1,6 @@
-import proxyLib from './lib/proxy/index.js'
+import proxyLib from './lib/proxy'
 import proxyConfig, { setDefaultCABasePath } from './lib/proxy/common/config.js'
-import speedTest from './lib/speed/index.js'
+import speedTest from './lib/speed'
 import ProxyOptions from './options.js'
 import log from './utils/util.log.server.js'
 import utilProcess from './utils/util.process.js'
@@ -11,7 +11,7 @@ const { fireError, fireStatus } = utilProcess
 const { info, error, warn } = log
 // const mitmproxy = require('./lib/proxy')
 // const proxyConfig = require('./lib/proxy/common/config')
-// const speedTest = require('./lib/speed/index.js')
+// const speedTest = require('./lib/speed')
 // const ProxyOptions = require('./options')
 // const log = require('./utils/util.log.server')
 // const { fireError, fireStatus } = require('./utils/util.process')

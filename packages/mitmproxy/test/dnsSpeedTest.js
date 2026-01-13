@@ -1,5 +1,5 @@
-import { initDNS } from '../src/lib/dns/index.js'
-import { initSpeedTest } from '../src/lib/speed/index.js'
+import { initDNS } from '../src/lib/dns'
+import { initSpeedTest } from '../src/lib/speed'
 import SpeedTester from '../src/lib/speed/SpeedTester.js'
 
 const dnsMap = initDNS({

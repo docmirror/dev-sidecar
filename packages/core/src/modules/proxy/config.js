@@ -1,2 +1,2 @@
-import mainConfig from '../../config.js';
-export default mainConfig.server.proxy;
+import mainConfig from '../../config'
+export default mainConfig.server.proxy

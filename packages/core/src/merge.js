@@ -1,4 +1,4 @@
-import lodash from 'lodash';
+import lodash from 'lodash'
 
 /**
  * 找出 newObj 相对于 oldObj 有差异的部分
@@ -84,4 +84,4 @@ export default {
   },
   doDiff,
   deleteNullItems,
-};
+}
