@@ -1,9 +1,9 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import clientModule from './client.js';
+import fs from 'node:fs'
+import path from 'node:path'
+import clientModule from './client.js'
 
-const runTests = (clientModule && (clientModule.runTests || (clientModule.default && clientModule.default.runTests)))
-import freeEyeConfig from './config.js';
+const runTests = (clientModule && clientModule.runTests)
+import freeEyeConfig from './config.js'
 
 const PLUGIN_STATUS_KEY = 'plugin.free_eye'
 
@@ -158,4 +158,4 @@ export default {
     result: null,
   },
   plugin: FreeEyePlugin,
-};
+}

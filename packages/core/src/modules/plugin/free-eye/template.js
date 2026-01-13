@@ -1,4 +1,4 @@
-import { performance } from 'node:perf_hooks';
+import { performance } from 'node:perf_hooks'
 
 class TestThread {
   /**
@@ -140,4 +140,4 @@ export default {
   TestThread,
   TestGroup,
   getClientTests,
-};
+}

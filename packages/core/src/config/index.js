@@ -1,5 +1,6 @@
-import path from 'node:path';
-import configLoader from './local-config-loader.js';
+/* eslint-disable style/no-tabs */
+import path from 'node:path'
+import configLoader from './local-config-loader.js'
 
 function getRootCaCertPath () {
   return path.join(configLoader.getUserBasePath(), '/dev-sidecar.ca.crt')
@@ -1288,4 +1289,4 @@ const defaultConfig = {
 // 从本地文件中加载配置
 defaultConfig.configFromFiles = configLoader.getConfigFromFiles(configLoader.getUserConfig(), defaultConfig)
 
-export default defaultConfig;
+export default defaultConfig

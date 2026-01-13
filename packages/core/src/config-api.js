@@ -1,12 +1,12 @@
-import fs from 'node:fs';
-import jsonApi from '@docmirror/mitmproxy/src/json.js';
-import lodash from 'lodash';
-import request from 'request';
-import defConfig from './config/index.js';
-import mergeApi from './merge.js';
-import Shell from './shell.js';
-import log from './utils/util.log.core.js';
-import configLoader from './config/local-config-loader.js';
+import fs from 'node:fs'
+import jsonApi from '@docmirror/mitmproxy/src/json.js'
+import lodash from 'lodash'
+import request from 'request'
+import defConfig from './config/index.js'
+import mergeApi from './merge.js'
+import Shell from './shell'
+import log from './utils/util.log.core.js'
+import configLoader from './config/local-config-loader.js'
 
 let configTarget = lodash.cloneDeep(defConfig)
 
@@ -297,4 +297,4 @@ const configApi = {
   },
 }
 
-export default configApi;
+export default configApi

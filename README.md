@@ -1,3 +1,4 @@
+/* eslint-disable format/prettier */
 # dev-sidecar
 
 开发者边车，命名取自service-mesh的service-sidecar，意为为开发者打辅助的边车工具（以下简称ds）
@@ -446,7 +447,7 @@ node_modules/.pnpm/phantomjs-prebuilt@2.1.16/node_modules/phantomjs-prebuilt: Ru
 
 2. `electron: Running postinstall script...` 卡死
 
-形如以下情况下卡死，请耐心等待。**不要删除node_modules后重新安装！**
+形如以下情况下卡死，请耐心等待。**不推荐在删除node_modules后重新安装！**
 
 ```shell
 > pnpm i
@@ -532,6 +533,66 @@ pnpm run electron:build:termux
   - Termux 缺少 setuid 能力，必须关闭沙箱，否则会提示 chrome-sandbox 权限错误。
   - `os-network-fallback.cjs` 会在 `uv_interface_addresses` 权限受限时返回回环接口，避免 node-ipc 崩溃。
   - 若仍需沙箱，只能在支持 setuid 的环境或 root 下运行。
+
+6. `ModuleNotFoundError: No module named 'distutils'` 错误
+
+形如以下情况下报错：
+
+```shell
+> pnpm i
+Scope: all 5 workspace projects
+Lockfile is up to date, resolution step is skipped
+Already up to date
+
+devDependencies:
++ @antfu/eslint-config 3.16.0
++ eslint 9.39.1
++ eslint-plugin-format 0.1.3
+
+packages/gui postinstall$ electron-builder install-app-deps
+│   • electron-builder  version=25.1.8
+│   • executing @electron/rebuild  electronVersion=29.4.6 arch=x64 buildFromSource=false appDir=./
+│   • installing native dependencies  arch=x64
+│   • preparing       moduleName=@parcel/watcher arch=x64
+│   ⨯ (node:158832) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() …  
+│ (Use `node --trace-deprecation ...` to show where the warning was created)
+│ (node:158832) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to se…
+│ Traceback (most recent call last):
+│   File "[dev-sidecar项目目录]\node_modules\.pnpm\node-gyp@9.4.1\node_modules\node-gyp\gyp\gyp_…  
+│     import gyp  # noqa: E402
+│     ^^^^^^^^^^
+│   File "[dev-sidecar项目目录]\node_modules\.pnpm\node-gyp@9.4.1\node_modules\node-gyp\gyp\pyli…
+│     import gyp.input
+│   File "[dev-sidecar项目目录]\node_modules\.pnpm\node-gyp@9.4.1\node_modules\node-gyp\gyp\pyli…
+│     from distutils.version import StrictVersion
+│ ModuleNotFoundError: No module named 'distutils'
+│ Error: `gyp` failed with exit code: 1
+│     at ChildProcess.onCpExit ([dev-sidecar项目目录]\node_modules\.pnpm\node-gyp@9.4.1\node_mod…  
+│     at ChildProcess.emit (node:events:508:28)
+│     at ChildProcess._handle.onexit (node:internal/child_process:294:12)
+│   ⨯ node-gyp failed to rebuild '[dev-sidecar项目目录]\node_modules\.pnpm\@parcel+watcher@2.5.0…  
+│     at ChildProcess.<anonymous> ([dev-sidecar项目目录]\node_modules\.pnpm\@electron+rebuild@3.…  
+│     at ChildProcess.emit (node:events:508:28)
+│     at ChildProcess._handle.onexit (node:internal/child_process:294:12)
+└─ Failed in 3.8s at [dev-sidecar项目目录]\packages\gui
+ ELIFECYCLE  Command failed with exit code 1.
+```
+
+distutils 是构建和安装 Python 模块的标准工具，但在 Python 3.10 被弃用，在 Python 3.12 被移除。显然，node-gyp 仍然依赖 distutils 来编译本地模块。
+
+推荐使用第三方的 setuptools 来替代 distutils。一般而言，请执行下面的命令安装 setuptools：（这至少在Python 3.12上有效）
+
+```shell
+pip install setuptools
+```
+
+如果你使用其他软件管理Python环境，请自行查找对应工具的pip等价命令，如使用uv时，应当执行：
+
+```shell
+uv venv . # 创建虚拟环境
+.venv\Scripts\activate # 激活虚拟环境，视具体shell类型，需要使用不同的activate脚本
+uv pip install setuptools
+```
 
 ### 8.5、提交pr
 

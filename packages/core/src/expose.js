@@ -1,10 +1,10 @@
-import lodash from 'lodash';
-import config from './config-api.js';
-import event from './event.js';
-import modules from './modules.js';
-import shell from './shell.js';
-import status from './status.js';
-import log from './utils/util.log.core.js';
+import lodash from 'lodash'
+import config from './config-api.js'
+import event from './event.js'
+import modules from './modules'
+import shell from './shell.js'
+import status from './status.js'
+import log from './utils/util.log.core.js'
 
 const context = {
   config,
@@ -141,4 +141,4 @@ const api = {
 export default {
   status,
   api,
-};
+}

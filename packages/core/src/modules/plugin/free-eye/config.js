@@ -1,4 +1,4 @@
-import mainConfig from '../../../config.js';
+import mainConfig from '../../../config'
 
 export default {
   name: '网络检测',
@@ -14,5 +14,6 @@ export default {
     defaultTimeout: 3,
   },
   // 复用主配置里的 free_eye 默认值，避免重复维护两份配置
-  ...mainConfig.plugin.free_eye,
-};
+  // TODO: 此处config并未读取到用户自定义配置
+  ...mainConfig.server.plugin.free_eye,
+}

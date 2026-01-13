@@ -76,4 +76,4 @@ export default {
   printHeader,
   getResultIcon,
   getCensorsString,
-};
+}
