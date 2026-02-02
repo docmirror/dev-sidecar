@@ -74,6 +74,9 @@ module.exports = {
       } else {
         tags = `\r\n\t${getScript('tampermonkey', scripts.tampermonkey.script)}${tags}`
       }
+      
+      // 增加一个假的js文件，避免github的js异步加载策略获得错误的根路径
+      tags = `\r\n\t${tags}${getScriptByUrlOrPath(" https://github.githubassets.com/assets/fakefile.js ")}`
 
       res.setHeader('DS-Script-Interceptor', 'true')
       log.info(`script response intercept: insert script ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`, ', head:', tags)
