@@ -20,16 +20,17 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
     this.dnsServerName = dnsServerName
   }
 
-  _dnsQueryPromise (hostname, type = 'A') {
+  _dnsQueryPromise (hostname, options = {}) {
     // 请求参数
-    const options = {
+    const type = options.family === 6 ? 'AAAA' : 'A'
+    const requestOptions = {
       url: this.dnsServer,
       agent: createAgent(this.dnsServer),
     }
     if (this.dnsServerName) {
       // 设置SNI
-      options.servername = this.dnsServerName
-      options.rejectUnauthorized = false
+      requestOptions.servername = this.dnsServerName
+      requestOptions.rejectUnauthorized = false
     }
 
     // DNS查询参数
@@ -40,6 +41,6 @@ module.exports = class DNSOverHTTPS extends BaseDNS {
       },
     ]
 
-    return dohQueryAsync(options, questions)
+    return dohQueryAsync(requestOptions, questions)
   }
 }

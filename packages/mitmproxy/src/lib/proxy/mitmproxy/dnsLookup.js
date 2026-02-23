@@ -1,6 +1,33 @@
 const defaultDns = require('node:dns')
+const net = require('node:net')
 const log = require('../../../utils/util.log.server')
 const speedTest = require('../../speed')
+
+function normalizeIp (ip) {
+  if (!ip || typeof ip !== 'string') {
+    return ip
+  }
+
+  // [IPv6]:port 或 [IPv6]
+  if (ip.startsWith('[')) {
+    const match = ip.match(/^\[([^\]]+)\](?::(\d+))?$/)
+    if (match) {
+      return match[1]
+    }
+  }
+
+  // IPv4:port 或 IPv6:port
+  const lastColon = ip.lastIndexOf(':')
+  if (lastColon > -1) {
+    const maybeHost = ip.slice(0, lastColon)
+    const maybePort = ip.slice(lastColon + 1)
+    if (/^\d+$/.test(maybePort) && net.isIP(maybeHost)) {
+      return maybeHost
+    }
+  }
+
+  return ip
+}
 
 function createIpChecker (tester) {
   if (!tester || tester.backupList == null || tester.backupList.length === 0) {
@@ -34,12 +61,13 @@ module.exports = {
       if (tester) {
         const aliveIpObj = tester.pickFastAliveIpObj()
         if (aliveIpObj) {
-          const family = aliveIpObj.host.includes(':') ? 6 : 4
-          log.info(`----- ${action}: ${hostname}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host}${target} -----`)
+          const aliveIp = normalizeIp(aliveIpObj.host)
+          const family = aliveIp && aliveIp.includes(':') ? 6 : 4
+          log.info(`----- ${action}: ${hostname}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIp}${target} -----`)
           if (res) {
-            res.setHeader('DS-DNS-Lookup', `IpTester: ${aliveIpObj.host} ${aliveIpObj.dns === '预设IP' ? 'PreSet' : aliveIpObj.dns}`)
+            res.setHeader('DS-DNS-Lookup', `IpTester: ${aliveIp} ${aliveIpObj.dns === '预设IP' ? 'PreSet' : aliveIpObj.dns}`)
           }
-          callback(null, aliveIpObj.host, family)
+          callback(null, aliveIp, family)
           return
         } else {
           log.info(`----- ${action}: ${hostname}, no alive ip${target}, tester: { "ready": ${tester.ready}, "backupList": ${JSON.stringify(tester.backupList)} }`)
@@ -49,38 +77,40 @@ module.exports = {
       const ipChecker = createIpChecker(tester)
 
       dns.lookup(hostname, ipChecker, { family: 6 }).then((ip) => {
-        if (ip && ip !== hostname) {
+        const normalizedIp = normalizeIp(ip)
+        if (normalizedIp && normalizedIp !== hostname) {
           if (isDnsIntercept) {
             isDnsIntercept.dns = dns
             isDnsIntercept.hostname = hostname
-            isDnsIntercept.ip = ip
+            isDnsIntercept.ip = normalizedIp
           }
           if (res) {
-            res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
+            res.setHeader('DS-DNS-Lookup', `DNS: ${normalizedIp} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
           }
-          callback(null, ip, 6)
+          callback(null, normalizedIp, 6)
           return
         }
         
         // 回退到IPv4查询
         return dns.lookup(hostname)
       }).then((ip) => {
-        if (!ip || ip === hostname) {
+        const normalizedIp = normalizeIp(ip)
+        if (!normalizedIp || normalizedIp === hostname) {
           // 使用默认dns
           return defaultDns.lookup(hostname, options, callback)
         }
         if (isDnsIntercept) {
           isDnsIntercept.dns = dns
           isDnsIntercept.hostname = hostname
-          isDnsIntercept.ip = ip
+          isDnsIntercept.ip = normalizedIp
         }
 
-        if (ip !== hostname) {
-          log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.dnsName}': ${ip}${target} -----`)
+        if (normalizedIp !== hostname) {
+          log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.dnsName}': ${normalizedIp}${target} -----`)
           if (res) {
-            res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
+            res.setHeader('DS-DNS-Lookup', `DNS: ${normalizedIp} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
           }
-          callback(null, ip, 4)
+          callback(null, normalizedIp, 4)
         } else {
           // 使用默认dns
           log.info(`----- ${action}: ${hostname}, use default DNS: ${hostname}${target}, options:`, options, ', dns:', dns)

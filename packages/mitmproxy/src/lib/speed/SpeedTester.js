@@ -8,6 +8,12 @@ const config = require('./config.js')
 
 const DISABLE_TIMEOUT = 60 * 60 * 1000
 
+const INVALID_IP_SET = new Set(['0.0.0.0', '::'])
+
+function isInvalidIp (ip) {
+  return !ip || INVALID_IP_SET.has(ip)
+}
+
 class SpeedTester {
   constructor ({ hostname, port }) {
     this.dnsMap = config.getConfig().dnsMap
@@ -75,14 +81,28 @@ class SpeedTester {
     const promiseList = []
     for (const dnsKey in dnsMap) {
       const dns = dnsMap[dnsKey]
-      const one = this.getFromOneDns(dns).then((ipList) => {
+      const v4 = this.getFromOneDns(dns).then((ipList) => {
         if (ipList && ipList.length > 0) {
           for (const ip of ipList) {
+            if (isInvalidIp(ip)) {
+              continue
+            }
             ips[ip] = { dns: ipList.isPreSet === true ? '预设IP' : dnsKey }
           }
         }
       })
-      promiseList.push(one)
+      const v6 = this.getFromOneDns(dns, { family: 6 }).then((ipList) => {
+        if (ipList && ipList.length > 0) {
+          for (const ip of ipList) {
+            if (isInvalidIp(ip)) {
+              continue
+            }
+            ips[ip] = { dns: ipList.isPreSet === true ? '预设IP' : dnsKey }
+          }
+        }
+      })
+      promiseList.push(v4)
+      promiseList.push(v6)
     }
     await Promise.all(promiseList)
 
@@ -93,8 +113,8 @@ class SpeedTester {
     return items
   }
 
-  async getFromOneDns (dns) {
-    return await dns._lookupWithPreSetIpList(this.hostname)
+  async getFromOneDns (dns, options = {}) {
+    return await dns._lookupWithPreSetIpList(this.hostname, options)
   }
 
   async test () {

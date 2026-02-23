@@ -103,7 +103,7 @@ module.exports = class BaseDNS {
     }
   }
 
-  async _lookupWithPreSetIpList (hostname) {
+  async _lookupWithPreSetIpList (hostname, options = {}) {
     if (this.preSetIpList) {
       // 获取当前域名的预设IP列表
       let hostnamePreSetIpList = matchUtil.matchHostname(this.preSetIpList, hostname, `matched preSetIpList(${this.dnsName})`)
@@ -117,27 +117,27 @@ module.exports = class BaseDNS {
         if (hostnamePreSetIpList.length > 0) {
           const result = []
           for (const item of hostnamePreSetIpList) {
-          if (net.isIP(item)) {
-            // 如果是IP地址，直接使用
-            result.push(item)
-          } else {
-            // 如果是域名，进行DNS解析
-            try {
-              const resolved = await this._lookup(item, options)
-              if (resolved && resolved.length > 0) {
-                result.push(...resolved)
+            if (net.isIP(item)) {
+              // 如果是IP地址，直接使用
+              result.push(item)
+            } else {
+              // 如果是域名，进行DNS解析
+              try {
+                const resolved = await this._lookup(item, options)
+                if (resolved && resolved.length > 0) {
+                  result.push(...resolved)
+                }
+              } catch (e) {
+                log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] 解析预设域名失败: ${item}`, e)
               }
-            } catch (e) {
-              log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] 解析预设域名失败: ${item}`, e)
             }
           }
-        }
 
-        if (result.length > 0) {
-          result.isPreSet = true
-          log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取到该域名的预设IP列表： ${hostname} - ${JSON.stringify(result)}`)
-          return result
-        }
+          if (result.length > 0) {
+            result.isPreSet = true
+            log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取到该域名的预设IP列表： ${hostname} - ${JSON.stringify(result)}`)
+            return result
+          }
         }
       }
     }
@@ -152,7 +152,7 @@ module.exports = class BaseDNS {
     try {
       // 执行DNS查询
       log.debug(`[DNS-over-${this.dnsType} '${this.dnsName}'] query start: ${hostname}`)
-      const response = await this._doDnsQuery(hostname, options, start)
+      response = await this._doDnsQuery(hostname, options, start)
     } catch {
       // 异常日志在 _doDnsQuery已经打印过，这里就不再打印了
       return []
