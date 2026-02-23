@@ -9,19 +9,20 @@ module.exports = class DNSOverTLS extends BaseDNS {
     this.dnsServer = dnsServer.replace(/\s+/, '')
     this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort
     this.dnsServerName = dnsServerName
+    this.isIPv6 = dnsServer.includes(':') && dnsServer.includes('[') && dnsServer.includes(']')
   }
 
-  _dnsQueryPromise (hostname, type = 'A') {
-    const options = {
+  _dnsQueryPromise (hostname, options = {}) {
+    const queryOptions = {
       host: this.dnsServer,
       port: this.dnsServerPort,
       servername: this.dnsServerName || this.dnsServer,
-
+      family: this.isIPv6 ? 6 : 4,
       name: hostname,
       klass: 'IN',
-      type,
+      type: options.family === 6 ? 'AAAA' : 'A',
     }
 
-    return dnstls.query(options)
+    return dnstls.query(queryOptions)
   }
 }

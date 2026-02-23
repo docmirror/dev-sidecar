@@ -34,11 +34,12 @@ module.exports = {
       if (tester) {
         const aliveIpObj = tester.pickFastAliveIpObj()
         if (aliveIpObj) {
+          const family = aliveIpObj.host.includes(':') ? 6 : 4
           log.info(`----- ${action}: ${hostname}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host}${target} -----`)
           if (res) {
             res.setHeader('DS-DNS-Lookup', `IpTester: ${aliveIpObj.host} ${aliveIpObj.dns === '预设IP' ? 'PreSet' : aliveIpObj.dns}`)
           }
-          callback(null, aliveIpObj.host, 4)
+          callback(null, aliveIpObj.host, family)
           return
         } else {
           log.info(`----- ${action}: ${hostname}, no alive ip${target}, tester: { "ready": ${tester.ready}, "backupList": ${JSON.stringify(tester.backupList)} }`)
@@ -47,7 +48,27 @@ module.exports = {
 
       const ipChecker = createIpChecker(tester)
 
-      dns.lookup(hostname, ipChecker).then((ip) => {
+      dns.lookup(hostname, ipChecker, { family: 6 }).then((ip) => {
+        if (ip && ip !== hostname) {
+          if (isDnsIntercept) {
+            isDnsIntercept.dns = dns
+            isDnsIntercept.hostname = hostname
+            isDnsIntercept.ip = ip
+          }
+          if (res) {
+            res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
+          }
+          callback(null, ip, 6)
+          return
+        }
+        
+        // 回退到IPv4查询
+        return dns.lookup(hostname)
+      }).then((ip) => {
+        if (!ip || ip === hostname) {
+          // 使用默认dns
+          return defaultDns.lookup(hostname, options, callback)
+        }
         if (isDnsIntercept) {
           isDnsIntercept.dns = dns
           isDnsIntercept.hostname = hostname

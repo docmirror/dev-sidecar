@@ -455,9 +455,10 @@ export default {
                   </a>
                   <a-tag
                     v-for="(element, index) of item.backupList" :key="index" style="margin:2px;"
-                    :title="element.title || `测速中：${element.host}`" :color="element.time ? (element.time > config.server.setting.lowSpeedDelay ? 'orange' : 'green') : (element.title ? 'red' : '')"
+                    :title="element.title || `测速中：${element.host}`" :color="element.time ? (element.time > config.server.setting.lowSpeedDelay ? 'orange' : 'green') : (element.title ? 'red' : '')" :class="{'ipv6-tag': element.host.includes(':')}"
                   >
                     {{ element.host }} {{ element.time ? `${element.time}ms` : (element.title ? '' : '测速中') }} {{ element.dns }}
+                    <span v-if="element.host.includes(':')" class="ipv6-badge">IPv6</span>
                   </a-tag>
                 </a-card>
               </a-col>
@@ -511,5 +512,26 @@ export default {
   .ant-input-group-addon:first-child {
     width: 45px;
   }
+  .ipv6-tag {
+  position: relative;
+  padding-right: 45px !important;
+  margin-right: 5px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  min-width: 200px !important;
+}
+.ipv6-badge {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  background: #1890ff;
+  color: white;
+  padding: 0 4px;
+  border-radius: 3px;
+  line-height: 16px;
+  height: 16px;
+}
 }
 </style>

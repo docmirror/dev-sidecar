@@ -15,7 +15,7 @@ module.exports = class DNSOverUDP extends BaseDNS {
     this.socketType = this.isIPv6 ? 'udp6' : 'udp4'
   }
 
-  _dnsQueryPromise (hostname, type = 'A') {
+  _dnsQueryPromise (hostname, options = {}) {
     return new Promise((resolve, reject) => {
       let isOver = false
       const timeout = 5000
@@ -27,7 +27,7 @@ module.exports = class DNSOverUDP extends BaseDNS {
         type: 'query',
         id: randi(0x0, 0xFFFF),
         questions: [{
-          type,
+          type: options.family === 6 ? 'AAAA' : 'A',
           name: hostname,
         }],
       })
