@@ -16,7 +16,7 @@ function normalizeIp(ip) {
     }
   }
 
-  // IPv4:port 或 IPv6:port
+  // IPv4:port (禁止使用IPv6:port格式)
   const lastColon = ip.lastIndexOf(':')
   if (lastColon > -1) {
     const maybeHost = ip.slice(0, lastColon)
