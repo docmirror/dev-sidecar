@@ -140,31 +140,24 @@ module.exports = {
          defaultDns.lookup(hostname, options, callback)
       }
 
-      tryIPv6().catch(() => {
+      if (reqFamily === 6) {
+        // 只查 v6
+        tryIPv6().catch(handleError)
+      } else if (reqFamily === 4) {
+        // 只查 v4
+        tryIPv4().catch(handleError)
+      } else {
+        // reqFamily === 0 (默认行为)：先查 v6，失败查 v4
+        // 原有逻辑是优先 v6
+        tryIPv6().catch(() => {
+          // v6 失败，尝试 v4
           return tryIPv4()
         }).catch(() => {
+          // v4 也失败，使用系统默认
           log.info(`----- ${action}: ${hostname}, use default DNS: ${hostname}${target}, options:`, options, ', dns:', dns)
           defaultDns.lookup(hostname, options, callback)
         })
-
-      // if (reqFamily === 6) {
-      //   // 只查 v6
-      //   tryIPv6().catch(handleError)
-      // } else if (reqFamily === 4) {
-      //   // 只查 v4
-      //   tryIPv4().catch(handleError)
-      // } else {
-      //   // reqFamily === 0 (默认行为)：先查 v6，失败查 v4 (或者根据你的需求调整顺序)
-      //   // 原有逻辑是优先 v6
-      //   tryIPv6().catch(() => {
-      //     // v6 失败，尝试 v4
-      //     return tryIPv4()
-      //   }).catch(() => {
-      //     // v4 也失败，使用系统默认
-      //     log.info(`----- ${action}: ${hostname}, use default DNS: ${hostname}${target}, options:`, options, ', dns:', dns)
-      //     defaultDns.lookup(hostname, options, callback)
-      //   })
-      // }
+      }
     }
   },
 }
