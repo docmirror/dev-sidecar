@@ -513,25 +513,25 @@ export default {
     width: 45px;
   }
   .ipv6-tag {
-  position: relative;
-  padding-right: 45px !important;
-  margin-right: 5px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  min-width: 200px !important;
-}
-.ipv6-badge {
-  position: absolute;
-  right: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 10px;
-  background: #1890ff;
-  color: white;
-  padding: 0 4px;
-  border-radius: 3px;
-  line-height: 16px;
-  height: 16px;
-}
+    position: relative;
+    padding-right: 45px !important;
+    margin-right: 5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    min-width: 200px !important;
+  }
+  .ipv6-badge {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    background: #1890ff;
+    color: white;
+    padding: 0 4px;
+    border-radius: 3px;
+    line-height: 16px;
+    height: 16px;
+  }
 }
 </style>
