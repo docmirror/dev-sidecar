@@ -179,9 +179,9 @@
 
 #### 2）`github.com` 的镜像网站（注意：部分镜像网站不能登录）
 
-> 1. [hub.fastgit.org](https://hub.fastgit.org/) （2024/11/18：这个好像失效了？）
-> 2. [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限（2024/11/18：这个好像失效了？）
-> 3. [dgithub.xyz](https://dgithub.xyz/)
+> 1. ~~[hub.fastgit.org](https://hub.fastgit.org/) （2024/11/18：这个好像失效了？）~~
+> 2. ~~[github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限（2024/11/18：这个好像失效了？）~~
+> 3. [bgithub.xyz](https://bgithub.xyz/)（edge浏览器可能报毒）
 
 ## 五、api
 
@@ -383,7 +383,6 @@ npm config delete https-proxy
 
 ```shell
 npm install -g pnpm --registry=https://registry.npmmirror.com
-
 ```
 
 ### 8.2、开发调试模式启动
