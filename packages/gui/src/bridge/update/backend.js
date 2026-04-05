@@ -15,6 +15,7 @@ const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 
 const curVersion = pkg.version
+const isCurrentPreRelease = curVersion.includes('-')
 
 function extractVersion (versionData) {
   const candidates = [versionData.name, versionData.tag_name]
@@ -22,8 +23,8 @@ function extractVersion (versionData) {
     if (!candidate) {
       continue
     }
-    const matched = candidate.match(/v?\d+(?:\.\d+)*(?:-[0-9A-Za-z.-]+)?/)
-    if (matched && matched[0]) {
+    const matched = candidate.match(/^v?(\d+(?:\.\d+)+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?)$/)
+    if (matched) {
       return matched[0].startsWith('v') ? matched[0].substring(1) : matched[0]
     }
   }
@@ -142,7 +143,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
             }
 
             const isOnlinePreRelease = onlineVersion.includes('-')
-            if (DevSidecar.api.config.get().app.skipPreRelease && isOnlinePreRelease) {
+            if (!isCurrentPreRelease && DevSidecar.api.config.get().app.skipPreRelease && isOnlinePreRelease) {
               log.info('跳过预发布版本:', versionData.name, ', onlineVersion:', onlineVersion)
               continue // 跳过预发布版本
             }
