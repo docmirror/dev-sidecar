@@ -13,7 +13,7 @@
 
 - **Quick:** ESLint + unit tests — [lint-and-test.yml](https://github.com/bvalavanis-maker/dev-sidecar/actions/workflows/lint-and-test.yml) (also **Actions** tab on GitHub). **Run manually:** Actions → *Lint and unit tests* → **Run workflow**.
 - **Full:** multi-OS Electron build — [test-and-upload.yml](https://github.com/bvalavanis-maker/dev-sidecar/actions/workflows/test-and-upload.yml).
-- **Local:** `pnpm install` then `pnpm verify`.
+- **Local:** `pnpm install` then `pnpm verify` (lint + tests). Full app build: `pnpm run build:full` (runs verify, then `electron:build` in `packages/gui`).
 - **Upstream:** sync from [docmirror/dev-sidecar](https://github.com/docmirror/dev-sidecar) — `git fetch upstream` then merge/rebase `upstream/master`.
 
 > Gitee上的同步项目已被封禁，请认准本项目唯一官方仓库地址[https://github.com/docmirror/dev-sidecar](https://github.com/docmirror/dev-sidecar) 【狗头保命】

@@ -9,7 +9,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "pnpm -r --if-present run test",
-    "verify": "pnpm lint && pnpm test"
+    "verify": "pnpm lint && pnpm test",
+    "check": "pnpm verify",
+    "build:gui": "pnpm --filter @docmirror/dev-sidecar-gui run electron:build",
+    "build:full": "pnpm verify && pnpm run build:gui"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.9.1",
