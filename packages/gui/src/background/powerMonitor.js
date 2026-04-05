@@ -96,7 +96,7 @@ class PowerMonitor {
   }
 
   /**
-   * @returns {boolean}
+   * @returns {boolean} 是否使用电池供电
    */
   get onBatteryPower () {
     return _powerMonitor.onBatteryPower
@@ -104,28 +104,28 @@ class PowerMonitor {
 
   /**
    * @param {number} idleThreshold
-   * @returns {'active'|'idle'|'locked'|'unknown'}
+   * @returns {'active'|'idle'|'locked'|'unknown'} 系统空闲状态
    */
   getSystemIdleState (idleThreshold) {
     return _powerMonitor.getSystemIdleState(idleThreshold)
   }
 
   /**
-   * @returns {number}
+   * @returns {number} 空闲时长（秒）
    */
   getSystemIdleTime () {
     return _powerMonitor.getSystemIdleTime()
   }
 
   /**
-   * @returns {'unknown'|'nominal'|'fair'|'serious'|'critical'}
+   * @returns {'unknown'|'nominal'|'fair'|'serious'|'critical'} 热状态
    */
   getCurrentThermalState () {
     return _powerMonitor.getCurrentThermalState()
   }
 
   /**
-   * @returns {boolean}
+   * @returns {boolean} 是否电池供电
    */
   isOnBatteryPower () {
     return _powerMonitor.isOnBatteryPower()

@@ -99,7 +99,7 @@ const localApi = {
   },
   /**
    * 启动所有
-   * @returns {Promise<void>}
+   * @returns {Promise<void>} 启动完成
    */
   startup () {
     return DevSidecar.api.startup({ mitmproxyPath })
@@ -107,14 +107,14 @@ const localApi = {
   server: {
     /**
      * 启动代理服务
-     * @returns {Promise<{port: *}>}
+     * @returns {Promise<{port: *}>} 代理端口等信息
      */
     start () {
       return DevSidecar.api.server.start({ mitmproxyPath })
     },
     /**
      * 重启代理服务
-     * @returns {Promise<void>}
+     * @returns {Promise<void>} 重启完成
      */
     restart () {
       return DevSidecar.api.server.restart({ mitmproxyPath })

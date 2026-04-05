@@ -5,7 +5,7 @@ const lodash = require('lodash')
  *
  * @param oldObj
  * @param newObj
- * @returns {{}|*}
+ * @returns {Object} 差异对象（相对 oldObj）
  */
 function doDiff (oldObj, newObj) {
   if (newObj == null) {

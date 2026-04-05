@@ -18,6 +18,8 @@ export default antfu(
     ignores: [
       '**/build/*',
       '**/dist_electron',
+      // CI YAML: format rules (plain scalar, # spacing) conflict with workflow shell blocks
+      '.github/**',
     ],
     formatters: {
       css: true,

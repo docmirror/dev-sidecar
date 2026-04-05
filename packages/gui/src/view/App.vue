@@ -140,12 +140,13 @@ export default {
 <template>
   <a-config-provider :locale="locale">
     <div class="ds_layout" :class="themeClass">
-      <SearchBar ref="searchBar"
-                 :root="'#document'"
-                 :highlightClass="'search-bar-highlight'"
-                 :selectedClass="'selected-highlight'"
-                 :hiden.sync="hideSearchBar"
-                 style="inset:auto auto 53px 210px; background-color:#ddd"
+      <SearchBar
+        ref="searchBar"
+        :root="'#document'"
+        :highlight-class="'search-bar-highlight'"
+        :selected-class="'selected-highlight'"
+        :hiden.sync="hideSearchBar"
+        style="inset:auto auto 53px 210px; background-color:#ddd"
       />
       <a-layout>
         <a-layout-sider :theme="theme" style="overflow-y: auto">
