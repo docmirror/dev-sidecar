@@ -1,27 +1,28 @@
-# Push this project to a PRIVATE GitHub repo (bvalavanis-maker/dev-sidecar-private).
-#
-# Option A — GitHub CLI (δημιουργεί το repo αν δεν υπάρχει):
-#   1) gh auth login
-#   2) Από τη ρίζα του project: gh repo create dev-sidecar-private --private --source=. --remote=private --push
-#
-# Option B — Χειροκίνητα:
-#   1) Δημιούργησε κενό private repo: https://github.com/new?name=dev-sidecar-private&visibility=private
-#   2) Τρέξε αυτό το script από τη ρίζα ή: powershell -File _script/push-to-private.ps1
-
+# Private mirror: github.com/bvalavanis-maker/dev-sidecar-private
+# Πλήρης αυτοματισμός: βάλε μόνιμα User env var GITHUB_TOKEN (classic PAT: repo scope) και τρέξε αυτό το script.
 $ErrorActionPreference = "Stop"
 $root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $root
-Write-Host "Root: $root"
 
-$remoteName = "private"
-$url = "https://github.com/bvalavanis-maker/dev-sidecar-private.git"
+$token = $env:GITHUB_TOKEN
+if (-not $token) { $token = $env:GH_TOKEN }
+$gh = Get-Command gh -ErrorAction SilentlyContinue
 
-if (-not (git remote get-url $remoteName 2>$null)) {
-  git remote add $remoteName $url
-  Write-Host "Added remote $remoteName"
-} else {
-  Write-Host "Remote '$remoteName' already configured."
+if ($token -and $gh) {
+  $token | & gh auth login --hostname github.com --with-token 2>&1
+  $exists = & gh repo view bvalavanis-maker/dev-sidecar-private 2>&1
+  if ($LASTEXITCODE -ne 0) {
+    & gh repo create dev-sidecar-private --private --confirm 2>&1
+  }
+  if (-not (git remote get-url private 2>$null)) {
+    git remote add private https://github.com/bvalavanis-maker/dev-sidecar-private.git
+  }
+  git push -u private master
+  exit $LASTEXITCODE
 }
 
-Write-Host "Pushing master -> $remoteName ..."
-git push -u $remoteName master
+if (-not (git remote get-url private 2>$null)) {
+  git remote add private https://github.com/bvalavanis-maker/dev-sidecar-private.git
+}
+git push -u private master
+exit $LASTEXITCODE
