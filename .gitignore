@@ -13,6 +13,9 @@ node_modules/
 *.lock
 package-lock.json
 
+# Local env (do not commit secrets)
+packages/gui/.env
+
 # Other files
 out
 gen
