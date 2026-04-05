@@ -97,6 +97,10 @@ jobs:
           echo "--------------------";
           pnpm install;
 
+      - name: Ensure packages/gui/.env for CI
+        shell: bash
+        run: cp packages/gui/.env.example packages/gui/.env
+
       - name: 'test packages/core'
         run: |
           cd packages/core;

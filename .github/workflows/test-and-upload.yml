@@ -116,6 +116,11 @@ jobs:
           echo "--------------------";
           pnpm install;
 
+      # gui/.env is not committed (secrets); CI needs defaults for electron-builder / after-pack
+      - name: Ensure packages/gui/.env for CI
+        shell: bash
+        run: cp packages/gui/.env.example packages/gui/.env
+
       - name: 'test packages/core'
         run: |
           cd packages/core;
