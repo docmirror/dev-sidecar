@@ -12,7 +12,7 @@
 ### CI / 持续集成
 
 - **Quick:** ESLint + unit tests — [lint-and-test.yml](https://github.com/bvalavanis-maker/dev-sidecar/actions/workflows/lint-and-test.yml) (also **Actions** tab on GitHub). **Run manually:** Actions → *Lint and unit tests* → **Run workflow**.
-- **Full:** multi-OS Electron build — [test-and-upload.yml](https://github.com/bvalavanis-maker/dev-sidecar/actions/workflows/test-and-upload.yml).
+- **Full:** multi-OS Electron build — [test-and-upload.yml](https://github.com/bvalavanis-maker/dev-sidecar/actions/workflows/test-and-upload.yml). **Run manually:** Actions → *Test And Upload* → **Run workflow**.
 - **Local:** `pnpm install` then `pnpm verify` (lint + tests). Full app build: `pnpm run build:full` (runs verify, then `electron:build` in `packages/gui`).
 - **Upstream:** sync from [docmirror/dev-sidecar](https://github.com/docmirror/dev-sidecar) — `git fetch upstream` then merge/rebase `upstream/master`.
 
