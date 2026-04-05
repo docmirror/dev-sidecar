@@ -1,0 +1,59 @@
+# Fast feedback: ESLint + mocha (packages with a test script), no Electron build.
+# See also: test-and-upload.yml for full GUI build on all OSes.
+name: Lint and unit tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+      - develop
+      - 1.x
+    paths-ignore:
+      - '_script/**'
+      - 'doc/**'
+      - '**/*.md'
+      - '**/.gitignore'
+      - '**/LICENSE'
+  pull_request:
+    branches:
+      - master
+      - main
+      - develop
+      - 1.x
+    paths-ignore:
+      - '_script/**'
+      - 'doc/**'
+      - '**/*.md'
+      - '**/.gitignore'
+      - '**/LICENSE'
+
+concurrency:
+  group: lint-and-test-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: ESLint
+        run: pnpm lint
+
+      - name: Unit tests (workspace packages with test script)
+        run: pnpm test

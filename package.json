@@ -7,7 +7,9 @@
   "license": "MPL-2.0",
   "scripts": {
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test": "pnpm -r --if-present run test",
+    "verify": "pnpm lint && pnpm test"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.9.1",
