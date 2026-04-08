@@ -15,8 +15,8 @@
     "intercepts": {
       "github.com": {
         "^(/[\\w-.]+){2,}/?(\\?.*)?$": {
-          "tampermonkeyScript": "https://gitee.com/wangliang181230/dev-sidecar/raw/scripts/tampermonkey.js",
-          "script": "https://gitee.com/wangliang181230/dev-sidecar/raw/scripts/GithubEnhanced-High-Speed-Download.user.js"
+          "tampermonkeyScript": "https://gitee.com/wangliang181230/dev-sidecar-config/raw/main/tampermonkey.js",
+          "script": "https://gitee.com/wangliang181230/dev-sidecar-config/raw/main/GithubEnhanced-High-Speed-Download.user.js"
         },
         "^(/[^/]+){2}/releases/download/.*$": {
           "redirect": "ghp.ci/https://github.com",
