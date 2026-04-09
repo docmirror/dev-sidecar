@@ -109,4 +109,13 @@ module.exports = {
     const maxAge = cacheReq.getMaxAge(interceptOpt)
     return maxAge != null && maxAge > 0
   },
+  // 简单处理方法
+  simpleHandle (interceptOpt, res) {
+    const maxAge = cacheReq.getMaxAge(interceptOpt)
+    if (maxAge == null || maxAge <= 0) {
+      return
+    }
+
+    res.setHeader('Cache-Control', `public, max-age=${maxAge + 1}, immutable`)
+  },
 }
