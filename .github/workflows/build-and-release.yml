@@ -1,4 +1,4 @@
-name: Build And Release
+name: "Build And Release"
 
 on:
   push:
@@ -28,13 +28,13 @@ jobs:
         node:
           - 22
     steps:
-      - name: Checkout
+      - name: "Checkout"
         uses: actions/checkout@v4.1.7
         with:
           submodules: true
           fetch-depth: 0
 
-      - name: Setup pnpm
+      - name: "Setup pnpm"
         uses: pnpm/action-setup@v4
 
       - name: 'Setup Node.js "${{ matrix.node }}.x" environment'
@@ -44,18 +44,18 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           cache: pnpm
 
-      - name: Setup Python environment (For all systems) Because of electron-builder install-app-deps requires Python setup tools
+      - name: "Setup Python environment, because of electron-builder install-app-deps requires Python setup tools"
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Get package info
+      - name: "Get package info"
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
         with:
           path: ./packages/gui
 
-      - name: Print
+      - name: "Print"
         run: |
           echo "version = ${{ steps.package-info.outputs.version }}";
           echo "github.ref_type = ${{ github.ref_type }}";
@@ -79,7 +79,7 @@ jobs:
           echo "--------------------";
           python --version;
 
-      - name: Setup electron cache
+      - name: "Setup electron cache"
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.cache/electron
@@ -87,7 +87,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-electron-cache-
 
-      - name: Setup electron-builder cache
+      - name: "Setup electron-builder cache"
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.cache/electron-builder
@@ -105,12 +105,12 @@ jobs:
           echo "--------------------";
           pnpm install;
 
-      - name: test packages/core
+      - name: "test packages/core"
         run: |
           cd packages/core;
           pnpm run test;
 
-      - name: test packages/mitmproxy
+      - name: "test packages/mitmproxy"
         run: |
           cd packages/mitmproxy;
           pnpm run test;
@@ -137,7 +137,7 @@ jobs:
           dir || ls -lah;
 
       # Rename artifacts
-      - name: Rename artifacts - Windows
+      - name: "Rename artifacts - Windows"
         if: ${{ matrix.os == 'windows' }}
         run: |
           cd packages/gui/dist_electron;
@@ -146,47 +146,32 @@ jobs:
           ren DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe;
           ren DevSidecar-${{ steps.package-info.outputs.version }}.exe       DevSidecar-${{ steps.package-info.outputs.version }}-windows-universal.exe;
           dir;
-      - name: Rename artifacts - Linux
+      - name: "Rename artifacts - Linux"
         if: ${{ matrix.os == 'ubuntu' }}
         run: |
           cd packages/gui/dist_electron;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.deb;
-
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage;
-
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x64.tar.gz      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.tar.gz;
-
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.rpm;
-
           #-------------------------------------------------------------------------------------------------------------------------
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb;
-
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage  DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage;
-
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.tar.gz    DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz;
-
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-aarch64.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm;
-
+          mv DevSidecar-${{ steps.package-info.outputs.version }}-aarch64.rpm     DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm;
           #-------------------------------------------------------------------------------------------------------------------------
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.deb      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb;
-
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.AppImage;
-
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.tar.gz   DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz;
-
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm;
-
           ls -lah;
-      - name: Rename artifacts - macOS
+      - name: "Rename artifacts - macOS"
         if: ${{ matrix.os == 'macos' }}
         run: |
           cd packages/gui/dist_electron;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x64.dmg        DevSidecar-${{ steps.package-info.outputs.version }}-macos-x86_64.dmg;
-
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.dmg      DevSidecar-${{ steps.package-info.outputs.version }}-macos-arm64.dmg;
-
           mv DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg  DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg;
-
           ls -lah;
 
       # region Upload artifacts - Windows
@@ -338,10 +323,10 @@ jobs:
     needs:
       - build-and-upload
     steps:
-      - name: Checkout
+      - name: "Checkout"
         uses: actions/checkout@v4.1.7
 
-      - name: Get package info
+      - name: "Get package info"
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
         with:
@@ -371,7 +356,7 @@ jobs:
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-windows-universal.exe"
           path: release
-
+      # -------------------------------------------------------------------------------------------------------------------------
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.deb"
         uses: actions/download-artifact@v4.1.8
         with:
@@ -434,7 +419,7 @@ jobs:
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm"
           path: release
-
+      # -------------------------------------------------------------------------------------------------------------------------
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-macos-x86_64.dmg"
         uses: actions/download-artifact@v4.1.8
         with:
@@ -455,7 +440,7 @@ jobs:
         run: |
           ls -lah release;
 
-      - name: Create a draft release
+      - name: "Create a draft release"
         uses: wangliang181230/github-action-ghr@master
         env:
           GITHUB_TOKEN: ${{ github.token }}
