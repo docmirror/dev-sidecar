@@ -107,6 +107,10 @@ module.exports = defineConfig({
               target: 'tar.gz',
               arch: ['x64', 'arm64', 'armv7l'],
             },
+            {
+              target: 'rpm',
+              arch: ['x64', 'arm64', 'armv7l'],
+            }
           ],
           category: 'System',
         },
@@ -124,7 +128,7 @@ module.exports = defineConfig({
           // url: 'http://dev-sidecar.docmirror.cn/update/preview/',
         },
       },
-      chainWebpackMainProcess (config) {
+      chainWebpackMainProcess(config) {
         config.entry('mitmproxy').add(path.join(__dirname, 'src/bridge/mitmproxy.js'))
       },
     },

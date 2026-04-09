@@ -14,7 +14,7 @@ import { isNewVersion } from '@docmirror/dev-sidecar/src/utils/util.version'
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 
-const curVersion = pkg.version
+const curVersion = `${pkg.version}.2`
 const isPreRelease = curVersion.includes('-')
 
 function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
