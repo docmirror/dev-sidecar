@@ -1,4 +1,4 @@
-name: npm run electron
+name: "npm run electron"
 
 on:
   push:
@@ -7,11 +7,12 @@ on:
       - test*
       - release*
     paths-ignore:
-      - '_script/**'
-      - 'doc/**'
-      - '**/*.md'
-      - '**/.gitignore'
-      - '**/LICENSE'
+      - "_script/**"
+      - "doc/**"
+      - "**/*.md"
+      - "**/.gitignore"
+      - "**/LICENSE"
+  workflow_dispatch:
 
 jobs:
   npm-run-electron:
@@ -29,10 +30,13 @@ jobs:
         node:
           - 22
     steps:
-      - name: Checkout
+      - name: "Checkout"
         uses: actions/checkout@v4.1.7
+        with:
+          submodules: true
+          fetch-depth: 0
 
-      - name: Setup pnpm
+      - name: "Setup pnpm"
         uses: pnpm/action-setup@v4
 
       - name: 'Setup Node.js "${{ matrix.node }}.x" environment'
@@ -42,19 +46,18 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           cache: pnpm
 
-      - name: Setup Python environment (Mac) Because of electron-builder install-app-deps requires Python setup tools
-        if: matrix.os == 'macos'
+      - name: "Setup Python environment, because of electron-builder install-app-deps requires Python setup tools"
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
-      - name: Print
+      - name: "Print"
         run: |
           echo "github.ref_type = ${{ github.ref_type }}";
           echo "github.ref = ${{ github.ref }}";
           echo "github.ref_name = ${{ github.ref_name }}";
 
-      - name: 'npm -v | pnpm -v | python --version'
+      - name: "npm -v | pnpm -v | python --version"
         run: |
           echo "======================================================================";
           echo "npm -v";
@@ -71,7 +74,7 @@ jobs:
           echo "--------------------";
           python --version;
 
-      - name: Setup electron cahce
+      - name: "Setup electron cache"
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.cache/electron
@@ -79,7 +82,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-electron-cache-
 
-      - name: Setup electron-builder cahce
+      - name: "Setup electron-builder cache"
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.cache/electron-builder
@@ -87,7 +90,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-electron-builder-cache-
 
-      - name: pnpm install
+      - name: "pnpm install"
         run: |
           echo "======================================================================";
           dir || ls -lah;
@@ -97,7 +100,7 @@ jobs:
           echo "--------------------";
           pnpm install;
 
-      - name: npm run electron
+      - name: "npm run electron"
         run: |
           echo "======================================================================";
           echo "cd packages/gui";

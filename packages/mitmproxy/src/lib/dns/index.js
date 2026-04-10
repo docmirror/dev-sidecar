@@ -89,9 +89,9 @@ module.exports = {
 
     return dnsMap
   },
-  hasDnsLookup (dnsConfig, hostname) {
+  getDNS (dnsConfig, hostname) {
     // 先匹配 预设IP配置
-    const hostnamePreSetIpList = matchUtil.matchHostname(dnsConfig.preSetIpList, hostname, 'matched preSetIpList(hasDnsLookup)')
+    const hostnamePreSetIpList = matchUtil.matchHostname(dnsConfig.preSetIpList, hostname, 'matched preSetIpList(getDNS)')
     if (hostnamePreSetIpList) {
       return dnsConfig.dnsMap.PreSet
     }

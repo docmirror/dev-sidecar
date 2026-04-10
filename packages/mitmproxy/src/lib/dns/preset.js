@@ -5,7 +5,7 @@ module.exports = class DNSOverPreSetIpList extends BaseDNS {
     super('PreSet', 'PreSet', null, preSetIpList)
   }
 
-  async _lookup (_hostname) {
+  async _lookup (_hostname, _options) {
     return []
   }
 }

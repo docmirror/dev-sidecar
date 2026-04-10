@@ -112,7 +112,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
       connectTimeout: 10000,
     }
     if (dnsConfig && dnsConfig.dnsMap) {
-      const dns = DnsUtil.hasDnsLookup(dnsConfig, hostname)
+      const dns = DnsUtil.getDNS(dnsConfig, hostname)
       if (dns) {
         options.lookup = dnsLookup.createLookupFunc(null, dns, 'connect', hostport, port, isDnsIntercept)
       }
