@@ -53,13 +53,20 @@ module.exports = class BaseDNS {
     }
   }
 
-  async lookup (hostname, ipChecker) {
+  async lookup (hostname, options) {
+    if (!options) {
+      options = {
+        ipChecker: undefined,
+        family: 4,
+      }
+    }
+
     try {
       let ipCache = this.cache.get(hostname)
       if (ipCache) {
         const ip = ipCache.value
         if (ip != null) {
-          if (ipChecker && ipChecker(ip)) {
+          if (options.ipChecker && options.ipChecker(ip)) {
             ipCache.doCount(ip, false)
             return ip
           } else {
@@ -72,9 +79,9 @@ module.exports = class BaseDNS {
       }
 
       const t = Date.now()
-      let ipList = await this._lookupWithPreSetIpList(hostname)
+      let ipList = await this._lookupWithPreSetIpList(hostname, options)
       if (ipList == null) {
-        // 没有获取到ipv4地址
+        // 没有获取到ip
         ipList = []
       }
       ipList.push(hostname) // 把原域名加入到统计里去
@@ -84,13 +91,13 @@ module.exports = class BaseDNS {
       const ip = ipCache.value
       log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] ${hostname} ➜ ${ip} (${Date.now() - t} ms), ipList: ${JSON.stringify(ipList)}, ipCache:`, JSON.stringify(ipCache))
 
-      if (ipChecker) {
-        if (ip != null && ip !== hostname && ipChecker(ip)) {
+      if (options.ipChecker) {
+        if (ip != null && ip !== hostname && options.ipChecker(ip)) {
           return ip
         }
 
         for (const ip of ipList) {
-          if (ip !== hostname && ipChecker(ip)) {
+          if (ip !== hostname && options.ipChecker(ip)) {
             return ip
           }
         }
@@ -103,7 +110,7 @@ module.exports = class BaseDNS {
     }
   }
 
-  async _lookupWithPreSetIpList (hostname) {
+  async _lookupWithPreSetIpList (hostname, options = {}) {
     if (this.preSetIpList) {
       // 获取当前域名的预设IP列表
       let hostnamePreSetIpList = matchUtil.matchHostname(this.preSetIpList, hostname, `matched preSetIpList(${this.dnsName})`)
@@ -122,17 +129,21 @@ module.exports = class BaseDNS {
       }
     }
 
-    return await this._lookup(hostname)
+    return await this._lookup(hostname, options)
   }
 
-  async _lookup (hostname) {
+  async _lookup (hostname, options = {}) {
     const start = Date.now()
+
+    options.family = options.family === 6 ? 6 : 4
+
+    const type = options.family === 6 ? 'AAAA' : 'A'
 
     let response
     try {
       // 执行DNS查询
       log.debug(`[DNS-over-${this.dnsType} '${this.dnsName}'] query start: ${hostname}`)
-      response = await this._doDnsQuery(hostname, 'A', start)
+      response = await this._doDnsQuery(hostname, type, start)
     } catch {
       // 异常日志在 _doDnsQuery已经打印过，这里就不再打印了
       return []
@@ -143,15 +154,15 @@ module.exports = class BaseDNS {
       log.debug(`[DNS-over-${this.dnsType} '${this.dnsName}'] query end: ${hostname}, cost: ${cost} ms, response:`, response)
 
       if (response == null || response.answers == null || response.answers.length == null || response.answers.length === 0) {
-        log.warn(`[DNS-over-${this.dnsType} '${this.dnsName}'] 没有该域名的IP地址: ${hostname}, cost: ${cost} ms, response:`, response)
+        log.warn(`[DNS-over-${this.dnsType} '${this.dnsName}'] 没有该域名的IPv${options.family}地址: ${hostname}, cost: ${cost} ms, response:`, response)
         return []
       }
 
-      const ret = response.answers.filter(item => item.type === 'A').map(item => item.data)
+      const ret = response.answers.filter(item => item.type === type).map(item => item.data)
       if (ret.length === 0) {
-        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 没有该域名的IP地址: ${hostname}, cost: ${cost} ms`)
+        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 没有该域名的IPv${options.family}地址: ${hostname}, cost: ${cost} ms`)
       } else {
-        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取到该域名的IP地址： ${hostname} - ${JSON.stringify(ret)}, cost: ${cost} ms`)
+        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取到该域名的IPv${options.family}地址： ${hostname} - ${JSON.stringify(ret)}, cost: ${cost} ms`)
       }
 
       return ret
