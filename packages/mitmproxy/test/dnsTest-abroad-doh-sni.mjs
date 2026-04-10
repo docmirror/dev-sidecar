@@ -6,6 +6,8 @@ const servers = [
 	'https://max.rethinkdns.com/dns-query',
 	'https://sky.rethinkdns.com/dns-query',
 	'https://doh.opendns.com/dns-query',
+	'https://1.1.1.1/dns-query',
+	'https://dns.cloudflare.com/dns-query',
 	'https://cloudflare-dns.com/dns-query',
 	'https://dns.google/dns-query',
 	'https://dns.bebasid.com/unfiltered',
@@ -35,6 +37,8 @@ const hostnames = [
 	'github.com',
 	'mvnrepository.com',
 ]
+
+const hostname1 = 'github.com'
 const sni = 'baidu.com'
 // const sni = ''
 

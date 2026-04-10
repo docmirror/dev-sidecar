@@ -114,7 +114,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
 
           const isDnsIntercept = {}
           if (dnsConfig && dnsConfig.dnsMap) {
-            let dns = DnsUtil.hasDnsLookup(dnsConfig, rOptions.hostname)
+            let dns = DnsUtil.getDNS(dnsConfig, rOptions.hostname)
             if (!dns && rOptions.servername) {
               dns = dnsConfig.dnsMap.ForSNI
               if (dns) {

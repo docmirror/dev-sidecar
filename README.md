@@ -33,9 +33,9 @@
 >
 > 注意：本应用启动会自动修改系统代理，所以会与其他代理软件有冲突，一起使用时请谨慎使用。
 > 
-> 与Watt Toolkit（原Steam++）共用时，请以hosts模式启动Watt Toolkit
+> 与 `Watt Toolkit（原Steam++）` 共用时，请以hosts模式启动Watt Toolkit
 > 
-> 与TUN网卡模式运行的游戏加速器可以共用
+> 与 `TUN网卡模式运行的游戏加速器` 可以共用
 > 
 > 本应用主要目的在于直连访问github，如果你已经有飞机了，那建议还是不要用这个自行车（ds）了
 
@@ -67,7 +67,6 @@
 > 以上部分功能通过 `X.I.U` 的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
 >
 > - [https://github.com/XIU2/UserScript](https://github.com/XIU2/UserScript)
-> 
 > - [https://greasyfork.org/scripts/412245](https://greasyfork.org/scripts/412245)
 >
 > 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过 `加速服务->基本设置->启用脚本` 进行关闭）。
@@ -160,7 +159,7 @@
 
 ## 四、 最佳实践
 
-- 把dev-sidecar一直开着就行了
+- 把dev-sidecar一直开着就行了（注意部分版本的windows下开着ds重启电脑，可能会无法上网，重新打开ds即可。）
 - 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被\*\*\*封杀的无效）
 
 ### 其他加速
@@ -191,38 +190,40 @@
 
 在【加速服务-拦截设置】中配置，格式如下：（更多内容参见[wiki](https://github.com/docmirror/dev-sidecar/wiki/%E5%8A%A0%E9%80%9F%E6%9C%8D%E5%8A%A1%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)）
 
-```jsonc
+```json
 {
   // 要拦截的域名
-  'github.com': {
+  "github.com": {
     // 需要拦截url的正则表达式
-    '/.*/.*/releases/download/': {
+    "/.*/.*/releases/download/": {
       // 拦截类型
-      // redirect: url,          // 临时重定向（url会变，一些下载资源可以通过此方式配置）
-      // proxy: url,             // 代理（url不会变，没有跨域问题）
-      // abort: true,            // 取消请求（适用于被***封锁的资源，找不到替代，直接取消请求，快速失败，节省时间）
-      // success: true,          // 直接返回成功请求（某些请求不想发出去，可以伪装成功返回）
-      // cacheDays: 1,           // GET请求的使用缓存，单位：天（常用于一些静态资源）
-      // options: true,          // OPTIONS请求直接返回成功请求（该功能存在一定风险，请谨慎使用）
-      // optionsMaxAge: 2592000, // OPTIONS请求缓存时间，默认：2592000（一个月）
-      redirect: 'download.fastgit.org'
+      // "redirect": "url",        // 临时重定向（url会变，一些下载资源可以通过此方式配置）
+      // "proxy": "url",           // 代理（url不会变，没有跨域问题）
+      // "abort": true,            // 取消请求（适用于被***封锁的资源，找不到替代，直接取消请求，快速失败，节省时间）
+      // "success": true,          // 直接返回成功请求（某些请求不想发出去，可以伪装成功返回）
+      // "cacheDays": 1,           // GET请求的使用缓存，单位：天（常用于一些静态资源）
+      // "options": true,          // OPTIONS请求直接返回成功请求（该功能存在一定风险，请谨慎使用）
+      // "optionsMaxAge": 2592000, // OPTIONS请求缓存时间，默认：2592000（一个月）
+
+      // 拦截配置示例：
+      "redirect": "download.fastgit.org"
     },
-    '.*': {
-      proxy: 'github.com',
-      sni: 'baidu.com' // 修改sni，规避***握手拦截
+    ".*": {
+      "proxy": "github.com",
+      "sni": "baidu.com" // 修改sni，规避***握手拦截
     }
   },
-  'ajax.googleapis.com': {
-    '.*': {
-      proxy: 'ajax.loli.net', // 代理请求，url不会变
-      backup: ['ajax.proxy.ustclug.org'], // 备份，当前代理请求失败后，将会切换到备用地址
-      test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
-      replace: '/(.*)/xxx'// 当加速地址的链接和原链接不是完全相同时，可以通过正则表达式replace，此时proxy通过$1$2来重组url， proxy:'ajax.loli.net/xxx/$1'
+  "ajax.googleapis.com": {
+    ".*": {
+      "proxy": "ajax.loli.net", // 代理请求，url不会变
+      "backup": ["ajax.proxy.ustclug.org"], // 备份，当前代理请求失败后，将会切换到备用地址
+      "test": "ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js",
+      "replace": "/(.*)/xxx" // 当加速地址的链接和原链接不是完全相同时，可以通过正则表达式replace，此时proxy通过$1$2来重组url， proxy:'ajax.loli.net/xxx/$1'
     }
   },
-  'clients*.google.com': {
-    '.*': {
-      abort: true // 取消请求，被***封锁的资源，找不到替代，直接取消请求，快速失败，节省时间
+  "clients*.google.com": {
+    ".*": {
+      "abort": true // 取消请求，被***封锁的资源，找不到替代，直接取消请求，快速失败，节省时间
     }
   }
 }
@@ -423,11 +424,11 @@ npm run electron:build
 
 加官方QQ群（请备注dev-sidecar，或简称DS）
 
-- QQ 1群：390691483，人数：499 / 500（满）
-- QQ 2群：667666069，人数：500 / 500（满）
-- QQ 3群：419807815，人数：493 / 500（满）
-- QQ 4群：[438148299](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=i_NCBB5f_Bkm2JsEV1tLs2TkQ79UlCID&authKey=nMsVJbJ6P%2FGNO7Q6vsVUadXRKnULUURwR8zvUZJnP3IgzhHYPhYdcBCHvoOh8vYr&noverify=0&group_code=438148299)，人数：700 / 1000
-- QQ 5群：[767622917](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nAWi_Rxj7mM4Unp5LMiatmUWhGimtbcB&authKey=aswmlWGjbt3GIWXtvjB2GJqqAKuv7hWjk6UBs3MTb%2Biyvr%2Fsbb1kA9CjF6sK7Hgg&noverify=0&group_code=767622917)，人数：200 / 200（new）
+- QQ 1群：390691483，人数：500 / 500（满）
+- QQ 2群：[667666069](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=n4nksr4sji93vZtD5e8YEHRT6qbh6VyQ&authKey=XKBZnzmoiJrAFyOT4V%2BCrgX5c13ds59b84g%2FVRhXAIQd%2FlAiilsuwDRGWJct%2B570&noverify=0&group_code=667666069)，人数：500 / 500（满）
+- QQ 3群：419807815，人数：500 / 500（满）
+- QQ 4群：[438148299](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=i_NCBB5f_Bkm2JsEV1tLs2TkQ79UlCID&authKey=nMsVJbJ6P%2FGNO7Q6vsVUadXRKnULUURwR8zvUZJnP3IgzhHYPhYdcBCHvoOh8vYr&noverify=0&group_code=438148299)，人数：1004 / 2000（推荐）
+- QQ 5群：[767622917](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nAWi_Rxj7mM4Unp5LMiatmUWhGimtbcB&authKey=aswmlWGjbt3GIWXtvjB2GJqqAKuv7hWjk6UBs3MTb%2Biyvr%2Fsbb1kA9CjF6sK7Hgg&noverify=0&group_code=767622917)，人数：200 / 500
 
 ## 十、求star
 

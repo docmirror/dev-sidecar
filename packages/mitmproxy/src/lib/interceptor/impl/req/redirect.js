@@ -1,4 +1,5 @@
 const proxyApi = require('./proxy')
+const cacheRes = require('../res/cacheResponse')
 
 module.exports = {
   name: 'redirect',
@@ -19,6 +20,9 @@ module.exports = {
       headers['Access-Control-Allow-Credentials'] = 'true'
       headers['Access-Control-Allow-Origin'] = rOptions.headers.origin
     }
+
+    // 同时使用缓存（如果配置了的话）
+    cacheRes.simpleHandle(interceptOpt, res)
 
     res.writeHead(302, headers)
     res.end()

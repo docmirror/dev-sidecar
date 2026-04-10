@@ -63,8 +63,6 @@ function query ({ host, servername, type, name, klass, port, rejectUnauthorized,
       if (response.length === packetLength + TWO_BYTES) {
         socket.destroy()
         resolve(dnsPacket.streamDecode(response))
-      } else {
-        reject(new Error('响应长度不正确'))
       }
     })
     socket.on('error', (err) => {

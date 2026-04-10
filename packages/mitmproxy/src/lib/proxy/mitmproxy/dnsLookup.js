@@ -38,7 +38,8 @@ module.exports = {
           if (res) {
             res.setHeader('DS-DNS-Lookup', `IpTester: ${aliveIpObj.host} ${aliveIpObj.dns === '预设IP' ? 'PreSet' : aliveIpObj.dns}`)
           }
-          callback(null, aliveIpObj.host, 4)
+          const family = aliveIpObj.host.includes(':') ? 6 : 4
+          callback(null, aliveIpObj.host, family)
           return
         } else {
           log.info(`----- ${action}: ${hostname}, no alive ip${target}, tester: { "ready": ${tester.ready}, "backupList": ${JSON.stringify(tester.backupList)} }`)
@@ -47,7 +48,7 @@ module.exports = {
 
       const ipChecker = createIpChecker(tester)
 
-      dns.lookup(hostname, ipChecker).then((ip) => {
+      dns.lookup(hostname, { ipChecker }).then((ip) => {
         if (isDnsIntercept) {
           isDnsIntercept.dns = dns
           isDnsIntercept.hostname = hostname
@@ -59,7 +60,8 @@ module.exports = {
           if (res) {
             res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
           }
-          callback(null, ip, 4)
+          const family = ip.includes(':') ? 6 : 4
+          callback(null, ip, family)
         } else {
           // 使用默认dns
           log.info(`----- ${action}: ${hostname}, use default DNS: ${hostname}${target}, options:`, options, ', dns:', dns)
