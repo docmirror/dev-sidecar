@@ -142,7 +142,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
               continue // 跳过即 “不是正式，又不是预发布” 的版本
             }
 
-            const isOnlinePreRelease = onlineVersion.includes('-')
+            const isOnlinePreRelease = onlineVersion.includes('-') || versionData.prerelease
             if (!isCurrentPreRelease && DevSidecar.api.config.get().app.skipPreRelease && isOnlinePreRelease) {
               log.info('跳过预发布版本:', versionData.name, ', onlineVersion:', onlineVersion)
               continue // 跳过预发布版本
