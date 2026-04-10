@@ -18,7 +18,7 @@ const curVersion = pkg.version
 const isCurrentPreRelease = curVersion.includes('-')
 
 function extractVersion (versionData) {
-  const candidates = [versionData.name, versionData.tag_name]
+  const candidates = [versionData.tag_name, versionData.name]
   for (const candidate of candidates) {
     if (!candidate) {
       continue
