@@ -24,6 +24,7 @@ on:
       - "**/*.md"
       - "**/.gitignore"
       - "**/LICENSE"
+  workflow_dispatch:
 
 jobs:
   test-and-upload:

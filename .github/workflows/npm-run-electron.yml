@@ -12,6 +12,7 @@ on:
       - "**/*.md"
       - "**/.gitignore"
       - "**/LICENSE"
+  workflow_dispatch:
 
 jobs:
   npm-run-electron:

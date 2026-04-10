@@ -10,6 +10,7 @@ on:
       - "**/*.md"
       - "**/.gitignore"
       - "**/LICENSE"
+  workflow_dispatch:
 
 jobs:
   # job 1
