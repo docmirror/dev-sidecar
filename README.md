@@ -3,19 +3,19 @@
 开发者边车，命名取自service-mesh的service-sidecar，意为为开发者打辅助的边车工具（以下简称ds）
 通过本地代理的方式将https请求代理到一些国内的加速通道上
 
-[![GitHub stars][github-stars-shield]][project-link]
+<a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
 
-[![Star History Chart][star-history-chart]][star-history-link]
+[![Star History Chart](https://api.star-history.com/svg?repos=docmirror/dev-sidecar&type=date&legend=top-left)](https://www.star-history.com/#docmirror/dev-sidecar&type=date&legend=top-left)
 
-> Gitee上的同步项目已被封禁，请认准本项目唯一官方仓库地址[https://github.com/docmirror/dev-sidecar][project-link] 【狗头保命】
+> Gitee上的同步项目已被封禁，请认准本项目唯一官方仓库地址[https://github.com/docmirror/dev-sidecar](https://github.com/docmirror/dev-sidecar) 【狗头保命】
 >
 > 我将继续奋战在开源一线，为社区贡献更多更好的开源项目。
 > 
-> 感兴趣的可以关注我的主页 [【github】][author-github] [【gitee】][author-gitee]
+> 感兴趣的可以关注我的主页 [【github】](https://github.com/greper) [【gitee】](https://gitee.com/greper)
 
 ## 打个广告
 
-> [https://github.com/certd/certd][certd-link]
+> [https://github.com/certd/certd](https://github.com/certd/certd)
 > 
 > 我的开源证书管理工具项目，全自动申请和部署证书，有需求的可以去试试，帮忙点个star
 
@@ -25,7 +25,7 @@
 >
 > 注意：由于electron无法监听windows的关机事件，开着ds情况下直接重启电脑，会导致无法上网，你可以手动启动ds即可恢复网络，你也可以将ds设置为开机自启。
 >
-> 关于此问题的更多讨论请前往：[https://github.com/docmirror/dev-sidecar/issues/109][issue-109-link]
+> 关于此问题的更多讨论请前往：[https://github.com/docmirror/dev-sidecar/issues/109](https://github.com/docmirror/dev-sidecar/issues/109)
 >
 > 注：此问题已在 `1.8.9` 版本中得到解决。
 
@@ -55,7 +55,7 @@
 
 ### 1.3、 github加速
 
-- github 直连加速 (通过修改sni实现，感谢 [fastGithub][fastgithub-link] 提供的思路)
+- github 直连加速 (通过修改sni实现，感谢 [fastGithub](https://github.com/dotnetcore/FastGithub) 提供的思路)
 - release、source、zip下载加速
 - clone 加速
 - 头像加速
@@ -66,8 +66,8 @@
 
 > 以上部分功能通过 `X.I.U` 的油猴脚本实现， 以下是仓库和脚本下载链接，大家可以去支持一下。
 >
-> - [https://github.com/XIU2/UserScript][xiu2-userscript-link]
-> - [https://greasyfork.org/scripts/412245][xiu2-greasyfork-link]
+> - [https://github.com/XIU2/UserScript](https://github.com/XIU2/UserScript)
+> - [https://greasyfork.org/scripts/412245](https://greasyfork.org/scripts/412245)
 >
 > 由于此脚本在ds中是打包在本地的，更新会不及时，你可以直接通过浏览器安装油猴插件使用此脚本，从而获得最新更新（ds本地的可以通过 `加速服务->基本设置->启用脚本` 进行关闭）。
 
@@ -96,7 +96,7 @@
 #### 1）下载安装包
 
 - release下载
-  [Github Release][release-link]
+  [Github Release](https://github.com/docmirror/dev-sidecar/releases)
 
 > Windows: 请选择DevSidecar-x.x.x-windows-universal.exe 
 > 
@@ -106,7 +106,7 @@
 > 
 > 其他Linux: 请选择DevSidecar-x.x.x-linux-[架构].AppImage (未做测试，不保证能用)
 
-> linux安装说明请参考 [linux安装文档][linux-doc-link]
+> linux安装说明请参考 [linux安装文档](./doc/linux.md)
 
 > 注意：由于没有买应用证书，所以应用在下载安装时会有“未知发行者”等安全提示，选择保留即可。
 
@@ -115,19 +115,19 @@
 界面应大致如下图所示：
 > 注意：mac版安装需要在“系统偏好设置->安全性与隐私->通用”中解锁并允许应用安装
 
-![][index-image]
+![](./doc/index.png)
 
 #### 3）安装根证书
 
 第一次打开会提示安装证书，根据提示操作即可
 
-更多有关根证书的说明，请参考 [为什么要安装根证书?][caroot-doc-link]
+更多有关根证书的说明，请参考 [为什么要安装根证书?](./doc/caroot.md)
 
 > 根证书是本地随机生成的，所以不用担心根证书的安全问题（本应用不收集任何用户信息）
 > 
 > 你也可以在加速服务设置中自定义根证书（PEM格式的证书与私钥）
 
-> 火狐浏览器需要[手动安装证书][firefox-cert-anchor]
+> 火狐浏览器需要[手动安装证书](#3火狐浏览器火狐浏览器不走系统的根证书需要在选项中添加根证书)
 
 #### 4）开始加速吧
 
@@ -137,9 +137,9 @@
 
 |          | 开启前                         | 开启后                                           |
 | -------- | ------------------------------ | ----------------------------------------------- |
-| 头像     | ![][avatar-before-image]         | ![][avatar-after-image]                          |
-| clone    | ![][clone-before-image]    | ![][clone-after-image]                            |
-| zip 下载 | ![][download-before-image] | ![][download-after-image]秒下的，实在截不到速度的图 |
+| 头像     | ![](./doc/avatar2.png)         | ![](./doc/avatar1.png)                          |
+| clone    | ![](./doc/clone-before.png)    | ![](./doc/clone.png)                            |
+| zip 下载 | ![](./doc/download-before.png) | ![](./doc/download.png)秒下的，实在截不到速度的图 |
 
 ## 三、模式说明
 
@@ -149,7 +149,7 @@
 - 最安全，无需安装证书，可以在浏览器地址栏左侧查看域名证书
 - 功能也最弱，只有特性1，相当于查询github的国外ip，手动改hosts一个意思。
 - github的可访问性不稳定，取决于IP测速，如果有绿色ip存在，就 `有可能` 可以直连访问。
-  ![][speed-image]
+  ![](./doc/speed.png)
 
 ### 3.2、默认模式
 
@@ -172,15 +172,15 @@
 
 - 方式2：
 
-  > 1. 使用方式：用实际的名称替换 `{}` 的内容，即可加速clone [https://hub.fastgit.org/{username}/{reponame}.git][fastgit-clone-link]
+  > 1. 使用方式：用实际的名称替换 `{}` 的内容，即可加速clone [https://hub.fastgit.org/{username}/{reponame}.git](https://hub.fastgit.org/%7Busername%7D/%7Breponame%7D.git)
   > 2. clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来
-  > 3. 你也可以直接使用他们的clone加速工具 [fgit-go][fgit-go-link]
+  > 3. 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
 
 #### 2）`github.com` 的镜像网站（注意：部分镜像网站不能登录）
 
-> 1. ~~[hub.fastgit.org][hub-fastgit-link] （2024/11/18：这个好像失效了？）~~
-> 2. ~~[github.com.cnpmjs.org][cnpmjs-mirror-link] 这个很容易超限（2024/11/18：这个好像失效了？）~~
-> 3. [bgithub.xyz][bgithub-link]（edge浏览器可能报毒）
+> 1. ~~[hub.fastgit.org](https://hub.fastgit.org/) （2024/11/18：这个好像失效了？）~~
+> 2. ~~[github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限（2024/11/18：这个好像失效了？）~~
+> 3. [bgithub.xyz](https://bgithub.xyz/)（edge浏览器可能报毒）
 
 ## 五、api
 
@@ -188,7 +188,7 @@
 
 没有配置域名的不会拦截，其他根据配置进行拦截处理。
 
-在【加速服务-拦截设置】中配置，格式如下：（更多内容参见[wiki][wiki-link]）
+在【加速服务-拦截设置】中配置，格式如下：（更多内容参见[wiki](https://github.com/docmirror/dev-sidecar/wiki/%E5%8A%A0%E9%80%9F%E6%9C%8D%E5%8A%A1%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)）
 
 ```json
 {
@@ -233,7 +233,7 @@
 
 某些域名解析出来的ip会无法访问，（比如api.github.com会被解析到新加坡的ip上，新加坡的服务器在上午挺好，到了晚上就卡死，基本不可用）
 
-通过从dns上获取ip列表，切换不同的ip进行尝试，最终会挑选到一个最快的ip（该功能需要事先配置好所用DNS），更多说明参见[wiki][wiki-link]
+通过从dns上获取ip列表，切换不同的ip进行尝试，最终会挑选到一个最快的ip（该功能需要事先配置好所用DNS），更多说明参见[wiki](https://github.com/docmirror/dev-sidecar/wiki/%E5%8A%A0%E9%80%9F%E6%9C%8D%E5%8A%A1%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
 
 ```json
 {
@@ -288,7 +288,7 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 
 ### 6.3、浏览器打开提示证书不受信任
 
-![][crt-error-image]
+![](./doc/crt-error.png)
 
 一般是证书安装位置不对，重新安装根证书后，重启浏览器
 
@@ -299,12 +299,12 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 #### 3）火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书
 
 1. 火狐浏览器->选项->隐私与安全->证书->查看证书
-![][firefox1-image]
+![](./doc/figures/Firefox/1.png)
 2. 证书颁发机构->导入
 3. 选择证书文件 `C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为 `~/.dev-sidecar` 目录）
-![][firefox2-image]
+![](./doc/figures/Firefox/2.png)
 4. 勾选信任由此证书颁发机构来标识网站，确定即可
-![][firefox3-image]
+![](./doc/figures/Firefox/3.png)
 
 ### 6.4、打开github显示连接超时
 
@@ -322,7 +322,7 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 
 日志打开方式：加速服务->右边日志按钮->打开日志文件夹
 
-![][log-image]
+![](./doc/log.png)
 
 ### 6.6、某些原本可以打开的网站打不开了
 
@@ -337,14 +337,14 @@ DevSidecar Warning: Error: www.github.com:443, 代理请求超时
 对于此问题有如下几种解决方案可供选择：
 
 1. 重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）
-2. 如果应用被卸载了，此时需要[手动关闭系统代理设置][recover-doc-link]
+2. 如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
 3. 如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启
 
 ### 6.8、卸载应用后上不了网，git请求不了
 
 如果你在卸载应用前，没有正常退出app，就有可能无法上网。请按如下步骤操作恢复您的网络：
 
-1、关闭系统代理设置，参见：[手动关闭系统代理设置][recover-doc-link]
+1、关闭系统代理设置，参见：[手动关闭系统代理设置](./doc/recover.md)
 2、执行下面的命令关闭git的代理设置（如果你开启过 `Git.exe代理` 的开关）
 
 ```shell
@@ -362,13 +362,13 @@ npm config delete https-proxy
 
 ### 6.9、其他问题
 
-请查阅[wiki][wiki-home-link]
+请查阅[wiki](https://github.com/docmirror/dev-sidecar/wiki)
 
-也可以查阅[有文档tag的issue][issue-doc-tag-link]，它们被开发者认证为相当于文档级别的参考issue。
+也可以查阅[有文档tag的issue](https://github.com/docmirror/dev-sidecar/issues?q=is%3Aissue%20label%3ADocumentation)，它们被开发者认证为相当于文档级别的参考issue。
 
 ## 七、在其他程序使用
 
-- [java程序使用][java-other-doc-link]
+- [java程序使用](./doc/other.md#Java程序使用)
 
 ## 八、贡献代码
 
@@ -425,87 +425,35 @@ npm run electron:build
 加官方QQ群（请备注dev-sidecar，或简称DS）
 
 - QQ 1群：390691483，人数：500 / 500（满）
-- QQ 2群：[667666069][qq2-link]，人数：500 / 500（满）
+- QQ 2群：[667666069](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=n4nksr4sji93vZtD5e8YEHRT6qbh6VyQ&authKey=XKBZnzmoiJrAFyOT4V%2BCrgX5c13ds59b84g%2FVRhXAIQd%2FlAiilsuwDRGWJct%2B570&noverify=0&group_code=667666069)，人数：500 / 500（满）
 - QQ 3群：419807815，人数：500 / 500（满）
-- QQ 4群：[438148299][qq4-link]，人数：1004 / 2000（推荐）
-- QQ 5群：[767622917][qq5-link]，人数：200 / 500
+- QQ 4群：[438148299](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=i_NCBB5f_Bkm2JsEV1tLs2TkQ79UlCID&authKey=nMsVJbJ6P%2FGNO7Q6vsVUadXRKnULUURwR8zvUZJnP3IgzhHYPhYdcBCHvoOh8vYr&noverify=0&group_code=438148299)，人数：1004 / 2000（推荐）
+- QQ 5群：[767622917](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nAWi_Rxj7mM4Unp5LMiatmUWhGimtbcB&authKey=aswmlWGjbt3GIWXtvjB2GJqqAKuv7hWjk6UBs3MTb%2Biyvr%2Fsbb1kA9CjF6sK7Hgg&noverify=0&group_code=767622917)，人数：200 / 500
 
 ## 十、求star
 
 我的其他项目求star
 
-- [fast-crud][fast-crud-link] : 开发crud快如闪电
-- [certd][certd-repo-link] : 让你的证书永不过期
-- [trident-sync][trident-sync-link] : 二次开发项目同步升级工具
+- [fast-crud](https://github.com/fast-crud/fast-crud) : 开发crud快如闪电
+- [certd](https://github.com/certd/certd) : 让你的证书永不过期
+- [trident-sync](https://github.com/handsfree-work/trident-sync) : 二次开发项目同步升级工具
 
 ## 十一、感谢
 
 本项目使用lerna包管理工具
 
-[![lerna][lerna-shield]][lerna-link]
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
 本项目参考如下开源项目
 
-- [node-mitmproxy][node-mitmproxy-link]
-- [ReplaceGoogleCDN][replace-google-cdn-link]
+- [node-mitmproxy](https://github.com/wuchangming/node-mitmproxy)
+- [ReplaceGoogleCDN](https://github.com/justjavac/ReplaceGoogleCDN)
 
 特别感谢
 
-- [github增强油猴脚本][greasyfork-github-enhance-link] 本项目部分加速功能完全复制该脚本。
-- [中国域名白名单][china-domain-allowlist-link]，本项目的系统代理排除域名功能中，使用了该白名单。
+- [github增强油猴脚本](https://greasyfork.org/zh-CN/scripts/412245-github-%E5%A2%9E%E5%BC%BA-%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD) 本项目部分加速功能完全复制该脚本。
+- [中国域名白名单](https://github.com/pluwen/china-domain-allowlist)，本项目的系统代理排除域名功能中，使用了该白名单。
 
 本项目部分加速资源由如下组织提供
 
-- [FastGit UK][fastgit-org-link]
-
-[project-link]: https://github.com/docmirror/dev-sidecar
-[github-stars-shield]: https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github
-[star-history-chart]: https://api.star-history.com/svg?repos=docmirror/dev-sidecar&type=date&legend=top-left
-[star-history-link]: https://www.star-history.com/#docmirror/dev-sidecar&type=date&legend=top-left
-[author-github]: https://github.com/greper
-[author-gitee]: https://gitee.com/greper
-[certd-link]: https://github.com/certd/certd
-[issue-109-link]: https://github.com/docmirror/dev-sidecar/issues/109
-[fastgithub-link]: https://github.com/dotnetcore/FastGithub
-[xiu2-userscript-link]: https://github.com/XIU2/UserScript
-[xiu2-greasyfork-link]: https://greasyfork.org/scripts/412245
-[release-link]: https://github.com/docmirror/dev-sidecar/releases
-[linux-doc-link]: ./doc/linux.md
-[caroot-doc-link]: ./doc/caroot.md
-[firefox-cert-anchor]: #3火狐浏览器火狐浏览器不走系统的根证书需要在选项中添加根证书
-[index-image]: ./doc/index.png
-[avatar-before-image]: ./doc/avatar2.png
-[avatar-after-image]: ./doc/avatar1.png
-[clone-before-image]: ./doc/clone-before.png
-[clone-after-image]: ./doc/clone.png
-[download-before-image]: ./doc/download-before.png
-[download-after-image]: ./doc/download.png
-[speed-image]: ./doc/speed.png
-[fastgit-clone-link]: https://hub.fastgit.org/%7Busername%7D/%7Breponame%7D.git
-[fgit-go-link]: https://github.com/FastGitORG/fgit-go
-[hub-fastgit-link]: https://hub.fastgit.org/
-[cnpmjs-mirror-link]: https://github.com.cnpmjs.org/
-[bgithub-link]: https://bgithub.xyz/
-[wiki-link]: https://github.com/docmirror/dev-sidecar/wiki/%E5%8A%A0%E9%80%9F%E6%9C%8D%E5%8A%A1%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E
-[crt-error-image]: ./doc/crt-error.png
-[firefox1-image]: ./doc/figures/Firefox/1.png
-[firefox2-image]: ./doc/figures/Firefox/2.png
-[firefox3-image]: ./doc/figures/Firefox/3.png
-[log-image]: ./doc/log.png
-[recover-doc-link]: ./doc/recover.md
-[wiki-home-link]: https://github.com/docmirror/dev-sidecar/wiki
-[issue-doc-tag-link]: https://github.com/docmirror/dev-sidecar/issues?q=is%3Aissue%20label%3ADocumentation
-[java-other-doc-link]: ./doc/other.md#Java程序使用
-[qq2-link]: http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=n4nksr4sji93vZtD5e8YEHRT6qbh6VyQ&authKey=XKBZnzmoiJrAFyOT4V%2BCrgX5c13ds59b84g%2FVRhXAIQd%2FlAiilsuwDRGWJct%2B570&noverify=0&group_code=667666069
-[qq4-link]: http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=i_NCBB5f_Bkm2JsEV1tLs2TkQ79UlCID&authKey=nMsVJbJ6P%2FGNO7Q6vsVUadXRKnULUURwR8zvUZJnP3IgzhHYPhYdcBCHvoOh8vYr&noverify=0&group_code=438148299
-[qq5-link]: http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=nAWi_Rxj7mM4Unp5LMiatmUWhGimtbcB&authKey=aswmlWGjbt3GIWXtvjB2GJqqAKuv7hWjk6UBs3MTb%2Biyvr%2Fsbb1kA9CjF6sK7Hgg&noverify=0&group_code=767622917
-[fast-crud-link]: https://github.com/fast-crud/fast-crud
-[certd-repo-link]: https://github.com/certd/certd
-[trident-sync-link]: https://github.com/handsfree-work/trident-sync
-[lerna-shield]: https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg
-[lerna-link]: https://lerna.js.org/
-[node-mitmproxy-link]: https://github.com/wuchangming/node-mitmproxy
-[replace-google-cdn-link]: https://github.com/justjavac/ReplaceGoogleCDN
-[greasyfork-github-enhance-link]: https://greasyfork.org/zh-CN/scripts/412245-github-%E5%A2%9E%E5%BC%BA-%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD
-[china-domain-allowlist-link]: https://github.com/pluwen/china-domain-allowlist
-[fastgit-org-link]: https://fastgit.org/
+- [FastGit UK](https://fastgit.org/)
