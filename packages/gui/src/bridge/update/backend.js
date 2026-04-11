@@ -15,7 +15,21 @@ const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 
 const curVersion = pkg.version
-const isPreRelease = curVersion.includes('-')
+const isCurrentPreRelease = curVersion.includes('-')
+
+function extractVersion (versionData) {
+  const candidates = [versionData.tag_name, versionData.name]
+  for (const candidate of candidates) {
+    if (!candidate) {
+      continue
+    }
+    const matched = candidate.match(/^v?(\d+(?:\.\d+)+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?)$/)
+    if (matched) {
+      return matched[0].startsWith('v') ? matched[0].substring(1) : matched[0]
+    }
+  }
+  return null
+}
 
 function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
   log.info('download url', uri)
@@ -122,22 +136,19 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
               log.info('跳过空版本，即未上传过安装包：', versionData.name)
               continue // 跳过空版本，即未上传过安装包
             }
-            if (!versionData.name.match(/^v?\d+(\.\d+)*(-.+)?$/g)) {
-              log.info('跳过即 “不是正式，又不是预发布” 的版本:', versionData.name)
+            const onlineVersion = extractVersion(versionData)
+            if (!onlineVersion) {
+              log.info('跳过无法提取版本号的版本:', versionData.name || versionData.tag_name)
               continue // 跳过即 “不是正式，又不是预发布” 的版本
             }
-            if (!isPreRelease && DevSidecar.api.config.get().app.skipPreRelease && (versionData.name.includes('-') || versionData.prerelease)) {
-              log.info('跳过预发布版本:', versionData.name)
+
+            const isOnlinePreRelease = onlineVersion.includes('-') || versionData.prerelease
+            if (!isCurrentPreRelease && DevSidecar.api.config.get().app.skipPreRelease && isOnlinePreRelease) {
+              log.info('跳过预发布版本:', versionData.name, ', onlineVersion:', onlineVersion)
               continue // 跳过预发布版本
             }
 
-            log.info('最近正式版本：', versionData.name)
-
-            // 获取版本号
-            let onlineVersion = versionData.name
-            if (onlineVersion.indexOf('v') === 0) {
-              onlineVersion = onlineVersion.substring(1)
-            }
+            log.info('最近可用版本：', versionData.name, ', onlineVersion:', onlineVersion)
 
             // 比对版本号，是否为新版本
             const isNew = isNewVersion(onlineVersion, curVersion, log)
