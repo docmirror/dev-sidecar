@@ -111,10 +111,6 @@ module.exports = defineConfig({
               target: 'rpm',
               arch: ['x64', 'arm64', 'armv7l'],
             },
-            {
-              target: 'flatpak',
-              arch: ['x64', 'arm64', 'armv7l'],
-            },
           ],
           category: 'System',
         },
