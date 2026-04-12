@@ -18,6 +18,7 @@ on:
       - master
       - develop
       - 1.x
+      - fix-flatpak
     paths-ignore:
       - "_script/**"
       - "doc/**"
