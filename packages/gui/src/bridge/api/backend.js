@@ -6,15 +6,33 @@ import lodash from 'lodash'
 
 const jsonApi = require('@docmirror/mitmproxy/src/json')
 const pk = require('../../../package.json')
+const coreDefaultConfig = require('@docmirror/dev-sidecar/src/config/index.js')
+const configLoader = require('@docmirror/dev-sidecar/src/config/local-config-loader.js')
 const configFromFiles = require('@docmirror/dev-sidecar/src/config/index.js').configFromFiles
 const log = require('../../utils/util.log.gui')
 const dateUtil = require('@docmirror/dev-sidecar/src/utils/util.date')
 
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
 process.env.DS_EXTRA_PATH = path.join(__dirname, '../extra/')
+let currentWin
 
 const getDefaultConfigBasePath = function () {
   return DevSidecar.api.config.get().server.setting.userBasePath
+}
+
+function getMetaInfo (config, fallbackId) {
+  const metaInfo = lodash.get(config, 'app.metaInfo') || lodash.get(config, 'metaInfo') || {}
+  return {
+    id: metaInfo.id || fallbackId,
+    version: metaInfo.version || '',
+    updateLog: metaInfo.updateLog || '',
+  }
+}
+
+function emitConfigChanged () {
+  if (currentWin) {
+    currentWin.webContents.send('config.changed')
+  }
 }
 
 const localApi = {
@@ -33,8 +51,28 @@ const localApi = {
   },
   info: {
     get () {
+      const runtimeConfig = DevSidecar.api.config.get()
+      const remoteConfig = lodash.get(runtimeConfig, 'app.remoteConfig') || {}
+
+      const internal = getMetaInfo(coreDefaultConfig, 'internal')
+      const sharedRemote = getMetaInfo(configLoader.getRemoteConfig(), 'shared-remote')
+      const personalRemote = getMetaInfo(configLoader.getRemoteConfig('_personal'), 'personal-remote')
+
       return {
         version: pk.version,
+        configProfiles: {
+          internal,
+          sharedRemote: {
+            ...sharedRemote,
+            url: remoteConfig.url || '',
+            enabled: remoteConfig.enabled === true && Boolean(remoteConfig.url),
+          },
+          personalRemote: {
+            ...personalRemote,
+            url: remoteConfig.personalUrl || '',
+            enabled: remoteConfig.enabled === true && Boolean(remoteConfig.personalUrl),
+          },
+        },
       }
     },
     getConfigDir () {
@@ -95,6 +133,36 @@ const localApi = {
       } catch (e) {
         log.error('保存 setting.json 配置文件失败:', settingPath, ', error:', e)
       }
+    },
+  },
+  config: {
+    get () {
+      return DevSidecar.api.config.get()
+    },
+    save (newConfig) {
+      const result = DevSidecar.api.config.save(newConfig)
+      emitConfigChanged()
+      return result
+    },
+    reload () {
+      const result = DevSidecar.api.config.reload()
+      emitConfigChanged()
+      return result
+    },
+    update (partConfig) {
+      const result = DevSidecar.api.config.update(partConfig)
+      emitConfigChanged()
+      return result
+    },
+    resetDefault (key) {
+      const result = DevSidecar.api.config.resetDefault(key)
+      emitConfigChanged()
+      return result
+    },
+    async removeUserConfig () {
+      const result = await DevSidecar.api.config.removeUserConfig()
+      emitConfigChanged()
+      return result
     },
   },
   /**
@@ -165,12 +233,14 @@ function invoke (api, param) {
 async function doStart () {
   // 开启自动下载远程配置
   await DevSidecar.api.config.startAutoDownloadRemoteConfig()
+  emitConfigChanged()
   // 启动所有
   localApi.startup()
 }
 
 export default {
   install ({ win }) {
+    currentWin = win
     // 接收view的方法调用
     ipcMain.handle('apiInvoke', async (event, args) => {
       const api = args[0]

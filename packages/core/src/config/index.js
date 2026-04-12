@@ -1,5 +1,6 @@
 const path = require('node:path')
 const configLoader = require('./local-config-loader')
+const { update } = require('lodash')
 
 function getRootCaCertPath () {
   return path.join(configLoader.getUserBasePath(), '/dev-sidecar.ca.crt')
@@ -11,6 +12,11 @@ function getRootCaKeyPath () {
 
 const defaultConfig = {
   app: {
+    metaInfo: {
+      updateLog: 'GUI v2.0.2自带配置',
+      version: '202604122348',
+      id: 'internal',
+    },
     mode: 'default',
     autoStart: {
       enabled: false,

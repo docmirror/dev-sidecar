@@ -35,10 +35,8 @@ export default {
   },
   created () {
     this.menus = createMenus(this)
-    this.config = this.$global.config
-    this.$api.info.get().then((ret) => {
-      this.info = ret
-    })
+    this.refreshConfigAndInfo()
+    ipcRenderer.on('config.changed', this.onConfigChanged)
 
     ipcRenderer.on('search-bar', (_, message) => {
       if (window.config.disableSearchBar) {
@@ -90,7 +88,18 @@ export default {
       }
     })
   },
+  beforeDestroy () {
+    ipcRenderer.removeListener('config.changed', this.onConfigChanged)
+  },
   methods: {
+    async refreshConfigAndInfo () {
+      this.config = await this.$api.config.get()
+      this.$global.config = this.config
+      this.info = await this.$api.info.get()
+    },
+    onConfigChanged () {
+      this.refreshConfigAndInfo()
+    },
     getSearchBarInput () {
       return this.$refs.searchBar.$el.querySelector('input[type=text]')
     },
@@ -178,7 +187,10 @@ export default {
           </a-layout-content>
           <a-layout-footer>
             <div class="footer">
-              ©2020-2025 docmirror.cn by <a @click="openExternal('https://github.com/greper')">Greper</a>, <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>  <span>{{ info.version }}</span>
+              出厂自带配置id: {{ (info.configProfiles && info.configProfiles.internal && info.configProfiles.internal.id) || '-' }} 版本: {{ (info.configProfiles && info.configProfiles.internal && info.configProfiles.internal.version) || '-' }}<br>
+              共享远程配置id: {{ (info.configProfiles && info.configProfiles.sharedRemote && info.configProfiles.sharedRemote.id) || '-' }} 版本: {{ (info.configProfiles && info.configProfiles.sharedRemote && info.configProfiles.sharedRemote.version) || '-' }}<br>
+              个人远程配置id: {{ (info.configProfiles && info.configProfiles.personalRemote && info.configProfiles.personalRemote.id) || '-' }} 版本: {{ (info.configProfiles && info.configProfiles.personalRemote && info.configProfiles.personalRemote.version) || '-' }}<br>
+              ©2020-2026 docmirror.cn by <a @click="openExternal('https://github.com/greper')">Greper</a>, <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>, <a @click="openExternal('https://github.com/cute-omega')">CuteOmega</a>  <span>{{ info.version }}</span>
             </div>
           </a-layout-footer>
         </a-layout>
