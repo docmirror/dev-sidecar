@@ -139,9 +139,11 @@ jobs:
         if: ${{ matrix.os == 'ubuntu' }}
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y flatpak flatpak-builder xdg-desktop-portal appstream
+          sudo apt-get install -y flatpak flatpak-builder xdg-desktop-portal appstream fuse3
           # Allow flatpak-builder's bwrap sandbox to create user namespaces on Ubuntu 24.04
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          # Remove bwrap AppArmor profile if present; it can block sandbox operations beyond userns
+          sudo apparmor_parser -R /etc/apparmor.d/bwrap 2>/dev/null || true
           flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           if [ "${{ steps.cache-flatpak-runtime.outputs.cache-hit }}" != "true" ]; then
             flatpak install --user -y flathub org.freedesktop.Platform//21.08 org.freedesktop.Sdk//21.08
@@ -165,6 +167,8 @@ jobs:
 
       - name: "npm run electron:build (Ubuntu)"
         if: ${{ matrix.os == 'ubuntu' }}
+        env:
+          DEBUG: "@malept/flatpak-bundler"
         run: |
           echo "======================================================================";
           echo "cd packages/gui";
