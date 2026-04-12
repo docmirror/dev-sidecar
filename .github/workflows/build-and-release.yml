@@ -147,7 +147,8 @@ jobs:
           flatpak --version
           flatpak-builder --version
 
-      - name: "npm run electron:build"
+      - name: "npm run electron:build (Windows/macOS)"
+        if: ${{ matrix.os != 'ubuntu' }}
         run: |
           echo "======================================================================";
           echo "cd packages/gui";
@@ -159,6 +160,20 @@ jobs:
           echo "npm run electron:build";
           echo "--------------------";
           npm run electron:build;
+
+      - name: "npm run electron:build (Ubuntu)"
+        if: ${{ matrix.os == 'ubuntu' }}
+        run: |
+          echo "======================================================================";
+          echo "cd packages/gui";
+          echo "--------------------";
+          cd packages/gui;
+          ls -lah;
+
+          echo "======================================================================";
+          echo "npm run electron:build";
+          echo "--------------------";
+          dbus-run-session -- npm run electron:build;
 
       - name: 'Print dir "packages/gui/dist_electron/"'
         run: |
@@ -192,13 +207,11 @@ jobs:
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage  DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.tar.gz    DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-aarch64.rpm     DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-aarch64.flatpak     DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak;
           #-------------------------------------------------------------------------------------------------------------------------
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.deb      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.AppImage;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.tar.gz   DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.flatpak      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak;
           ls -lah;
       - name: "Rename artifacts - macOS"
         if: ${{ matrix.os == 'macos' }}
@@ -306,13 +319,6 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm"
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak"
-        uses: actions/upload-artifact@v4.4.0
-        if: ${{ matrix.os == 'ubuntu' }}
-        with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak"
-          if-no-files-found: error
 
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb"
@@ -342,13 +348,6 @@ jobs:
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm"
-          if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak"
-        uses: actions/upload-artifact@v4.4.0
-        if: ${{ matrix.os == 'ubuntu' }}
-        with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak"
           if-no-files-found: error
       # endregion Upload artifacts - Linux
 
@@ -461,11 +460,6 @@ jobs:
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm"
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak"
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak"
-          path: release
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb"
         uses: actions/download-artifact@v4.1.8
@@ -486,11 +480,6 @@ jobs:
         uses: actions/download-artifact@v4.1.8
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm"
-          path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak"
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak"
           path: release
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-macos-x86_64.dmg"
