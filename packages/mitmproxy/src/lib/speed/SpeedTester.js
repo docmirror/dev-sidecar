@@ -94,6 +94,7 @@ class SpeedTester {
   }
 
   async getFromOneDns (dns) {
+    // TODO: 临时判断一下
     const family = (this.hostname.includes('googlevideo.com') || this.hostname.includes('gvt1.com')) ? 6 : 4
     return await dns._lookupWithPreSetIpList(this.hostname, { family })
   }

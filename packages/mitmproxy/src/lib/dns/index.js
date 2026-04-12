@@ -89,23 +89,35 @@ module.exports = {
 
     return dnsMap
   },
-  getDNS (dnsConfig, hostname) {
-    // 先匹配 预设IP配置
-    const hostnamePreSetIpList = matchUtil.matchHostname(dnsConfig.preSetIpList, hostname, 'matched preSetIpList(getDNS)')
+  getDNSAndFamily (dnsConfig, hostname) {
+    // 1. 匹配 预设IP配置
+    const hostnamePreSetIpList = matchUtil.matchHostname(dnsConfig.preSetIpList, hostname, 'matched preSetIpList(getDNSAndFamily)')
     if (hostnamePreSetIpList) {
-      return dnsConfig.dnsMap.PreSet
+      return {
+        dns: dnsConfig.dnsMap.PreSet,
+      }
     }
 
-    // 再匹配 DNS映射配置
-    const providerName = matchUtil.matchHostname(dnsConfig.mapping, hostname, 'get dns providerName')
+    // 2. 读取域名对应的DNS配置
+    const dnsData = matchUtil.matchHostname(dnsConfig.mapping, hostname, 'get dns data')
+    if (!dnsData) {
+      return null
+    }
 
     // 由于DNS中的usa已重命名为cloudflare，所以做以下处理，为了向下兼容
-    if (providerName === 'usa' && dnsConfig.dnsMap.usa == null && dnsConfig.dnsMap.cloudflare != null) {
-      return dnsConfig.dnsMap.cloudflare
+    let dns
+    if (dnsData.dnsName === 'usa' && dnsConfig.dnsMap.usa == null && dnsConfig.dnsMap.cloudflare != null) {
+      dns = dnsConfig.dnsMap.cloudflare
+    } else {
+      dns = dnsConfig.dnsMap[dnsData.dnsName]
+      if (!dns) {
+        return null
+      }
     }
 
-    if (providerName) {
-      return dnsConfig.dnsMap[providerName]
+    return {
+      dns,
+      family: dnsData.family,
     }
   },
 }

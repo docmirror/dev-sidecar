@@ -11,7 +11,7 @@ const dnsProviders = dns.initDNS({
 
   // tls
   aliyunTLS: {
-    server: 'tls://223.5.5.5:853',
+    server: 'tls://dns.alidns.com',
     cacheSize: 1000,
   },
 
@@ -28,7 +28,7 @@ const dnsProviders = dns.initDNS({
   },
 }, null)
 
-const hostname = 'rr5---sn-4g5e6nzl.gvt1.com'
+const hostname = 'rr4---sn-npoe7nek.gvt1.com'
 // const hostname = 'rr5---sn-4g5e6nzl.googlevideo.com'
 // const hostname = 'www.youtube.com'
 

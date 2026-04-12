@@ -53,14 +53,7 @@ module.exports = class BaseDNS {
     }
   }
 
-  async lookup (hostname, options) {
-    if (!options) {
-      options = {
-        ipChecker: undefined,
-        family: 4,
-      }
-    }
-
+  async lookup (hostname, options = {}) {
     try {
       let ipCache = this.cache.get(hostname)
       if (ipCache) {

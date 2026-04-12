@@ -35,12 +35,35 @@ function getExclusionArray (exclusions) {
   return ret
 }
 
+function handleDnsMapping (dnsMapping) {
+  // 循环读取所有key value
+  for (const hostname in dnsMapping) {
+    const value = dnsMapping[hostname]
+    if (value == null) {
+      delete dnsMapping[hostname]
+      continue
+    }
+
+    if (typeof value === 'string') {
+      dnsMapping[hostname] = {
+        dnsName: value,
+        family: hostname.includes('googlevideo.com') || hostname.includes('gvt1.com') ? 6 : null, // TODO: 暂时指定 googlevideo.com 使用IPv6
+      }
+    } else if (value.dnsName == null) {
+      log.warn(`域名 ${hostname} 的DNS配置有误，未配置dnsName，配置值：`, value)
+      delete dnsMapping[hostname]
+    }
+  }
+
+  return dnsMapping
+}
+
 module.exports = (serverConfig) => {
   const intercepts = matchUtil.domainMapRegexply(buildIntercepts(serverConfig.intercepts))
   const whiteList = matchUtil.domainMapRegexply(serverConfig.whiteList)
   const timeoutMapping = matchUtil.domainMapRegexply(serverConfig.setting.timeoutMapping)
 
-  const dnsMapping = serverConfig.dns.mapping
+  const dnsMapping = handleDnsMapping(serverConfig.dns.mapping)
   const setting = serverConfig.setting
 
   if (!setting.script.dirAbsolutePath) {

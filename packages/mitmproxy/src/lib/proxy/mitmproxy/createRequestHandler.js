@@ -114,19 +114,23 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
 
           const isDnsIntercept = {}
           if (dnsConfig && dnsConfig.dnsMap) {
-            let dns = DnsUtil.getDNS(dnsConfig, rOptions.hostname)
-            if (!dns && rOptions.servername) {
-              dns = dnsConfig.dnsMap.ForSNI
+            let dnsFamily = DnsUtil.getDNSAndFamily(dnsConfig, rOptions.hostname)
+            if (!dnsFamily && rOptions.servername) {
+              const dns = dnsConfig.dnsMap.ForSNI
               if (dns) {
-                log.info(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}, 必须使用dns，现默认使用 '${dns.dnsName}' DNS.`)
+                dnsFamily = { dns }
+                log.info(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}, 必须使用dns，现默认使用 '${dnsFamily.dnsName}' DNS.`)
               } else {
-                log.warn(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}，且DNS服务管理中，也未指定SNI默认使用的DNS。`)
+                log.warn(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}，然而DNS服务管理中，并未指定SNI默认使用的DNS。`)
               }
             }
-            if (dns) {
-              rOptions.lookup = dnsLookup.createLookupFunc(res, dns, 'request url', url, rOptions.port, isDnsIntercept)
-              log.debug(`域名 ${rOptions.hostname} DNS: ${dns.dnsName}`)
-              res.setHeader('DS-DNS', dns.dnsName)
+            if (dnsFamily) {
+              rOptions.lookup = dnsLookup.createLookupFunc(res, dnsFamily, 'request url', url, rOptions.port, isDnsIntercept)
+              if (dnsFamily.family === 6) {
+                rOptions.family = dnsFamily.family
+              }
+              log.debug(`域名 ${rOptions.hostname} DNS: ${dnsFamily.dns.dnsName}`)
+              res.setHeader('DS-DNS', dnsFamily.dns.dnsName)
             } else {
               log.info(`域名 ${rOptions.hostname} 在DNS中未配置`)
             }
