@@ -140,11 +140,23 @@ jobs:
           cd packages/mitmproxy;
           pnpm run test;
 
+      - name: "Cache Flatpak runtime (Ubuntu)"
+        if: ${{ matrix.os == 'ubuntu' }}
+        id: cache-flatpak-runtime
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/flatpak
+          key: flatpak-runtime-freedesktop-21.08
+
       - name: "Install Flatpak tooling (Ubuntu)"
         if: ${{ matrix.os == 'ubuntu' }}
         run: |
           sudo apt-get update -y
           sudo apt-get install -y flatpak flatpak-builder xdg-desktop-portal appstream
+          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          if [ "${{ steps.cache-flatpak-runtime.outputs.cache-hit }}" != "true" ]; then
+            flatpak install --user -y flathub org.freedesktop.Platform//21.08 org.freedesktop.Sdk//21.08
+          fi
           flatpak --version
           flatpak-builder --version
 
