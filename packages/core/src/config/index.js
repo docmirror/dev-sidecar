@@ -1,6 +1,5 @@
 const path = require('node:path')
 const configLoader = require('./local-config-loader')
-const { update } = require('lodash')
 
 function getRootCaCertPath () {
   return path.join(configLoader.getUserBasePath(), '/dev-sidecar.ca.crt')

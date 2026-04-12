@@ -75,7 +75,7 @@ module.exports = defineConfig({
         productName: 'dev-sidecar',
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: 'DevSidecar-${version}-${arch}.${ext}',
-        copyright: 'Copyright © 2020-2025 Greper, WangLiang',
+        copyright: 'Copyright © 2020-2026 Greper, WangLiang, CuteOmega',
         nsis: {
           oneClick: false,
           perMachine: true,
@@ -109,6 +109,10 @@ module.exports = defineConfig({
             },
             {
               target: 'rpm',
+              arch: ['x64', 'arm64', 'armv7l'],
+            },
+            {
+              target: 'flatpak',
               arch: ['x64', 'arm64', 'armv7l'],
             },
           ],
