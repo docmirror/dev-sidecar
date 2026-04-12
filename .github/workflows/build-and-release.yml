@@ -140,6 +140,8 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y flatpak flatpak-builder xdg-desktop-portal appstream
+          # Allow flatpak-builder's bwrap sandbox to create user namespaces on Ubuntu 24.04
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           if [ "${{ steps.cache-flatpak-runtime.outputs.cache-hit }}" != "true" ]; then
             flatpak install --user -y flathub org.freedesktop.Platform//21.08 org.freedesktop.Sdk//21.08
