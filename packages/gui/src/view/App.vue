@@ -201,28 +201,28 @@ export default {
                     出厂自带
                   </td>
                   <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.internal && info.configProfiles.internal.id) || '-' }}</code>
+                    <code>{{ (info.configProfiles.internal.id) || '-' }}</code>
                   </td>
                   <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.internal && info.configProfiles.internal.version) || '-' }}</code>
+                    <code>{{ (info.configProfiles.internal.version) || '-' }}</code>
                   </td>
                 </tr>
                 <tr>
                   <td>共享远程</td>
                   <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.sharedRemote && info.configProfiles.sharedRemote.id) || '-' }}</code>
+                    <code>{{ (info.configProfiles.sharedRemote.id) || '-' }}</code>
                   </td>
                   <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.sharedRemote && info.configProfiles.sharedRemote.version) || '-' }}</code>
+                    <code>{{ (info.configProfiles.sharedRemote.version) || '-' }}</code>
                   </td>
                 </tr>
                 <tr>
                   <td>个人远程</td>
                   <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.personalRemote && info.configProfiles.personalRemote.id) || '-' }}</code>
+                    <code>{{ (info.configProfiles.personalRemote.id) || '-' }}</code>
                   </td>
                   <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.personalRemote && info.configProfiles.personalRemote.version) || '-' }}</code>
+                    <code>{{ (info.configProfiles.personalRemote.version) || '-' }}</code>
                   </td>
                 </tr>
               </table>
