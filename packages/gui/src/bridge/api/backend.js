@@ -54,9 +54,9 @@ const localApi = {
       const runtimeConfig = DevSidecar.api.config.get()
       const remoteConfig = lodash.get(runtimeConfig, 'app.remoteConfig') || {}
 
-      const internal = getMetaInfo(coreDefaultConfig, 'internal')
-      const sharedRemote = getMetaInfo(configLoader.getRemoteConfig(), 'shared-remote')
-      const personalRemote = getMetaInfo(configLoader.getRemoteConfig('_personal'), 'personal-remote')
+      const internal = getMetaInfo(coreDefaultConfig, '')
+      const sharedRemote = getMetaInfo(configLoader.getRemoteConfig(), '')
+      const personalRemote = getMetaInfo(configLoader.getRemoteConfig('_personal'), '')
 
       return {
         version: pk.version,
