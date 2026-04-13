@@ -126,10 +126,6 @@ module.exports = defineConfig({
           },
           category: 'public.app-category.developer-tools',
         },
-        flatpak: {
-          // Flatpak rejects icons larger than 512x512, so specify the 512x512 icon explicitly
-          icon: 'build/mac/512x512.png',
-        },
         publish: {
           provider: publishProvider,
           url: publishUrl,
