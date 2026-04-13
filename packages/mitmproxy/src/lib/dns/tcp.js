@@ -7,9 +7,8 @@ const BaseDNS = require('./base')
 const defaultPort = 53 // TCP类型的DNS服务默认端口号
 
 module.exports = class DNSOverTCP extends BaseDNS {
-  constructor (dnsName, cacheSize, preSetIpList, dnsServer, dnsServerPort) {
-    super(dnsName, 'TCP', cacheSize, preSetIpList)
-    this.dnsServer = dnsServer.replace(/\s+/, '')
+  constructor (dnsName, cacheSize, preSetIpList, dnsServer, dnsServerPort, dnsFamily) {
+    super(dnsServer.replace(/\s+/, ''), dnsFamily, dnsName, 'TCP', cacheSize, preSetIpList)
     this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort
   }
 
@@ -30,6 +29,7 @@ module.exports = class DNSOverTCP extends BaseDNS {
       const tcpClient = net.createConnection({
         host: this.dnsServer,
         port: this.dnsServerPort,
+        family: this.dnsFamily,
       }, () => {
         // TCP DNS 报文前需添加 2 字节长度头
         const lengthBuffer = Buffer.alloc(2)
