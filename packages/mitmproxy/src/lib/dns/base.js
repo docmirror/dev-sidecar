@@ -1,6 +1,7 @@
 const LRUCache = require('lru-cache')
 const log = require('../../utils/util.log.server')
 const matchUtil = require('../../utils/util.match')
+const { isIPv6 } = require('./util.ip')
 const { DynamicChoice } = require('../choice/index')
 
 function mapToList (ipMap) {
@@ -34,10 +35,16 @@ class IpCache extends DynamicChoice {
 }
 
 module.exports = class BaseDNS {
-  constructor (dnsName, dnsType, cacheSize, preSetIpList) {
+  constructor (dnsServer, dnsFamily, dnsName, dnsType, cacheSize, preSetIpList) {
     this.dnsName = dnsName
     this.dnsType = dnsType
     this.preSetIpList = preSetIpList
+
+    if (!dnsServer) {
+      return
+    }
+    this.dnsServer = dnsServer
+    this.dnsFamily = dnsFamily || (isIPv6(dnsServer) ? 6 : 4)
     this.cache = new LRUCache({
       maxSize: (cacheSize > 0 ? cacheSize : defaultCacheSize),
       sizeCalculation: () => {
