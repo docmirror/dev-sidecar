@@ -7,6 +7,7 @@ on:
       - 1.x
       - develop
       - test*
+      - fix*
     paths-ignore:
       - "_script/**"
       - "doc/**"
@@ -18,7 +19,6 @@ on:
       - master
       - develop
       - 1.x
-      - fix-flatpak
     paths-ignore:
       - "_script/**"
       - "doc/**"
