@@ -7,6 +7,7 @@ on:
       - 1.x
       - develop
       - test*
+      - fix*
     paths-ignore:
       - "_script/**"
       - "doc/**"
@@ -140,7 +141,32 @@ jobs:
           cd packages/mitmproxy;
           pnpm run test;
 
-      - name: "npm run electron:build"
+      - name: "Cache Flatpak runtime (Ubuntu)"
+        if: ${{ matrix.os == 'ubuntu' }}
+        id: cache-flatpak-runtime
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/flatpak
+          key: flatpak-runtime-freedesktop-21.08
+
+      - name: "Install Flatpak tooling (Ubuntu)"
+        if: ${{ matrix.os == 'ubuntu' }}
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y flatpak flatpak-builder xdg-desktop-portal appstream fuse3
+          # Allow flatpak-builder's bwrap sandbox to create user namespaces on Ubuntu 24.04
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          # Remove bwrap AppArmor profile if present; it can block sandbox operations beyond userns
+          sudo apparmor_parser -R /etc/apparmor.d/bwrap 2>/dev/null || true
+          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          if [ "${{ steps.cache-flatpak-runtime.outputs.cache-hit }}" != "true" ]; then
+            flatpak install --user -y flathub org.freedesktop.Platform//21.08 org.freedesktop.Sdk//21.08
+          fi
+          flatpak --version
+          flatpak-builder --version
+
+      - name: "npm run electron:build (Windows/macOS)"
+        if: ${{ matrix.os != 'ubuntu' }}
         run: |
           echo "======================================================================";
           echo "cd packages/gui";
@@ -152,6 +178,22 @@ jobs:
           echo "npm run electron:build";
           echo "--------------------";
           npm run electron:build;
+
+      - name: "npm run electron:build (Ubuntu)"
+        if: ${{ matrix.os == 'ubuntu' }}
+        env:
+          DEBUG: "@malept/flatpak-bundler"
+        run: |
+          echo "======================================================================";
+          echo "cd packages/gui";
+          echo "--------------------";
+          cd packages/gui;
+          ls -lah;
+
+          echo "======================================================================";
+          echo "npm run electron:build";
+          echo "--------------------";
+          dbus-run-session -- npm run electron:build;
 
       - name: 'Print dir "packages/gui/dist_electron/"'
         run: |
@@ -185,13 +227,11 @@ jobs:
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage  DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.tar.gz    DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-aarch64.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.flatpak      DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak;
           #-------------------------------------------------------------------------------------------------------------------------
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.deb      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.AppImage;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.tar.gz   DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.flatpak      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak;
           ls -lah;
       - name: "Rename artifacts - macOS"
         if: ${{ matrix.os == 'macos' }}
@@ -298,13 +338,6 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm"
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak"
-        uses: actions/upload-artifact@v4.4.0
-        if: ${{ matrix.os == 'ubuntu' }}
-        with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak"
-          if-no-files-found: error
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb"
         uses: actions/upload-artifact@v4.4.0
@@ -333,13 +366,6 @@ jobs:
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm"
-          if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak"
-        uses: actions/upload-artifact@v4.4.0
-        if: ${{ matrix.os == 'ubuntu' }}
-        with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak"
           if-no-files-found: error
       # endregion Upload artifacts - Linux
 

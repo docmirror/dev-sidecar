@@ -71,7 +71,7 @@ module.exports = defineConfig({
             to: 'extra',
           },
         ],
-        appId: 'dev-sidecar',
+        appId: 'cn.docmirror.DevSidecar',
         productName: 'dev-sidecar',
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: 'DevSidecar-${version}-${arch}.${ext}',
@@ -113,7 +113,7 @@ module.exports = defineConfig({
             },
             {
               target: 'flatpak',
-              arch: ['x64', 'arm64', 'armv7l'],
+              arch: ['x64'],
             },
           ],
           category: 'System',
