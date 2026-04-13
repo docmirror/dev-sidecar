@@ -94,6 +94,9 @@ export default {
             <a-radio-button value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
               taobao镜像
             </a-radio-button>
+            <a-radio-button value="https://npmreg.proxy.ustclug.org" title="https://npmreg.proxy.ustclug.org">
+              中国科学技术大学镜像
+            </a-radio-button>
           </a-radio-group>
           <div class="form-help">
             设置后立即生效，即使关闭 ds 也会继续保持
