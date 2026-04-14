@@ -71,7 +71,7 @@ module.exports = defineConfig({
             to: 'extra',
           },
         ],
-        appId: 'cn.docmirror.DevSidecar',
+        appId: 'dev-sidecar',
         productName: 'dev-sidecar',
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: 'DevSidecar-${version}-${arch}.${ext}',
@@ -93,6 +93,7 @@ module.exports = defineConfig({
           // requestedExecutionLevel: 'highestAvailable', // 加了这个无法开机自启
         },
         linux: {
+          appId: 'cn.docmirror.DevSidecar',
           icon: 'build/mac/',
           target: [
             {
