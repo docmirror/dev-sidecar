@@ -42,6 +42,7 @@ module.exports = defineConfig({
         '@starknt/sysproxy-win32-x64-msvc',
         '@starknt/sysproxy-win32-arm64-msvc',
         '@starknt/sysproxy-linux-x64-gnu',
+        '@starknt/sysproxy-linux-arm64-gnu',
         '@starknt/sysproxy-darwin-x64',
         '@starknt/sysproxy-darwin-arm64',
         '@starknt/shutdown-handler-napi',
@@ -49,6 +50,7 @@ module.exports = defineConfig({
         '@starknt/shutdown-handler-napi-win32-x64-msvc',
         '@starknt/shutdown-handler-napi-win32-arm64-msvc',
         '@starknt/shutdown-handler-napi-linux-x64-gnu',
+        '@starknt/shutdown-handler-napi-linux-arm64-gnu',
         '@starknt/shutdown-handler-napi-darwin-x64',
         '@starknt/shutdown-handler-napi-darwin-arm64',
       ],
@@ -95,19 +97,19 @@ module.exports = defineConfig({
           target: [
             {
               target: 'deb',
-              arch: ['x64'],
+              arch: ['x64', 'arm64', 'armv7l'],
             },
             {
               target: 'AppImage',
-              arch: ['x64'],
+              arch: ['x64', 'arm64', 'armv7l'],
             },
             {
               target: 'tar.gz',
-              arch: ['x64'],
+              arch: ['x64', 'arm64', 'armv7l'],
             },
             {
               target: 'rpm',
-              arch: ['x64'],
+              arch: ['x64', 'arm64', 'armv7l'],
             },
             {
               target: 'flatpak',

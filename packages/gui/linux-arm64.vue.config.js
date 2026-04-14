@@ -74,22 +74,6 @@ module.exports = defineConfig({
           icon: 'build/mac/',
           target: [
             {
-              target: 'deb',
-              arch: ['arm64', 'armv7l'],
-            },
-            {
-              target: 'AppImage',
-              arch: ['arm64', 'armv7l'],
-            },
-            {
-              target: 'tar.gz',
-              arch: ['arm64', 'armv7l'],
-            },
-            {
-              target: 'rpm',
-              arch: ['arm64', 'armv7l'],
-            },
-            {
               target: 'flatpak',
               arch: ['arm64', 'armv7l'],
             },
