@@ -142,6 +142,10 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
       const errorMsg = `${isDirect ? '直连' : '代理连接'}超时: ${hostport}, cost: ${cost} ms`
       log.error(errorMsg)
 
+      cltSocket.write('HTTP/1.1 408 Proxy connect timeout\r\n'
+        + 'Proxy-agent: dev-sidecar\r\n'
+        + '\r\n')
+      cltSocket.end()
       cltSocket.destroy()
 
       if (isDnsIntercept && isDnsIntercept.dns && isDnsIntercept.ip !== isDnsIntercept.hostname) {
@@ -156,6 +160,10 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
       const errorMsg = `${isDirect ? '直连' : '代理连接'}失败: ${hostport}, cost: ${cost} ms, errorMsg: ${e.message}`
       log.error(`${errorMsg}\r\n`, e)
 
+      cltSocket.write(`HTTP/1.1 400 Proxy connect error: ${e.message}\r\n`
+        + 'Proxy-agent: dev-sidecar\r\n'
+        + '\r\n')
+      cltSocket.end()
       cltSocket.destroy()
 
       if (isDnsIntercept && isDnsIntercept.dns && isDnsIntercept.ip !== isDnsIntercept.hostname) {
