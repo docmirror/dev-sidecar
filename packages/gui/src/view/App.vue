@@ -189,9 +189,10 @@ export default {
           <a-layout-footer>
             <div class="footer">
               <div>
-                <label>出厂配置：</label><code :title="info.configProfiles.internal.updateLog">{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? '-' : '' }}{{ (info.configProfiles.internal.version) || '-' }}</code>
-                <label class="ml10">共享配置：</label><code :title="info.configProfiles.sharedRemote.updateLog">{{ info.configProfiles.sharedRemote.id || '' }}{{ info.configProfiles.sharedRemote.id ? '-' : '' }}{{ (info.configProfiles.sharedRemote.version) || '-' }}</code>
-                <label class="ml10">个人配置：</label><code :title="info.configProfiles.personalRemote.updateLog">{{ info.configProfiles.personalRemote.id }}{{ info.configProfiles.personalRemote.id ? '-' : '' }}{{ (info.configProfiles.personalRemote.version) || '-' }}</code>
+                当前配置：
+                <code :title="info.configProfiles.internal.updateLog">{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? '-' : '' }}{{ (info.configProfiles.internal.version) || '-' }}</code>
+                <code :title="info.configProfiles.sharedRemote.updateLog" class="ml5">{{ info.configProfiles.sharedRemote.id || '' }}{{ info.configProfiles.sharedRemote.id ? '-' : '' }}{{ (info.configProfiles.sharedRemote.version) || '-' }}</code>
+                <code :title="info.configProfiles.personalRemote.updateLog" class="ml5">{{ info.configProfiles.personalRemote.id }}{{ info.configProfiles.personalRemote.id ? '-' : '' }}{{ (info.configProfiles.personalRemote.version) || '-' }}</code>
               </div>
 
               <div class="mt5">
