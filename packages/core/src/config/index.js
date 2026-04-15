@@ -13,7 +13,7 @@ const defaultConfig = {
   app: {
     metaInfo: {
       updateLog: 'GUI v2.0.2自带配置',
-      version: '202604122348',
+      version: 202604122348,
       id: 'internal',
     },
     mode: 'default',
