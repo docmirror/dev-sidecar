@@ -26,7 +26,7 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
     let packetLength = 0
     const dnsQuery = getDnsQuery({ id: randi(0x0, 0xFFFF), type, name, klass })
     const dnsQueryBuf = dnsPacket.streamEncode(dnsQuery)
-    const socket = tls_1.connect({ host, port, servername, family: family || 4, rejectUnauthorized, timeout })
+    const socket = tls_1.connect({ host, port, servername, family: Number.parseInt(family) === 6 ? 6 : 4, rejectUnauthorized, timeout })
 
     // 超时处理
     let isFinished = false

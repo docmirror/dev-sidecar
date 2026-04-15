@@ -3,6 +3,10 @@ const net = require('node:net')
 const _ = require('lodash')
 const log = require('../../utils/util.log.server')
 const config = require('./config.js')
+const matchUtil = require('../../utils/util.match.js')
+const { configFromFiles } = require('@docmirror/dev-sidecar/src/config/index.js')
+
+const familyMapping = matchUtil.domainMapRegexply(configFromFiles.server.dns.familyMapping)
 
 // const isWindows = process.platform === 'win32'
 
@@ -94,8 +98,7 @@ class SpeedTester {
   }
 
   async getFromOneDns (dns) {
-    // TODO: 临时判断一下
-    const family = (this.hostname.includes('googlevideo.com') || this.hostname.includes('gvt1.com')) ? 6 : 4
+    const family = Number.parseInt(matchUtil.matchHostname(familyMapping, this.hostname, 'get family')) === 6 ? 6 : 4
     return await dns._lookupWithPreSetIpList(this.hostname, { family })
   }
 

@@ -35,7 +35,7 @@ function getExclusionArray (exclusions) {
   return ret
 }
 
-function handleDnsMapping (dnsMapping) {
+function handleDnsMapping (dnsMapping, familyMapping) {
   // 循环读取所有key value
   for (const hostname in dnsMapping) {
     const value = dnsMapping[hostname]
@@ -47,7 +47,7 @@ function handleDnsMapping (dnsMapping) {
     if (typeof value === 'string') {
       dnsMapping[hostname] = {
         dnsName: value,
-        family: hostname.includes('googlevideo.com') || hostname.includes('gvt1.com') ? 6 : null, // TODO: 暂时指定 googlevideo.com 使用IPv6
+        family: Number.parseInt(familyMapping[hostname]) === 6 ? 6 : 4,
       }
     } else if (value.dnsName == null) {
       log.warn(`域名 ${hostname} 的DNS配置有误，未配置dnsName，配置值：`, value)
@@ -63,7 +63,7 @@ module.exports = (serverConfig) => {
   const whiteList = matchUtil.domainMapRegexply(serverConfig.whiteList)
   const timeoutMapping = matchUtil.domainMapRegexply(serverConfig.setting.timeoutMapping)
 
-  const dnsMapping = handleDnsMapping(serverConfig.dns.mapping)
+  const dnsMapping = handleDnsMapping(serverConfig.dns.mapping, serverConfig.dns.familyMapping || {})
   const setting = serverConfig.setting
 
   if (!setting.script.dirAbsolutePath) {

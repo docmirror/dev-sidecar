@@ -26,11 +26,11 @@ function createIpChecker (tester) {
 }
 
 module.exports = {
-  createLookupFunc (res, dnsFamily, action, target, port, isDnsIntercept) {
+  createLookupFunc (res, dnsAndFamily, action, target, port, isDnsIntercept) {
     target = target ? (`, target: ${target}`) : ''
 
-    const dns = dnsFamily.dns
-    const family = dnsFamily.family || 4
+    const dns = dnsAndFamily.dns
+    const family = Number.parseInt(dnsAndFamily.family) === 6 ? 6 : 4
 
     return (hostname, options, callback) => {
       const tester = speedTest.getSpeedTester(hostname, port)
@@ -50,10 +50,6 @@ module.exports = {
 
       const ipChecker = createIpChecker(tester)
 
-      // TODO: 临时打印下日志
-      if (hostname.includes('googlevideo.com') || hostname.includes('gvt1.com')) {
-        log.debug(`[${hostname}] 使用的lookup参数：dns: ${dns.dnsName}, family: ${family}`)
-      }
       dns.lookup(hostname, { ipChecker, family }).then((ip) => {
         if (isDnsIntercept) {
           isDnsIntercept.dns = dns
@@ -64,7 +60,7 @@ module.exports = {
         if (ip !== hostname) {
           log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.dnsName}': ${ip}(family: ${family})${target} -----`)
           if (res) {
-            res.setHeader('DS-DNS-Lookup', `DNS: ${ip} ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
+            res.setHeader('DS-DNS-Lookup', `DNS: ${ip}（IPv${family}） ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
           }
           callback(null, ip, family)
         } else {

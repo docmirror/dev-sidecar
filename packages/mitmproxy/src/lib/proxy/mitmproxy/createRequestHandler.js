@@ -114,23 +114,23 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
 
           const isDnsIntercept = {}
           if (dnsConfig && dnsConfig.dnsMap) {
-            let dnsFamily = DnsUtil.getDNSAndFamily(dnsConfig, rOptions.hostname)
-            if (!dnsFamily && rOptions.servername) {
+            let dnsAndFamily = DnsUtil.getDNSAndFamily(dnsConfig, rOptions.hostname)
+            if (!dnsAndFamily && rOptions.servername) {
               const dns = dnsConfig.dnsMap.ForSNI
               if (dns) {
-                dnsFamily = { dns }
-                log.info(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}, 必须使用dns，现默认使用 '${dnsFamily.dnsName}' DNS.`)
+                dnsAndFamily = { dns }
+                log.info(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}, 必须使用dns，现默认使用 '${dnsAndFamily.dnsName}' DNS.`)
               } else {
                 log.warn(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}，然而DNS服务管理中，并未指定SNI默认使用的DNS。`)
               }
             }
-            if (dnsFamily) {
-              rOptions.lookup = dnsLookup.createLookupFunc(res, dnsFamily, 'request url', url, rOptions.port, isDnsIntercept)
-              if (dnsFamily.family === 6) {
-                rOptions.family = dnsFamily.family
+            if (dnsAndFamily) {
+              rOptions.lookup = dnsLookup.createLookupFunc(res, dnsAndFamily, 'request url', url, rOptions.port, isDnsIntercept)
+              if (dnsAndFamily.family === 6) {
+                rOptions.family = 6
               }
-              log.debug(`域名 ${rOptions.hostname} DNS: ${dnsFamily.dns.dnsName}`)
-              res.setHeader('DS-DNS', dnsFamily.dns.dnsName)
+              log.debug(`域名 ${rOptions.hostname} DNS: ${dnsAndFamily.dns.dnsName}, family: ${rOptions.family || 4}`)
+              res.setHeader('DS-DNS', dnsAndFamily.dns.dnsName)
             } else {
               log.info(`域名 ${rOptions.hostname} 在DNS中未配置`)
             }
@@ -159,6 +159,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             }
           }
 
+          res.setHeader('DS-Proxy-Request-Family', rOptions.family || 4)
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const cost = Date.now() - start
             if (rOptions.protocol === 'https:') {

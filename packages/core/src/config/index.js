@@ -415,6 +415,31 @@ const defaultConfig = {
         '*.jetbrains.com': 'quad9',
         '*.azureedge.net': 'quad9',
       },
+      /*
+       * 原本是想将 mapping 中的数据结构由 string 改为 object，但是这样会导致新的配置无法向下兼容，所以将family配置，放到下面的 familyMapping 中
+       *
+       * @param family 可选值：4（只查询IPv4地址，默认值）、6（只查询IPv6地址）......暂不支持同时查IPv4和IPv6地址
+       * @since 2.0.2
+       */
+      familyMapping: {
+        '*.github.com': '4',
+        '*github*.com': '4',
+        '*.github.io': '4',
+        '*.docker.com': '4',
+        '*.stackoverflow.com': '4',
+        '*.electronjs.org': '4',
+        '*.amazonaws.com': '4',
+        '*.yarnpkg.com': '4',
+        '*.cloudfront.net': '4',
+        '*.cloudflare.com': '4',
+        'img.shields.io': '4',
+        '*.vuepress.vuejs.org': '4',
+        '*.gh.docmirror.top': '4',
+        '*.v2ex.com': '4',
+        '*.pypi.org': '4',
+        '*.jetbrains.com': '4',
+        '*.azureedge.net': '4',
+      },
       speedTest: {
         enabled: true,
         interval: 300000,
