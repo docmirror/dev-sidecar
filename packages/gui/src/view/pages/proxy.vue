@@ -172,7 +172,7 @@ export default {
             <MockInput v-model="item.key" class="mt-1" />
           </a-col>
           <a-col :span="5">
-            <a-select v-model="item.value" style="width:100%">
+            <a-select v-model="item.value" class="w100">
               <a-select-option v-for="(item2) of excludeIpOptions" :key="item2.value" :value="item2.value">
                 {{ item2.label }}
               </a-select-option>
