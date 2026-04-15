@@ -24,7 +24,7 @@ function getMetaInfo (config, fallbackId) {
   const metaInfo = lodash.get(config, 'app.metaInfo') || lodash.get(config, 'metaInfo') || {}
   return {
     id: metaInfo.id || fallbackId,
-    version: metaInfo.version || '',
+    version: metaInfo.version || 0,
     updateLog: metaInfo.updateLog || '',
   }
 }
