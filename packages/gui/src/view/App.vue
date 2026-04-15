@@ -188,45 +188,19 @@ export default {
           </a-layout-content>
           <a-layout-footer>
             <div class="footer">
-              <table style="margin: 0 auto">
-                <thead>
-                  <tr>
-                    <th>配置类型</th>
-                    <th>ID</th>
-                    <th>版本</th>
-                  </tr>
-                </thead>
-                <tr>
-                  <td>
-                    出厂自带
-                  </td>
-                  <td>
-                    <code>{{ (info.configProfiles.internal.id) || '-' }}</code>
-                  </td>
-                  <td>
-                    <code>{{ (info.configProfiles.internal.version) || '-' }}</code>
-                  </td>
-                </tr>
-                <tr>
-                  <td>共享远程</td>
-                  <td>
-                    <code>{{ (info.configProfiles.sharedRemote.id) || '-' }}</code>
-                  </td>
-                  <td>
-                    <code>{{ (info.configProfiles.sharedRemote.version) || '-' }}</code>
-                  </td>
-                </tr>
-                <tr>
-                  <td>个人远程</td>
-                  <td>
-                    <code>{{ (info.configProfiles.personalRemote.id) || '-' }}</code>
-                  </td>
-                  <td>
-                    <code>{{ (info.configProfiles.personalRemote.version) || '-' }}</code>
-                  </td>
-                </tr>
-              </table>
-              ©2020-2026 docmirror.cn by <a @click="openExternal('https://github.com/greper')">Greper</a>, <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>, <a @click="openExternal('https://github.com/cute-omega')">CuteOmega</a>  <span>{{ info.version }}</span>
+              <div>
+                <label>出厂配置：</label><code :title="info.configProfiles.internal.updateLog">{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? '-' : '' }}{{ (info.configProfiles.internal.version) || '-' }}</code>
+                <label class="ml10">共享配置：</label><code :title="info.configProfiles.sharedRemote.updateLog">{{ info.configProfiles.sharedRemote.id || '' }}{{ info.configProfiles.sharedRemote.id ? '-' : '' }}{{ (info.configProfiles.sharedRemote.version) || '-' }}</code>
+                <label class="ml10">个人配置：</label><code :title="info.configProfiles.personalRemote.updateLog">{{ info.configProfiles.personalRemote.id }}{{ info.configProfiles.personalRemote.id ? '-' : '' }}{{ (info.configProfiles.personalRemote.version) || '-' }}</code>
+              </div>
+
+              <div class="mt5">
+                ©2020-2026 docmirror.cn by
+                <a @click="openExternal('https://github.com/greper')">Greper</a>,
+                <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>,
+                <a @click="openExternal('https://github.com/cute-omega')">CuteOmega</a>
+                <span class="ml5">{{ info.version }}</span>
+              </div>
             </div>
           </a-layout-footer>
         </a-layout>
