@@ -1,7 +1,10 @@
 function parseVersion (version) {
-  const matched = version.match(/^v?(\d{1,2}(?:\.\d{1,2})*)?[.-]?(.*)$/)
+  const matched = version.match(/^v?(\d{1,2}(?:\.\d{1,2})*)[.-]?(.*)$/)
+  if (!matched) {
+    throw new Error(`Invalid version string: ${version}`)
+  }
   const versionInfo = {
-    versions: matched[1] ? matched[1].split('.') : [0, 0, 0], // 版本号数组
+    versions: matched[1].split('.'), // 版本号数组
     pre: matched[2], // 预发布版本号
   }
 

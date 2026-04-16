@@ -155,6 +155,10 @@ module.exports = (serverConfig) => {
       const matchIntercepts = []
       const matchInterceptsOpts = {}
       for (const regexp in interceptOpts) { // 遍历拦截配置
+        // 跳过hostname匹配结果，它不是路径正则
+        if (regexp === 'matched') {
+          continue
+        }
         // 判断是否匹配拦截器
         const matched = matchUtil.isMatched(rOptions.path, regexp)
         if (matched == null) { // 拦截器匹配失败
