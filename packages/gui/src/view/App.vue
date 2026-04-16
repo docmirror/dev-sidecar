@@ -189,7 +189,7 @@ export default {
           <a-layout-footer>
             <div class="footer">
               <div>
-                当前配置：
+                <label v-if="info.configProfiles.personalRemote.showLabel !== false">当前配置：</label>
                 <code :title="info.configProfiles.internal.updateLog">{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? '-' : '' }}{{ (info.configProfiles.internal.version) || '-' }}</code>
                 <code :title="info.configProfiles.sharedRemote.updateLog" class="ml5">{{ info.configProfiles.sharedRemote.id || '' }}{{ info.configProfiles.sharedRemote.id ? '-' : '' }}{{ (info.configProfiles.sharedRemote.version) || '-' }}</code>
                 <code :title="info.configProfiles.personalRemote.updateLog" class="ml5">{{ info.configProfiles.personalRemote.id }}{{ info.configProfiles.personalRemote.id ? '-' : '' }}{{ (info.configProfiles.personalRemote.version) || '-' }}</code>
