@@ -25,7 +25,7 @@ const ProxyPlugin = function (context) {
     },
 
     async unsetProxy (setEnv) {
-      if (setEnv) {
+      if (setEnv == null) {
         setEnv = config.get().proxy.setEnv
       }
       try {

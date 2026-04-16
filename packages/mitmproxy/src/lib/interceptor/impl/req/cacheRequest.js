@@ -44,7 +44,7 @@ function getLastModifiedTimeFromIfModifiedSince (rOptions, log) {
     return new Date(lastModified).getTime()
   } catch (e) {
     // 为数字时，直接返回
-    if (/\\d+/.test(lastModified)) {
+    if (/\d+/.test(lastModified)) {
       return lastModified - 0
     }
 

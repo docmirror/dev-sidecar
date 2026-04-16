@@ -3,7 +3,7 @@ const defaultAllowMethods = 'GET,POST,PUT,DELETE,HEAD,OPTIONS,PATCH' // CONNECTã
 
 function readConfig (config, defaultConfig) {
   if (config) {
-    if (Object.isArray(config)) {
+    if (Array.isArray(config)) {
       config = config.join(',')
     }
   } else {
