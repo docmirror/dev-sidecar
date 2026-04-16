@@ -1,4 +1,4 @@
-const url = require('node:url')
+const URL = require('node:url')
 const lodash = require('lodash')
 
 function replacePlaceholder0 (url, matched, pre) {
@@ -45,9 +45,8 @@ function buildTargetUrl (rOptions, urlConf, interceptOpt, matched, hostnameMatch
   } else {
     let uri = rOptions.path
     if (uri.indexOf('http:') === 0 || uri.indexOf('https:') === 0) {
-      // eslint-disable-next-line node/no-deprecated-api
-      const URL = url.parse(uri)
-      uri = URL.path
+      const urlObj = new URL.URL(uri)
+      uri = urlObj.path
     }
     targetUrl = urlConf + uri
   }
@@ -66,17 +65,16 @@ function doProxy (proxyConf, rOptions, req, interceptOpt, matched, hostnameMatch
   const proxyTarget = buildTargetUrl(rOptions, proxyConf, interceptOpt, matched, hostnameMatched)
 
   // 替换rOptions的属性
-  // eslint-disable-next-line node/no-deprecated-api
-  const URL = url.parse(proxyTarget)
+  const urlObj = new URL.URL(proxyTarget)
   rOptions.origional = lodash.cloneDeep(rOptions) // 备份原始请求参数
   delete rOptions.origional.agent
   delete rOptions.origional.headers
-  rOptions.protocol = URL.protocol
-  rOptions.hostname = URL.hostname
-  rOptions.host = URL.host
-  rOptions.headers.host = URL.host
-  rOptions.path = URL.path
-  if (URL.port == null) {
+  rOptions.protocol = urlObj.protocol
+  rOptions.hostname = urlObj.hostname
+  rOptions.host = urlObj.host
+  rOptions.headers.host = urlObj.host
+  rOptions.path = urlObj.path
+  if (urlObj.port == null) {
     rOptions.port = rOptions.protocol === 'https:' ? 443 : 80
   }
 

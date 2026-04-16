@@ -1,7 +1,7 @@
 const { Buffer } = require('node:buffer')
 const fs = require('node:fs')
 const path = require('node:path')
-const url = require('node:url')
+const URL = require('node:url')
 const lodash = require('lodash')
 const request = require('request')
 const log = require('../../../utils/util.log.server')
@@ -187,20 +187,19 @@ function createOverwallMiddleware (overWallConfig) {
 
       // const backup = interceptOpt.backup
       const proxy = proxyTarget.indexOf('http:') === 0 || proxyTarget.indexOf('https:') === 0 ? proxyTarget : (`${rOptions.protocol}//${proxyTarget}`)
-      // eslint-disable-next-line node/no-deprecated-api
-      const URL = url.parse(proxy)
+      const urlObj = new URL.URL(proxy)
       rOptions.origional = lodash.cloneDeep(rOptions) // 备份原始请求参数
       delete rOptions.origional.agent
       delete rOptions.origional.headers
-      rOptions.protocol = URL.protocol
-      rOptions.hostname = URL.hostname
-      rOptions.host = URL.host
-      rOptions.headers.host = URL.host
+      rOptions.protocol = urlObj.protocol
+      rOptions.hostname = urlObj.hostname
+      rOptions.host = urlObj.host
+      rOptions.headers.host = urlObj.host
       if (password) {
         rOptions.headers.dspassword = password
       }
-      rOptions.path = URL.path
-      if (URL.port == null) {
+      rOptions.path = urlObj.path
+      if (urlObj.port == null) {
         rOptions.port = port || (rOptions.protocol === 'https:' ? 443 : 80)
       }
       log.info('OverWall:', rOptions.hostname, '➜', proxyTarget)

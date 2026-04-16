@@ -1,5 +1,5 @@
 const net = require('node:net')
-const url = require('node:url')
+const URL = require('node:url')
 const jsonApi = require('../../../json')
 const log = require('../../../utils/util.log.server')
 const DnsUtil = require('../../dns')
@@ -31,8 +31,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
   }
 
   return function connectHandler (req, cltSocket, head, ssl) {
-    // eslint-disable-next-line node/no-deprecated-api
-    let { hostname, port } = url.parse(`${ssl ? 'https' : 'http'}://${req.url}`)
+    let { hostname, port } = new URL.URL(`${ssl ? 'https' : 'http'}://${req.url}`)
     port = Number.parseInt(port)
 
     if (isSslConnect(sslConnectInterceptors, req, cltSocket, head)) {
