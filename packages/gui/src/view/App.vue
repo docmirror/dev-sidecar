@@ -9,7 +9,13 @@ export default {
   data () {
     return {
       locale: zhCN,
-      info: {},
+      info: {
+        configProfiles: {
+          internal: {},
+          sharedRemote: {},
+          personalRemote: {},
+        },
+      },
       menus: undefined,
       config: undefined,
       configReadyPromise: null,

@@ -287,7 +287,7 @@ const configApi = {
       for (const item of noSetList) {
         if (item.value.includes('${')) {
           for (const key in context) {
-            item.value = item.value.replcace(new RegExp(`\${${key}}`, 'g'), context[key])
+            item.value = item.value.replace(new RegExp(`\\$\\{${key}\\}`, 'g'), context[key])
           }
         }
       }

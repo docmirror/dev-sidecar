@@ -157,7 +157,7 @@ module.exports = {
 
     const isHtml = httpUtil.isHtml(proxyRes)
     const contentLengthIsZero = (() => {
-      return proxyRes.headers['content-length'] === 0
+      return proxyRes.headers['content-length'] === '0'
     })()
     if (!isHtml || contentLengthIsZero) {
       next()

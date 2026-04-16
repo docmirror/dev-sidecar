@@ -26,6 +26,7 @@ function getMetaInfo (config, fallbackId) {
     id: metaInfo.id || fallbackId,
     version: metaInfo.version || 0,
     updateLog: metaInfo.updateLog || '',
+    showLabel: metaInfo.showLabel !== false && metaInfo.showLabel !== 'false', // 个人配置可以使用此配置隐藏footer中的 '当前配置：' 字样
   }
 }
 

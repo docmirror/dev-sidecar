@@ -1,4 +1,4 @@
-const url = require('node:url')
+const URL = require('node:url')
 const tunnelAgent = require('tunnel-agent')
 const log = require('../../../utils/util.log.server')
 const matchUtil = require('../../../utils/util.match')
@@ -100,8 +100,7 @@ util.parseHostnameAndPort = (host, defaultPort) => {
 }
 
 util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, compatibleConfig = null) => {
-  // eslint-disable-next-line node/no-deprecated-api
-  const urlObject = url.parse(req.url)
+  const urlObj = new URL.URL(req.url)
   const defaultPort = ssl ? 443 : 80
   const protocol = ssl ? 'https:' : 'http:'
   const headers = Object.assign({}, req.headers)
@@ -147,20 +146,19 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
     url: req.url,
     hostname,
     port,
-    path: urlObject.path,
+    path: urlObj.pathname + urlObj.search,
     headers: req.headers,
     agent,
     compatibleConfig,
   }
 
-  // eslint-disable-next-line node/no-deprecated-api
-  if (protocol === 'http:' && externalProxyUrl && (url.parse(externalProxyUrl)).protocol === 'http:') {
-    // eslint-disable-next-line node/no-deprecated-api
-    const externalURL = url.parse(externalProxyUrl)
-    options.hostname = externalURL.hostname
-    options.port = externalURL.port
-    // support non-transparent proxy
-    options.path = `http://${urlObject.host}${urlObject.path}`
+  if (protocol === 'http:' && externalProxyUrl) {
+    const externalUrlObj = new URL.URL(externalProxyUrl)
+    if (externalUrlObj.protocol === 'http:') {
+      options.hostname = externalUrlObj.hostname
+      options.port = externalUrlObj.port
+      options.path = `http://${externalUrlObj.host}${externalUrlObj.path}`
+    }
   }
 
   // mark a socketId for Agent to bind socket for NTLM
@@ -174,14 +172,13 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
 }
 
 util.getTunnelAgent = (requestIsSSL, externalProxyUrl) => {
-  // eslint-disable-next-line node/no-deprecated-api
-  const urlObject = url.parse(externalProxyUrl)
-  const protocol = urlObject.protocol || 'http:'
-  let port = urlObject.port
+  const urlObj = new URL.URL(externalProxyUrl)
+  const protocol = urlObj.protocol || 'http:'
+  let port = urlObj.port
   if (!port) {
     port = protocol === 'http:' ? 80 : 443
   }
-  const hostname = urlObject.hostname || 'localhost'
+  const hostname = urlObj.hostname || 'localhost'
 
   if (requestIsSSL) {
     if (protocol === 'http:') {

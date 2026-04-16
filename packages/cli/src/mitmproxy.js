@@ -7,7 +7,7 @@ const log = require('@docmirror/mitmproxy/src/utils/util.log.server') // 当前�
 const home = process.env.USER_HOME || process.env.HOME || 'C:/Users/Administrator/'
 
 let configPath
-if (process.argv && process.argv.length > 3) {
+if (process.argv && process.argv.length >= 3) {
   configPath = process.argv[2]
 } else {
   configPath = path.join(home, '.dev-sidecar/running.json')

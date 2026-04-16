@@ -62,7 +62,7 @@ function _loadFromFile (defaultConfig) {
         config.request = defaultConfig.request
       }
     } catch (e) {
-      log.error('解析 automaticCompatibleConfig.json 成功:', configPath, ', error:', e)
+      log.error('解析 automaticCompatibleConfig.json 失败:', configPath, ', error:', e)
       return defaultConfig
     }
   }
@@ -132,7 +132,7 @@ module.exports = {
   },
 
   setRequestRejectUnauthorized (rOptions, rejectUnauthorized, autoSave = true) {
-    const requestCompatibleConfig = this.getRequestCompatibleConfig(rOptions.hostname, rOptions.port)
+    const requestCompatibleConfig = this.getRequestCompatibleConfig(rOptions)
     if (requestCompatibleConfig) {
       requestCompatibleConfig.rejectUnauthorized = rejectUnauthorized
     } else {
