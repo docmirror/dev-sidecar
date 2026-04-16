@@ -16,9 +16,13 @@ testIsNewVersion('2.1.0', '2.0.0', 2)
 testIsNewVersion('2.0.0', '2.1.0', -2)
 
 testIsNewVersion('2.0.1', '2.0.0', 3)
+testIsNewVersion('2.0.10', '2.0.2', 3)
+testIsNewVersion('2.0.10.1', '2.0.2.2', 3)
+testIsNewVersion('2.0.10-RC1', '2.0.2-RC2', 3)
 testIsNewVersion('2.0.0', '2.0.1', -3)
 
 testIsNewVersion('2.0.0.1', '2.0.0', 4)
+testIsNewVersion('2.0.0.1', '2.0.0.X', 4)
 testIsNewVersion('2.0.0', '2.0.0.1', -4)
 
 testIsNewVersion('2.0.0.9.1', '2.0.0.9', 5)
@@ -33,3 +37,5 @@ testIsNewVersion('2.0.0-RC1', '2.0.0', -102)
 testIsNewVersion('2.0.0.0', '2.0.0', 0)
 
 testIsNewVersion('x', 'v', -999)
+
+console.log('版本测试通过')
