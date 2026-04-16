@@ -28,9 +28,9 @@ module.exports = class CertAndKeyContainer {
   getCertPromise (hostname, port, dnsName, mappingHostNames) {
     for (let i = 0; i < this.queue.length; i++) {
       const _certPromiseObj = this.queue[i]
-      const mappingHostNames = _certPromiseObj.mappingHostNames
-      for (let j = 0; j < mappingHostNames.length; j++) {
-        const DNSName = mappingHostNames[j]
+      const certMappingHostNames = _certPromiseObj.mappingHostNames
+      for (let j = 0; j < certMappingHostNames.length; j++) {
+        const DNSName = certMappingHostNames[j]
         if (DNSName === dnsName || tlsUtils.isMappingHostName(DNSName, hostname)) {
           this.reRankCert(i)
           log.info(`Load fakeCertPromise from cache, hostname: ${hostname}:${port}, certPromiseObj: {"mappingHostNames":${JSON.stringify(_certPromiseObj.mappingHostNames)}}`)

@@ -54,6 +54,7 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
         packetLength = data.readUInt16BE(0)
         if (packetLength < 12) {
           reject(new Error('Below DNS minimum packet length (DNS Header is 12 bytes)'))
+          return
         }
         response = Buffer.from(data)
       } else {

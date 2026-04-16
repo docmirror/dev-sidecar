@@ -61,7 +61,7 @@ class DynamicChoice {
    * @param newBackupList 新的backupList
    */
   setBackupList (newBackupList) {
-    this.backupList = newBackupList
+    this.backupList = [...newBackupList]
     let defaultTotal = newBackupList.length
     for (const ip of newBackupList) {
       if (!this.countMap[ip]) {
@@ -69,7 +69,7 @@ class DynamicChoice {
         defaultTotal--
       }
     }
-    this.value = newBackupList.shift()
+    this.value = this.backupList.shift()
     this.doCount(this.value, false)
   }
 
