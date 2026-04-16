@@ -37,11 +37,11 @@ function isNewVersion (onlineVersion, currentVersion, log = null) {
       // 短的数组补0
       if (versions1.length < versions2.length) {
         for (let i = versions1.length; i < versions2.length; i++) {
-          versions1.push('0')
+          versions1.push(0)
         }
       } else if (versions1.length > versions2.length) {
         for (let i = versions2.length; i < versions1.length; i++) {
-          versions2.push('0')
+          versions2.push(0)
         }
       }
     }

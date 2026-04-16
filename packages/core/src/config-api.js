@@ -104,7 +104,7 @@ const configApi = {
 
           let message
           if (response) {
-            message = `下载远程配置失败: ${remoteConfigUrl}, message: ${response.message}, code: ${response.statusCode}`
+            message = `下载远程配置失败: ${remoteConfigUrl}, message: ${response.statusMessage}, code: ${response.statusCode}`
           } else {
             message = `下载远程配置失败: response: ${response}`
           }

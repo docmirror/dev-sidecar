@@ -17,8 +17,8 @@ const PipPlugin = function (context) {
     },
 
     async save (newConfig) {
-      await api.setVariables()
     },
+
     async getPipEnv () {
       const command = config.get().plugin.pip.setting.command
       let ret = await shell.exec([`${command} config list`], { type: 'cmd' })
@@ -75,11 +75,9 @@ const PipPlugin = function (context) {
     },
 
     async setProxy (ip, port) {
-
     },
 
     async unsetProxy () {
-
     },
   }
   return api

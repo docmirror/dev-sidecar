@@ -219,7 +219,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             const cost = Date.now() - start
             const errorMsg = `请求被取消: ${url}, cost: ${cost} ms`
             log.error(errorMsg, ', rOptions:', jsonApi.stringify2(rOptions))
-            proxyReq.abort()
+            proxyReq.destroy()
             if (res.writableEnded) {
               return
             }
