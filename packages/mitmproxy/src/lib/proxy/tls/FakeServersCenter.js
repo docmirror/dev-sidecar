@@ -110,17 +110,13 @@ module.exports = class FakeServersCenter {
           key = certObj.key
           const certPem = pki.certificateToPem(cert)
           const keyPem = pki.privateKeyToPem(key)
+          const secureContext = tls.createSecureContext({ key: keyPem, cert: certPem })
           fakeServer = new https.Server({
             key: keyPem,
             cert: certPem,
             SNICallback: (hostname, done) => {
-              (async () => {
-                log.info(`fakeServer SNICallback: ${hostname}:${port}`)
-                done(null, tls.createSecureContext({
-                  key: pki.privateKeyToPem(certObj.key),
-                  cert: pki.certificateToPem(certObj.cert),
-                }))
-              })()
+              log.info(`fakeServer SNICallback: ${hostname}:${port}`)
+              done(null, secureContext)
             },
           })
         } else {
