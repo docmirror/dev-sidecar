@@ -46,7 +46,7 @@ function buildTargetUrl (rOptions, urlConf, interceptOpt, matched, hostnameMatch
     let uri = rOptions.path
     if (uri.indexOf('http:') === 0 || uri.indexOf('https:') === 0) {
       const urlObj = new URL.URL(uri)
-      uri = urlObj.path
+      uri = urlObj.pathname + urlObj.search
     }
     targetUrl = urlConf + uri
   }
@@ -73,8 +73,10 @@ function doProxy (proxyConf, rOptions, req, interceptOpt, matched, hostnameMatch
   rOptions.hostname = urlObj.hostname
   rOptions.host = urlObj.host
   rOptions.headers.host = urlObj.host
-  rOptions.path = urlObj.path
-  if (urlObj.port == null) {
+  rOptions.path = urlObj.pathname + urlObj.search
+  if (urlObj.port) {
+    rOptions.port = Number.parseInt(urlObj.port)
+  } else {
     rOptions.port = rOptions.protocol === 'https:' ? 443 : 80
   }
 

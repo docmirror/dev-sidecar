@@ -226,7 +226,7 @@ module.exports = (serverConfig) => {
             }
             matchInterceptsOpts[impl.name] = {
               order: interceptOpt.order || 0,
-              index: matchIntercepts.length - 1,
+              index: action === 'replace' ? matchedInterceptOpt.index : matchIntercepts.length - 1,
             }
           }
         }

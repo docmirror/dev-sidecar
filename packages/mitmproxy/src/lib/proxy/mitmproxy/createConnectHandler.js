@@ -63,8 +63,8 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
 
   try {
     // 客户端的连接事件监听
-    cltSocket.on('timeout', (e) => {
-      log.error(`cltSocket timeout: ${connectInfo}, errorMsg: ${e.message}`)
+    cltSocket.on('timeout', () => {
+      log.error(`cltSocket timeout: ${connectInfo}`)
     })
     cltSocket.on('error', (e) => {
       log.error(`cltSocket error:   ${connectInfo}, errorMsg: ${e.message}`)

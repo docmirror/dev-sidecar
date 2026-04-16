@@ -68,6 +68,9 @@ module.exports = {
           log.info(`----- ${action}: ${hostname}, use default DNS: ${hostname}${target}, options:`, options, ', dns:', dns)
           defaultDns.lookup(hostname, options, callback)
         }
+      }).catch((err) => {
+        log.error(`----- ${action}: ${hostname}, dns lookup error${target}, options:`, options, `, error:`, err)
+        defaultDns.lookup(hostname, options, callback)
       })
     }
   },
