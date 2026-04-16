@@ -43,12 +43,8 @@ module.exports = class CertAndKeyContainer {
       mappingHostNames,
     }
 
-    const promise = new Promise((resolve, _reject) => {
-      log.info(`【CreateFakeCertificate】dnsName: ${dnsName}, hostname: ${hostname}:${port}`)
-
-      const certObj = tlsUtils.createFakeCertificateByDomain(this.caKey, this.caCert, dnsName, mappingHostNames)
-      resolve(certObj)
-    })
+    log.info(`【CreateFakeCertificate】dnsName: ${dnsName}, hostname: ${hostname}:${port}`)
+    const promise = tlsUtils.createFakeCertificateByDomain(this.caKey, this.caCert, dnsName, mappingHostNames)
 
     certPromiseObj.promise = promise
     this.addCertPromise(certPromiseObj)
