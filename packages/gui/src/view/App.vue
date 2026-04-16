@@ -9,7 +9,13 @@ export default {
   data () {
     return {
       locale: zhCN,
-      info: {},
+      info: {
+        configProfiles: {
+          internal: {},
+          sharedRemote: {},
+          personalRemote: {},
+        },
+      },
       menus: undefined,
       config: undefined,
       hideSearchBar: true,
@@ -26,8 +32,12 @@ export default {
     },
   },
   mounted () {
+    if (!this.config || !this.config.app) {
+      return
+    }
+
     let theme = this.config.app.theme
-    if (this.config.app.theme === 'system') {
+    if (theme === 'system') {
       theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     }
 
