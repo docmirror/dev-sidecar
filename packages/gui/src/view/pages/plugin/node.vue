@@ -83,7 +83,7 @@ export default {
           </a-checkbox>
           npm代理启用后必须关闭
         </a-form-item>
-        <a-form-item label="npm仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item label="npm镜像仓库" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group
             v-model="config.plugin.node.setting.registry" default-value="https://registry.npmjs.org"
             button-style="solid" @change="onSwitchRegistry"
@@ -91,24 +91,21 @@ export default {
             <a-radio-button value="https://registry.npmjs.org" title="https://registry.npmjs.org">
               npmjs原生
             </a-radio-button>
-            <a-radio-button value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
-              taobao镜像
-            </a-radio-button>
-            <a-radio-button value="https://npmreg.proxy.ustclug.org" title="https://npmreg.proxy.ustclug.org">
-              中国科学技术大学镜像
+            <a-radio-button v-for="(item) of config.plugin.node.setting.registryList" :key="item.value" :value="item.value" :title="item.value">
+              {{ item.name }}
             </a-radio-button>
           </a-radio-group>
           <div class="form-help">
             设置后立即生效，即使关闭 ds 也会继续保持
           </div>
         </a-form-item>
-        <a-form-item label="yarn仓库镜像" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-item label="yarn镜像仓库" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group v-model="config.plugin.node.setting.yarnRegistry" default-value="null" button-style="solid" @change="onSwitchYarnRegistry">
             <a-radio-button value="default" title="https://registry.yarnpkg.com">
               yarn原生
             </a-radio-button>
-            <a-radio-button value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
-              taobao镜像
+            <a-radio-button v-for="(item) of config.plugin.node.setting.yarnRegistryList" :key="item.value" :value="item.value" :title="item.value" value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
+              {{ item.name }}
             </a-radio-button>
           </a-radio-group>
           <div class="form-help">

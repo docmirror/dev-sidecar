@@ -11,8 +11,24 @@ module.exports = {
     'cafile': false,
     'NODE_EXTRA_CA_CERTS': false,
     'NODE_TLS_REJECT_UNAUTHORIZED': false,
-    'yarnRegistry': 'default',
     'registry': 'https://registry.npmjs.org', // 可以选择切换官方或者淘宝镜像
+    'registryList': {
+      taobao: {
+        name: 'taobao镜像',
+        value: 'https://registry.npmmirror.com',
+      },
+      ustclug: {
+        name: '中国科学技术大学镜像',
+        value: 'https://npmreg.proxy.ustclug.org',
+      },
+    },
+    'yarnRegistry': 'default',
+    'yarnRegistryList': {
+      taobao: {
+        name: 'taobao镜像',
+        value: 'https://registry.npmmirror.com',
+      },
+    },
   },
   variables: {
     phantomjs_cdnurl: 'https://npmmirror.com/mirrors/phantomjs',
