@@ -145,7 +145,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           // log.debug('rOptions:', rOptions.hostname + rOptions.path, '\r\n', rOptions)
           // log.debug('agent:', rOptions.agent)
           // log.debug('agent.options:', rOptions.agent.options)
-          res.setHeader('DS-Proxy-Request', rOptions.hostname)
+          res.setHeader('DS-Proxy-Request', `${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`)
 
           // 自动兼容程序：2
           if (rOptions.agent) {

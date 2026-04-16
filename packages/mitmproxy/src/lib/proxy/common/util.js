@@ -147,7 +147,7 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
     url: req.url,
     hostname,
     port,
-    path: urlObj.pathname + urlObj.search,
+    path: urlObj.path,
     headers: req.headers,
     agent,
     compatibleConfig,

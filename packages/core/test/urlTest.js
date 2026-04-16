@@ -8,3 +8,5 @@
 // // eslint-disable-next-line node/no-deprecated-api
 // const urlObj2 = URL.parse(url)
 // console.log('\nURL.parse(url) -> ', urlObj2)
+//
+// console.log('\n`urlObj.pathname + urlObj.search === urlObj2.path` =', urlObj.pathname + urlObj.search === urlObj2.path)

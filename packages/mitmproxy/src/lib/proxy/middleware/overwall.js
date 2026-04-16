@@ -199,7 +199,7 @@ function createOverwallMiddleware (overWallConfig) {
       if (password) {
         rOptions.headers.dspassword = password
       }
-      rOptions.path = urlObj.pathname + urlObj.search
+      rOptions.path = urlObj.path
       if (urlObj.port) {
         rOptions.port = Number.parseInt(urlObj.port)
       } else {

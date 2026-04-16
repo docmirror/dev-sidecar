@@ -47,7 +47,7 @@ function buildTargetUrl (rOptions, urlConf, interceptOpt, matched, hostnameMatch
     if (uri.indexOf('http:') === 0 || uri.indexOf('https:') === 0) {
       // eslint-disable-next-line node/no-deprecated-api
       const urlObj = URL.parse(uri)
-      uri = urlObj.pathname + urlObj.search
+      uri = urlObj.path
     }
     targetUrl = urlConf + uri
   }
@@ -75,7 +75,7 @@ function doProxy (proxyConf, rOptions, req, interceptOpt, matched, hostnameMatch
   rOptions.hostname = urlObj.hostname
   rOptions.host = urlObj.host
   rOptions.headers.host = urlObj.host
-  rOptions.path = urlObj.pathname + urlObj.search
+  rOptions.path = urlObj.path
   if (urlObj.port) {
     rOptions.port = Number.parseInt(urlObj.port)
   } else {
