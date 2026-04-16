@@ -225,7 +225,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             }
             reject(new Error(errorMsg))
           })
-          req.on('error', (e, req, res) => {
+          req.on('error', (e) => {
             const cost = Date.now() - start
             log.error(`请求错误: ${url}, cost: ${cost} ms, error:`, e, ', rOptions:', jsonApi.stringify2(rOptions))
             reject(e)

@@ -188,9 +188,9 @@ function createOverwallMiddleware (overWallConfig) {
       // const backup = interceptOpt.backup
       const proxy = proxyTarget.indexOf('http:') === 0 || proxyTarget.indexOf('https:') === 0 ? proxyTarget : (`${rOptions.protocol}//${proxyTarget}`)
       const urlObj = new URL.URL(proxy)
-      rOptions.origional = lodash.cloneDeep(rOptions) // 备份原始请求参数
-      delete rOptions.origional.agent
-      delete rOptions.origional.headers
+      rOptions.original = lodash.cloneDeep(rOptions) // 备份原始请求参数
+      delete rOptions.original.agent
+      delete rOptions.original.headers
       rOptions.protocol = urlObj.protocol
       rOptions.hostname = urlObj.hostname
       rOptions.host = urlObj.host
@@ -199,7 +199,9 @@ function createOverwallMiddleware (overWallConfig) {
         rOptions.headers.dspassword = password
       }
       rOptions.path = urlObj.pathname + urlObj.search
-      if (urlObj.port == null) {
+      if (urlObj.port) {
+        rOptions.port = Number.parseInt(urlObj.port)
+      } else {
         rOptions.port = port || (rOptions.protocol === 'https:' ? 443 : 80)
       }
       log.info('OverWall:', rOptions.hostname, '➜', proxyTarget)

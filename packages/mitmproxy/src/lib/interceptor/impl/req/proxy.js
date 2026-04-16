@@ -66,9 +66,9 @@ function doProxy (proxyConf, rOptions, req, interceptOpt, matched, hostnameMatch
 
   // 替换rOptions的属性
   const urlObj = new URL.URL(proxyTarget)
-  rOptions.origional = lodash.cloneDeep(rOptions) // 备份原始请求参数
-  delete rOptions.origional.agent
-  delete rOptions.origional.headers
+  rOptions.original = lodash.cloneDeep(rOptions) // 备份原始请求参数
+  delete rOptions.original.agent
+  delete rOptions.original.headers
   rOptions.protocol = urlObj.protocol
   rOptions.hostname = urlObj.hostname
   rOptions.host = urlObj.host
