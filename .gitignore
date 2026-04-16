@@ -18,3 +18,4 @@ out
 gen
 *.log
 *.lnk
+.venv
