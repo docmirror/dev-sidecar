@@ -276,7 +276,7 @@ const executor = {
         })
         regKey.get('HTTP_PROXY', (err) => {
           if (!err) {
-            regKey.remove('HTTP_PROXY', (err) => {
+            regKey.remove('HTTP_PROXY', async (err) => {
               if (err) {
                 log.warn('删除环境变量 HTTP_PROXY 失败:', err)
               }
