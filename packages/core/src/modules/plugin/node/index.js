@@ -132,10 +132,10 @@ const NodePlugin = function (context) {
       const env = []
 
       /**
-       *  'strict-ssl': false,
-       cafile: true,
-       NODE_EXTRA_CA_CERTS: true,
-       NODE_TLS_REJECT_UNAUTHORIZED: false
+       * 'strict-ssl': false,
+       * 'cafile': true,
+       * 'NODE_EXTRA_CA_CERTS': true,
+       * 'NODE_TLS_REJECT_UNAUTHORIZED': false
        */
       const nodeConfig = config.get().plugin.node
       const rootCaCertFile = config.get().server.setting.rootCaFile.certPath
@@ -172,8 +172,10 @@ const NodePlugin = function (context) {
       const cmds = [
         `${command} config  delete proxy`,
         `${command} config  delete https-proxy`,
-        `${command} config  delete NODE_EXTRA_CA_CERTS`,
         `${command} config  delete strict-ssl`,
+        `${command} config  delete cafile`,
+        `${command} config  delete NODE_EXTRA_CA_CERTS`,
+        `${command} config  delete NODE_TLS_REJECT_UNAUTHORIZED`,
       ]
       const ret = await shell.exec(cmds, { type: 'cmd' })
       event.fire('status', { key: 'plugin.node.enabled', value: false })
