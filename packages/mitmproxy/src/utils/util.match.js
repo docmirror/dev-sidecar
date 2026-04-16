@@ -31,6 +31,7 @@ function domainMapRegexply (hostMap) {
     return { origin: {} }
   }
   const regexpMap = {}
+  const compiledRegexps = [] // 预编译的正则表达式列表，用于避免每次请求重复创建 RegExp 对象
   const origin = {} // 用于快速匹配，见matchHostname、matchHostnameAll方法
   lodash.each(hostMap, (value, domain) => {
     try {
@@ -45,6 +46,7 @@ function domainMapRegexply (hostMap) {
       if (domain.includes('*') || domain[0] === '^') {
         const regDomain = domain[0] !== '^' ? domainRegexply(domain) : domain
         regexpMap[regDomain] = value
+        compiledRegexps.push({ regexp: new RegExp(regDomain), key: regDomain, value }) // 预编译正则
 
         if (domain.indexOf('*') === 0 && domain.lastIndexOf('*') === 0) {
           origin[domain] = value
@@ -57,6 +59,8 @@ function domainMapRegexply (hostMap) {
     }
   })
   regexpMap.origin = origin
+  // 以不可枚举属性存储，避免 for...in 遍历时被当作域名模式处理
+  Object.defineProperty(regexpMap, '_compiledRegexps', { value: compiledRegexps, enumerable: false, configurable: true })
   return regexpMap
 }
 
@@ -72,38 +76,64 @@ function matchHostname (hostMap, hostname, action) {
     return null
   }
 
+  // 命中缓存时直接返回，避免每次请求重复做正则匹配
+  if (!hostMap._cache) {
+    Object.defineProperty(hostMap, '_cache', { value: new Map(), enumerable: false, configurable: true })
+  }
+  if (hostMap._cache.has(hostname)) {
+    return hostMap._cache.get(hostname)
+  }
+
+  let value
+
   // 域名快速匹配：直接匹配（优先级最高）
-  let value = hostMap.origin[hostname]
+  value = hostMap.origin[hostname]
   if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "${hostname}": ${JSON.stringify(value)} }`)
+    hostMap._cache.set(hostname, value)
     return value // 快速匹配成功
   }
   // 域名快速匹配：三种前缀通配符匹配
   value = hostMap.origin[`*.${hostname}`]
   if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "*.${hostname}": ${JSON.stringify(value)} }`)
+    hostMap._cache.set(hostname, value)
     return value // 快速匹配成功
   }
   value = hostMap.origin[`*${hostname}`]
   if (value != null) {
     log.info(`matchHostname: ${action}: '${hostname}' -> { "*${hostname}": ${JSON.stringify(value)} }`)
+    hostMap._cache.set(hostname, value)
     return value // 快速匹配成功
   }
 
-  // 通配符匹配 或 正则表达式匹配
-  for (const regexp in hostMap) {
-    if (regexp === 'origin') {
-      continue
+  // 通配符匹配 或 正则表达式匹配：优先使用预编译的正则表达式，避免重复创建 RegExp 对象
+  const compiledRegexps = hostMap._compiledRegexps
+  if (compiledRegexps) {
+    for (const { regexp, key, value: val } of compiledRegexps) {
+      if (regexp.test(hostname)) {
+        log.info(`matchHostname: ${action}: '${hostname}' -> { "${key}": ${JSON.stringify(val)} }`)
+        hostMap._cache.set(hostname, val)
+        return val
+      }
     }
+  } else {
+    for (const regexp in hostMap) {
+      if (regexp === 'origin') {
+        continue
+      }
 
-    // 正则表达式匹配
-    if (hostname.match(regexp)) {
-      value = hostMap[regexp]
-      log.info(`matchHostname: ${action}: '${hostname}' -> { "${regexp}": ${JSON.stringify(value)} }`)
-      return value
+      // 正则表达式匹配
+      if (hostname.match(regexp)) {
+        value = hostMap[regexp]
+        log.info(`matchHostname: ${action}: '${hostname}' -> { "${regexp}": ${JSON.stringify(value)} }`)
+        hostMap._cache.set(hostname, value)
+        return value
+      }
     }
   }
 
+  hostMap._cache.set(hostname, undefined)
   log.debug(`matchHostname: ${action}: '${hostname}' Not-Matched`)
 }
 
@@ -127,41 +157,78 @@ function matchHostnameAll (hostMap, hostname, action) {
     return null
   }
 
+  // 命中缓存时直接返回，避免每次请求重复做正则匹配和 lodash.merge
+  if (!hostMap._cacheAll) {
+    Object.defineProperty(hostMap, '_cacheAll', { value: new Map(), enumerable: false, configurable: true })
+  }
+  if (hostMap._cacheAll.has(hostname)) {
+    return hostMap._cacheAll.get(hostname)
+  }
+
   let values = {}
   let value
 
-  // 通配符匹配 或 正则表达式匹配（优先级：1，最低）
-  for (const regexp in hostMap) {
-    if (regexp === 'origin') {
-      continue
-    }
+  // 通配符匹配 或 正则表达式匹配（优先级：1，最低）：优先使用预编译的正则表达式，避免重复创建 RegExp 对象
+  const compiledRegexps = hostMap._compiledRegexps
+  if (compiledRegexps) {
+    for (const { regexp, key, value: val } of compiledRegexps) {
+      const matched = regexp.exec(hostname)
+      if (matched) {
+        log.debug(`matchHostname-one: ${action}: '${hostname}' -> { "${key}": ${JSON.stringify(val)} }`)
+        values = merge(values, val)
 
-    // if (target.indexOf('*') < 0 && target[0] !== '^') {
-    //   continue // 不是通配符匹配串，也不是正则表达式，跳过
-    // }
+        // 设置matched
+        if (matched.length > 1) {
+          if (values.matched) {
+            // 合并array
+            matched.shift()
+            values.matched = [...values.matched, ...matched] // 拼接上多个matched
 
-    // 正则表达式匹配
-    const matched = hostname.match(regexp)
-    if (matched) {
-      value = hostMap[regexp]
-      log.debug(`matchHostname-one: ${action}: '${hostname}' -> { "${regexp}": ${JSON.stringify(value)} }`)
-      values = merge(values, value)
-
-      // 设置matched
-      if (matched.length > 1) {
-        if (values.matched) {
-          // 合并array
-          matched.shift()
-          values.matched = [...values.matched, ...matched] // 拼接上多个matched
-
-          // 合并groups
-          if (matched.groups) {
-            values.matched.groups = merge(values.matched.groups, matched.groups)
+            // 合并groups
+            if (matched.groups) {
+              values.matched.groups = merge(values.matched.groups, matched.groups)
+            } else {
+              values.matched.groups = matched.groups
+            }
           } else {
-            values.matched.groups = matched.groups
+            values.matched = matched
           }
-        } else {
-          values.matched = matched
+        }
+      }
+    }
+  } else {
+    for (const regexp in hostMap) {
+      if (regexp === 'origin') {
+        continue
+      }
+
+      // if (target.indexOf('*') < 0 && target[0] !== '^') {
+      //   continue // 不是通配符匹配串，也不是正则表达式，跳过
+      // }
+
+      // 正则表达式匹配
+      const matched = hostname.match(regexp)
+      if (matched) {
+        value = hostMap[regexp]
+        log.debug(`matchHostname-one: ${action}: '${hostname}' -> { "${regexp}": ${JSON.stringify(value)} }`)
+        values = merge(values, value)
+
+        // 设置matched
+        if (matched.length > 1) {
+          if (values.matched) {
+            // 合并array
+            matched.shift()
+            values.matched = [...values.matched, ...matched] // 拼接上多个matched
+
+            // 合并groups
+            if (matched.groups) {
+              values.matched.groups = merge(values.matched.groups, matched.groups)
+            } else {
+              values.matched.groups = matched.groups
+            }
+          } else {
+            values.matched = matched
+          }
         }
       }
     }
@@ -190,9 +257,11 @@ function matchHostnameAll (hostMap, hostname, action) {
   if (!lodash.isEmpty(values)) {
     mergeApi.deleteNullItems(values)
     log.info(`matchHostname-all: ${action}: '${hostname}':`, JSON.stringify(values))
+    hostMap._cacheAll.set(hostname, values)
     return values
   } else {
     log.debug(`matchHostname-all: ${action}: '${hostname}' Not-Matched`)
+    hostMap._cacheAll.set(hostname, undefined)
   }
 }
 
