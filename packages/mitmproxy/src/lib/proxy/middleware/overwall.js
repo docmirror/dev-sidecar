@@ -198,7 +198,7 @@ function createOverwallMiddleware (overWallConfig) {
       if (password) {
         rOptions.headers.dspassword = password
       }
-      rOptions.path = urlObj.path
+      rOptions.path = urlObj.pathname + urlObj.search
       if (urlObj.port == null) {
         rOptions.port = port || (rOptions.protocol === 'https:' ? 443 : 80)
       }
