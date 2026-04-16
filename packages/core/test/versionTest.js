@@ -36,6 +36,6 @@ testIsNewVersion('2.0.0-RC1', '2.0.0', -102)
 
 testIsNewVersion('2.0.0.0', '2.0.0', 0)
 
-testIsNewVersion('x', 'v', -999)
+testIsNewVersion('x', 'y', -101)
 
 console.log('版本测试通过')
