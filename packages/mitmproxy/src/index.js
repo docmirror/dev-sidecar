@@ -52,7 +52,7 @@ const api = {
       if (servers && servers.length > 0) {
         for (const server of servers) {
           server.close((err) => {
-            if (err && err.code !== 'ERR_SERVER_NOT_RUNNING') {
+            if (err) {
               if (err.code === 'ERR_SERVER_NOT_RUNNING') {
                 log.info('代理服务未运行，无需关闭')
                 resolve()
