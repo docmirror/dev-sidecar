@@ -28,6 +28,8 @@ class SpeedTester {
     this.keepCheckIntervalId = false
 
     this.tryTestCount = 0
+    this.isTesting = false
+    this.isTestingBackups = false
 
     this.test() // 异步：初始化完成后先测速一次
   }
@@ -103,6 +105,11 @@ class SpeedTester {
   }
 
   async test () {
+    if (this.isTesting) {
+      log.debug(`[speed] test skipped (already running): ${this.hostname}`)
+      return
+    }
+    this.isTesting = true
     this.testCount++
     log.debug(`[speed] test start: ${this.hostname}, testCount: ${this.testCount}`)
 
@@ -117,44 +124,59 @@ class SpeedTester {
       }
     } catch (e) {
       log.error(`[speed] test failed: ${this.hostname}, testCount: ${this.testCount}, error:`, e)
+    } finally {
+      this.isTesting = false
     }
   }
 
   async testBackups () {
-    if (this.backupList.length > 0) {
-      const aliveList = []
-
-      const testAll = []
-      for (const item of this.backupList) {
-        testAll.push(this.doTest(item, aliveList))
-      }
-      await Promise.all(testAll)
-      this.alive = aliveList
+    if (this.isTestingBackups) {
+      log.debug(`[speed] testBackups skipped (already running): ${this.hostname}`)
+      return
     }
+    this.isTestingBackups = true
 
-    this.ready = true
+    try {
+      if (this.backupList.length > 0) {
+        const aliveList = []
+
+        const testAll = []
+        for (const item of this.backupList) {
+          testAll.push(this._doTest(item, aliveList))
+        }
+        await Promise.all(testAll)
+
+        // 全部测速完成后，根据耗时进行排序
+        aliveList.sort((a, b) => a.time - b.time)
+        this.backupList.sort((a, b) => {
+          if (a.time === b.time) {
+            return 0
+          }
+          if (a.time == null) {
+            return 1
+          }
+          if (b.time == null) {
+            return -1
+          }
+          return a.time - b.time
+        })
+
+        this.alive = aliveList
+      }
+
+      this.ready = true
+    } finally {
+      this.isTestingBackups = false
+    }
   }
 
-  async doTest (item, aliveList) {
+  async _doTest (item, aliveList) {
     try {
       const ret = await this.testOne(item)
       item.title = `${ret.by}测速成功：${ret.target}`
       log.info(`[speed] test success: ${this.hostname} ➜ ${item.host}:${this.port} from DNS '${item.dns}'`)
       _.merge(item, ret)
       aliveList.push({ ...ret, ...item })
-      aliveList.sort((a, b) => a.time - b.time)
-      this.backupList.sort((a, b) => {
-        if (a.time === b.time) {
-          return 0
-        }
-        if (a.time == null) {
-          return 1
-        }
-        if (b.time == null) {
-          return -1
-        }
-        return a.time - b.time
-      })
     } catch (e) {
       if (item.time == null) {
         item.title = e.message
