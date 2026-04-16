@@ -280,7 +280,7 @@ const configApi = {
     const noSetList = list.filter((item) => {
       return !item.exists
     })
-    if (list.length > 0) {
+    if (noSetList.length > 0) {
       const context = {
         root_ca_cert_path: configApi.get().server.setting.rootCaFile.certPath,
       }

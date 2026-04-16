@@ -33,7 +33,7 @@ const PipPlugin = function (context) {
           const key = line.substring(0, line.indexOf('='))
           let value = line.substring(line.indexOf('=') + 1)
           if (value.startsWith('\'')) {
-            value = value.startsWith(1, value.length - 1)
+            value = value.slice(1, -1)
           }
           vars[key] = value
         }
