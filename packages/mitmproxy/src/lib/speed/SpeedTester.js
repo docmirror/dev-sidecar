@@ -211,7 +211,7 @@ class SpeedTester {
 
         log.warn('[speed] test by TCP error:  ', this.hostname, `➜ ${host}:${this.port} from DNS '${dns}', cost: ${Date.now() - startTime} ms, errorMsg:`, e.message)
         reject(e)
-        client.end()
+        client.destroy()
       })
 
       timeoutId = setTimeout(() => {
@@ -221,7 +221,7 @@ class SpeedTester {
 
         log.warn('[speed] test by TCP timeout:', this.hostname, `➜ ${host}:${this.port} from DNS '${dns}', cost: ${Date.now() - startTime} ms`)
         reject(new Error('timeout'))
-        client.end()
+        client.destroy()
       }, timeout)
     })
   }

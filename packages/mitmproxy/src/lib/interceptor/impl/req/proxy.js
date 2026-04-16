@@ -1,5 +1,4 @@
 const URL = require('node:url')
-const lodash = require('lodash')
 
 function replacePlaceholder0 (url, matched, pre) {
   if (matched) {
@@ -38,7 +37,7 @@ function replacePlaceholder (url, rOptions, pathMatched, hostnameMatched) {
 function buildTargetUrl (rOptions, urlConf, interceptOpt, matched, hostnameMatched) {
   let targetUrl
   if (interceptOpt && interceptOpt.replace) {
-    const regexp = new RegExp(interceptOpt.replace)
+    const regexp = interceptOpt.compiledRegexp || (interceptOpt.compiledRegexp = new RegExp(interceptOpt.replace))
     targetUrl = rOptions.path.replace(regexp, urlConf)
   } else if (urlConf.indexOf('http:') === 0 || urlConf.indexOf('https:') === 0) {
     targetUrl = urlConf
@@ -68,9 +67,11 @@ function doProxy (proxyConf, rOptions, req, interceptOpt, matched, hostnameMatch
   // 替换rOptions的属性
   // eslint-disable-next-line node/no-deprecated-api
   const urlObj = URL.parse(proxyTarget)
-  rOptions.original = lodash.cloneDeep(rOptions) // 备份原始请求参数
-  delete rOptions.original.agent
-  delete rOptions.original.headers
+
+  // 备份原始请求参数，不包含 agent 和 headers（agent 是共享单例，headers 在代理转发时会被改写）
+  const { agent: _agent, headers: _headers, ...original } = rOptions
+  rOptions.original = original
+
   rOptions.protocol = urlObj.protocol
   rOptions.hostname = urlObj.hostname
   rOptions.host = urlObj.host

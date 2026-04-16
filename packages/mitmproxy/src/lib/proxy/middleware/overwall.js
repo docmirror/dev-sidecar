@@ -2,7 +2,6 @@ const { Buffer } = require('node:buffer')
 const fs = require('node:fs')
 const path = require('node:path')
 const URL = require('node:url')
-const lodash = require('lodash')
 const request = require('request')
 const log = require('../../../utils/util.log.server')
 const matchUtil = require('../../../utils/util.match')
@@ -189,9 +188,11 @@ function createOverwallMiddleware (overWallConfig) {
       const proxy = proxyTarget.indexOf('http:') === 0 || proxyTarget.indexOf('https:') === 0 ? proxyTarget : (`${rOptions.protocol}//${proxyTarget}`)
       // eslint-disable-next-line node/no-deprecated-api
       const urlObj = URL.parse(proxy)
-      rOptions.original = lodash.cloneDeep(rOptions) // 备份原始请求参数
-      delete rOptions.original.agent
-      delete rOptions.original.headers
+
+      // 备份原始请求参数，不包含 agent 和 headers（agent 是共享单例，headers 在代理转发时会被改写）
+      const { agent: _agent, headers: _headers, ...original } = rOptions
+      rOptions.original = original
+
       rOptions.protocol = urlObj.protocol
       rOptions.hostname = urlObj.hostname
       rOptions.host = urlObj.host
