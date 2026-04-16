@@ -31,7 +31,9 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
   }
 
   return function connectHandler (req, cltSocket, head, ssl) {
-    let { hostname, port } = new URL.URL(`${ssl ? 'https' : 'http'}://${req.url}`)
+    const url = `${ssl ? 'https' : 'http'}://${req.url}`
+    // eslint-disable-next-line node/no-deprecated-api
+    let { hostname, port } = URL.parse(url)
     port = Number.parseInt(port)
 
     if (isSslConnect(sslConnectInterceptors, req, cltSocket, head)) {

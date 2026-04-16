@@ -187,7 +187,8 @@ function createOverwallMiddleware (overWallConfig) {
 
       // const backup = interceptOpt.backup
       const proxy = proxyTarget.indexOf('http:') === 0 || proxyTarget.indexOf('https:') === 0 ? proxyTarget : (`${rOptions.protocol}//${proxyTarget}`)
-      const urlObj = new URL.URL(proxy)
+      // eslint-disable-next-line node/no-deprecated-api
+      const urlObj = URL.parse(proxy)
       rOptions.original = lodash.cloneDeep(rOptions) // 备份原始请求参数
       delete rOptions.original.agent
       delete rOptions.original.headers

@@ -100,7 +100,8 @@ util.parseHostnameAndPort = (host, defaultPort) => {
 }
 
 util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, compatibleConfig = null) => {
-  const urlObj = new URL.URL(req.url)
+  // eslint-disable-next-line node/no-deprecated-api
+  const urlObj = URL.parse(req.url)
   const defaultPort = ssl ? 443 : 80
   const protocol = ssl ? 'https:' : 'http:'
   const headers = Object.assign({}, req.headers)
@@ -153,7 +154,8 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
   }
 
   if (protocol === 'http:' && externalProxyUrl) {
-    const externalUrlObj = new URL.URL(externalProxyUrl)
+    // eslint-disable-next-line node/no-deprecated-api
+    const externalUrlObj = URL.parse(externalProxyUrl)
     if (externalUrlObj.protocol === 'http:') {
       options.hostname = externalUrlObj.hostname
       options.port = externalUrlObj.port
@@ -172,7 +174,8 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
 }
 
 util.getTunnelAgent = (requestIsSSL, externalProxyUrl) => {
-  const urlObj = new URL.URL(externalProxyUrl)
+  // eslint-disable-next-line node/no-deprecated-api
+  const urlObj = URL.parse(externalProxyUrl)
   const protocol = urlObj.protocol || 'http:'
   let port = urlObj.port
   if (!port) {

@@ -45,7 +45,8 @@ function buildTargetUrl (rOptions, urlConf, interceptOpt, matched, hostnameMatch
   } else {
     let uri = rOptions.path
     if (uri.indexOf('http:') === 0 || uri.indexOf('https:') === 0) {
-      const urlObj = new URL.URL(uri)
+      // eslint-disable-next-line node/no-deprecated-api
+      const urlObj = URL.parse(uri)
       uri = urlObj.pathname + urlObj.search
     }
     targetUrl = urlConf + uri
@@ -65,7 +66,8 @@ function doProxy (proxyConf, rOptions, req, interceptOpt, matched, hostnameMatch
   const proxyTarget = buildTargetUrl(rOptions, proxyConf, interceptOpt, matched, hostnameMatched)
 
   // 替换rOptions的属性
-  const urlObj = new URL.URL(proxyTarget)
+  // eslint-disable-next-line node/no-deprecated-api
+  const urlObj = URL.parse(proxyTarget)
   rOptions.original = lodash.cloneDeep(rOptions) // 备份原始请求参数
   delete rOptions.original.agent
   delete rOptions.original.headers
