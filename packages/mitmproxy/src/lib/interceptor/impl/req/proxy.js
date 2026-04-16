@@ -72,7 +72,7 @@ function doProxy (proxyConf, rOptions, req, interceptOpt, matched, hostnameMatch
   delete rOptions.origional.agent
   delete rOptions.origional.headers
   rOptions.protocol = URL.protocol
-  rOptions.hostname = URL.host
+  rOptions.hostname = URL.hostname
   rOptions.host = URL.host
   rOptions.headers.host = URL.host
   rOptions.path = URL.path

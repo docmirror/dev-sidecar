@@ -193,7 +193,7 @@ function createOverwallMiddleware (overWallConfig) {
       delete rOptions.origional.agent
       delete rOptions.origional.headers
       rOptions.protocol = URL.protocol
-      rOptions.hostname = URL.host
+      rOptions.hostname = URL.hostname
       rOptions.host = URL.host
       rOptions.headers.host = URL.host
       if (password) {
