@@ -26,7 +26,7 @@ module.exports = class CertAndKeyContainer {
   }
 
   getCertPromise (hostname, port, dnsName, mappingHostNames) {
-    for (let i = 0; i < this.queue.length; i++) {
+    for (let i = this.queue.length - 1; i >= 0; i--) {
       const _certPromiseObj = this.queue[i]
       const certMappingHostNames = _certPromiseObj.mappingHostNames
       for (let j = 0; j < certMappingHostNames.length; j++) {

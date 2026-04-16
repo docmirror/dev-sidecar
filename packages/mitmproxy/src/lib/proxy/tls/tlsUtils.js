@@ -217,17 +217,22 @@ utils.createFakeCertificateByCA = function (caKey, caCert, originCertificate) {
 utils.isBrowserRequest = function (userAgent) {
   return /Mozilla/i.test(userAgent)
 }
+
 //
 //  /^[^.]+\.a\.com$/.test('c.a.com')
 //
+const mappingHostNameRegexpCache = {}
 utils.isMappingHostName = function (DNSName, hostname) {
   if (DNSName === hostname) {
     return true
   }
 
-  let reg = DNSName.replace(/\./g, '\\.').replace(/\*/g, '[^.]+')
-  reg = `^${reg}$`
-  return (new RegExp(reg)).test(hostname)
+  let regexp = mappingHostNameRegexpCache[DNSName]
+  if (!regexp) {
+    const regStr = `^${DNSName.replace(/\./g, '\\.').replace(/\*/g, '[^.]+')}$`
+    regexp = mappingHostNameRegexpCache[DNSName] = new RegExp(regStr)
+  }
+  return regexp.test(hostname)
 }
 
 utils.getMappingHostNamesFromCert = function (cert) {

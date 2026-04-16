@@ -69,7 +69,7 @@ module.exports = class FakeServersCenter {
 
     log.info(`getServerPromise, hostname: ${hostname}:${port}, ssl: ${ssl}, protocol: ${ssl ? 'https' : 'http'}`)
 
-    for (let i = 0; i < this.queue.length; i++) {
+    for (let i = this.queue.length - 1; i >= 0; i--) {
       const serverPromiseObj = this.queue[i]
       if (serverPromiseObj.port === port && serverPromiseObj.ssl === ssl) {
         const mappingHostNames = serverPromiseObj.mappingHostNames
