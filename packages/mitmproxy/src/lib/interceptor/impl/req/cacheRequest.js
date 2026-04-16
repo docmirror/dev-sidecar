@@ -44,14 +44,13 @@ function getLastModifiedTimeFromIfModifiedSince (rOptions, log) {
     return new Date(lastModified).getTime()
   } catch (e) {
     // 为数字时，直接返回
-    if (/\d+/.test(lastModified)) {
-      return lastModified - 0
+    if (/^\s*\d+\s*$/.test(lastModified)) {
+      return Number.parseInt(lastModified)
     }
 
     log.warn(`cache intercept: 解析 if-modified-since 失败: '${lastModified}', error:`, e)
+    return null
   }
-
-  return null
 }
 
 module.exports = {
