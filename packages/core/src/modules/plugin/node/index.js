@@ -27,7 +27,7 @@ const NodePlugin = function (context) {
     },
 
     async save (newConfig) {
-      nodeApi.setVariables()
+      await nodeApi.setVariables()
     },
     async getNpmEnv () {
       const command = config.get().plugin.node.setting.command || 'npm'
