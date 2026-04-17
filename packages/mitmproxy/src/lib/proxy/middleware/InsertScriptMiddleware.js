@@ -2,6 +2,9 @@ const zlib = require('node:zlib')
 const through = require('through2')
 const log = require('../../../utils/util.log.server')
 
+const HTML_CONTENT_TYPE_RE = /text\/html|application\/xhtml\+xml/
+const CSP_SCRIPT_SRC_RE = /script-src ([^:]*);/i
+
 // 编解码器
 const codecMap = {
   gzip: {
@@ -40,7 +43,7 @@ const httpUtil = {
   // 是否HTML代码
   isHtml (res) {
     const contentType = res.headers['content-type']
-    return (typeof contentType !== 'undefined') && /text\/html|application\/xhtml\+xml/.test(contentType)
+    return (typeof contentType !== 'undefined') && HTML_CONTENT_TYPE_RE.test(contentType)
   },
 }
 const HEAD = Buffer.from('</head>')
@@ -97,8 +100,7 @@ function handleResponseHeaders (res, proxyRes) {
       if (key === 'content-security-policy') {
         // content-security-policy
         let policy = proxyRes.headers[key]
-        const reg = /script-src ([^:]*);/i
-        const matched = policy.match(reg)
+        const matched = policy.match(CSP_SCRIPT_SRC_RE)
         if (matched) {
           if (!matched[1].includes('self')) {
             policy = policy.replace('script-src', 'script-src \'self\' ')
@@ -143,7 +145,7 @@ module.exports = {
       'Cache-Control': 'public, max-age=86401, immutable', // 缓存1天
       'Last-Modified': now.toUTCString(),
       'Expires': new Date(now.getTime() + 86400000).toUTCString(), // 缓存1天
-      'Date': new Date().toUTCString(),
+      'Date': now.toUTCString(),
     })
     res.write(script.script)
     res.end()

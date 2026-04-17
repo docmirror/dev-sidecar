@@ -11,6 +11,7 @@ const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
 const dnsLookup = require('./dnsLookup')
 
 const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
+const WWW_AUTH_HEADER_RE = /^www-authenticate$/i
 
 // create requestHandler function
 module.exports = function createRequestHandler (createIntercepts, middlewares, externalProxy, dnsConfig, setting, compatibleConfig) {
@@ -313,7 +314,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
         Object.keys(proxyRes.headers).forEach((key) => {
           if (proxyRes.headers[key] !== undefined) {
             // https://github.com/nodejitsu/node-http-proxy/issues/362
-            if (/^www-authenticate$/i.test(key)) {
+            if (WWW_AUTH_HEADER_RE.test(key)) {
               if (proxyRes.headers[key]) {
                 proxyRes.headers[key] = proxyRes.headers[key] && proxyRes.headers[key].split(',')
               }
