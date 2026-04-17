@@ -86,6 +86,7 @@ function matchHostname (hostMap, hostname, action) {
   }
 
   // 命中缓存时直接返回，避免每次请求重复做正则匹配
+  // 注：hostMap 对象在代理启动后不会被修改，配置变更时会重启代理服务并重新创建 hostMap 对象，因此无需缓存失效逻辑
   if (!hostMap._cache) {
     Object.defineProperty(hostMap, '_cache', { value: new Map(), enumerable: false, configurable: true })
   }
@@ -167,6 +168,7 @@ function matchHostnameAll (hostMap, hostname, action) {
   }
 
   // 命中缓存时直接返回，避免每次请求重复做正则匹配和 lodash.merge
+  // 注：hostMap 对象在代理启动后不会被修改，配置变更时会重启代理服务并重新创建 hostMap 对象，因此无需缓存失效逻辑
   if (!hostMap._cacheAll) {
     Object.defineProperty(hostMap, '_cacheAll', { value: new Map(), enumerable: false, configurable: true })
   }

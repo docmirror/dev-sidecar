@@ -153,6 +153,7 @@ module.exports = (serverConfig) => {
       }
 
       // 路径级缓存：同一 hostname+path 的拦截器列表是固定的，不必每次重新构建
+      // 注：interceptOpts 对象在代理启动后不会被修改，配置变更时会重启代理服务并重新创建此对象，因此无需缓存失效逻辑
       if (!interceptOpts._pathCache) {
         Object.defineProperty(interceptOpts, '_pathCache', { value: new Map(), enumerable: false, configurable: true })
       }
