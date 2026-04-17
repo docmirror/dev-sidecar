@@ -34,13 +34,12 @@ function getDnsName (hostname) {
 
 module.exports = class FakeServersCenter {
   constructor ({ maxLength = 256, requestHandler, upgradeHandler, caCert, caKey, getCertSocketTimeout }) {
-    this.queue = []
     this.maxLength = maxLength
     this.requestHandler = requestHandler
     this.upgradeHandler = upgradeHandler
-    // 用于 O(1) 快速查找已有 fakeServer，避免每次 CONNECT 都线性扫描 queue
+    // LRU Map: JS Map 按插入顺序迭代，用 delete+reinsert 实现 O(1) LRU 更新
     // 键格式：`${dnsName}:${port}:${ssl}`
-    this._serverMap = new Map()
+    this._lruMap = new Map()
     this.certAndKeyContainer = new CertAndKeyContainer({
       getCertSocketTimeout,
       caCert,
@@ -49,23 +48,19 @@ module.exports = class FakeServersCenter {
   }
 
   addServerPromise (serverPromiseObj) {
-    if (this.queue.length >= this.maxLength) {
-      const delServerObj = this.queue.shift()
+    if (this._lruMap.size >= this.maxLength) {
+      // 淘汰最久未使用的条目（Map 中的第一个条目）
+      const iter = this._lruMap.entries()
+      const { value: [evictKey, delServerObj] } = iter.next()
+      this._lruMap.delete(evictKey)
       try {
         log.info(`超过最大服务数量${this.maxLength}，删除旧服务。delServerObj:`, delServerObj)
         delServerObj.serverObj.server.close()
       } catch (e) {
         log.error('`delServerObj.serverObj.server.close()` error:', e)
       }
-      // 同步从 map 中删除，避免 map 持有已关闭 server 的引用
-      if (delServerObj._mapKey) {
-        this._serverMap.delete(delServerObj._mapKey)
-      }
     }
-    this.queue.push(serverPromiseObj)
-    if (serverPromiseObj._mapKey) {
-      this._serverMap.set(serverPromiseObj._mapKey, serverPromiseObj)
-    }
+    this._lruMap.set(serverPromiseObj._mapKey, serverPromiseObj)
     return serverPromiseObj
   }
 
@@ -85,9 +80,12 @@ module.exports = class FakeServersCenter {
     const dnsName = getDnsName(hostname)
     const mapKey = `${dnsName}:${port}:${ssl}`
 
-    // O(1) map 快速查找，避免每次 CONNECT 都线性扫描 queue
-    const cachedServerObj = this._serverMap.get(mapKey)
+    // O(1) LRU Map 快速查找，避免每次 CONNECT 都线性扫描队列
+    const cachedServerObj = this._lruMap.get(mapKey)
     if (cachedServerObj) {
+      // LRU 更新：删除后重新插入，移到 Map 末尾（最近使用）
+      this._lruMap.delete(mapKey)
+      this._lruMap.set(mapKey, cachedServerObj)
       log.info(`Load fakeServerPromise from cache, hostname: ${hostname}:${port}, ssl: ${ssl}, serverPromiseObj: {"ssl":${cachedServerObj.ssl},"port":${cachedServerObj.port},"mappingHostNames":${JSON.stringify(cachedServerObj.mappingHostNames)}}`)
       return cachedServerObj.promise
     }
@@ -235,10 +233,5 @@ module.exports = class FakeServersCenter {
     this.addServerPromise(serverPromiseObj)
 
     return promise
-  }
-
-  reRankServer (index) {
-    // index ==> queue foot
-    this.queue.push((this.queue.splice(index, 1))[0])
   }
 }
