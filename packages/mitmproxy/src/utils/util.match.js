@@ -21,7 +21,7 @@ function isMatched (url, regexp) {
       compiled = new RegExp(urlRegexp)
       pathRegexpCache.set(regexp, compiled)
     }
-    return compiled.exec(url)
+    return url.match(compiled)
   } catch {
     log.error('匹配串有问题:', regexp)
     return null
