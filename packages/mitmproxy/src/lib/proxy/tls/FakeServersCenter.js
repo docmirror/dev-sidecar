@@ -9,6 +9,9 @@ const compatible = require('../compatible/compatible')
 
 const pki = forge.pki
 
+// IPv4地址检测正则，提前编译，避免在 getDnsName 中重复创建
+const IPV4_RE = /\b(25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\b){3}/
+
 // 获取DNS名称
 function getDnsName (hostname) {
   if (!hostname.includes('.')) {
@@ -16,7 +19,7 @@ function getDnsName (hostname) {
   }
 
   // 判断是否为IP
-  if (hostname.match(/\b(25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\b){3}/g)) {
+  if (IPV4_RE.test(hostname)) {
     return hostname // 为IP，直接返回
   }
 
@@ -35,6 +38,9 @@ module.exports = class FakeServersCenter {
     this.maxLength = maxLength
     this.requestHandler = requestHandler
     this.upgradeHandler = upgradeHandler
+    // 用于 O(1) 快速查找已有 fakeServer，避免每次 CONNECT 都线性扫描 queue
+    // 键格式：`${dnsName}:${port}:${ssl}`
+    this._serverMap = new Map()
     this.certAndKeyContainer = new CertAndKeyContainer({
       getCertSocketTimeout,
       caCert,
@@ -51,8 +57,15 @@ module.exports = class FakeServersCenter {
       } catch (e) {
         log.error('`delServerObj.serverObj.server.close()` error:', e)
       }
+      // 同步从 map 中删除，避免 map 持有已关闭 server 的引用
+      if (delServerObj._mapKey) {
+        this._serverMap.delete(delServerObj._mapKey)
+      }
     }
     this.queue.push(serverPromiseObj)
+    if (serverPromiseObj._mapKey) {
+      this._serverMap.set(serverPromiseObj._mapKey, serverPromiseObj)
+    }
     return serverPromiseObj
   }
 
@@ -69,22 +82,16 @@ module.exports = class FakeServersCenter {
 
     log.info(`getServerPromise, hostname: ${hostname}:${port}, ssl: ${ssl}, protocol: ${ssl ? 'https' : 'http'}`)
 
-    for (let i = this.queue.length - 1; i >= 0; i--) {
-      const serverPromiseObj = this.queue[i]
-      if (serverPromiseObj.port === port && serverPromiseObj.ssl === ssl) {
-        const mappingHostNames = serverPromiseObj.mappingHostNames
-        for (let j = 0; j < mappingHostNames.length; j++) {
-          const DNSName = mappingHostNames[j]
-          if (tlsUtils.isMappingHostName(DNSName, hostname)) {
-            this.reRankServer(i)
-            log.info(`Load fakeServerPromise from cache, hostname: ${hostname}:${port}, ssl: ${ssl}, serverPromiseObj: {"ssl":${serverPromiseObj.ssl},"port":${serverPromiseObj.port},"mappingHostNames":${JSON.stringify(serverPromiseObj.mappingHostNames)}}`)
-            return serverPromiseObj.promise
-          }
-        }
-      }
+    const dnsName = getDnsName(hostname)
+    const mapKey = `${dnsName}:${port}:${ssl}`
+
+    // O(1) map 快速查找，避免每次 CONNECT 都线性扫描 queue
+    const cachedServerObj = this._serverMap.get(mapKey)
+    if (cachedServerObj) {
+      log.info(`Load fakeServerPromise from cache, hostname: ${hostname}:${port}, ssl: ${ssl}, serverPromiseObj: {"ssl":${cachedServerObj.ssl},"port":${cachedServerObj.port},"mappingHostNames":${JSON.stringify(cachedServerObj.mappingHostNames)}}`)
+      return cachedServerObj.promise
     }
 
-    const dnsName = getDnsName(hostname)
     const mappingHostNames = [dnsName]
     if (dnsName.startsWith('*.')) {
       mappingHostNames.push(dnsName.replace('*.', ''))
@@ -94,6 +101,7 @@ module.exports = class FakeServersCenter {
       port,
       ssl,
       mappingHostNames,
+      _mapKey: mapKey,
     }
 
     const promise = new Promise((resolve, _reject) => {
