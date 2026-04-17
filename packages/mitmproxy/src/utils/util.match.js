@@ -2,9 +2,7 @@ const lodash = require('lodash')
 const log = require('./util.log.server')
 const mergeApi = require('@docmirror/dev-sidecar/src/merge')
 
-// Pre-compiled path RegExp cache, keyed by the raw regexp string.
-// Avoids re-creating RegExp objects on every call to isMatched().
-const pathRegexpCache = new Map()
+const urlRegexpCache = new Map()
 
 function isMatched (url, regexp) {
   if (regexp === '.*' || regexp === '*' || regexp === 'true' || regexp === true) {
@@ -12,15 +10,16 @@ function isMatched (url, regexp) {
   }
 
   try {
-    let compiled = pathRegexpCache.get(regexp)
+    let compiled = urlRegexpCache.get(regexp)
     if (!compiled) {
       let urlRegexp = regexp
       if (regexp[0] === '*' || regexp[0] === '?' || regexp[0] === '+') {
         urlRegexp = `.${regexp}`
       }
       compiled = new RegExp(urlRegexp)
-      pathRegexpCache.set(regexp, compiled)
+      urlRegexpCache.set(regexp, compiled)
     }
+
     return url.match(compiled)
   } catch {
     log.error('匹配串有问题:', regexp)

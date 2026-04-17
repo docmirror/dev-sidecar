@@ -1,8 +1,6 @@
 const REMOVE = '[remove]'
 
-// 提前编译，避免在每次 requestReplace 拦截时重复创建 RegExp 对象
 const DS_DOWNLOAD_CHECK_RE = /DS_DOWNLOAD/i
-// 注：锚定于末尾（$），路径中最多只有一个匹配，无需 /g 标志
 const DS_DOWNLOAD_STRIP_RE = /[?&/]?DS_DOWNLOAD(=[^?&/]+)?$/i
 
 function replaceRequestHeaders (rOptions, headers, log) {

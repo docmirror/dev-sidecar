@@ -2,9 +2,7 @@ const zlib = require('node:zlib')
 const through = require('through2')
 const log = require('../../../utils/util.log.server')
 
-// 提前编译，避免在每次 HTML 响应时重复创建 RegExp 对象
 const HTML_CONTENT_TYPE_RE = /text\/html|application\/xhtml\+xml/
-// 提前编译，避免在每次处理响应头时重复创建 RegExp 对象
 const CSP_SCRIPT_SRC_RE = /script-src ([^:]*);/i
 
 // 编解码器

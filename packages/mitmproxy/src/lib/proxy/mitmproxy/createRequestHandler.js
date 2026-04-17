@@ -11,7 +11,7 @@ const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
 const dnsLookup = require('./dnsLookup')
 
 const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
-const WWW_AUTH_HEADER_RE = /^www-authenticate$/i // 提前编译，避免在响应头遍历中重复创建
+const WWW_AUTH_HEADER_RE = /^www-authenticate$/i
 
 // create requestHandler function
 module.exports = function createRequestHandler (createIntercepts, middlewares, externalProxy, dnsConfig, setting, compatibleConfig) {

@@ -3,7 +3,6 @@ const cacheReq = require('../req/cacheRequest')
 
 const REMOVE = '[remove]'
 
-// 提前编译，避免在每次文件下载拦截时通过字符串参数隐式创建 RegExp 对象
 const FILENAME_RE = /^.*\/([^/?]+)\/?(\?.*)?$/
 
 // 替换响应头
