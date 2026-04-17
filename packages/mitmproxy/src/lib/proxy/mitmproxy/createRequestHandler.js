@@ -335,9 +335,16 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
         try {
           const status = e.status || 500
           res.writeHead(status, { 'Content-Type': 'text/html;charset=UTF8' })
-          res.write(`DevSidecar Error:<br/>
-目标网站请求错误：【${e.code}】 ${e.message}<br/>
-目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`,
+          res.write(`<style>
+            p {
+              margin: 10px 0;
+              color: white;
+              background-color: black;
+            }
+          </style>
+          <p>DevSidecar Error:</p>
+          <p>目标网站请求错误：【${e.code}】 ${e.message}</p>
+          <p>目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}</p>`,
           )
         } catch (e) {
           // do nothing
