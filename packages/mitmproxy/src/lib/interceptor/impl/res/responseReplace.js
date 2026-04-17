@@ -3,6 +3,9 @@ const cacheReq = require('../req/cacheRequest')
 
 const REMOVE = '[remove]'
 
+// 提前编译，避免在每次文件下载拦截时通过字符串参数隐式创建 RegExp 对象
+const FILENAME_RE = /^.*\/([^/?]+)\/?(\?.*)?$/
+
 // 替换响应头
 function replaceResponseHeaders (newHeaders, res, proxyRes) {
   if (!newHeaders || lodash.isEmpty(newHeaders)) {
@@ -82,7 +85,7 @@ module.exports = {
 
     // 处理文件下载请求
     if (responseReplaceConfig.doDownload || rOptions.doDownload) {
-      const filename = (rOptions.path.match('^.*/([^/?]+)/?(\\?.*)?$') || [])[1] || 'UNKNOWN_FILENAME'
+      const filename = (FILENAME_RE.exec(rOptions.path) || [])[1] || 'UNKNOWN_FILENAME'
       // 设置文件下载响应头
       replaceHeaders['content-disposition'] = `attachment; filename="${encodeURIComponent(filename)}"`
       // 设置文件类型
