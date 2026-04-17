@@ -8,6 +8,11 @@ const { getTmpPacFilePath, downloadPacAsync, createOverwallMiddleware } = requir
 const log = require('./utils/util.log.server')
 const matchUtil = require('./utils/util.match')
 
+// 每个域名的路径级拦截器缓存的最大条数。
+// 对于使用 .* 路径模式的域名（如 api.github.com），每个唯一 URL（含不同 query string）都会生成独立的缓存条目；
+// 设置上限，超出后清空重建，防止长期运行时因 API 分页/唯一 token 等导致内存无界增长。
+const PATH_CACHE_MAX_SIZE = 512
+
 // 处理拦截配置
 function buildIntercepts (intercepts) {
   // 自动生成script拦截器所需的辅助配置，降低使用`script拦截器`配置绝对地址和相对地址时的门槛
@@ -154,6 +159,8 @@ module.exports = (serverConfig) => {
 
       // 路径级缓存：同一 hostname+path 的拦截器列表是固定的，不必每次重新构建
       // 注：interceptOpts 对象在代理启动后不会被修改，配置变更时会重启代理服务并重新创建此对象，因此无需缓存失效逻辑
+      // 注：缓存 key 使用完整路径（含 query string），以保证正则捕获组（matched）的正确性
+      // 注：缓存上限为 PATH_CACHE_MAX_SIZE 条，超限后清空重建，防止含唯一 query string 的路径（如 API 分页）导致无界增长
       if (!interceptOpts._pathCache) {
         Object.defineProperty(interceptOpts, '_pathCache', { value: new Map(), enumerable: false, configurable: true })
       }
@@ -252,6 +259,10 @@ module.exports = (serverConfig) => {
       //   log.info('interceptor:', interceptor.name, 'priority:', interceptor.priority)
       // }
 
+      // 超出上限时清空缓存，防止因大量唯一路径/query string 导致内存无界增长
+      if (interceptOpts._pathCache.size >= PATH_CACHE_MAX_SIZE) {
+        interceptOpts._pathCache.clear()
+      }
       interceptOpts._pathCache.set(rOptions.path, matchIntercepts)
       return matchIntercepts
     },
