@@ -160,12 +160,16 @@ module.exports = (serverConfig) => {
       // 路径级缓存：同一 hostname+path 的拦截器列表是固定的，不必每次重新构建
       // 注：interceptOpts 对象在代理启动后不会被修改，配置变更时会重启代理服务并重新创建此对象，因此无需缓存失效逻辑
       // 注：缓存 key 使用完整路径（含 query string），以保证正则捕获组（matched）的正确性
-      // 注：缓存上限为 PATH_CACHE_MAX_SIZE 条，超限后清空重建，防止含唯一 query string 的路径（如 API 分页）导致无界增长
+      // 注：采用 LRU 淘汰策略，上限为 PATH_CACHE_MAX_SIZE 条；利用 Map 按插入顺序迭代的特性，命中时删除后重新插入以更新位置
       if (!interceptOpts._pathCache) {
         Object.defineProperty(interceptOpts, '_pathCache', { value: new Map(), enumerable: false, configurable: true })
       }
       if (interceptOpts._pathCache.has(rOptions.path)) {
-        return interceptOpts._pathCache.get(rOptions.path)
+        const cached = interceptOpts._pathCache.get(rOptions.path)
+        // 移至末尾以维护 LRU 顺序（Map 按插入顺序迭代）
+        interceptOpts._pathCache.delete(rOptions.path)
+        interceptOpts._pathCache.set(rOptions.path, cached)
+        return cached
       }
 
       const matchIntercepts = []
@@ -259,9 +263,9 @@ module.exports = (serverConfig) => {
       //   log.info('interceptor:', interceptor.name, 'priority:', interceptor.priority)
       // }
 
-      // 超出上限时清空缓存，防止因大量唯一路径/query string 导致内存无界增长
+      // 超出上限时逐出最久未使用（LRU）的条目，防止因大量唯一路径/query string 导致内存无界增长
       if (interceptOpts._pathCache.size >= PATH_CACHE_MAX_SIZE) {
-        interceptOpts._pathCache.clear()
+        interceptOpts._pathCache.delete(interceptOpts._pathCache.keys().next().value)
       }
       interceptOpts._pathCache.set(rOptions.path, matchIntercepts)
       return matchIntercepts
