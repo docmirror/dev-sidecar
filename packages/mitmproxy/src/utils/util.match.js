@@ -2,17 +2,25 @@ const lodash = require('lodash')
 const log = require('./util.log.server')
 const mergeApi = require('@docmirror/dev-sidecar/src/merge')
 
+const urlRegexpCache = new Map()
+
 function isMatched (url, regexp) {
   if (regexp === '.*' || regexp === '*' || regexp === 'true' || regexp === true) {
     return [url]
   }
 
   try {
-    let urlRegexp = regexp
-    if (regexp[0] === '*' || regexp[0] === '?' || regexp[0] === '+') {
-      urlRegexp = `.${regexp}`
+    let compiled = urlRegexpCache.get(regexp)
+    if (!compiled) {
+      let urlRegexp = regexp
+      if (regexp[0] === '*' || regexp[0] === '?' || regexp[0] === '+') {
+        urlRegexp = `.${regexp}`
+      }
+      compiled = new RegExp(urlRegexp)
+      urlRegexpCache.set(regexp, compiled)
     }
-    return url.match(urlRegexp)
+
+    return url.match(compiled)
   } catch {
     log.error('匹配串有问题:', regexp)
     return null
