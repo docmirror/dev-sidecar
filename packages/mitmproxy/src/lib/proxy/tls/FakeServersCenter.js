@@ -9,7 +9,8 @@ const compatible = require('../compatible/compatible')
 
 const pki = forge.pki
 
-// IPv4地址检测正则，提前编译，避免在 getDnsName 中重复创建
+// IPv4地址检测正则，提前编译，避免在 getDnsName 中重复创建。
+// 不使用 /g 标志：此处只做存在性检测（.test()），无需记录 lastIndex 状态。
 const IPV4_RE = /\b(25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\b){3}/
 
 // 获取DNS名称

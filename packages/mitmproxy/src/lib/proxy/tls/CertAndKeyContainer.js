@@ -21,7 +21,7 @@ module.exports = class CertAndKeyContainer {
     if (this._lruMap.size >= this.maxLength) {
       // 淘汰最久未使用的条目（Map 中的第一个条目）
       const iter = this._lruMap.entries()
-      const { value: [evictKey] } = iter.next()
+      const { value: [evictKey, _delCertObj] } = iter.next()
       this._lruMap.delete(evictKey)
       log.info(`超过最大证书数量${this.maxLength}，删除旧证书，dnsName: ${evictKey}`)
     }

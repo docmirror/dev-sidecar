@@ -86,7 +86,9 @@ function matchHostname (hostMap, hostname, action) {
   }
 
   // 命中缓存时直接返回，避免每次请求重复做正则匹配
-  // 注：hostMap 对象在代理启动后不会被修改，配置变更时会重启代理服务并重新创建 hostMap 对象，因此无需缓存失效逻辑
+  // 注：hostMap 对象在代理启动后不会被修改，配置变更时会重启代理服务并重新创建 hostMap 对象，因此无需缓存失效逻辑。
+  // 缓存也记录"未匹配"结果（undefined），避免高频未匹配域名（如白名单外的域名）每次仍触发全量正则扫描。
+  // 实际流量中唯一域名数量有限，不会造成内存问题。
   if (!hostMap._cache) {
     Object.defineProperty(hostMap, '_cache', { value: new Map(), enumerable: false, configurable: true })
   }
@@ -168,7 +170,8 @@ function matchHostnameAll (hostMap, hostname, action) {
   }
 
   // 命中缓存时直接返回，避免每次请求重复做正则匹配和 lodash.merge
-  // 注：hostMap 对象在代理启动后不会被修改，配置变更时会重启代理服务并重新创建 hostMap 对象，因此无需缓存失效逻辑
+  // 注：hostMap 对象在代理启动后不会被修改，配置变更时会重启代理服务并重新创建 hostMap 对象，因此无需缓存失效逻辑。
+  // 缓存也记录"未匹配"结果（undefined），避免高频未匹配域名每次仍触发全量正则扫描和 merge。
   if (!hostMap._cacheAll) {
     Object.defineProperty(hostMap, '_cacheAll', { value: new Map(), enumerable: false, configurable: true })
   }
