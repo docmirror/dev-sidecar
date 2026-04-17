@@ -152,6 +152,14 @@ module.exports = (serverConfig) => {
         return
       }
 
+      // 路径级缓存：同一 hostname+path 的拦截器列表是固定的，不必每次重新构建
+      if (!interceptOpts._pathCache) {
+        Object.defineProperty(interceptOpts, '_pathCache', { value: new Map(), enumerable: false, configurable: true })
+      }
+      if (interceptOpts._pathCache.has(rOptions.path)) {
+        return interceptOpts._pathCache.get(rOptions.path)
+      }
+
       const matchIntercepts = []
       const matchInterceptsOpts = {}
       for (const regexp in interceptOpts) { // 遍历拦截配置
@@ -243,6 +251,7 @@ module.exports = (serverConfig) => {
       //   log.info('interceptor:', interceptor.name, 'priority:', interceptor.priority)
       // }
 
+      interceptOpts._pathCache.set(rOptions.path, matchIntercepts)
       return matchIntercepts
     },
   }
