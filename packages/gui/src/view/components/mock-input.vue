@@ -3,15 +3,20 @@
   作用：全文检索（SearchBar）组件，无法检索 `<a-input/>` 的内容，所以使用 `<span contenteditable="true"></span>` 代替。
 -->
 <script>
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  emits: ['update:modelValue'],
   name: 'MockInput',
+
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
       required: false,
     },
   },
+
   methods: {
     onKeydown (event) {
       // 不允许输入换行符
@@ -20,14 +25,14 @@ export default {
       }
     },
     onBlur () {
-      if (this.$refs.input.textContent !== this.value) {
-        this.$emit('input', this.$refs.input.textContent)
+      if (this.$refs.input.textContent !== this.modelValue) {
+        this.$emit('update:modelValue', this.$refs.input.textContent)
       }
     },
   },
-}
+});
 </script>
 
 <template>
-  <span ref="input" class="ant-input" contenteditable="true" spellcheck="false" :title="value" @blur="onBlur" @keydown="onKeydown" v-html="value" />
+  <span ref="input" class="ant-input" contenteditable="true" spellcheck="false" :title="modelValue" @blur="onBlur" @keydown="onKeydown" v-html="modelValue" />
 </template>

@@ -1,9 +1,12 @@
 <script>
+import { defineComponent } from 'vue';
+
 import Plugin from '../../mixins/plugin'
 
-export default {
+export default defineComponent({
   name: 'Pip',
   mixins: [Plugin],
+
   data () {
     return {
       key: 'plugin.pip',
@@ -14,11 +17,14 @@ export default {
       trustedHostList: [],
     }
   },
+
   created () {
     console.log('status:', this.status)
   },
+
   mounted () {
   },
+
   methods: {
     ready () {
     },
@@ -40,7 +46,7 @@ export default {
       await this.apply()
     },
   },
-}
+});
 </script>
 
 <template>
@@ -76,7 +82,7 @@ export default {
             <a-radio-button value="https://pypi.org/simple/" title="https://pypi.org/simple/">
               原生
             </a-radio-button>
-            <a-radio-button v-for="(item) of config.plugin.pip.setting.registryList" :key="item.value" :value="item.value" :title="item.value">
+            <a-radio-button v-for="(item) of config.plugin.pip.setting.registryList" :key="item.value" :modelValue="item.value" :title="item.value">
               {{ item.name }}
             </a-radio-button>
           </a-radio-group>

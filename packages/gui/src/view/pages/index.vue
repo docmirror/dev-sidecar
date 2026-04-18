@@ -86,37 +86,22 @@ export default {
       } else if (mode === 'ow') {
         console.log('event', event)
         if (!this.setting.overwall) {
-          this.wantOW()
           return
         }
         this.config.server.intercept.enabled = true
-        this.config.server.dns.speedTest.enabled = true
-        this.config.plugin.overwall.enabled = true
-      }
-      this.$api.config.save(this.config).then(() => {
-        this.$message.success('设置已保存')
-      })
-      if (this.status.server.enabled) {
         return this.$api.server.restart()
       }
     },
     wantOW () {
       this.$success({
         title: '彩蛋（增强模式）',
-        content: (
-          <div>
-            我把它藏在了源码里，感兴趣的话可以找一找它（线索提示 // TODO）
-          </div>
-        ),
+        content: h => h('div', null, '我把它藏在了源码里，感兴趣的话可以找一找它（线索提示 // TODO）'),
       })
     },
     async doCheckRootCa () {
       const setting = await this.$api.setting.load()
       console.log('setting', setting)
       this.setting = setting || {}
-      if (this.setting.rootCa && (this.setting.rootCa.setuped || this.setting.rootCa.noTip)) {
-        return
-      }
       this.$confirm({
         title: '第一次使用，请先安装CA根证书',
         content: '本应用正常使用，必须安装和信任CA根证书',

@@ -1,11 +1,14 @@
 <script>
+import { defineComponent } from 'vue';
+
 import Plugin from '../../mixins/plugin'
 import MockInput from '@/view/components/mock-input.vue'
 
-export default {
+export default defineComponent({
   name: 'Overwall',
   components: { MockInput },
   mixins: [Plugin],
+
   data () {
     return {
       key: 'plugin.overwall',
@@ -25,11 +28,14 @@ export default {
       ],
     }
   },
+
   created () {
     console.log('status:', this.status)
   },
+
   mounted () {
   },
+
   methods: {
     async openExternal (url) {
       await this.$api.ipc.openExternal(url)
@@ -114,7 +120,7 @@ export default {
       this.config.plugin.overwall.server = map
     },
   },
-}
+});
 </script>
 
 <template>
@@ -179,7 +185,7 @@ export default {
               </a-col>
               <a-col :span="4">
                 <a-select v-model="item.value" class="w100">
-                  <a-select-option v-for="(item2) of overwallOptions" :key="item2.value" :value="item2.value">
+                  <a-select-option v-for="(item2) of overwallOptions" :key="item2.value" :modelValue="item2.value">
                     {{ item2.label }}
                   </a-select-option>
                 </a-select>

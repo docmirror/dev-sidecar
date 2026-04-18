@@ -1,5 +1,4 @@
 import lodash from 'lodash'
-import Vue from 'vue'
 
 const status = {
   server: {
@@ -12,7 +11,7 @@ const status = {
     node: {},
   },
 }
-async function install (api) {
+async function install (app, api) {
   api.ipc.on('status', (event, message) => {
     console.log('view on status', event, message)
     const value = message.value
@@ -21,7 +20,7 @@ async function install (api) {
   })
   const basicStatus = await api.status.get()
   lodash.merge(status, basicStatus)
-  Vue.prototype.$status = status
+  app.config.globalProperties.$status = status
   return status
 }
 export default {

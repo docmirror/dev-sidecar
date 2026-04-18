@@ -1,11 +1,14 @@
 <script>
+import { defineComponent } from 'vue';
+
 import Plugin from '../mixins/plugin'
 import MockInput from '@/view/components/mock-input.vue'
 
-export default {
+export default defineComponent({
   name: 'Proxy',
   components: { MockInput },
   mixins: [Plugin],
+
   data () {
     return {
       key: 'proxy',
@@ -23,10 +26,13 @@ export default {
       ],
     }
   },
+
   async created () {
   },
+
   mounted () {
   },
+
   methods: {
     async openExternal (url) {
       await this.$api.ipc.openExternal(url)
@@ -80,7 +86,7 @@ export default {
       this.config.proxy.excludeIpList = excludeIpList
     },
   },
-}
+});
 </script>
 
 <template>
@@ -173,7 +179,7 @@ export default {
           </a-col>
           <a-col :span="5">
             <a-select v-model="item.value" class="w100">
-              <a-select-option v-for="(item2) of excludeIpOptions" :key="item2.value" :value="item2.value">
+              <a-select-option v-for="(item2) of excludeIpOptions" :key="item2.value" :modelValue="item2.value">
                 {{ item2.label }}
               </a-select-option>
             </a-select>
@@ -198,7 +204,7 @@ export default {
     <a-drawer
       placement="right"
       :closable="false"
-      :visible.sync="loopbackVisible"
+      v-model:visible="loopbackVisible"
       width="660px"
       height="100%"
       :slots="{ title: 'title' }"

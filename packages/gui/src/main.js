@@ -1,13 +1,12 @@
 import antd from 'ant-design-vue'
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import SearchBar from 'search-bar-vue2'
+import { createApp, h } from 'vue';
+import VueRouter, { createRouter } from 'vue-router';
 import { ipcRenderer } from 'electron'
 import view from './view'
 import App from './view/App.vue'
 import DsContainer from './view/components/container'
 import routes from './view/router'
-import 'ant-design-vue/dist/antd.css'
+import 'ant-design-vue/dist/reset.css'
 import './view/style/index.scss'
 import './view/style/theme/dark.scss' // 暗色主题
 
@@ -23,25 +22,25 @@ try {
   console.info('main.js start')
   ipcRenderer.send('main.js start')
 
-  Vue.config.productionTip = false
-  Vue.use(antd)
-  Vue.use(VueRouter)
-  Vue.use(SearchBar)
-  Vue.component(DsContainer)
   // 3. 创建 router 实例，然后传 `routes` 配置
   // 你还可以传别的配置参数, 不过先这么简单着吧。
-  const router = new VueRouter({
+  const router = createRouter({
     routes, // (缩写) 相当于 routes: routes
   })
-  const app = new Vue({
+  const app = createApp({
     router,
-    render: h => h(App),
+    render: () => h(App),
   })
+  
+  app.use(antd)
+  app.use(VueRouter)
+  app.component('DsContainer', DsContainer)
+  
   view.initApi(app).then(async (api) => {
     // 初始化status
     try {
-      await view.initPre(Vue, api)
-      app.$mount('#app')
+      await view.initPre(app, api)
+      app.mount('#app')
       view.initModules(app, router)
     } catch (e) {
       console.error('view初始化出现未知异常：', e)

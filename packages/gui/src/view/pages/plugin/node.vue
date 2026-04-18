@@ -1,9 +1,12 @@
 <script>
+import { defineComponent } from 'vue';
+
 import Plugin from '../../mixins/plugin'
 
-export default {
+export default defineComponent({
   name: 'Node',
   mixins: [Plugin],
+
   data () {
     return {
       key: 'plugin.node',
@@ -13,11 +16,14 @@ export default {
       registry: false,
     }
   },
+
   created () {
     console.log('status:', this.status)
   },
+
   mounted () {
   },
+
   methods: {
     ready () {
       return this.$api.plugin.node.getVariables().then((ret) => {
@@ -46,7 +52,7 @@ export default {
       })
     },
   },
-}
+});
 </script>
 
 <template>
@@ -91,7 +97,7 @@ export default {
             <a-radio-button value="https://registry.npmjs.org" title="https://registry.npmjs.org">
               npmjs原生
             </a-radio-button>
-            <a-radio-button v-for="(item) of config.plugin.node.setting.registryList" :key="item.value" :value="item.value" :title="item.value">
+            <a-radio-button v-for="(item) of config.plugin.node.setting.registryList" :key="item.value" :modelValue="item.value" :title="item.value">
               {{ item.name }}
             </a-radio-button>
           </a-radio-group>
@@ -104,7 +110,7 @@ export default {
             <a-radio-button value="default" title="https://registry.yarnpkg.com">
               yarn原生
             </a-radio-button>
-            <a-radio-button v-for="(item) of config.plugin.node.setting.yarnRegistryList" :key="item.value" :value="item.value" :title="item.value" value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
+            <a-radio-button v-for="(item) of config.plugin.node.setting.yarnRegistryList" :key="item.value" :modelValue="item.value" :title="item.value" value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
               {{ item.name }}
             </a-radio-button>
           </a-radio-group>

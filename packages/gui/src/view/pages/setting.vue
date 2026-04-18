@@ -271,33 +271,31 @@ export default {
       this.$confirm({
         title: '确定要恢复出厂设置吗？',
         width: 610,
-        content: h => (
-          <div class="restore-factory-settings">
-            <hr />
-            <p>
-              <h3>操作警告：</h3>
-              <div>
-                该功能将备份您的所有页面的个性化配置，并重载
-                <span>默认配置</span>
-                及
-                <span>远程配置</span>
-                ，请谨慎操作！！！
-              </div>
-            </p>
-            <hr />
-            <p>
-              <h3>找回个性化配置的方法：</h3>
-              <div>
-                1. 找到备份文件，路径：
-                <span>~/.dev-sidecar/config.json.时间戳.bak.json</span>
-                <br />
-                2. 将该备份文件重命名为
-                <span>config.json</span>
-                ，再重启软件即可恢复个性化配置。
-              </div>
-            </p>
-          </div>
-        ),
+        content: h => h('div', { class: 'restore-factory-settings' }, [
+          h('hr'),
+          h('p', [
+            h('h3', '操作警告：'),
+            h('div', [
+              '该功能将备份您的所有页面的个性化配置，并重载',
+              h('span', '默认配置'),
+              '及',
+              h('span', '远程配置'),
+              '，请谨慎操作！！！'
+            ])
+          ]),
+          h('hr'),
+          h('p', [
+            h('h3', '找回个性化配置的方法：'),
+            h('div', [
+              '1. 找到备份文件，路径：',
+              h('span', '~/.dev-sidecar/config.json.时间戳.bak.json'),
+              h('br'),
+              '2. 将该备份文件重命名为',
+              h('span', 'config.json'),
+              '，再重启软件即可恢复个性化配置。'
+            ])
+          ])
+        ]),
         cancelText: '取消',
         okText: '确定',
         onOk: async () => {

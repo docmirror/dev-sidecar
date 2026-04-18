@@ -96,7 +96,7 @@ export default {
       return value
     },
     setConfig (newConfig) {
-      this.$set(this, 'config', newConfig)
+      this.config = newConfig
     },
     printConfig (prefix = '') {
       console.log(`${prefix}${this.key} page config:`, this.config, this.systemPlatform)

@@ -1,24 +1,30 @@
 <script>
+import { defineComponent } from 'vue';
+
 import Plugin from '../mixins/plugin'
 import TreeNode from '../components/tree-node'
 
-export default {
+export default defineComponent({
   name: 'Help',
+
   components: {
     TreeNode,
   },
+
   mixins: [Plugin],
+
   data () {
     return {
       key: 'help',
     }
   },
+
   methods: {
     async openExternal (url) {
       await this.$api.ipc.openExternal(url)
     },
   },
-}
+});
 </script>
 
 <template>

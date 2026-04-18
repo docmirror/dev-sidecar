@@ -1,9 +1,14 @@
 <script>
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  emits: ['update:visible', 'setup'],
   name: 'SetupCa',
+
   components: {
 
   },
+
   props: {
     title: {
       type: String,
@@ -13,11 +18,13 @@ export default {
       type: Boolean,
     },
   },
+
   data () {
     return {
       systemPlatform: '',
     }
   },
+
   computed: {
     setupImage () {
       if (this.systemPlatform === 'mac') {
@@ -29,9 +36,11 @@ export default {
       }
     },
   },
+
   async created () {
     this.systemPlatform = await this.$api.info.getSystemPlatform()
   },
+
   methods: {
     async openExternal (url) {
       await this.$api.ipc.openExternal(url)
@@ -51,7 +60,7 @@ export default {
       }
     },
   },
-}
+});
 </script>
 
 <template>

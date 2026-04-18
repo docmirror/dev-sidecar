@@ -1,16 +1,21 @@
 <script>
+import { defineComponent } from 'vue';
+
 import _ from 'lodash'
 import VueJsonEditor from 'vue-json-editor-fix-cn'
 import Plugin from '../mixins/plugin'
 import MockInput from '@/view/components/mock-input.vue'
 
-export default {
+export default defineComponent({
   name: 'Server',
+
   components: {
     VueJsonEditor,
     MockInput,
   },
+
   mixins: [Plugin],
+
   data () {
     return {
       key: 'server',
@@ -40,6 +45,7 @@ export default {
       ],
     }
   },
+
   computed: {
     speedDnsOptions () {
       const options = []
@@ -55,11 +61,14 @@ export default {
       return options
     },
   },
+
   created () {
   },
+
   mounted () {
     this.registerSpeedTestEvent()
   },
+
   methods: {
     async onCrtSelect () {
       const value = await this.$api.fileSelector.open(this.config.server.setting.rootCaFile.certPath, 'file')
@@ -223,7 +232,7 @@ export default {
       }
     },
   },
-}
+});
 </script>
 
 <template>
@@ -351,7 +360,7 @@ export default {
               </a-col>
               <a-col :span="5">
                 <a-select v-model="item.value" class="w100">
-                  <a-select-option v-for="(item2) of whiteListOptions" :key="item2.value" :value="item2.value">
+                  <a-select-option v-for="(item2) of whiteListOptions" :key="item2.value" :modelValue="item2.value">
                     {{ item2.label }}
                   </a-select-option>
                 </a-select>
@@ -409,14 +418,14 @@ export default {
               </a-col>
               <a-col :span="6">
                 <a-select v-model="item.value" :disabled="item.value === false" class="w100">
-                  <a-select-option v-for="(item2) of speedDnsOptions" :key="item2.value" :value="item2.value">
+                  <a-select-option v-for="(item2) of speedDnsOptions" :key="item2.value" :modelValue="item2.value">
                     {{ item2.value }}
                   </a-select-option>
                 </a-select>
               </a-col>
               <a-col :span="4">
                 <a-select v-model="item.family" class="w100">
-                  <a-select-option v-for="(item2) of familyOptions" :key="item2.value" :value="item2.value">
+                  <a-select-option v-for="(item2) of familyOptions" :key="item2.value" :modelValue="item2.value">
                     {{ item2.label }}
                   </a-select-option>
                 </a-select>

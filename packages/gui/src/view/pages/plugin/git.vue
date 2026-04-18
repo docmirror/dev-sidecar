@@ -1,11 +1,14 @@
 <script>
+import { defineComponent } from 'vue';
+
 import Plugin from '../../mixins/plugin'
 import MockInput from '@/view/components/mock-input.vue'
 
-export default {
+export default defineComponent({
   name: 'Git',
   components: { MockInput },
   mixins: [Plugin],
+
   data () {
     return {
       key: 'plugin.git',
@@ -15,11 +18,14 @@ export default {
       needRestart: false,
     }
   },
+
   created () {
     console.log('status:', this.status)
   },
+
   mounted () {
   },
+
   methods: {
     ready () {
       this.initNoProxyUrls()
@@ -68,7 +74,7 @@ export default {
       this.config.plugin.git.setting.noProxyUrls = noProxyUrls
     },
   },
-}
+});
 </script>
 
 <template>
