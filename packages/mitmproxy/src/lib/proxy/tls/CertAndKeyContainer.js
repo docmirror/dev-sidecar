@@ -1,5 +1,5 @@
 const tlsUtils = require('./tlsUtils')
-const LRUCache = require('lru-cache')
+const { LRUCache } = require('lru-cache')
 const log = require('../../../utils/util.log.server')
 
 const DEFAULT_MAX_LENGTH = 256

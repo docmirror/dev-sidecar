@@ -1,4 +1,4 @@
-const LRUCache = require('lru-cache')
+const { LRUCache } = require('lru-cache')
 const log = require('../../utils/util.log.server')
 
 const cacheSize = 1024
