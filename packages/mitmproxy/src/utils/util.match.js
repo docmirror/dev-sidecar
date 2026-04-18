@@ -2,7 +2,7 @@ const lodash = require('lodash')
 const log = require('./util.log.server')
 const mergeApi = require('@docmirror/dev-sidecar/src/merge')
 
-const LRUCache = require('lru-cache')
+const { LRUCache } = require('lru-cache')
 
 const urlRegexpCache = new LRUCache({
   maxSize: 512,
