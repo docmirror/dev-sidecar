@@ -119,6 +119,7 @@ module.exports = (serverConfig) => {
   const options = {
     host: serverConfig.host,
     port: serverConfig.port,
+    maxLength: serverConfig.fakeServerMaxLength,
     dnsConfig: {
       preSetIpList,
       dnsMap: dnsUtil.initDNS(serverConfig.dns.providers, preSetIpList),

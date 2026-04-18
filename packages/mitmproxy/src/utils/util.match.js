@@ -2,7 +2,14 @@ const lodash = require('lodash')
 const log = require('./util.log.server')
 const mergeApi = require('@docmirror/dev-sidecar/src/merge')
 
-const urlRegexpCache = new Map()
+const LRUCache = require('lru-cache')
+
+const urlRegexpCache = new LRUCache({
+  maxSize: 512,
+  sizeCalculation: () => {
+    return 1
+  },
+})
 
 function isMatched (url, regexp) {
   if (regexp === '.*' || regexp === '*' || regexp === 'true' || regexp === true) {
@@ -280,7 +287,6 @@ function matchHostnameAll (hostMap, hostname, action) {
 
 module.exports = {
   isMatched,
-  domainRegexply,
   domainMapRegexply,
   matchHostname,
   matchHostnameAll,

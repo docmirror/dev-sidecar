@@ -2,6 +2,7 @@ const http = require('node:http')
 const https = require('node:https')
 const tls = require('node:tls')
 const forge = require('node-forge')
+const LRUCache = require('lru-cache')
 const CertAndKeyContainer = require('./CertAndKeyContainer')
 const log = require('../../../utils/util.log.server')
 const compatible = require('../compatible/compatible')
@@ -32,33 +33,43 @@ function getDnsName (hostname) {
   return `*${hostname.substring(hostname.indexOf('.'))}`
 }
 
+const DEFAULT_MAX_LENGTH = 256
+
 module.exports = class FakeServersCenter {
-  constructor ({ maxLength = 256, requestHandler, upgradeHandler, caCert, caKey, getCertSocketTimeout }) {
-    this.cacheMap = new Map() // 键格式：`${dnsName}:${port}:${ssl}`
-    this.maxLength = maxLength
+  constructor ({
+    maxLength = DEFAULT_MAX_LENGTH,
+    requestHandler,
+    upgradeHandler,
+    caCert,
+    caKey,
+  }) {
+    // 缓存键格式：`${dnsName}:${port}:${ssl}`
+    this.cache = new LRUCache({
+      maxSize: maxLength > 0 ? maxLength : DEFAULT_MAX_LENGTH,
+      sizeCalculation: () => {
+        return 1
+      },
+      dispose: (evictServerPromiseObj, evictDnsName) => {
+        try {
+          evictServerPromiseObj.serverObj.server.close()
+          log.info(`旧fake服务缓存被移除，停止服务成功，${evictDnsName}`)
+        } catch (e) {
+          log.error(`旧fake服务缓存被移除，但停止服务失败，${evictDnsName} ->`, evictServerPromiseObj, `, error:`, e)
+        }
+      },
+    })
     this.requestHandler = requestHandler
     this.upgradeHandler = upgradeHandler
     this.certAndKeyContainer = new CertAndKeyContainer({
-      getCertSocketTimeout,
+      maxLength: maxLength > 0 ? maxLength : DEFAULT_MAX_LENGTH,
       caCert,
       caKey,
     })
   }
 
-  _addServerPromise (serverPromiseObj) {
-    if (this.cacheMap.size >= this.maxLength) {
-      // 淘汰最久未使用的条目（Map 中的第一个条目）
-      const { value: [evictKey, delServerObj] } = this.cacheMap.entries().next()
-      this.cacheMap.delete(evictKey)
-
-      try {
-        log.info(`超过最大服务数量${this.maxLength}，删除并停止了旧服务: ${evictKey} ->`, delServerObj)
-        delServerObj.serverObj.server.close()
-      } catch (e) {
-        log.error(`'delServerObj.serverObj.server.close()' failed， ${evictKey} ->`, delServerObj, ', error:', e)
-      }
-    }
-    this.cacheMap.set(serverPromiseObj._mapKey, serverPromiseObj)
+  addServerPromise (serverPromiseObj) {
+    // 添加缓存
+    this.cache.set(serverPromiseObj.cacheKey, serverPromiseObj)
   }
 
   getServerPromise (hostname, port, ssl, manualCompatibleConfig) {
@@ -75,14 +86,10 @@ module.exports = class FakeServersCenter {
     log.info(`getServerPromise, hostname: ${hostname}:${port}, ssl: ${ssl}, protocol: ${ssl ? 'https' : 'http'}`)
 
     const dnsName = getDnsName(hostname)
-    const mapKey = `${dnsName}:${port}:${ssl}`
+    const cacheKey = `${dnsName}:${port}:${ssl}`
 
-    // O(1) LRU Map 快速查找，避免每次 CONNECT 都线性扫描队列
-    const cachedServerObj = this.cacheMap.get(mapKey)
+    const cachedServerObj = this.cache.get(cacheKey)
     if (cachedServerObj) {
-      // LRU 更新：删除后重新插入，移到 Map 末尾（最近使用）
-      this.cacheMap.delete(mapKey)
-      this.cacheMap.set(mapKey, cachedServerObj)
       log.info(`Load fakeServerPromise from cache, hostname: ${hostname}:${port}, ssl: ${ssl}, serverPromiseObj: {"ssl":${cachedServerObj.ssl},"port":${cachedServerObj.port},"mappingHostNames":${JSON.stringify(cachedServerObj.mappingHostNames)}}`)
       return cachedServerObj.promise
     }
@@ -93,10 +100,10 @@ module.exports = class FakeServersCenter {
     }
 
     const serverPromiseObj = {
+      cacheKey,
       port,
       ssl,
       mappingHostNames,
-      _mapKey: mapKey,
     }
 
     const promise = new Promise((resolve, _reject) => {
@@ -227,7 +234,7 @@ module.exports = class FakeServersCenter {
     })
 
     serverPromiseObj.promise = promise
-    this._addServerPromise(serverPromiseObj)
+    this.addServerPromise(serverPromiseObj)
 
     return promise
   }

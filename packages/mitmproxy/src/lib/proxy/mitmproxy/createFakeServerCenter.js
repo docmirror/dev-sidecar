@@ -9,7 +9,6 @@ module.exports = function createFakeServerCenter ({
   caKeyPath,
   requestHandler,
   upgradeHandler,
-  getCertSocketTimeout,
 }) {
   let caCert
   let caKey
@@ -31,6 +30,5 @@ module.exports = function createFakeServerCenter ({
     maxLength,
     requestHandler,
     upgradeHandler,
-    getCertSocketTimeout,
   })
 }

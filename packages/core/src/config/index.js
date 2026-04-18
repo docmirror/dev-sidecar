@@ -50,6 +50,7 @@ const defaultConfig = {
     enabled: true,
     host: '127.0.0.1',
     port: 31181,
+    fakeServerMaxLength: 100, // fakeServer的最大缓存数量
     setting: {
       NODE_TLS_REJECT_UNAUTHORIZED: true,
       verifySsl: true,

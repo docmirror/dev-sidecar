@@ -17,7 +17,6 @@ module.exports = {
     caKeyPath,
     sslConnectInterceptor,
     createIntercepts,
-    getCertSocketTimeout = 1000,
     middlewares = [],
     externalProxy,
     dnsConfig,
@@ -71,7 +70,6 @@ module.exports = {
       caKeyPath,
       requestHandler,
       upgradeHandler,
-      getCertSocketTimeout,
     })
 
     const connectHandler = createConnectHandler(
