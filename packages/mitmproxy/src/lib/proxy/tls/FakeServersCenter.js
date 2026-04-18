@@ -2,12 +2,16 @@ const http = require('node:http')
 const https = require('node:https')
 const tls = require('node:tls')
 const forge = require('node-forge')
+const LRUCache = require('lru-cache')
 const CertAndKeyContainer = require('./CertAndKeyContainer')
-const tlsUtils = require('./tlsUtils')
 const log = require('../../../utils/util.log.server')
 const compatible = require('../compatible/compatible')
 
 const pki = forge.pki
+
+// IPv4地址检测正则，提前编译，避免在 getDnsName 中重复创建。
+// 不使用 /g 标志：此处只做存在性检测（.test()），无需记录 lastIndex 状态。
+const IPv4_RE = /\b(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\b){3}/
 
 // 获取DNS名称
 function getDnsName (hostname) {
@@ -16,7 +20,7 @@ function getDnsName (hostname) {
   }
 
   // 判断是否为IP
-  if (hostname.match(/\b(25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\b){3}/g)) {
+  if (IPv4_RE.test(hostname)) {
     return hostname // 为IP，直接返回
   }
 
@@ -29,31 +33,43 @@ function getDnsName (hostname) {
   return `*${hostname.substring(hostname.indexOf('.'))}`
 }
 
+const DEFAULT_MAX_LENGTH = 256
+
 module.exports = class FakeServersCenter {
-  constructor ({ maxLength = 256, requestHandler, upgradeHandler, caCert, caKey, getCertSocketTimeout }) {
-    this.queue = []
-    this.maxLength = maxLength
+  constructor ({
+    maxLength = DEFAULT_MAX_LENGTH,
+    requestHandler,
+    upgradeHandler,
+    caCert,
+    caKey,
+  }) {
+    // 缓存键格式：`${dnsName}:${port}:${ssl}`
+    this.cache = new LRUCache({
+      maxSize: maxLength > 0 ? maxLength : DEFAULT_MAX_LENGTH,
+      sizeCalculation: () => {
+        return 1
+      },
+      dispose: (evictServerPromiseObj, evictDnsName) => {
+        try {
+          evictServerPromiseObj.serverObj.server.close()
+          log.info(`旧fake服务缓存被移除，停止服务成功，${evictDnsName}`)
+        } catch (e) {
+          log.error(`旧fake服务缓存被移除，但停止服务失败，${evictDnsName} ->`, evictServerPromiseObj, `, error:`, e)
+        }
+      },
+    })
     this.requestHandler = requestHandler
     this.upgradeHandler = upgradeHandler
     this.certAndKeyContainer = new CertAndKeyContainer({
-      getCertSocketTimeout,
+      maxLength: maxLength > 0 ? maxLength : DEFAULT_MAX_LENGTH,
       caCert,
       caKey,
     })
   }
 
   addServerPromise (serverPromiseObj) {
-    if (this.queue.length >= this.maxLength) {
-      const delServerObj = this.queue.shift()
-      try {
-        log.info(`超过最大服务数量${this.maxLength}，删除旧服务。delServerObj:`, delServerObj)
-        delServerObj.serverObj.server.close()
-      } catch (e) {
-        log.error('`delServerObj.serverObj.server.close()` error:', e)
-      }
-    }
-    this.queue.push(serverPromiseObj)
-    return serverPromiseObj
+    // 添加缓存
+    this.cache.set(serverPromiseObj.cacheKey, serverPromiseObj)
   }
 
   getServerPromise (hostname, port, ssl, manualCompatibleConfig) {
@@ -69,28 +85,22 @@ module.exports = class FakeServersCenter {
 
     log.info(`getServerPromise, hostname: ${hostname}:${port}, ssl: ${ssl}, protocol: ${ssl ? 'https' : 'http'}`)
 
-    for (let i = this.queue.length - 1; i >= 0; i--) {
-      const serverPromiseObj = this.queue[i]
-      if (serverPromiseObj.port === port && serverPromiseObj.ssl === ssl) {
-        const mappingHostNames = serverPromiseObj.mappingHostNames
-        for (let j = 0; j < mappingHostNames.length; j++) {
-          const DNSName = mappingHostNames[j]
-          if (tlsUtils.isMappingHostName(DNSName, hostname)) {
-            this.reRankServer(i)
-            log.info(`Load fakeServerPromise from cache, hostname: ${hostname}:${port}, ssl: ${ssl}, serverPromiseObj: {"ssl":${serverPromiseObj.ssl},"port":${serverPromiseObj.port},"mappingHostNames":${JSON.stringify(serverPromiseObj.mappingHostNames)}}`)
-            return serverPromiseObj.promise
-          }
-        }
-      }
+    const dnsName = getDnsName(hostname)
+    const cacheKey = `${dnsName}:${port}:${ssl}`
+
+    const cachedServerObj = this.cache.get(cacheKey)
+    if (cachedServerObj) {
+      log.info(`Load fakeServerPromise from cache, hostname: ${hostname}:${port}, ssl: ${ssl}, serverPromiseObj: {"ssl":${cachedServerObj.ssl},"port":${cachedServerObj.port},"mappingHostNames":${JSON.stringify(cachedServerObj.mappingHostNames)}}`)
+      return cachedServerObj.promise
     }
 
-    const dnsName = getDnsName(hostname)
     const mappingHostNames = [dnsName]
     if (dnsName.startsWith('*.')) {
       mappingHostNames.push(dnsName.replace('*.', ''))
     }
 
     const serverPromiseObj = {
+      cacheKey,
       port,
       ssl,
       mappingHostNames,
@@ -227,10 +237,5 @@ module.exports = class FakeServersCenter {
     this.addServerPromise(serverPromiseObj)
 
     return promise
-  }
-
-  reRankServer (index) {
-    // index ==> queue foot
-    this.queue.push((this.queue.splice(index, 1))[0])
   }
 }

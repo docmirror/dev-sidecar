@@ -1,59 +1,51 @@
 const tlsUtils = require('./tlsUtils')
-// const https = require('https')
+const LRUCache = require('lru-cache')
 const log = require('../../../utils/util.log.server')
+
+const DEFAULT_MAX_LENGTH = 256
 
 module.exports = class CertAndKeyContainer {
   constructor ({
-    maxLength = 1000,
-    // getCertSocketTimeout = 2 * 1000,
+    maxLength = DEFAULT_MAX_LENGTH,
     caCert,
     caKey,
   }) {
-    this.queue = []
-    this.maxLength = maxLength
-    // this.getCertSocketTimeout = getCertSocketTimeout
+    // 缓存键：dnsName
+    this.cache = new LRUCache({
+      maxSize: maxLength > 0 ? maxLength : DEFAULT_MAX_LENGTH,
+      sizeCalculation: () => {
+        return 1
+      },
+      dispose: (_evictCertPromiseObj, evictKey) => {
+        log.error(`旧证书缓存被移除：${evictKey}`)
+      },
+    })
     this.caCert = caCert
     this.caKey = caKey
   }
 
   addCertPromise (certPromiseObj) {
-    if (this.queue.length >= this.maxLength) {
-      const delCertObj = this.queue.shift()
-      log.info(`超过最大证书数量${this.maxLength}，删除旧证书。delCertObj:`, delCertObj)
-    }
-    this.queue.push(certPromiseObj)
-    return certPromiseObj
+    // 添加缓存
+    this.cache.set(certPromiseObj.dnsName, certPromiseObj)
   }
 
   getCertPromise (hostname, port, dnsName, mappingHostNames) {
-    for (let i = this.queue.length - 1; i >= 0; i--) {
-      const _certPromiseObj = this.queue[i]
-      const certMappingHostNames = _certPromiseObj.mappingHostNames
-      for (let j = 0; j < certMappingHostNames.length; j++) {
-        const DNSName = certMappingHostNames[j]
-        if (DNSName === dnsName || tlsUtils.isMappingHostName(DNSName, hostname)) {
-          this.reRankCert(i)
-          log.info(`Load fakeCertPromise from cache, hostname: ${hostname}:${port}, certPromiseObj: {"mappingHostNames":${JSON.stringify(_certPromiseObj.mappingHostNames)}}`)
-          return _certPromiseObj.promise
-        }
-      }
-    }
-
-    const certPromiseObj = {
-      mappingHostNames,
+    // 获取缓存
+    const cached = this.cache.get(dnsName)
+    if (cached) {
+      log.info(`Load fakeCertPromise from cache, hostname: ${hostname}:${port}, certPromiseObj: {"mappingHostNames":${JSON.stringify(cached.mappingHostNames)}}`)
+      return cached.promise
     }
 
     log.info(`【CreateFakeCertificate】dnsName: ${dnsName}, hostname: ${hostname}:${port}`)
     const promise = tlsUtils.createFakeCertificateByDomain(this.caKey, this.caCert, dnsName, mappingHostNames)
 
-    certPromiseObj.promise = promise
-    this.addCertPromise(certPromiseObj)
+    this.addCertPromise({
+      dnsName,
+      mappingHostNames,
+      promise,
+    })
 
     return promise
-  }
-
-  reRankCert (index) {
-    // index ==> queue foot
-    this.queue.push((this.queue.splice(index, 1))[0])
   }
 }
