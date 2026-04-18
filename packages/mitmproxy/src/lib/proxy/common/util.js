@@ -5,6 +5,10 @@ const matchUtil = require('../../../utils/util.match')
 const Agent = require('./ProxyHttpAgent')
 const HttpsAgent = require('./ProxyHttpsAgent')
 
+// 提前编译，避免在每次请求时（parseHostnameAndPort）重复创建 RegExp 对象
+// 匹配形如 `[::1]` 或 `[::1]:443` 的 IPv6 地址（带或不带端口）
+const IPV6_HOST_RE = /^(\[[^\]]+\])(?::(\d+))?$/
+
 const util = exports
 
 const httpsAgentCache = {}
@@ -77,7 +81,7 @@ function createAgent (protocol, timeoutConfig, verifySsl) {
 }
 
 util.parseHostnameAndPort = (host, defaultPort) => {
-  let arr = host.match(/^(\[[^\]]+\])(?::(\d+))?$/) // 尝试解析IPv6
+  let arr = host.match(IPV6_HOST_RE) // 尝试解析IPv6
   if (arr) {
     arr = arr.slice(1)
     if (arr[1]) {

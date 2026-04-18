@@ -1,5 +1,8 @@
 const URL = require('node:url')
 
+// 提前编译，避免在每次包含模板占位符的代理 URL 处理时重复创建 RegExp 对象
+const PLACEHOLDER_RE = /\$\{[^}]+\}/g
+
 function replacePlaceholder0 (url, matched, pre) {
   if (matched) {
     for (let i = 0; i < matched.length; i++) {
@@ -27,7 +30,7 @@ function replacePlaceholder (url, rOptions, pathMatched, hostnameMatched) {
 
     // 移除多余的占位符
     if (url.includes('${')) {
-      url = url.replace(/\$\{[^}]+\}/g, '')
+      url = url.replace(PLACEHOLDER_RE, '')
     }
   }
 
