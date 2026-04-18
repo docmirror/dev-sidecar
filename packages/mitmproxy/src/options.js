@@ -1,6 +1,7 @@
 const fs = require('node:fs')
 const path = require('node:path')
 const lodash = require('lodash')
+const LRUCache = require('lru-cache')
 const dnsUtil = require('./lib/dns')
 const interceptorImpls = require('./lib/interceptor')
 const scriptInterceptor = require('./lib/interceptor/impl/res/script')
@@ -163,14 +164,17 @@ module.exports = (serverConfig) => {
       // 注：缓存 key 使用完整路径（含 query string），以保证正则捕获组（matched）的正确性
       // 注：采用 LRU 淘汰策略，上限为 PATH_CACHE_MAX_SIZE 条；利用 Map 按插入顺序迭代的特性，命中时删除后重新插入以更新位置
       if (!interceptOpts._pathCache) {
-        Object.defineProperty(interceptOpts, '_pathCache', { value: new Map(), enumerable: false, configurable: true })
-      }
-      if (interceptOpts._pathCache.has(rOptions.path)) {
+        Object.defineProperty(interceptOpts, '_pathCache', { value: new LRUCache({
+          maxSize: PATH_CACHE_MAX_SIZE,
+          sizeCalculation: () => {
+            return 1
+          },
+        }), enumerable: false, configurable: true })
+      } else {
         const cached = interceptOpts._pathCache.get(rOptions.path)
-        // 移至末尾以维护 LRU 顺序（Map 按插入顺序迭代）
-        interceptOpts._pathCache.delete(rOptions.path)
-        interceptOpts._pathCache.set(rOptions.path, cached)
-        return cached
+        if (cached) {
+          return cached
+        }
       }
 
       const matchIntercepts = []
@@ -264,10 +268,6 @@ module.exports = (serverConfig) => {
       //   log.info('interceptor:', interceptor.name, 'priority:', interceptor.priority)
       // }
 
-      // 超出上限时逐出最久未使用（LRU）的条目，防止因大量唯一路径/query string 导致内存无界增长
-      if (interceptOpts._pathCache.size >= PATH_CACHE_MAX_SIZE) {
-        interceptOpts._pathCache.delete(interceptOpts._pathCache.keys().next().value)
-      }
       interceptOpts._pathCache.set(rOptions.path, matchIntercepts)
       return matchIntercepts
     },
