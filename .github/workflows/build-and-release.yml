@@ -415,11 +415,11 @@ jobs:
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.rpm"
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
-          path: release
+      #- name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
+      #  uses: actions/download-artifact@v4.1.8
+      #  with:
+      #    name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
+      #    path: release
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb"
         uses: actions/download-artifact@v4.1.8
@@ -441,11 +441,11 @@ jobs:
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm"
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak"
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak"
-          path: release
+      #- name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak"
+      #  uses: actions/download-artifact@v4.1.8
+      #  with:
+      #    name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak"
+      #    path: release
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb"
         uses: actions/download-artifact@v4.1.8
@@ -467,11 +467,11 @@ jobs:
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm"
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak"
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak"
-          path: release
+      #- name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak"
+      #  uses: actions/download-artifact@v4.1.8
+      #  with:
+      #    name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak"
+      #    path: release
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-macos-x86_64.dmg"
         uses: actions/download-artifact@v4.1.8
