@@ -1,5 +1,7 @@
 const fs = require('node:fs')
 const path = require('node:path')
+const crypto = require('node:crypto')
+const { promisify } = require('node:util')
 const _ = require('lodash')
 const forge = require('node-forge')
 const log = require('../../../utils/util.log.server')
@@ -8,6 +10,20 @@ const config = require('../common/config')
 
 const utils = exports
 const pki = forge.pki
+
+const _generateKeyPair = promisify(crypto.generateKeyPair)
+
+/**
+ * 使用 Node.js 原生 crypto 模块异步生成 RSA 密钥对（在 libuv 线程池中运行，不阻塞事件循环），
+ * 并将结果转换为 node-forge 格式。
+ */
+async function generateForgeRsaKeyPair () {
+  const { privateKey } = await _generateKeyPair('rsa', { modulusLength: 2048 })
+  const privateKeyDer = privateKey.export({ type: 'pkcs1', format: 'der' })
+  const forgePrivateKey = pki.privateKeyFromAsn1(forge.asn1.fromDer(forge.util.createBuffer(privateKeyDer)))
+  const forgePublicKey = pki.rsa.setPublicKey(forgePrivateKey.n, forgePrivateKey.e)
+  return { privateKey: forgePrivateKey, publicKey: forgePublicKey }
+}
 
 // const os = require('os')
 // let username = 'dev-sidecar'
@@ -73,7 +89,7 @@ utils.covertNodeCertToForgeCert = function (originCertificate) {
   return forge.pki.certificateFromAsn1(obj)
 }
 
-utils.createFakeCertificateByDomain = function (caKey, caCert, domain, mappingHostNames) {
+utils.createFakeCertificateByDomain = async function (caKey, caCert, domain, mappingHostNames) {
   // 作用域名
   const altNames = []
   mappingHostNames.forEach((mappingHostName) => {
@@ -83,7 +99,7 @@ utils.createFakeCertificateByDomain = function (caKey, caCert, domain, mappingHo
     })
   })
 
-  const keys = pki.rsa.generateKeyPair(2048)
+  const keys = await generateForgeRsaKeyPair()
   const cert = pki.createCertificate()
   cert.publicKey = keys.publicKey
 
@@ -156,10 +172,10 @@ utils.createFakeCertificateByDomain = function (caKey, caCert, domain, mappingHo
   }
 }
 
-utils.createFakeCertificateByCA = function (caKey, caCert, originCertificate) {
+utils.createFakeCertificateByCA = async function (caKey, caCert, originCertificate) {
   const certificate = utils.covertNodeCertToForgeCert(originCertificate)
 
-  const keys = pki.rsa.generateKeyPair(2048)
+  const keys = await generateForgeRsaKeyPair()
   const cert = pki.createCertificate()
   cert.publicKey = keys.publicKey
 
@@ -217,17 +233,22 @@ utils.createFakeCertificateByCA = function (caKey, caCert, originCertificate) {
 utils.isBrowserRequest = function (userAgent) {
   return /Mozilla/i.test(userAgent)
 }
+
 //
 //  /^[^.]+\.a\.com$/.test('c.a.com')
 //
+const mappingHostNameRegexpCache = {}
 utils.isMappingHostName = function (DNSName, hostname) {
   if (DNSName === hostname) {
     return true
   }
 
-  let reg = DNSName.replace(/\./g, '\\.').replace(/\*/g, '[^.]+')
-  reg = `^${reg}$`
-  return (new RegExp(reg)).test(hostname)
+  let regexp = mappingHostNameRegexpCache[DNSName]
+  if (!regexp) {
+    const regStr = `^${DNSName.replace(/\./g, '\\.').replace(/\*/g, '[^.]+')}$`
+    regexp = mappingHostNameRegexpCache[DNSName] = new RegExp(regStr)
+  }
+  return regexp.test(hostname)
 }
 
 utils.getMappingHostNamesFromCert = function (cert) {

@@ -266,15 +266,20 @@ const executor = {
         regKey.get('HTTPS_PROXY', (err) => {
           if (!err) {
             regKey.remove('HTTPS_PROXY', async (err) => {
-              log.warn('删除环境变量 HTTPS_PROXY 失败:', err)
-              await exec('setx DS_REFRESH "1"')
+              if (err) {
+                log.warn('删除环境变量 HTTPS_PROXY 失败:', err)
+              } else {
+                await exec('setx DS_REFRESH "1"')
+              }
             })
           }
         })
         regKey.get('HTTP_PROXY', (err) => {
           if (!err) {
             regKey.remove('HTTP_PROXY', async (err) => {
-              log.warn('删除环境变量 HTTP_PROXY 失败:', err)
+              if (err) {
+                log.warn('删除环境变量 HTTP_PROXY 失败:', err)
+              }
             })
           }
         })

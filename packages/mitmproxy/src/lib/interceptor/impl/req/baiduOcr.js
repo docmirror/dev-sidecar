@@ -47,7 +47,7 @@ function getConfig (interceptOpt, tryCount, log) {
   tryCount = tryCount || 1
 
   let config
-  if (typeof (interceptOpt.baiduOcr) && interceptOpt.baiduOcr.length > 0) {
+  if (Array.isArray(interceptOpt.baiduOcr) && interceptOpt.baiduOcr.length > 0) {
     config = interceptOpt.baiduOcr[count++ % interceptOpt.baiduOcr.length]
 
     if (tryCount < interceptOpt.baiduOcr.length) {

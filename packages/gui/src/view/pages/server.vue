@@ -28,6 +28,16 @@ export default {
           value: 'false',
         },
       ],
+      familyOptions: [
+        {
+          label: 'IPv4',
+          value: '4',
+        },
+        {
+          label: 'IPv6',
+          value: '6',
+        },
+      ],
     }
   },
   computed: {
@@ -83,31 +93,47 @@ export default {
     // dnsMapping
     initDnsMapping () {
       this.dnsMappings = []
+      const familyMapping = this.config.server.dns.familyMapping || {}
       for (const key in this.config.server.dns.mapping) {
         const value = this.config.server.dns.mapping[key]
         this.dnsMappings.push({
           key,
           value,
+          family: `${familyMapping[key] || '4'}`, // 转成字符串
         })
       }
     },
     submitDnsMappings () {
       const dnsMapping = {}
+      const familyMapping = {}
       for (const item of this.dnsMappings) {
         if (item.key) {
           const hostname = this.handleHostname(item.key)
           if (hostname) {
             dnsMapping[hostname] = item.value
+            if (item.family === '6' || (this.config.server.dns.familyMapping != null && this.config.server.dns.familyMapping[hostname] != null)) {
+              familyMapping[hostname] = item.family
+            }
           }
         }
       }
       this.config.server.dns.mapping = dnsMapping
+      this.config.server.dns.familyMapping = familyMapping
     },
     deleteDnsMapping (item, index) {
       this.dnsMappings.splice(index, 1)
     },
     addDnsMapping () {
-      this.dnsMappings.unshift({ key: '', value: 'quad9' })
+      let defaultDns
+      const dnsArr = ['quad9', 'safe360', 'aliyun']
+      for (const dnsName of dnsArr) {
+        if (this.config.server.dns.providers[dnsName]) {
+          defaultDns = dnsName
+          break
+        }
+      }
+
+      this.dnsMappings.unshift({ key: '', value: defaultDns, family: '4' })
       this.focusFirst(this.$refs.dnsMappings)
     },
 
@@ -324,7 +350,7 @@ export default {
                 <MockInput v-model="item.key" />
               </a-col>
               <a-col :span="5">
-                <a-select v-model="item.value" style="width:100%">
+                <a-select v-model="item.value" class="w100">
                   <a-select-option v-for="(item2) of whiteListOptions" :key="item2.value" :value="item2.value">
                     {{ item2.label }}
                   </a-select-option>
@@ -378,13 +404,20 @@ export default {
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of dnsMappings" ref="dnsMappings" :key="index" :gutter="10" style="margin-top: 5px">
-              <a-col :span="15">
+              <a-col :span="11">
                 <MockInput v-model="item.key" />
               </a-col>
               <a-col :span="6">
-                <a-select v-model="item.value" :disabled="item.value === false" style="width: 100%">
-                  <a-select-option v-for="(item) of speedDnsOptions" :key="item.value" :value="item.value">
-                    {{ item.value }}
+                <a-select v-model="item.value" :disabled="item.value === false" class="w100">
+                  <a-select-option v-for="(item2) of speedDnsOptions" :key="item2.value" :value="item2.value">
+                    {{ item2.value }}
+                  </a-select-option>
+                </a-select>
+              </a-col>
+              <a-col :span="4">
+                <a-select v-model="item.family" class="w100">
+                  <a-select-option v-for="(item2) of familyOptions" :key="item2.value" :value="item2.value">
+                    {{ item2.label }}
                   </a-select-option>
                 </a-select>
               </a-col>

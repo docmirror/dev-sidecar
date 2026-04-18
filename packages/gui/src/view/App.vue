@@ -9,9 +9,16 @@ export default {
   data () {
     return {
       locale: zhCN,
-      info: {},
+      info: {
+        configProfiles: {
+          internal: {},
+          sharedRemote: {},
+          personalRemote: {},
+        },
+      },
       menus: undefined,
       config: undefined,
+      configReadyPromise: null,
       hideSearchBar: true,
       searchBarIsFocused: false,
       searchBarInputKeyupTimeout: null,
@@ -25,9 +32,14 @@ export default {
       return colorTheme.value
     },
   },
-  mounted () {
-    let theme = this.config.app.theme
-    if (this.config.app.theme === 'system') {
+  async mounted () {
+    if (this.configReadyPromise) {
+      await this.configReadyPromise
+    } // 强制在mounted之前等待created里对配置的刷新完成，以避免mounted里对this.config.app的访问为空
+
+    const appConfig = (this.config && this.config.app) || (this.$global && this.$global.config && this.$global.config.app) || {} // this.$global.config 可能不是最新值，但它作为已有的配置用于兜底
+    let theme = appConfig.theme || 'dark' // TODO: 这里可能存在一个问题，就是如果用户在系统主题为dark的情况下，app.theme是system，那么colorTheme会被设置为dark，但如果用户在app运行时将系统主题切换为light，colorTheme就不会更新了。后续可以考虑监听系统主题变化事件来动态更新colorTheme。
+    if (appConfig.theme === 'system') {
       theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     }
 
@@ -35,7 +47,7 @@ export default {
   },
   created () {
     this.menus = createMenus(this)
-    this.refreshConfigAndInfo()
+    this.configReadyPromise = this.refreshConfigAndInfo()
     ipcRenderer.on('config.changed', this.onConfigChanged)
 
     ipcRenderer.on('search-bar', (_, message) => {
@@ -93,12 +105,27 @@ export default {
   },
   methods: {
     async refreshConfigAndInfo () {
-      this.config = await this.$api.config.get()
-      this.$global.config = this.config
-      this.info = await this.$api.info.get()
+      try {
+        const config = await this.$api.config.get()
+        if (config) {
+          this.config = config
+          this.$global.config = config
+        } else {
+          this.config = this.config || this.$global.config || {}
+        }
+      } catch (e) {
+        console.error('刷新配置出现异常：', e)
+        this.config = this.config || this.$global.config || {}
+      }
+
+      try {
+        this.info = await this.$api.info.get()
+      } catch (e) {
+        console.error('刷新信息出现异常：', e)
+      }
     },
-    onConfigChanged () {
-      this.refreshConfigAndInfo()
+    async onConfigChanged () {
+      await this.refreshConfigAndInfo()
     },
     getSearchBarInput () {
       return this.$refs.searchBar.$el.querySelector('input[type=text]')
@@ -188,45 +215,21 @@ export default {
           </a-layout-content>
           <a-layout-footer>
             <div class="footer">
-              <table style="margin: 0 auto">
-                <thead>
-                  <tr>
-                    <th>配置类型</th>
-                    <th>ID</th>
-                    <th>版本</th>
-                  </tr>
-                </thead>
-                <tr>
-                  <td>
-                    出厂自带
-                  </td>
-                  <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.internal && info.configProfiles.internal.id) || '-' }}</code>
-                  </td>
-                  <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.internal && info.configProfiles.internal.version) || '-' }}</code>
-                  </td>
-                </tr>
-                <tr>
-                  <td>共享远程</td>
-                  <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.sharedRemote && info.configProfiles.sharedRemote.id) || '-' }}</code>
-                  </td>
-                  <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.sharedRemote && info.configProfiles.sharedRemote.version) || '-' }}</code>
-                  </td>
-                </tr>
-                <tr>
-                  <td>个人远程</td>
-                  <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.personalRemote && info.configProfiles.personalRemote.id) || '-' }}</code>
-                  </td>
-                  <td>
-                    <code>{{ (info.configProfiles && info.configProfiles.personalRemote && info.configProfiles.personalRemote.version) || '-' }}</code>
-                  </td>
-                </tr>
-              </table>
-              ©2020-2026 docmirror.cn by <a @click="openExternal('https://github.com/greper')">Greper</a>, <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>, <a @click="openExternal('https://github.com/cute-omega')">CuteOmega</a>  <span>{{ info.version }}</span>
+              <div>
+                <label v-if="info.configProfiles.personalRemote.showLabel !== false">当前配置：</label>
+                <!-- 后端api里，id的回退值是''而version的回退值是0（因为version始终应该是一个Number），所以为了不显示一个零蛋，version在前端需要再做个回退为'' -->
+                <code>{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? ':' : '-' }}{{ info.configProfiles.internal.version || '' }}</code>
+                <code class="ml5">{{ info.configProfiles.sharedRemote.id }}{{ info.configProfiles.sharedRemote.id ? ':' : '-' }}{{ info.configProfiles.sharedRemote.version || '' }}</code>
+                <code class="ml5">{{ info.configProfiles.personalRemote.id }}{{ info.configProfiles.personalRemote.id ? ':' : '-' }}{{ info.configProfiles.personalRemote.version || '' }}</code>
+              </div>
+
+              <div class="mt5">
+                ©2020-2026 docmirror.cn by
+                <a @click="openExternal('https://github.com/greper')">Greper</a>,
+                <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>,
+                <a @click="openExternal('https://github.com/cute-omega')">CuteOmega</a>
+                <span class="ml5">{{ info.version }}</span>
+              </div>
             </div>
           </a-layout-footer>
         </a-layout>

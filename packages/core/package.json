@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "private": false,
   "description": "给开发者的加速代理工具",
   "author": "docmirror.cn",

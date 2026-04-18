@@ -17,8 +17,8 @@ const PipPlugin = function (context) {
     },
 
     async save (newConfig) {
-      await api.setVariables()
     },
+
     async getPipEnv () {
       const command = config.get().plugin.pip.setting.command
       let ret = await shell.exec([`${command} config list`], { type: 'cmd' })
@@ -30,10 +30,10 @@ const PipPlugin = function (context) {
           if (!line.startsWith('global')) {
             continue
           }
-          const key = line.substring(0, line.indexOf('='))
-          let value = line.substring(line.indexOf('=') + 1)
+          const key = line.substring(0, line.indexOf('=')).trim()
+          let value = line.substring(line.indexOf('=') + 1).trim()
           if (value.startsWith('\'')) {
-            value = value.startsWith(1, value.length - 1)
+            value = value.slice(1, -1)
           }
           vars[key] = value
         }
@@ -75,11 +75,9 @@ const PipPlugin = function (context) {
     },
 
     async setProxy (ip, port) {
-
     },
 
     async unsetProxy () {
-
     },
   }
   return api

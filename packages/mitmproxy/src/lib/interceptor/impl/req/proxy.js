@@ -1,5 +1,6 @@
-const url = require('node:url')
-const lodash = require('lodash')
+const URL = require('node:url')
+
+const PLACEHOLDER_RE = /\$\{[^}]+\}/g
 
 function replacePlaceholder0 (url, matched, pre) {
   if (matched) {
@@ -28,7 +29,7 @@ function replacePlaceholder (url, rOptions, pathMatched, hostnameMatched) {
 
     // 移除多余的占位符
     if (url.includes('${')) {
-      url = url.replace(/\$\{[^}]+\}/g, '')
+      url = url.replace(PLACEHOLDER_RE, '')
     }
   }
 
@@ -38,7 +39,7 @@ function replacePlaceholder (url, rOptions, pathMatched, hostnameMatched) {
 function buildTargetUrl (rOptions, urlConf, interceptOpt, matched, hostnameMatched) {
   let targetUrl
   if (interceptOpt && interceptOpt.replace) {
-    const regexp = new RegExp(interceptOpt.replace)
+    const regexp = interceptOpt.compiledRegexp || (interceptOpt.compiledRegexp = new RegExp(interceptOpt.replace))
     targetUrl = rOptions.path.replace(regexp, urlConf)
   } else if (urlConf.indexOf('http:') === 0 || urlConf.indexOf('https:') === 0) {
     targetUrl = urlConf
@@ -46,8 +47,8 @@ function buildTargetUrl (rOptions, urlConf, interceptOpt, matched, hostnameMatch
     let uri = rOptions.path
     if (uri.indexOf('http:') === 0 || uri.indexOf('https:') === 0) {
       // eslint-disable-next-line node/no-deprecated-api
-      const URL = url.parse(uri)
-      uri = URL.path
+      const urlObj = URL.parse(uri)
+      uri = urlObj.path
     }
     targetUrl = urlConf + uri
   }
@@ -67,16 +68,20 @@ function doProxy (proxyConf, rOptions, req, interceptOpt, matched, hostnameMatch
 
   // 替换rOptions的属性
   // eslint-disable-next-line node/no-deprecated-api
-  const URL = url.parse(proxyTarget)
-  rOptions.origional = lodash.cloneDeep(rOptions) // 备份原始请求参数
-  delete rOptions.origional.agent
-  delete rOptions.origional.headers
-  rOptions.protocol = URL.protocol
-  rOptions.hostname = URL.host
-  rOptions.host = URL.host
-  rOptions.headers.host = URL.host
-  rOptions.path = URL.path
-  if (URL.port == null) {
+  const urlObj = URL.parse(proxyTarget)
+
+  // 备份原始请求参数，不包含 agent 和 headers（agent 是共享单例，headers 在代理转发时会被改写）
+  const { agent: _agent, headers: _headers, ...original } = rOptions
+  rOptions.original = original
+
+  rOptions.protocol = urlObj.protocol
+  rOptions.hostname = urlObj.hostname
+  rOptions.host = urlObj.host
+  rOptions.headers.host = urlObj.host
+  rOptions.path = urlObj.path
+  if (urlObj.port) {
+    rOptions.port = Number.parseInt(urlObj.port)
+  } else {
     rOptions.port = rOptions.protocol === 'https:' ? 443 : 80
   }
 

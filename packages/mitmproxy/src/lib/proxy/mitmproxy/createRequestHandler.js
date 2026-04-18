@@ -11,6 +11,7 @@ const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
 const dnsLookup = require('./dnsLookup')
 
 const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
+const WWW_AUTH_HEADER_RE = /^www-authenticate$/i
 
 // create requestHandler function
 module.exports = function createRequestHandler (createIntercepts, middlewares, externalProxy, dnsConfig, setting, compatibleConfig) {
@@ -114,23 +115,23 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
 
           const isDnsIntercept = {}
           if (dnsConfig && dnsConfig.dnsMap) {
-            let dnsFamily = DnsUtil.getDNSAndFamily(dnsConfig, rOptions.hostname)
-            if (!dnsFamily && rOptions.servername) {
+            let dnsAndFamily = DnsUtil.getDNSAndFamily(dnsConfig, rOptions.hostname)
+            if (!dnsAndFamily && rOptions.servername) {
               const dns = dnsConfig.dnsMap.ForSNI
               if (dns) {
-                dnsFamily = { dns }
-                log.info(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}, 必须使用dns，现默认使用 '${dnsFamily.dnsName}' DNS.`)
+                dnsAndFamily = { dns }
+                log.info(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}, 必须使用dns，现默认使用 '${dnsAndFamily.dnsName}' DNS.`)
               } else {
                 log.warn(`域名 ${rOptions.hostname} 在dns中未配置，但使用了 sni: ${rOptions.servername}，然而DNS服务管理中，并未指定SNI默认使用的DNS。`)
               }
             }
-            if (dnsFamily) {
-              rOptions.lookup = dnsLookup.createLookupFunc(res, dnsFamily, 'request url', url, rOptions.port, isDnsIntercept)
-              if (dnsFamily.family === 6) {
-                rOptions.family = dnsFamily.family
+            if (dnsAndFamily) {
+              rOptions.lookup = dnsLookup.createLookupFunc(res, dnsAndFamily, 'request url', url, rOptions.port, isDnsIntercept)
+              if (dnsAndFamily.family === 6) {
+                rOptions.family = 6
               }
-              log.debug(`域名 ${rOptions.hostname} DNS: ${dnsFamily.dns.dnsName}`)
-              res.setHeader('DS-DNS', dnsFamily.dns.dnsName)
+              log.debug(`域名 ${rOptions.hostname} DNS: ${dnsAndFamily.dns.dnsName}, family: ${rOptions.family || 4}`)
+              res.setHeader('DS-DNS', dnsAndFamily.dns.dnsName)
             } else {
               log.info(`域名 ${rOptions.hostname} 在DNS中未配置`)
             }
@@ -145,7 +146,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           // log.debug('rOptions:', rOptions.hostname + rOptions.path, '\r\n', rOptions)
           // log.debug('agent:', rOptions.agent)
           // log.debug('agent.options:', rOptions.agent.options)
-          res.setHeader('DS-Proxy-Request', rOptions.hostname)
+          res.setHeader('DS-Proxy-Request', `${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`)
 
           // 自动兼容程序：2
           if (rOptions.agent) {
@@ -159,6 +160,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             }
           }
 
+          res.setHeader('DS-Proxy-Request-Family', rOptions.family || 4)
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const cost = Date.now() - start
             if (rOptions.protocol === 'https:') {
@@ -218,13 +220,13 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             const cost = Date.now() - start
             const errorMsg = `请求被取消: ${url}, cost: ${cost} ms`
             log.error(errorMsg, ', rOptions:', jsonApi.stringify2(rOptions))
-            proxyReq.abort()
+            proxyReq.destroy()
             if (res.writableEnded) {
               return
             }
             reject(new Error(errorMsg))
           })
-          req.on('error', (e, req, res) => {
+          req.on('error', (e) => {
             const cost = Date.now() - start
             log.error(`请求错误: ${url}, cost: ${cost} ms, error:`, e, ', rOptions:', jsonApi.stringify2(rOptions))
             reject(e)
@@ -312,7 +314,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
         Object.keys(proxyRes.headers).forEach((key) => {
           if (proxyRes.headers[key] !== undefined) {
             // https://github.com/nodejitsu/node-http-proxy/issues/362
-            if (/^www-authenticate$/i.test(key)) {
+            if (WWW_AUTH_HEADER_RE.test(key)) {
               if (proxyRes.headers[key]) {
                 proxyRes.headers[key] = proxyRes.headers[key] && proxyRes.headers[key].split(',')
               }
@@ -333,17 +335,24 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
         try {
           const status = e.status || 500
           res.writeHead(status, { 'Content-Type': 'text/html;charset=UTF8' })
-          res.write(`DevSidecar Error:<br/>
-目标网站请求错误：【${e.code}】 ${e.message}<br/>
-目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`,
+          res.write(`<style>
+            p {
+              margin: 10px 0;
+              color: white;
+              background-color: black;
+            }
+          </style>
+          <p>DevSidecar Error:</p>
+          <p>目标网站请求错误：【${e.code}】 ${e.message}</p>
+          <p>目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}</p>`,
           )
-        } catch (e) {
+        } catch {
           // do nothing
         }
 
         try {
           res.end()
-        } catch (e) {
+        } catch {
           // do nothing
         }
 

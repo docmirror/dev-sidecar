@@ -24,7 +24,6 @@ const Plugin = function (context) {
     },
 
     async save (newConfig) {
-
     },
 
     async setProxy (ip, port) {

@@ -178,7 +178,7 @@ export default {
                 <MockInput v-model="item.key" class="mt-2" />
               </a-col>
               <a-col :span="4">
-                <a-select v-model="item.value" style="width:100%">
+                <a-select v-model="item.value" class="w100">
                   <a-select-option v-for="(item2) of overwallOptions" :key="item2.value" :value="item2.value">
                     {{ item2.label }}
                   </a-select-option>

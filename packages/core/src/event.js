@@ -27,7 +27,7 @@ function unregister (id) {
     for (let i = 0; i < handlers.length; i++) {
       const handle = handlers[i]
       if (handle.id === id) {
-        handlers.splice(i)
+        handlers.splice(i, 1)
         return
       }
     }

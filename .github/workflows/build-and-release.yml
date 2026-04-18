@@ -241,7 +241,7 @@ jobs:
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x64.tar.gz      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.tar.gz;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.rpm;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.flatpak      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak;
+          # mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.flatpak      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak;
           #-------------------------------------------------------------------------------------------------------------------------
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage  DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage;
@@ -331,13 +331,13 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.rpm
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.rpm"
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
-        uses: actions/upload-artifact@v4.4.0
-        if: ${{ matrix.os == 'ubuntu' }}
-        with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
-          if-no-files-found: error
+      # - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
+      #   uses: actions/upload-artifact@v4.4.0
+      #   if: ${{ matrix.os == 'ubuntu' }}
+      #   with:
+      #     path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak
+      #     name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
+      #     if-no-files-found: error
 
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb"
@@ -501,11 +501,11 @@ jobs:
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.rpm"
           path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
-          path: release
+      #- name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
+      #  uses: actions/download-artifact@v4.1.8
+      #  with:
+      #    name: "DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak"
+      #    path: release
       # -------------------------------------------------------------------------------------------------------------------------
       - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb"
         uses: actions/download-artifact@v4.1.8

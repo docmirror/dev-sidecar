@@ -1,6 +1,7 @@
-const LRUCache = require('lru-cache')
+const { LRUCache } = require('lru-cache')
 const log = require('../../utils/util.log.server')
 const matchUtil = require('../../utils/util.match')
+const { isIPv6 } = require('./util.ip')
 const { DynamicChoice } = require('../choice/index')
 
 function mapToList (ipMap) {
@@ -34,16 +35,24 @@ class IpCache extends DynamicChoice {
 }
 
 module.exports = class BaseDNS {
-  constructor (dnsName, dnsType, cacheSize, preSetIpList) {
+  constructor (dnsServer, dnsFamily, dnsName, dnsType, cacheSize, preSetIpList) {
     this.dnsName = dnsName
     this.dnsType = dnsType
     this.preSetIpList = preSetIpList
+
     this.cache = new LRUCache({
       maxSize: (cacheSize > 0 ? cacheSize : defaultCacheSize),
       sizeCalculation: () => {
         return 1
       },
     })
+
+    if (!dnsServer) {
+      return
+    }
+    this.dnsServer = dnsServer
+    this.dnsFamily = Number.parseInt(dnsFamily) || (isIPv6(dnsServer) ? 6 : 4)
+    this.dnsFamily = this.dnsFamily === 6 ? 6 : 4 // 避免值错误
   }
 
   count (hostname, ip, isError = true) {
@@ -59,16 +68,26 @@ module.exports = class BaseDNS {
       if (ipCache) {
         const ip = ipCache.value
         if (ip != null) {
-          if (options.ipChecker && options.ipChecker(ip)) {
-            ipCache.doCount(ip, false)
-            return ip
+          if (options.ipChecker) {
+            if (options.ipChecker(ip)) {
+              ipCache.doCount(ip, false)
+              log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取IP地址缓存: ${hostname} -> ${ip}（测试通过）`)
+              return ip
+            } else {
+              log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取IP地址缓存: ${hostname} -> ${ip}（测试不通过）-> ${hostname}`)
+              return hostname
+            }
           } else {
-            return hostname
+            log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取IP地址缓存: ${hostname} -> ${ip}`)
+            return ip
           }
+        } else {
+          log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 未获取到IP地址缓存: ${hostname}`)
         }
       } else {
         ipCache = new IpCache(hostname)
         this.cache.set(hostname, ipCache)
+        log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 首次创建IP地址缓存区: ${hostname}`)
       }
 
       const t = Date.now()
@@ -128,8 +147,7 @@ module.exports = class BaseDNS {
   async _lookup (hostname, options = {}) {
     const start = Date.now()
 
-    options.family = options.family === 6 ? 6 : 4
-
+    options.family = Number.parseInt(options.family) === 6 ? 6 : 4
     const type = options.family === 6 ? 'AAAA' : 'A'
 
     let response

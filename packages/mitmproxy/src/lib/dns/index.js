@@ -1,4 +1,5 @@
 const matchUtil = require('../../utils/util.match')
+const ipUtil = require('./util.ip')
 const log = require('../../utils/util.log.server')
 const DNSOverPreSetIpList = require('./preset.js')
 const DNSOverHTTPS = require('./https.js')
@@ -41,6 +42,9 @@ module.exports = {
         type = type.replace(/\s+/, '').toLowerCase()
       }
 
+      // 获取DNS的Family值
+      const family = conf.family
+
       // 创建DNS对象
       if (type === 'https' || type === 'doh' || type === 'dns-over-https') {
         if (!server.includes('/')) {
@@ -48,7 +52,7 @@ module.exports = {
         }
 
         // 基于 https
-        dnsMap[provider] = new DNSOverHTTPS(provider, conf.cacheSize, preSetIpList, server, conf.sni || conf.servername)
+        dnsMap[provider] = new DNSOverHTTPS(provider, conf.cacheSize, preSetIpList, server, family, conf.sni || conf.servername)
       } else {
         // 获取DNS端口
         let port = conf.port
@@ -59,18 +63,27 @@ module.exports = {
         }
         // 处理带端口的DNS服务地址
         if (port == null && server.includes(':')) {
-          [server, port] = server.split(':')
+          // 判断是否为IPv6并带端口号
+          if (server.includes(']:')) {
+            [server, port] = server.split(']:')
+            server = server.substring(1) // 移除第一个字符 `[`
+          } else if (!ipUtil.isIPv6(server)) {
+            [server, port] = server.split(':')
+          }
         }
+
+        // 去除host两边的中括号，因为可能是IPv6配置
+        server = server.replace(/[[\]]/g, '')
 
         if (type === 'tls' || type === 'dot' || type === 'dns-over-tls') {
           // 基于 tls
-          dnsMap[provider] = new DNSOverTLS(provider, conf.cacheSize, preSetIpList, server, port, conf.sni || conf.servername)
+          dnsMap[provider] = new DNSOverTLS(provider, conf.cacheSize, preSetIpList, server, port, family, conf.sni || conf.servername)
         } else if (type === 'tcp') {
           // 基于 tcp
-          dnsMap[provider] = new DNSOverTCP(provider, conf.cacheSize, preSetIpList, server, port)
+          dnsMap[provider] = new DNSOverTCP(provider, conf.cacheSize, preSetIpList, server, port, family)
         } else {
           // 基于 udp
-          dnsMap[provider] = new DNSOverUDP(provider, conf.cacheSize, preSetIpList, server, port)
+          dnsMap[provider] = new DNSOverUDP(provider, conf.cacheSize, preSetIpList, server, port, family)
         }
       }
 

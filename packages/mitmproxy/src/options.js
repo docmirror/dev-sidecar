@@ -35,7 +35,7 @@ function getExclusionArray (exclusions) {
   return ret
 }
 
-function handleDnsMapping (dnsMapping) {
+function handleDnsMapping (dnsMapping, familyMapping) {
   // 循环读取所有key value
   for (const hostname in dnsMapping) {
     const value = dnsMapping[hostname]
@@ -47,7 +47,7 @@ function handleDnsMapping (dnsMapping) {
     if (typeof value === 'string') {
       dnsMapping[hostname] = {
         dnsName: value,
-        family: hostname.includes('googlevideo.com') || hostname.includes('gvt1.com') ? 6 : null, // TODO: 暂时指定 googlevideo.com 使用IPv6
+        family: Number.parseInt(familyMapping[hostname]) === 6 ? 6 : 4,
       }
     } else if (value.dnsName == null) {
       log.warn(`域名 ${hostname} 的DNS配置有误，未配置dnsName，配置值：`, value)
@@ -63,7 +63,7 @@ module.exports = (serverConfig) => {
   const whiteList = matchUtil.domainMapRegexply(serverConfig.whiteList)
   const timeoutMapping = matchUtil.domainMapRegexply(serverConfig.setting.timeoutMapping)
 
-  const dnsMapping = handleDnsMapping(serverConfig.dns.mapping)
+  const dnsMapping = handleDnsMapping(serverConfig.dns.mapping, serverConfig.dns.familyMapping || {})
   const setting = serverConfig.setting
 
   if (!setting.script.dirAbsolutePath) {
@@ -114,6 +114,7 @@ module.exports = (serverConfig) => {
   const options = {
     host: serverConfig.host,
     port: serverConfig.port,
+    maxLength: serverConfig.fakeServerMaxLength,
     dnsConfig: {
       preSetIpList,
       dnsMap: dnsUtil.initDNS(serverConfig.dns.providers, preSetIpList),
@@ -155,6 +156,10 @@ module.exports = (serverConfig) => {
       const matchIntercepts = []
       const matchInterceptsOpts = {}
       for (const regexp in interceptOpts) { // 遍历拦截配置
+        // 跳过hostname匹配结果，它不是路径正则
+        if (regexp === 'matched') {
+          continue
+        }
         // 判断是否匹配拦截器
         const matched = matchUtil.isMatched(rOptions.path, regexp)
         if (matched == null) { // 拦截器匹配失败
@@ -226,7 +231,7 @@ module.exports = (serverConfig) => {
             }
             matchInterceptsOpts[impl.name] = {
               order: interceptOpt.order || 0,
-              index: matchIntercepts.length - 1,
+              index: action === 'replace' ? matchedInterceptOpt.index : matchIntercepts.length - 1,
             }
           }
         }

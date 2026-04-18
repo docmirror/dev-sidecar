@@ -16,7 +16,7 @@ function getDnsQuery ({ type, name, klass, id }) {
   }
 }
 
-function query ({ host, servername, type, name, klass, port, rejectUnauthorized, timeout }) {
+function query ({ host, servername, type, name, klass, port, family, rejectUnauthorized, timeout }) {
   return new Promise((resolve, reject) => {
     if (!host || !servername || !name) {
       throw new Error('At least host, servername and name must be set.')
@@ -26,7 +26,7 @@ function query ({ host, servername, type, name, klass, port, rejectUnauthorized,
     let packetLength = 0
     const dnsQuery = getDnsQuery({ id: randi(0x0, 0xFFFF), type, name, klass })
     const dnsQueryBuf = dnsPacket.streamEncode(dnsQuery)
-    const socket = tls_1.connect({ host, port, servername, rejectUnauthorized, timeout })
+    const socket = tls_1.connect({ host, port, servername, family: Number.parseInt(family) === 6 ? 6 : 4, rejectUnauthorized, timeout })
 
     // 超时处理
     let isFinished = false
@@ -54,6 +54,7 @@ function query ({ host, servername, type, name, klass, port, rejectUnauthorized,
         packetLength = data.readUInt16BE(0)
         if (packetLength < 12) {
           reject(new Error('Below DNS minimum packet length (DNS Header is 12 bytes)'))
+          return
         }
         response = Buffer.from(data)
       } else {

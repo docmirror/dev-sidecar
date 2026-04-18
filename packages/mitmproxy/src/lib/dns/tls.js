@@ -4,9 +4,8 @@ const BaseDNS = require('./base')
 const defaultPort = 853
 
 module.exports = class DNSOverTLS extends BaseDNS {
-  constructor (dnsName, cacheSize, preSetIpList, dnsServer, dnsServerPort, dnsServerName) {
-    super(dnsName, 'TLS', cacheSize, preSetIpList)
-    this.dnsServer = dnsServer.replace(/\s+/, '')
+  constructor (dnsName, cacheSize, preSetIpList, dnsServer, dnsServerPort, dnsFamily, dnsServerName) {
+    super(dnsServer.replace(/\s+/, ''), dnsFamily, dnsName, 'TLS', cacheSize, preSetIpList)
     this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort
     this.dnsServerName = dnsServerName
   }
@@ -16,6 +15,7 @@ module.exports = class DNSOverTLS extends BaseDNS {
       host: this.dnsServer,
       port: this.dnsServerPort,
       servername: this.dnsServerName || this.dnsServer,
+      family: this.dnsFamily,
       rejectUnauthorized: !this.dnsServerName,
 
       name: hostname,

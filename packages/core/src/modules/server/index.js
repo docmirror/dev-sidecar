@@ -130,31 +130,6 @@ const serverApi = {
   async close () {
     return await serverApi.kill()
   },
-  async close1 () {
-    return new Promise((resolve, reject) => {
-      if (server) {
-        // fireStatus('ing')// 关闭中
-        server.close((err) => {
-          if (err) {
-            log.warn('close error:', err)
-            if (err.code === 'ERR_SERVER_NOT_RUNNING') {
-              log.info('代理服务关闭成功')
-              resolve()
-              return
-            }
-            log.warn('代理服务关闭失败:', err)
-            reject(err)
-          } else {
-            log.info('代理服务关闭成功')
-            resolve()
-          }
-        })
-      } else {
-        log.info('server is null')
-        resolve()
-      }
-    })
-  },
   async restart ({ mitmproxyPath }) {
     await serverApi.kill()
     await serverApi.start({ mitmproxyPath })
