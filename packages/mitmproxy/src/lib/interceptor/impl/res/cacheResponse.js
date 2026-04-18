@@ -66,6 +66,7 @@ module.exports = {
 
     // 判断原max-age是否大于新max-age
     if (originalHeaders.cacheControl) {
+      // 注：MAX_AGE_RE 不含 /g 或 /y 标志，exec() 不会维护 lastIndex 状态，模块级常量安全
       const maxAgeMatch = MAX_AGE_RE.exec(originalHeaders.cacheControl.value)
       if (maxAgeMatch && Number.parseInt(maxAgeMatch[1]) > maxAge) {
         if (interceptOpt.cacheImmutable !== false && !originalHeaders.cacheControl.value.includes('immutable')) {
