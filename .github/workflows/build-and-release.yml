@@ -15,7 +15,7 @@ on:
 jobs:
   # job 1
   build-and-upload:
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os }}
     env:
       ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
       ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
@@ -23,10 +23,10 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - windows
-          - ubuntu
+          - windows-latest
+          - ubuntu-latest
           # - ubuntu-24.04-arm
-          - macos
+          - macos-latest
         node:
           - 22
     steps:
