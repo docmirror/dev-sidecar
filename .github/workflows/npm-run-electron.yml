@@ -26,7 +26,7 @@ jobs:
         os:
           - windows
           - ubuntu
-          - ubuntu-24.04-arm
+          # - ubuntu-24.04-arm # 因难以申请到 ARM64 runner而放弃；注意该系统名称不应使用latest后缀
           - macos
         node:
           - 22

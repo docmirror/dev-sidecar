@@ -15,7 +15,7 @@ on:
 jobs:
   # job 1
   build-and-upload:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
     env:
       ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
       ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
@@ -23,10 +23,10 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - windows-latest
-          - ubuntu-latest
-          # - ubuntu-24.04-arm
-          - macos-latest
+          - windows
+          - ubuntu
+          # - ubuntu-24.04-arm # 因难以申请到 ARM64 runner而放弃；注意该系统名称不应使用latest后缀
+          - macos
         node:
           - 22
     steps:
