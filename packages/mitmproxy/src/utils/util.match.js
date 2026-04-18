@@ -97,8 +97,7 @@ function matchHostname (hostMap, hostname, action) {
   // 实际流量中唯一域名数量有限，不会造成内存问题。
   if (!hostMap._cache) {
     Object.defineProperty(hostMap, '_cache', { value: new Map(), enumerable: false, configurable: true })
-  }
-  if (hostMap._cache.has(hostname)) {
+  } else if (hostMap._cache.has(hostname)) {
     return hostMap._cache.get(hostname)
   }
 
@@ -180,8 +179,7 @@ function matchHostnameAll (hostMap, hostname, action) {
   // 缓存也记录"未匹配"结果（undefined），避免高频未匹配域名每次仍触发全量正则扫描和 merge。
   if (!hostMap._cacheAll) {
     Object.defineProperty(hostMap, '_cacheAll', { value: new Map(), enumerable: false, configurable: true })
-  }
-  if (hostMap._cacheAll.has(hostname)) {
+  } else if (hostMap._cacheAll.has(hostname)) {
     return hostMap._cacheAll.get(hostname)
   }
 
