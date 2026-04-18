@@ -1,5 +1,7 @@
 const URL = require('node:url')
 
+const PLACEHOLDER_RE = /\$\{[^}]+\}/g
+
 function replacePlaceholder0 (url, matched, pre) {
   if (matched) {
     for (let i = 0; i < matched.length; i++) {
@@ -27,7 +29,7 @@ function replacePlaceholder (url, rOptions, pathMatched, hostnameMatched) {
 
     // 移除多余的占位符
     if (url.includes('${')) {
-      url = url.replace(/\$\{[^}]+\}/g, '')
+      url = url.replace(PLACEHOLDER_RE, '')
     }
   }
 
