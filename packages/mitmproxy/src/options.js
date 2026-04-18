@@ -1,7 +1,7 @@
 const fs = require('node:fs')
 const path = require('node:path')
 const lodash = require('lodash')
-const LRUCache = require('lru-cache')
+const { LRUCache } = require('lru-cache')
 const dnsUtil = require('./lib/dns')
 const interceptorImpls = require('./lib/interceptor')
 const scriptInterceptor = require('./lib/interceptor/impl/res/script')
@@ -164,12 +164,13 @@ module.exports = (serverConfig) => {
       // 注：缓存 key 使用完整路径（含 query string），以保证正则捕获组（matched）的正确性
       // 注：采用 LRU 淘汰策略，上限为 PATH_CACHE_MAX_SIZE 条；利用 Map 按插入顺序迭代的特性，命中时删除后重新插入以更新位置
       if (!interceptOpts._pathCache) {
-        Object.defineProperty(interceptOpts, '_pathCache', { value: new LRUCache({
+        const cache = new LRUCache({
           maxSize: PATH_CACHE_MAX_SIZE,
           sizeCalculation: () => {
             return 1
           },
-        }), enumerable: false, configurable: true })
+        })
+        Object.defineProperty(interceptOpts, '_pathCache', { value: cache, enumerable: false, configurable: true })
       } else {
         const cached = interceptOpts._pathCache.get(rOptions.path)
         if (cached) {
