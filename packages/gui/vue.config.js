@@ -75,7 +75,7 @@ module.exports = defineConfig({
         productName: 'dev-sidecar',
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: 'DevSidecar-${version}-${arch}.${ext}',
-        copyright: 'Copyright © 2020-2026 Greper, WangLiang, CuteOmega',
+        copyright: 'Copyright © 2020-' + new Date().getFullYear() + ' Greper, WangLiang, CuteOmega',
         nsis: {
           oneClick: false,
           perMachine: true,
