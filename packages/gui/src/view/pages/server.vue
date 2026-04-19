@@ -23,6 +23,7 @@ export default defineComponent({
       dnsMappings: [],
       speedTestList: [],
       whiteList: [],
+      speedRefreshInterval: null,
       whiteListOptions: [
         {
           label: '不代理',
@@ -205,13 +206,18 @@ export default defineComponent({
         }
       }
       this.$api.ipc.on('speed', listener)
-      const interval = this.startSpeedRefreshInterval()
+      this.speedRefreshInterval = this.startSpeedRefreshInterval()
       this.reloadAllSpeedTester()
 
-      this.$once('hook:beforeUnmount', () => {
-        clearInterval(interval)
-        this.$api.ipc.removeAllListeners('speed')
-      })
+      // Vue 3 中 this.$once 已被移除，使用 beforeUnmount 钩子
+    },
+
+    beforeUnmount () {
+      // 清理事件监听器
+      this.$api.ipc.removeAllListeners('speed')
+      if (this.speedRefreshInterval) {
+        clearInterval(this.speedRefreshInterval)
+      }
     },
     async reloadAllSpeedTester () {
       this.$api.server.getSpeedTestList()

@@ -34,7 +34,7 @@
     "request-progress": "^3.0.0",
     "sass": "^1.99.0",
     "sass-loader": "^16.0.7",
-    "vue": "^3.3.13",
+    "vue": "^3.5.32",
     "vue-json-editor-fix-cn": "^1.4.3",
     "vue-router": "^4.0.8",
     "tiny-emitter": "^2.1.0",

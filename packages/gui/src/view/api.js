@@ -7,10 +7,13 @@ let apiObj = null
 export function apiInit (app) {
   const invoke = (api, args) => {
     return ipcRenderer.invoke('apiInvoke', [api, args]).catch((e) => {
-      app.$notification.error({
-        message: 'Api invoke error',
-        description: e.message,
-      })
+      if (app && app.$notification) {
+        app.$notification.error({
+          message: 'Api invoke error',
+          description: e.message,
+        })
+      }
+      throw e
     })
   }
   const send = (channel, message) => {

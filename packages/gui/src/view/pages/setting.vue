@@ -387,7 +387,7 @@ export default {
       </a-form-item>
       <hr>
       <a-form-item label="主题设置" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.theme" default-value="light" button-style="solid">
+        <a-radio-group v-model:value="config.app.theme" default-value="light" button-style="solid">
           <a-radio-button value="light" title="light">
             亮色
           </a-radio-button>
@@ -510,7 +510,7 @@ export default {
         </div>
       </a-form-item>
     </div>
-    <template slot="footer">
+ 
       <div class="footer-bar">
         <a-button :loading="removeUserConfigLoading" class="mr10" icon="sync" @click="restoreFactorySettings()">
           恢复出厂设置
@@ -522,6 +522,6 @@ export default {
           应用
         </a-button>
       </div>
-    </template>
+
   </ds-container>
 </template>
