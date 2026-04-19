@@ -400,7 +400,7 @@ export default {
         </a-radio-group>
       </a-form-item>
       <a-form-item label="首页提示" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.showShutdownTip" default-value="true" button-style="solid">
+        <a-radio-group v-model:value="config.app.showShutdownTip" default-value="true" button-style="solid">
           <a-radio-button :value="true">
             显示
           </a-radio-button>
@@ -413,7 +413,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item v-if="!isLinux()" label="关闭策略" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.closeStrategy" default-value="0" button-style="solid">
+        <a-radio-group v-model:value="config.app.closeStrategy" default-value="0" button-style="solid">
           <a-radio-button :value="0">
             弹出提示
           </a-radio-button>
@@ -436,7 +436,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="启动时窗口状态" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.startShowWindow" default-value="true" button-style="solid">
+        <a-radio-group v-model:value="config.app.startShowWindow" default-value="true" button-style="solid">
           <a-radio-button :value="true">
             打开窗口
           </a-radio-button>
@@ -454,7 +454,7 @@ export default {
       </a-form-item>
       <hr>
       <a-form-item label="自动检查更新" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.autoChecked" default-value="light" button-style="solid">
+        <a-radio-group v-model:value="config.app.autoChecked" default-value="light" button-style="solid">
           <a-radio-button :value="true">
             开启
           </a-radio-button>
@@ -467,7 +467,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="忽略预发布版本" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.skipPreRelease" default-value="light" button-style="solid">
+        <a-radio-group v-model:value="config.app.skipPreRelease" default-value="light" button-style="solid">
           <a-radio-button :value="true">
             忽略
           </a-radio-button>
