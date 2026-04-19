@@ -37,10 +37,10 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - windows-latest
-          - ubuntu-latest
+          - windows
+          - ubuntu
           # - ubuntu-24.04-arm # 因难以申请到 ARM64 runner而放弃；注意该系统名称不应使用latest后缀
-          - macos-latest
+          - macos
         node:
           - 22
     steps:
