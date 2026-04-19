@@ -106,7 +106,7 @@ export default defineComponent({
           </div>
         </a-form-item>
         <a-form-item label="yarn镜像仓库" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-radio-group v-model="config.plugin.node.setting.yarnRegistry" default-value="null" button-style="solid" @change="onSwitchYarnRegistry">
+          <a-radio-group v-model:value="config.plugin.node.setting.yarnRegistry" default-value="null" button-style="solid" @change="onSwitchYarnRegistry">
             <a-radio-button value="default" title="https://registry.yarnpkg.com">
               yarn原生
             </a-radio-button>

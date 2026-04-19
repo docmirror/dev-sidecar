@@ -48,10 +48,10 @@ export default defineComponent({
     afterVisibleChange (val) {
     },
     showDrawer () {
-      this.$emit('update:visible', true)
+      this.$emit('update:open', true)
     },
     onClose () {
-      this.$emit('update:visible', false)
+      this.$emit('update:open', false)
     },
     async doSetup () {
       this.$emit('setup')
@@ -67,8 +67,8 @@ export default defineComponent({
   <a-drawer
     placement="right"
     :closable="false"
-    :visible="visible"
-    :after-visible-change="afterVisibleChange"
+    :open="visible"
+    @after-visible-change="afterVisibleChange"
     width="660px"
     height="100%"
     :slots="{ title: 'title' }"

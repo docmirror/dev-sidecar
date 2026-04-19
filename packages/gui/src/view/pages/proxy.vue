@@ -204,7 +204,7 @@ export default defineComponent({
     <a-drawer
       placement="right"
       :closable="false"
-      v-model:visible="loopbackVisible"
+      v-model:open="loopbackVisible"
       width="660px"
       height="100%"
       :slots="{ title: 'title' }"

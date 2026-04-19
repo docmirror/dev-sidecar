@@ -59,9 +59,9 @@ export default {
   async created () {
     await this.doCheckRootCa()
     await this.reloadConfig()
-    this.$set(this, 'status', this.$status)
+    this.status = this.$status
     this.switchBtns = this.createSwitchBtns()
-    this.$set(this, 'update', this.$global.update)
+    this.update = this.$global.update
     if (!this.update.autoChecked && this.config.app.autoChecked) {
       this.update.autoChecked = true // 应用启动时，执行一次
       this.doCheckUpdate(false)
@@ -147,7 +147,7 @@ export default {
       // 删除noTip数据
       // delete rootCa.noTip
 
-      this.$set(this, 'setting', this.setting)
+      this.setting = this.setting
       this.$api.setting.save(this.setting)
     },
     reloadConfig () {
@@ -268,7 +268,7 @@ export default {
     <div class="box">
       <a-alert v-if="config && config.app.showShutdownTip" message="本应用开启后会修改系统代理，直接重启电脑可能会无法上网，您可以再次启动本应用即可恢复。如您需要卸载，在卸载前请务必完全退出本应用再进行卸载" banner closable @close="onShutdownTipClose" />
       <div v-if="config && config.app" class="mode-bar" style="margin:20px;">
-        <a-radio-group v-model="config.app.mode" button-style="solid" @change="modeChange">
+        <a-radio-group v-model:value="config.app.mode" button-style="solid" @change="modeChange">
           <a-tooltip placement="topLeft" title="启用测速，关闭拦截，关闭增强（不稳定，不需要安装证书，最安全）">
             <a-radio-button value="safe">
               安全模式
@@ -325,7 +325,7 @@ export default {
       </div>
     </div>
 
-    <SetupCa title="安装证书" :visible.sync="setupCa.visible" @setup="handleCaSetuped" />
+    <SetupCa title="安装证书" v-model:open="setupCa.visible" @setup="handleCaSetuped" />
     <div slot="footer">
       <div v-if="!setting.overwall" class="star">
         <div class="donate">

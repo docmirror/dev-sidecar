@@ -10,7 +10,7 @@ function install (app, api) {
     function onCheckChange (event) {
       doSave = event.target.checked
     }
-    app.$confirm({
+    app.config.globalProperties.$confirm({
       title: '关闭策略',
       content: (h) => (
         <div>

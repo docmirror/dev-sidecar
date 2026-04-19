@@ -208,7 +208,7 @@ export default defineComponent({
       const interval = this.startSpeedRefreshInterval()
       this.reloadAllSpeedTester()
 
-      this.$once('hook:beforeDestroy', () => {
+      this.$once('hook:beforeUnmount', () => {
         clearInterval(interval)
         this.$api.ipc.removeAllListeners('speed')
       })

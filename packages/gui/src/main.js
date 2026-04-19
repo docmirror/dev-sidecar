@@ -1,6 +1,6 @@
 import antd from 'ant-design-vue'
 import { createApp, h } from 'vue';
-import VueRouter, { createRouter } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import { ipcRenderer } from 'electron'
 import view from './view'
 import App from './view/App.vue'
@@ -25,15 +25,15 @@ try {
   // 3. 创建 router 实例，然后传 `routes` 配置
   // 你还可以传别的配置参数, 不过先这么简单着吧。
   const router = createRouter({
+    history: createWebHashHistory(),
     routes, // (缩写) 相当于 routes: routes
   })
   const app = createApp({
-    router,
     render: () => h(App),
   })
   
   app.use(antd)
-  app.use(VueRouter)
+  app.use(router)
   app.component('DsContainer', DsContainer)
   
   view.initApi(app).then(async (api) => {
@@ -49,13 +49,13 @@ try {
   })
 
   // fix vue-router NavigationDuplicated
-  const VueRouterPush = VueRouter.prototype.push
-  VueRouter.prototype.push = function push (location) {
-    return VueRouterPush.call(this, location).catch(err => err)
+  const originalPush = router.push
+  router.push = function push (location) {
+    return originalPush.call(this, location).catch(err => err)
   }
-  const VueRouterReplace = VueRouter.prototype.replace
-  VueRouter.prototype.replace = function replace (location) {
-    return VueRouterReplace.call(this, location).catch(err => err)
+  const originalReplace = router.replace
+  router.replace = function replace (location) {
+    return originalReplace.call(this, location).catch(err => err)
   }
 
   console.info('main.js finished')
