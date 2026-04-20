@@ -138,6 +138,11 @@ module.exports = {
     // log.info(`urlPath: ${urlPath}, fileName: ${filename}, script: ${script}`)
 
     log.info('ds_script, filename:', filename, ', `script != null` =', script != null)
+    if (script == null) {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' })
+      res.end(`DevSidecar: script '${filename}' not found`)
+      return true
+    }
     const now = new Date()
     res.writeHead(200, {
       'DS-Middleware': 'ds_script',

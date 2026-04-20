@@ -72,7 +72,13 @@ module.exports = class DNSOverTCP extends BaseDNS {
         }
 
         if (response.length >= packetLength + DNS_LENGTH_PREFIX_SIZE) {
-          finish(() => resolve(dnsPacket.decode(response.subarray(DNS_LENGTH_PREFIX_SIZE, DNS_LENGTH_PREFIX_SIZE + packetLength))))
+          finish(() => {
+            try {
+              resolve(dnsPacket.decode(response.subarray(DNS_LENGTH_PREFIX_SIZE, DNS_LENGTH_PREFIX_SIZE + packetLength)))
+            } catch (e) {
+              reject(e)
+            }
+          })
         }
       })
 

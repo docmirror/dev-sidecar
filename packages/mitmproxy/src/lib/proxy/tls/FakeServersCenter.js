@@ -176,7 +176,7 @@ module.exports = class FakeServersCenter {
 
           // 自动兼容程序：1
           if (port !== 443 && port !== 80) {
-            if (ssl === true && err.code.indexOf('ERR_SSL_') === 0) {
+            if (ssl === true && err.code && err.code.startsWith('ERR_SSL_')) {
               compatible.setConnectSsl(hostname, port, false)
               log.error(`自动兼容程序：SSL异常，现设置为禁用ssl: ${hostname}:${port}, ssl = false`)
             } else if (ssl === false && err.code === 'HPE_INVALID_METHOD') {
