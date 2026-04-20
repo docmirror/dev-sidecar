@@ -46,20 +46,25 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
         clearTimeout(timeoutId)
       }
 
-      if (response.length === 0) {
-        packetLength = data.readUInt16BE(0)
+      response = Buffer.concat([response, data])
+
+      // 等待至少 2 字节的长度头到达后再读取报文长度
+      if (packetLength === 0) {
+        if (response.length < TWO_BYTES) {
+          return // 等待更多数据
+        }
+        packetLength = response.readUInt16BE(0)
         if (packetLength < 12) {
+          socket.destroy()
           reject(new Error('Below DNS minimum packet length (DNS Header is 12 bytes)'))
           return
         }
-        response = Buffer.from(data)
-      } else {
-        response = Buffer.concat([response, data])
       }
 
-      if (response.length === packetLength + TWO_BYTES) {
+      // 使用 >= 代替 === ：防止极端情况下数据量超过预期时 Promise 永远不 resolve
+      if (response.length >= packetLength + TWO_BYTES) {
         socket.destroy()
-        resolve(dnsPacket.streamDecode(response))
+        resolve(dnsPacket.streamDecode(response.subarray(0, packetLength + TWO_BYTES)))
       }
     })
     socket.on('error', (err) => {
