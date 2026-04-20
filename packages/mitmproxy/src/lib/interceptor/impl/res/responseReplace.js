@@ -80,8 +80,7 @@ module.exports = {
 
     let actions = ''
 
-    // 浅拷贝配置中的 headers，避免将请求级数据（content-disposition 等）写入共享的拦截器配置对象，
-    // 同时防止 replaceResponseHeaders 内部的 key 规范化和 delete 操作污染共享配置（Bug：会导致第一次请求后配置被清空）。
+    // 浅拷贝配置中的 headers
     const replaceHeaders = { ...(responseReplaceConfig.headers || {}) }
 
     // 处理文件下载请求
