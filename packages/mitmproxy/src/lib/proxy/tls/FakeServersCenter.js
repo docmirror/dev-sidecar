@@ -106,7 +106,7 @@ module.exports = class FakeServersCenter {
       mappingHostNames,
     }
 
-    const promise = new Promise((resolve, _reject) => {
+    const promise = new Promise((resolve, reject) => {
       (async () => {
         let fakeServer
         let cert
@@ -140,6 +140,8 @@ module.exports = class FakeServersCenter {
         }
         serverPromiseObj.serverObj = serverObj
 
+        let isListening = false
+
         const printDebugLog = process.env.NODE_ENV === 'development' && false // 开发过程中，如有需要可以将此参数临时改为true，打印所有事件的日志
         fakeServer.listen(0, () => {
           const address = fakeServer.address()
@@ -152,6 +154,7 @@ module.exports = class FakeServersCenter {
           this.requestHandler(req, res, ssl)
         })
         fakeServer.on('listening', () => {
+          isListening = true
           if (printDebugLog) {
             log.debug(`【fakeServer listening - ${hostname}:${port}】no arguments...`)
           }
@@ -169,6 +172,9 @@ module.exports = class FakeServersCenter {
         // 三个 error 事件
         fakeServer.on('error', (e) => {
           log.error(`【fakeServer error - ${hostname}:${port}】\r\n----- error -----\r\n`, e)
+          if (!isListening) {
+            reject(e)
+          }
         })
         fakeServer.on('clientError', (err, _socket) => {
           // log.error(`【fakeServer clientError - ${hostname}:${port}】\r\n----- error -----\r\n`, err, '\r\n----- socket -----\r\n', socket)
@@ -230,7 +236,7 @@ module.exports = class FakeServersCenter {
             log.debug(`【fakeServer resumeSession - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- socket -----\r\n', socket, '\r\n----- head -----\r\n', head)
           })
         }
-      })()
+      })().catch(reject)
     })
 
     serverPromiseObj.promise = promise
