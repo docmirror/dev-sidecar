@@ -43,10 +43,6 @@ function getLastModifiedTimeFromIfModifiedSince (rOptions, log) {
   }
 
   // 优先尝试作为纯数字时间戳（毫秒）解析，避免 new Date() 将其当作无效日期而返回 NaN
-  // 注：new Date(x).getTime() 对无效字符串不会抛出异常，而是静默返回 NaN，catch块无法捕获。
-  // 注：HTTP 规范要求 If-Modified-Since 使用 HTTP-date 格式，纯数字属于非标准用法；
-  //     此处将其视为毫秒级时间戳（与 Date.now() 量纲一致）处理。
-  //     若客户端发来的是秒级时间戳，passTime ≈ Date.now() >> maxAge*1000 → 视为已过期 → 安全回退。
   if (PURE_NUMBER_RE.test(lastModified)) {
     return Number.parseInt(lastModified, 10)
   }
@@ -57,6 +53,7 @@ function getLastModifiedTimeFromIfModifiedSince (rOptions, log) {
     log.warn(`cache intercept: 解析 if-modified-since 失败: '${lastModified}'`)
     return null
   }
+
   return time
 }
 
