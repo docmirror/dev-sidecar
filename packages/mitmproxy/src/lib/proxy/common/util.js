@@ -35,7 +35,7 @@ function createHttpsAgent (timeoutConfig, verifySsl) {
 
     // 证书回调函数
     const checkServerIdentity = (host, cert) => {
-      log.info(`checkServerIdentity: ${host}, CN: ${cert.subject.CN}, C: ${cert.subject.C || cert.issuer.C}, ST: ${cert.subject.ST || cert.issuer.ST}, bits: ${cert.bits}`)
+      log.debug(`checkServerIdentity: ${host}, CN: ${cert.subject.CN}, C: ${cert.subject.C || cert.issuer.C}, ST: ${cert.subject.ST || cert.issuer.ST}, bits: ${cert.bits}`)
     }
 
     const agent = new HttpsAgent({

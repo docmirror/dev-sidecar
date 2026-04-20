@@ -18,7 +18,7 @@ class ChoiceCache {
   }
 
   getOrCreate (key, backupList) {
-    log.info('get counter:', key)
+    log.debug('get counter:', key)
     let item = this.cache.get(key)
     if (item == null) {
       item = new DynamicChoice(key)
@@ -116,8 +116,8 @@ class DynamicChoice {
       // 总次数+1
       count.total++
     }
-    // 计算成功率
-    count.successRate = 1.0 - (count.error / count.total)
+    // 计算成功率：total 为成功次数，error 为失败次数，successRate = 成功次数 / 总次数
+    count.successRate = (count.total + count.error) > 0 ? count.total / (count.total + count.error) : 1
     if (isError && this.value === ip) {
       // 连续错误3次，切换下一个
       if (count.keepErrorCount >= 3) {
