@@ -5,6 +5,8 @@ const randi = require('random-int')
 const BaseDNS = require('./base')
 
 const defaultPort = 53 // TCP类型的DNS服务默认端口号
+const DNS_QUERY_TIMEOUT_MS = 5000 // DNS 查询的默认超时时间（毫秒）
+const DNS_LENGTH_PREFIX_SIZE = 2 // TCP DNS 帧的前 2 字节为报文长度
 
 module.exports = class DNSOverTCP extends BaseDNS {
   constructor (dnsName, cacheSize, preSetIpList, dnsServer, dnsServerPort, dnsFamily) {
@@ -27,7 +29,6 @@ module.exports = class DNSOverTCP extends BaseDNS {
 
       let isFinished = false
       let timeoutId = null
-      const DNS_QUERY_TIMEOUT_MS = 5000
 
       function finish (fn) {
         if (isFinished) {
@@ -59,7 +60,6 @@ module.exports = class DNSOverTCP extends BaseDNS {
       // DNS-over-TCP 响应头含 2 字节长度，之后的完整报文可能跨多个 TCP 分片到达，需要累积数据。
       let response = Buffer.alloc(0)
       let packetLength = 0
-      const DNS_LENGTH_PREFIX_SIZE = 2 // TCP DNS 帧的前 2 字节为报文长度
 
       tcpClient.on('data', (data) => {
         response = Buffer.concat([response, data])
