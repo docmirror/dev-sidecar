@@ -1,0 +1,92 @@
+name: "Publish To AUR"
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Package version to publish (e.g. 2.0.2). Leave empty to use the latest release tag."
+        required: false
+        type: string
+
+jobs:
+  publish-to-aur:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4.1.7
+
+      # ── Resolve version ──────────────────────────────────────────────────────
+      - name: "Resolve version"
+        id: version
+        run: |
+          if [[ -n "${{ inputs.version }}" ]]; then
+            VERSION="${{ inputs.version }}"
+          else
+            # Strip leading 'v' from the release tag (e.g. v2.0.2 → 2.0.2)
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: ${VERSION}"
+
+      # ── Download release assets and compute SHA256 checksums ─────────────────
+      - name: "Download Linux x86_64 tar.gz and compute SHA256"
+        id: sha256_x86_64
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          URL="https://github.com/docmirror/dev-sidecar/releases/download/v${VERSION}/DevSidecar-${VERSION}-linux-x86_64.tar.gz"
+          echo "Downloading: ${URL}"
+          curl -fsSL -o /tmp/dev-sidecar-x86_64.tar.gz "${URL}"
+          SHA256=$(sha256sum /tmp/dev-sidecar-x86_64.tar.gz | awk '{print $1}')
+          echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
+          echo "x86_64 SHA256: ${SHA256}"
+
+      - name: "Download Linux aarch64 tar.gz and compute SHA256"
+        id: sha256_aarch64
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          URL="https://github.com/docmirror/dev-sidecar/releases/download/v${VERSION}/DevSidecar-${VERSION}-linux-arm64.tar.gz"
+          echo "Downloading: ${URL}"
+          curl -fsSL -o /tmp/dev-sidecar-aarch64.tar.gz "${URL}"
+          SHA256=$(sha256sum /tmp/dev-sidecar-aarch64.tar.gz | awk '{print $1}')
+          echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
+          echo "aarch64 SHA256: ${SHA256}"
+
+      # ── Update PKGBUILD ───────────────────────────────────────────────────────
+      - name: "Update PKGBUILD with new version and checksums"
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          SHA256_X86_64="${{ steps.sha256_x86_64.outputs.sha256 }}"
+          SHA256_AARCH64="${{ steps.sha256_aarch64.outputs.sha256 }}"
+
+          PKGBUILD="packages/aur/PKGBUILD"
+
+          # Update pkgver
+          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" "${PKGBUILD}"
+
+          # Reset pkgrel to 1 on every new upstream version
+          sed -i "s/^pkgrel=.*/pkgrel=1/" "${PKGBUILD}"
+
+          # Update checksums
+          sed -i "s/^sha256sums_x86_64=.*/sha256sums_x86_64=('${SHA256_X86_64}')/" "${PKGBUILD}"
+          sed -i "s/^sha256sums_aarch64=.*/sha256sums_aarch64=('${SHA256_AARCH64}')/" "${PKGBUILD}"
+
+          echo "======== Updated PKGBUILD ========"
+          cat "${PKGBUILD}"
+
+      # ── Push to AUR ───────────────────────────────────────────────────────────
+      - name: "Deploy to AUR"
+        uses: KSXGitHub/github-actions-deploy-aur@v2.7.2
+        with:
+          pkgname: dev-sidecar-bin
+          pkgbuild: packages/aur/PKGBUILD
+          commit_username: ${{ vars.AUR_USERNAME }}
+          commit_email: ${{ vars.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "Update to v${{ steps.version.outputs.version }}"
+          allow_empty_commits: false
+          force_push: true
