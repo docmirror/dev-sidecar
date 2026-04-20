@@ -192,7 +192,7 @@ module.exports = (serverConfig) => {
 
         // 获取拦截器
         const interceptOpt = interceptOpts[regexp]
-        // interceptOpt.key = regexp
+        interceptOpt.key = regexp // 供 proxy 拦截器用于构建 RequestCounter 的 key，写入的值与 regexp 恒等，写入是幂等的，不会影响共享配置的正确性
 
         // 添加exclusions字段，用于排除某些路径
         // @since 1.8.5
