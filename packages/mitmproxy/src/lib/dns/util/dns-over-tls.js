@@ -64,7 +64,11 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
       // 使用 >= 代替 === ：防止极端情况下数据量超过预期时 Promise 永远不 resolve
       if (response.length >= packetLength + TWO_BYTES) {
         socket.destroy()
-        resolve(dnsPacket.streamDecode(response.subarray(0, packetLength + TWO_BYTES)))
+        try {
+          resolve(dnsPacket.streamDecode(response.subarray(0, packetLength + TWO_BYTES)))
+        } catch (e) {
+          reject(e)
+        }
       }
     })
     socket.on('error', (err) => {
