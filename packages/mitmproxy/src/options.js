@@ -10,8 +10,8 @@ const log = require('./utils/util.log.server')
 const matchUtil = require('./utils/util.match')
 
 // 每个域名的路径级拦截器缓存的最大条数。
-// 对于使用 .* 路径模式的域名（如 api.github.com），每个唯一 URL（含不同 query string）都会生成独立的缓存条目；
-// 设置上限，超出后清空重建，防止长期运行时因 API 分页/唯一 token 等导致内存无界增长。
+// 对于使用 .* 路径模式的域名（如 api.github.com），每个唯一 URL（含不同 query string）都会生成独立的缓存条目。
+// 设置上限，超出后清空最久未使用的缓存，防止长期运行时因 API 分页/唯一 token 等导致内存无界增长。
 const PATH_CACHE_MAX_SIZE = 512
 
 // 处理拦截配置
@@ -159,8 +159,7 @@ module.exports = (serverConfig) => {
         return
       }
 
-      // 路径级缓存：同一 hostname+path 的拦截器列表是固定的，不必每次重新构建
-      // 注：interceptOpts 对象在代理启动后不会被修改，配置变更时会重启代理服务并重新创建此对象，因此无需缓存失效逻辑
+      // 获取缓存：同一 hostname+path 的拦截器列表是固定的，不必每次重新构建
       // 注：缓存 key 使用完整路径（含 query string），以保证正则捕获组（matched）的正确性
       // 注：采用 LRU 淘汰策略，上限为 PATH_CACHE_MAX_SIZE 条；利用 Map 按插入顺序迭代的特性，命中时删除后重新插入以更新位置
       if (!interceptOpts._pathCache) {
@@ -269,7 +268,9 @@ module.exports = (serverConfig) => {
       //   log.info('interceptor:', interceptor.name, 'priority:', interceptor.priority)
       // }
 
+      // 设置缓存
       interceptOpts._pathCache.set(rOptions.path, matchIntercepts)
+
       return matchIntercepts
     },
   }
