@@ -161,6 +161,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           }
 
           res.setHeader('DS-Proxy-Request-Family', rOptions.family || 4)
+          let isProxyReqOver = false
           proxyReq = (rOptions.protocol === 'https:' ? https : http).request(rOptions, (proxyRes) => {
             const cost = Date.now() - start
             if (rOptions.protocol === 'https:') {
@@ -183,6 +184,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             const errorMsg = `代理请求超时: ${url}, cost: ${cost} ms`
             log.error(errorMsg, ', rOptions:', jsonApi.stringify2(rOptions))
             countSlow(isDnsIntercept, `代理请求超时, cost: ${cost} ms`)
+            isProxyReqOver = true
             proxyReq.end()
             proxyReq.destroy()
             const error = new Error(errorMsg)
@@ -190,6 +192,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             reject(error)
           })
           proxyReq.on('error', (e) => {
+            if (isProxyReqOver) {
+              return // 忽略 proxyReq.destroy() 引发的后续 error 事件
+            }
+            isProxyReqOver = true
             const cost = Date.now() - start
             log.error(`代理请求错误: ${url}, cost: ${cost} ms, error:`, e, ', rOptions:', jsonApi.stringify2(rOptions))
             countSlow(isDnsIntercept, `代理请求错误: ${e.message}`)
@@ -220,6 +226,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             const cost = Date.now() - start
             const errorMsg = `请求被取消: ${url}, cost: ${cost} ms`
             log.error(errorMsg, ', rOptions:', jsonApi.stringify2(rOptions))
+            isProxyReqOver = true
             proxyReq.destroy()
             if (res.writableEnded) {
               return
