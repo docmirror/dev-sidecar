@@ -25,6 +25,20 @@ module.exports = class DNSOverTCP extends BaseDNS {
         }],
       })
 
+      let isFinished = false
+      let timeoutId = null
+      const DNS_QUERY_TIMEOUT_MS = 5000
+
+      function finish (fn) {
+        if (isFinished) {
+          return
+        }
+        isFinished = true
+        clearTimeout(timeoutId)
+        tcpClient.destroy()
+        fn()
+      }
+
       // --- TCP 查询 ---
       const tcpClient = net.createConnection({
         host: this.dnsServer,
@@ -37,16 +51,33 @@ module.exports = class DNSOverTCP extends BaseDNS {
         tcpClient.write(Buffer.concat([lengthBuffer, packet]))
       })
 
-      tcpClient.once('data', (data) => {
-        const length = data.readUInt16BE(0)
-        const response = dnsPacket.decode(data.subarray(2, 2 + length))
-        resolve(response)
-        tcpClient.end()
+      // 超时处理：base.js 也有 8s 外层超时，但不会销毁内层 TCP socket；这里提前清理，避免泄漏。
+      timeoutId = setTimeout(() => {
+        finish(() => reject(new Error('DNS查询超时')))
+      }, DNS_QUERY_TIMEOUT_MS)
+
+      // DNS-over-TCP 响应头含 2 字节长度，之后的完整报文可能跨多个 TCP 分片到达，需要累积数据。
+      let response = Buffer.alloc(0)
+      let packetLength = 0
+      const DNS_LENGTH_PREFIX_SIZE = 2 // TCP DNS 帧的前 2 字节为报文长度
+
+      tcpClient.on('data', (data) => {
+        response = Buffer.concat([response, data])
+
+        if (packetLength === 0) {
+          if (response.length < DNS_LENGTH_PREFIX_SIZE) {
+            return // 等待更多数据
+          }
+          packetLength = response.readUInt16BE(0)
+        }
+
+        if (response.length >= packetLength + DNS_LENGTH_PREFIX_SIZE) {
+          finish(() => resolve(dnsPacket.decode(response.subarray(DNS_LENGTH_PREFIX_SIZE, DNS_LENGTH_PREFIX_SIZE + packetLength))))
+        }
       })
 
       tcpClient.once('error', (err) => {
-        reject(err)
-        tcpClient.end()
+        finish(() => reject(err))
       })
     })
   }
