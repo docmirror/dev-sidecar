@@ -69,21 +69,20 @@ function getConfig (interceptOpt, tryCount, log) {
     return null // 没有配置或配置错误，直接返回null
   }
 
-  // 重置 config.api，防止上次调用的旧值残留导致 `if (config.api == null)` 判断失效：
-  // 若所有接口均已达限，下面的循环不会执行 `config.api = api`，此时 config.api 应保持 null。
-  config.api = null
-  // 获取当前配置可用的API
+  // 选择当前配置可用的API。
+  // 注意：不将结果写入共享的 config 对象，而是作为局部变量返回，避免并发请求互相覆盖。
+  let selectedApi = null
   for (let i = 0; i < apis.length; i++) {
     const api = apis[i]
     if (!checkIsLimitConfig(config.id, api)) {
-      config.api = api
+      selectedApi = api
       break
     }
     log.warn(`百度云账号 ${config.id} 的接口 ${api} 已超出限额`)
   }
 
   // 如果当前配置的所有API均不可用，则返回null
-  if (config.api == null) {
+  if (selectedApi == null) {
     if (tryCount == null) {
       return null // 只配置了一个账号，没有更多账号可以选择了，直接返回null
     } else {
@@ -96,7 +95,7 @@ function getConfig (interceptOpt, tryCount, log) {
     }
   }
 
-  return config
+  return { config, api: selectedApi }
 }
 
 function limitConfig (id, api) {
@@ -122,23 +121,21 @@ module.exports = {
       'Access-Control-Allow-Origin': '*',
     }
 
-    // 获取配置
-    const config = getConfig(interceptOpt, null, log)
-    if (!config) {
+    // 获取配置（api 由 getConfig 以局部变量形式返回，不写入共享配置对象，并发安全）
+    const configResult = getConfig(interceptOpt, null, log)
+    if (!configResult) {
       res.writeHead(200, headers)
       res.write('{"error_code": 99917, "error_msg": "dev-sidecar中，未配置百度云账号，或所有百度云账号的免费额度都已用完！！！"}')
       res.end()
       return true
     }
+    const { config, api } = configResult
     if (!config.id || !config.ak || !config.sk) {
       res.writeHead(200, headers)
       res.write('{"error_code": 999500, "error_msg": "dev-sidecar中，baiduOcr的 id 或 ak 或 sk 配置为空"}')
       res.end()
       return true
     }
-    // 在异步调用前，将 config.api 固定到局部变量中，防止并发请求的 getConfig() 在本次异步操作期间
-    // 重置并修改共享的 config.api，导致 .then() 回调中使用了错误的 API 名称来记录限额。
-    const api = config.api || apis[0]
 
     headers['DS-Interceptor'] = `baiduOcr: id=${config.id}, api=${api}, account=${config.account}`
 

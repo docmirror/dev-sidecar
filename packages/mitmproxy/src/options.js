@@ -192,7 +192,13 @@ module.exports = (serverConfig) => {
 
         // 获取拦截器
         const interceptOpt = interceptOpts[regexp]
-        interceptOpt.key = regexp // 供 proxy 拦截器用于构建 RequestCounter 的 key，写入的值与 regexp 恒等，写入是幂等的，不会影响共享配置的正确性
+        // `interceptOpt` 是从配置中解析出的共享对象（同一 hostname+path-regexp 下所有请求共用同一个引用）。
+        // 这里将 `regexp`（该拦截配置的路径模式，一个常量字符串）赋值给 `interceptOpt.key`，
+        // 供 proxy 拦截器用于构建 RequestCounter 的 key（`hostname/regexp`），
+        // 使不同路径模式的 backup 优选计数器相互独立，避免误切换。
+        // 此写入是幂等的（对同一 interceptOpt 写入的值始终等于 regexp），
+        // 不会造成 abort/success/responseReplace 等拦截器曾出现的"将请求级数据写入共享配置"问题。
+        interceptOpt.key = regexp
 
         // 添加exclusions字段，用于排除某些路径
         // @since 1.8.5
