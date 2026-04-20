@@ -129,7 +129,9 @@ module.exports = {
       res.end()
       return true
     }
-    const { config, api } = configResult
+    let { config, api } = configResult
+    api |= apis[0]
+
     if (!config.id || !config.ak || !config.sk) {
       res.writeHead(200, headers)
       res.write('{"error_code": 999500, "error_msg": "dev-sidecar中，baiduOcr的 id 或 ak 或 sk 配置为空"}')
