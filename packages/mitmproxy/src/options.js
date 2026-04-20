@@ -192,7 +192,7 @@ module.exports = (serverConfig) => {
 
         // 获取拦截器
         const interceptOpt = interceptOpts[regexp]
-        // interceptOpt.key = regexp
+        interceptOpt.key = regexp
 
         // 添加exclusions字段，用于排除某些路径
         // @since 1.8.5
