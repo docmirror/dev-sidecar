@@ -130,7 +130,7 @@ module.exports = {
       return true
     }
     let { config, api } = configResult
-    api |= apis[0]
+    api = api || apis[0]
 
     if (!config.id || !config.ak || !config.sk) {
       res.writeHead(200, headers)

@@ -61,7 +61,7 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
         response = Buffer.concat([response, data])
       }
 
-      if (response.length === packetLength + TWO_BYTES) {
+      if (response.length >= packetLength + TWO_BYTES) {
         socket.destroy()
         resolve(dnsPacket.streamDecode(response))
       }
