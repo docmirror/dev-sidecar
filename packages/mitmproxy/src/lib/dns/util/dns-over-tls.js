@@ -33,11 +33,9 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
     let timeoutId
     if (timeout > 0) {
       timeoutId = setTimeout(() => {
-        if (!isFinished) {
-          isFinished = true
-          socket.destroy()
-          reject(new Error('DNS查询超时'))
-        }
+        isFinished = true
+        socket.destroy()
+        reject(new Error('DNS查询超时'))
       }, timeout)
     }
 
