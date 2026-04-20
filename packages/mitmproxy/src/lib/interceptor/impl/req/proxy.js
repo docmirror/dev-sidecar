@@ -132,10 +132,10 @@ module.exports = {
     }
 
     if (interceptOpt.sni) {
-      let unVerifySsl = rOptions.agent.options.rejectUnauthorized === false
+      let unVerifySsl = rOptions.agent && rOptions.agent.options.rejectUnauthorized === false
 
       rOptions.servername = interceptOpt.sni
-      if (rOptions.agent.options.rejectUnauthorized && rOptions.agent.unVerifySslAgent) {
+      if (rOptions.agent && rOptions.agent.options.rejectUnauthorized && rOptions.agent.unVerifySslAgent) {
         // rOptions.agent.options.rejectUnauthorized = false // 不能直接在agent上进行修改属性值，因为它采用了单例模式，所有请求共用这个对象的
         rOptions.agent = rOptions.agent.unVerifySslAgent
         unVerifySsl = true
@@ -145,7 +145,7 @@ module.exports = {
       res.setHeader('DS-Interceptor', `proxy: ${proxyTarget}, sni: ${interceptOpt.sni}${unVerifySslStr}`)
       log.info(`proxy intercept: hostname: ${originHostname}, target: ${proxyTarget}, sni replace servername: ${rOptions.servername}${unVerifySslStr}`)
     } else if (interceptOpt.unVerifySsl === true) {
-      if (rOptions.agent.options.rejectUnauthorized && rOptions.agent.unVerifySslAgent) {
+      if (rOptions.agent && rOptions.agent.options.rejectUnauthorized && rOptions.agent.unVerifySslAgent) {
         rOptions.agent = rOptions.agent.unVerifySslAgent
         res.setHeader('DS-Interceptor', `proxy: ${proxyTarget}, unVerifySsl`)
         log.info(`proxy intercept: hostname: ${originHostname}, target: ${proxyTarget}, unVerifySsl`)
