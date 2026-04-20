@@ -69,6 +69,9 @@ function getConfig (interceptOpt, tryCount, log) {
     return null // 没有配置或配置错误，直接返回null
   }
 
+  // 重置 config.api，防止上次调用的旧值残留导致 `if (config.api == null)` 判断失效：
+  // 若所有接口均已达限，下面的循环不会执行 `config.api = api`，此时 config.api 应保持 null。
+  config.api = null
   // 获取当前配置可用的API
   for (let i = 0; i < apis.length; i++) {
     const api = apis[i]
