@@ -46,29 +46,29 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
         clearTimeout(timeoutId)
       }
 
-      response = Buffer.concat([response, data])
+      try {
+        response = Buffer.concat([response, data])
 
-      // 等待至少 2 字节的长度头到达后再读取报文长度
-      if (packetLength === 0) {
-        if (response.length < TWO_BYTES) {
-          return // 等待更多数据
+        // 等待至少 2 字节的长度头到达后再读取报文长度
+        if (packetLength === 0) {
+          if (response.length < TWO_BYTES) {
+            return // 等待更多数据
+          }
+          packetLength = response.readUInt16BE(0)
+          if (packetLength < 12) {
+            reject(new Error('Below DNS minimum packet length (DNS Header is 12 bytes)'))
+            socket.destroy()
+            return
+          }
         }
-        packetLength = response.readUInt16BE(0)
-        if (packetLength < 12) {
-          reject(new Error('Below DNS minimum packet length (DNS Header is 12 bytes)'))
+
+        // 使用 >= 代替 === ：防止极端情况下数据量超过预期时 Promise 永远不 resolve
+        if (response.length >= packetLength + TWO_BYTES) {
           socket.destroy()
-          return
-        }
-      }
-
-      // 使用 >= 代替 === ：防止极端情况下数据量超过预期时 Promise 永远不 resolve
-      if (response.length >= packetLength + TWO_BYTES) {
-        socket.destroy()
-        try {
           resolve(dnsPacket.streamDecode(response.subarray(0, packetLength + TWO_BYTES)))
-        } catch (e) {
-          reject(e)
         }
+      } catch (e) {
+        reject(e)
       }
     })
     socket.on('error', (err) => {
