@@ -116,7 +116,8 @@ class DynamicChoice {
       // 总次数+1
       count.total++
     }
-    // 计算成功率：total 为成功次数，error 为失败次数，successRate = 成功次数 / 总次数
+    // 计算成功率：注意 count.total 记录的是成功次数（非总次数），count.error 记录失败次数
+    // successRate = 成功次数 / (成功次数 + 失败次数)
     count.successRate = (count.total + count.error) > 0 ? count.total / (count.total + count.error) : 1
     if (isError && this.value === ip) {
       // 连续错误3次，切换下一个
