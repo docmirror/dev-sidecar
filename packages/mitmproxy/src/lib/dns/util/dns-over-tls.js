@@ -30,14 +30,12 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
 
     // 超时处理
     let isFinished = false
-    let interval
+    let timeoutId
     if (timeout > 0) {
-      interval = setInterval(() => {
+      timeoutId = setTimeout(() => {
         if (!isFinished) {
-          socket.destroy((...args) => {
-            console.info('socket destory callback args:', args)
-          })
-
+          isFinished = true
+          socket.destroy()
           reject(new Error('DNS查询超时'))
         }
       }, timeout)
@@ -47,7 +45,7 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
     socket.on('data', (data) => {
       if (timeout) {
         isFinished = true
-        clearInterval(interval)
+        clearTimeout(timeoutId)
       }
 
       if (response.length === 0) {
@@ -69,7 +67,7 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
     socket.on('error', (err) => {
       if (timeout) {
         isFinished = true
-        clearInterval(interval)
+        clearTimeout(timeoutId)
       }
       reject(err)
     })
