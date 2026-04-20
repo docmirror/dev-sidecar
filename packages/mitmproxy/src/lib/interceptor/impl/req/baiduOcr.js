@@ -136,8 +136,11 @@ module.exports = {
       res.end()
       return true
     }
+    // 在异步调用前，将 config.api 固定到局部变量中，防止并发请求的 getConfig() 在本次异步操作期间
+    // 重置并修改共享的 config.api，导致 .then() 回调中使用了错误的 API 名称来记录限额。
+    const api = config.api || apis[0]
 
-    headers['DS-Interceptor'] = `baiduOcr: id=${config.id}, api=${config.api || apis[0]}, account=${config.account}`
+    headers['DS-Interceptor'] = `baiduOcr: id=${config.id}, api=${api}, account=${config.account}`
 
     // 获取图片的base64编码
     let imageBase64 = rOptions.path.substring(rOptions.path.indexOf('?') + 1)
@@ -149,7 +152,7 @@ module.exports = {
     }
     imageBase64 = decodeURIComponent(imageBase64)
 
-    // 调用百度云 “文字识别” 相关接口，根据 `config.api` 调用不同的接口
+    // 调用百度云 "文字识别" 相关接口，根据 `api` 调用不同的接口
     const client = createBaiduOcrClient(config)
     const options = {
       recognize_granularity: 'big',
@@ -159,13 +162,13 @@ module.exports = {
       ...(config.options || {}),
     }
     log.info('发起百度ocr请求', req.hostname)
-    client[config.api || apis[0]](imageBase64, options).then((result) => {
+    client[api](imageBase64, options).then((result) => {
       if (result.error_code != null) {
         log.error('baiduOcr error:', result)
         if (result.error_code === 17) {
           // 当前百度云账号，达到当日调用次数上限
-          limitConfig(config.id, config.api)
-          log.error(`当前百度云账号的接口 ${config.api}，已达到当日调用次数上限，暂时禁用它，明天会自动放开:`, config)
+          limitConfig(config.id, api)
+          log.error(`当前百度云账号的接口 ${api}，已达到当日调用次数上限，暂时禁用它，明天会自动放开:`, config)
         }
       } else {
         log.info('baiduOcr success:', result)
