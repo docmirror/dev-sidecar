@@ -38,21 +38,9 @@ module.exports = defineConfig({
       customFileProtocol: './',
       externals: [
         '@starknt/sysproxy',
-        '@starknt/sysproxy-win32-ia32-msvc',
-        '@starknt/sysproxy-win32-x64-msvc',
-        '@starknt/sysproxy-win32-arm64-msvc',
-        '@starknt/sysproxy-linux-x64-gnu',
         '@starknt/sysproxy-linux-arm64-gnu',
-        '@starknt/sysproxy-darwin-x64',
-        '@starknt/sysproxy-darwin-arm64',
         '@starknt/shutdown-handler-napi',
-        '@starknt/shutdown-handler-napi-win32-ia32-msvc',
-        '@starknt/shutdown-handler-napi-win32-x64-msvc',
-        '@starknt/shutdown-handler-napi-win32-arm64-msvc',
-        '@starknt/shutdown-handler-napi-linux-x64-gnu',
         '@starknt/shutdown-handler-napi-linux-arm64-gnu',
-        '@starknt/shutdown-handler-napi-darwin-x64',
-        '@starknt/shutdown-handler-napi-darwin-arm64',
       ],
       nodeIntegration: true,
       // Provide an array of files that, when changed, will recompile the main process and restart Electron
@@ -71,7 +59,7 @@ module.exports = defineConfig({
             to: 'extra',
           },
         ],
-        appId: 'dev-sidecar',
+        appId: 'cn.docmirror.DevSidecar',
         productName: 'dev-sidecar',
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: 'DevSidecar-${version}-${arch}.${ext}',
@@ -82,50 +70,15 @@ module.exports = defineConfig({
           allowElevation: true,
           allowToChangeInstallationDirectory: true,
         },
-        win: {
-          icon: 'build/icons/',
-          target: [
-            {
-              target: 'nsis',
-              arch: ['x64', 'ia32', 'arm64'],
-            },
-          ],
-          // requestedExecutionLevel: 'highestAvailable', // 加了这个无法开机自启
-        },
         linux: {
-          appId: 'cn.docmirror.DevSidecar',
           icon: 'build/mac/',
           target: [
             {
-              target: 'deb',
-              arch: ['x64', 'arm64', 'armv7l'],
-            },
-            {
-              target: 'AppImage',
-              arch: ['x64', 'arm64', 'armv7l'],
-            },
-            {
-              target: 'tar.gz',
-              arch: ['x64', 'arm64', 'armv7l'],
-            },
-            {
-              target: 'rpm',
-              arch: ['x64', 'arm64', 'armv7l'],
-            },
-            {
               target: 'flatpak',
-              arch: ['x64'],
+              arch: ['arm64', 'armv7l'],
             },
           ],
           category: 'System',
-        },
-        mac: {
-          icon: './build/mac/icon.icns',
-          target: {
-            target: 'dmg',
-            arch: ['x64', 'arm64', 'universal'],
-          },
-          category: 'public.app-category.developer-tools',
         },
         publish: {
           provider: publishProvider,
