@@ -71,18 +71,18 @@ module.exports = class BaseDNS {
           if (options.ipChecker) {
             if (options.ipChecker(ip)) {
               ipCache.doCount(ip, false)
-              log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取IP地址缓存: ${hostname} -> ${ip}（测试通过）`)
+              log.debug(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取IP地址缓存: ${hostname} -> ${ip}（测试通过）`)
               return ip
             } else {
-              log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取IP地址缓存: ${hostname} -> ${ip}（测试不通过）-> ${hostname}`)
+              log.debug(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取IP地址缓存: ${hostname} -> ${ip}（测试不通过）-> ${hostname}`)
               return hostname
             }
           } else {
-            log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取IP地址缓存: ${hostname} -> ${ip}`)
+            log.debug(`[DNS-over-${this.dnsType} '${this.dnsName}'] 获取IP地址缓存: ${hostname} -> ${ip}`)
             return ip
           }
         } else {
-          log.info(`[DNS-over-${this.dnsType} '${this.dnsName}'] 未获取到IP地址缓存: ${hostname}`)
+          log.debug(`[DNS-over-${this.dnsType} '${this.dnsName}'] 未获取到IP地址缓存: ${hostname}`)
         }
       } else {
         ipCache = new IpCache(hostname)

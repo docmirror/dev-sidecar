@@ -68,6 +68,7 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
           resolve(dnsPacket.streamDecode(response.subarray(0, packetLength + TWO_BYTES)))
         }
       } catch (e) {
+        socket.destroy()
         reject(e)
       }
     })
