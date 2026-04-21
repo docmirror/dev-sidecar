@@ -83,8 +83,6 @@ module.exports = class FakeServersCenter {
       }
     }
 
-    log.debug(`getServerPromise, hostname: ${hostname}:${port}, ssl: ${ssl}, protocol: ${ssl ? 'https' : 'http'}`)
-
     const dnsName = getDnsName(hostname)
     const cacheKey = `${dnsName}:${port}:${ssl}`
 
@@ -93,6 +91,8 @@ module.exports = class FakeServersCenter {
       log.debug(`Load fakeServerPromise from cache, hostname: ${hostname}:${port}, ssl: ${ssl}, serverPromiseObj: {"ssl":${cachedServerObj.ssl},"port":${cachedServerObj.port},"mappingHostNames":${JSON.stringify(cachedServerObj.mappingHostNames)}}`)
       return cachedServerObj.promise
     }
+
+    log.info(`getServerPromise, hostname: ${hostname}:${port}, ssl: ${ssl}, protocol: ${ssl ? 'https' : 'http'}`)
 
     const mappingHostNames = [dnsName]
     if (dnsName.startsWith('*.')) {
