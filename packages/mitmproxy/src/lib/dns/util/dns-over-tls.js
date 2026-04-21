@@ -50,20 +50,24 @@ function query ({ host, servername, type, name, klass, port, family, rejectUnaut
         clearInterval(interval)
       }
 
-      if (response.length === 0) {
-        packetLength = data.readUInt16BE(0)
-        if (packetLength < 12) {
-          reject(new Error('Below DNS minimum packet length (DNS Header is 12 bytes)'))
-          return
+      try {
+        if (response.length === 0) {
+          packetLength = data.readUInt16BE(0)
+          if (packetLength < 12) {
+            reject(new Error('Below DNS minimum packet length (DNS Header is 12 bytes)'))
+            return
+          }
+          response = Buffer.from(data)
+        } else {
+          response = Buffer.concat([response, data])
         }
-        response = Buffer.from(data)
-      } else {
-        response = Buffer.concat([response, data])
-      }
 
-      if (response.length >= packetLength + TWO_BYTES) {
-        socket.destroy()
-        resolve(dnsPacket.streamDecode(response))
+        if (response.length >= packetLength + TWO_BYTES) {
+          socket.destroy()
+          resolve(dnsPacket.streamDecode(response))
+        }
+      } catch (e) {
+        reject(e)
       }
     })
     socket.on('error', (err) => {

@@ -109,13 +109,11 @@ class DynamicChoice {
     }
 
     if (isError) {
-      // 失败次数+1，累计连续失败次数+1
-      count.error++
-      count.keepErrorCount++
-    } else {
-      // 总次数+1
-      count.total++
+      count.error++ // 失败次数+1
+      count.keepErrorCount++ // 累计连续失败次数+1
     }
+    count.total++ // 总次数+1
+
     // 计算成功率
     count.successRate = 1.0 - (count.error / count.total)
     if (isError && this.value === ip) {
