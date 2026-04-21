@@ -1,0 +1,127 @@
+name: "Publish To AUR"
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Package version to publish (e.g. 2.0.2). Leave empty to use the latest release tag."
+        required: false
+        type: string
+
+jobs:
+  publish-to-aur:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4.1.7
+
+      # ── Resolve version ──────────────────────────────────────────────────────
+      - name: "Resolve version"
+        id: version
+        run: |
+          if [[ -n "${{ inputs.version }}" ]]; then
+            VERSION="${{ inputs.version }}"
+          else
+            # Strip leading 'v' from the release tag (e.g. v2.0.2 → 2.0.2)
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: ${VERSION}"
+
+      # ── Download release assets and compute SHA256 checksums ─────────────────
+      - name: "Download Linux x86_64 tar.gz and compute SHA256"
+        id: sha256_x86_64
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          URL="https://github.com/docmirror/dev-sidecar/releases/download/v${VERSION}/DevSidecar-${VERSION}-linux-x86_64.tar.gz"
+          echo "Downloading: ${URL}"
+          curl -fsSL -o /tmp/dev-sidecar-x86_64.tar.gz "${URL}"
+          SHA256=$(sha256sum /tmp/dev-sidecar-x86_64.tar.gz | awk '{print $1}')
+          echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
+          echo "x86_64 SHA256: ${SHA256}"
+
+      - name: "Download Linux aarch64 tar.gz and compute SHA256"
+        id: sha256_aarch64
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          URL="https://github.com/docmirror/dev-sidecar/releases/download/v${VERSION}/DevSidecar-${VERSION}-linux-arm64.tar.gz"
+          echo "Downloading: ${URL}"
+          curl -fsSL -o /tmp/dev-sidecar-aarch64.tar.gz "${URL}"
+          SHA256=$(sha256sum /tmp/dev-sidecar-aarch64.tar.gz | awk '{print $1}')
+          echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
+          echo "aarch64 SHA256: ${SHA256}"
+
+      # ── Update PKGBUILD ───────────────────────────────────────────────────────
+      - name: "Update PKGBUILD with new version and checksums"
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          SHA256_X86_64="${{ steps.sha256_x86_64.outputs.sha256 }}"
+          SHA256_AARCH64="${{ steps.sha256_aarch64.outputs.sha256 }}"
+
+          PKGBUILD="packages/aur/PKGBUILD"
+
+          # Update pkgver
+          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" "${PKGBUILD}"
+
+          # Reset pkgrel to 1 on every new upstream version
+          sed -i "s/^pkgrel=.*/pkgrel=1/" "${PKGBUILD}"
+
+          # Update checksums
+          sed -i "s/^sha256sums_x86_64=.*/sha256sums_x86_64=('${SHA256_X86_64}')/" "${PKGBUILD}"
+          sed -i "s/^sha256sums_aarch64=.*/sha256sums_aarch64=('${SHA256_AARCH64}')/" "${PKGBUILD}"
+
+          echo "======== Updated PKGBUILD ========"
+          cat "${PKGBUILD}"
+
+      # ── Push to AUR via git + SSH ─────────────────────────────────────────────
+      - name: "Set up SSH key for AUR"
+        run: |
+          install -dm700 ~/.ssh
+
+          # Write the private key
+          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur_id
+          chmod 600 ~/.ssh/aur_id
+
+          # Trust AUR's host key
+          ssh-keyscan -t rsa,ecdsa,ed25519 aur.archlinux.org >> ~/.ssh/known_hosts 2>/dev/null
+          chmod 644 ~/.ssh/known_hosts
+
+          # SSH config: use this key for AUR (printf avoids heredoc indentation issues)
+          printf 'Host aur.archlinux.org\n  IdentityFile ~/.ssh/aur_id\n  User aur\n' >> ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+      - name: "Clone AUR repository"
+        run: |
+          git clone ssh://aur@aur.archlinux.org/dev-sidecar-bin.git /tmp/aur-dev-sidecar-bin
+
+      - name: "Copy PKGBUILD and generate .SRCINFO"
+        run: |
+          cp packages/aur/PKGBUILD /tmp/aur-dev-sidecar-bin/PKGBUILD
+
+          # Generate .SRCINFO via helper script (makepkg is not available on the ubuntu
+          # runner since pacman is not installed)
+          cd /tmp/aur-dev-sidecar-bin
+          python3 "$GITHUB_WORKSPACE/packages/aur/gen_srcinfo.py"
+
+      - name: "Commit and push to AUR"
+        run: |
+          cd /tmp/aur-dev-sidecar-bin
+
+          git config user.name "${{ vars.AUR_USERNAME }}"
+          git config user.email "${{ vars.AUR_EMAIL }}"
+
+          git add PKGBUILD .SRCINFO
+
+          # Only commit if there are actual changes
+          if git diff --cached --quiet; then
+            echo "No changes to commit – AUR is already up to date."
+          else
+            git commit -m "Update to v${{ steps.version.outputs.version }}"
+            git push
+            echo "Successfully pushed to AUR."
+          fi
