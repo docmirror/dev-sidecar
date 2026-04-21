@@ -164,7 +164,7 @@ module.exports = class BaseDNS {
       const cost = Date.now() - start
       log.debug(`[DNS-over-${this.dnsType} '${this.dnsName}'] query end: ${hostname}, cost: ${cost} ms, response:`, response)
 
-      if (response == null || response.answers == null || response.answers.length == null || response.answers.length === 0) {
+      if (response == null || response.answers == null || response.answers.length === 0) {
         log.warn(`[DNS-over-${this.dnsType} '${this.dnsName}'] 没有该域名的IPv${options.family}地址: ${hostname}, cost: ${cost} ms, response:`, response)
         return []
       }

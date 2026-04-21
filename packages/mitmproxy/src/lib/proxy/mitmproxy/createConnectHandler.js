@@ -148,6 +148,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
         + '\r\n')
       cltSocket.end()
       cltSocket.destroy()
+      proxySocket.destroy()
 
       if (isDnsIntercept && isDnsIntercept.dns && isDnsIntercept.ip !== isDnsIntercept.hostname) {
         const { dns, ip, hostname } = isDnsIntercept
@@ -166,6 +167,7 @@ function connect (req, cltSocket, head, hostname, port, dnsConfig = null, isDire
         + '\r\n')
       cltSocket.end()
       cltSocket.destroy()
+      proxySocket.destroy()
 
       if (isDnsIntercept && isDnsIntercept.dns && isDnsIntercept.ip !== isDnsIntercept.hostname) {
         const { dns, ip, hostname } = isDnsIntercept
