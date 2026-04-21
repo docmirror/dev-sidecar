@@ -120,9 +120,8 @@ class DynamicChoice {
       // 连续错误3次，切换下一个
       if (count.keepErrorCount >= 3) {
         this.changeNext(count)
-      }
-      // 成功率小于40%,切换下一个
-      if (count.successRate < 0.4) {
+      } else if (count.successRate < 0.4) {
+        // 成功率小于40%,切换下一个
         this.changeNext(count)
       }
     }

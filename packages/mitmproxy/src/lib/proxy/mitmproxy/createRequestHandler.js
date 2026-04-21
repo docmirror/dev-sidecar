@@ -133,10 +133,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               log.debug(`域名 ${rOptions.hostname} DNS: ${dnsAndFamily.dns.dnsName}, family: ${rOptions.family || 4}`)
               res.setHeader('DS-DNS', dnsAndFamily.dns.dnsName)
             } else {
-              log.info(`域名 ${rOptions.hostname} 在DNS中未配置`)
+              log.debug(`域名 ${rOptions.hostname} 在DNS中未配置`)
             }
           } else {
-            log.info(`域名 ${rOptions.hostname} DNS配置不存在`)
+            log.debug(`域名 ${rOptions.hostname} DNS配置不存在`)
           }
 
           // rOptions.sigalgs = 'RSA-PSS+SHA256:RSA-PSS+SHA512:ECDSA+SHA256'

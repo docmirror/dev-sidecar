@@ -47,7 +47,7 @@ module.exports = function createConnectHandler (sslConnectInterceptor, middlewar
         log.error(`----- fakeServer getServerPromise error: ${hostname}:${port}, error:`, e)
       })
     } else {
-      log.info(`不拦截请求，直连目标服务器: ${hostname}:${port}, headers:`, jsonApi.stringify2(req.headers))
+      log.debug(`不拦截请求，直连目标服务器: ${hostname}:${port}, headers:`, jsonApi.stringify2(req.headers))
       connect(req, cltSocket, head, hostname, port, dnsConfig, true)
     }
   }
