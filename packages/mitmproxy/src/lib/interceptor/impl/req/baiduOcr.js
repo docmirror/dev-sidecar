@@ -118,7 +118,11 @@ module.exports = {
 
     const headers = {
       'Content-Type': 'application/json; charset=utf-8',
-      'Access-Control-Allow-Origin': '*',
+    }
+
+    if (rOptions.headers.origin) {
+      headers['Access-Control-Allow-Credentials'] = 'true'
+      headers['Access-Control-Allow-Origin'] = rOptions.headers.origin
     }
 
     // 获取配置（api 由 getConfig 以局部变量形式返回，不写入共享配置对象，并发安全）

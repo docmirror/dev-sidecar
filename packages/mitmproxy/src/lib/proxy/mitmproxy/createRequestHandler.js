@@ -334,7 +334,16 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       if (!res.writableEnded) {
         try {
           const status = e.status || 500
-          res.writeHead(status, { 'Content-Type': 'text/html;charset=UTF8' })
+
+          const headers = { 'Content-Type': 'text/html;charset=UTF8' }
+
+          // headers.Access-Control-Allow-*：避免跨域问题
+          if (rOptions.headers.origin) {
+            headers['Access-Control-Allow-Credentials'] = 'true'
+            headers['Access-Control-Allow-Origin'] = rOptions.headers.origin
+          }
+
+          res.writeHead(status, headers)
           res.write(`<style>
             p {
               margin: 10px 0;
