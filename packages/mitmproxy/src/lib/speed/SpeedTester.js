@@ -215,14 +215,12 @@ class SpeedTester {
       })
 
       timeoutId = setTimeout(() => {
-        if (isOver) {
-          return
+        if (!isOver) {
+          isOver = true
+          log.warn('[speed] test by TCP timeout:', this.hostname, `➜ ${host}:${this.port} from DNS '${dns}', cost: ${Date.now() - startTime} ms`)
+          reject(new Error('timeout'))
+          client.destroy()
         }
-        isOver = true
-
-        log.warn('[speed] test by TCP timeout:', this.hostname, `➜ ${host}:${this.port} from DNS '${dns}', cost: ${Date.now() - startTime} ms`)
-        reject(new Error('timeout'))
-        client.destroy()
       }, timeout)
     })
   }
