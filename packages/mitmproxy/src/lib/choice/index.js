@@ -116,13 +116,14 @@ class DynamicChoice {
 
     // 计算成功率
     count.successRate = 1.0 - (count.error / count.total)
+
+    // 判断是否需要切换下一个
     if (isError && this.value === ip) {
-      // 连续错误3次，切换下一个
       if (count.keepErrorCount >= 3) {
+        // 连续错误3次，切换下一个
         this.changeNext(count)
-      }
-      // 成功率小于40%,切换下一个
-      if (count.successRate < 0.4) {
+      } else if (count.successRate < 0.4) {
+        // 成功率小于40%,切换下一个
         this.changeNext(count)
       }
     }
