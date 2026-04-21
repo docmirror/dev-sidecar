@@ -190,6 +190,7 @@ module.exports = {
           .pipe(res)
       } else {
         log.error(`InsertScriptMiddleware.responseInterceptor(): 暂不支持编码方式 ${encoding}, 目前支持:`, httpUtil.supportedEncodingsStr())
+        proxyRes.pipe(res) // 不支持该编码，无法注入脚本，直接透传响应体，避免响应悬挂
       }
     } else {
       proxyRes
