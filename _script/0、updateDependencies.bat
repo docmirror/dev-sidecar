@@ -11,3 +11,5 @@ ncu -u
 
 # cd ../packages/mitmproxy
 # ncu -u
+
+cmd
