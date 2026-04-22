@@ -300,12 +300,12 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 #### 3）火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书
 
 1. 火狐浏览器->选项->隐私与安全->证书->查看证书
-   ![](./doc/figures/Firefox/1.png)
+   ![](./doc/Firefox/1.png)
 2. 证书颁发机构->导入
 3. 选择证书文件 `C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为 `~/.dev-sidecar` 目录）
-   ![](./doc/figures/Firefox/2.png)
+   ![](./doc/Firefox/2.png)
 4. 勾选信任由此证书颁发机构来标识网站，确定即可
-   ![](./doc/figures/Firefox/3.png)
+   ![](./doc/Firefox/3.png)
 
 ### 6.4、打开github显示连接超时
 
