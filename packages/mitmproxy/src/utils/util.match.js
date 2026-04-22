@@ -38,7 +38,7 @@ function domainRegexply (target) {
   if (target === '.*' || target === '*' || target === 'true' || target === true) {
     return '^.*$'
   }
-  return `^${target.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`
+  return `^${target.replace(/\\/g, '\\\\').replace(/\./g, '\\.').replace(/\*/g, '.*')}$`
 }
 
 function domainMapRegexply (hostMap) {
