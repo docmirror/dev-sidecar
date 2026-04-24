@@ -275,7 +275,7 @@ export default {
         width: 610,
         content: h => h('div', { class: 'restore-factory-settings' }, [
           h('hr'),
-          h('p', [
+          h('div', [
             h('h3', '操作警告：'),
             h('div', [
               '该功能将备份您的所有页面的个性化配置，并重载',
@@ -286,7 +286,7 @@ export default {
             ])
           ]),
           h('hr'),
-          h('p', [
+          h('div', [
             h('h3', '找回个性化配置的方法：'),
             h('div', [
               '1. 找到备份文件，路径：',

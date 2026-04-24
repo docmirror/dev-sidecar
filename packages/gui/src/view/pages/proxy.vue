@@ -3,11 +3,10 @@ import { defineComponent } from 'vue';
 
 import { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
 import Plugin from '../mixins/plugin'
-import MockInput from '@/view/components/mock-input.vue'
 
 export default defineComponent({
   name: 'Proxy',
-  components: { MockInput, PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
+  components: { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
   mixins: [Plugin],
 
   data () {
@@ -176,7 +175,7 @@ export default defineComponent({
         </a-row>
         <a-row v-for="(item, index) of excludeIpList" ref="excludeIpList" :key="index" :gutter="10" class="fine-tuning">
           <a-col :span="17">
-            <MockInput v-model:value="item.key" class="mt-1" />
+            <a-input v-model:value="item.key" class="mt-1" spellcheck="false" />
           </a-col>
           <a-col :span="5">
             <a-select v-model:value="item.value" class="w100">

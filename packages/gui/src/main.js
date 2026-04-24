@@ -1,5 +1,5 @@
 import antd from 'ant-design-vue'
-import { createApp, h } from 'vue';
+import { createApp } from 'vue';
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { ipcRenderer } from 'electron'
 import view from './view'
@@ -28,9 +28,7 @@ try {
     history: createWebHashHistory(),
     routes, // (缩写) 相当于 routes: routes
   })
-  const app = createApp({
-    render: () => h(App),
-  })
+  const app = createApp(App)
   
   app.use(antd)
   app.use(router)
@@ -47,16 +45,6 @@ try {
       ipcRenderer.send('view初始化出现未知异常：', e)
     }
   })
-
-  // fix vue-router NavigationDuplicated
-  const originalPush = router.push
-  router.push = function push (location) {
-    return originalPush.call(this, location).catch(err => err)
-  }
-  const originalReplace = router.replace
-  router.replace = function replace (location) {
-    return originalReplace.call(this, location).catch(err => err)
-  }
 
   console.info('main.js finished')
   ipcRenderer.send('main.js finished')

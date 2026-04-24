@@ -3,11 +3,10 @@ import { defineComponent } from 'vue';
 
 import { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
 import Plugin from '../../mixins/plugin'
-import MockInput from '@/view/components/mock-input.vue'
 
 export default defineComponent({
   name: 'Overwall',
-  components: { MockInput, PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
+  components: { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
   mixins: [Plugin],
 
   data () {
@@ -182,7 +181,7 @@ export default defineComponent({
             </a-row>
             <a-row v-for="(item, index) of targets" ref="targets" :key="index" :gutter="10">
               <a-col :span="18">
-                <MockInput v-model:value="item.key" class="mt-2" />
+                <a-input v-model:value="item.key" class="mt-2" spellcheck="false" />
               </a-col>
               <a-col :span="4">
                 <a-select v-model:value="item.value" class="w100">

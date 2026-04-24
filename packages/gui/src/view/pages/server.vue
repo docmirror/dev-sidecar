@@ -5,14 +5,12 @@ import _ from 'lodash'
 import { Vue3JsonEditor } from 'vue3-json-editor'
 import { CheckOutlined, InfoCircleOutlined, PlusOutlined, MinusOutlined, SyncOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 import Plugin from '../mixins/plugin'
-import MockInput from '@/view/components/mock-input.vue'
 
 export default defineComponent({
   name: 'Server',
 
   components: {
     Vue3JsonEditor,
-    MockInput,
     CheckOutlined,
     InfoCircleOutlined,
     PlusOutlined,
@@ -369,7 +367,7 @@ export default defineComponent({
             </a-row>
             <a-row v-for="(item, index) of whiteList" ref="whiteList" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="16">
-                <MockInput v-model:value="item.key" />
+                <a-input v-model:value="item.key" spellcheck="false" />
               </a-col>
               <a-col :span="5">
                 <a-select v-model:value="item.value" class="w100">
@@ -427,7 +425,7 @@ export default defineComponent({
             </a-row>
             <a-row v-for="(item, index) of dnsMappings" ref="dnsMappings" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="11">
-                <MockInput v-model:value="item.key" />
+                <a-input v-model:value="item.key" spellcheck="false" />
               </a-col>
               <a-col :span="6">
                 <a-select v-model:value="item.value" :disabled="item.value === false" class="w100">
@@ -482,7 +480,7 @@ export default defineComponent({
             </a-row>
             <a-row v-for="(item, index) of getSpeedTestConfig().hostnameList" ref="hostnameList" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="21">
-                <MockInput v-model:value="getSpeedTestConfig().hostnameList[index]" />
+                <a-input v-model:value="getSpeedTestConfig().hostnameList[index]" spellcheck="false" />
               </a-col>
               <a-col :span="2">
                 <a-button style="margin-left:10px" type="danger" @click="delSpeedHostname(item, index)"><MinusOutlined /></a-button>
