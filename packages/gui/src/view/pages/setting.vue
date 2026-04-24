@@ -347,12 +347,12 @@ export default {
 
     <div v-if="config">
       <a-form-item label="开机自启" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.app.autoStart.enabled" @change="onAutoStartChange">
+        <a-checkbox v-model:checked="config.app.autoStart.enabled" @change="onAutoStartChange">
           本应用开机自启
         </a-checkbox>
       </a-form-item>
       <a-form-item v-if="systemPlatform === 'mac'" label="隐藏Dock图标" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.app.dock.hideWhenWinClose">
+        <a-checkbox v-model:checked="config.app.dock.hideWhenWinClose">
           关闭窗口时隐藏Dock图标(仅限Mac)
         </a-checkbox>
         <div class="form-help">
@@ -361,7 +361,7 @@ export default {
       </a-form-item>
       <hr>
       <a-form-item label="远程配置" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.app.remoteConfig.enabled" @change="onRemoteConfigEnabledChange">
+        <a-checkbox v-model:checked="config.app.remoteConfig.enabled" @change="onRemoteConfigEnabledChange">
           启用远程配置
         </a-checkbox>
         <div class="form-help">
@@ -510,7 +510,7 @@ export default {
         </div>
       </a-form-item>
     </div>
- 
+
       <div class="footer-bar">
         <a-button :loading="removeUserConfigLoading" class="mr10" icon="sync" @click="restoreFactorySettings()">
           恢复出厂设置

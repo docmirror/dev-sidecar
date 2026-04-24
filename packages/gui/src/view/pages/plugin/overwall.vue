@@ -135,7 +135,7 @@ export default defineComponent({
     <div v-if="config">
       <a-form layout="horizontal">
         <a-form-item label="梯子" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.overwall.enabled">
+          <a-checkbox v-model:checked="config.plugin.overwall.enabled">
             启用
           </a-checkbox>
           <div class="form-help">
@@ -146,7 +146,7 @@ export default defineComponent({
         </a-form-item>
         <hr>
         <a-form-item label="PAC" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.overwall.pac.enabled">
+          <a-checkbox v-model:checked="config.plugin.overwall.pac.enabled">
             启用PAC
           </a-checkbox>
           <div class="form-help">
@@ -154,7 +154,7 @@ export default defineComponent({
           </div>
         </a-form-item>
         <a-form-item label="自动更新PAC" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.overwall.pac.autoUpdate">
+          <a-checkbox v-model:checked="config.plugin.overwall.pac.autoUpdate">
             是否自动更新PAC
           </a-checkbox>
           <div class="form-help">
@@ -231,7 +231,7 @@ export default defineComponent({
         </a-form-item>
       </a-form>
     </div>
-    <template slot="footer">
+    <template #footer>
       <div class="footer-bar">
         <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
           恢复默认

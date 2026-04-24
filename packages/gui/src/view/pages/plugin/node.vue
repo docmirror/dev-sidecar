@@ -67,7 +67,7 @@ export default defineComponent({
     <div v-if="config">
       <a-form layout="horizontal">
         <a-form-item label="启用NPM代理" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.node.enabled">
+          <a-checkbox v-model:checked="config.plugin.node.enabled">
             随应用启动
           </a-checkbox>
           <a-tag v-if="status.plugin.node.enabled" color="green">
@@ -84,7 +84,7 @@ export default defineComponent({
           </div>
         </a-form-item>
         <a-form-item label="SSL校验" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.node.setting['strict-ssl']">
+          <a-checkbox v-model:checked="config.plugin.node.setting['strict-ssl']">
             关闭strict-ssl
           </a-checkbox>
           npm代理启用后必须关闭
@@ -119,7 +119,7 @@ export default defineComponent({
           </div>
         </a-form-item>
         <a-form-item label="镜像变量设置" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.node.startup.variables">
+          <a-checkbox v-model:checked="config.plugin.node.startup.variables">
             自动设置，启动npm加速开关时将会设置如下环境变量
           </a-checkbox>
           <div class="form-help">
@@ -140,7 +140,7 @@ export default defineComponent({
         </a-form-item>
       </a-form>
     </div>
-    <template slot="footer">
+    <template #footer>
       <div class="footer-bar">
         <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
           恢复默认

@@ -75,7 +75,7 @@ export default defineComponent({
     wrap-class-name="json-wrapper"
     @close="onClose"
   >
-    <template slot="title">
+    <template #title>
       {{ title }}
       <a-button type="primary" style="float:right" @click="doSetup()">
         点此去安装

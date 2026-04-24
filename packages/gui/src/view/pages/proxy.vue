@@ -97,7 +97,7 @@ export default defineComponent({
 
     <div v-if="config">
       <a-form-item label="启用系统代理" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.enabled">
+        <a-checkbox v-model:checked:checked="config.proxy.enabled">
           随应用启动
         </a-checkbox>
         <a-tag v-if="status.proxy.enabled" color="green">
@@ -111,7 +111,7 @@ export default defineComponent({
         </div>
       </a-form-item>
       <a-form-item label="代理HTTP请求" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.proxyHttp">
+        <a-checkbox v-model:checked="config.proxy.proxyHttp">
           是否代理HTTP请求
         </a-checkbox>
         <div class="form-help">
@@ -122,7 +122,7 @@ export default defineComponent({
 
       <!-- 以下两个功能仅windows支持，mac和linux暂不支持 -->
       <a-form-item v-if="isWindows()" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.setEnv">
+        <a-checkbox v-model:checked="config.proxy.setEnv">
           是否同时修改<code>HTTPS_PROXY</code>环境变量（不好用，不建议勾选）
         </a-checkbox>
         <div class="form-help">
@@ -141,7 +141,7 @@ export default defineComponent({
 
       <hr>
       <a-form-item label="排除国内域名" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.excludeDomesticDomainAllowList">
+        <a-checkbox v-model:checked="config.proxy.excludeDomesticDomainAllowList">
           是否排除国内域名白名单
         </a-checkbox>
         <div class="form-help">
@@ -149,7 +149,7 @@ export default defineComponent({
         </div>
       </a-form-item>
       <a-form-item label="自动更新国内域名" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.autoUpdateDomesticDomainAllowList">
+        <a-checkbox v-model:checked="config.proxy.autoUpdateDomesticDomainAllowList">
           是否自动更新国内域名白名单
         </a-checkbox>
         <div class="form-help">
@@ -190,7 +190,7 @@ export default defineComponent({
         </a-row>
       </a-form-item>
     </div>
-    <template slot="footer">
+    <template #footer>
       <div class="footer-bar">
         <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
           恢复默认

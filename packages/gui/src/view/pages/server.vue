@@ -258,7 +258,7 @@ export default defineComponent({
         <a-tab-pane key="1" tab="基本设置">
           <div v-if="activeTabKey === '1'" style="padding-right:10px">
             <a-form-item label="代理服务:" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-checkbox v-model="config.server.enabled">
+              <a-checkbox v-model:checked="config.server.enabled">
                 随应用启动
               </a-checkbox>
               <a-tag v-if="status.server.enabled" color="green">
@@ -282,7 +282,7 @@ export default defineComponent({
             </a-form-item>
             <hr>
             <a-form-item label="全局校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-checkbox v-model="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED">
+              <a-checkbox v-model:checked="config.server.setting.NODE_TLS_REJECT_UNAUTHORIZED">
                 NODE_TLS_REJECT_UNAUTHORIZED
               </a-checkbox>
               <div class="form-help">
@@ -290,7 +290,7 @@ export default defineComponent({
               </div>
             </a-form-item>
             <a-form-item label="代理校验SSL" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-checkbox v-model="config.server.setting.verifySsl">
+              <a-checkbox v-model:checked="config.server.setting.verifySsl">
                 校验加速目标网站的ssl证书
               </a-checkbox>
               <div class="form-help">
@@ -311,7 +311,7 @@ export default defineComponent({
             </a-form-item>
             <hr>
             <a-form-item label="启用拦截" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-checkbox v-model="config.server.intercept.enabled">
+              <a-checkbox v-model:checked="config.server.intercept.enabled">
                 启用拦截
               </a-checkbox>
               <div class="form-help">
@@ -319,7 +319,7 @@ export default defineComponent({
               </div>
             </a-form-item>
             <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-checkbox v-model="config.server.setting.script.enabled">
+              <a-checkbox v-model:checked="config.server.setting.script.enabled">
                 允许插入并运行脚本
               </a-checkbox>
               <div class="form-help">
@@ -446,7 +446,7 @@ export default defineComponent({
           <div v-if="activeTabKey === '9'" class="ip-tester" style="padding-right: 10px">
             <a-alert type="info" message="对从DNS获取到的IP进行测速，使用速度最快的IP进行访问（注意：对使用了增强功能的域名没啥用）" />
             <a-form-item label="开启DNS测速" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-checkbox v-model="getSpeedTestConfig().enabled">
+              <a-checkbox v-model:checked="getSpeedTestConfig().enabled">
                 启用
               </a-checkbox>
             </a-form-item>
@@ -514,7 +514,7 @@ export default defineComponent({
         </a-tab-pane>
       </a-tabs>
     </div>
-    <template slot="footer">
+    <template #footer>
       <div class="footer-bar">
         <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
           恢复默认

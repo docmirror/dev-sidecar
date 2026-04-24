@@ -74,12 +74,15 @@ export default {
   },
   methods: {
     async modeChange (event) {
+      console.log("[Test]: Mode Changed")
       const mode = this.config.app.mode
       if (mode === 'safe') {
+        console.log("[Test]: Mode Changed To Safe")
         this.config.server.intercept.enabled = false
         this.config.server.dns.speedTest.enabled = true
         this.config.plugin.overwall.enabled = false
       } else if (mode === 'default') {
+        console.log("[Test]: Mode Changed To Default")
         this.config.server.intercept.enabled = true
         this.config.server.dns.speedTest.enabled = true
         this.config.plugin.overwall.enabled = false
@@ -89,6 +92,10 @@ export default {
           return
         }
         this.config.server.intercept.enabled = true
+      }
+      const configCopy = lodash.cloneDeep(this.config)
+      await this.$api.config.save(configCopy)
+      if (this.status.server && this.status.server.enabled) {
         return this.$api.server.restart()
       }
     },

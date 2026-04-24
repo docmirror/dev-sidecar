@@ -58,7 +58,7 @@ export default defineComponent({
     <div v-if="config">
       <a-form layout="horizontal">
         <!--        <a-form-item label="启用PIP加速" :label-col="labelCol" :wrapper-col="wrapperCol"> -->
-        <!--          <a-checkbox v-model="config.plugin.pip.enabled"> -->
+        <!--          <a-checkbox v-model:checked="config.plugin.pip.enabled"> -->
         <!--            随应用启动 -->
         <!--          </a-checkbox> -->
         <!--          <a-tag v-if="status.plugin.pip.enabled" color="green"> -->
@@ -99,7 +99,7 @@ export default defineComponent({
         </a-form-item>
       </a-form>
     </div>
-    <template slot="footer">
+    <template #footer>
       <div class="footer-bar">
         <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
           恢复默认
