@@ -3,6 +3,7 @@ import { defineComponent } from 'vue';
 
 import _ from 'lodash'
 import { Vue3JsonEditor } from 'vue3-json-editor'
+import { CheckOutlined, InfoCircleOutlined, PlusOutlined, MinusOutlined, SyncOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 import Plugin from '../mixins/plugin'
 import MockInput from '@/view/components/mock-input.vue'
 
@@ -12,6 +13,12 @@ export default defineComponent({
   components: {
     Vue3JsonEditor,
     MockInput,
+    CheckOutlined,
+    InfoCircleOutlined,
+    PlusOutlined,
+    MinusOutlined,
+    SyncOutlined,
+    ReloadOutlined,
   },
 
   mixins: [Plugin],
@@ -357,7 +364,7 @@ export default defineComponent({
                 <div>配置为<code>不代理</code>的域名不会通过代理</div>
               </a-col>
               <a-col span="3">
-                <a-button style="margin-left:8px" type="primary" icon="plus" @click="addWhiteList()" />
+                <a-button style="margin-left:8px" type="primary" @click="addWhiteList()"><PlusOutlined /></a-button>
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of whiteList" ref="whiteList" :key="index" :gutter="10" style="margin-top: 5px">
@@ -366,13 +373,13 @@ export default defineComponent({
               </a-col>
               <a-col :span="5">
                 <a-select v-model:value="item.value" class="w100">
-                  <a-select-option v-for="(item2) of whiteListOptions" :key="item2.value" :modelValue="item2.value">
+                  <a-select-option v-for="(item2) of whiteListOptions" :key="item2.value" :value="item2.value">
                     {{ item2.label }}
                   </a-select-option>
                 </a-select>
               </a-col>
               <a-col :span="3">
-                <a-button type="danger" icon="minus" @click="deleteWhiteList(item, index)" />
+                <a-button type="danger" @click="deleteWhiteList(item, index)"><MinusOutlined /></a-button>
               </a-col>
             </a-row>
           </div>
@@ -415,7 +422,7 @@ export default defineComponent({
                 <div>这里配置哪些域名需要通过国外DNS服务器获取IP进行访问</div>
               </a-col>
               <a-col span="3">
-                <a-button style="margin-left:8px" type="primary" icon="plus" @click="addDnsMapping()" />
+                <a-button style="margin-left:8px" type="primary" @click="addDnsMapping()"><PlusOutlined /></a-button>
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of dnsMappings" ref="dnsMappings" :key="index" :gutter="10" style="margin-top: 5px">
@@ -424,20 +431,20 @@ export default defineComponent({
               </a-col>
               <a-col :span="6">
                 <a-select v-model:value="item.value" :disabled="item.value === false" class="w100">
-                  <a-select-option v-for="(item2) of speedDnsOptions" :key="item2.value" :modelValue="item2.value">
+                  <a-select-option v-for="(item2) of speedDnsOptions" :key="item2.value" :value="item2.value">
                     {{ item2.value }}
                   </a-select-option>
                 </a-select>
               </a-col>
               <a-col :span="4">
                 <a-select v-model:value="item.family" class="w100">
-                  <a-select-option v-for="(item2) of familyOptions" :key="item2.value" :modelValue="item2.value">
+                  <a-select-option v-for="(item2) of familyOptions" :key="item2.value" :value="item2.value">
                     {{ item2.label }}
                   </a-select-option>
                 </a-select>
               </a-col>
               <a-col :span="3">
-                <a-button type="danger" icon="minus" @click="deleteDnsMapping(item, index)" />
+                <a-button type="danger" @click="deleteDnsMapping(item, index)"><MinusOutlined /></a-button>
               </a-col>
             </a-row>
           </div>
@@ -470,7 +477,7 @@ export default defineComponent({
                 以下域名在启动后立即进行测速，其他域名在第一次访问时才测速
               </a-col>
               <a-col :span="2">
-                <a-button style="margin-left:10px" type="primary" icon="plus" @click="addSpeedHostname()" />
+                <a-button style="margin-left:10px" type="primary" @click="addSpeedHostname()"><PlusOutlined /></a-button>
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of getSpeedTestConfig().hostnameList" ref="hostnameList" :key="index" :gutter="10" style="margin-top: 5px">
@@ -478,18 +485,18 @@ export default defineComponent({
                 <MockInput v-model:value="getSpeedTestConfig().hostnameList[index]" />
               </a-col>
               <a-col :span="2">
-                <a-button style="margin-left:10px" type="danger" icon="minus" @click="delSpeedHostname(item, index)" />
+                <a-button style="margin-left:10px" type="danger" @click="delSpeedHostname(item, index)"><MinusOutlined /></a-button>
               </a-col>
             </a-row>
 
             <a-divider />
             <a-row :gutter="10" class="mt10">
               <a-col span="24">
-                <a-button type="primary" icon="plus" @click="reSpeedTest()">
-                  立即重新测速
+                <a-button type="primary" @click="reSpeedTest()">
+                  <PlusOutlined />立即重新测速
                 </a-button>
-                <a-button class="ml10" type="primary" icon="reload" @click="reloadAllSpeedTester()">
-                  刷新
+                <a-button class="ml10" type="primary" @click="reloadAllSpeedTester()">
+                  <ReloadOutlined />刷新
                 </a-button>
               </a-col>
             </a-row>
@@ -497,10 +504,12 @@ export default defineComponent({
             <a-row :gutter="20">
               <a-col v-for="(item, key) of speedTestList" :key="key" span="12">
                 <a-card size="small" class="mt10" :title="key">
-                  <a slot="extra" href="javascript:void(0)" :title="key" style="cursor:default">
-                    <a-icon v-if="item.alive.length > 0" type="check" />
-                    <a-icon v-else type="info-circle" />
-                  </a>
+                  <template #extra>
+                    <a href="javascript:void(0)" :title="key" style="cursor:default">
+                      <CheckOutlined v-if="item.alive.length > 0" />
+                      <InfoCircleOutlined v-else />
+                    </a>
+                  </template>
                   <a-tag
                     v-for="(element, index) of item.backupList" :key="index" style="margin:2px;"
                     :title="element.title || `测速中：${element.host}`" :color="element.time ? (element.time > config.server.setting.lowSpeedDelay ? 'orange' : 'green') : (element.title ? 'red' : '')"
@@ -516,11 +525,11 @@ export default defineComponent({
     </div>
     <template #footer>
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
     </template>

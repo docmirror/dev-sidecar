@@ -1,11 +1,13 @@
 <script>
 import { ipcRenderer } from 'electron'
+import { ProfileOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
 import Plugin from '../mixins/plugin'
 import { colorTheme } from '../composables/theme'
 
 export default {
   name: 'Setting',
   mixins: [Plugin],
+  components: { ProfileOutlined, SyncOutlined, CheckOutlined },
   data () {
     return {
       key: 'app',
@@ -342,7 +344,7 @@ export default {
       设置
     </template>
     <template slot="header-right">
-      <a-button class="mr10" icon="profile" @click="openLog()">查看日志</a-button>
+      <a-button class="mr10" @click="openLog()"><ProfileOutlined />查看日志</a-button>
     </template>
 
     <div v-if="config">
@@ -377,8 +379,8 @@ export default {
         <a-input v-model:value="config.app.remoteConfig.personalUrl" :title="config.app.remoteConfig.personalUrl" spellcheck="false" />
       </a-form-item>
       <a-form-item label="重载远程配置" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-button :disabled="config.app.remoteConfig.enabled === false" :loading="reloadLoading" icon="sync" @click="reloadRemoteConfig()">
-          重载远程配置
+        <a-button :disabled="config.app.remoteConfig.enabled === false" :loading="reloadLoading" @click="reloadRemoteConfig()">
+          <SyncOutlined />重载远程配置
         </a-button>
         <div class="form-help">
           注意，部分远程配置文件所在站点，修改内容后可能需要等待一段时间才能生效。<br>
@@ -512,14 +514,14 @@ export default {
     </div>
 
       <div class="footer-bar">
-        <a-button :loading="removeUserConfigLoading" class="mr10" icon="sync" @click="restoreFactorySettings()">
-          恢复出厂设置
+        <a-button :loading="removeUserConfigLoading" class="mr10" @click="restoreFactorySettings()">
+          <SyncOutlined />恢复出厂设置
         </a-button>
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
 

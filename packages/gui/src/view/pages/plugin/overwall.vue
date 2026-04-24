@@ -1,12 +1,13 @@
 <script>
 import { defineComponent } from 'vue';
 
+import { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
 import Plugin from '../../mixins/plugin'
 import MockInput from '@/view/components/mock-input.vue'
 
 export default defineComponent({
   name: 'Overwall',
-  components: { MockInput },
+  components: { MockInput, PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
   mixins: [Plugin],
 
   data () {
@@ -176,7 +177,7 @@ export default defineComponent({
                 <span>PAC没有拦截到的域名，可以在此处定义；配置为<code>禁用</code>时，将不使用梯子</span>
               </a-col>
               <a-col :span="2">
-                <a-button type="primary" icon="plus" @click="addTarget()" />
+                <a-button type="primary" @click="addTarget()"><PlusOutlined /></a-button>
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of targets" ref="targets" :key="index" :gutter="10">
@@ -185,13 +186,13 @@ export default defineComponent({
               </a-col>
               <a-col :span="4">
                 <a-select v-model:value="item.value" class="w100">
-                  <a-select-option v-for="(item2) of overwallOptions" :key="item2.value" :modelValue="item2.value">
+                  <a-select-option v-for="(item2) of overwallOptions" :key="item2.value" :value="item2.value">
                     {{ item2.label }}
                   </a-select-option>
                 </a-select>
               </a-col>
               <a-col :span="2">
-                <a-button type="danger" icon="minus" @click="deleteTarget(item, index)" />
+                <a-button type="danger" @click="deleteTarget(item, index)"><MinusOutlined /></a-button>
               </a-col>
             </a-row>
           </div>
@@ -203,7 +204,7 @@ export default defineComponent({
                 <span>Nginx二层代理服务端配置</span>
               </a-col>
               <a-col :span="2">
-                <a-button type="primary" icon="plus" @click="addServer()" />
+                <a-button type="primary" @click="addServer()"><PlusOutlined /></a-button>
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of servers" ref="servers" :key="index" :gutter="10">
@@ -220,7 +221,7 @@ export default defineComponent({
                 <a-input v-model:value="item.value.password" addon-before="密码" type="password" placeholder="password" spellcheck="false" />
               </a-col>
               <a-col :span="2">
-                <a-button type="danger" icon="minus" @click="deleteServer(item, index)" />
+                <a-button type="danger" @click="deleteServer(item, index)"><MinusOutlined /></a-button>
               </a-col>
             </a-row>
             <div class="form-help">
@@ -233,11 +234,11 @@ export default defineComponent({
     </div>
     <template #footer>
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
     </template>

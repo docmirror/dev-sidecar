@@ -1,11 +1,19 @@
 <script>
 import { defineComponent } from 'vue';
 
+
+import { CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons-vue'
 import Plugin from '../../mixins/plugin'
 
 export default defineComponent({
   name: 'Node',
   mixins: [Plugin],
+
+  components: {
+    CheckOutlined,
+    ExclamationCircleOutlined,
+    SyncOutlined,
+  },
 
   data () {
     return {
@@ -97,7 +105,7 @@ export default defineComponent({
             <a-radio-button value="https://registry.npmjs.org" title="https://registry.npmjs.org">
               npmjs原生
             </a-radio-button>
-            <a-radio-button v-for="(item) of config.plugin.node.setting.registryList" :key="item.value" :modelValue="item.value" :title="item.value">
+            <a-radio-button v-for="(item) of config.plugin.node.setting.registryList" :key="item.value" :value="item.value" :title="item.value">
               {{ item.name }}
             </a-radio-button>
           </a-radio-group>
@@ -110,7 +118,7 @@ export default defineComponent({
             <a-radio-button value="default" title="https://registry.yarnpkg.com">
               yarn原生
             </a-radio-button>
-            <a-radio-button v-for="(item) of config.plugin.node.setting.yarnRegistryList" :key="item.value" :modelValue="item.value" :title="item.value" value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
+            <a-radio-button v-for="(item) of config.plugin.node.setting.yarnRegistryList" :key="item.value" :value="item.value" :title="item.value">
               {{ item.name }}
             </a-radio-button>
           </a-radio-group>
@@ -133,8 +141,8 @@ export default defineComponent({
               <a-input v-model:value="item.value" :title="item.value" read-only spellcheck="false" />
             </a-col>
             <a-col :span="1">
-              <a-icon v-if="item.exists && item.hadSet" title="已设置" style="color:green" type="check" />
-              <a-icon v-else title="还未设置" style="color:red" type="exclamation-circle" />
+              <CheckOutlined v-if="item.exists && item.hadSet" title="已设置" style="color:green" />
+              <ExclamationCircleOutlined v-else title="还未设置" style="color:red" />
             </a-col>
           </a-row>
         </a-form-item>
@@ -142,11 +150,11 @@ export default defineComponent({
     </div>
     <template #footer>
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
     </template>

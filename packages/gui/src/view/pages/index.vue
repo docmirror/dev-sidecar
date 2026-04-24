@@ -1,5 +1,6 @@
 <script>
 import lodash from 'lodash'
+import { CheckOutlined, CloseOutlined, ArrowRightOutlined } from '@ant-design/icons-vue'
 import DsContainer from '../components/container'
 import SetupCa from '../components/setup-ca'
 
@@ -8,6 +9,9 @@ export default {
   components: {
     DsContainer,
     SetupCa,
+    CheckOutlined,
+    CloseOutlined,
+    ArrowRightOutlined,
   },
   data () {
     return {
@@ -323,8 +327,8 @@ export default {
                   style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked
                   @change="item.doClick"
                 >
-                  <a-icon slot="checkedChildren" type="check" />
-                  <a-icon slot="unCheckedChildren" type="close" />
+                  <template #checkedChildren><CheckOutlined /></template>
+                  <template #unCheckedChildren><CloseOutlined /></template>
                 </a-switch>
               </a-tooltip>
             </a-form-item>
@@ -348,7 +352,7 @@ export default {
         <div class="right">
           <div>
             如果它解决了你的问题，请不要吝啬你的star哟！点这里
-            <a-icon style="margin-right:10px;" type="arrow-right" theme="outlined" />
+            <ArrowRightOutlined style="margin-right:10px;" />
           </div>
           <a @click="openExternal('https://github.com/docmirror/dev-sidecar')"><img
             alt="GitHub stars"

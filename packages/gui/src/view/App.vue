@@ -1,5 +1,6 @@
 <script>
 import { defineComponent } from 'vue';
+import * as Icons from '@ant-design/icons-vue';
 
 import { ipcRenderer } from 'electron'
 import createMenus from '@/view/router/menu'
@@ -8,6 +9,10 @@ import { colorTheme } from './composables/theme'
 
 export default defineComponent({
   name: 'App',
+
+  components: {
+    ...Icons,
+  },
 
   data () {
     return {
@@ -59,6 +64,11 @@ export default defineComponent({
   },
 
   methods: {
+    iconComp (icon) {
+      if (!icon) return 'FileOutlined'
+      const name = icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) + 'Outlined'
+      return name
+    },
     async refreshConfigAndInfo () {
       try {
         const config = await this.$api.config.get()
@@ -112,14 +122,14 @@ export default defineComponent({
               <template v-for="(item) of menus">
                 <a-sub-menu v-if="item.children && item.children.length > 0" :key="'sub-' + item.path" @titleClick="titleClick(item)">
                   <template #title>
-                    <span><a-icon :type="item.icon ? item.icon : 'file'" /><span>{{ item.title }}</span></span>
+                    <span><component :is="iconComp(item.icon)" /><span>{{ item.title }}</span></span>
                   </template>
                   <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)">
-                    <a-icon :type="sub.icon ? item.icon : 'file'" /> {{ sub.title }}
+                    <component :is="iconComp(sub.icon)" /> {{ sub.title }}
                   </a-menu-item>
                 </a-sub-menu>
                 <a-menu-item v-else :key="'item-' + item.path" @click="menuClick(item)">
-                  <a-icon :type="item.icon ? item.icon : 'file'" />
+                  <component :is="iconComp(item.icon)" />
                   <span class="nav-text">{{ item.title }}</span>
                 </a-menu-item>
               </template>

@@ -1,12 +1,13 @@
 <script>
 import { defineComponent } from 'vue';
 
+import { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
 import Plugin from '../mixins/plugin'
 import MockInput from '@/view/components/mock-input.vue'
 
 export default defineComponent({
   name: 'Proxy',
-  components: { MockInput },
+  components: { MockInput, PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
   mixins: [Plugin],
 
   data () {
@@ -170,7 +171,7 @@ export default defineComponent({
             <span>国内域名不包含的域名，可以在此处定义；配置为 <code>不排除</code>时，将被代理</span>
           </a-col>
           <a-col :span="2">
-            <a-button type="primary" icon="plus" @click="addExcludeIp()" />
+            <a-button type="primary" @click="addExcludeIp()"><PlusOutlined /></a-button>
           </a-col>
         </a-row>
         <a-row v-for="(item, index) of excludeIpList" ref="excludeIpList" :key="index" :gutter="10" class="fine-tuning">
@@ -179,24 +180,24 @@ export default defineComponent({
           </a-col>
           <a-col :span="5">
             <a-select v-model:value="item.value" class="w100">
-              <a-select-option v-for="(item2) of excludeIpOptions" :key="item2.value" :modelValue="item2.value">
+              <a-select-option v-for="(item2) of excludeIpOptions" :key="item2.value" :value="item2.value">
                 {{ item2.label }}
               </a-select-option>
             </a-select>
           </a-col>
           <a-col :span="2">
-            <a-button type="danger" icon="minus" @click="delExcludeIp(item, index)" />
+            <a-button type="danger" @click="delExcludeIp(item, index)"><MinusOutlined /></a-button>
           </a-col>
         </a-row>
       </a-form-item>
     </div>
     <template #footer>
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
     </template>

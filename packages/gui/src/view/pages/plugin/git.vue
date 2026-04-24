@@ -1,12 +1,13 @@
 <script>
 import { defineComponent } from 'vue';
 
+import { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
 import Plugin from '../../mixins/plugin'
 import MockInput from '@/view/components/mock-input.vue'
 
 export default defineComponent({
   name: 'Git',
-  components: { MockInput },
+  components: { MockInput, PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
   mixins: [Plugin],
 
   data () {
@@ -112,7 +113,7 @@ export default defineComponent({
                 <span><code>Git.exe</code>将不代理以下仓库；可以是根地址、组织/机构地址、完整地址</span>
               </a-col>
               <a-col :span="2">
-                <a-button type="primary" icon="plus" @click="addNoProxyUrl()" />
+                <a-button type="primary" @click="addNoProxyUrl()"><PlusOutlined /></a-button>
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of noProxyUrls" ref="noProxyUrls" :key="index" :gutter="10">
@@ -120,7 +121,7 @@ export default defineComponent({
                 <MockInput v-model:value="item.key" class="mt-2" />
               </a-col>
               <a-col :span="2">
-                <a-button type="danger" icon="minus" @click="delNoProxyUrl(item, index)" />
+                <a-button type="danger" @click="delNoProxyUrl(item, index)"><MinusOutlined /></a-button>
               </a-col>
             </a-row>
           </div>
@@ -129,11 +130,11 @@ export default defineComponent({
     </div>
     <template #footer>
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
     </template>

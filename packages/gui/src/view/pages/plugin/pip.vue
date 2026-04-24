@@ -1,11 +1,14 @@
 <script>
 import { defineComponent } from 'vue';
 
+import { SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
 import Plugin from '../../mixins/plugin'
 
 export default defineComponent({
   name: 'Pip',
   mixins: [Plugin],
+
+  components: { SyncOutlined, CheckOutlined },
 
   data () {
     return {
@@ -71,7 +74,7 @@ export default defineComponent({
             <a-radio-button value="https://pypi.org/simple/" title="https://pypi.org/simple/">
               原生
             </a-radio-button>
-            <a-radio-button v-for="(item) of config.plugin.pip.setting.registryList" :key="item.value" :modelValue="item.value" :title="item.value">
+            <a-radio-button v-for="(item) of config.plugin.pip.setting.registryList" :key="item.value" :value="item.value" :title="item.value">
               {{ item.name }}
             </a-radio-button>
           </a-radio-group>
@@ -90,11 +93,11 @@ export default defineComponent({
     </div>
     <template #footer>
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
     </template>
