@@ -97,7 +97,7 @@ export default defineComponent({
 
     <div v-if="config">
       <a-form-item label="启用系统代理" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model:checked:checked="config.proxy.enabled">
+        <a-checkbox v-model:checked="config.proxy.enabled">
           随应用启动
         </a-checkbox>
         <a-tag v-if="status.proxy.enabled" color="green">

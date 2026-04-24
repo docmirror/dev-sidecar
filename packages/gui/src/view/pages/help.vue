@@ -31,10 +31,10 @@ export default defineComponent({
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       帮助中心
     </template>
-    <template slot="header-right">
+    <template #header-right>
       <a-button class="mr10" @click="openExternal('https://github.com/docmirror/dev-sidecar/issues/new/choose')">反馈问题</a-button>
       <a-button class="mr10" @click="openLog()"><ProfileOutlined />查看日志</a-button>
     </template>

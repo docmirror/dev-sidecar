@@ -340,10 +340,10 @@ export default {
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       设置
     </template>
-    <template slot="header-right">
+    <template #header-right>
       <a-button class="mr10" @click="openLog()"><ProfileOutlined />查看日志</a-button>
     </template>
 
@@ -513,6 +513,7 @@ export default {
       </a-form-item>
     </div>
 
+    <template #footer>
       <div class="footer-bar">
         <a-button :loading="removeUserConfigLoading" class="mr10" @click="restoreFactorySettings()">
           <SyncOutlined />恢复出厂设置
@@ -524,6 +525,7 @@ export default {
           <CheckOutlined />应用
         </a-button>
       </div>
+    </template>
 
   </ds-container>
 </template>

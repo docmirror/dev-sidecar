@@ -3,14 +3,16 @@ import path from 'node:path'
 import DevSidecar from '@docmirror/dev-sidecar'
 import { ipcMain } from 'electron'
 import lodash from 'lodash'
-
-const jsonApi = require('@docmirror/mitmproxy/src/json')
+import jsonApi from '@docmirror/mitmproxy/src/json'
+import { createRequire } from 'node:module'
+const require = createRequire(import.meta.url)
 const pk = require('../../../package.json')
-const coreDefaultConfig = require('@docmirror/dev-sidecar/src/config/index.js')
-const configLoader = require('@docmirror/dev-sidecar/src/config/local-config-loader.js')
-const configFromFiles = require('@docmirror/dev-sidecar/src/config/index.js').configFromFiles
-const log = require('../../utils/util.log.gui')
-const dateUtil = require('@docmirror/dev-sidecar/src/utils/util.date')
+import coreDefaultConfig from '@docmirror/dev-sidecar/src/config/index.js'
+import configLoader from '@docmirror/dev-sidecar/src/config/local-config-loader.js'
+import log from '../../utils/util.log.gui.js'
+import dateUtil from '@docmirror/dev-sidecar/src/utils/util.date'
+
+const { configFromFiles } = coreDefaultConfig
 
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
 process.env.DS_EXTRA_PATH = path.join(__dirname, '../extra/')

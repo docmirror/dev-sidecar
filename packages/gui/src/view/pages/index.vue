@@ -338,7 +338,7 @@ export default {
     </div>
 
     <SetupCa title="安装证书" v-model:open="setupCa.visible" @setup="handleCaSetuped" />
-    <div slot="footer">
+    <template #footer>
       <div v-if="!setting.overwall" class="star">
         <div class="donate">
           <a-tooltip placement="topLeft" title="彩蛋，点我">
@@ -360,7 +360,7 @@ export default {
           ></a>
         </div>
       </div>
-    </div>
+    </template>
   </DsContainer>
 </template>
 

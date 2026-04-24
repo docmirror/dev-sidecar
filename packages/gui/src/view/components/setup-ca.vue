@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  emits: ['update:visible', 'setup'],
+  emits: ['update:open', 'setup'],
   name: 'SetupCa',
 
   components: {
@@ -14,7 +14,7 @@ export default defineComponent({
       type: String,
       default: '安装根证书',
     },
-    visible: {
+    open: {
       type: Boolean,
     },
   },
@@ -67,7 +67,7 @@ export default defineComponent({
   <a-drawer
     placement="right"
     :closable="false"
-    :open="visible"
+    :open="open"
     @after-open-change="afterVisibleChange"
     width="660px"
     height="100%"

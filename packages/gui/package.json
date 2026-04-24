@@ -2,6 +2,8 @@
   "name": "@docmirror/dev-sidecar-gui",
   "version": "2.0.2",
   "private": false,
+  "type": "module",
+  "main": "src/background.js",
   "author": {
     "email": "xiaojunnuo@qq.com",
     "name": "Greper"
@@ -10,9 +12,10 @@
   "homepage": "https://github.com/docmirror/dev-sidecar",
   "scripts": {
     "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build",
-    "electron": "vue-cli-service electron:serve",
+    "electron": "concurrently -k \"vue-cli-service serve --port 8080\" \"wait-on http-get://localhost:8080 && cross-env WEBPACK_DEV_SERVER_URL=http://localhost:8080 electron .\"",
+    "electron:build": "npm run build && electron-builder",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "electron:icons": "electron-icon-builder --input=./public/logo/win.png --output=build --flatten",
@@ -50,8 +53,10 @@
     "electron": "^41.3.0",
     "electron-builder": "^26.8.1",
     "electron-icon-builder": "^2.0.1",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
     "json5-loader": "^4.0.1",
-    "vue-cli-plugin-electron-builder": "3.0.0-alpha.4"
+    "wait-on": "^7.2.0"
   },
   "browserslist": [
     "> 1%",

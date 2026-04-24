@@ -75,6 +75,14 @@ export default defineComponent({
     this.registerSpeedTestEvent()
   },
 
+  beforeUnmount () {
+    // 清理事件监听器
+    this.$api.ipc.removeAllListeners('speed')
+    if (this.speedRefreshInterval) {
+      clearInterval(this.speedRefreshInterval)
+    }
+  },
+
   methods: {
     async onCrtSelect () {
       const value = await this.$api.fileSelector.open(this.config.server.setting.rootCaFile.certPath, 'file')
@@ -213,16 +221,6 @@ export default defineComponent({
       this.$api.ipc.on('speed', listener)
       this.speedRefreshInterval = this.startSpeedRefreshInterval()
       this.reloadAllSpeedTester()
-
-      // Vue 3 中 this.$once 已被移除，使用 beforeUnmount 钩子
-    },
-
-    beforeUnmount () {
-      // 清理事件监听器
-      this.$api.ipc.removeAllListeners('speed')
-      if (this.speedRefreshInterval) {
-        clearInterval(this.speedRefreshInterval)
-      }
     },
     async reloadAllSpeedTester () {
       this.$api.server.getSpeedTestList()
