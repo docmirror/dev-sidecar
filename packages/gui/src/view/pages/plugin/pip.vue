@@ -57,26 +57,15 @@ export default defineComponent({
 
     <div v-if="config">
       <a-form layout="horizontal">
-        <!--        <a-form-item label="启用PIP加速" :label-col="labelCol" :wrapper-col="wrapperCol"> -->
-        <!--          <a-checkbox v-model:checked="config.plugin.pip.enabled"> -->
-        <!--            随应用启动 -->
-        <!--          </a-checkbox> -->
-        <!--          <a-tag v-if="status.plugin.pip.enabled" color="green"> -->
-        <!--            当前已启动 -->
-        <!--          </a-tag> -->
-        <!--          <a-tag v-else color="red"> -->
-        <!--            当前未启动 -->
-        <!--          </a-tag> -->
-        <!--        </a-form-item> -->
         <a-form-item label="pip命令名" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.pip.setting.command" spellcheck="false" />
+          <a-input v-model:value="config.plugin.pip.setting.command" spellcheck="false" />
           <div class="form-help">
             如果你的<code>pip</code>命令改成了其他名字（如<code>pip3</code>），或想设置绿色版<code>pip</code>程序路径，可在此处修改
           </div>
         </a-form-item>
         <a-form-item label="镜像仓库" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group
-            v-model="config.plugin.pip.setting.registry" default-value="https://pypi.org/simple/"
+            v-model:value="config.plugin.pip.setting.registry" default-value="https://pypi.org/simple/"
             button-style="solid" @change="onSwitchRegistry"
           >
             <a-radio-button value="https://pypi.org/simple/" title="https://pypi.org/simple/">
@@ -91,7 +80,7 @@ export default defineComponent({
           </div>
         </a-form-item>
         <a-form-item label="信任仓库域名" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.pip.setting.trustedHost" spellcheck="false" />
+          <a-input v-model:value="config.plugin.pip.setting.trustedHost" spellcheck="false" />
           <div class="form-help">
             使用以上域名安装包时，不会进行SSL证书验证，多个域名用空格隔开<br>
             注意：切换镜像仓库同时会修改<code>pip.ini</code>中的<code>trusted-host</code>配置，即使关闭 ds 也会继续保持

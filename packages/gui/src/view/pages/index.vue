@@ -77,12 +77,10 @@ export default {
       console.log("[Test]: Mode Changed")
       const mode = this.config.app.mode
       if (mode === 'safe') {
-        console.log("[Test]: Mode Changed To Safe")
         this.config.server.intercept.enabled = false
         this.config.server.dns.speedTest.enabled = true
         this.config.plugin.overwall.enabled = false
       } else if (mode === 'default') {
-        console.log("[Test]: Mode Changed To Default")
         this.config.server.intercept.enabled = true
         this.config.server.dns.speedTest.enabled = true
         this.config.plugin.overwall.enabled = false
@@ -109,6 +107,9 @@ export default {
       const setting = await this.$api.setting.load()
       console.log('setting', setting)
       this.setting = setting || {}
+      if (this.setting.rootCa && this.setting.rootCa.setuped) {
+        return
+      }
       this.$confirm({
         title: '第一次使用，请先安装CA根证书',
         content: '本应用正常使用，必须安装和信任CA根证书',

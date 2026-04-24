@@ -34,5 +34,19 @@ export default defineComponent({
 </script>
 
 <template>
-  <span ref="input" class="ant-input" contenteditable="true" spellcheck="false" :title="modelValue" @blur="onBlur" @keydown="onKeydown" v-html="modelValue" />
+  <span ref="input" class="ant-input mock-input" contenteditable="true" spellcheck="false" :title="modelValue" @blur="onBlur" @keydown="onKeydown" v-html="modelValue" />
 </template>
+
+<style scoped>
+.mock-input {
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  display: inline-block;
+  min-height: 32px;
+  padding: 4px 11px;
+  outline: none;
+}
+.mock-input:focus {
+  border-color: #4096ff;
+}
+</style>

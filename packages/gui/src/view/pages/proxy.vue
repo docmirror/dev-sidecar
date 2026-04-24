@@ -158,7 +158,7 @@ export default defineComponent({
         </div>
       </a-form-item>
       <a-form-item label="远程国内域名地址" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.proxy.remoteDomesticDomainAllowListFileUrl" :title="config.proxy.remoteDomesticDomainAllowListFileUrl" spellcheck="false" />
+        <a-input v-model:value="config.proxy.remoteDomesticDomainAllowListFileUrl" :title="config.proxy.remoteDomesticDomainAllowListFileUrl" spellcheck="false" />
         <div class="form-help">
           远程国内域名白名单文件内容可以是<code>base64</code>编码格式，也可以是未经过编码的
         </div>
@@ -175,10 +175,10 @@ export default defineComponent({
         </a-row>
         <a-row v-for="(item, index) of excludeIpList" ref="excludeIpList" :key="index" :gutter="10" class="fine-tuning">
           <a-col :span="17">
-            <MockInput v-model="item.key" class="mt-1" />
+            <MockInput v-model:value="item.key" class="mt-1" />
           </a-col>
           <a-col :span="5">
-            <a-select v-model="item.value" class="w100">
+            <a-select v-model:value="item.value" class="w100">
               <a-select-option v-for="(item2) of excludeIpOptions" :key="item2.value" :modelValue="item2.value">
                 {{ item2.label }}
               </a-select-option>

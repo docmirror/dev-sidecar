@@ -163,7 +163,7 @@ export default defineComponent({
           </div>
         </a-form-item>
         <a-form-item label="远程PAC文件" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.overwall.pac.pacFileUpdateUrl" :title="config.plugin.overwall.pac.pacFileUpdateUrl" spellcheck="false" />
+          <a-input v-model:value="config.plugin.overwall.pac.pacFileUpdateUrl" :title="config.plugin.overwall.pac.pacFileUpdateUrl" spellcheck="false" />
           <div class="form-help">
             远程PAC文件内容可以是<code>base64</code>编码格式，也可以是未经过编码的
           </div>
@@ -181,10 +181,10 @@ export default defineComponent({
             </a-row>
             <a-row v-for="(item, index) of targets" ref="targets" :key="index" :gutter="10">
               <a-col :span="18">
-                <MockInput v-model="item.key" class="mt-2" />
+                <MockInput v-model:value="item.key" class="mt-2" />
               </a-col>
               <a-col :span="4">
-                <a-select v-model="item.value" class="w100">
+                <a-select v-model:value="item.value" class="w100">
                   <a-select-option v-for="(item2) of overwallOptions" :key="item2.value" :modelValue="item2.value">
                     {{ item2.label }}
                   </a-select-option>
@@ -208,16 +208,16 @@ export default defineComponent({
             </a-row>
             <a-row v-for="(item, index) of servers" ref="servers" :key="index" :gutter="10">
               <a-col :span="6">
-                <a-input v-model="item.key" :title="item.key" addon-before="域名" placeholder="yourdomain.com" spellcheck="false" />
+                <a-input v-model:value="item.key" :title="item.key" addon-before="域名" placeholder="yourdomain.com" spellcheck="false" />
               </a-col>
               <a-col :span="5">
-                <a-input v-model="item.value.port" :title="item.value.port" addon-before="端口" placeholder="443" spellcheck="false" />
+                <a-input v-model:value="item.value.port" :title="item.value.port" addon-before="端口" placeholder="443" spellcheck="false" />
               </a-col>
               <a-col :span="6">
-                <a-input v-model="item.value.path" :title="item.value.path" addon-before="路径" placeholder="xxxxxx" spellcheck="false" />
+                <a-input v-model:value="item.value.path" :title="item.value.path" addon-before="路径" placeholder="xxxxxx" spellcheck="false" />
               </a-col>
               <a-col :span="5">
-                <a-input v-model="item.value.password" addon-before="密码" type="password" placeholder="password" spellcheck="false" />
+                <a-input v-model:value="item.value.password" addon-before="密码" type="password" placeholder="password" spellcheck="false" />
               </a-col>
               <a-col :span="2">
                 <a-button type="danger" icon="minus" @click="deleteServer(item, index)" />

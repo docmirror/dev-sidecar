@@ -117,7 +117,7 @@ export default defineComponent({
             </a-row>
             <a-row v-for="(item, index) of noProxyUrls" ref="noProxyUrls" :key="index" :gutter="10">
               <a-col :span="22">
-                <MockInput v-model="item.key" class="mt-2" />
+                <MockInput v-model:value="item.key" class="mt-2" />
               </a-col>
               <a-col :span="2">
                 <a-button type="danger" icon="minus" @click="delNoProxyUrl(item, index)" />

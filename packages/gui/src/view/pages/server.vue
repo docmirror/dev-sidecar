@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue';
 
 import _ from 'lodash'
-import VueJsonEditor from 'vue-json-editor-fix-cn'
+import { Vue3JsonEditor } from 'vue3-json-editor'
 import Plugin from '../mixins/plugin'
 import MockInput from '@/view/components/mock-input.vue'
 
@@ -10,7 +10,7 @@ export default defineComponent({
   name: 'Server',
 
   components: {
-    VueJsonEditor,
+    Vue3JsonEditor,
     MockInput,
   },
 
@@ -269,13 +269,13 @@ export default defineComponent({
               </a-tag>
             </a-form-item>
             <a-form-item label="绑定IP" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input v-model="config.server.host" spellcheck="false" />
+              <a-input v-model:value="config.server.host" spellcheck="false" />
               <div class="form-help">
                 你可以设置为<code>0.0.0.0</code>，让其他电脑可以使用此代理服务
               </div>
             </a-form-item>
             <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number v-model="config.server.port" :min="0" :max="65535" :precision="0" spellcheck="false" />
+              <a-input-number v-model:value="config.server.port" :min="0" :max="65535" :precision="0" spellcheck="false" />
               <div class="form-help">
                 修改后需要重启应用
               </div>
@@ -299,12 +299,12 @@ export default defineComponent({
             </a-form-item>
             <a-form-item label="根证书" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-input-search
-                v-model="config.server.setting.rootCaFile.certPath" addon-before="Cert" enter-button="选择"
+                v-model:value="config.server.setting.rootCaFile.certPath" addon-before="Cert" enter-button="选择"
                 :title="config.server.setting.rootCaFile.certPath" spellcheck="false"
                 @search="onCrtSelect"
               />
               <a-input-search
-                v-model="config.server.setting.rootCaFile.keyPath" addon-before="Key" enter-button="选择"
+                v-model:value="config.server.setting.rootCaFile.keyPath" addon-before="Key" enter-button="选择"
                 :title="config.server.setting.rootCaFile.keyPath" spellcheck="false"
                 @search="onKeySelect"
               />
@@ -330,7 +330,7 @@ export default defineComponent({
         </a-tab-pane>
         <a-tab-pane key="2" tab="拦截设置">
           <div v-if="activeTabKey === '2'" style="height:100%">
-            <VueJsonEditor
+            <Vue3JsonEditor
               v-model="config.server.intercepts" style="height:100%" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
@@ -339,12 +339,12 @@ export default defineComponent({
         <a-tab-pane key="3" tab="超时时间设置">
           <div v-if="activeTabKey === '3'" style="height:100%;display:flex;flex-direction:column">
             <a-form-item label="默认超时时间" :label-col="labelCol" :wrapper-col="wrapperCol">
-              请求：<a-input-number v-model="config.server.setting.defaultTimeout" :step="1000" :min="1000" :precision="0" spellcheck="false" /> ms，对应<code>timeout</code>配置<br>
-              连接：<a-input-number v-model="config.server.setting.defaultKeepAliveTimeout" :step="1000" :min="1000" :precision="0" spellcheck="false" /> ms，对应<code>keepAliveTimeout</code>配置
+              请求：<a-input-number v-model:value="config.server.setting.defaultTimeout" :step="1000" :min="1000" :precision="0" spellcheck="false" /> ms，对应<code>timeout</code>配置<br>
+              连接：<a-input-number v-model:value="config.server.setting.defaultKeepAliveTimeout" :step="1000" :min="1000" :precision="0" spellcheck="false" /> ms，对应<code>keepAliveTimeout</code>配置
             </a-form-item>
             <hr style="margin-bottom:15px">
             <div>这里指定域名的超时时间：<span class="form-help">（域名配置可使用通配符或正则）</span></div>
-            <VueJsonEditor
+            <Vue3JsonEditor
               v-model="config.server.setting.timeoutMapping" style="flex-grow:1;min-height:300px;margin-top:10px" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
@@ -362,10 +362,10 @@ export default defineComponent({
             </a-row>
             <a-row v-for="(item, index) of whiteList" ref="whiteList" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="16">
-                <MockInput v-model="item.key" />
+                <MockInput v-model:value="item.key" />
               </a-col>
               <a-col :span="5">
-                <a-select v-model="item.value" class="w100">
+                <a-select v-model:value="item.value" class="w100">
                   <a-select-option v-for="(item2) of whiteListOptions" :key="item2.value" :modelValue="item2.value">
                     {{ item2.label }}
                   </a-select-option>
@@ -382,7 +382,7 @@ export default defineComponent({
             <div>
               说明：<code>自动兼容程序</code>会自动根据错误信息进行兼容性调整，并将兼容设置保存在 <code>~/.dev-sidecar/automaticCompatibleConfig.json</code> 文件中。但并不是所有的兼容设置都是正确的，所以需要通过以下配置来覆盖错误的兼容设置。
             </div>
-            <VueJsonEditor
+            <Vue3JsonEditor
               v-model="config.server.compatible" style="flex-grow:1;min-height:300px;margin-top:10px;" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
@@ -394,7 +394,7 @@ export default defineComponent({
               提示：<code>IP预设置</code>功能，优先级高于 <code>DNS设置</code>
               <span class="form-help">（域名配置可使用通配符或正则）</span>
             </div>
-            <VueJsonEditor
+            <Vue3JsonEditor
               v-model="config.server.preSetIpList" style="flex-grow:1;min-height:300px;margin-top:10px;" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
@@ -402,7 +402,7 @@ export default defineComponent({
         </a-tab-pane>
         <a-tab-pane key="7" tab="DNS服务管理">
           <div v-if="activeTabKey === '7'" style="height:100%">
-            <VueJsonEditor
+            <Vue3JsonEditor
               v-model="config.server.dns.providers" style="height:100%" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
@@ -420,17 +420,17 @@ export default defineComponent({
             </a-row>
             <a-row v-for="(item, index) of dnsMappings" ref="dnsMappings" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="11">
-                <MockInput v-model="item.key" />
+                <MockInput v-model:value="item.key" />
               </a-col>
               <a-col :span="6">
-                <a-select v-model="item.value" :disabled="item.value === false" class="w100">
+                <a-select v-model:value="item.value" :disabled="item.value === false" class="w100">
                   <a-select-option v-for="(item2) of speedDnsOptions" :key="item2.value" :modelValue="item2.value">
                     {{ item2.value }}
                   </a-select-option>
                 </a-select>
               </a-col>
               <a-col :span="4">
-                <a-select v-model="item.family" class="w100">
+                <a-select v-model:value="item.family" class="w100">
                   <a-select-option v-for="(item2) of familyOptions" :key="item2.value" :modelValue="item2.value">
                     {{ item2.label }}
                   </a-select-option>
@@ -451,16 +451,16 @@ export default defineComponent({
               </a-checkbox>
             </a-form-item>
             <a-form-item label="自动测试间隔" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number v-model="getSpeedTestConfig().interval" :step="1000" :min="1" :precision="0" spellcheck="false" /> ms
+              <a-input-number v-model:value="getSpeedTestConfig().interval" :step="1000" :min="1" :precision="0" spellcheck="false" /> ms
             </a-form-item>
             <!-- <a-form-item label="慢速IP阈值" :label-col="labelCol" :wrapper-col="wrapperCol">
-              <a-input-number v-model="config.server.setting.lowSpeedDelay" :step="10" :min="100" :precision="0" spellcheck="false" /> ms
+              <a-input-number v-model:value="config.server.setting.lowSpeedDelay" :step="10" :min="100" :precision="0" spellcheck="false" /> ms
             </a-form-item> -->
             <div>使用以下DNS获取IP进行测速</div>
             <a-row style="margin-top:10px">
               <a-col span="24">
                 <a-checkbox-group
-                  v-model="getSpeedTestConfig().dnsProviders"
+                  v-model:value="getSpeedTestConfig().dnsProviders"
                   :options="speedDnsOptions"
                 />
               </a-col>
@@ -475,7 +475,7 @@ export default defineComponent({
             </a-row>
             <a-row v-for="(item, index) of getSpeedTestConfig().hostnameList" ref="hostnameList" :key="index" :gutter="10" style="margin-top: 5px">
               <a-col :span="21">
-                <MockInput v-model="getSpeedTestConfig().hostnameList[index]" />
+                <MockInput v-model:value="getSpeedTestConfig().hostnameList[index]" />
               </a-col>
               <a-col :span="2">
                 <a-button style="margin-left:10px" type="danger" icon="minus" @click="delSpeedHostname(item, index)" />

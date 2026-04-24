@@ -68,7 +68,7 @@ export default defineComponent({
     placement="right"
     :closable="false"
     :open="visible"
-    @after-visible-change="afterVisibleChange"
+    @after-open-change="afterVisibleChange"
     width="660px"
     height="100%"
     :slots="{ title: 'title' }"

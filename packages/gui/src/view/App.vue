@@ -110,7 +110,7 @@ export default defineComponent({
               :default-open-keys="['/plugin']"
             >
               <template v-for="(item) of menus">
-                <a-sub-menu v-if="item.children && item.children.length > 0" :key="item.path" @titleClick="titleClick(item)">
+                <a-sub-menu v-if="item.children && item.children.length > 0" :key="'sub-' + item.path" @titleClick="titleClick(item)">
                   <template #title>
                     <span><a-icon :type="item.icon ? item.icon : 'file'" /><span>{{ item.title }}</span></span>
                   </template>
@@ -118,7 +118,7 @@ export default defineComponent({
                     <a-icon :type="sub.icon ? item.icon : 'file'" /> {{ sub.title }}
                   </a-menu-item>
                 </a-sub-menu>
-                <a-menu-item v-else :key="item.path" @click="menuClick(item)">
+                <a-menu-item v-else :key="'item-' + item.path" @click="menuClick(item)">
                   <a-icon :type="item.icon ? item.icon : 'file'" />
                   <span class="nav-text">{{ item.title }}</span>
                 </a-menu-item>
