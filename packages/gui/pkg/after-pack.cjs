@@ -11,7 +11,7 @@ function writeAppUpdateYmlForLinux () {
   // updaterCacheDirName: '@docmirrordev-sidecar-gui-updater'
   const fileContent = `provider: ${publishProvider}
 url: '${publishUrl}'
-updaterCacheDirName: '@docmirrordev-sidecar-gui-updater'
+updaterCacheDirName: 'dev-sidecar-gui-updater'
 `
   console.log('write linux app-update.yml,updateUrl:', publishUrl)
   const filePath = path.resolve('./dist_electron/linux-unpacked/resources/app-update.yml')
