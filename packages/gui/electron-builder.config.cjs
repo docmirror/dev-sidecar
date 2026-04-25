@@ -58,7 +58,12 @@ module.exports = {
         target: 'rpm',
         arch: ['x64', 'arm64', 'armv7l'],
       },
+      {
+        target: 'flatpak',
+        arch: ['x64'],
+      },
     ],
+    appId: 'cn.docmirror.DevSidecar',
     category: 'System',
   },
   mac: {
