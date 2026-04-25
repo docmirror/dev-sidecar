@@ -133,14 +133,12 @@ jobs:
           pnpm install;
 
       - name: "test packages/core"
-        run: |
-          cd packages/core;
-          pnpm run test;
+        working-directory: packages/core
+        run: pnpm run test;
 
       - name: "test packages/mitmproxy"
-        run: |
-          cd packages/mitmproxy;
-          pnpm run test;
+        working-directory: packages/mitmproxy
+        run: pnpm run test;
 
       - name: "Cache Flatpak runtime (Linux)"
         if: ${{ matrix.os == 'ubuntu' }}
@@ -200,11 +198,9 @@ jobs:
 
       - name: "npm run electron:build (Windows/macOS)"
         if: ${{ matrix.os != 'ubuntu' }}
+        working-directory: packages/gui
         run: |
           echo "======================================================================";
-          echo "cd packages/gui";
-          echo "--------------------";
-          cd packages/gui;
           dir || ls -lah;
 
           echo "======================================================================";
@@ -215,13 +211,11 @@ jobs:
       - name: "npm run electron:build (Linux & Linux ARM64)"
         # if: ${{ matrix.os == 'ubuntu' || matrix.os == 'ubuntu-24.04-arm' }}
         if: ${{ matrix.os == 'ubuntu' }}
+        working-directory: packages/gui
         env:
           DEBUG: "@malept/flatpak-bundler"
         run: |
           echo "======================================================================";
-          echo "cd packages/gui";
-          echo "--------------------";
-          cd packages/gui;
           ls -lah;
 
           echo "======================================================================";
@@ -230,18 +224,16 @@ jobs:
           dbus-run-session -- npm run electron:build;
 
       - name: 'Print dir "packages/gui/dist_electron/"'
+        working-directory: packages/gui/dist_electron
         run: |
           echo "======================================================================";
-          echo "cd packages/gui/dist_electron";
-          echo "--------------------";
-          cd packages/gui/dist_electron;
           dir || ls -lah;
 
       # Rename artifacts
       - name: "Rename artifacts - Windows"
         if: ${{ matrix.os == 'windows' }}
+        working-directory: packages/gui/dist_electron
         run: |
-          cd packages/gui/dist_electron;
           ren DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe   DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe;
           ren DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe  DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe;
           ren DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe;
@@ -249,8 +241,8 @@ jobs:
           dir;
       - name: "Rename artifacts - Linux"
         if: ${{ matrix.os == 'ubuntu' }}
+        working-directory: packages/gui/dist_electron
         run: |
-          cd packages/gui/dist_electron;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.deb;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x64.tar.gz      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.tar.gz;
@@ -278,8 +270,8 @@ jobs:
       #     ls -lah;
       - name: "Rename artifacts - macOS"
         if: ${{ matrix.os == 'macos' }}
+        working-directory: packages/gui/dist_electron
         run: |
-          cd packages/gui/dist_electron;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x64.dmg        DevSidecar-${{ steps.package-info.outputs.version }}-macos-x86_64.dmg;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.dmg      DevSidecar-${{ steps.package-info.outputs.version }}-macos-arm64.dmg;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg  DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg;
