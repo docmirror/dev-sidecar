@@ -223,6 +223,10 @@ jobs:
           echo "--------------------";
           dbus-run-session -- npm run electron:build;
 
+      - name: "Test w"
+        working-directory: packages/gui
+        run: tree .
+
       - name: 'Print dir "packages/gui/dist_electron/"'
         working-directory: packages/gui/dist_electron
         run: |
