@@ -202,6 +202,20 @@ function parseMacNetworkServiceByDevice (networkServiceOrder, device) {
   return null
 }
 
+function parseMacRouteDevice (routeOutput) {
+  if (!routeOutput) {
+    return null
+  }
+  const routeLines = routeOutput.split(/\r?\n/)
+  for (const routeLine of routeLines) {
+    const trimmedLine = routeLine.trim()
+    if (trimmedLine.startsWith('interface:')) {
+      return trimmedLine.slice('interface:'.length).trim() || null
+    }
+  }
+  return null
+}
+
 function pickMacNetworkService (listAllNetworkServicesOutput) {
   if (!listAllNetworkServicesOutput) {
     return null
@@ -224,7 +238,8 @@ function pickMacNetworkService (listAllNetworkServicesOutput) {
 }
 
 async function getMacNetworkService (exec) {
-  const device = (await exec('route -n get 0.0.0.0 | awk -F\': *\' \'/interface:/{print $2}\' | head -n 1')).trim()
+  const routeOutput = await exec('route -n get 0.0.0.0')
+  const device = parseMacRouteDevice(routeOutput)
   if (device) {
     const networkServiceOrder = await exec('networksetup -listnetworkserviceorder')
     const matchedService = parseMacNetworkServiceByDevice(networkServiceOrder, device)
@@ -430,4 +445,5 @@ const setSystemProxy = async function (args) {
 
 module.exports = setSystemProxy
 module.exports.parseMacNetworkServiceByDevice = parseMacNetworkServiceByDevice
+module.exports.parseMacRouteDevice = parseMacRouteDevice
 module.exports.pickMacNetworkService = pickMacNetworkService
