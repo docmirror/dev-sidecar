@@ -234,47 +234,47 @@ jobs:
         if: ${{ matrix.os == 'windows' }}
         working-directory: packages/gui/dist
         run: |
-          ren DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe   DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe;
-          ren DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe  DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe;
-          ren DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe;
-          ren DevSidecar-${{ steps.package-info.outputs.version }}.exe       DevSidecar-${{ steps.package-info.outputs.version }}-windows-universal.exe;
+          ren dev-sidecar-gui-${{ steps.package-info.outputs.version }}-x64.exe   DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe;
+          ren dev-sidecar-gui-${{ steps.package-info.outputs.version }}-ia32.exe  DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe;
+          ren dev-sidecar-gui-${{ steps.package-info.outputs.version }}-arm64.exe DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe;
+          ren dev-sidecar-gui-${{ steps.package-info.outputs.version }}.exe       DevSidecar-${{ steps.package-info.outputs.version }}-windows-universal.exe;
           dir;
       - name: "Rename artifacts - Linux"
         if: ${{ matrix.os == 'ubuntu' }}
         working-directory: packages/gui/dist
         run: |
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-amd64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.deb;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-x64.tar.gz      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.tar.gz;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.rpm;
-          # mv DevSidecar-${{ steps.package-info.outputs.version }}-x86_64.flatpak      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-amd64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.deb;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-x86_64.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.AppImage;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-x64.tar.gz      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.tar.gz;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-x86_64.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.rpm;
+          # mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-x86_64.flatpak      DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.flatpak;
           #-------------------------------------------------------------------------------------------------------------------------
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.AppImage  DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.tar.gz    DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-aarch64.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-arm64.deb       DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.deb;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-arm64.AppImage  DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.AppImage;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-arm64.tar.gz    DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.tar.gz;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-aarch64.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.rpm;
           # arm64 flatpak is on Linux ARM64 runner
           #-------------------------------------------------------------------------------------------------------------------------
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.deb      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.AppImage;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.tar.gz   DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-armv7l.deb      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.deb;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-armv7l.AppImage DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.AppImage;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-armv7l.tar.gz   DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.tar.gz;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-armv7l.rpm      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.rpm;
           # armv7l flatpak is on Linux ARM64 runner
           ls -lah;
       # - name: "Rename artifacts - Linux ARM64"
       #   if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
       #   run: |
-      #     mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.flatpak      DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak;
+      #     mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-arm64.flatpak      DevSidecar-${{ steps.package-info.outputs.version }}-linux-arm64.flatpak;
       #     #-------------------------------------------------------------------------------------------------------------------------
-      #     mv DevSidecar-${{ steps.package-info.outputs.version }}-armv7l.flatpak      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak;
+      #     mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-armv7l.flatpak      DevSidecar-${{ steps.package-info.outputs.version }}-linux-armv7l.flatpak;
       #     ls -lah;
       - name: "Rename artifacts - macOS"
         if: ${{ matrix.os == 'macos' }}
         working-directory: packages/gui/dist
         run: |
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-x64.dmg        DevSidecar-${{ steps.package-info.outputs.version }}-macos-x86_64.dmg;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.dmg      DevSidecar-${{ steps.package-info.outputs.version }}-macos-arm64.dmg;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg  DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-x64.dmg        DevSidecar-${{ steps.package-info.outputs.version }}-macos-x86_64.dmg;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-arm64.dmg      DevSidecar-${{ steps.package-info.outputs.version }}-macos-arm64.dmg;
+          mv dev-sidecar-gui-${{ steps.package-info.outputs.version }}-universal.dmg  DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg;
           ls -lah;
 
       # region Upload artifacts - Windows
