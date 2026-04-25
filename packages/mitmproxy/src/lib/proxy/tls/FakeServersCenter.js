@@ -83,16 +83,16 @@ module.exports = class FakeServersCenter {
       }
     }
 
-    log.info(`getServerPromise, hostname: ${hostname}:${port}, ssl: ${ssl}, protocol: ${ssl ? 'https' : 'http'}`)
-
     const dnsName = getDnsName(hostname)
     const cacheKey = `${dnsName}:${port}:${ssl}`
 
     const cachedServerObj = this.cache.get(cacheKey)
     if (cachedServerObj) {
-      log.info(`Load fakeServerPromise from cache, hostname: ${hostname}:${port}, ssl: ${ssl}, serverPromiseObj: {"ssl":${cachedServerObj.ssl},"port":${cachedServerObj.port},"mappingHostNames":${JSON.stringify(cachedServerObj.mappingHostNames)}}`)
+      log.debug(`Load fakeServerPromise from cache, hostname: ${hostname}:${port}, ssl: ${ssl}, serverPromiseObj: {"ssl":${cachedServerObj.ssl},"port":${cachedServerObj.port},"mappingHostNames":${JSON.stringify(cachedServerObj.mappingHostNames)}}`)
       return cachedServerObj.promise
     }
+
+    log.info(`getServerPromise, hostname: ${hostname}:${port}, ssl: ${ssl}, protocol: ${ssl ? 'https' : 'http'}`)
 
     const mappingHostNames = [dnsName]
     if (dnsName.startsWith('*.')) {
@@ -106,7 +106,7 @@ module.exports = class FakeServersCenter {
       mappingHostNames,
     }
 
-    const promise = new Promise((resolve, _reject) => {
+    const promise = new Promise((resolve, reject) => {
       (async () => {
         let fakeServer
         let cert
@@ -140,6 +140,8 @@ module.exports = class FakeServersCenter {
         }
         serverPromiseObj.serverObj = serverObj
 
+        let isListening = false
+
         const printDebugLog = process.env.NODE_ENV === 'development' && false // 开发过程中，如有需要可以将此参数临时改为true，打印所有事件的日志
         fakeServer.listen(0, () => {
           const address = fakeServer.address()
@@ -152,6 +154,7 @@ module.exports = class FakeServersCenter {
           this.requestHandler(req, res, ssl)
         })
         fakeServer.on('listening', () => {
+          isListening = true
           if (printDebugLog) {
             log.debug(`【fakeServer listening - ${hostname}:${port}】no arguments...`)
           }
@@ -169,6 +172,9 @@ module.exports = class FakeServersCenter {
         // 三个 error 事件
         fakeServer.on('error', (e) => {
           log.error(`【fakeServer error - ${hostname}:${port}】\r\n----- error -----\r\n`, e)
+          if (!isListening) {
+            reject(e)
+          }
         })
         fakeServer.on('clientError', (err, _socket) => {
           // log.error(`【fakeServer clientError - ${hostname}:${port}】\r\n----- error -----\r\n`, err, '\r\n----- socket -----\r\n', socket)
@@ -176,7 +182,7 @@ module.exports = class FakeServersCenter {
 
           // 自动兼容程序：1
           if (port !== 443 && port !== 80) {
-            if (ssl === true && err.code.indexOf('ERR_SSL_') === 0) {
+            if (ssl === true && err.code && err.code.startsWith('ERR_SSL_')) {
               compatible.setConnectSsl(hostname, port, false)
               log.error(`自动兼容程序：SSL异常，现设置为禁用ssl: ${hostname}:${port}, ssl = false`)
             } else if (ssl === false && err.code === 'HPE_INVALID_METHOD') {
@@ -230,7 +236,7 @@ module.exports = class FakeServersCenter {
             log.debug(`【fakeServer resumeSession - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- socket -----\r\n', socket, '\r\n----- head -----\r\n', head)
           })
         }
-      })()
+      })().catch(reject)
     })
 
     serverPromiseObj.promise = promise

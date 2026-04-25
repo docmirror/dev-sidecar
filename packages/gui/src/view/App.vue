@@ -224,7 +224,7 @@ export default {
               </div>
 
               <div class="mt5">
-                ©2020-2026 docmirror.cn by
+                ©2020-{{ new Date().getFullYear() }} docmirror.cn by
                 <a @click="openExternal('https://github.com/greper')">Greper</a>,
                 <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>,
                 <a @click="openExternal('https://github.com/cute-omega')">CuteOmega</a>
