@@ -183,6 +183,64 @@ function getProxyExcludeIpStr (split) {
   return excludeIpStr
 }
 
+function parseMacNetworkServiceByDevice (networkServiceOrder, device) {
+  if (!networkServiceOrder || !device) {
+    return null
+  }
+  const lines = networkServiceOrder.split(/\r?\n/)
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].includes(`Device: ${device}`)) {
+      for (let j = i - 1; j >= 0; j--) {
+        const serviceLine = lines[j].trim()
+        const markerIndex = serviceLine.indexOf(') ')
+        if (serviceLine.startsWith('(') && markerIndex > 0) {
+          return serviceLine.slice(markerIndex + 2).trim()
+        }
+      }
+    }
+  }
+  return null
+}
+
+function pickMacNetworkService (listAllNetworkServicesOutput) {
+  if (!listAllNetworkServicesOutput) {
+    return null
+  }
+  const services = listAllNetworkServicesOutput
+    .split(/\r?\n/)
+    .map(item => item.replace(/^\*/, '').trim())
+    .filter(Boolean)
+  if (services.length === 0) {
+    return null
+  }
+  const preferredServices = ['Wi-Fi', 'WiFi', 'Ethernet']
+  for (const preferredService of preferredServices) {
+    const matched = services.find(item => item === preferredService)
+    if (matched) {
+      return matched
+    }
+  }
+  return services[0]
+}
+
+async function getMacNetworkService (exec) {
+  const device = (await exec('route -n get 0.0.0.0 | awk -F\': *\' \'/interface:/{print $2}\' | head -n 1')).trim()
+  if (device) {
+    const networkServiceOrder = await exec('networksetup -listnetworkserviceorder')
+    const matchedService = parseMacNetworkServiceByDevice(networkServiceOrder, device)
+    if (matchedService) {
+      return matchedService
+    }
+  }
+
+  const listAllNetworkServicesOutput = await exec('networksetup -listallnetworkservices | tail -n +2')
+  const fallbackService = pickMacNetworkService(listAllNetworkServicesOutput)
+  if (fallbackService) {
+    return fallbackService
+  }
+  throw new Error('未找到可用的 macOS 网络服务，无法设置系统代理')
+}
+
 const executor = {
   async windows (exec, params = {}) {
     const { ip, port, setEnv } = params
@@ -324,10 +382,7 @@ const executor = {
     }
   },
   async mac (exec, params = {}) {
-    // exec = _exec
-    let wifiAdaptor = await exec('sh -c "networksetup -listnetworkserviceorder | grep `route -n get 0.0.0.0 | grep \'interface\' | cut -d \':\' -f2` -B 1 | head -n 1 "')
-    wifiAdaptor = wifiAdaptor.trim()
-    wifiAdaptor = wifiAdaptor.substring(wifiAdaptor.indexOf(' ')).trim()
+    const wifiAdaptor = await getMacNetworkService(exec)
     const { ip, port } = params
     if (ip != null) { // 设置代理
       // 延迟加载config
@@ -369,6 +424,10 @@ const executor = {
   },
 }
 
-module.exports = async function (args) {
+const setSystemProxy = async function (args) {
   return execute(executor, args)
 }
+
+module.exports = setSystemProxy
+module.exports.parseMacNetworkServiceByDevice = parseMacNetworkServiceByDevice
+module.exports.pickMacNetworkService = pickMacNetworkService
