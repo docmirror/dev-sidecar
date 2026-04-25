@@ -221,7 +221,7 @@ const defaultConfig = {
       },
       'ajax.googleapis.com': {
         '.*': {
-          proxy: 'ajax.lug.ustc.edu.cn',
+          proxy: 'ajax.proxy.ustclug.org',
           backup: ['gapis.geekzu.org'],
           test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
         },
@@ -253,7 +253,7 @@ const defaultConfig = {
       // mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
       '*.s3.1amazonaws1.com': {
         '/sqlite3/.*': {
-          redirect: 'npm.taobao.org/mirrors',
+          redirect: 'npmmirror.com/mirrors',
         },
       },
       // 'packages.elastic.co': { '.*': { proxy: 'elastic.proxy.ustclug.org' } },

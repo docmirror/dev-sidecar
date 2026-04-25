@@ -16,7 +16,7 @@ on:
 
 jobs:
   npm-run-electron:
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ contains(matrix.os, '-arm') && matrix.os || format('{0}-latest', matrix.os) }}
     env:
       ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
       ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
