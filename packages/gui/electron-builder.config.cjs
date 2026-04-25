@@ -6,7 +6,7 @@ module.exports = {
   appId: 'dev-sidecar',
   productName: 'dev-sidecar',
   artifactName: 'DevSidecar-${version}-${arch}.${ext}',
-  copyright: 'Copyright © 2020-2026 Greper, WangLiang, CuteOmega',
+  copyright: 'Copyright © 2020-' + new Date().getFullYear() + ' Greper, WangLiang, CuteOmega',
   directories: {
     output: 'dist_electron',
   },
