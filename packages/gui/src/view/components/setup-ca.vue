@@ -71,7 +71,6 @@ export default defineComponent({
     @after-open-change="afterVisibleChange"
     width="660px"
     height="100%"
-    :slots="{ title: 'title' }"
     wrap-class-name="json-wrapper"
     @close="onClose"
   >

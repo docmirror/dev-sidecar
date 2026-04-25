@@ -17,6 +17,15 @@ module.exports = defineConfig({
     plugins: [
       new webpack.DefinePlugin({ 'global.GENTLY': true }),
     ],
+    externals: {
+      electron: 'commonjs electron',
+    },
+    resolve: {
+      fallback: {
+        path: require.resolve('path-browserify'),
+        fs: false,
+      },
+    },
     module: {
       rules: [
         {

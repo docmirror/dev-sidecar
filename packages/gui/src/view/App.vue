@@ -1,5 +1,5 @@
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent, ref, computed, watch, h, getCurrentInstance } from 'vue';
 import * as Icons from '@ant-design/icons-vue';
 
 import { ipcRenderer } from 'electron'
@@ -10,66 +10,165 @@ import { colorTheme } from './composables/theme'
 export default defineComponent({
   name: 'App',
 
-  components: {
-    ...Icons,
-  },
-
-  data () {
-    return {
-      locale: zhCN,
-      info: {
-        configProfiles: {
-          internal: {},
-          sharedRemote: {},
-          personalRemote: {},
-        },
+  setup() {
+    const instance = getCurrentInstance()
+    const router = instance.appContext.config.globalProperties.$router
+    const api = instance.appContext.config.globalProperties.$api
+    const locale = ref(zhCN)
+    const info = ref({
+      configProfiles: {
+        internal: {},
+        sharedRemote: {},
+        personalRemote: {},
       },
-      menus: undefined,
-      config: undefined,
-      configReadyPromise: null,
+    })
+    const config = ref(undefined)
+    const configReadyPromise = ref(null)
+    const selectedKeys = ref([])
+    const openKeys = ref(['/plugin'])
+    const menus = ref([])
+
+    const themeClass = computed(() => `theme-${colorTheme.value}`)
+    const theme = computed(() => colorTheme.value)
+
+    // 将菜单数据转换为 items 格式
+    const menuItems = computed(() => {
+      return (menus.value || []).map(item => {
+        const iconName = item.icon
+          ? item.icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) + 'Outlined'
+          : 'FileOutlined'
+        const IconComponent = Icons[iconName]
+
+        if (item.children && item.children.length > 0) {
+          return {
+            key: item.path,
+            icon: () => h(IconComponent),
+            label: item.title,
+            children: item.children.map(child => {
+              const childIconName = child.icon
+                ? child.icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) + 'Outlined'
+                : 'FileOutlined'
+              const ChildIconComponent = Icons[childIconName]
+              return {
+                key: child.path,
+                icon: () => h(ChildIconComponent),
+                label: child.title,
+              }
+            }),
+          }
+        }
+        return {
+          key: item.path,
+          icon: () => h(IconComponent),
+          label: item.title,
+        }
+      })
+    })
+
+    const updateSelectedKeys = (currentPath) => {
+      // 查找匹配的菜单项
+      for (const item of menus.value || []) {
+        if (item.children && item.children.length > 0) {
+          for (const sub of item.children) {
+            if (sub.path === currentPath) {
+              selectedKeys.value = [sub.path]
+              return
+            }
+          }
+        } else if (item.path === currentPath) {
+          selectedKeys.value = [item.path]
+          return
+        }
+      }
+      // 默认选中第一个菜单项
+      if (menus.value && menus.value.length > 0) {
+        const firstItem = menus.value[0]
+        if (firstItem.children && firstItem.children.length > 0) {
+          selectedKeys.value = [firstItem.children[0].path]
+        } else {
+          selectedKeys.value = [firstItem.path]
+        }
+      }
+    }
+
+    const handleMenuClick = ({ key }) => {
+      console.log('menu click:', key)
+      window.config.disableSearchBar = false
+      // 找到对应的菜单项
+      for (const item of menus.value || []) {
+        if (item.path === key) {
+          router.replace(key)
+          selectedKeys.value = [key]
+          return
+        }
+        if (item.children) {
+          for (const sub of item.children) {
+            if (sub.path === key) {
+              router.replace(key)
+              selectedKeys.value = [key]
+              return
+            }
+          }
+        }
+      }
+    }
+
+    const openExternal = async (url) => {
+      await api.ipc.openExternal(url)
+    }
+
+    return {
+      locale,
+      info,
+      config,
+      configReadyPromise,
+      selectedKeys,
+      openKeys,
+      menus,
+      menuItems,
+      themeClass,
+      theme,
+      updateSelectedKeys,
+      handleMenuClick,
+      openExternal,
     }
   },
 
-  computed: {
-    themeClass () {
-      return `theme-${colorTheme.value}`
-    },
-    theme () {
-      return colorTheme.value
-    },
+  data() {
+    return {
+      // 兼容旧代码
+    }
   },
 
-  async mounted () {
+  async mounted() {
     if (this.configReadyPromise) {
       await this.configReadyPromise
-    } // 强制在mounted之前等待created里对配置的刷新完成，以避免mounted里对this.config.app的访问为空
+    }
 
-    const appConfig = (this.config && this.config.app) || (this.$global && this.$global.config && this.$global.config.app) || {} // this.$global.config 可能不是最新值，但它作为已有的配置用于兜底
-    let theme = appConfig.theme || 'dark' // TODO: 这里可能存在一个问题，就是如果用户在系统主题为dark的情况下，app.theme是system，那么colorTheme会被设置为dark，但如果用户在app运行时将系统主题切换为light，colorTheme就不会更新了。后续可以考虑监听系统主题变化事件来动态更新colorTheme。
+    const appConfig = (this.config && this.config.app) || (this.$global && this.$global.config && this.$global.config.app) || {}
+    let theme = appConfig.theme || 'dark'
     if (appConfig.theme === 'system') {
       theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     }
 
     colorTheme.value = theme
+
+    // 设置默认选中的菜单项
+    this.updateSelectedKeys(this.$route.fullPath)
   },
 
-  created () {
+  created() {
     this.menus = createMenus(this)
     this.configReadyPromise = this.refreshConfigAndInfo()
     ipcRenderer.on('config.changed', this.onConfigChanged)
   },
 
-  beforeUnmount () {
+  beforeUnmount() {
     ipcRenderer.removeListener('config.changed', this.onConfigChanged)
   },
 
   methods: {
-    iconComp (icon) {
-      if (!icon) return 'FileOutlined'
-      const name = icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) + 'Outlined'
-      return name
-    },
-    async refreshConfigAndInfo () {
+    async refreshConfigAndInfo() {
       try {
         const config = await this.$api.config.get()
         if (config) {
@@ -89,19 +188,8 @@ export default defineComponent({
         console.error('刷新信息出现异常：', e)
       }
     },
-    async onConfigChanged () {
+    async onConfigChanged() {
       await this.refreshConfigAndInfo()
-    },
-    titleClick (item) {
-      console.log('title click:', item)
-    },
-    menuClick (item) {
-      console.log('menu click:', item)
-      window.config.disableSearchBar = false
-      this.$router.replace(item.path)
-    },
-    async openExternal (url) {
-      await this.$api.ipc.openExternal(url)
     },
   },
 });
@@ -116,24 +204,11 @@ export default defineComponent({
           <div class="aside">
             <a-menu
               mode="inline"
-              :default-selected-keys="[$route.fullPath]"
-              :default-open-keys="['/plugin']"
-            >
-              <template v-for="(item) of menus">
-                <a-sub-menu v-if="item.children && item.children.length > 0" :key="'sub-' + item.path" @titleClick="titleClick(item)">
-                  <template #title>
-                    <span><component :is="iconComp(item.icon)" /><span>{{ item.title }}</span></span>
-                  </template>
-                  <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)">
-                    <component :is="iconComp(sub.icon)" /> {{ sub.title }}
-                  </a-menu-item>
-                </a-sub-menu>
-                <a-menu-item v-else :key="'item-' + item.path" @click="menuClick(item)">
-                  <component :is="iconComp(item.icon)" />
-                  <span class="nav-text">{{ item.title }}</span>
-                </a-menu-item>
-              </template>
-            </a-menu>
+              v-model:selectedKeys="selectedKeys"
+              v-model:openKeys="openKeys"
+              :items="menuItems"
+              @click="handleMenuClick"
+            />
           </div>
         </a-layout-sider>
         <a-layout>

@@ -1,10 +1,11 @@
 'use strict'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import DevSidecar from '@docmirror/dev-sidecar'
 import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, Tray } from 'electron'
 import minimist from 'minimist'
 import backend from './bridge/backend.js'
-import jsonApi from '@docmirror/mitmproxy/src/json'
+import jsonApi from '@docmirror/mitmproxy/src/json.js'
 import log from './utils/util.log.gui.js'
 
 log.info(`background.js start, platform is ${process.platform}`)
@@ -13,6 +14,7 @@ const isWindows = process.platform === 'win32'
 const isLinux = process.platform === 'linux'
 const isMac = process.platform === 'darwin'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const staticPath = isDevelopment
   ? path.resolve('public')

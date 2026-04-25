@@ -50,12 +50,13 @@
     "@vue/babel-preset-jsx": "^1.4.0",
     "@vue/cli-plugin-babel": "^5.0.9",
     "@vue/cli-service": "^5.0.9",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
     "electron": "^41.3.0",
     "electron-builder": "^26.8.1",
     "electron-icon-builder": "^2.0.1",
-    "concurrently": "^8.2.2",
-    "cross-env": "^7.0.3",
     "json5-loader": "^4.0.1",
+    "path-browserify": "^1.0.1",
     "wait-on": "^7.2.0"
   },
   "browserslist": [

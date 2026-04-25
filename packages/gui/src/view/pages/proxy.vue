@@ -207,7 +207,6 @@ export default defineComponent({
       v-model:open="loopbackVisible"
       width="660px"
       height="100%"
-      :slots="{ title: 'title' }"
       wrap-class-name="json-wrapper"
       @close="loopbackVisible = false"
     >
