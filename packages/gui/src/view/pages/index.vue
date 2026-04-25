@@ -19,9 +19,6 @@ export default {
       status: undefined,
       startup: {
         loading: false,
-        type: () => {
-          return (this.status.server && this.status.server.enabled) ? 'primary' : 'default'
-        },
         doClick: () => {
           if (this.status.server.enabled) {
             this.apiCall(this.startup, this.$api.shutdown)
@@ -305,25 +302,32 @@ export default {
 
       <div
         v-if="status"
-        style="margin-top:20px;display: flex; align-items:center;justify-content:space-around;flex-direction: row"
+        class="main-control-panel"
       >
-        <div style="text-align: center">
-          <div class="big_button">
-            <a-button shape="circle" :type="startup.type()" :loading="startup.loading" @click="startup.doClick">
+        <div class="main-switch-wrapper">
+          <div class="big-button">
+            <a-button
+              shape="circle"
+              :class="{ 'is-active': status.server.enabled }"
+              :loading="startup.loading"
+              @click="startup.doClick"
+            >
               <img v-if="!startup.loading && !status.server.enabled" width="50" :src="`${publicPath}logo/logo-simple.svg`">
               <img v-if="!startup.loading && status.server.enabled" width="50" :src="`${publicPath}logo/logo-fff.svg`">
             </a-button>
-            <div class="mt10">
+            <div class="switch-status-label" :class="{ 'is-active': status.server.enabled }">
               {{ status.server.enabled ? '已开启' : '已关闭' }}
             </div>
           </div>
         </div>
-        <div :span="12">
-          <a-form style="margin-top:20px" :label-col="{ span: 15 }" :wrapper-col="{ span: 9 }">
+        <div class="sub-switches-wrapper">
+          <a-form :label-col="{ span: 15 }" :wrapper-col="{ span: 9 }">
             <a-form-item v-for="(item, key) in switchBtns" :key="key" :label="item.label">
-              <a-tooltip placement="topLeft">
+              <a-tooltip placement="topLeft" :title="item.tip">
                 <a-switch
-                  style="margin-left:10px" :loading="item.loading" :checked="item.status()" default-checked
+                  class="sub-switch"
+                  :loading="item.loading"
+                  :checked="item.status()"
                   @change="item.doClick"
                 >
                   <template #checkedChildren><CheckOutlined /></template>
@@ -398,22 +402,84 @@ export default {
       }
     }
   }
+
+  /* 主控制面板 */
+  .main-control-panel {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: row;
+  }
+
+  /* 主开关区域 */
+  .main-switch-wrapper {
+    text-align: center;
+
+    .big-button {
+      > button {
+        width: 100px;
+        height: 100px;
+        border-radius: 100px;
+        transition: all 0.3s ease;
+        border: 2px solid #d9d9d9;
+        background-color: #fff;
+
+        &:hover {
+          border-color: #40a9ff;
+          box-shadow: 0 0 8px rgba(24, 144, 255, 0.2);
+        }
+
+        /* 激活状态 */
+        &.is-active {
+          background-color: #1890ff;
+          border-color: #1890ff;
+          box-shadow: 0 0 12px rgba(24, 144, 255, 0.4);
+
+          &:hover {
+            background-color: #40a9ff;
+            border-color: #40a9ff;
+          }
+        }
+      }
+
+      > button i {
+        size: 40px;
+      }
+    }
+
+    .switch-status-label {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+      transition: color 0.3s ease;
+
+      &.is-active {
+        color: #1890ff;
+        font-weight: 600;
+      }
+    }
+  }
+
+  /* 子开关区域 */
+  .sub-switches-wrapper {
+    margin-top: 20px;
+
+    .sub-switch {
+      margin-left: 10px;
+
+      &.ant-switch-checked {
+        background-color: #1890ff;
+      }
+    }
+  }
 }
 
 .payQrcode {
   padding: 10px;
   display: flex;
   justify-content: space-evenly;
-}
-
-.big_button > button {
-  width: 100px;
-  height: 100px;
-  border-radius: 100px;
-}
-
-.big_button > button i {
-  size: 40px;
 }
 
 div.ant-form-item {

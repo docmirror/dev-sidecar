@@ -1,6 +1,7 @@
 import lodash from 'lodash'
+import { reactive } from 'vue'
 
-const status = {
+const status = reactive({
   server: {
     enabled: false,
   },
@@ -10,7 +11,7 @@ const status = {
   plugin: {
     node: {},
   },
-}
+})
 async function install (app, api) {
   api.ipc.on('status', (event, message) => {
     console.log('view on status', event, message)
