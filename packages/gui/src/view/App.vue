@@ -1,5 +1,5 @@
 <script>
-import { defineComponent, ref, computed, watch, h, getCurrentInstance } from 'vue';
+import { h } from 'vue';
 import * as Icons from '@ant-design/icons-vue';
 
 import { ipcRenderer } from 'electron'
@@ -7,33 +7,37 @@ import createMenus from '@/view/router/menu'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import { colorTheme } from './composables/theme'
 
-export default defineComponent({
+export default {
   name: 'App',
 
-  setup() {
-    const instance = getCurrentInstance()
-    const router = instance.appContext.config.globalProperties.$router
-    const api = instance.appContext.config.globalProperties.$api
-    const locale = ref(zhCN)
-    const info = ref({
-      configProfiles: {
-        internal: {},
-        sharedRemote: {},
-        personalRemote: {},
+  data() {
+    return {
+      locale: zhCN,
+      info: {
+        configProfiles: {
+          internal: {},
+          sharedRemote: {},
+          personalRemote: {},
+        },
       },
-    })
-    const config = ref(undefined)
-    const configReadyPromise = ref(null)
-    const selectedKeys = ref([])
-    const openKeys = ref(['/plugin'])
-    const menus = ref([])
+      config: undefined,
+      configReadyPromise: null,
+      selectedKeys: [],
+      openKeys: ['/plugin'],
+      menus: [],
+    }
+  },
 
-    const themeClass = computed(() => `theme-${colorTheme.value}`)
-    const theme = computed(() => colorTheme.value)
-
+  computed: {
+    themeClass() {
+      return `theme-${this.theme}`
+    },
+    theme() {
+      return colorTheme.value
+    },
     // 将菜单数据转换为 items 格式
-    const menuItems = computed(() => {
-      return (menus.value || []).map(item => {
+    menuItems() {
+      return (this.menus || []).map(item => {
         const iconName = item.icon
           ? item.icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) + 'Outlined'
           : 'FileOutlined'
@@ -63,81 +67,13 @@ export default defineComponent({
           label: item.title,
         }
       })
-    })
-
-    const updateSelectedKeys = (currentPath) => {
-      // 查找匹配的菜单项
-      for (const item of menus.value || []) {
-        if (item.children && item.children.length > 0) {
-          for (const sub of item.children) {
-            if (sub.path === currentPath) {
-              selectedKeys.value = [sub.path]
-              return
-            }
-          }
-        } else if (item.path === currentPath) {
-          selectedKeys.value = [item.path]
-          return
-        }
-      }
-      // 默认选中第一个菜单项
-      if (menus.value && menus.value.length > 0) {
-        const firstItem = menus.value[0]
-        if (firstItem.children && firstItem.children.length > 0) {
-          selectedKeys.value = [firstItem.children[0].path]
-        } else {
-          selectedKeys.value = [firstItem.path]
-        }
-      }
-    }
-
-    const handleMenuClick = ({ key }) => {
-      console.log('menu click:', key)
-      window.config.disableSearchBar = false
-      // 找到对应的菜单项
-      for (const item of menus.value || []) {
-        if (item.path === key) {
-          router.replace(key)
-          selectedKeys.value = [key]
-          return
-        }
-        if (item.children) {
-          for (const sub of item.children) {
-            if (sub.path === key) {
-              router.replace(key)
-              selectedKeys.value = [key]
-              return
-            }
-          }
-        }
-      }
-    }
-
-    const openExternal = async (url) => {
-      await api.ipc.openExternal(url)
-    }
-
-    return {
-      locale,
-      info,
-      config,
-      configReadyPromise,
-      selectedKeys,
-      openKeys,
-      menus,
-      menuItems,
-      themeClass,
-      theme,
-      updateSelectedKeys,
-      handleMenuClick,
-      openExternal,
-    }
+    },
   },
 
-  data() {
-    return {
-      // 兼容旧代码
-    }
+  created() {
+    this.menus = createMenus(this)
+    this.configReadyPromise = this.refreshConfigAndInfo()
+    ipcRenderer.on('config.changed', this.onConfigChanged)
   },
 
   async mounted() {
@@ -155,12 +91,6 @@ export default defineComponent({
 
     // 设置默认选中的菜单项
     this.updateSelectedKeys(this.$route.fullPath)
-  },
-
-  created() {
-    this.menus = createMenus(this)
-    this.configReadyPromise = this.refreshConfigAndInfo()
-    ipcRenderer.on('config.changed', this.onConfigChanged)
   },
 
   beforeUnmount() {
@@ -191,8 +121,57 @@ export default defineComponent({
     async onConfigChanged() {
       await this.refreshConfigAndInfo()
     },
+    updateSelectedKeys(currentPath) {
+      // 查找匹配的菜单项
+      for (const item of this.menus || []) {
+        if (item.children && item.children.length > 0) {
+          for (const sub of item.children) {
+            if (sub.path === currentPath) {
+              this.selectedKeys = [sub.path]
+              return
+            }
+          }
+        } else if (item.path === currentPath) {
+          this.selectedKeys = [item.path]
+          return
+        }
+      }
+      // 默认选中第一个菜单项
+      if (this.menus && this.menus.length > 0) {
+        const firstItem = this.menus[0]
+        if (firstItem.children && firstItem.children.length > 0) {
+          this.selectedKeys = [firstItem.children[0].path]
+        } else {
+          this.selectedKeys = [firstItem.path]
+        }
+      }
+    },
+    handleMenuClick({ key }) {
+      console.log('menu click:', key)
+      window.config.disableSearchBar = false
+      // 找到对应的菜单项
+      for (const item of this.menus || []) {
+        if (item.path === key) {
+          this.$router.replace(key)
+          this.selectedKeys = [key]
+          return
+        }
+        if (item.children) {
+          for (const sub of item.children) {
+            if (sub.path === key) {
+              this.$router.replace(key)
+              this.selectedKeys = [key]
+              return
+            }
+          }
+        }
+      }
+    },
+    async openExternal(url) {
+      await this.$api.ipc.openExternal(url)
+    },
   },
-});
+}
 </script>
 
 <template>

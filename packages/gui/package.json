@@ -35,6 +35,7 @@
     "electron-updater": "^6.8.3",
     "json5": "^2.2.3",
     "lodash": "^4.18.1",
+    "minimist": "^1.2.8",
     "request-progress": "^3.0.0",
     "sass": "^1.99.0",
     "sass-loader": "^16.0.7",

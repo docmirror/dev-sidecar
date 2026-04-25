@@ -8,10 +8,11 @@ module.exports = {
   artifactName: 'DevSidecar-${version}-${arch}.${ext}',
   copyright: 'Copyright © 2020-' + new Date().getFullYear() + ' Greper, WangLiang, CuteOmega',
   directories: {
-    output: 'dist_electron',
+    output: 'dist',
+    buildResources: 'build',
   },
   files: [
-    'dist/**/*',
+    'dist_electron/**/*',
     'src/**/*',
     'package.json',
     'extra/**/*',

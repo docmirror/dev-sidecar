@@ -18,7 +18,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const staticPath = isDevelopment
   ? path.resolve('public')
-  : path.join(app.getAppPath(), 'dist')
+  : path.join(app.getAppPath(), 'dist_electron')
 
 let _powerMonitor = powerMonitor
 
@@ -242,7 +242,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
     }
   } else {
     // Load the index.html when not in development
-    win.loadFile(path.join(app.getAppPath(), 'dist', 'index.html'))
+    win.loadFile(path.join(app.getAppPath(), 'dist_electron', 'index.html'))
   }
 
   if (startHideWindow) {

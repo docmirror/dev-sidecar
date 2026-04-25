@@ -14,7 +14,7 @@ url: '${publishUrl}'
 updaterCacheDirName: 'dev-sidecar-gui-updater'
 `
   console.log('write linux app-update.yml,updateUrl:', publishUrl)
-  const filePath = path.resolve('./dist_electron/linux-unpacked/resources/app-update.yml')
+  const filePath = path.resolve('./dist/linux-unpacked/resources/app-update.yml')
   fs.writeFileSync(filePath, fileContent)
 }
 exports.default = async function (context) {

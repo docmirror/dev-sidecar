@@ -15,6 +15,7 @@ export default {
   },
   data () {
     return {
+      publicPath: process.env.BASE_URL || './',
       status: undefined,
       startup: {
         loading: false,
@@ -309,8 +310,8 @@ export default {
         <div style="text-align: center">
           <div class="big_button">
             <a-button shape="circle" :type="startup.type()" :loading="startup.loading" @click="startup.doClick">
-              <img v-if="!startup.loading && !status.server.enabled" width="50" src="/logo/logo-simple.svg">
-              <img v-if="!startup.loading && status.server.enabled" width="50" src="/logo/logo-fff.svg">
+              <img v-if="!startup.loading && !status.server.enabled" width="50" :src="`${publicPath}logo/logo-simple.svg`">
+              <img v-if="!startup.loading && status.server.enabled" width="50" :src="`${publicPath}logo/logo-fff.svg`">
             </a-button>
             <div class="mt10">
               {{ status.server.enabled ? '已开启' : '已关闭' }}
