@@ -19,7 +19,7 @@ module.exports = {
     const { rOptions, log } = context
 
     // 不是 OPTIONS 请求，或请求头中不含 origin 时，跳过当前拦截器
-    if (rOptions.method !== 'OPTIONS' || rOptions.headers.origin == null) {
+    if (rOptions.method !== 'OPTIONS' || !rOptions.headers.origin) {
       return
     }
 
