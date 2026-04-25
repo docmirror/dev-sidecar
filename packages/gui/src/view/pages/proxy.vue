@@ -91,7 +91,7 @@ export default defineComponent({
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       系统代理设置
     </template>
 
@@ -211,7 +211,7 @@ export default defineComponent({
       wrap-class-name="json-wrapper"
       @close="loopbackVisible = false"
     >
-      <template slot="title">
+      <template #title>
         设置Loopback
         <a-button style="float:right;margin-right:10px;" @click="openEnableLoopback()">
           打开EnableLoopback

@@ -54,7 +54,7 @@ export default defineComponent({
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       PIP加速
     </template>
 

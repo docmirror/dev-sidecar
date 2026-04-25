@@ -78,7 +78,6 @@ export default {
   },
   methods: {
     async modeChange (event) {
-      console.log("[Test]: Mode Changed")
       const mode = this.config.app.mode
       if (mode === 'safe') {
         this.config.server.intercept.enabled = false
@@ -159,7 +158,6 @@ export default {
       // 删除noTip数据
       // delete rootCa.noTip
 
-      this.setting = this.setting
       this.$api.setting.save(this.setting)
     },
     reloadConfig () {
@@ -259,10 +257,10 @@ export default {
 
 <template>
   <DsContainer class="page_index">
-    <template slot="header">
+    <template #header>
       给开发者的辅助工具
     </template>
-    <template slot="header-right">
+    <template #header-right>
       <a-button style="margin-right:10px" @click="openSetupCa">
         <a-badge :count="_rootCaSetuped ? 0 : 1" dot>安装根证书</a-badge>
       </a-button>

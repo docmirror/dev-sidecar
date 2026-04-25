@@ -79,10 +79,10 @@ export default defineComponent({
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       Git.exe代理设置
     </template>
-    <template slot="header-right">
+    <template #header-right>
       仅针对git命令行的代理设置，github网站的访问无需设置
     </template>
 

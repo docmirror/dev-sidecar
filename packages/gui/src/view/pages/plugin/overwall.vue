@@ -125,10 +125,10 @@ export default defineComponent({
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       梯子
     </template>
-    <template slot="header-right">
+    <template #header-right>
       <a-button type="primary" @click="openExternal('https://github.com/docmirror/dev-sidecar-doc/blob/main/ow.md')">原理说明</a-button>
     </template>
 

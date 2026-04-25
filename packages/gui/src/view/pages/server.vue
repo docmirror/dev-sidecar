@@ -246,7 +246,7 @@ export default defineComponent({
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       加速服务设置
     </template>
 

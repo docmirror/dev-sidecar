@@ -65,10 +65,10 @@ export default defineComponent({
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       NPM加速
     </template>
-    <template slot="header-right">
+    <template #header-right>
       由于nodejs不走系统证书，所以npm加速不是很好用，可以用淘宝registry
     </template>
 
