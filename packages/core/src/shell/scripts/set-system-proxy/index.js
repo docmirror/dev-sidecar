@@ -223,7 +223,7 @@ function pickMacNetworkService (listAllNetworkServicesOutput) {
   const services = listAllNetworkServicesOutput
     .split(/\r?\n/)
     .map(item => item.replace(/^\*/, '').trim())
-    .filter(Boolean)
+    .filter(item => item && !item.startsWith('An asterisk (*) denotes'))
   if (services.length === 0) {
     return null
   }
@@ -238,21 +238,41 @@ function pickMacNetworkService (listAllNetworkServicesOutput) {
 }
 
 async function getMacNetworkService (exec) {
-  const routeOutput = await exec('route -n get 0.0.0.0')
-  const device = parseMacRouteDevice(routeOutput)
-  if (device) {
-    const networkServiceOrder = await exec('networksetup -listnetworkserviceorder')
-    const matchedService = parseMacNetworkServiceByDevice(networkServiceOrder, device)
-    if (matchedService) {
-      return matchedService
+  try {
+    const routeOutput = await exec('route -n get 0.0.0.0')
+    const device = parseMacRouteDevice(routeOutput)
+    if (device) {
+      log.info('macOS 代理服务检测：当前网络设备:', device)
+      try {
+        const networkServiceOrder = await exec('networksetup -listnetworkserviceorder')
+        const matchedService = parseMacNetworkServiceByDevice(networkServiceOrder, device)
+        if (matchedService) {
+          log.info('macOS 代理服务检测：通过设备名匹配到网络服务:', matchedService)
+          return matchedService
+        }
+        log.warn('macOS 代理服务检测：未通过设备名匹配到网络服务，尝试备用方法')
+      } catch (e) {
+        log.warn('macOS 代理服务检测：获取网络服务列表失败:', e.message, '，尝试备用方法')
+      }
+    } else {
+      log.warn('macOS 代理服务检测：未检测到当前网络设备，尝试备用方法')
     }
+  } catch (e) {
+    log.warn('macOS 代理服务检测：获取路由信息失败:', e.message, '，尝试备用方法')
   }
 
-  const listAllNetworkServicesOutput = await exec('networksetup -listallnetworkservices | tail -n +2')
-  const fallbackService = pickMacNetworkService(listAllNetworkServicesOutput)
-  if (fallbackService) {
-    return fallbackService
+  try {
+    const allServicesOutput = await exec('networksetup -listallnetworkservices')
+    const fallbackService = pickMacNetworkService(allServicesOutput)
+    if (fallbackService) {
+      log.info('macOS 代理服务检测：通过服务列表备用方法找到网络服务:', fallbackService)
+      return fallbackService
+    }
+    log.warn('macOS 代理服务检测：未通过服务列表找到可用网络服务')
+  } catch (e) {
+    log.warn('macOS 代理服务检测：获取所有网络服务列表失败:', e.message)
   }
+
   throw new Error('未找到可用的 macOS 网络服务，无法设置系统代理')
 }
 

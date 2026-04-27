@@ -62,4 +62,18 @@ Thunderbolt Bridge
     assert.strictEqual(setSystemProxy.pickMacNetworkService(''), null)
     assert.strictEqual(setSystemProxy.pickMacNetworkService(null), null)
   })
+
+  // eslint-disable-next-line no-undef
+  it('should ignore the "An asterisk" header line produced by networksetup -listallnetworkservices', () => {
+    const fullOutput = `An asterisk (*) denotes that a network service is disabled.
+Ethernet
+Wi-Fi
+Thunderbolt Bridge`
+    assert.strictEqual(setSystemProxy.pickMacNetworkService(fullOutput), 'Wi-Fi')
+
+    const fullOutputEthernetOnly = `An asterisk (*) denotes that a network service is disabled.
+Ethernet
+Thunderbolt Bridge`
+    assert.strictEqual(setSystemProxy.pickMacNetworkService(fullOutputEthernetOnly), 'Ethernet')
+  })
 })
