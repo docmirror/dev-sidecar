@@ -1,13 +1,15 @@
 <script>
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'DsContainer',
-}
+});
 </script>
 
 <template>
   <div class="ds-container">
     <div class="body-wrapper">
-      <div v-if="$slots.header" class="container-header">
+      <div v-if="$slots.header?.()" class="container-header">
         <span><slot name="header" /></span>
         <span style="color:#999"><slot name="header-right" /></span>
       </div>

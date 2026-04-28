@@ -1,5 +1,5 @@
 function install (app, api) {
-  const updateParams = app.$global.update = { fromUser: false, autoDownload: false, progress: 0, checking: false, downloading: false, newVersion: false, isFullUpdate: true }
+  const updateParams = app.config.globalProperties.$global.update = { fromUser: false, autoDownload: false, progress: 0, checking: false, downloading: false, newVersion: false, isFullUpdate: true }
   api.ipc.on('update', (event, message) => {
     console.log('on message', event, message)
     handleUpdateMessage(message, app)
@@ -52,7 +52,7 @@ function install (app, api) {
           return // 不是手动检查更新，不提示错误信息，避免打扰
         }
         const error = message.error
-        app.$message.error((error == null ? '未知错误' : (error.stack || error).toString()))
+        app.config.globalProperties.$message.error((error == null ? '未知错误' : (error.stack || error).toString()))
       }
     }
   }
@@ -60,7 +60,7 @@ function install (app, api) {
   function noNewVersion () {
     updateParams.newVersion = false
     if (updateParams.fromUser) {
-      app.$message.info('当前已经是最新版本')
+      app.config.globalProperties.$message.info('当前已经是最新版本')
     }
   }
 
@@ -74,7 +74,7 @@ function install (app, api) {
 
   function goManualUpdate (value) {
     updateParams.newVersion = false
-    app.$confirm({
+    app.config.globalProperties.$confirm({
       title: '暂不提供自动升级',
       cancelText: '取消',
       okText: '打开链接',
@@ -139,13 +139,13 @@ function install (app, api) {
     updateParams.newVersion = true
 
     if (updateParams.autoDownload !== false) {
-      app.$message.info('发现新版本，正在下载中...')
+      app.config.globalProperties.$message.info('发现新版本，正在下载中...')
 
       downloadNewVersion(value)
       return
     }
     console.log(value)
-    app.$confirm({
+    app.config.globalProperties.$confirm({
       title: `发现新版本：v${value.version}`,
       cancelText: '暂不升级',
       okText: '升级',
@@ -197,7 +197,7 @@ function install (app, api) {
   function newUpdateIsReady (value) {
     updateParams.downloading = false
     console.log(value)
-    app.$confirm({
+    app.config.globalProperties.$confirm({
       title: `新版本(v${value.version})已准备好，是否立即升级?`,
       cancelText: '暂不升级',
       okText: '立即升级',

@@ -1,9 +1,20 @@
 <script>
+import { defineComponent } from 'vue';
+
+
+import { CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons-vue'
 import Plugin from '../../mixins/plugin'
 
-export default {
+export default defineComponent({
   name: 'Node',
   mixins: [Plugin],
+
+  components: {
+    CheckOutlined,
+    ExclamationCircleOutlined,
+    SyncOutlined,
+  },
+
   data () {
     return {
       key: 'plugin.node',
@@ -13,11 +24,14 @@ export default {
       registry: false,
     }
   },
+
   created () {
     console.log('status:', this.status)
   },
+
   mounted () {
   },
+
   methods: {
     ready () {
       return this.$api.plugin.node.getVariables().then((ret) => {
@@ -46,22 +60,22 @@ export default {
       })
     },
   },
-}
+});
 </script>
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       NPM加速
     </template>
-    <template slot="header-right">
+    <template #header-right>
       由于nodejs不走系统证书，所以npm加速不是很好用，可以用淘宝registry
     </template>
 
     <div v-if="config">
       <a-form layout="horizontal">
         <a-form-item label="启用NPM代理" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.node.enabled">
+          <a-checkbox v-model:checked="config.plugin.node.enabled">
             随应用启动
           </a-checkbox>
           <a-tag v-if="status.plugin.node.enabled" color="green">
@@ -72,20 +86,20 @@ export default {
           </a-tag>
         </a-form-item>
         <a-form-item label="npm命令名" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.node.setting.command" spellcheck="false" />
+          <a-input v-model:value="config.plugin.node.setting.command" spellcheck="false" />
           <div class="form-help">
             如果你的npm命令改成了其他名字，或者想设置绿色版npm程序路径，可在此处修改
           </div>
         </a-form-item>
         <a-form-item label="SSL校验" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.node.setting['strict-ssl']">
+          <a-checkbox v-model:checked="config.plugin.node.setting['strict-ssl']">
             关闭strict-ssl
           </a-checkbox>
           npm代理启用后必须关闭
         </a-form-item>
         <a-form-item label="npm镜像仓库" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-radio-group
-            v-model="config.plugin.node.setting.registry" default-value="https://registry.npmjs.org"
+            v-model:value="config.plugin.node.setting.registry" default-value="https://registry.npmjs.org"
             button-style="solid" @change="onSwitchRegistry"
           >
             <a-radio-button value="https://registry.npmjs.org" title="https://registry.npmjs.org">
@@ -100,11 +114,11 @@ export default {
           </div>
         </a-form-item>
         <a-form-item label="yarn镜像仓库" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-radio-group v-model="config.plugin.node.setting.yarnRegistry" default-value="null" button-style="solid" @change="onSwitchYarnRegistry">
+          <a-radio-group v-model:value="config.plugin.node.setting.yarnRegistry" default-value="null" button-style="solid" @change="onSwitchYarnRegistry">
             <a-radio-button value="default" title="https://registry.yarnpkg.com">
               yarn原生
             </a-radio-button>
-            <a-radio-button v-for="(item) of config.plugin.node.setting.yarnRegistryList" :key="item.value" :value="item.value" :title="item.value" value="https://registry.npmmirror.com" title="https://registry.npmmirror.com">
+            <a-radio-button v-for="(item) of config.plugin.node.setting.yarnRegistryList" :key="item.value" :value="item.value" :title="item.value">
               {{ item.name }}
             </a-radio-button>
           </a-radio-group>
@@ -113,7 +127,7 @@ export default {
           </div>
         </a-form-item>
         <a-form-item label="镜像变量设置" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.node.startup.variables">
+          <a-checkbox v-model:checked="config.plugin.node.startup.variables">
             自动设置，启动npm加速开关时将会设置如下环境变量
           </a-checkbox>
           <div class="form-help">
@@ -121,26 +135,26 @@ export default {
           </div>
           <a-row v-for="(item, index) of npmVariables" :key="index" :gutter="10" style="margin-top: 2px">
             <a-col :span="10">
-              <a-input v-model="item.key" :title="item.key" read-only spellcheck="false" />
+              <a-input v-model:value="item.key" :title="item.key" read-only spellcheck="false" />
             </a-col>
             <a-col :span="13">
-              <a-input v-model="item.value" :title="item.value" read-only spellcheck="false" />
+              <a-input v-model:value="item.value" :title="item.value" read-only spellcheck="false" />
             </a-col>
             <a-col :span="1">
-              <a-icon v-if="item.exists && item.hadSet" title="已设置" style="color:green" type="check" />
-              <a-icon v-else title="还未设置" style="color:red" type="exclamation-circle" />
+              <CheckOutlined v-if="item.exists && item.hadSet" title="已设置" style="color:green" />
+              <ExclamationCircleOutlined v-else title="还未设置" style="color:red" />
             </a-col>
           </a-row>
         </a-form-item>
       </a-form>
     </div>
-    <template slot="footer">
+    <template #footer>
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
     </template>

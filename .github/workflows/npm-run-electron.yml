@@ -113,11 +113,9 @@ jobs:
           pnpm install;
 
       - name: "npm run electron"
+        working-directory: packages/gui
         run: |
           echo "======================================================================";
-          echo "cd packages/gui";
-          echo "--------------------";
-          cd packages/gui;
           dir || ls -lah;
 
           echo "======================================================================";

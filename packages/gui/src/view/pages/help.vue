@@ -1,34 +1,42 @@
 <script>
+import { defineComponent } from 'vue';
+
+import { ProfileOutlined } from '@ant-design/icons-vue'
 import Plugin from '../mixins/plugin'
 import TreeNode from '../components/tree-node'
 
-export default {
+export default defineComponent({
   name: 'Help',
+
   components: {
     TreeNode,
+    ProfileOutlined,
   },
+
   mixins: [Plugin],
+
   data () {
     return {
       key: 'help',
     }
   },
+
   methods: {
     async openExternal (url) {
       await this.$api.ipc.openExternal(url)
     },
   },
-}
+});
 </script>
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       帮助中心
     </template>
-    <template slot="header-right">
+    <template #header-right>
       <a-button class="mr10" @click="openExternal('https://github.com/docmirror/dev-sidecar/issues/new/choose')">反馈问题</a-button>
-      <a-button class="mr10" icon="profile" @click="openLog()">查看日志</a-button>
+      <a-button class="mr10" @click="openLog()"><ProfileOutlined />查看日志</a-button>
     </template>
 
     <div v-if="config" class="help-list">
