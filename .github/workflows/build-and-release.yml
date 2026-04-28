@@ -454,7 +454,7 @@ jobs:
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
         with:
-          path: ./packages/mitmproxy
+          path: ./packages/gui
 
       - name: 'Make "release" dir'
         run: mkdir release
