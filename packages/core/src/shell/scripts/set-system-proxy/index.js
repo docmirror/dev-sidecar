@@ -5,6 +5,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const request = require('request')
 const Registry = require('winreg')
+const sudoPrompt = require('@vscode/sudo-prompt')
 const log = require('../../../utils/util.log.core')
 const Shell = require('../../shell')
 const extraPath = require('../extra-path')
@@ -276,6 +277,26 @@ async function getMacNetworkService (exec) {
   throw new Error('未找到可用的 macOS 网络服务，无法设置系统代理')
 }
 
+// macOS exit code 14 = "You don't have permission to change the system preferences."
+const MACOS_NETWORKSETUP_PERMISSION_ERROR_CODE = 14
+
+function sudoExecMac (cmd) {
+  return new Promise((resolve, reject) => {
+    log.info('以管理员权限执行命令:', cmd)
+    sudoPrompt.exec(cmd, { name: 'dev-sidecar' }, (error, stdout, stderr) => {
+      if (stderr) {
+        log.warn('以管理员权限执行命令，stderr:', stderr)
+      }
+      if (error) {
+        log.error('以管理员权限执行命令失败:', error)
+        reject(error)
+      } else {
+        resolve(stdout)
+      }
+    })
+  })
+}
+
 const executor = {
   async windows (exec, params = {}) {
     const { ip, port, setEnv } = params
@@ -419,42 +440,45 @@ const executor = {
   async mac (exec, params = {}) {
     const wifiAdaptor = await getMacNetworkService(exec)
     const { ip, port } = params
+
+    let cmds
     if (ip != null) { // 设置代理
       // 延迟加载config
       loadConfig()
 
       // https
-      await exec(`networksetup -setsecurewebproxy "${wifiAdaptor}" ${ip} ${port}`)
+      cmds = [`networksetup -setsecurewebproxy "${wifiAdaptor}" ${ip} ${port}`]
       // http
       if (config.get().proxy.proxyHttp) {
-        await exec(`networksetup -setwebproxy "${wifiAdaptor}" ${ip} ${port - 1}`)
+        cmds.push(`networksetup -setwebproxy "${wifiAdaptor}" ${ip} ${port - 1}`)
       } else {
-        await exec(`networksetup -setwebproxystate "${wifiAdaptor}" off`)
+        cmds.push(`networksetup -setwebproxystate "${wifiAdaptor}" off`)
       }
 
       // 设置排除域名
       const excludeIpStr = getProxyExcludeIpStr('" "')
-      await exec(`networksetup -setproxybypassdomains "${wifiAdaptor}" "${excludeIpStr}"`)
-
-      // const setEnv = `cat <<ENDOF >>  ~/.zshrc
-      // export http_proxy="http://${ip}:${port}"
-      // export https_proxy="http://${ip}:${port}"
-      // ENDOF
-      // source ~/.zshrc
-      // `
-      // await exec(setEnv)
+      cmds.push(`networksetup -setproxybypassdomains "${wifiAdaptor}" "${excludeIpStr}"`)
     } else { // 关闭代理
-      // https
-      await exec(`networksetup -setsecurewebproxystate "${wifiAdaptor}" off`)
-      // http
-      await exec(`networksetup -setwebproxystate "${wifiAdaptor}" off`)
+      // https + http
+      cmds = [
+        `networksetup -setsecurewebproxystate "${wifiAdaptor}" off`,
+        `networksetup -setwebproxystate "${wifiAdaptor}" off`,
+      ]
+    }
 
-      // const removeEnv = `
-      // sed -ie '/export http_proxy/d' ~/.zshrc
-      // sed -ie '/export https_proxy/d' ~/.zshrc
-      // source ~/.zshrc
-      // `
-      // await exec(removeEnv)
+    // 先尝试直接执行；若因权限不足（exit code 14）失败，弹出系统授权对话框后重试
+    try {
+      for (const cmd of cmds) {
+        await exec(cmd)
+      }
+    } catch (e) {
+      if (e.code === MACOS_NETWORKSETUP_PERMISSION_ERROR_CODE) {
+        log.warn('networksetup 命令需要管理员权限（exit code 14），正在弹出系统授权对话框...')
+        await sudoExecMac(cmds.join(' && '))
+        log.info('以管理员权限执行 networksetup 命令成功')
+      } else {
+        throw e
+      }
     }
   },
 }
