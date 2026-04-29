@@ -150,10 +150,6 @@ importers:
       vue-cli-plugin-electron-builder:
         specifier: ^3.0.0-alpha.4
         version: 3.0.0-alpha.4(encoding@0.1.13)
-    optionalDependencies:
-      electron-icon-builder:
-        specifier: ^2.0.1
-        version: 2.0.1
 
   packages/mitmproxy:
     dependencies:
