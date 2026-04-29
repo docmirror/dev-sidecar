@@ -198,13 +198,13 @@ export default {
               :default-open-keys="['/plugin']"
             >
               <template v-for="(item) of menus">
-                <a-sub-menu v-if="item.children && item.children.length > 0" :key="item.path" @titleClick="titleClick(item)">
+                <a-sub-menu v-if="item.children && item.children.length > 0" :key="'sub-'+item.path" @titleClick="titleClick(item)">
                   <span slot="title"><a-icon :type="item.icon ? item.icon : 'file'" /><span>{{ item.title }}</span></span>
-                  <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)">
+                  <a-menu-item v-for="(sub) of item.children" :key="'subitem-'+sub.path" @click="menuClick(sub)">
                     <a-icon :type="sub.icon ? sub.icon : 'file'" /> {{ sub.title }}
                   </a-menu-item>
                 </a-sub-menu>
-                <a-menu-item v-else :key="item.path" @click="menuClick(item)">
+                <a-menu-item v-else :key="'item-'+item.path" @click="menuClick(item)">
                   <a-icon :type="item.icon ? item.icon : 'file'" />
                   <span class="nav-text">{{ item.title }}</span>
                 </a-menu-item>
@@ -218,7 +218,9 @@ export default {
             <div v-if="isPreRelease" class="pre-release-banner">
               当前为测试版（非正式版）软件，仅用于测试验证，不建议在生产环境长期使用。
             </div>
-            <router-view id="document" />
+            <div class="content-inner">
+              <router-view id="document" />
+            </div>
           </a-layout-content>
           <a-layout-footer>
             <div class="footer">
@@ -273,6 +275,12 @@ body {
   .ant-layout-content {
     flex: 1 1 auto;
     min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .content-inner {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow: auto;
   }
   .logo {
@@ -300,7 +308,7 @@ body {
   }
 
   .pre-release-banner {
-    margin: 12px 12px 0;
+    margin: 0 12px 12px;
     padding: 10px 12px;
     border: 1px solid #ffa940;
     background: #fff7e6;
