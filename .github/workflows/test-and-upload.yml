@@ -40,7 +40,7 @@ jobs:
         os:
           - windows
           - ubuntu
-          # - ubuntu-24.04-arm
+          - ubuntu-24.04-arm
           - macos
         node:
           - 22
@@ -180,37 +180,37 @@ jobs:
           flatpak --version
           flatpak-builder --version
 
-      # - name: "Cache Flatpak runtime (Linux ARM64)"
-      #   if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
-      #   id: cache-flatpak-runtime-linux-arm64
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ~/.local/share/flatpak
-      #     key: flatpak-runtime-freedesktop-21.08
-      #
-      # - name: "Install Flatpak tooling (Linux ARM64)"
-      #   if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
-      #   run: |
-      #     sudo apt-get update -y
-      #     sudo apt-get install -y flatpak flatpak-builder xdg-desktop-portal appstream fuse3
-      #     # Allow flatpak-builder's bwrap sandbox to create user namespaces on Ubuntu 24.04
-      #     sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
-      #     # Remove bwrap AppArmor profile if present; it can block sandbox operations beyond userns
-      #     sudo apparmor_parser -R /etc/apparmor.d/bwrap 2>/dev/null || true
-      #     flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-      #     if [ "${{ steps.cache-flatpak-runtime-linux-arm64.outputs.cache-hit }}" != "true" ]; then
-      #       flatpak install --user -y flathub org.freedesktop.Platform//21.08 org.freedesktop.Sdk//21.08
-      #     fi
-      #     flatpak --version
-      #     flatpak-builder --version
-      #
-      # - name: "Special preparation for Linux ARM64 build"
-      #   if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
-      #   run: |
-      #     echo "======================================================================";
-      #     echo "Run _script/linux-arm64-prepare.sh";
-      #     echo "--------------------";
-      #     bash _script/linux-arm64-prepare.sh;
+      - name: "Cache Flatpak runtime (Linux ARM64)"
+        if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
+        id: cache-flatpak-runtime-linux-arm64
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/flatpak
+          key: flatpak-runtime-freedesktop-21.08
+
+      - name: "Install Flatpak tooling (Linux ARM64)"
+        if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y flatpak flatpak-builder xdg-desktop-portal appstream fuse3
+          # Allow flatpak-builder's bwrap sandbox to create user namespaces on Ubuntu 24.04
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          # Remove bwrap AppArmor profile if present; it can block sandbox operations beyond userns
+          sudo apparmor_parser -R /etc/apparmor.d/bwrap 2>/dev/null || true
+          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          if [ "${{ steps.cache-flatpak-runtime-linux-arm64.outputs.cache-hit }}" != "true" ]; then
+            flatpak install --user -y flathub org.freedesktop.Platform//21.08 org.freedesktop.Sdk//21.08
+          fi
+          flatpak --version
+          flatpak-builder --version
+
+      - name: "Special preparation for Linux ARM64 build"
+        if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
+        run: |
+          echo "======================================================================";
+          echo "Run _script/linux-arm64-prepare.sh";
+          echo "--------------------";
+          bash _script/linux-arm64-prepare.sh;
 
       - name: "npm run electron:build (Windows/macOS)"
         if: ${{ matrix.os != 'ubuntu' }}
@@ -227,8 +227,7 @@ jobs:
           npm run electron:build;
 
       - name: "npm run electron:build (Linux & Linux ARM64)"
-        # if: ${{ matrix.os == 'ubuntu' || matrix.os == 'ubuntu-24.04-arm' }}
-        if: ${{ matrix.os == 'ubuntu' }}
+        if: ${{ matrix.os == 'ubuntu' || matrix.os == 'ubuntu-24.04-arm' }}
         env:
           DEBUG: "@malept/flatpak-bundler"
         run: |
@@ -283,13 +282,13 @@ jobs:
           mv DevSidecar-${{ env.BUILD_VERSION }}-armv7l.rpm      DevSidecar-${{ env.BUILD_VERSION }}-linux-armv7l.rpm;
           # armv7l flatpak is on Linux ARM64 runner
           ls -lah;
-      # - name: "Rename artifacts - Linux ARM64"
-      #   if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
-      #   run: |
-      #     mv DevSidecar-${{ env.BUILD_VERSION }}-arm64.flatpak      DevSidecar-${{ env.BUILD_VERSION }}-linux-arm64.flatpak;
-      #     #-------------------------------------------------------------------------------------------------------------------------
-      #     mv DevSidecar-${{ env.BUILD_VERSION }}-armv7l.flatpak      DevSidecar-${{ env.BUILD_VERSION }}-linux-armv7l.flatpak;
-      #     ls -lah;
+      - name: "Rename artifacts - Linux ARM64"
+        if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
+        run: |
+          mv DevSidecar-${{ env.BUILD_VERSION }}-arm64.flatpak      DevSidecar-${{ env.BUILD_VERSION }}-linux-arm64.flatpak;
+          #-------------------------------------------------------------------------------------------------------------------------
+          mv DevSidecar-${{ env.BUILD_VERSION }}-armv7l.flatpak      DevSidecar-${{ env.BUILD_VERSION }}-linux-armv7l.flatpak;
+          ls -lah;
       - name: "Rename artifacts - macOS"
         if: ${{ matrix.os == 'macos' }}
         run: |
@@ -426,23 +425,23 @@ jobs:
           if-no-files-found: error
       # endregion Upload artifacts - Linux
 
-      # # region Upload artifacts - Linux ARM64
-      # - name: "Upload DevSidecar-${{ env.BUILD_VERSION }}-linux-arm64.flatpak"
-      #   uses: actions/upload-artifact@v4.4.0
-      #   if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
-      #   with:
-      #     path: packages/gui/dist_electron/DevSidecar-${{ env.BUILD_VERSION }}-linux-arm64.flatpak
-      #     name: "DevSidecar-${{ env.BUILD_VERSION }}-linux-arm64.flatpak"
-      #     if-no-files-found: error
-      # # -------------------------------------------------------------------------------------------------------------------------
-      # - name: "Upload DevSidecar-${{ env.BUILD_VERSION }}-linux-armv7l.flatpak"
-      #   uses: actions/upload-artifact@v4.4.0
-      #   if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
-      #   with:
-      #     path: packages/gui/dist_electron/DevSidecar-${{ env.BUILD_VERSION }}-linux-armv7l.flatpak
-      #     name: "DevSidecar-${{ env.BUILD_VERSION }}-linux-armv7l.flatpak"
-      #     if-no-files-found: error
-      # # endregion Upload artifacts - Linux ARM64
+      # region Upload artifacts - Linux ARM64
+      - name: "Upload DevSidecar-${{ env.BUILD_VERSION }}-linux-arm64.flatpak"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ env.BUILD_VERSION }}-linux-arm64.flatpak
+          name: "DevSidecar-${{ env.BUILD_VERSION }}-linux-arm64.flatpak"
+          if-no-files-found: error
+      # -------------------------------------------------------------------------------------------------------------------------
+      - name: "Upload DevSidecar-${{ env.BUILD_VERSION }}-linux-armv7l.flatpak"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu-24.04-arm' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ env.BUILD_VERSION }}-linux-armv7l.flatpak
+          name: "DevSidecar-${{ env.BUILD_VERSION }}-linux-armv7l.flatpak"
+          if-no-files-found: error
+      # endregion Upload artifacts - Linux ARM64
 
       # Upload artifacts - macOS
       - name: "Upload DevSidecar-${{ env.BUILD_VERSION }}-macos-x86_64.dmg"

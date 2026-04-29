@@ -262,8 +262,18 @@ body {
   .ant-layout-sider-children {
     border-right: 1px solid #eee;
   }
-  .ant-layout {
+  > .ant-layout {
     height: 100%;
+  }
+  > .ant-layout > .ant-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .ant-layout-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
   }
   .logo {
     padding: 5px;
@@ -278,6 +288,10 @@ body {
     padding: 10px;
     text-align: center;
     border-top: #d6d4d4 solid 1px;
+    flex: 0 0 auto;
+    background: #fff;
+    position: relative;
+    z-index: 1;
   }
   .ant-menu-inline,
   .ant-menu-vertical,
