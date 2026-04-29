@@ -194,8 +194,8 @@ export default {
           <div class="aside">
             <a-menu
               mode="inline"
-              :default-selected-keys="[$route.fullPath]"
-              :default-open-keys="['/plugin']"
+              :default-selected-keys="['item-'+$route.fullPath, 'subitem-'+$route.fullPath]"
+              :default-open-keys="['sub-/plugin']"
             >
               <template v-for="(item) of menus">
                 <a-sub-menu v-if="item.children && item.children.length > 0" :key="'sub-'+item.path" @titleClick="titleClick(item)">
