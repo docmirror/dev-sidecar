@@ -31,6 +31,10 @@ export default {
     theme () {
       return colorTheme.value
     },
+    isPreRelease () {
+      const version = this.info && this.info.version
+      return typeof version === 'string' && version.includes('-')
+    },
   },
   async mounted () {
     if (this.configReadyPromise) {
@@ -211,6 +215,9 @@ export default {
         <a-layout>
           <!-- <a-layout-header>Header</a-layout-header> -->
           <a-layout-content>
+            <div v-if="isPreRelease" class="pre-release-banner">
+              当前为测试版（非正式版）软件，仅用于测试验证，不建议在生产环境长期使用。
+            </div>
             <router-view id="document" />
           </a-layout-content>
           <a-layout-footer>
@@ -218,8 +225,8 @@ export default {
               <div>
                 <label v-if="info.configProfiles.personalRemote.showLabel !== false">当前配置：</label>
                 <!-- 后端api里，id的回退值是''而version的回退值是0（因为version始终应该是一个Number），所以为了不显示一个零蛋，version在前端需要再做个回退为'' -->
-                <code>{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? ':' : '-' }}{{ info.configProfiles.internal.version || '' }}</code>
-                <code class="ml5">{{ info.configProfiles.sharedRemote.id }}{{ info.configProfiles.sharedRemote.id ? ':' : '-' }}{{ info.configProfiles.sharedRemote.version || '' }}</code>
+                <code>{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? ':' : '-' }}{{ info.configProfiles.internal.version || '' }} </code>
+                <code class="ml5">{{ info.configProfiles.sharedRemote.id }}{{ info.configProfiles.sharedRemote.id ? ':' : '-' }}{{ info.configProfiles.sharedRemote.version || '' }} </code>
                 <code class="ml5">{{ info.configProfiles.personalRemote.id }}{{ info.configProfiles.personalRemote.id ? ':' : '-' }}{{ info.configProfiles.personalRemote.version || '' }}</code>
               </div>
 
@@ -229,6 +236,7 @@ export default {
                 <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>,
                 <a @click="openExternal('https://github.com/cute-omega')">CuteOmega</a>
                 <span class="ml5">{{ info.version }}</span>
+                <span v-if="isPreRelease" class="pre-release-tag">非正式版</span>
               </div>
             </div>
           </a-layout-footer>
@@ -275,6 +283,29 @@ body {
   .ant-menu-vertical,
   .ant-menu-vertical-left {
     border: 0;
+  }
+
+  .pre-release-banner {
+    margin: 12px 12px 0;
+    padding: 10px 12px;
+    border: 1px solid #ffa940;
+    background: #fff7e6;
+    color: #ad4e00;
+    font-weight: 600;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .pre-release-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid #ffa940;
+    background: #fff7e6;
+    color: #ad4e00;
+    font-size: 12px;
+    line-height: 20px;
   }
 }
 .search-bar-highlight {
