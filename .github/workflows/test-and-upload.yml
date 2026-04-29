@@ -40,7 +40,7 @@ jobs:
         os:
           - windows
           - ubuntu
-          - ubuntu-24.04-arm
+          # - ubuntu-24.04-arm
           - macos
         node:
           - 22

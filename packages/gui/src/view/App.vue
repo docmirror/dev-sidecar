@@ -216,7 +216,7 @@ export default {
           <!-- <a-layout-header>Header</a-layout-header> -->
           <a-layout-content>
             <div v-if="isPreRelease" class="pre-release-banner">
-              当前为测试版（非正式版）软件，仅用于测试验证，不建议在生产环境长期使用。
+              当前为非正式版软件，部分功能可能不稳定，请在开发者指导下使用。
             </div>
             <div class="content-inner">
               <router-view id="document" />
