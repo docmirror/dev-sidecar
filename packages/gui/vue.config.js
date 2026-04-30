@@ -4,6 +4,7 @@ const webpack = require('webpack')
 
 const publishUrl = process.env.VUE_APP_PUBLISH_URL
 const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
+const publishChannel = process.env.VUE_APP_PUBLISH_CHANNEL
 console.log('Publish url:', publishUrl)
 
 module.exports = defineConfig({
@@ -127,9 +128,11 @@ module.exports = defineConfig({
           },
           category: 'public.app-category.developer-tools',
         },
+        generateUpdatesFilesForAllChannels: true,
         publish: {
           provider: publishProvider,
           url: publishUrl,
+          ...(publishChannel ? { channel: publishChannel } : {}),
           // url: 'http://dev-sidecar.docmirror.cn/update/preview/',
         },
       },

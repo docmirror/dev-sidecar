@@ -31,6 +31,10 @@ export default {
     theme () {
       return colorTheme.value
     },
+    isPreRelease () {
+      const version = this.info && this.info.version
+      return typeof version === 'string' && version.includes('-')
+    },
   },
   async mounted () {
     if (this.configReadyPromise) {
@@ -190,17 +194,17 @@ export default {
           <div class="aside">
             <a-menu
               mode="inline"
-              :default-selected-keys="[$route.fullPath]"
-              :default-open-keys="['/plugin']"
+              :default-selected-keys="['item-'+$route.fullPath, 'subitem-'+$route.fullPath]"
+              :default-open-keys="['sub-/plugin']"
             >
               <template v-for="(item) of menus">
-                <a-sub-menu v-if="item.children && item.children.length > 0" :key="item.path" @titleClick="titleClick(item)">
+                <a-sub-menu v-if="item.children && item.children.length > 0" :key="'sub-'+item.path" @titleClick="titleClick(item)">
                   <span slot="title"><a-icon :type="item.icon ? item.icon : 'file'" /><span>{{ item.title }}</span></span>
-                  <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)">
+                  <a-menu-item v-for="(sub) of item.children" :key="'subitem-'+sub.path" @click="menuClick(sub)">
                     <a-icon :type="sub.icon ? sub.icon : 'file'" /> {{ sub.title }}
                   </a-menu-item>
                 </a-sub-menu>
-                <a-menu-item v-else :key="item.path" @click="menuClick(item)">
+                <a-menu-item v-else :key="'item-'+item.path" @click="menuClick(item)">
                   <a-icon :type="item.icon ? item.icon : 'file'" />
                   <span class="nav-text">{{ item.title }}</span>
                 </a-menu-item>
@@ -211,15 +215,20 @@ export default {
         <a-layout>
           <!-- <a-layout-header>Header</a-layout-header> -->
           <a-layout-content>
-            <router-view id="document" />
+            <div v-if="isPreRelease" class="pre-release-banner">
+              当前为非正式版软件，部分功能可能不稳定，请在开发者指导下使用。
+            </div>
+            <div class="content-inner">
+              <router-view id="document" />
+            </div>
           </a-layout-content>
           <a-layout-footer>
             <div class="footer">
               <div>
                 <label v-if="info.configProfiles.personalRemote.showLabel !== false">当前配置：</label>
                 <!-- 后端api里，id的回退值是''而version的回退值是0（因为version始终应该是一个Number），所以为了不显示一个零蛋，version在前端需要再做个回退为'' -->
-                <code>{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? ':' : '-' }}{{ info.configProfiles.internal.version || '' }}</code>
-                <code class="ml5">{{ info.configProfiles.sharedRemote.id }}{{ info.configProfiles.sharedRemote.id ? ':' : '-' }}{{ info.configProfiles.sharedRemote.version || '' }}</code>
+                <code>{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? ':' : '-' }}{{ info.configProfiles.internal.version || '' }} </code>
+                <code class="ml5">{{ info.configProfiles.sharedRemote.id }}{{ info.configProfiles.sharedRemote.id ? ':' : '-' }}{{ info.configProfiles.sharedRemote.version || '' }} </code>
                 <code class="ml5">{{ info.configProfiles.personalRemote.id }}{{ info.configProfiles.personalRemote.id ? ':' : '-' }}{{ info.configProfiles.personalRemote.version || '' }}</code>
               </div>
 
@@ -229,6 +238,7 @@ export default {
                 <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>,
                 <a @click="openExternal('https://github.com/cute-omega')">CuteOmega</a>
                 <span class="ml5">{{ info.version }}</span>
+                <span v-if="isPreRelease" class="pre-release-tag">非正式版</span>
               </div>
             </div>
           </a-layout-footer>
@@ -254,8 +264,24 @@ body {
   .ant-layout-sider-children {
     border-right: 1px solid #eee;
   }
-  .ant-layout {
+  > .ant-layout {
     height: 100%;
+  }
+  > .ant-layout > .ant-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .ant-layout-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .content-inner {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
   }
   .logo {
     padding: 5px;
@@ -270,11 +296,38 @@ body {
     padding: 10px;
     text-align: center;
     border-top: #d6d4d4 solid 1px;
+    flex: 0 0 auto;
+    background: #fff;
+    position: relative;
+    z-index: 1;
   }
   .ant-menu-inline,
   .ant-menu-vertical,
   .ant-menu-vertical-left {
     border: 0;
+  }
+
+  .pre-release-banner {
+    margin: 0 12px 12px;
+    padding: 10px 12px;
+    border: 1px solid #ffa940;
+    background: #fff7e6;
+    color: #ad4e00;
+    font-weight: 600;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .pre-release-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid #ffa940;
+    background: #fff7e6;
+    color: #ad4e00;
+    font-size: 12px;
+    line-height: 20px;
   }
 }
 .search-bar-highlight {
