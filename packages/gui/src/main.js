@@ -4,7 +4,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import { ipcRenderer } from 'electron'
 import view from './view'
 import App from './view/App.vue'
-import DsContainer from './view/components/container'
+import DsContainer from './view/components/container.vue'
 import routes from './view/router'
 import 'ant-design-vue/dist/reset.css'
 import './view/style/index.scss'

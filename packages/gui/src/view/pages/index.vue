@@ -1,8 +1,8 @@
 <script>
 import lodash from 'lodash'
 import { CheckOutlined, CloseOutlined, ArrowRightOutlined } from '@ant-design/icons-vue'
-import DsContainer from '../components/container'
-import SetupCa from '../components/setup-ca'
+import DsContainer from '../components/container.vue'
+import SetupCa from '../components/setup-ca.vue'
 
 export default {
   name: 'Index',

@@ -8,9 +8,9 @@ import electronUpdater from 'electron-updater'
 const { autoUpdater } = electronUpdater
 import request from 'request'
 import progress from 'request-progress'
-import { createRequire } from 'node:module'
-const require = createRequire(import.meta.url)
-const pkg = require('../../../package.json')
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+const pkg = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf-8'))
 import appPathUtil from '../../utils/util.apppath.js'
 import log from '../../utils/util.log.gui.js'
 import { isNewVersion } from '@docmirror/dev-sidecar/src/utils/util.version.js'

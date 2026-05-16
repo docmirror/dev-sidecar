@@ -1,5 +1,5 @@
-const publishUrl = process.env.VUE_APP_PUBLISH_URL
-const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
+const publishUrl = process.env.VITE_PUBLISH_URL
+const publishProvider = process.env.VITE_PUBLISH_PROVIDER
 
 /** @type {import('electron-builder').Configuration} */
 module.exports = {
@@ -13,27 +13,20 @@ module.exports = {
   },
   files: [
     {
-      from: 'dist',
-      to: 'dist',
-      filter: [
-        '**/*',
-        '!win-*/**/*',
-        '!mac-*/**/*',
-        '!linux-*/**/*',
-        '!*.zip',
-        '!*.dmg',
-        '!*.blockmap',
-        '!*.exe',
-        '!*.AppImage',
-        '!*.deb',
-        '!*.rpm',
-        '!*.tar.gz',
-        '!*.flatpak',
-        '!builder-*.yml',
-        '!builder-*.yaml',
-      ],
+      from: 'dist/main',
+      to: 'dist/main',
+      filter: ['**/*'],
     },
-    'src/**/*',
+    {
+      from: 'dist/renderer',
+      to: 'dist/renderer',
+      filter: ['**/*'],
+    },
+    {
+      from: 'dist/preload',
+      to: 'dist/preload',
+      filter: ['**/*'],
+    },
     'package.json',
     'extra/**/*',
   ],

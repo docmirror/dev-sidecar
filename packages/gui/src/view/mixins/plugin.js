@@ -1,5 +1,5 @@
 import lodash from 'lodash'
-import DsContainer from '../components/container'
+import DsContainer from '../components/container.vue'
 
 export default {
   components: {

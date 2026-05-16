@@ -234,15 +234,15 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
     _powerMonitor.setupMainWindow(win)
   }
 
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
+  if (process.env.VITE_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
-    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+    win.loadURL(process.env.VITE_DEV_SERVER_URL)
     if (!process.env.IS_TEST) {
       setTimeout(openDevTools, 2000)
     }
   } else {
     // Load the index.html when not in development
-    win.loadFile(path.join(app.getAppPath(), 'dist', 'index.html'))
+    win.loadFile(path.join(app.getAppPath(), 'dist', 'renderer', 'index.html'))
   }
 
   if (startHideWindow) {

@@ -1,13 +1,13 @@
-import Index from '../pages/index'
-import Git from '../pages/plugin/git'
-import Node from '../pages/plugin/node'
-import Overwall from '../pages/plugin/overwall'
-import Pip from '../pages/plugin/pip'
+import Index from '../pages/index.vue'
+import Git from '../pages/plugin/git.vue'
+import Node from '../pages/plugin/node.vue'
+import Overwall from '../pages/plugin/overwall.vue'
+import Pip from '../pages/plugin/pip.vue'
 import FreeEye from '../pages/plugin/free-eye.vue'
-import Proxy from '../pages/proxy'
-import Server from '../pages/server'
-import Setting from '../pages/setting'
-import Help from '../pages/help'
+import Proxy from '../pages/proxy.vue'
+import Server from '../pages/server.vue'
+import Setting from '../pages/setting.vue'
+import Help from '../pages/help.vue'
 
 const routes = [
   { path: '/', redirect: '/index' },

@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 
 import { ProfileOutlined } from '@ant-design/icons-vue'
 import Plugin from '../mixins/plugin'
-import TreeNode from '../components/tree-node'
+import TreeNode from '../components/tree-node.vue'
 
 export default defineComponent({
   name: 'Help',

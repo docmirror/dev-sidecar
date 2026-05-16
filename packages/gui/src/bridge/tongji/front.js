@@ -52,11 +52,12 @@ function ebtRenderer (ipcRenderer, siteId, router) {
   ipcRenderer.send('electron-baidu-tongji-message', siteId)
 }
 
+import { ipcRenderer } from 'electron'
+
 export default {
   install (app, api, router) {
     const BAIDU_SITE_ID = 'f2d170ce560aef0005b689f28697f852'
     // 百度统计
-    const { ipcRenderer } = require('electron')
     ebtRenderer(ipcRenderer, BAIDU_SITE_ID, router)
   },
   ebtRenderer,
