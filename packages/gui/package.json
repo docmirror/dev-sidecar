@@ -16,7 +16,7 @@
     "preview": "electron-vite preview",
     "lint": "eslint .",
     "electron": "electron-vite dev",
-    "electron:build": "electron-vite build && electron-builder --config electron-builder.config.cjs",
+    "electron:build": "electron-vite build && electron-builder",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "electron:icons": "electron-icon-builder --input=./public/logo/win.png --output=build --flatten",
