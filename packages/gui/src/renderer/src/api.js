@@ -1,5 +1,7 @@
-import { ipcRenderer, shell } from 'electron'
 import lodash from 'lodash'
+
+// 从 preload 暴露的 electron API 获取 ipcRenderer 和 shell
+const { ipcRenderer, shell } = window.electron
 
 let inited = false
 let apiObj = null

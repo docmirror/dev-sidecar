@@ -13,19 +13,24 @@ module.exports = {
   },
   files: [
     {
-      from: 'dist/main',
-      to: 'dist/main',
+      from: 'out/main',
+      to: 'out/main',
       filter: ['**/*'],
     },
     {
-      from: 'dist/renderer',
-      to: 'dist/renderer',
+      from: 'out/renderer',
+      to: 'out/renderer',
       filter: ['**/*'],
     },
     {
-      from: 'dist/preload',
-      to: 'dist/preload',
+      from: 'out/preload',
+      to: 'out/preload',
       filter: ['**/*'],
+    },
+    {
+      from: 'src/main/bridge',
+      to: 'out/main',
+      filter: ['mitmproxy.js'],
     },
     'package.json',
     'extra/**/*',

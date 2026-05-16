@@ -2,10 +2,12 @@
 import { h } from 'vue';
 import * as Icons from '@ant-design/icons-vue';
 
-import { ipcRenderer } from 'electron'
-import createMenus from '@/view/router/menu'
+import createMenus from '@/router/menu'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import { colorTheme } from './composables/theme'
+
+// 从 preload 暴露的 electron API 获取 ipcRenderer
+const { ipcRenderer } = window.electron
 
 export default {
   name: 'App',
@@ -363,7 +365,7 @@ body {
     padding: 5px;
     border-bottom: #eee solid 1px;
     height: 60px;
-    background-image: url('../../public/logo/logo-lang.svg');
+    background-image: url('/logo/logo-lang.svg');
     background-size: auto 50px;
     background-repeat: no-repeat;
     background-position: 5px center;

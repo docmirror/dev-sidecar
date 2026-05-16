@@ -1,4 +1,4 @@
-import modules from '../bridge/front'
+import modules from './bridge/front'
 import { apiInit, useApi } from './api'
 import status from './status'
 

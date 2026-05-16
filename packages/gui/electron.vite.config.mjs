@@ -2,17 +2,27 @@ import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { resolve } from 'path'
+import fs from 'fs'
+
+// 复制 mitmproxy.js 到输出目录的插件
+function copyMitmproxyPlugin() {
+  return {
+    name: 'copy-mitmproxy',
+    closeBundle() {
+      const src = resolve(__dirname, 'src/main/bridge/mitmproxy.js')
+      const dest = resolve(__dirname, 'out/main/mitmproxy.js')
+      if (fs.existsSync(src)) {
+        fs.copyFileSync(src, dest)
+        console.log('✓ mitmproxy.js copied to out/main/')
+      }
+    }
+  }
+}
 
 export default defineConfig({
   main: {
-    // Electron 主进程配置
     build: {
-      lib: {
-        entry: 'src/background.js',
-        formats: ['es'],
-        fileName: () => 'index.js',
-      },
-      outDir: 'dist/main',
+      outDir: 'out/main',
       rollupOptions: {
         external: [
           'electron',
@@ -23,10 +33,13 @@ export default defineConfig({
         ],
       },
     },
-    plugins: [externalizeDepsPlugin()],
+    plugins: [
+      externalizeDepsPlugin(),
+      copyMitmproxyPlugin()
+    ],
     resolve: {
       alias: {
-        '@': resolve(__dirname, 'src'),
+        '@': resolve(__dirname, 'src/main'),
       },
     },
     define: {
@@ -34,26 +47,28 @@ export default defineConfig({
     },
   },
   preload: {
-    // 如果没有 preload 脚本，可以禁用
     build: {
+      outDir: 'out/preload',
       lib: {
-        entry: 'src/preload.js',
-        formats: ['es'],
+        entry: resolve(__dirname, 'src/preload/index.js'),
+        formats: ['cjs'],
         fileName: () => 'index.js',
       },
-      outDir: 'dist/preload',
+      rollupOptions: {
+        external: ['electron'],
+      },
     },
     plugins: [externalizeDepsPlugin()],
   },
   renderer: {
-    // 渲染进程配置
-    root: '.',
+    root: resolve(__dirname, 'src/renderer'),
     base: './',
+    publicDir: resolve(__dirname, 'public'),
     build: {
-      outDir: 'dist/renderer',
+      outDir: resolve(__dirname, 'out/renderer'),
       rollupOptions: {
         input: {
-          index: resolve(__dirname, 'index.html'),
+          index: resolve(__dirname, 'src/renderer/index.html'),
         },
         output: {
           manualChunks(id) {
@@ -72,7 +87,7 @@ export default defineConfig({
     ],
     resolve: {
       alias: {
-        '@': resolve(__dirname, 'src'),
+        '@': resolve(__dirname, 'src/renderer/src')
       },
     },
     css: {

@@ -1,14 +1,16 @@
 import antd from 'ant-design-vue'
 import { createApp } from 'vue';
 import { createRouter, createWebHashHistory } from 'vue-router';
-import { ipcRenderer } from 'electron'
-import view from './view'
-import App from './view/App.vue'
-import DsContainer from './view/components/container.vue'
-import routes from './view/router'
+import view from './'
+import App from './App.vue'
+import DsContainer from './components/container.vue'
+import routes from './router'
 import 'ant-design-vue/dist/reset.css'
-import './view/style/index.scss'
-import './view/style/theme/dark.scss' // 暗色主题
+import './style/index.scss'
+import './style/theme/dark.scss' // 暗色主题
+
+// 从 preload 暴露的 electron API 获取 ipcRenderer
+const { ipcRenderer } = window.electron
 
 try {
   window.onerror = (message, source, lineno, colno, error) => {
@@ -29,11 +31,11 @@ try {
     routes, // (缩写) 相当于 routes: routes
   })
   const app = createApp(App)
-  
+
   app.use(antd)
   app.use(router)
   app.component('DsContainer', DsContainer)
-  
+
   view.initApi(app).then(async (api) => {
     // 初始化status
     try {

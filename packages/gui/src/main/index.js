@@ -5,6 +5,7 @@ import DevSidecar from '@docmirror/dev-sidecar'
 import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, Tray } from 'electron'
 import minimist from 'minimist'
 import backend from './bridge/backend.js'
+// Note: bridge, utils, background are now in src/main/ directory
 import jsonApi from '@docmirror/mitmproxy/src/json.js'
 import log from './utils/util.log.gui.js'
 
@@ -19,6 +20,11 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const staticPath = isDevelopment
   ? path.resolve('public')
   : path.join(app.getAppPath(), 'dist')
+
+// preload 脚本路径
+const preloadPath = isDevelopment
+  ? path.join(process.cwd(), 'out/preload/index.cjs')
+  : path.join(app.getAppPath(), 'out/preload/index.cjs')
 
 let _powerMonitor = powerMonitor
 
@@ -206,12 +212,10 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
       height: windowSize.height || 750,
       title: 'DevSidecar',
       webPreferences: {
-        enableRemoteModule: true,
-        contextIsolation: false,
-        nativeWindowOpen: true, // ADD THIS
-        // Use pluginOptions.nodeIntegration, leave this alone
-        // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-        nodeIntegration: true, // process.env.ELECTRON_NODE_INTEGRATION
+        preload: preloadPath,
+        contextIsolation: true,
+        nodeIntegration: false,
+        nativeWindowOpen: true,
       },
       show: !startHideWindow,
       icon: path.join(staticPath, 'icon.png'),
@@ -242,7 +246,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
     }
   } else {
     // Load the index.html when not in development
-    win.loadFile(path.join(app.getAppPath(), 'dist', 'renderer', 'index.html'))
+    win.loadFile(path.join(app.getAppPath(), 'out', 'renderer', 'index.html'))
   }
 
   if (startHideWindow) {

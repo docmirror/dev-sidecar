@@ -1,4 +1,4 @@
-import fs from 'node:fs'
+import fs, { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import DevSidecar from '@docmirror/dev-sidecar'
@@ -8,9 +8,7 @@ import electronUpdater from 'electron-updater'
 const { autoUpdater } = electronUpdater
 import request from 'request'
 import progress from 'request-progress'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
-const pkg = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf-8'))
+const pkg = JSON.parse(readFileSync(path.join(process.cwd(), 'package.json'), 'utf-8'))
 import appPathUtil from '../../utils/util.apppath.js'
 import log from '../../utils/util.log.gui.js'
 import { isNewVersion } from '@docmirror/dev-sidecar/src/utils/util.version.js'

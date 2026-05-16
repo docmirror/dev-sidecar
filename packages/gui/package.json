@@ -3,7 +3,7 @@
   "version": "2.1.0",
   "private": false,
   "type": "module",
-  "main": "dist/main/index.js",
+  "main": "out/main/index.js",
   "author": {
     "email": "xiaojunnuo@qq.com",
     "name": "Greper"
@@ -11,7 +11,7 @@
   "license": "MPL-2.0",
   "homepage": "https://github.com/docmirror/dev-sidecar",
   "scripts": {
-    "dev": "electron-vite dev",
+    "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "lint": "eslint .",

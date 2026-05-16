@@ -1,6 +1,8 @@
 <script>
-import { ipcRenderer } from 'electron'
 import { ProfileOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
+
+// 从 preload 暴露的 electron API 获取 ipcRenderer
+const { ipcRenderer } = window.electron
 import Plugin from '../mixins/plugin'
 import { colorTheme } from '../composables/theme'
 

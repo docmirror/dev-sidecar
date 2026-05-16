@@ -1,13 +1,11 @@
-import fs from 'node:fs'
+import fs, { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import DevSidecar from '@docmirror/dev-sidecar'
 import { app, ipcMain } from 'electron'
 import lodash from 'lodash'
 import jsonApi from '@docmirror/mitmproxy/src/json.js'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
-const pk = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf-8'))
+const pk = JSON.parse(readFileSync(path.join(process.cwd(), 'package.json'), 'utf-8'))
 import coreDefaultConfig from '@docmirror/dev-sidecar/src/config/index.js'
 import configLoader from '@docmirror/dev-sidecar/src/config/local-config-loader.js'
 import log from '../../utils/util.log.gui.js'
@@ -17,11 +15,11 @@ const { configFromFiles } = coreDefaultConfig
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // 根据环境判断 mitmproxy.js 的路径
-// electron-vite 开发模式下，主进程构建输出在 dist/main/，所以 mitmproxy.js 也在同一目录
+// electron-vite 开发模式下，主进程构建输出在 out/main/，所以 mitmproxy.js 也在同一目录
 const isDev = process.env.NODE_ENV !== 'production'
 const mitmproxyPath = isDev
-  ? path.join(process.cwd(), 'dist', 'main', 'mitmproxy.js')
-  : path.join(app.getAppPath(), 'dist', 'main', 'mitmproxy.js')
+  ? path.join(process.cwd(), 'out', 'main', 'mitmproxy.js')
+  : path.join(app.getAppPath(), 'out', 'main', 'mitmproxy.js')
 process.env.DS_EXTRA_PATH = path.join(app.getAppPath(), 'extra')
 let currentWin
 
