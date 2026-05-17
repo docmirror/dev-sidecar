@@ -1,6 +1,6 @@
 import DevSidecar from "@docmirror/dev-sidecar";
 import sudoPrompt from "@vscode/sudo-prompt";
-import { join } from "node:path";
+import { join } from "path";
 import log from "../../utils/util.log.gui.js";
 
 const _isDevelopment = process.env.NODE_ENV !== "production";

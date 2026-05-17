@@ -1,5 +1,5 @@
-import { createSocket } from "node:dgram";
-import { createConnection } from "node:net";
+import { createSocket } from "dgram";
+import { createConnection } from "net";
 import { TestGroup } from "../template.js";
 import { FAMILY_VALUES, getResultIcon, PROTOCOL_VALUES } from "../utils.js";
 

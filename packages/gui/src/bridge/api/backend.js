@@ -1,11 +1,11 @@
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import DevSidecar from "@docmirror/dev-sidecar";
 import { app, ipcMain } from "electron";
 import lodash from "lodash";
 import jsonApi from "@docmirror/mitmproxy/src/json.js";
-import { createRequire } from "node:module";
+import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const pk = require("../../../package.json");
 import coreDefaultConfig from "@docmirror/dev-sidecar/src/config/index.js";

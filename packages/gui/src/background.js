@@ -1,5 +1,5 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import path from "path";
+import { fileURLToPath } from "url";
 import DevSidecar from "@docmirror/dev-sidecar";
 import {
 	app,

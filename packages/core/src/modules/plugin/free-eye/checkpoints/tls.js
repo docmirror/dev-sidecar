@@ -1,5 +1,5 @@
-import net from "node:net";
-import tls from "node:tls";
+import net from "net";
+import tls from "tls";
 import { TestGroup } from "../template.js";
 import {
 	FAMILY_VALUES,

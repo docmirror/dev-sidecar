@@ -1,5 +1,5 @@
-import os from "node:os";
-import path from "node:path";
+import os from "os";
+import path from "path";
 import log from "./util.log.gui.js";
 
 function getSystemPlatform(throwIfUnknown = false) {

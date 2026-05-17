@@ -1,6 +1,6 @@
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import server from "@docmirror/mitmproxy";
 import jsonApi from "@docmirror/mitmproxy/src/json.js";
 import log from "@docmirror/mitmproxy/src/utils/util.log.server.js"; // 当前脚本是在 server 的进程中执行的，所以使用 mitmproxy 中的logger

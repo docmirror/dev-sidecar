@@ -1,6 +1,6 @@
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import DevSidecar from "@docmirror/dev-sidecar";
 import AdmZip from "adm-zip";
 import { ipcMain } from "electron";
@@ -8,7 +8,7 @@ import electronUpdater from "electron-updater";
 const { autoUpdater } = electronUpdater;
 import request from "request";
 import progress from "request-progress";
-import { createRequire } from "node:module";
+import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const pkg = require("../../../package.json");
 import appPathUtil from "../../utils/util.apppath.js";

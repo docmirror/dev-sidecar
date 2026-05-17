@@ -1,5 +1,5 @@
-import { randomBytes } from "node:crypto";
-import { promises as dns } from "node:dns";
+import { randomBytes } from "crypto";
+import { promises as dns } from "dns";
 import { TestGroup } from "../template.js";
 import { FAMILY_VALUES, getCensorsString, getResultIcon } from "../utils.js";
 

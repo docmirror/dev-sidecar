@@ -1,4 +1,4 @@
-import { createConnection } from "node:net";
+import { createConnection } from "net";
 import { TestGroup } from "../template.js";
 import { FAMILY_VALUES, getCensorsString, getResultIcon } from "../utils.js";
 
