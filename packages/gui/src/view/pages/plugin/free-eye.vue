@@ -133,7 +133,7 @@ export default {
       />
 
       <div class="action-bar">
-        <a-button type="primary"  :loading="running" @click="runTests">
+        <a-button type="primary" :loading="running" @click="runTests">
           <ExperimentOutlined/>
           运行检测
         </a-button>
