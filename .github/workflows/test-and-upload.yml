@@ -158,6 +158,13 @@ jobs:
           echo "--------------------";
           pnpm biome lint;
 
+      - name: "oxlint check"
+        run: |
+          echo "======================================================================";
+          echo "pnpm lint";
+          echo "--------------------";
+          pnpm lint;
+
       - name: "test packages/core"
         run: |
           cd packages/core;
