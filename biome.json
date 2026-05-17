@@ -12,6 +12,7 @@
 			"!**/build",
 			"!**/dist_electron",
 			"!**/node_modules",
+			"!**/.cache",
 			"!**/index.html"
 		]
 	},
