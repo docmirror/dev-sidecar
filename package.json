@@ -10,7 +10,7 @@
 		"format:check": "biome format && biome lint",
 		"lint": "oxlint",
 		"lint:fix": "oxlint --fix",
-		"postinstall": "prek install"
+		"prepare": "prek install || npx prek@latest install"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.15",
