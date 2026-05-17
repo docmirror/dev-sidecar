@@ -1,0 +1,22 @@
+repos:
+  - repo: local
+    hooks:
+      - id: biome-format
+        name: Biome Format
+        entry: pnpm biome format --write --no-errors-on-unmatched
+        language: system
+        types: [text]
+        pass_filenames: true
+      - id: biome-lint
+        name: Biome Lint
+        entry: pnpm biome lint --write --no-errors-on-unmatched
+        language: system
+        types: [text]
+        pass_filenames: true
+      - id: oxlint
+        name: Oxlint Lint
+        entry: pnpm oxlint --fix .
+        language: system
+        types: [text]
+        pass_filenames: false
+        always_run: true

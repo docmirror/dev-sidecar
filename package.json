@@ -9,7 +9,8 @@
 		"format": "biome format --write && biome lint --write",
 		"format:check": "biome format && biome lint",
 		"lint": "oxlint",
-		"lint:fix": "oxlint --fix"
+		"lint:fix": "oxlint --fix",
+		"postinstall": "prek install"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.15",
