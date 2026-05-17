@@ -149,21 +149,15 @@ jobs:
       - name: "Biome format and lint check"
         run: |
           echo "======================================================================";
-          echo "pnpm biome format:check";
+          echo "pnpm format:check";
           echo "--------------------";
-          pnpm biome format:check;
+          pnpm format:check;
 
-          echo "======================================================================";
-          echo "pnpm biome lint";
-          echo "--------------------";
-          pnpm biome lint;
-
-      - name: "oxlint check"
-        run: |
           echo "======================================================================";
           echo "pnpm lint";
           echo "--------------------";
           pnpm lint;
+
 
       - name: "test packages/core"
         run: |
