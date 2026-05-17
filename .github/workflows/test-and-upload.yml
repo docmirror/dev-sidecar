@@ -146,6 +146,18 @@ jobs:
           echo "--------------------";
           pnpm install;
 
+      - name: "Biome format and lint check"
+        run: |
+          echo "======================================================================";
+          echo "pnpm biome format:check";
+          echo "--------------------";
+          pnpm biome format:check;
+
+          echo "======================================================================";
+          echo "pnpm biome lint";
+          echo "--------------------";
+          pnpm biome lint;
+
       - name: "test packages/core"
         run: |
           cd packages/core;
