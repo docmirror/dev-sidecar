@@ -29,9 +29,7 @@
 //     req.end()
 //   })
 // }
-// // eslint-disable-next-line no-undef
 // describe('ssl.verify', () => {
-//   // eslint-disable-next-line no-undef
 //   it('regex.test.js', async () => {
 //     // https.request('https://test1.gagedigital.com/ssltest.php')
 //     await request()

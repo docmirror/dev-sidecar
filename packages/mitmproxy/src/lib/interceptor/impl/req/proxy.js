@@ -58,7 +58,6 @@ function buildTargetUrl(
 	} else {
 		let uri = rOptions.path;
 		if (uri.indexOf("http:") === 0 || uri.indexOf("https:") === 0) {
-			// eslint-disable-next-line node/no-deprecated-api
 			const urlObj = URL.parse(uri);
 			uri = urlObj.path;
 		}
@@ -95,7 +94,6 @@ function doProxy(
 	);
 
 	// 替换rOptions的属性
-	// eslint-disable-next-line node/no-deprecated-api
 	const urlObj = URL.parse(proxyTarget);
 
 	// 备份原始请求参数，不包含 agent 和 headers（agent 是共享单例，headers 在代理转发时会被改写）

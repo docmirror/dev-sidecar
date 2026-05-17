@@ -12,6 +12,7 @@ const PROTOCOL_VALUES = {
 	UDP: "udp",
 };
 
+// biome-ignore lint/complexity/noStaticOnlyClass: constants container
 class LogColors {
 	/**
 	 * ANSI color codes for pretty terminal output

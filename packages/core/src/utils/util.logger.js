@@ -14,6 +14,7 @@ function getDefaultConfigBasePath() {
 			logFileSavePath = logFileSavePath.slice(0, -1);
 		}
 		return logFileSavePath.replace(
+			// biome-ignore lint/suspicious/noTemplateCurlyInString: configuration placeholder
 			"${userBasePath}",
 			configFromFiles.server.setting.userBasePath,
 		);

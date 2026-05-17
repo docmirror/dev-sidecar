@@ -43,7 +43,6 @@ module.exports = function createConnectHandler(
 
 	return function connectHandler(req, cltSocket, head, ssl) {
 		const url = `${ssl ? "https" : "http"}://${req.url}`;
-		// eslint-disable-next-line node/no-deprecated-api
 		let { hostname, port } = URL.parse(url);
 		port = Number.parseInt(port, 10);
 

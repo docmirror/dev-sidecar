@@ -2,7 +2,7 @@ const jsonApi = require("@docmirror/mitmproxy/src/json");
 const nodeConfig = require("./config");
 
 const NodePlugin = (context) => {
-	const { config, shell, event, log } = context;
+	const { config, shell, log } = context;
 	const nodeApi = {
 		async start() {
 			try {

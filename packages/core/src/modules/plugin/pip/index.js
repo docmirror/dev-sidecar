@@ -1,7 +1,7 @@
 const pipConfig = require("./config");
 
 const PipPlugin = (context) => {
-	const { config, shell, event, log } = context;
+	const { config, shell } = context;
 	const api = {
 		async start() {
 			await api.setRegistry({

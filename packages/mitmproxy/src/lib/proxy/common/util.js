@@ -121,7 +121,6 @@ util.getOptionsFromRequest = (
 	serverSetting,
 	compatibleConfig = null,
 ) => {
-	// eslint-disable-next-line node/no-deprecated-api
 	const urlObj = URL.parse(req.url);
 	const defaultPort = ssl ? 443 : 80;
 	const protocol = ssl ? "https:" : "http:";
@@ -175,7 +174,6 @@ util.getOptionsFromRequest = (
 	};
 
 	if (protocol === "http:" && externalProxyUrl) {
-		// eslint-disable-next-line node/no-deprecated-api
 		const externalUrlObj = URL.parse(externalProxyUrl);
 		if (externalUrlObj.protocol === "http:") {
 			options.hostname = externalUrlObj.hostname;
@@ -195,7 +193,6 @@ util.getOptionsFromRequest = (
 };
 
 util.getTunnelAgent = (requestIsSSL, externalProxyUrl) => {
-	// eslint-disable-next-line node/no-deprecated-api
 	const urlObj = URL.parse(externalProxyUrl);
 	const protocol = urlObj.protocol || "http:";
 	let port = urlObj.port;

@@ -28,10 +28,10 @@ const executor = {
 			});
 		});
 	},
-	async linux(_exec, { port }) {
+	async linux(_exec) {
 		throw new Error("不支持此操作");
 	},
-	async mac(_exec, { port }) {
+	async mac(_exec) {
 		throw new Error("不支持此操作");
 	},
 };

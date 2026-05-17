@@ -45,6 +45,7 @@ export default {
 					? item.icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) +
 						"Outlined"
 					: "FileOutlined";
+				// biome-ignore lint/performance/noDynamicNamespaceImportAccess: dynamic icon loading required
 				const IconComponent = Icons[iconName];
 
 				if (item.children && item.children.length > 0) {
@@ -58,6 +59,7 @@ export default {
 										c.toUpperCase(),
 									)}Outlined`
 								: "FileOutlined";
+							// biome-ignore lint/performance/noDynamicNamespaceImportAccess: dynamic icon loading required
 							const ChildIconComponent = Icons[childIconName];
 							return {
 								key: child.path,

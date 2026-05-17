@@ -137,14 +137,14 @@ const defaultConfig = {
 					desc: "PR详情页：标题右边那个Code按钮的HTML代码请求地址，感觉上应该可以缓存。暂时先设置为缓存7天",
 				},
 				"^((/[^/]+){2,})/raw((/[^/]+)+\\.(jpg|jpeg|png|gif))(\\?.*)?$": {
-					// eslint-disable-next-line no-template-curly-in-string
+					// biome-ignore lint/suspicious/noTemplateCurlyInString: regex replacement placeholder
 					proxy: "https://raw.githubusercontent.com${m[1]}${m[3]}",
 					sni: "baidu.com",
 					cacheDays: 7,
 					desc: "仓库内图片，重定向改为代理，并缓存7天。",
 				},
 				"^((/[^/]+){2,})/raw((/[^/]+)+\\.js)(\\?.*)?$": {
-					// eslint-disable-next-line no-template-curly-in-string
+					// biome-ignore lint/suspicious/noTemplateCurlyInString: regex replacement placeholder
 					proxy: "https://raw.githubusercontent.com${m[1]}${m[3]}",
 					sni: "baidu.com",
 					responseReplace: {

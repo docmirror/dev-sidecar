@@ -6,6 +6,7 @@ const log = require("../utils/util.log.core");
 
 fixPath();
 
+// biome-ignore lint/complexity/noStaticOnlyClass: abstract base class for inheritance
 class SystemShell {
 	static async exec(_cmds, _args) {
 		throw new Error("You have to implement the method exec!");

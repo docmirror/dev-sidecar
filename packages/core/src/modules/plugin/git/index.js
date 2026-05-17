@@ -1,7 +1,7 @@
 const pluginConfig = require("./config");
 
 const Plugin = (context) => {
-	const { config, shell, event, log } = context;
+	const { config, shell } = context;
 	const pluginApi = {
 		async start() {
 			const ip = "127.0.0.1";

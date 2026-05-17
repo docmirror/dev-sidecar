@@ -1,8 +1,6 @@
 const assert = require("node:assert");
 const expect = require("chai").expect;
-// eslint-disable-next-line no-undef
 describe("test", () => {
-	// eslint-disable-next-line no-undef
 	it("regexp", () => {
 		const test = "^/[^/]+/[^/]+(?:/releases(?:/.*)?)?$";
 		const reg = new RegExp(test);

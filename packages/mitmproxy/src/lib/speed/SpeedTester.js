@@ -306,7 +306,6 @@ class SpeedTester {
 	//       const regex = /[=<](\d+(?:\.\d*)?)ms/gi // 适配Linux/Windows
 	//       const times = []
 	//       let match
-	//       // eslint-disable-next-line no-cond-assign
 	//       while ((match = regex.exec(stdout)) !== null) {
 	//         times.push(Number.parseFloat(match[1]))
 	//       }

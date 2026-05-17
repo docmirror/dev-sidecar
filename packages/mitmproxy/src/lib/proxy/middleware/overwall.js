@@ -230,7 +230,6 @@ function createOverwallMiddleware(overWallConfig) {
 				proxyTarget.indexOf("https:") === 0
 					? proxyTarget
 					: `${rOptions.protocol}//${proxyTarget}`;
-			// eslint-disable-next-line node/no-deprecated-api
 			const urlObj = URL.parse(proxy);
 
 			// 备份原始请求参数，不包含 agent 和 headers（agent 是共享单例，headers 在代理转发时会被改写）

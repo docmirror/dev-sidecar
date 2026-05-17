@@ -86,7 +86,6 @@ await test(dnsProviders.TCP2);
 await test(dnsProviders.UDP1);
 await test(dnsProviders.UDP2);
 
-// eslint-disable-next-line node/handle-callback-err
 defaultDns.lookup(hostname, { family }, (...args) => {
 	console.log(
 		`\n\n【test Default DNS（IPv${family}）】 ${hostname} -> ${args[1]}`,
