@@ -34,14 +34,14 @@ function printBackups() {
 		backupLogs = null; // 先置空历史消息对象，再记录日志
 
 		for (const item of backups) {
-			log[item.fun](...[`[${item.time}] console -`, ...item.args]);
+			log[item.fun](`[${item.time}] console -`, ...item.args);
 		}
 	} catch {}
 }
 
 function _doLog(fun, args) {
 	if (log === console) {
-		log[fun](...[`[${fun.toUpperCase()}]`, ...args]);
+		log[fun](`[${fun.toUpperCase()}]`, ...args);
 		backup(fun, args); // 控制台日志备份起来
 	} else {
 		log[fun](...args);

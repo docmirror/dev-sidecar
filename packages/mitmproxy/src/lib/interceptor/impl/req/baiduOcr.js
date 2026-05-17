@@ -170,7 +170,7 @@ module.exports = {
 			detect_direction: "false",
 			paragraph: "false",
 			probability: "false",
-			...(config.options || {}),
+			...config.options,
 		};
 		log.info("发起百度ocr请求", req.hostname);
 		client[api](imageBase64, options)

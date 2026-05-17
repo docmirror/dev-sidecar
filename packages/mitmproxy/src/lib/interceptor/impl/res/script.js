@@ -104,7 +104,7 @@ module.exports = {
 		} catch (err) {
 			try {
 				res.setHeader("DS-Script-Interceptor", "error");
-			} catch (_e) {
+			} catch {
 				// ignore
 			}
 			log.error("load monkey script error", err);

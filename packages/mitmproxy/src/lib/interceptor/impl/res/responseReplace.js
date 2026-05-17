@@ -91,7 +91,7 @@ module.exports = {
 		let actions = "";
 
 		// 浅拷贝配置中的 headers
-		const replaceHeaders = { ...(responseReplaceConfig.headers || {}) };
+		const replaceHeaders = { ...responseReplaceConfig.headers };
 
 		// 处理文件下载请求
 		if (responseReplaceConfig.doDownload || rOptions.doDownload) {

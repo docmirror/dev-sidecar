@@ -49,7 +49,7 @@ const FreeEyePlugin = (context) => {
 					if (typeof item === "object") {
 						try {
 							return JSON.stringify(item);
-						} catch (_err) {
+						} catch {
 							return String(item);
 						}
 					}

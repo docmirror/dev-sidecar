@@ -9,6 +9,6 @@ describe("test", () => {
 		console.log(ret);
 		assert.strictEqual(ret, true);
 
-		expect(ret).be.ok;
+		expect(ret).to.equal(true);
 	});
 });

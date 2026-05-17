@@ -51,7 +51,7 @@ module.exports = {
 					`  因配置success拦截器，本请求直接返回${status}成功。`;
 
 			// headers：浅拷贝配置中的 headers，避免将 origin 等请求级数据写入共享的拦截器配置对象
-			const headers = { ...(response.headers || {}) };
+			const headers = { ...response.headers };
 			headers["DS-Interceptor"] = "success";
 			// headers.Content-Type
 			if (status !== 204) {
