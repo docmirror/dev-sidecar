@@ -7,7 +7,8 @@
   "license": "MPL-2.0",
   "scripts": {
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "gui:dev": "cd packages/gui && pnpm dev"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.16.0",
