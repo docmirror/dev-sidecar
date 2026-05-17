@@ -13,10 +13,10 @@ const executor = {
 		}
 		return await exec(cmds, { type: "cmd" });
 	},
-	async linux(exec, { port }) {
+	async linux(_exec, { port: _port }) {
 		throw new Error("暂未实现此功能");
 	},
-	async mac(exec, { port }) {
+	async mac(_exec, { port: _port }) {
 		throw new Error("暂未实现此功能");
 	},
 };

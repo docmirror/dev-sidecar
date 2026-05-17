@@ -22,7 +22,7 @@ module.exports = class DNSOverUDP extends BaseDNS {
 			cacheSize,
 			preSetIpList,
 		);
-		this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort;
+		this.dnsServerPort = Number.parseInt(dnsServerPort, 10) || defaultPort;
 
 		this.socketType = this.dnsFamily === 6 ? "udp6" : "udp4";
 	}

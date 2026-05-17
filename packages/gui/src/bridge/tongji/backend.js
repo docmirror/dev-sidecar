@@ -7,7 +7,7 @@ import request from "request";
 function ebtMain(ipcMain) {
 	const isDevelopment = process.env.NODE_ENV !== "production";
 	/* istanbul ignore else */
-	if (!(ipcMain && ipcMain.on)) {
+	if (!ipcMain?.on) {
 		throw new TypeError("require ipcMain");
 	}
 
@@ -23,7 +23,7 @@ function ebtMain(ipcMain) {
 					Referer: "https://hm.baidu.com/",
 				},
 			},
-			(err, response, body) => {
+			(err, _response, body) => {
 				if (err) {
 					console.error("百度统计请求出错", err);
 					return;
@@ -31,7 +31,7 @@ function ebtMain(ipcMain) {
 				const rource =
 					'(h.c.b.su=h.c.b.u||document.location.href),h.c.b.u=f.protocol+"//"+document.location.host+';
 				/* istanbul ignore else */
-				if (body && body.includes(rource)) {
+				if (body?.includes(rource)) {
 					// step 3
 					let text = body;
 

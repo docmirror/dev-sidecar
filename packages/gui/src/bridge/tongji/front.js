@@ -6,7 +6,7 @@
  */
 function ebtRenderer(ipcRenderer, siteId, router) {
 	/* istanbul ignore else */
-	if (!(ipcRenderer && ipcRenderer.on && ipcRenderer.send)) {
+	if (!(ipcRenderer?.on && ipcRenderer.send)) {
 		throw new TypeError("require ipcRenderer");
 	}
 
@@ -37,7 +37,7 @@ function ebtRenderer(ipcRenderer, siteId, router) {
 			// 把虚拟的url地址赋给百度统计的API接口
 
 			/* istanbul ignore else */
-			if (router && router.beforeEach) {
+			if (router?.beforeEach) {
 				router.beforeEach((to, _, next) => {
 					/* istanbul ignore else */
 					if (to.path) {
@@ -56,7 +56,7 @@ function ebtRenderer(ipcRenderer, siteId, router) {
 }
 
 export default {
-	install(app, api, router) {
+	install(_app, _api, router) {
 		const BAIDU_SITE_ID = "f2d170ce560aef0005b689f28697f852";
 		// 百度统计
 		const { ipcRenderer } = require("electron");

@@ -45,7 +45,7 @@ module.exports = function createConnectHandler(
 		const url = `${ssl ? "https" : "http"}://${req.url}`;
 		// eslint-disable-next-line node/no-deprecated-api
 		let { hostname, port } = URL.parse(url);
-		port = Number.parseInt(port);
+		port = Number.parseInt(port, 10);
 
 		if (isSslConnect(sslConnectInterceptors, req, cltSocket, head)) {
 			// 需要拦截，代替目标服务器，让客户端连接DS在本地启动的代理服务
@@ -91,7 +91,7 @@ module.exports = function createConnectHandler(
 };
 
 function connect(
-	req,
+	_req,
 	cltSocket,
 	head,
 	hostname,
@@ -169,7 +169,7 @@ function connect(
 			host: hostname,
 			connectTimeout: 10000,
 		};
-		if (dnsConfig && dnsConfig.dnsMap) {
+		if (dnsConfig?.dnsMap) {
 			const dnsAndFamily = DnsUtil.getDNSAndFamily(dnsConfig, hostname);
 			if (dnsAndFamily) {
 				options.lookup = dnsLookup.createLookupFunc(
@@ -218,8 +218,7 @@ function connect(
 			cltSocket.destroy();
 
 			if (
-				isDnsIntercept &&
-				isDnsIntercept.dns &&
+				isDnsIntercept?.dns &&
 				isDnsIntercept.ip !== isDnsIntercept.hostname
 			) {
 				const { dns, ip, hostname } = isDnsIntercept;
@@ -244,8 +243,7 @@ function connect(
 			cltSocket.destroy();
 
 			if (
-				isDnsIntercept &&
-				isDnsIntercept.dns &&
+				isDnsIntercept?.dns &&
 				isDnsIntercept.ip !== isDnsIntercept.hostname
 			) {
 				const { dns, ip, hostname } = isDnsIntercept;

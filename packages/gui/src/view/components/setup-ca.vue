@@ -43,7 +43,7 @@ export default defineComponent({
 		async openExternal(url) {
 			await this.$api.ipc.openExternal(url);
 		},
-		afterVisibleChange(val) {},
+		afterVisibleChange(_val) {},
 		showDrawer() {
 			this.$emit("update:open", true);
 		},

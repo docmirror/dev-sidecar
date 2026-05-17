@@ -1,4 +1,4 @@
-const assert = require("node:assert");
+const _assert = require("node:assert");
 const pac = require("../src/lib/proxy/middleware/source/pac");
 
 const pacClient = pac.createPacClient("../gui/extra/pac/pac.txt"); // 相对于 mitmproxy 目录的相对路径，而不是当前 test 目录的。

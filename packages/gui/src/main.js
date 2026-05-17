@@ -11,7 +11,7 @@ import "./view/style/index.scss";
 import "./view/style/theme/dark.scss"; // 暗色主题
 
 try {
-	window.onerror = (message, source, lineno, colno, error) => {
+	window.onerror = (message, source, lineno, _colno, error) => {
 		ipcRenderer.send(
 			`[ERROR] JavaScript脚本异常：Error in ${source} at line ${lineno}: ${message}`,
 			error,

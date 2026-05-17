@@ -54,7 +54,7 @@ const HEAD_UP = Buffer.from("</HEAD>");
 const BODY = Buffer.from("</body>");
 const BODY_UP = Buffer.from("</BODY>");
 
-function chunkByteReplace(_this, chunk, enc, callback, append) {
+function chunkByteReplace(_this, chunk, _enc, callback, append) {
 	if (append) {
 		if (append.head) {
 			const ret = injectScriptIntoHtml([HEAD, HEAD_UP], chunk, append.head);
@@ -124,7 +124,7 @@ const contextPath = "/____ds_script____/";
 const monkey = require("../../monkey");
 
 module.exports = {
-	requestIntercept(context, req, res, ssl, next) {
+	requestIntercept(context, _req, res, _ssl, _next) {
 		const { rOptions, log, setting } = context;
 		if (rOptions.path.indexOf(contextPath) !== 0) {
 			return;
@@ -164,7 +164,7 @@ module.exports = {
 		res.end();
 		return true;
 	},
-	responseInterceptor(req, res, proxyReq, proxyRes, ssl, next, append) {
+	responseInterceptor(_req, res, _proxyReq, proxyRes, _ssl, next, append) {
 		if (append == null || (!append.head && !append.body)) {
 			next();
 			return;

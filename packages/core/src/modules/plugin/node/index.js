@@ -26,7 +26,7 @@ const NodePlugin = (context) => {
 			await nodeApi.start();
 		},
 
-		async save(newConfig) {
+		async save(_newConfig) {
 			await nodeApi.setVariables();
 		},
 		async getNpmEnv() {

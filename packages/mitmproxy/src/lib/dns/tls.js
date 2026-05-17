@@ -21,7 +21,7 @@ module.exports = class DNSOverTLS extends BaseDNS {
 			cacheSize,
 			preSetIpList,
 		);
-		this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort;
+		this.dnsServerPort = Number.parseInt(dnsServerPort, 10) || defaultPort;
 		this.dnsServerName = dnsServerName;
 	}
 

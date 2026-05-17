@@ -11,7 +11,7 @@ function addSpeedTest(hostname, port) {
 		if (idx > 0 && idx === hostname.lastIndexOf(":")) {
 			const arr = hostname.split(":");
 			hostname = arr[0];
-			port = Number.parseInt(arr[1]) || 443;
+			port = Number.parseInt(arr[1], 10) || 443;
 		} else {
 			port = 443;
 		}
@@ -21,7 +21,8 @@ function addSpeedTest(hostname, port) {
 	const key = port === 443 ? hostname : `${hostname}:${port}`;
 
 	if (SpeedTestPool[key] == null) {
-		return (SpeedTestPool[key] = new SpeedTester({ hostname, port }));
+		SpeedTestPool[key] = new SpeedTester({ hostname, port });
+		return SpeedTestPool[key];
 	}
 
 	return SpeedTestPool[key];

@@ -7,7 +7,7 @@ function appendIntro(context, systemType, latest) {
 	const partUpdateFile = `update-${systemType}-${version}.zip`;
 
 	const publishConfig = context.configuration.publish;
-	if (!publishConfig || !publishConfig.url) {
+	if (!publishConfig?.url) {
 		console.log(`跳过 latest 修改: ${latest}，publish 配置不可用`);
 		return;
 	}

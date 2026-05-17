@@ -13,7 +13,6 @@ function getDefaultConfigBasePath() {
 		if (logFileSavePath.endsWith("/") || logFileSavePath.endsWith("\\")) {
 			logFileSavePath = logFileSavePath.slice(0, -1);
 		}
-		// eslint-disable-next-line no-template-curly-in-string
 		return logFileSavePath.replace(
 			"${userBasePath}",
 			configFromFiles.server.setting.userBasePath,

@@ -1,5 +1,5 @@
 function install(app, api) {
-	api.ipc.on("auto-start", (event, message) => {
+	api.ipc.on("auto-start", (_event, message) => {
 		if (message.value === true) {
 			app.config.globalProperties.$message.info("已添加开机自启");
 		} else {

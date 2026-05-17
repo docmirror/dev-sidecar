@@ -1,7 +1,7 @@
 module.exports = {
 	name: "sni",
 	priority: 123,
-	requestIntercept(context, interceptOpt, req, res, ssl, next) {
+	requestIntercept(context, interceptOpt, _req, res, _ssl, _next) {
 		const { rOptions, log } = context;
 
 		let unVerifySsl =
@@ -9,8 +9,7 @@ module.exports = {
 
 		rOptions.servername = interceptOpt.sni;
 		if (
-			rOptions.agent &&
-			rOptions.agent.options.rejectUnauthorized &&
+			rOptions.agent?.options.rejectUnauthorized &&
 			rOptions.agent.unVerifySslAgent
 		) {
 			// rOptions.agent.options.rejectUnauthorized = false // 不能直接在agent上进行修改属性值，因为它采用了单例模式，所有请求共用这个对象的

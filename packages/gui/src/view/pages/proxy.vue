@@ -73,7 +73,7 @@ export default defineComponent({
 			this.excludeIpList.unshift({ key: "", value: "true" });
 			this.focusFirst(this.$refs.excludeIpList);
 		},
-		delExcludeIp(item, index) {
+		delExcludeIp(_item, index) {
 			this.excludeIpList.splice(index, 1);
 		},
 		submitExcludeIpList() {

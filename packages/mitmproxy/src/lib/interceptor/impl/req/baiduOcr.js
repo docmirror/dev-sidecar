@@ -54,7 +54,7 @@ function getConfig(interceptOpt, tryCount, log) {
 		config = interceptOpt.baiduOcr[count++ % interceptOpt.baiduOcr.length];
 
 		if (tryCount < interceptOpt.baiduOcr.length) {
-			if (!config || !config.id || !config.ak || !config.sk) {
+			if (!config?.id || !config.ak || !config.sk) {
 				return getConfig(interceptOpt, tryCount + 1, log); // 递归找到有效的配置
 			}
 		}
@@ -68,7 +68,7 @@ function getConfig(interceptOpt, tryCount, log) {
 		tryCount = null; // 将tryCount设置为null代表只有一个配置
 	}
 
-	if (!config || !config.id || !config.ak || !config.sk) {
+	if (!config?.id || !config.ak || !config.sk) {
 		return null; // 没有配置或配置错误，直接返回null
 	}
 
@@ -116,7 +116,7 @@ function checkIsLimitConfig(id, api) {
 module.exports = {
 	name: "baiduOcr",
 	priority: 131,
-	requestIntercept(context, interceptOpt, req, res, ssl, next) {
+	requestIntercept(context, interceptOpt, req, res, _ssl, next) {
 		const { rOptions, log } = context;
 
 		const headers = {

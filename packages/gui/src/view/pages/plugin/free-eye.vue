@@ -64,17 +64,17 @@ export default {
 			) {
 				return this.lastResult.logs
 					.map((entry) => {
-						const timestamp =
-							entry && entry.timestamp ? new Date(entry.timestamp) : null;
+						const timestamp = entry?.timestamp
+							? new Date(entry.timestamp)
+							: null;
 						const formattedTime =
 							timestamp && !Number.isNaN(timestamp.getTime())
 								? timestamp.toLocaleString()
 								: "";
-						const level =
-							entry && entry.level
-								? `[${String(entry.level).toUpperCase()}]`
-								: "";
-						const message = entry && entry.message ? entry.message : "";
+						const level = entry?.level
+							? `[${String(entry.level).toUpperCase()}]`
+							: "";
+						const message = entry?.message ? entry.message : "";
 						return `${formattedTime ? `${formattedTime} ` : ""}${level} ${message}`.trim();
 					})
 					.join("\n");
@@ -138,7 +138,7 @@ export default {
 				this.lastResult = ret;
 				this.$message.success("检测完成");
 			} catch (err) {
-				const message = err && err.message ? err.message : err;
+				const message = err?.message ? err.message : err;
 				this.$message.error(`检测失败: ${message}`);
 			} finally {
 				this.running = false;

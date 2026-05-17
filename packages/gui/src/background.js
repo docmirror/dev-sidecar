@@ -1,4 +1,3 @@
-
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import DevSidecar from "@docmirror/dev-sidecar";
@@ -71,7 +70,7 @@ function closeDevTools() {
 }
 
 function switchDevTools() {
-	if (!win || !win.webContents) {
+	if (!win?.webContents) {
 		return;
 	}
 	if (win.webContents.isDevToolsOpened()) {
@@ -267,7 +266,7 @@ function createWindow(startHideWindow, autoQuitIfError = true) {
 		tray = null;
 	});
 
-	ipcMain.on("close", async (event, message) => {
+	ipcMain.on("close", async (_event, message) => {
 		if (message.value === 1) {
 			quit('ipc receive "close"');
 		} else {
@@ -400,7 +399,7 @@ function createWindow(startHideWindow, autoQuitIfError = true) {
 		console.info("win ipc-message:", event, channel, message, ...args);
 
 		// 记录日志
-		if (channel && channel.startsWith("[ERROR]")) {
+		if (channel?.startsWith("[ERROR]")) {
 			log.error("win ipc-message:", channel.substring(7), message, ...args);
 		} else {
 			log.info("win ipc-message:", channel, message, ...args);
@@ -532,7 +531,7 @@ try {
 			log.info("应用关闭，注销所有快捷键");
 			globalShortcut.unregisterAll();
 		});
-		app.on("second-instance", (event, commandLine) => {
+		app.on("second-instance", (_event, commandLine) => {
 			log.info("new app started, command:", commandLine);
 			if (win) {
 				showWin();

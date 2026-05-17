@@ -23,7 +23,7 @@ const Plugin = (context) => {
 			return config.get().plugin.git.enabled;
 		},
 
-		async save(newConfig) {},
+		async save(_newConfig) {},
 
 		async setProxy(ip, port) {
 			const cmds = [

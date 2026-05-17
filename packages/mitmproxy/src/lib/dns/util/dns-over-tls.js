@@ -40,7 +40,7 @@ function query({
 			host,
 			port,
 			servername,
-			family: Number.parseInt(family) === 6 ? 6 : 4,
+			family: Number.parseInt(family, 10) === 6 ? 6 : 4,
 			rejectUnauthorized,
 			timeout,
 		});

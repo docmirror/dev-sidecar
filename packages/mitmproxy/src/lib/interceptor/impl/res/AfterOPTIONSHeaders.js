@@ -7,12 +7,12 @@ module.exports = {
 	responseIntercept(
 		context,
 		interceptOpt,
-		req,
+		_req,
 		res,
-		proxyReq,
+		_proxyReq,
 		proxyRes,
-		ssl,
-		next,
+		_ssl,
+		_next,
 	) {
 		const { rOptions, log } = context;
 

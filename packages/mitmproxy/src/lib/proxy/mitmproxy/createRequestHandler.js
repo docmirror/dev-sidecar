@@ -103,8 +103,7 @@ module.exports = function createRequestHandler(
 
 		function countSlow(isDnsIntercept, reason) {
 			if (
-				isDnsIntercept &&
-				isDnsIntercept.dns &&
+				isDnsIntercept?.dns &&
 				isDnsIntercept.ip !== isDnsIntercept.hostname
 			) {
 				const { dns, ip, hostname } = isDnsIntercept;
@@ -153,7 +152,7 @@ module.exports = function createRequestHandler(
 					);
 
 					const isDnsIntercept = {};
-					if (dnsConfig && dnsConfig.dnsMap) {
+					if (dnsConfig?.dnsMap) {
 						let dnsAndFamily = DnsUtil.getDNSAndFamily(
 							dnsConfig,
 							rOptions.hostname,
@@ -434,8 +433,7 @@ module.exports = function createRequestHandler(
 						// https://github.com/nodejitsu/node-http-proxy/issues/362
 						if (WWW_AUTH_HEADER_RE.test(key)) {
 							if (proxyRes.headers[key]) {
-								proxyRes.headers[key] =
-									proxyRes.headers[key] && proxyRes.headers[key].split(",");
+								proxyRes.headers[key] = proxyRes.headers[key]?.split(",");
 							}
 							key = "www-authenticate";
 						}

@@ -207,11 +207,7 @@ utils.createFakeCertificateByDomain = async (
 	};
 };
 
-utils.createFakeCertificateByCA = async (
-	caKey,
-	caCert,
-	originCertificate,
-) => {
+utils.createFakeCertificateByCA = async (caKey, caCert, originCertificate) => {
 	const certificate = utils.covertNodeCertToForgeCert(originCertificate);
 
 	const keys = await generateForgeRsaKeyPair();
@@ -229,8 +225,9 @@ utils.createFakeCertificateByCA = async (
 	cert.setSubject(certificate.subject.attributes);
 	cert.setIssuer(caCert.subject.attributes);
 
-	certificate.subjectaltname &&
-		(cert.subjectaltname = certificate.subjectaltname);
+	if (certificate.subjectaltname) {
+		cert.subjectaltname = certificate.subjectaltname;
+	}
 
 	const subjectAltName = _.find(certificate.extensions, {
 		name: "subjectAltName",

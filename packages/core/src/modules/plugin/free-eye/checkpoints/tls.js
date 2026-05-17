@@ -40,8 +40,8 @@ class TlsTester extends TestGroup {
 		 */
 		let skip = true;
 		for (const family in FAMILY_VALUES) {
-			const tcpRes = globalResults.TCP && globalResults.TCP[family];
-			if (tcpRes && tcpRes[443] && Object.values(tcpRes[443]).includes(null)) {
+			const tcpRes = globalResults.TCP?.[family];
+			if (tcpRes?.[443] && Object.values(tcpRes[443]).includes(null)) {
 				this.results[family] = {};
 				skip = false;
 			}

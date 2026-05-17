@@ -19,7 +19,7 @@ function replacePlaceholder0(url, matched, pre) {
 // 替换占位符
 function replacePlaceholder(url, rOptions, pathMatched, hostnameMatched) {
 	if (url.includes("${")) {
-		// eslint-disable-next-line no-template-curly-in-string
+		// biome-ignore lint/suspicious/noTemplateCurlyInString: placeholder syntax
 		url = url.replace("${host}", rOptions.hostname);
 
 		if (url.includes("${")) {
@@ -44,10 +44,11 @@ function buildTargetUrl(
 	hostnameMatched,
 ) {
 	let targetUrl;
-	if (interceptOpt && interceptOpt.replace) {
-		const regexp =
-			interceptOpt.compiledRegexp ||
-			(interceptOpt.compiledRegexp = new RegExp(interceptOpt.replace));
+	if (interceptOpt?.replace) {
+		if (!interceptOpt.compiledRegexp) {
+			interceptOpt.compiledRegexp = new RegExp(interceptOpt.replace);
+		}
+		const regexp = interceptOpt.compiledRegexp;
 		targetUrl = rOptions.path.replace(regexp, urlConf);
 	} else if (
 		urlConf.indexOf("http:") === 0 ||
@@ -79,7 +80,7 @@ function buildTargetUrl(
 function doProxy(
 	proxyConf,
 	rOptions,
-	req,
+	_req,
 	interceptOpt,
 	matched,
 	hostnameMatched,
@@ -107,7 +108,7 @@ function doProxy(
 	rOptions.headers.host = urlObj.host;
 	rOptions.path = urlObj.path;
 	if (urlObj.port) {
-		rOptions.port = Number.parseInt(urlObj.port);
+		rOptions.port = Number.parseInt(urlObj.port, 10);
 	} else {
 		rOptions.port = rOptions.protocol === "https:" ? 443 : 80;
 	}
@@ -126,8 +127,8 @@ module.exports = {
 		interceptOpt,
 		req,
 		res,
-		ssl,
-		next,
+		_ssl,
+		_next,
 		matched,
 		hostnameMatched,
 	) {
@@ -184,8 +185,7 @@ module.exports = {
 
 			rOptions.servername = interceptOpt.sni;
 			if (
-				rOptions.agent &&
-				rOptions.agent.options.rejectUnauthorized &&
+				rOptions.agent?.options.rejectUnauthorized &&
 				rOptions.agent.unVerifySslAgent
 			) {
 				// rOptions.agent.options.rejectUnauthorized = false // 不能直接在agent上进行修改属性值，因为它采用了单例模式，所有请求共用这个对象的
@@ -203,8 +203,7 @@ module.exports = {
 			);
 		} else if (interceptOpt.unVerifySsl === true) {
 			if (
-				rOptions.agent &&
-				rOptions.agent.options.rejectUnauthorized &&
+				rOptions.agent?.options.rejectUnauthorized &&
 				rOptions.agent.unVerifySslAgent
 			) {
 				rOptions.agent = rOptions.agent.unVerifySslAgent;

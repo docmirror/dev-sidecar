@@ -20,6 +20,8 @@ function buildDefaultCABasePath() {
 	return path.resolve(userHome, "./.dev-sidecar");
 }
 
-config.getDefaultCACertPath = () => path.resolve(config.getDefaultCABasePath(), config.caCertFileName);
+config.getDefaultCACertPath = () =>
+	path.resolve(config.getDefaultCABasePath(), config.caCertFileName);
 
-config.getDefaultCAKeyPath = () => path.resolve(config.getDefaultCABasePath(), config.caKeyFileName);
+config.getDefaultCAKeyPath = () =>
+	path.resolve(config.getDefaultCABasePath(), config.caKeyFileName);

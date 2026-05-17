@@ -20,7 +20,8 @@ const mitmproxyPath = path.join(__dirname, "../mitmproxy.js");
 process.env.DS_EXTRA_PATH = path.join(app.getAppPath(), "extra");
 let currentWin;
 
-const getDefaultConfigBasePath = () => DevSidecar.api.config.get().server.setting.userBasePath;
+const getDefaultConfigBasePath = () =>
+	DevSidecar.api.config.get().server.setting.userBasePath;
 
 function getMetaInfo(config, fallbackId) {
 	const metaInfo =
@@ -259,7 +260,7 @@ export default {
 	install({ win }) {
 		currentWin = win;
 		// 接收view的方法调用
-		ipcMain.handle("apiInvoke", async (event, args) => {
+		ipcMain.handle("apiInvoke", async (_event, args) => {
 			const api = args[0];
 			let param;
 			if (args.length >= 2) {

@@ -35,7 +35,7 @@ const servers = [
 
 const hostnames = ["github.com", "mvnrepository.com"];
 
-const hostname1 = "github.com";
+const _hostname1 = "github.com";
 const sni = "baidu.com";
 // const sni = ''
 

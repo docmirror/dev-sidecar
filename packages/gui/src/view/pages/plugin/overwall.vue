@@ -72,7 +72,7 @@ export default defineComponent({
 			this.targets.unshift({ key: "", value: "true" });
 			this.focusFirst(this.$refs.targets);
 		},
-		deleteTarget(item, index) {
+		deleteTarget(_item, index) {
 			this.targets.splice(index, 1);
 		},
 		submitTarget() {
@@ -102,7 +102,7 @@ export default defineComponent({
 				this.addServer(false);
 			}
 		},
-		deleteServer(item, index) {
+		deleteServer(_item, index) {
 			this.servers.splice(index, 1);
 		},
 		addServer(needFocus = true) {

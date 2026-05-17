@@ -1,4 +1,5 @@
 function install(app, api) {
+	// biome-ignore lint/suspicious/noAssignInExpressions: intentional assignment
 	const updateParams = (app.config.globalProperties.$global.update = {
 		fromUser: false,
 		autoDownload: false,
@@ -85,22 +86,26 @@ function install(app, api) {
 		api.ipc.openExternal("https://github.com/docmirror/dev-sidecar/releases");
 	}
 
-	function goManualUpdate(value) {
+	function goManualUpdate(_value) {
 		updateParams.newVersion = false;
 		app.config.globalProperties.$confirm({
 			title: "暂不提供自动升级",
 			cancelText: "取消",
 			okText: "打开链接",
 			width: 420,
-			content: (h) => {
+			content: (_h) => {
 				return (
 					<div>
 						<div>
 							请前往
+							{/* biome-ignore lint/a11y/useValidAnchor: JSX link with onClick */}
+							{/* biome-ignore lint/a11y/noStaticElementInteractions: intentional */}
 							<a onClick={openGithubUrl}>github项目release页面</a>
 							下载新版本手动安装
 						</div>
 						<div>
+							{/* biome-ignore lint/a11y/useValidAnchor: JSX link with onClick */}
+							{/* biome-ignore lint/a11y/noStaticElementInteractions: intentional */}
 							<a onClick={openGithubUrl}>
 								https://github.com/docmirror/dev-sidecar/releases
 							</a>
@@ -167,7 +172,7 @@ function install(app, api) {
 			cancelText: "暂不升级",
 			okText: "升级",
 			width: 700,
-			content: (h) => {
+			content: (_h) => {
 				if (value.releaseNotes) {
 					const notes = [];
 					if (typeof value.releaseNotes === "string") {
@@ -176,6 +181,8 @@ function install(app, api) {
 							<div>
 								<div>
 									发布公告：
+									{/* biome-ignore lint/a11y/useValidAnchor: JSX link with onClick */}
+									{/* biome-ignore lint/a11y/noStaticElementInteractions: intentional */}
 									<a onClick={openGithubUrl}>
 										https://github.com/docmirror/dev-sidecar/releases
 									</a>
@@ -186,23 +193,24 @@ function install(app, api) {
 								</pre>
 							</div>
 						);
-					} else {
-						for (const note of value.releaseNotes) {
-							notes.push(<li>{note}</li>);
-						}
-						return (
-							<div>
-								<div>
-									发布公告：
-									<a onClick={openGithubUrl}>
-										https://github.com/docmirror/dev-sidecar/releases
-									</a>
-								</div>
-								<div>更新内容：</div>
-								<ol>{notes}</ol>
-							</div>
-						);
 					}
+					for (const note of value.releaseNotes) {
+						notes.push(<li>{note}</li>);
+					}
+					return (
+						<div>
+							<div>
+								发布公告：
+								{/* biome-ignore lint/a11y/useValidAnchor: JSX link with onClick */}
+								{/* biome-ignore lint/a11y/noStaticElementInteractions: intentional */}
+								<a onClick={openGithubUrl}>
+									https://github.com/docmirror/dev-sidecar/releases
+								</a>
+							</div>
+							<div>更新内容：</div>
+							<ol>{notes}</ol>
+						</div>
+					);
 				}
 			},
 			onOk() {
@@ -223,7 +231,7 @@ function install(app, api) {
 			cancelText: "暂不升级",
 			okText: "立即升级",
 			width: 700,
-			content: (h) => {
+			content: (_h) => {
 				if (value.releaseNotes) {
 					const notes = [];
 					if (typeof value.releaseNotes === "string") {
@@ -232,6 +240,8 @@ function install(app, api) {
 							<div>
 								<div>
 									发布公告：
+									{/* biome-ignore lint/a11y/useValidAnchor: JSX link with onClick */}
+									{/* biome-ignore lint/a11y/noStaticElementInteractions: intentional */}
 									<a onClick={openGithubUrl}>
 										https://github.com/docmirror/dev-sidecar/releases
 									</a>
@@ -242,23 +252,24 @@ function install(app, api) {
 								</pre>
 							</div>
 						);
-					} else {
-						for (const note of value.releaseNotes) {
-							notes.push(<li>{note}</li>);
-						}
-						return (
-							<div>
-								<div>
-									发布公告：
-									<a onClick={openGithubUrl}>
-										https://github.com/docmirror/dev-sidecar/releases
-									</a>
-								</div>
-								<div>更新内容：</div>
-								<ol>{notes}</ol>
-							</div>
-						);
 					}
+					for (const note of value.releaseNotes) {
+						notes.push(<li>{note}</li>);
+					}
+					return (
+						<div>
+							<div>
+								发布公告：
+								{/* biome-ignore lint/a11y/useValidAnchor: JSX link with onClick */}
+								{/* biome-ignore lint/a11y/noStaticElementInteractions: intentional */}
+								<a onClick={openGithubUrl}>
+									https://github.com/docmirror/dev-sidecar/releases
+								</a>
+							</div>
+							<div>更新内容：</div>
+							<ol>{notes}</ol>
+						</div>
+					);
 				}
 			},
 			onOk() {

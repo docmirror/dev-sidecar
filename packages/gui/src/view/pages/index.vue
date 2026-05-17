@@ -102,7 +102,7 @@ export default {
 			}
 			const configCopy = lodash.cloneDeep(this.config);
 			await this.$api.config.save(configCopy);
-			if (this.status.server && this.status.server.enabled) {
+			if (this.status.server?.enabled) {
 				return this.$api.server.restart();
 			}
 		},
@@ -201,7 +201,7 @@ export default {
 				this.$api.proxy,
 				status,
 			);
-			lodash.forEach(status.plugin, (item, key) => {
+			lodash.forEach(status.plugin, (_item, key) => {
 				if (this.config.plugin[key].statusOff) {
 					return;
 				}
@@ -263,7 +263,7 @@ export default {
 				checked,
 			);
 		},
-		start(checked) {
+		start(_checked) {
 			this.apiCall(this.startup, this.$api.startup);
 		},
 		openSettings() {
@@ -286,7 +286,7 @@ export default {
 		async openExternal(url) {
 			await this.$api.ipc.openExternal(url);
 		},
-		onShutdownTipClose(e) {
+		onShutdownTipClose(_e) {
 			this.$confirm({
 				title: "是否永久关闭该提示",
 				okText: "我已知晓，不再提示",

@@ -23,7 +23,7 @@ module.exports = class DNSOverTCP extends BaseDNS {
 			cacheSize,
 			preSetIpList,
 		);
-		this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort;
+		this.dnsServerPort = Number.parseInt(dnsServerPort, 10) || defaultPort;
 	}
 
 	_dnsQueryPromise(hostname, type = "A") {

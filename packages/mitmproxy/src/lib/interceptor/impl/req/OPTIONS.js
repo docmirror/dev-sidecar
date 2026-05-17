@@ -15,7 +15,7 @@ function readConfig(config, defaultConfig) {
 module.exports = {
 	name: "options",
 	priority: 101,
-	requestIntercept(context, interceptOpt, req, res, ssl, next) {
+	requestIntercept(context, interceptOpt, _req, res, _ssl, _next) {
 		const { rOptions, log } = context;
 
 		// 不是 OPTIONS 请求，或请求头中不含 origin 时，跳过当前拦截器

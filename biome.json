@@ -7,7 +7,13 @@
 	},
 
 	"files": {
-		"includes": ["**", "!**/build", "!**/dist_electron", "!**/node_modules"]
+		"includes": [
+			"**",
+			"!**/build",
+			"!**/dist_electron",
+			"!**/node_modules",
+			"!**/index.html"
+		]
 	},
 	"formatter": {
 		"enabled": true,

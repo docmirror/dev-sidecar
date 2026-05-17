@@ -69,7 +69,7 @@ const serverApi = {
 		}
 		serverConfig.plugin = allConfig.plugin;
 
-		if (allConfig.proxy && allConfig.proxy.enabled) {
+		if (allConfig.proxy?.enabled) {
 			serverConfig.proxy = allConfig.proxy;
 		}
 
@@ -105,7 +105,7 @@ const serverApi = {
 		serverProcess.on("exit", (code, signal) => {
 			log.warn(`server process exit, code: ${code}, signal:`, signal);
 		});
-		serverProcess.on("uncaughtException", (err, origin) => {
+		serverProcess.on("uncaughtException", (err, _origin) => {
 			log.error("server process uncaughtException:", err);
 		});
 		serverProcess.on("message", (msg) => {

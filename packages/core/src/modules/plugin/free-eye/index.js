@@ -3,9 +3,7 @@ import path from "node:path";
 import clientModule from "./client.js";
 
 const runTests =
-	clientModule &&
-	(clientModule.runTests ||
-		(clientModule.default && clientModule.default.runTests));
+	clientModule && (clientModule.runTests || clientModule.default?.runTests);
 import freeEyeConfig from "./config.js";
 
 const PLUGIN_STATUS_KEY = "plugin.free_eye";
@@ -51,7 +49,7 @@ const FreeEyePlugin = (context) => {
 					if (typeof item === "object") {
 						try {
 							return JSON.stringify(item);
-						} catch (err) {
+						} catch (_err) {
 							return String(item);
 						}
 					}
@@ -145,7 +143,7 @@ const FreeEyePlugin = (context) => {
 
 		isEnabled() {
 			const pluginConfig = config.get().plugin.free_eye;
-			return pluginConfig && pluginConfig.enabled;
+			return pluginConfig?.enabled;
 		},
 
 		async run() {

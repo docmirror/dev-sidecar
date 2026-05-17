@@ -1,7 +1,7 @@
 module.exports = {
 	name: "abort",
 	priority: 103,
-	requestIntercept(context, interceptOpt, req, res, ssl, next) {
+	requestIntercept(context, interceptOpt, req, res, _ssl, _next) {
 		const { rOptions, log } = context;
 
 		if (interceptOpt.abort === true || interceptOpt.abort === "true") {

@@ -1,7 +1,7 @@
 let latestConfirmTime = null;
 
 function install(app, api) {
-	api.ipc.on("error.core", (event, message) => {
+	api.ipc.on("error.core", (_event, message) => {
 		console.error("view on error", message);
 		const key = message.key;
 		if (key === "server") {
@@ -13,7 +13,7 @@ function install(app, api) {
 	});
 }
 
-function handleServerStartError(message, err, app, api) {
+function handleServerStartError(message, _err, app, api) {
 	if (message.value === "EADDRINUSE") {
 		// 避免重复弹窗
 		const now = Date.now();
@@ -29,7 +29,7 @@ function handleServerStartError(message, err, app, api) {
 			onOk() {
 				api.config.get().then((config) => {
 					console.log("config:", config);
-					api.shell.killByPort({ port: config.server.port }).then((ret) => {
+					api.shell.killByPort({ port: config.server.port }).then((_ret) => {
 						app.config.globalProperties.$message.info(
 							"杀掉进程成功，请重试开启代理服务",
 						);

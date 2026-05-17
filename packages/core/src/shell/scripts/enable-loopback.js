@@ -7,7 +7,7 @@ const log = require("../../utils/util.log.core");
 const execute = Shell.execute;
 
 const executor = {
-	windows(exec) {
+	windows(_exec) {
 		const loopbackPath = extraPath.getEnableLoopbackPath();
 		const sudoCommand = [`"${loopbackPath}"`];
 
@@ -28,10 +28,10 @@ const executor = {
 			});
 		});
 	},
-	async linux(exec, { port }) {
+	async linux(_exec, { port }) {
 		throw new Error("不支持此操作");
 	},
-	async mac(exec, { port }) {
+	async mac(_exec, { port }) {
 		throw new Error("不支持此操作");
 	},
 };

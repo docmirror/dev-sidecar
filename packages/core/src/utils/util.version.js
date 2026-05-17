@@ -10,7 +10,7 @@ function parseVersion(version) {
 
 	// 将 versions 中的数字字符串转为数字
 	for (let i = 0; i < versionInfo.versions.length; i++) {
-		versionInfo.versions[i] = Number.parseInt(versionInfo.versions[i]);
+		versionInfo.versions[i] = Number.parseInt(versionInfo.versions[i], 10);
 	}
 
 	return versionInfo;

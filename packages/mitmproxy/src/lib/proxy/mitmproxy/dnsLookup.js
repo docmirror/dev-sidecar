@@ -30,7 +30,7 @@ module.exports = {
 		target = target ? `, target: ${target}` : "";
 
 		const dns = dnsAndFamily.dns;
-		const family = Number.parseInt(dnsAndFamily.family) === 6 ? 6 : 4;
+		const family = Number.parseInt(dnsAndFamily.family, 10) === 6 ? 6 : 4;
 
 		return (hostname, options, callback) => {
 			const tester = speedTest.getSpeedTester(hostname, port);

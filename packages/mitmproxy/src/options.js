@@ -57,7 +57,7 @@ function handleDnsMapping(dnsMapping, familyMapping) {
 		if (typeof value === "string") {
 			dnsMapping[hostname] = {
 				dnsName: value,
-				family: Number.parseInt(familyMapping[hostname]) === 6 ? 6 : 4,
+				family: Number.parseInt(familyMapping[hostname], 10) === 6 ? 6 : 4,
 			};
 		} else if (value.dnsName == null) {
 			log.warn(
@@ -98,7 +98,7 @@ module.exports = (serverConfig) => {
 	setting.timeoutMapping = timeoutMapping;
 
 	const overWallConfig = serverConfig.plugin.overwall;
-	if (overWallConfig.pac && overWallConfig.pac.enabled) {
+	if (overWallConfig.pac?.enabled) {
 		const pacConfig = overWallConfig.pac;
 
 		// 自动更新 pac.txt
@@ -160,7 +160,7 @@ module.exports = (serverConfig) => {
 				: {},
 		},
 		middlewares,
-		sslConnectInterceptor: (req, cltSocket, head) => {
+		sslConnectInterceptor: (req, _cltSocket, _head) => {
 			const hostname = req.url.split(":")[0];
 
 			// 配置了白名单的域名，将跳过代理
@@ -278,7 +278,7 @@ module.exports = (serverConfig) => {
 				// log.info(`interceptor matched, regexp: '${regexp}' =>`, JSON.stringify(interceptOpt), ', url:', url)
 				for (const impl of interceptorImpls) {
 					// 根据拦截配置挑选合适的拦截器来处理
-					if (impl.is && impl.is(interceptOpt)) {
+					if (impl.is?.(interceptOpt)) {
 						let action = "add";
 
 						// 如果存在同名拦截器，则order值越大，优先级越高

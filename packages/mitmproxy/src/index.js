@@ -28,7 +28,7 @@ const api = {
 		// log.info('启动代理服务时的配置:', JSON.stringify(proxyOptions, null, '\t'))
 		const newServers = mitmproxy.createProxy(
 			proxyOptions,
-			(server, port, host, ssl) => {
+			(_server, port, host, ssl) => {
 				fireStatus(true);
 				log.info(`代理服务已启动：${host}:${port}, ssl: ${ssl}`);
 			},

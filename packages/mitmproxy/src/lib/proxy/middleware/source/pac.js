@@ -334,7 +334,13 @@ function createPacClient(pacFilePath) {
 			this.siteKeys = siteKeys;
 			return this.siteKeys;
 		},
-		matches: function (location, contentType, docDomain, thirdParty, siteKey) {
+		matches: function (
+			location,
+			_contentType,
+			docDomain,
+			_thirdParty,
+			siteKey,
+		) {
 			return !!(
 				this.getRegexp().test(location) &&
 				this.isActiveOnDomain(docDomain, siteKey)
@@ -387,7 +393,7 @@ function createPacClient(pacFilePath) {
 					matchCase = true;
 				} else if (option === "~MATCH_CASE") {
 					matchCase = false;
-				} else if (option === "DOMAIN" && typeof value != "undefined") {
+				} else if (option === "DOMAIN" && typeof value !== "undefined") {
 					domains = value;
 				} else if (option === "THIRD_PARTY") {
 					thirdParty = true;
@@ -397,12 +403,12 @@ function createPacClient(pacFilePath) {
 					collapse = true;
 				} else if (option === "~COLLAPSE") {
 					collapse = false;
-				} else if (option === "SITEKEY" && typeof value != "undefined") {
+				} else if (option === "SITEKEY" && typeof value !== "undefined") {
 					siteKeys = value;
 				} else {
 					return new InvalidFilter(
 						origText,
-						"Unknown option " + option.toLowerCase(),
+						`Unknown option ${option.toLowerCase()}`,
 					);
 				}
 			}
@@ -535,7 +541,7 @@ function createPacClient(pacFilePath) {
 			}
 			const keyword = this.findKeyword(filter);
 			const oldEntry = this.filterByKeyword[keyword];
-			if (typeof oldEntry == "undefined") {
+			if (typeof oldEntry === "undefined") {
 				this.filterByKeyword[keyword] = filter;
 			} else if (oldEntry.length === 1) {
 				this.filterByKeyword[keyword] = [oldEntry, filter];
@@ -761,7 +767,7 @@ function createPacClient(pacFilePath) {
 			return blacklistHit;
 		},
 		matchesAny: function (location, docDomain) {
-			const key = location + " " + docDomain + " ";
+			const key = `${location} ${docDomain} `;
 			if (key in this.resultCache) {
 				return this.resultCache[key];
 			}

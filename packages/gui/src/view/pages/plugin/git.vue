@@ -62,7 +62,7 @@ export default defineComponent({
 			this.noProxyUrls.unshift({ key: "" });
 			this.focusFirst(this.$refs.noProxyUrls);
 		},
-		delNoProxyUrl(item, index) {
+		delNoProxyUrl(_item, index) {
 			this.noProxyUrls.splice(index, 1);
 		},
 		submitNoProxyUrls() {

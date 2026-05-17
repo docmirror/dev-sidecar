@@ -1,10 +1,9 @@
-import { app } from "electron";
 import DevSidecar from "@docmirror/dev-sidecar";
 import sudoPrompt from "@vscode/sudo-prompt";
 import { join } from "node:path";
 import log from "../../utils/util.log.gui.js";
 
-const isDevelopment = process.env.NODE_ENV !== "production";
+const _isDevelopment = process.env.NODE_ENV !== "production";
 const extraPath = join(process.cwd(), "extra");
 
 export default {

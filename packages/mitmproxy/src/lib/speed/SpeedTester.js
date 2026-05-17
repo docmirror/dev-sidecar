@@ -107,6 +107,7 @@ class SpeedTester {
 		const family =
 			Number.parseInt(
 				matchUtil.matchHostname(familyMapping, this.hostname, "get family"),
+				10,
 			) === 6
 				? 6
 				: 4;

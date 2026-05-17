@@ -64,7 +64,7 @@ function downloadFile(uri, filePath, onProgress, onSuccess, onError) {
 /**
  * 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
  */
-function updateHandle(app, api, win, beforeQuit, quit, log) {
+function updateHandle(app, api, win, beforeQuit, _quit, log) {
 	// // 更新前，删除本地安装包 ↓
 	// const updaterCacheDirName = 'dev-sidecar-updater'
 	// const updatePendingPath = path.join(autoUpdater.app.baseCachePath, updaterCacheDirName, 'pending')
@@ -266,9 +266,9 @@ function updateHandle(app, api, win, beforeQuit, quit, log) {
 
 						let message;
 						if (response) {
-							message = `检查更新失败: ${bodyObj && bodyObj.message ? bodyObj.message : response.message}, code: ${response.statusCode}`;
+							message = `检查更新失败: ${bodyObj?.message ? bodyObj.message : response.message}, code: ${response.statusCode}`;
 						} else {
-							message = `检查更新失败: ${bodyObj && bodyObj.message ? bodyObj.message : body}`;
+							message = `检查更新失败: ${bodyObj?.message ? bodyObj.message : body}`;
 						}
 						win.webContents.send("update", {
 							key: "error",
@@ -306,7 +306,7 @@ function updateHandle(app, api, win, beforeQuit, quit, log) {
 			(data) => {
 				win.webContents.send("update", {
 					key: "progress",
-					value: Number.parseInt(data),
+					value: Number.parseInt(data, 10),
 				});
 			},
 			() => {
@@ -325,7 +325,7 @@ function updateHandle(app, api, win, beforeQuit, quit, log) {
 		);
 	}
 
-	async function updatePart(app, api, value, partPackagePath) {
+	async function updatePart(app, api, _value, partPackagePath) {
 		const appPath = appPathUtil.getAppRootPath(app);
 		const platform = api.shell.getSystemPlatform();
 		let target = path.join(appPath, "resources");
@@ -371,7 +371,7 @@ function updateHandle(app, api, win, beforeQuit, quit, log) {
 		log.info("autoUpdater download-progress");
 		win.webContents.send("update", {
 			key: "progress",
-			value: Number.parseInt(progressObj.percent),
+			value: Number.parseInt(progressObj.percent, 10),
 		});
 	});
 	// 更新完成，重启应用
@@ -383,7 +383,7 @@ function updateHandle(app, api, win, beforeQuit, quit, log) {
 		});
 	});
 
-	ipcMain.on("update", (e, arg) => {
+	ipcMain.on("update", (_e, arg) => {
 		if (arg.key === "doUpdateNow") {
 			if (partPackagePath) {
 				updatePart(app, api, arg.value, partPackagePath);

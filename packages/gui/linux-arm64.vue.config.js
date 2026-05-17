@@ -63,7 +63,7 @@ module.exports = defineConfig({
 				],
 				appId: "cn.docmirror.DevSidecar",
 				productName: "dev-sidecar",
-				// eslint-disable-next-line no-template-curly-in-string
+				// biome-ignore lint/suspicious/noTemplateCurlyInString: electron-builder syntax
 				artifactName: "DevSidecar-${version}-${arch}.${ext}",
 				copyright:
 					"Copyright © 2020-" +

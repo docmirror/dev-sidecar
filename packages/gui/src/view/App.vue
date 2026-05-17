@@ -54,9 +54,9 @@ export default {
 						label: item.title,
 						children: item.children.map((child) => {
 							const childIconName = child.icon
-								? child.icon.replace(/(^|-)(\w)/g, (_, _s, c) =>
+								? `${child.icon.replace(/(^|-)(\w)/g, (_, _s, c) =>
 										c.toUpperCase(),
-									) + "Outlined"
+									)}Outlined`
 								: "FileOutlined";
 							const ChildIconComponent = Icons[childIconName];
 							return {
@@ -75,7 +75,7 @@ export default {
 			});
 		},
 		isPreRelease() {
-			const version = this.info && this.info.version;
+			const version = this.info?.version;
 			return typeof version === "string" && version.includes("-");
 		},
 	},
@@ -134,10 +134,7 @@ export default {
 			await this.configReadyPromise;
 		}
 
-		const appConfig =
-			(this.config && this.config.app) ||
-			(this.$global && this.$global.config && this.$global.config.app) ||
-			{};
+		const appConfig = this.config?.app || this.$global?.config?.app || {};
 		let theme = appConfig.theme || "dark";
 		if (appConfig.theme === "system") {
 			theme = window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -236,7 +233,7 @@ export default {
 				}
 			});
 		},
-		doSearchBarSearch(message, isPrevious) {
+		doSearchBarSearch(_message, isPrevious) {
 			this.$nextTick(() => {
 				const searchBarInput = document.getElementById("search-bar-input");
 				if (searchBarInput) {

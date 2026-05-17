@@ -18,7 +18,7 @@ const Plugin = (context) => {
 
 		async overrideRunningConfig_bak(serverConfig) {
 			const conf = config.get().plugin.overwall;
-			if (!conf || !conf.enabled || !conf.targets) {
+			if (!conf?.enabled || !conf.targets) {
 				return;
 			}
 			const server = conf.server;

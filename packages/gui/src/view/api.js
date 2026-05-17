@@ -1,6 +1,6 @@
 import { ipcRenderer, shell } from "electron";
 import lodash from "lodash";
-import path from "path";
+import path from "node:path";
 
 let inited = false;
 let apiObj = null;

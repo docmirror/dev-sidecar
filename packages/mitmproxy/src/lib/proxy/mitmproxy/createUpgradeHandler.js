@@ -8,7 +8,7 @@ const util = require("../common/util");
 // create connectHandler function
 module.exports = function createUpgradeHandler(serverSetting) {
 	// return
-	return function upgradeHandler(req, cltSocket, head, ssl) {
+	return function upgradeHandler(req, cltSocket, _head, ssl) {
 		const clientOptions = util.getOptionsFromRequest(
 			req,
 			ssl,
@@ -41,7 +41,7 @@ module.exports = function createUpgradeHandler(serverSetting) {
 
 			proxySocket.setKeepAlive(true, 0);
 
-			if (proxyHead && proxyHead.length) {
+			if (proxyHead?.length) {
 				proxySocket.unshift(proxyHead);
 			}
 

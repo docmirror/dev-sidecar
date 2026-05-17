@@ -10,10 +10,10 @@ module.exports = {
 		interceptOpt,
 		req,
 		res,
-		proxyReq,
+		_proxyReq,
 		proxyRes,
-		ssl,
-		next,
+		_ssl,
+		_next,
 	) {
 		const { rOptions, log } = context;
 
@@ -23,10 +23,7 @@ module.exports = {
 		}
 
 		// 判断当前响应码是否不使用缓存
-		if (
-			interceptOpt.cacheExcludeStatusCodeList &&
-			interceptOpt.cacheExcludeStatusCodeList[`${proxyRes.statusCode}`]
-		) {
+		if (interceptOpt.cacheExcludeStatusCodeList?.[`${proxyRes.statusCode}`]) {
 			return;
 		}
 
@@ -102,12 +99,12 @@ module.exports = {
 		// 判断原max-age是否大于新max-age
 		if (originalHeaders.cacheControl) {
 			const maxAgeMatch = MAX_AGE_RE.exec(originalHeaders.cacheControl.value);
-			if (maxAgeMatch && Number.parseInt(maxAgeMatch[1]) > maxAge) {
+			if (maxAgeMatch && Number.parseInt(maxAgeMatch[1], 10) > maxAge) {
 				if (
 					interceptOpt.cacheImmutable !== false &&
 					!originalHeaders.cacheControl.value.includes("immutable")
 				) {
-					maxAge = Number.parseInt(maxAgeMatch[1]);
+					maxAge = Number.parseInt(maxAgeMatch[1], 10);
 				} else {
 					const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`;
 					res.setHeader(

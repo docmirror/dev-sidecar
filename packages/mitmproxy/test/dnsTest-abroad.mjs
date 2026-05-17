@@ -59,11 +59,11 @@ const hasPresetHostname = "xxx.com";
 const noPresetHostname = "yyy.com";
 
 const hostname1 = "github.com";
-const hostname2 = "api.github.com";
-const hostname3 = "hk.docmirror.cn";
-const hostname4 = "github.docmirror.cn";
-const hostname5 = "gh.docmirror.top";
-const hostname6 = "gh2.docmirror.top";
+const _hostname2 = "api.github.com";
+const _hostname3 = "hk.docmirror.cn";
+const _hostname4 = "github.docmirror.cn";
+const _hostname5 = "gh.docmirror.top";
+const _hostname6 = "gh2.docmirror.top";
 
 let ip;
 

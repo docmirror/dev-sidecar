@@ -164,7 +164,7 @@ function createOverwallMiddleware(overWallConfig) {
 	if (!overWallConfig || overWallConfig.enabled !== true) {
 		return null;
 	}
-	if (overWallConfig.pac && overWallConfig.pac.enabled) {
+	if (overWallConfig.pac?.enabled) {
 		// 初始化pac
 		pacClient = pac.createPacClient(overWallConfig.pac.pacFileAbsolutePath);
 	}
@@ -246,7 +246,7 @@ function createOverwallMiddleware(overWallConfig) {
 			}
 			rOptions.path = urlObj.path;
 			if (urlObj.port) {
-				rOptions.port = Number.parseInt(urlObj.port);
+				rOptions.port = Number.parseInt(urlObj.port, 10);
 			} else {
 				rOptions.port = port || (rOptions.protocol === "https:" ? 443 : 80);
 			}

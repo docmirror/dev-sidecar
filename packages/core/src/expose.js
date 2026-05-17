@@ -84,11 +84,7 @@ async function shutdown() {
 	try {
 		const plugins = [];
 		for (const key in plugin) {
-			if (
-				status.plugin[key] &&
-				status.plugin[key].enabled &&
-				plugin[key].close
-			) {
+			if (status.plugin[key]?.enabled && plugin[key].close) {
 				const close = async () => {
 					try {
 						await plugin[key].close();

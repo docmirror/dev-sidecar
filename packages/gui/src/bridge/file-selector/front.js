@@ -1,4 +1,4 @@
-function install(app, api) {
+function install(_app, api) {
 	api.fileSelector = {
 		/**
 		 * 打开文件选择框
@@ -39,7 +39,7 @@ function install(app, api) {
 
 			return new Promise((resolve, reject) => {
 				api.ipc.send("file-selector", { key: "open", options });
-				api.ipc.on("file-selector", (event, message) => {
+				api.ipc.on("file-selector", (_event, message) => {
 					console.log("selector", message);
 					if (message.key === "selected") {
 						resolve(message.value);

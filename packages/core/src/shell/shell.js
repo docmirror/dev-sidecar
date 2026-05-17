@@ -7,7 +7,7 @@ const log = require("../utils/util.log.core");
 fixPath();
 
 class SystemShell {
-	static async exec(cmds, args) {
+	static async exec(_cmds, _args) {
 		throw new Error("You have to implement the method exec!");
 	}
 }

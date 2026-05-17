@@ -62,15 +62,10 @@ export default defineComponent({
 	computed: {
 		speedDnsOptions() {
 			const options = [];
-			if (
-				!this.config ||
-				!this.config.server ||
-				!this.config.server.dns ||
-				!this.config.server.dns.providers
-			) {
+			if (!this.config?.server?.dns?.providers) {
 				return options;
 			}
-			_.forEach(this.config.server.dns.providers, (dnsConfig, key) => {
+			_.forEach(this.config.server.dns.providers, (_dnsConfig, key) => {
 				options.push({
 					value: key,
 					label: key,
@@ -164,7 +159,7 @@ export default defineComponent({
 			this.config.server.dns.mapping = dnsMapping;
 			this.config.server.dns.familyMapping = familyMapping;
 		},
-		deleteDnsMapping(item, index) {
+		deleteDnsMapping(_item, index) {
 			this.dnsMappings.splice(index, 1);
 		},
 		addDnsMapping() {
@@ -196,7 +191,7 @@ export default defineComponent({
 			this.whiteList.unshift({ key: "", value: "true" });
 			this.focusFirst(this.$refs.whiteList);
 		},
-		deleteWhiteList(item, index) {
+		deleteWhiteList(_item, index) {
 			this.whiteList.splice(index, 1);
 		},
 		submitWhiteList() {
@@ -218,7 +213,7 @@ export default defineComponent({
 			this.getSpeedTestConfig().hostnameList.unshift("");
 			this.focusFirst(this.$refs.hostnameList);
 		},
-		delSpeedHostname(item, index) {
+		delSpeedHostname(_item, index) {
 			this.getSpeedTestConfig().hostnameList.splice(index, 1);
 		},
 		delEmptySpeedHostname() {

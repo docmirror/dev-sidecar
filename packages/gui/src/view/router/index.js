@@ -4,6 +4,7 @@ import Node from "../pages/plugin/node";
 import Overwall from "../pages/plugin/overwall";
 import Pip from "../pages/plugin/pip";
 import FreeEye from "../pages/plugin/free-eye.vue";
+// biome-ignore lint/suspicious/noShadowRestrictedNames: component name
 import Proxy from "../pages/proxy";
 import Server from "../pages/server";
 import Setting from "../pages/setting";

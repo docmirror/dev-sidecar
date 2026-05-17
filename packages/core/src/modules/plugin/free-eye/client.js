@@ -3,9 +3,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import utils from "./utils.js";
 
-const printHeader =
-	(utils && utils.printHeader) ||
-	(utils && utils.default && utils.default.printHeader);
+const printHeader = utils?.printHeader || utils?.default?.printHeader;
 
 const TEST_PACKAGE_DIR = "checkpoints";
 const PLUGIN_RELATIVE_PATH = path.join(
@@ -68,8 +66,7 @@ async function loadAllTests(globalConfig, testsDir) {
 
 		const module = pluginRequire(modulePath);
 		const getClientTests =
-			module.getClientTests ||
-			(module.default && module.default.getClientTests);
+			module.getClientTests || module.default?.getClientTests;
 		if (typeof getClientTests === "function") {
 			for (const testCls of getClientTests()) {
 				if (testCls.getTestTag() in globalConfig) {

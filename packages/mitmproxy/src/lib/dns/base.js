@@ -52,7 +52,8 @@ module.exports = class BaseDNS {
 			return;
 		}
 		this.dnsServer = dnsServer;
-		this.dnsFamily = Number.parseInt(dnsFamily) || (isIPv6(dnsServer) ? 6 : 4);
+		this.dnsFamily =
+			Number.parseInt(dnsFamily, 10) || (isIPv6(dnsServer) ? 6 : 4);
 		this.dnsFamily = this.dnsFamily === 6 ? 6 : 4; // 避免值错误
 	}
 
@@ -174,7 +175,7 @@ module.exports = class BaseDNS {
 	async _lookup(hostname, options = {}) {
 		const start = Date.now();
 
-		options.family = Number.parseInt(options.family) === 6 ? 6 : 4;
+		options.family = Number.parseInt(options.family, 10) === 6 ? 6 : 4;
 		const type = options.family === 6 ? "AAAA" : "A";
 
 		let response;

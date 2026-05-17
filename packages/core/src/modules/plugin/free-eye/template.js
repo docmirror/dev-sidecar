@@ -81,7 +81,7 @@ class TestGroup {
 		return {};
 	}
 
-	checkIfShouldSkip(globalResults) {
+	checkIfShouldSkip(_globalResults) {
 		/**
 		 * If earlier results indicate this test shouldn't be run
 		 * return a string indicating why (otherwise return null)

@@ -55,7 +55,7 @@ function doDiff(oldObj, newObj) {
 	}
 
 	// tempObj 里面剩下的是被删掉的数据
-	lodash.forEach(tempObj, (oldValue, key) => {
+	lodash.forEach(tempObj, (_oldValue, key) => {
 		// 将被删除的属性设置为null，目的是为了merge时，将被删掉的对象设置为null，达到删除的目的
 		diffObj[key] = null;
 	});

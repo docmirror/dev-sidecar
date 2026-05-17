@@ -9,8 +9,8 @@ module.exports = {
 		interceptOpt,
 		req,
 		res,
-		ssl,
-		next,
+		_ssl,
+		_next,
 		matched,
 		hostnameMatched,
 	) {

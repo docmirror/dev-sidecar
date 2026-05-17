@@ -31,7 +31,7 @@ function replaceRequestHeaders(rOptions, headers, log) {
 module.exports = {
 	name: "requestReplace",
 	priority: 111,
-	requestIntercept(context, interceptOpt, req, res, ssl, next) {
+	requestIntercept(context, interceptOpt, req, res, _ssl, _next) {
 		const { rOptions, log } = context;
 
 		const requestReplaceConfig = interceptOpt.requestReplace;

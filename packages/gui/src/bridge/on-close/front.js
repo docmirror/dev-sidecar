@@ -12,7 +12,7 @@ function install(app, api) {
 			message,
 		);
 		function onRadioChange(e) {
-			closeType = parseInt(e.target.value);
+			closeType = parseInt(e.target.value, 10);
 		}
 		function onCheckChange(e) {
 			doSave = e.target.checked;
