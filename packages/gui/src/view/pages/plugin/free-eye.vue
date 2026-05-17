@@ -214,7 +214,7 @@ export default {
   margin-bottom: 16px;
 }
 .last-run {
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--text-secondary);
 }
 .summary-output {
   margin: 0;
@@ -222,7 +222,7 @@ export default {
 }
 .raw-json {
   margin: 0;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-highlight);
   padding: 12px;
   border-radius: 4px;
   overflow-x: auto;

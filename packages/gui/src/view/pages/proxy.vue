@@ -219,7 +219,7 @@ export default defineComponent({
       <div>
         <div>1、此设置用于解决OneNote、MicrosoftStore、Outlook等UWP应用无法访问网络的问题。</div>
         <div>2、点击右上方按钮，打开EnableLoopback，然后按下图所示操作即可</div>
-        <img style="margin-top:20px;border:1px solid #eee" width="80%" src="loopback.png">
+        <img style="margin-top:20px;border:1px solid var(--border-color)" width="80%" src="loopback.png">
       </div>
     </a-drawer>
   </ds-container>
