@@ -82,7 +82,7 @@ jobs:
       - name: "Apply beta version to packages/gui/package.json"
         shell: bash
         run: |
-          node -e 'const fs=require("fs");const p="packages/gui/package.json";const j=JSON.parse(fs.readFileSync(p,"utf8"));j.version=process.env.BUILD_VERSION;fs.writeFileSync(p,JSON.stringify(j,null,"\t")+"\n");console.log("set gui version to",j.version);'
+          node -e 'const fs=require("fs");const p="packages/gui/package.json";const j=JSON.parse(fs.readFileSync(p,"utf8"));j.version=process.env.BUILD_VERSION;fs.writeFileSync(p,JSON.stringify(j,null,2)+"\n");console.log("set gui version to",j.version);'
 
       - name: "Print"
         run: |
