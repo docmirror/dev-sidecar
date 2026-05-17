@@ -5,6 +5,7 @@ import * as Icons from '@ant-design/icons-vue';
 import { ipcRenderer } from 'electron'
 import createMenus from '@/view/router/menu'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
+import { theme } from 'ant-design-vue'
 import { colorTheme } from './composables/theme'
 
 export default {
@@ -37,6 +38,21 @@ export default {
     },
     theme() {
       return colorTheme.value
+    },
+    themeConfig() {
+      const isDark = this.theme === 'dark'
+      return {
+        algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        token: isDark
+          ? {
+              colorBgBase: '#1e1f22',
+              colorTextBase: '#dddddd',
+
+              colorBgContainer: '#1e1f22',
+
+            }
+          : undefined,
+      }
     },
     // 将菜单数据转换为 items 格式
     menuItems() {
@@ -258,10 +274,10 @@ export default {
 </script>
 
 <template>
-  <a-config-provider :locale="locale">
+  <a-config-provider :locale="locale" :theme="themeConfig">
     <div class="ds_layout" :class="themeClass">
       <a-layout>
-        <a-layout-sider :theme="theme" style="overflow-y: auto">
+        <a-layout-sider :style="{ background: theme === 'dark' ? '#1e1f22' : '#fff', overflowY: 'auto' }">
           <div class="logo" />
           <div class="aside">
             <a-menu
