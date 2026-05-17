@@ -1,125 +1,129 @@
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
-import { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
-import Plugin from '../../mixins/plugin'
+import {
+	PlusOutlined,
+	MinusOutlined,
+	SyncOutlined,
+	CheckOutlined,
+} from "@ant-design/icons-vue";
+import Plugin from "../../mixins/plugin";
 
 export default defineComponent({
-  name: 'Overwall',
-  components: { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
-  mixins: [Plugin],
+	name: "Overwall",
+	components: { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
+	mixins: [Plugin],
 
-  data () {
-    return {
-      key: 'plugin.overwall',
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 },
-      targets: undefined,
-      servers: undefined,
-      overwallOptions: [
-        {
-          label: '启用',
-          value: 'true',
-        },
-        {
-          label: '禁用',
-          value: 'false',
-        },
-      ],
-    }
-  },
+	data() {
+		return {
+			key: "plugin.overwall",
+			labelCol: { span: 4 },
+			wrapperCol: { span: 20 },
+			targets: undefined,
+			servers: undefined,
+			overwallOptions: [
+				{
+					label: "启用",
+					value: "true",
+				},
+				{
+					label: "禁用",
+					value: "false",
+				},
+			],
+		};
+	},
 
-  created () {
-    console.log('status:', this.status)
-  },
+	created() {
+		console.log("status:", this.status);
+	},
 
-  mounted () {
-  },
+	mounted() {},
 
-  methods: {
-    async openExternal (url) {
-      await this.$api.ipc.openExternal(url)
-    },
-    async applyAfter () {
-      if (this.status.server.enabled) {
-        return this.$api.server.restart()
-      }
-    },
-    ready () {
-      this.initTarget()
-      this.initServer()
-    },
-    async applyBefore () {
-      this.submitTarget()
-      this.submitServer()
-    },
-    initTarget () {
-      this.targets = []
-      const targetsMap = this.config.plugin.overwall.targets
-      for (const key in targetsMap) {
-        const value = targetsMap[key]
-        this.targets.push({
-          key: key || '',
-          value: value === true ? 'true' : 'false',
-        })
-      }
-    },
-    addTarget () {
-      this.targets.unshift({ key: '', value: 'true' })
-      this.focusFirst(this.$refs.targets)
-    },
-    deleteTarget (item, index) {
-      this.targets.splice(index, 1)
-    },
-    submitTarget () {
-      const map = {}
-      for (const item of this.targets) {
-        if (item.key) {
-          const hostname = this.handleHostname(item.key)
-          if (hostname) {
-            map[hostname] = (item.value === 'true')
-          }
-        }
-      }
-      this.config.plugin.overwall.targets = map
-    },
+	methods: {
+		async openExternal(url) {
+			await this.$api.ipc.openExternal(url);
+		},
+		async applyAfter() {
+			if (this.status.server.enabled) {
+				return this.$api.server.restart();
+			}
+		},
+		ready() {
+			this.initTarget();
+			this.initServer();
+		},
+		async applyBefore() {
+			this.submitTarget();
+			this.submitServer();
+		},
+		initTarget() {
+			this.targets = [];
+			const targetsMap = this.config.plugin.overwall.targets;
+			for (const key in targetsMap) {
+				const value = targetsMap[key];
+				this.targets.push({
+					key: key || "",
+					value: value === true ? "true" : "false",
+				});
+			}
+		},
+		addTarget() {
+			this.targets.unshift({ key: "", value: "true" });
+			this.focusFirst(this.$refs.targets);
+		},
+		deleteTarget(item, index) {
+			this.targets.splice(index, 1);
+		},
+		submitTarget() {
+			const map = {};
+			for (const item of this.targets) {
+				if (item.key) {
+					const hostname = this.handleHostname(item.key);
+					if (hostname) {
+						map[hostname] = item.value === "true";
+					}
+				}
+			}
+			this.config.plugin.overwall.targets = map;
+		},
 
-    initServer () {
-      this.servers = []
-      const targetsMap = this.config.plugin.overwall.server
-      for (const key in targetsMap) {
-        const value = targetsMap[key]
-        this.servers.push({
-          key,
-          value,
-        })
-      }
-      if (this.servers.length === 0) {
-        this.addServer(false)
-      }
-    },
-    deleteServer (item, index) {
-      this.servers.splice(index, 1)
-    },
-    addServer (needFocus = true) {
-      this.servers.unshift({ key: '', value: { type: 'path' } })
-      if (needFocus) {
-        this.focusFirst(this.$refs.servers)
-      }
-    },
-    submitServer () {
-      const map = {}
-      for (const item of this.servers) {
-        if (item.key) {
-          const hostname = this.handleHostname(item.key)
-          if (hostname) {
-            map[hostname] = item.value
-          }
-        }
-      }
-      this.config.plugin.overwall.server = map
-    },
-  },
+		initServer() {
+			this.servers = [];
+			const targetsMap = this.config.plugin.overwall.server;
+			for (const key in targetsMap) {
+				const value = targetsMap[key];
+				this.servers.push({
+					key,
+					value,
+				});
+			}
+			if (this.servers.length === 0) {
+				this.addServer(false);
+			}
+		},
+		deleteServer(item, index) {
+			this.servers.splice(index, 1);
+		},
+		addServer(needFocus = true) {
+			this.servers.unshift({ key: "", value: { type: "path" } });
+			if (needFocus) {
+				this.focusFirst(this.$refs.servers);
+			}
+		},
+		submitServer() {
+			const map = {};
+			for (const item of this.servers) {
+				if (item.key) {
+					const hostname = this.handleHostname(item.key);
+					if (hostname) {
+						map[hostname] = item.value;
+					}
+				}
+			}
+			this.config.plugin.overwall.server = map;
+		},
+	},
 });
 </script>
 

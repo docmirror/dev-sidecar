@@ -1,3 +1,3 @@
-import { ref } from 'vue'
+import { ref } from "vue";
 
-export const colorTheme = ref('dark')
+export const colorTheme = ref("dark");

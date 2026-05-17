@@ -1,31 +1,31 @@
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
-import { ProfileOutlined } from '@ant-design/icons-vue'
-import Plugin from '../mixins/plugin'
-import TreeNode from '../components/tree-node'
+import { ProfileOutlined } from "@ant-design/icons-vue";
+import Plugin from "../mixins/plugin";
+import TreeNode from "../components/tree-node";
 
 export default defineComponent({
-  name: 'Help',
+	name: "Help",
 
-  components: {
-    TreeNode,
-    ProfileOutlined,
-  },
+	components: {
+		TreeNode,
+		ProfileOutlined,
+	},
 
-  mixins: [Plugin],
+	mixins: [Plugin],
 
-  data () {
-    return {
-      key: 'help',
-    }
-  },
+	data() {
+		return {
+			key: "help",
+		};
+	},
 
-  methods: {
-    async openExternal (url) {
-      await this.$api.ipc.openExternal(url)
-    },
-  },
+	methods: {
+		async openExternal(url) {
+			await this.$api.ipc.openExternal(url);
+		},
+	},
 });
 </script>
 

@@ -1,77 +1,102 @@
-const defaultDns = require('node:dns')
-const log = require('../../../utils/util.log.server')
-const speedTest = require('../../speed')
+const defaultDns = require("node:dns");
+const log = require("../../../utils/util.log.server");
+const speedTest = require("../../speed");
 
-function createIpChecker (tester) {
-  if (!tester || tester.backupList == null || tester.backupList.length === 0) {
-    return null
-  }
+function createIpChecker(tester) {
+	if (!tester || tester.backupList == null || tester.backupList.length === 0) {
+		return null;
+	}
 
-  return (ip) => {
-    for (let i = 0; i < tester.backupList.length; i++) {
-      const item = tester.backupList[i]
-      if (item.host === ip) {
-        if (item.time > 0) {
-          return true // IP测速成功
-        }
-        if (item.status === 'failed') {
-          return false // IP测速失败
-        }
-        break
-      }
-    }
+	return (ip) => {
+		for (let i = 0; i < tester.backupList.length; i++) {
+			const item = tester.backupList[i];
+			if (item.host === ip) {
+				if (item.time > 0) {
+					return true; // IP测速成功
+				}
+				if (item.status === "failed") {
+					return false; // IP测速失败
+				}
+				break;
+			}
+		}
 
-    return true // IP测速未知
-  }
+		return true; // IP测速未知
+	};
 }
 
 module.exports = {
-  createLookupFunc (res, dnsAndFamily, action, target, port, isDnsIntercept) {
-    target = target ? (`, target: ${target}`) : ''
+	createLookupFunc(res, dnsAndFamily, action, target, port, isDnsIntercept) {
+		target = target ? `, target: ${target}` : "";
 
-    const dns = dnsAndFamily.dns
-    const family = Number.parseInt(dnsAndFamily.family) === 6 ? 6 : 4
+		const dns = dnsAndFamily.dns;
+		const family = Number.parseInt(dnsAndFamily.family) === 6 ? 6 : 4;
 
-    return (hostname, options, callback) => {
-      const tester = speedTest.getSpeedTester(hostname, port)
-      if (tester) {
-        const aliveIpObj = tester.pickFastAliveIpObj()
-        if (aliveIpObj) {
-          log.info(`----- ${action}: ${hostname}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host}${target} -----`)
-          if (res) {
-            res.setHeader('DS-DNS-Lookup', `IpTester: ${aliveIpObj.host} ${aliveIpObj.dns === '预设IP' ? 'PreSet' : aliveIpObj.dns}`)
-          }
-          callback(null, aliveIpObj.host, family)
-          return
-        } else {
-          log.info(`----- ${action}: ${hostname}, no alive ip${target}, tester: { "ready": ${tester.ready}, "backupList": ${JSON.stringify(tester.backupList)} }`)
-        }
-      }
+		return (hostname, options, callback) => {
+			const tester = speedTest.getSpeedTester(hostname, port);
+			if (tester) {
+				const aliveIpObj = tester.pickFastAliveIpObj();
+				if (aliveIpObj) {
+					log.info(
+						`----- ${action}: ${hostname}, use alive ip from dns '${aliveIpObj.dns}': ${aliveIpObj.host}${target} -----`,
+					);
+					if (res) {
+						res.setHeader(
+							"DS-DNS-Lookup",
+							`IpTester: ${aliveIpObj.host} ${aliveIpObj.dns === "预设IP" ? "PreSet" : aliveIpObj.dns}`,
+						);
+					}
+					callback(null, aliveIpObj.host, family);
+					return;
+				} else {
+					log.info(
+						`----- ${action}: ${hostname}, no alive ip${target}, tester: { "ready": ${tester.ready}, "backupList": ${JSON.stringify(tester.backupList)} }`,
+					);
+				}
+			}
 
-      const ipChecker = createIpChecker(tester)
+			const ipChecker = createIpChecker(tester);
 
-      dns.lookup(hostname, { ipChecker, family }).then((ip) => {
-        if (isDnsIntercept) {
-          isDnsIntercept.dns = dns
-          isDnsIntercept.hostname = hostname
-          isDnsIntercept.ip = ip
-        }
+			dns
+				.lookup(hostname, { ipChecker, family })
+				.then((ip) => {
+					if (isDnsIntercept) {
+						isDnsIntercept.dns = dns;
+						isDnsIntercept.hostname = hostname;
+						isDnsIntercept.ip = ip;
+					}
 
-        if (ip !== hostname) {
-          log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.dnsName}': ${ip}(family: ${family})${target} -----`)
-          if (res) {
-            res.setHeader('DS-DNS-Lookup', `DNS: ${ip}（IPv${family}） ${dns.dnsName === '预设IP' ? 'PreSet' : dns.dnsName}`)
-          }
-          callback(null, ip, family)
-        } else {
-          // 使用默认dns
-          log.info(`----- ${action}: ${hostname}, use default DNS: ${hostname}${target}, options:`, options, ', dns:', dns)
-          defaultDns.lookup(hostname, options, callback)
-        }
-      }).catch((err) => {
-        log.error(`----- ${action}: ${hostname}, dns lookup error${target}, options:`, options, `, error:`, err)
-        defaultDns.lookup(hostname, options, callback)
-      })
-    }
-  },
-}
+					if (ip !== hostname) {
+						log.info(
+							`----- ${action}: ${hostname}, use ip from dns '${dns.dnsName}': ${ip}(family: ${family})${target} -----`,
+						);
+						if (res) {
+							res.setHeader(
+								"DS-DNS-Lookup",
+								`DNS: ${ip}（IPv${family}） ${dns.dnsName === "预设IP" ? "PreSet" : dns.dnsName}`,
+							);
+						}
+						callback(null, ip, family);
+					} else {
+						// 使用默认dns
+						log.info(
+							`----- ${action}: ${hostname}, use default DNS: ${hostname}${target}, options:`,
+							options,
+							", dns:",
+							dns,
+						);
+						defaultDns.lookup(hostname, options, callback);
+					}
+				})
+				.catch((err) => {
+					log.error(
+						`----- ${action}: ${hostname}, dns lookup error${target}, options:`,
+						options,
+						`, error:`,
+						err,
+					);
+					defaultDns.lookup(hostname, options, callback);
+				});
+		};
+	},
+};

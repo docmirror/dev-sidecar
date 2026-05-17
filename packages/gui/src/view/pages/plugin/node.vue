@@ -1,65 +1,67 @@
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
-
-import { CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons-vue'
-import Plugin from '../../mixins/plugin'
+import {
+	CheckOutlined,
+	ExclamationCircleOutlined,
+	SyncOutlined,
+} from "@ant-design/icons-vue";
+import Plugin from "../../mixins/plugin";
 
 export default defineComponent({
-  name: 'Node',
-  mixins: [Plugin],
+	name: "Node",
+	mixins: [Plugin],
 
-  components: {
-    CheckOutlined,
-    ExclamationCircleOutlined,
-    SyncOutlined,
-  },
+	components: {
+		CheckOutlined,
+		ExclamationCircleOutlined,
+		SyncOutlined,
+	},
 
-  data () {
-    return {
-      key: 'plugin.node',
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 },
-      npmVariables: undefined,
-      registry: false,
-    }
-  },
+	data() {
+		return {
+			key: "plugin.node",
+			labelCol: { span: 4 },
+			wrapperCol: { span: 20 },
+			npmVariables: undefined,
+			registry: false,
+		};
+	},
 
-  created () {
-    console.log('status:', this.status)
-  },
+	created() {
+		console.log("status:", this.status);
+	},
 
-  mounted () {
-  },
+	mounted() {},
 
-  methods: {
-    ready () {
-      return this.$api.plugin.node.getVariables().then((ret) => {
-        console.log('variables', ret)
-        this.npmVariables = ret
-      })
-    },
-    async onSwitchRegistry (event) {
-      await this.setRegistry({ registry: event.target.value, type: 'npm' })
-      this.$message.success('切换成功')
-    },
-    async onSwitchYarnRegistry (event) {
-      const registry = event.target.value
-      console.log('registry', registry)
-      await this.setRegistry({ registry, type: 'yarn' })
-      this.$message.success('切换成功')
-    },
-    async setRegistry ({ registry, type }) {
-      this.apply()
-      console.log('type', type)
-      await this.$api.plugin.node.setRegistry({ registry, type })
-    },
-    setNpmVariableAll () {
-      this.saveConfig().then(() => {
-        this.$api.plugin.node.setVariables()
-      })
-    },
-  },
+	methods: {
+		ready() {
+			return this.$api.plugin.node.getVariables().then((ret) => {
+				console.log("variables", ret);
+				this.npmVariables = ret;
+			});
+		},
+		async onSwitchRegistry(event) {
+			await this.setRegistry({ registry: event.target.value, type: "npm" });
+			this.$message.success("切换成功");
+		},
+		async onSwitchYarnRegistry(event) {
+			const registry = event.target.value;
+			console.log("registry", registry);
+			await this.setRegistry({ registry, type: "yarn" });
+			this.$message.success("切换成功");
+		},
+		async setRegistry({ registry, type }) {
+			this.apply();
+			console.log("type", type);
+			await this.$api.plugin.node.setRegistry({ registry, type });
+		},
+		setNpmVariableAll() {
+			this.saveConfig().then(() => {
+				this.$api.plugin.node.setVariables();
+			});
+		},
+	},
 });
 </script>
 

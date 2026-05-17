@@ -1,5 +1,5 @@
-import loggerFactory from '@docmirror/dev-sidecar/src/utils/util.logger.js'
+import loggerFactory from "@docmirror/dev-sidecar/src/utils/util.logger.js";
 
-const logger = loggerFactory.getLogger('gui')
+const logger = loggerFactory.getLogger("gui");
 
-export default logger
+export default logger;

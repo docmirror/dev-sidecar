@@ -1,246 +1,279 @@
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
-import _ from 'lodash'
-import { Vue3JsonEditor } from 'vue3-json-editor'
-import { CheckOutlined, InfoCircleOutlined, PlusOutlined, MinusOutlined, SyncOutlined, ReloadOutlined } from '@ant-design/icons-vue'
-import Plugin from '../mixins/plugin'
+import _ from "lodash";
+import { Vue3JsonEditor } from "vue3-json-editor";
+import {
+	CheckOutlined,
+	InfoCircleOutlined,
+	PlusOutlined,
+	MinusOutlined,
+	SyncOutlined,
+	ReloadOutlined,
+} from "@ant-design/icons-vue";
+import Plugin from "../mixins/plugin";
 
 export default defineComponent({
-  name: 'Server',
+	name: "Server",
 
-  components: {
-    Vue3JsonEditor,
-    CheckOutlined,
-    InfoCircleOutlined,
-    PlusOutlined,
-    MinusOutlined,
-    SyncOutlined,
-    ReloadOutlined,
-  },
+	components: {
+		Vue3JsonEditor,
+		CheckOutlined,
+		InfoCircleOutlined,
+		PlusOutlined,
+		MinusOutlined,
+		SyncOutlined,
+		ReloadOutlined,
+	},
 
-  mixins: [Plugin],
+	mixins: [Plugin],
 
-  data () {
-    return {
-      key: 'server',
-      activeTabKey: '1',
-      dnsMappings: [],
-      speedTestList: [],
-      whiteList: [],
-      speedRefreshInterval: null,
-      whiteListOptions: [
-        {
-          label: '不代理',
-          value: 'true',
-        },
-        {
-          label: '代理',
-          value: 'false',
-        },
-      ],
-      familyOptions: [
-        {
-          label: 'IPv4',
-          value: '4',
-        },
-        {
-          label: 'IPv6',
-          value: '6',
-        },
-      ],
-    }
-  },
+	data() {
+		return {
+			key: "server",
+			activeTabKey: "1",
+			dnsMappings: [],
+			speedTestList: [],
+			whiteList: [],
+			speedRefreshInterval: null,
+			whiteListOptions: [
+				{
+					label: "不代理",
+					value: "true",
+				},
+				{
+					label: "代理",
+					value: "false",
+				},
+			],
+			familyOptions: [
+				{
+					label: "IPv4",
+					value: "4",
+				},
+				{
+					label: "IPv6",
+					value: "6",
+				},
+			],
+		};
+	},
 
-  computed: {
-    speedDnsOptions () {
-      const options = []
-      if (!this.config || !this.config.server || !this.config.server.dns || !this.config.server.dns.providers) {
-        return options
-      }
-      _.forEach(this.config.server.dns.providers, (dnsConfig, key) => {
-        options.push({
-          value: key,
-          label: key,
-        })
-      })
-      return options
-    },
-  },
+	computed: {
+		speedDnsOptions() {
+			const options = [];
+			if (
+				!this.config ||
+				!this.config.server ||
+				!this.config.server.dns ||
+				!this.config.server.dns.providers
+			) {
+				return options;
+			}
+			_.forEach(this.config.server.dns.providers, (dnsConfig, key) => {
+				options.push({
+					value: key,
+					label: key,
+				});
+			});
+			return options;
+		},
+	},
 
-  created () {
-  },
+	created() {},
 
-  mounted () {
-    this.registerSpeedTestEvent()
-  },
+	mounted() {
+		this.registerSpeedTestEvent();
+	},
 
-  beforeUnmount () {
-    // 清理事件监听器
-    this.$api.ipc.removeAllListeners('speed')
-    if (this.speedRefreshInterval) {
-      clearInterval(this.speedRefreshInterval)
-    }
-  },
+	beforeUnmount() {
+		// 清理事件监听器
+		this.$api.ipc.removeAllListeners("speed");
+		if (this.speedRefreshInterval) {
+			clearInterval(this.speedRefreshInterval);
+		}
+	},
 
-  methods: {
-    async onCrtSelect () {
-      const value = await this.$api.fileSelector.open(this.config.server.setting.rootCaFile.certPath, 'file')
-      if (value != null && value.length > 0) {
-        this.config.server.setting.rootCaFile.certPath = value[0]
-      }
-    },
-    async onKeySelect () {
-      const value = await this.$api.fileSelector.open(this.config.server.setting.rootCaFile.keyPath, 'file')
-      if (value != null && value.length > 0) {
-        this.config.server.setting.rootCaFile.keyPath = value[0]
-      }
-    },
-    ready () {
-      this.initDnsMapping()
-      this.initWhiteList()
-      if (this.config.server.dns.speedTest.dnsProviders) {
-        this.speedDns = this.config.server.dns.speedTest.dnsProviders
-      }
-    },
-    async applyBefore () {
-      this.submitDnsMappings()
-      this.submitWhiteList()
-      this.delEmptySpeedHostname()
-    },
-    async applyAfter () {
-      if (this.status.server.enabled) {
-        return this.$api.server.restart()
-      }
-    },
-    // dnsMapping
-    initDnsMapping () {
-      this.dnsMappings = []
-      const familyMapping = this.config.server.dns.familyMapping || {}
-      for (const key in this.config.server.dns.mapping) {
-        const value = this.config.server.dns.mapping[key]
-        this.dnsMappings.push({
-          key,
-          value,
-          family: `${familyMapping[key] || '4'}`, // 转成字符串
-        })
-      }
-    },
-    submitDnsMappings () {
-      const dnsMapping = {}
-      const familyMapping = {}
-      for (const item of this.dnsMappings) {
-        if (item.key) {
-          const hostname = this.handleHostname(item.key)
-          if (hostname) {
-            dnsMapping[hostname] = item.value
-            if (item.family === '6' || (this.config.server.dns.familyMapping != null && this.config.server.dns.familyMapping[hostname] != null)) {
-              familyMapping[hostname] = item.family
-            }
-          }
-        }
-      }
-      this.config.server.dns.mapping = dnsMapping
-      this.config.server.dns.familyMapping = familyMapping
-    },
-    deleteDnsMapping (item, index) {
-      this.dnsMappings.splice(index, 1)
-    },
-    addDnsMapping () {
-      let defaultDns
-      const dnsArr = ['quad9', 'safe360', 'aliyun']
-      for (const dnsName of dnsArr) {
-        if (this.config.server.dns.providers[dnsName]) {
-          defaultDns = dnsName
-          break
-        }
-      }
+	methods: {
+		async onCrtSelect() {
+			const value = await this.$api.fileSelector.open(
+				this.config.server.setting.rootCaFile.certPath,
+				"file",
+			);
+			if (value != null && value.length > 0) {
+				this.config.server.setting.rootCaFile.certPath = value[0];
+			}
+		},
+		async onKeySelect() {
+			const value = await this.$api.fileSelector.open(
+				this.config.server.setting.rootCaFile.keyPath,
+				"file",
+			);
+			if (value != null && value.length > 0) {
+				this.config.server.setting.rootCaFile.keyPath = value[0];
+			}
+		},
+		ready() {
+			this.initDnsMapping();
+			this.initWhiteList();
+			if (this.config.server.dns.speedTest.dnsProviders) {
+				this.speedDns = this.config.server.dns.speedTest.dnsProviders;
+			}
+		},
+		async applyBefore() {
+			this.submitDnsMappings();
+			this.submitWhiteList();
+			this.delEmptySpeedHostname();
+		},
+		async applyAfter() {
+			if (this.status.server.enabled) {
+				return this.$api.server.restart();
+			}
+		},
+		// dnsMapping
+		initDnsMapping() {
+			this.dnsMappings = [];
+			const familyMapping = this.config.server.dns.familyMapping || {};
+			for (const key in this.config.server.dns.mapping) {
+				const value = this.config.server.dns.mapping[key];
+				this.dnsMappings.push({
+					key,
+					value,
+					family: `${familyMapping[key] || "4"}`, // 转成字符串
+				});
+			}
+		},
+		submitDnsMappings() {
+			const dnsMapping = {};
+			const familyMapping = {};
+			for (const item of this.dnsMappings) {
+				if (item.key) {
+					const hostname = this.handleHostname(item.key);
+					if (hostname) {
+						dnsMapping[hostname] = item.value;
+						if (
+							item.family === "6" ||
+							(this.config.server.dns.familyMapping != null &&
+								this.config.server.dns.familyMapping[hostname] != null)
+						) {
+							familyMapping[hostname] = item.family;
+						}
+					}
+				}
+			}
+			this.config.server.dns.mapping = dnsMapping;
+			this.config.server.dns.familyMapping = familyMapping;
+		},
+		deleteDnsMapping(item, index) {
+			this.dnsMappings.splice(index, 1);
+		},
+		addDnsMapping() {
+			let defaultDns;
+			const dnsArr = ["quad9", "safe360", "aliyun"];
+			for (const dnsName of dnsArr) {
+				if (this.config.server.dns.providers[dnsName]) {
+					defaultDns = dnsName;
+					break;
+				}
+			}
 
-      this.dnsMappings.unshift({ key: '', value: defaultDns, family: '4' })
-      this.focusFirst(this.$refs.dnsMappings)
-    },
+			this.dnsMappings.unshift({ key: "", value: defaultDns, family: "4" });
+			this.focusFirst(this.$refs.dnsMappings);
+		},
 
-    // whiteList
-    initWhiteList () {
-      this.whiteList = []
-      for (const key in this.config.server.whiteList) {
-        const value = this.config.server.whiteList[key]
-        this.whiteList.push({
-          key: key || '',
-          value: value === true ? 'true' : 'false',
-        })
-      }
-    },
-    addWhiteList () {
-      this.whiteList.unshift({ key: '', value: 'true' })
-      this.focusFirst(this.$refs.whiteList)
-    },
-    deleteWhiteList (item, index) {
-      this.whiteList.splice(index, 1)
-    },
-    submitWhiteList () {
-      const whiteList = {}
-      for (const item of this.whiteList) {
-        if (item.key) {
-          const hostname = this.handleHostname(item.key)
-          if (hostname) {
-            whiteList[hostname] = (item.value === 'true')
-          }
-        }
-      }
-      this.config.server.whiteList = whiteList
-    },
-    getSpeedTestConfig () {
-      return this.config.server.dns.speedTest
-    },
-    addSpeedHostname () {
-      this.getSpeedTestConfig().hostnameList.unshift('')
-      this.focusFirst(this.$refs.hostnameList)
-    },
-    delSpeedHostname (item, index) {
-      this.getSpeedTestConfig().hostnameList.splice(index, 1)
-    },
-    delEmptySpeedHostname () {
-      for (let i = this.getSpeedTestConfig().hostnameList.length - 1; i >= 0; i--) {
-        const hostname = this.handleHostname(this.getSpeedTestConfig().hostnameList[i])
-        if (!hostname) {
-          this.getSpeedTestConfig().hostnameList.splice(i, 1)
-        }
-      }
-    },
-    reSpeedTest () {
-      this.$api.server.reSpeedTest()
-    },
-    registerSpeedTestEvent () {
-      const listener = async (event, message) => {
-        console.log('get speed event', event, message)
-        if (message.key === 'getList') {
-          this.speedTestList = message.value
-        }
-      }
-      this.$api.ipc.on('speed', listener)
-      this.speedRefreshInterval = this.startSpeedRefreshInterval()
-      this.reloadAllSpeedTester()
-    },
-    async reloadAllSpeedTester () {
-      this.$api.server.getSpeedTestList()
-    },
-    startSpeedRefreshInterval () {
-      return setInterval(() => {
-        this.reloadAllSpeedTester()
-      }, 5000)
-    },
-    async handleTabChange (key) {
-      this.activeTabKey = key
-      if (key !== '2' && key !== '3' && key !== '5' && key !== '6' && key !== '7') {
-        // 没有 JsonEditor，启用SearchBar
-        window.config.disableSearchBar = false
-      } else {
-        // 有 JsonEditor，禁用SearchBar
-        window.config.disableSearchBar = true
-      }
-    },
-  },
+		// whiteList
+		initWhiteList() {
+			this.whiteList = [];
+			for (const key in this.config.server.whiteList) {
+				const value = this.config.server.whiteList[key];
+				this.whiteList.push({
+					key: key || "",
+					value: value === true ? "true" : "false",
+				});
+			}
+		},
+		addWhiteList() {
+			this.whiteList.unshift({ key: "", value: "true" });
+			this.focusFirst(this.$refs.whiteList);
+		},
+		deleteWhiteList(item, index) {
+			this.whiteList.splice(index, 1);
+		},
+		submitWhiteList() {
+			const whiteList = {};
+			for (const item of this.whiteList) {
+				if (item.key) {
+					const hostname = this.handleHostname(item.key);
+					if (hostname) {
+						whiteList[hostname] = item.value === "true";
+					}
+				}
+			}
+			this.config.server.whiteList = whiteList;
+		},
+		getSpeedTestConfig() {
+			return this.config.server.dns.speedTest;
+		},
+		addSpeedHostname() {
+			this.getSpeedTestConfig().hostnameList.unshift("");
+			this.focusFirst(this.$refs.hostnameList);
+		},
+		delSpeedHostname(item, index) {
+			this.getSpeedTestConfig().hostnameList.splice(index, 1);
+		},
+		delEmptySpeedHostname() {
+			for (
+				let i = this.getSpeedTestConfig().hostnameList.length - 1;
+				i >= 0;
+				i--
+			) {
+				const hostname = this.handleHostname(
+					this.getSpeedTestConfig().hostnameList[i],
+				);
+				if (!hostname) {
+					this.getSpeedTestConfig().hostnameList.splice(i, 1);
+				}
+			}
+		},
+		reSpeedTest() {
+			this.$api.server.reSpeedTest();
+		},
+		registerSpeedTestEvent() {
+			const listener = async (event, message) => {
+				console.log("get speed event", event, message);
+				if (message.key === "getList") {
+					this.speedTestList = message.value;
+				}
+			};
+			this.$api.ipc.on("speed", listener);
+			this.speedRefreshInterval = this.startSpeedRefreshInterval();
+			this.reloadAllSpeedTester();
+		},
+		async reloadAllSpeedTester() {
+			this.$api.server.getSpeedTestList();
+		},
+		startSpeedRefreshInterval() {
+			return setInterval(() => {
+				this.reloadAllSpeedTester();
+			}, 5000);
+		},
+		async handleTabChange(key) {
+			this.activeTabKey = key;
+			if (
+				key !== "2" &&
+				key !== "3" &&
+				key !== "5" &&
+				key !== "6" &&
+				key !== "7"
+			) {
+				// 没有 JsonEditor，启用SearchBar
+				window.config.disableSearchBar = false;
+			} else {
+				// 有 JsonEditor，禁用SearchBar
+				window.config.disableSearchBar = true;
+			}
+		},
+	},
 });
 </script>
 

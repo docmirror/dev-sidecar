@@ -1,18 +1,18 @@
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'TreeNode',
+	name: "TreeNode",
 
-  props: {
-    treeData: Array,
-  },
+	props: {
+		treeData: Array,
+	},
 
-  methods: {
-    async openExternal (url) {
-      await this.$api.ipc.openExternal(url)
-    },
-  },
+	methods: {
+		async openExternal(url) {
+			await this.$api.ipc.openExternal(url);
+		},
+	},
 });
 </script>
 

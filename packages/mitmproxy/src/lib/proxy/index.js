@@ -1,2 +1,2 @@
 // require('babel-polyfill')
-module.exports = require('./mitmproxy')
+module.exports = require("./mitmproxy");

@@ -1,3 +1,3 @@
-const { ChoiceCache } = require('./index')
+const { ChoiceCache } = require("./index");
 
-module.exports = new ChoiceCache()
+module.exports = new ChoiceCache();

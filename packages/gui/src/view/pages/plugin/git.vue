@@ -1,79 +1,83 @@
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
-import { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
-import Plugin from '../../mixins/plugin'
+import {
+	PlusOutlined,
+	MinusOutlined,
+	SyncOutlined,
+	CheckOutlined,
+} from "@ant-design/icons-vue";
+import Plugin from "../../mixins/plugin";
 
 export default defineComponent({
-  name: 'Git',
-  components: { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
-  mixins: [Plugin],
+	name: "Git",
+	components: { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
+	mixins: [Plugin],
 
-  data () {
-    return {
-      key: 'plugin.git',
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 },
-      noProxyUrls: [],
-      needRestart: false,
-    }
-  },
+	data() {
+		return {
+			key: "plugin.git",
+			labelCol: { span: 4 },
+			wrapperCol: { span: 20 },
+			noProxyUrls: [],
+			needRestart: false,
+		};
+	},
 
-  created () {
-    console.log('status:', this.status)
-  },
+	created() {
+		console.log("status:", this.status);
+	},
 
-  mounted () {
-  },
+	mounted() {},
 
-  methods: {
-    ready () {
-      this.initNoProxyUrls()
-    },
-    async applyBefore () {
-      if (this.status.plugin.git.enabled) {
-        await this.$api.plugin.git.close()
-        this.needRestart = true
-      } else {
-        this.needRestart = false
-      }
-      this.submitNoProxyUrls()
-    },
-    async applyAfter () {
-      if (this.needRestart) {
-        await this.$api.plugin.git.start()
-      }
-    },
-    initNoProxyUrls () {
-      this.noProxyUrls = []
-      for (const key in this.config.plugin.git.setting.noProxyUrls) {
-        const value = this.config.plugin.git.setting.noProxyUrls[key]
-        this.noProxyUrls.push({
-          key,
-          value,
-        })
-      }
-    },
-    addNoProxyUrl () {
-      this.noProxyUrls.unshift({ key: '' })
-      this.focusFirst(this.$refs.noProxyUrls)
-    },
-    delNoProxyUrl (item, index) {
-      this.noProxyUrls.splice(index, 1)
-    },
-    submitNoProxyUrls () {
-      const noProxyUrls = {}
-      for (const item of this.noProxyUrls) {
-        if (item.key) {
-          const hostname = this.handleHostname(item.key)
-          if (hostname) {
-            noProxyUrls[hostname] = true
-          }
-        }
-      }
-      this.config.plugin.git.setting.noProxyUrls = noProxyUrls
-    },
-  },
+	methods: {
+		ready() {
+			this.initNoProxyUrls();
+		},
+		async applyBefore() {
+			if (this.status.plugin.git.enabled) {
+				await this.$api.plugin.git.close();
+				this.needRestart = true;
+			} else {
+				this.needRestart = false;
+			}
+			this.submitNoProxyUrls();
+		},
+		async applyAfter() {
+			if (this.needRestart) {
+				await this.$api.plugin.git.start();
+			}
+		},
+		initNoProxyUrls() {
+			this.noProxyUrls = [];
+			for (const key in this.config.plugin.git.setting.noProxyUrls) {
+				const value = this.config.plugin.git.setting.noProxyUrls[key];
+				this.noProxyUrls.push({
+					key,
+					value,
+				});
+			}
+		},
+		addNoProxyUrl() {
+			this.noProxyUrls.unshift({ key: "" });
+			this.focusFirst(this.$refs.noProxyUrls);
+		},
+		delNoProxyUrl(item, index) {
+			this.noProxyUrls.splice(index, 1);
+		},
+		submitNoProxyUrls() {
+			const noProxyUrls = {};
+			for (const item of this.noProxyUrls) {
+				if (item.key) {
+					const hostname = this.handleHostname(item.key);
+					if (hostname) {
+						noProxyUrls[hostname] = true;
+					}
+				}
+			}
+			this.config.plugin.git.setting.noProxyUrls = noProxyUrls;
+		},
+	},
 });
 </script>
 

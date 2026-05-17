@@ -1,44 +1,45 @@
 module.exports = {
-  name: 'NPM加速',
-  enabled: false,
-  tip: '如果你没有安装nodejs则不需要启动它',
-  startup: {
-    variables: true,
-  },
-  setting: {
-    'command': 'npm',
-    'strict-ssl': true,
-    'cafile': false,
-    'NODE_EXTRA_CA_CERTS': false,
-    'NODE_TLS_REJECT_UNAUTHORIZED': false,
-    'registry': 'https://registry.npmjs.org', // 可以选择切换官方或者淘宝镜像
-    'registryList': {
-      taobao: {
-        name: 'taobao镜像',
-        value: 'https://registry.npmmirror.com',
-      },
-      ustclug: {
-        name: '中国科学技术大学镜像',
-        value: 'https://npmreg.proxy.ustclug.org',
-      },
-    },
-    'yarnRegistry': 'default',
-    'yarnRegistryList': {
-      taobao: {
-        name: 'taobao镜像',
-        value: 'https://registry.npmmirror.com',
-      },
-    },
-  },
-  variables: {
-    phantomjs_cdnurl: 'https://npmmirror.com/mirrors/phantomjs',
-    chromedriver_cdnurl: 'https://npmmirror.com/mirrors/chromedriver',
-    sass_binary_site: 'https://npmmirror.com/mirrors/node-sass',
-    ELECTRON_MIRROR: 'https://npmmirror.com/mirrors/electron/',
-    NVM_NODEJS_ORG_MIRROR: 'https://npmmirror.com/mirrors/node',
-    CHROMEDRIVER_CDNURL: 'https://npmmirror.com/mirrors/chromedriver',
-    OPERADRIVER: 'https://npmmirror.com/mirrors/operadriver',
-    ELECTRON_BUILDER_BINARIES_MIRROR: 'https://npmmirror.com/mirrors/electron-builder-binaries/',
-    PYTHON_MIRROR: 'https://npmmirror.com/mirrors/python',
-  },
-}
+	name: "NPM加速",
+	enabled: false,
+	tip: "如果你没有安装nodejs则不需要启动它",
+	startup: {
+		variables: true,
+	},
+	setting: {
+		command: "npm",
+		"strict-ssl": true,
+		cafile: false,
+		NODE_EXTRA_CA_CERTS: false,
+		NODE_TLS_REJECT_UNAUTHORIZED: false,
+		registry: "https://registry.npmjs.org", // 可以选择切换官方或者淘宝镜像
+		registryList: {
+			taobao: {
+				name: "taobao镜像",
+				value: "https://registry.npmmirror.com",
+			},
+			ustclug: {
+				name: "中国科学技术大学镜像",
+				value: "https://npmreg.proxy.ustclug.org",
+			},
+		},
+		yarnRegistry: "default",
+		yarnRegistryList: {
+			taobao: {
+				name: "taobao镜像",
+				value: "https://registry.npmmirror.com",
+			},
+		},
+	},
+	variables: {
+		phantomjs_cdnurl: "https://npmmirror.com/mirrors/phantomjs",
+		chromedriver_cdnurl: "https://npmmirror.com/mirrors/chromedriver",
+		sass_binary_site: "https://npmmirror.com/mirrors/node-sass",
+		ELECTRON_MIRROR: "https://npmmirror.com/mirrors/electron/",
+		NVM_NODEJS_ORG_MIRROR: "https://npmmirror.com/mirrors/node",
+		CHROMEDRIVER_CDNURL: "https://npmmirror.com/mirrors/chromedriver",
+		OPERADRIVER: "https://npmmirror.com/mirrors/operadriver",
+		ELECTRON_BUILDER_BINARIES_MIRROR:
+			"https://npmmirror.com/mirrors/electron-builder-binaries/",
+		PYTHON_MIRROR: "https://npmmirror.com/mirrors/python",
+	},
+};

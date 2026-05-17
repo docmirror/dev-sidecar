@@ -1,120 +1,151 @@
 <script>
-import lodash from 'lodash'
-import Plugin from '../../mixins/plugin'
+import lodash from "lodash";
+import Plugin from "../../mixins/plugin";
 
 export default {
-  name: 'FreeEye',
-  mixins: [Plugin],
-  data () {
-    return {
-      key: 'plugin.free_eye',
-      running: false,
-      lastResult: null,
-      summaryColumns: [
-        { title: '测试', dataIndex: 'tag', key: 'tag' },
-        { title: '状态', dataIndex: 'status', key: 'status', scopedSlots: { customRender: 'status' } },
-        { title: '耗时', dataIndex: 'duration', key: 'duration', scopedSlots: { customRender: 'duration' } },
-        { title: '输出', dataIndex: 'output', key: 'output', scopedSlots: { customRender: 'output' } },
-      ],
-      unwatchStatus: null,
-    }
-  },
-  computed: {
-    pluginStatus () {
-      return lodash.get(this.$status, 'plugin.free_eye', {})
-    },
-    summaryData () {
-      if (!this.lastResult || !Array.isArray(this.lastResult.summaries)) {
-        return []
-      }
-      return this.lastResult.summaries.map((item, index) => ({
-        key: `${item.tag || 'test'}-${index}`,
-        ...item,
-        status: item.skipped ? 'skipped' : 'completed',
-      }))
-    },
-    logs () {
-      if (!this.lastResult || !Array.isArray(this.lastResult.logs)) {
-        return []
-      }
-      return this.lastResult.logs
-    },
-    rawLogsText () {
-      if (!this.lastResult) {
-        return ''
-      }
-      if (Array.isArray(this.lastResult.logs) && this.lastResult.logs.length > 0) {
-        return this.lastResult.logs.map((entry) => {
-          const timestamp = entry && entry.timestamp ? new Date(entry.timestamp) : null
-          const formattedTime = timestamp && !Number.isNaN(timestamp.getTime())
-            ? timestamp.toLocaleString()
-            : ''
-          const level = entry && entry.level ? `[${String(entry.level).toUpperCase()}]` : ''
-          const message = entry && entry.message ? entry.message : ''
-          return `${formattedTime ? `${formattedTime} ` : ''}${level} ${message}`.trim()
-        }).join('\n')
-      }
-      return (this.lastResult.raw
-        || this.lastResult.output
-        || (this.lastResult.results ? JSON.stringify(this.lastResult.results, null, 2) : ''))
-    },
-  },
-  created () {
-    this.unwatchStatus = this.$watch(
-      () => lodash.get(this.$status, 'plugin.free_eye.result'),
-      () => this.refreshResult(),
-      { deep: true },
-    )
-  },
-  mounted () {
-    this.refreshResult()
-  },
-  beforeDestroy () {
-    if (this.unwatchStatus) {
-      this.unwatchStatus()
-    }
-  },
-  methods: {
-    ready () {
-      this.refreshResult()
-    },
-    refreshResult () {
-      this.lastResult = lodash.cloneDeep(lodash.get(this.$status, 'plugin.free_eye.result', null))
-    },
-    formatTime (value) {
-      if (!value) {
-        return '-'
-      }
-      const date = new Date(value)
-      if (Number.isNaN(date.getTime())) {
-        return value
-      }
-      return date.toLocaleString()
-    },
-    formatSeconds (value) {
-      if (value == null || Number.isNaN(Number(value))) {
-        return '-'
-      }
-      return `${Number(value).toFixed(3)}s`
-    },
-    async runTests () {
-      if (this.running) {
-        return
-      }
-      this.running = true
-      try {
-        const ret = await this.$api.plugin.free_eye.run()
-        this.lastResult = ret
-        this.$message.success('检测完成')
-      } catch (err) {
-        const message = err && err.message ? err.message : err
-        this.$message.error(`检测失败: ${message}`)
-      } finally {
-        this.running = false
-      }
-    },
-  },
-}
+	name: "FreeEye",
+	mixins: [Plugin],
+	data() {
+		return {
+			key: "plugin.free_eye",
+			running: false,
+			lastResult: null,
+			summaryColumns: [
+				{ title: "测试", dataIndex: "tag", key: "tag" },
+				{
+					title: "状态",
+					dataIndex: "status",
+					key: "status",
+					scopedSlots: { customRender: "status" },
+				},
+				{
+					title: "耗时",
+					dataIndex: "duration",
+					key: "duration",
+					scopedSlots: { customRender: "duration" },
+				},
+				{
+					title: "输出",
+					dataIndex: "output",
+					key: "output",
+					scopedSlots: { customRender: "output" },
+				},
+			],
+			unwatchStatus: null,
+		};
+	},
+	computed: {
+		pluginStatus() {
+			return lodash.get(this.$status, "plugin.free_eye", {});
+		},
+		summaryData() {
+			if (!this.lastResult || !Array.isArray(this.lastResult.summaries)) {
+				return [];
+			}
+			return this.lastResult.summaries.map((item, index) => ({
+				key: `${item.tag || "test"}-${index}`,
+				...item,
+				status: item.skipped ? "skipped" : "completed",
+			}));
+		},
+		logs() {
+			if (!this.lastResult || !Array.isArray(this.lastResult.logs)) {
+				return [];
+			}
+			return this.lastResult.logs;
+		},
+		rawLogsText() {
+			if (!this.lastResult) {
+				return "";
+			}
+			if (
+				Array.isArray(this.lastResult.logs) &&
+				this.lastResult.logs.length > 0
+			) {
+				return this.lastResult.logs
+					.map((entry) => {
+						const timestamp =
+							entry && entry.timestamp ? new Date(entry.timestamp) : null;
+						const formattedTime =
+							timestamp && !Number.isNaN(timestamp.getTime())
+								? timestamp.toLocaleString()
+								: "";
+						const level =
+							entry && entry.level
+								? `[${String(entry.level).toUpperCase()}]`
+								: "";
+						const message = entry && entry.message ? entry.message : "";
+						return `${formattedTime ? `${formattedTime} ` : ""}${level} ${message}`.trim();
+					})
+					.join("\n");
+			}
+			return (
+				this.lastResult.raw ||
+				this.lastResult.output ||
+				(this.lastResult.results
+					? JSON.stringify(this.lastResult.results, null, 2)
+					: "")
+			);
+		},
+	},
+	created() {
+		this.unwatchStatus = this.$watch(
+			() => lodash.get(this.$status, "plugin.free_eye.result"),
+			() => this.refreshResult(),
+			{ deep: true },
+		);
+	},
+	mounted() {
+		this.refreshResult();
+	},
+	beforeDestroy() {
+		if (this.unwatchStatus) {
+			this.unwatchStatus();
+		}
+	},
+	methods: {
+		ready() {
+			this.refreshResult();
+		},
+		refreshResult() {
+			this.lastResult = lodash.cloneDeep(
+				lodash.get(this.$status, "plugin.free_eye.result", null),
+			);
+		},
+		formatTime(value) {
+			if (!value) {
+				return "-";
+			}
+			const date = new Date(value);
+			if (Number.isNaN(date.getTime())) {
+				return value;
+			}
+			return date.toLocaleString();
+		},
+		formatSeconds(value) {
+			if (value == null || Number.isNaN(Number(value))) {
+				return "-";
+			}
+			return `${Number(value).toFixed(3)}s`;
+		},
+		async runTests() {
+			if (this.running) {
+				return;
+			}
+			this.running = true;
+			try {
+				const ret = await this.$api.plugin.free_eye.run();
+				this.lastResult = ret;
+				this.$message.success("检测完成");
+			} catch (err) {
+				const message = err && err.message ? err.message : err;
+				this.$message.error(`检测失败: ${message}`);
+			} finally {
+				this.running = false;
+			}
+		},
+	},
+};
 </script>
 
 <template>

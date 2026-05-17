@@ -1,5 +1,5 @@
-const loggerFactory = require('./util.logger')
+const loggerFactory = require("./util.logger");
 
-const logger = loggerFactory.getLogger('core')
+const logger = loggerFactory.getLogger("core");
 
-module.exports = logger
+module.exports = logger;

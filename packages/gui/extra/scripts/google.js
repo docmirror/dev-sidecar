@@ -10,11 +10,11 @@
 // @namespace
 // ==/UserScript==
 
-(function () {
-  console.log('google script  loaded')
-  const aList = document.getElementsByTagName('a')
-  for (let i = 0; i <= aList.length; i++) {
-    console.log(aList[i].href)
-    aList[i].ping = undefined
-  }
-})()
+(() => {
+	console.log("google script  loaded");
+	const aList = document.getElementsByTagName("a");
+	for (let i = 0; i <= aList.length; i++) {
+		console.log(aList[i].href);
+		aList[i].ping = undefined;
+	}
+})();

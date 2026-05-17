@@ -1,54 +1,58 @@
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
-import { SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
-import Plugin from '../../mixins/plugin'
+import { SyncOutlined, CheckOutlined } from "@ant-design/icons-vue";
+import Plugin from "../../mixins/plugin";
 
 export default defineComponent({
-  name: 'Pip',
-  mixins: [Plugin],
+	name: "Pip",
+	mixins: [Plugin],
 
-  components: { SyncOutlined, CheckOutlined },
+	components: { SyncOutlined, CheckOutlined },
 
-  data () {
-    return {
-      key: 'plugin.pip',
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 },
-      npmVariables: undefined,
-      registry: false,
-      trustedHostList: [],
-    }
-  },
+	data() {
+		return {
+			key: "plugin.pip",
+			labelCol: { span: 4 },
+			wrapperCol: { span: 20 },
+			npmVariables: undefined,
+			registry: false,
+			trustedHostList: [],
+		};
+	},
 
-  created () {
-    console.log('status:', this.status)
-  },
+	created() {
+		console.log("status:", this.status);
+	},
 
-  mounted () {
-  },
+	mounted() {},
 
-  methods: {
-    ready () {
-    },
-    async applyBefore () {
-      this.config.plugin.pip.setting.trustedHost = this.config.plugin.pip.setting.trustedHost.replaceAll(/[,，。+\s]+/g, ' ').trim()
-    },
-    async applyAfter () {
-      await this.$api.plugin.pip.start()
-      await this.$api.proxy.restart()
-    },
-    async onSwitchRegistry (event) {
-      await this.setRegistry({ registry: event.target.value })
-      this.$message.success('切换成功')
-    },
-    async setRegistry ({ registry }) {
-      this.config.plugin.pip.setting.registry = registry
-      const domain = registry.substring(registry.indexOf('//') + 2, registry.indexOf('/', 8))
-      this.config.plugin.pip.setting.trustedHost = domain
-      await this.apply()
-    },
-  },
+	methods: {
+		ready() {},
+		async applyBefore() {
+			this.config.plugin.pip.setting.trustedHost =
+				this.config.plugin.pip.setting.trustedHost
+					.replaceAll(/[,，。+\s]+/g, " ")
+					.trim();
+		},
+		async applyAfter() {
+			await this.$api.plugin.pip.start();
+			await this.$api.proxy.restart();
+		},
+		async onSwitchRegistry(event) {
+			await this.setRegistry({ registry: event.target.value });
+			this.$message.success("切换成功");
+		},
+		async setRegistry({ registry }) {
+			this.config.plugin.pip.setting.registry = registry;
+			const domain = registry.substring(
+				registry.indexOf("//") + 2,
+				registry.indexOf("/", 8),
+			);
+			this.config.plugin.pip.setting.trustedHost = domain;
+			await this.apply();
+		},
+	},
 });
 </script>
 

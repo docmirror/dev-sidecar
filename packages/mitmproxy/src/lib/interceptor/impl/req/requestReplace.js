@@ -1,57 +1,66 @@
-const REMOVE = '[remove]'
+const REMOVE = "[remove]";
 
-const DS_DOWNLOAD_CHECK_RE = /DS_DOWNLOAD/i
-const DS_DOWNLOAD_STRIP_RE = /[?&/]?DS_DOWNLOAD(=[^?&/]+)?$/i
+const DS_DOWNLOAD_CHECK_RE = /DS_DOWNLOAD/i;
+const DS_DOWNLOAD_STRIP_RE = /[?&/]?DS_DOWNLOAD(=[^?&/]+)?$/i;
 
-function replaceRequestHeaders (rOptions, headers, log) {
-  for (const key in headers) {
-    let value = headers[key]
-    if (value === REMOVE) {
-      value = null
-    }
+function replaceRequestHeaders(rOptions, headers, log) {
+	for (const key in headers) {
+		let value = headers[key];
+		if (value === REMOVE) {
+			value = null;
+		}
 
-    if (value) {
-      log.debug(`[DS-RequestReplace-Interceptor] replace '${key}': '${rOptions.headers[key.toLowerCase()]}' -> '${value}'`)
-      rOptions.headers[key.toLowerCase()] = value
-    } else if (rOptions.headers[key.toLowerCase()]) {
-      log.debug(`[DS-RequestReplace-Interceptor] remove '${key}': '${rOptions.headers[key.toLowerCase()]}'`)
-      delete rOptions.headers[key.toLowerCase()]
-    }
-  }
+		if (value) {
+			log.debug(
+				`[DS-RequestReplace-Interceptor] replace '${key}': '${rOptions.headers[key.toLowerCase()]}' -> '${value}'`,
+			);
+			rOptions.headers[key.toLowerCase()] = value;
+		} else if (rOptions.headers[key.toLowerCase()]) {
+			log.debug(
+				`[DS-RequestReplace-Interceptor] remove '${key}': '${rOptions.headers[key.toLowerCase()]}'`,
+			);
+			delete rOptions.headers[key.toLowerCase()];
+		}
+	}
 
-  log.debug(`[DS-RequestReplace-Interceptor] 最终headers: \r\n${JSON.stringify(rOptions.headers, null, '\t')}`)
+	log.debug(
+		`[DS-RequestReplace-Interceptor] 最终headers: \r\n${JSON.stringify(rOptions.headers, null, "\t")}`,
+	);
 }
 
 module.exports = {
-  name: 'requestReplace',
-  priority: 111,
-  requestIntercept (context, interceptOpt, req, res, ssl, next) {
-    const { rOptions, log } = context
+	name: "requestReplace",
+	priority: 111,
+	requestIntercept(context, interceptOpt, req, res, ssl, next) {
+		const { rOptions, log } = context;
 
-    const requestReplaceConfig = interceptOpt.requestReplace
+		const requestReplaceConfig = interceptOpt.requestReplace;
 
-    let actions = ''
+		let actions = "";
 
-    // 替换请求头
-    if (requestReplaceConfig.headers) {
-      replaceRequestHeaders(rOptions, requestReplaceConfig.headers, log)
-      actions += `${actions ? ',' : ''}headers`
-    }
+		// 替换请求头
+		if (requestReplaceConfig.headers) {
+			replaceRequestHeaders(rOptions, requestReplaceConfig.headers, log);
+			actions += `${actions ? "," : ""}headers`;
+		}
 
-    // 替换下载文件请求的请求地址（此功能主要是为了方便拦截配置）
-    // 注：要转换为下载请求，需要 responseReplace 拦截器的配合使用。
-    if (requestReplaceConfig.doDownload && DS_DOWNLOAD_CHECK_RE.test(rOptions.path)) {
-      rOptions.doDownload = true
-      rOptions.path = rOptions.path.replace(DS_DOWNLOAD_STRIP_RE, '')
-      actions += `${actions ? ',' : ''}path:remove-DS_DOWNLOAD`
-    }
+		// 替换下载文件请求的请求地址（此功能主要是为了方便拦截配置）
+		// 注：要转换为下载请求，需要 responseReplace 拦截器的配合使用。
+		if (
+			requestReplaceConfig.doDownload &&
+			DS_DOWNLOAD_CHECK_RE.test(rOptions.path)
+		) {
+			rOptions.doDownload = true;
+			rOptions.path = rOptions.path.replace(DS_DOWNLOAD_STRIP_RE, "");
+			actions += `${actions ? "," : ""}path:remove-DS_DOWNLOAD`;
+		}
 
-    res.setHeader('DS-RequestReplace-Interceptor', actions)
+		res.setHeader("DS-RequestReplace-Interceptor", actions);
 
-    const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`
-    log.info('requestReplace intercept:', url)
-  },
-  is (interceptOpt) {
-    return !!interceptOpt.requestReplace
-  },
-}
+		const url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${req.url}`;
+		log.info("requestReplace intercept:", url);
+	},
+	is(interceptOpt) {
+		return !!interceptOpt.requestReplace;
+	},
+};

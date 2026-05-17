@@ -10,5 +10,5 @@ $type = Add-Type -MemberDefinition $signature -Name wininet -Namespace pinvoke -
 $a = $type::InternetSetOption(0, $INTERNET_OPTION_SETTINGS_CHANGED, 0, 0)
 $b = $type::InternetSetOption(0, $INTERNET_OPTION_REFRESH, 0, 0)
 $a -and $b
-`
-module.exports = script
+`;
+module.exports = script;

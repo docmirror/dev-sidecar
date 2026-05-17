@@ -1,341 +1,419 @@
 <script>
-import { ipcRenderer } from 'electron'
-import { ProfileOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
-import Plugin from '../mixins/plugin'
-import { colorTheme } from '../composables/theme'
+import { ipcRenderer } from "electron";
+import {
+	ProfileOutlined,
+	SyncOutlined,
+	CheckOutlined,
+} from "@ant-design/icons-vue";
+import Plugin from "../mixins/plugin";
+import { colorTheme } from "../composables/theme";
 
 export default {
-  name: 'Setting',
-  mixins: [Plugin],
-  components: { ProfileOutlined, SyncOutlined, CheckOutlined },
-  data () {
-    return {
-      key: 'app',
-      removeUserConfigLoading: false,
-      reloadLoading: false,
-      urlBackup: null,
-      personalUrlBackup: null,
-      maxLogFileSizeStep: 1, // 单位不同，值不同：GB=1，MB=100
-      maxLogFileSizeUnit: [
-        {
-          label: 'GB',
-          value: 'GB',
-        },
-        {
-          label: 'MB',
-          value: 'MB',
-        },
-      ],
-    }
-  },
-  methods: {
-    ready (config) {
-      this.urlBackup = config.app.remoteConfig.url
-      this.personalUrlBackup = config.app.remoteConfig.personalUrl
-    },
-    getEventKey (event) {
-      // 忽略以下键
-      switch (event.key) {
-        case 'Control':
-        case 'Alt':
-        case 'Shift':
-        case 'Meta': // Window键
-        case 'Escape':
-        case 'Backspace':
-        case 'Tab':
-        case 'CapsLock':
-        case 'NumLock':
-        case 'Enter':
-        case 'ArrowUp':
-        case 'ArrowDown':
-        case 'ArrowLeft':
-        case 'ArrowRight':
-          return ''
-      }
+	name: "Setting",
+	mixins: [Plugin],
+	components: { ProfileOutlined, SyncOutlined, CheckOutlined },
+	data() {
+		return {
+			key: "app",
+			removeUserConfigLoading: false,
+			reloadLoading: false,
+			urlBackup: null,
+			personalUrlBackup: null,
+			maxLogFileSizeStep: 1, // 单位不同，值不同：GB=1，MB=100
+			maxLogFileSizeUnit: [
+				{
+					label: "GB",
+					value: "GB",
+				},
+				{
+					label: "MB",
+					value: "MB",
+				},
+			],
+		};
+	},
+	methods: {
+		ready(config) {
+			this.urlBackup = config.app.remoteConfig.url;
+			this.personalUrlBackup = config.app.remoteConfig.personalUrl;
+		},
+		getEventKey(event) {
+			// 忽略以下键
+			switch (event.key) {
+				case "Control":
+				case "Alt":
+				case "Shift":
+				case "Meta": // Window键
+				case "Escape":
+				case "Backspace":
+				case "Tab":
+				case "CapsLock":
+				case "NumLock":
+				case "Enter":
+				case "ArrowUp":
+				case "ArrowDown":
+				case "ArrowLeft":
+				case "ArrowRight":
+					return "";
+			}
 
-      switch (event.code) {
-        // F1 ~ F12
-        case 'F1': return 'F1'
-        case 'F2': return 'F2'
-        case 'F3': return 'F3'
-        case 'F4': return 'F4'
-        case 'F5': return 'F5'
-        case 'F6': return 'F6'
-        case 'F7': return 'F7'
-        case 'F8': return 'F8'
-        case 'F9': return 'F9'
-        case 'F10': return 'F10'
-        case 'F11': return 'F11'
-        case 'F12': return 'F12'
+			switch (event.code) {
+				// F1 ~ F12
+				case "F1":
+					return "F1";
+				case "F2":
+					return "F2";
+				case "F3":
+					return "F3";
+				case "F4":
+					return "F4";
+				case "F5":
+					return "F5";
+				case "F6":
+					return "F6";
+				case "F7":
+					return "F7";
+				case "F8":
+					return "F8";
+				case "F9":
+					return "F9";
+				case "F10":
+					return "F10";
+				case "F11":
+					return "F11";
+				case "F12":
+					return "F12";
 
-        // 0 ~ 9
-        case 'Digit0': return '0'
-        case 'Digit1': return '1'
-        case 'Digit2': return '2'
-        case 'Digit3': return '3'
-        case 'Digit4': return '4'
-        case 'Digit5': return '5'
-        case 'Digit6': return '6'
-        case 'Digit7': return '7'
-        case 'Digit8': return '8'
-        case 'Digit9': return '9'
+				// 0 ~ 9
+				case "Digit0":
+					return "0";
+				case "Digit1":
+					return "1";
+				case "Digit2":
+					return "2";
+				case "Digit3":
+					return "3";
+				case "Digit4":
+					return "4";
+				case "Digit5":
+					return "5";
+				case "Digit6":
+					return "6";
+				case "Digit7":
+					return "7";
+				case "Digit8":
+					return "8";
+				case "Digit9":
+					return "9";
 
-        case 'Backquote': return '`'
-        case 'Minus': return '-'
-        case 'Equal': return '='
-        case 'Space': return 'Space'
+				case "Backquote":
+					return "`";
+				case "Minus":
+					return "-";
+				case "Equal":
+					return "=";
+				case "Space":
+					return "Space";
 
-        case 'BracketLeft': return '['
-        case 'BracketRight': return ']'
-        case 'Backslash': return '\\'
-        case 'Semicolon': return ';'
-        case 'Quote': return '\''
-        case 'Comma': return ','
-        case 'Period': return '.'
-        case 'Slash': return '/'
+				case "BracketLeft":
+					return "[";
+				case "BracketRight":
+					return "]";
+				case "Backslash":
+					return "\\";
+				case "Semicolon":
+					return ";";
+				case "Quote":
+					return "'";
+				case "Comma":
+					return ",";
+				case "Period":
+					return ".";
+				case "Slash":
+					return "/";
 
-        case 'Insert': return 'Insert'
-        case 'Delete': return 'Delete'
-        case 'Home': return 'Home'
-        case 'End': return 'End'
-        case 'PageUp': return 'PageUp'
-        case 'PageDown': return 'PageDown'
+				case "Insert":
+					return "Insert";
+				case "Delete":
+					return "Delete";
+				case "Home":
+					return "Home";
+				case "End":
+					return "End";
+				case "PageUp":
+					return "PageUp";
+				case "PageDown":
+					return "PageDown";
 
-        // 小键盘
-        case 'Numpad1': return 'Num1'
-        case 'Numpad2': return 'Num2'
-        case 'Numpad3': return 'Num3'
-        case 'Numpad4': return 'Num4'
-        case 'Numpad5': return 'Num5'
-        case 'Numpad6': return 'Num6'
-        case 'Numpad7': return 'Num7'
-        case 'Numpad8': return 'Num8'
-        case 'Numpad9': return 'Num9'
-        case 'Numpad0': return 'Num0'
+				// 小键盘
+				case "Numpad1":
+					return "Num1";
+				case "Numpad2":
+					return "Num2";
+				case "Numpad3":
+					return "Num3";
+				case "Numpad4":
+					return "Num4";
+				case "Numpad5":
+					return "Num5";
+				case "Numpad6":
+					return "Num6";
+				case "Numpad7":
+					return "Num7";
+				case "Numpad8":
+					return "Num8";
+				case "Numpad9":
+					return "Num9";
+				case "Numpad0":
+					return "Num0";
 
-        // 不支持监听以下几个键，返回空
-        case 'NumpadDivide': // return 'Num/'
-        case 'NumpadMultiply': // return 'Num*'
-        case 'NumpadDecimal': // return 'Num.'
-        case 'NumpadSubtract': // return 'Num-'
-        case 'NumpadAdd': // return 'Num+'
-          return ''
-      }
+				// 不支持监听以下几个键，返回空
+				case "NumpadDivide": // return 'Num/'
+				case "NumpadMultiply": // return 'Num*'
+				case "NumpadDecimal": // return 'Num.'
+				case "NumpadSubtract": // return 'Num-'
+				case "NumpadAdd": // return 'Num+'
+					return "";
+			}
 
-      // 字母
-      if (event.code.startsWith('Key') && event.code.length === 4) {
-        return event.key.toUpperCase()
-      }
+			// 字母
+			if (event.code.startsWith("Key") && event.code.length === 4) {
+				return event.key.toUpperCase();
+			}
 
-      console.error(`未能识别的按键：key=${event.key}, code=${event.code}, keyCode=${event.keyCode}`)
-      return ''
-    },
-    async disableBeforeInputEvent () {
-      clearTimeout(window.enableBeforeInputEventTimeout)
-      window.config.disableBeforeInputEvent = true
-      window.enableBeforeInputEventTimeout = setTimeout(() => {
-        window.config.disableBeforeInputEvent = false
-      }, 2000)
-    },
-    shortcutChange () {
-      this.config.app.showHideShortcut = '无'
-    },
-    shortcutKeyUp (event) {
-      event.preventDefault()
-      this.disableBeforeInputEvent()
-    },
-    shortcutKeyDown (event) {
-      event.preventDefault()
-      this.disableBeforeInputEvent()
+			console.error(
+				`未能识别的按键：key=${event.key}, code=${event.code}, keyCode=${event.keyCode}`,
+			);
+			return "";
+		},
+		async disableBeforeInputEvent() {
+			clearTimeout(window.enableBeforeInputEventTimeout);
+			window.config.disableBeforeInputEvent = true;
+			window.enableBeforeInputEventTimeout = setTimeout(() => {
+				window.config.disableBeforeInputEvent = false;
+			}, 2000);
+		},
+		shortcutChange() {
+			this.config.app.showHideShortcut = "无";
+		},
+		shortcutKeyUp(event) {
+			event.preventDefault();
+			this.disableBeforeInputEvent();
+		},
+		shortcutKeyDown(event) {
+			event.preventDefault();
+			this.disableBeforeInputEvent();
 
-      // console.info(`code=${event.code}, key=${event.key}, keyCode=${event.keyCode}`)
-      if (event.type !== 'keydown') {
-        return
-      }
+			// console.info(`code=${event.code}, key=${event.key}, keyCode=${event.keyCode}`)
+			if (event.type !== "keydown") {
+				return;
+			}
 
-      const key = this.getEventKey(event)
-      if (!key) {
-        this.config.app.showHideShortcut = '无'
-        return
-      }
+			const key = this.getEventKey(event);
+			if (!key) {
+				this.config.app.showHideShortcut = "无";
+				return;
+			}
 
-      // 判断 Ctrl、Alt、Shift、Window 按钮是否已按下，如果已按下，则拼接键值
-      let shortcut = event.ctrlKey ? 'Ctrl + ' : ''
-      if (event.altKey) {
-        shortcut += 'Alt + '
-      }
-      if (event.shiftKey) {
-        shortcut += 'Shift + '
-      }
-      if (event.metaKey) {
-        shortcut += 'Meta + '
-      }
+			// 判断 Ctrl、Alt、Shift、Window 按钮是否已按下，如果已按下，则拼接键值
+			let shortcut = event.ctrlKey ? "Ctrl + " : "";
+			if (event.altKey) {
+				shortcut += "Alt + ";
+			}
+			if (event.shiftKey) {
+				shortcut += "Shift + ";
+			}
+			if (event.metaKey) {
+				shortcut += "Meta + ";
+			}
 
-      // 如果以上按钮都没有按下，并且当前键不是F1、F2、F4、F6~F11时，则直接返回（注：F5已经是刷新页面快捷键、F12已经是打开DevTools的快捷键了）
-      if (shortcut === '' && !key.match(/^F([1246-9]|1[01])$/g)) {
-        this.config.app.showHideShortcut = '无'
-        return
-      }
+			// 如果以上按钮都没有按下，并且当前键不是F1、F2、F4、F6~F11时，则直接返回（注：F5已经是刷新页面快捷键、F12已经是打开DevTools的快捷键了）
+			if (shortcut === "" && !key.match(/^F([1246-9]|1[01])$/g)) {
+				this.config.app.showHideShortcut = "无";
+				return;
+			}
 
-      // 拼接键值
-      shortcut += key
+			// 拼接键值
+			shortcut += key;
 
-      if (shortcut === 'Ctrl + F' || shortcut === 'Shift + F3') {
-        shortcut = '无' // 如果是其他已被占用快捷键，则设置为 '无'
-      }
+			if (shortcut === "Ctrl + F" || shortcut === "Shift + F3") {
+				shortcut = "无"; // 如果是其他已被占用快捷键，则设置为 '无'
+			}
 
-      this.config.app.showHideShortcut = shortcut
-    },
-    async applyBefore () {
-      if (!this.config.app.showHideShortcut) {
-        this.config.app.showHideShortcut = '无'
-      }
-    },
-    async applyAfter () {
-      let reloadLazy = 10
+			this.config.app.showHideShortcut = shortcut;
+		},
+		async applyBefore() {
+			if (!this.config.app.showHideShortcut) {
+				this.config.app.showHideShortcut = "无";
+			}
+		},
+		async applyAfter() {
+			let reloadLazy = 10;
 
-      let theme = this.config.app.theme
-      if (theme === 'system') {
-        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      }
-      colorTheme.value = theme
+			let theme = this.config.app.theme;
+			if (theme === "system") {
+				theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+					? "dark"
+					: "light";
+			}
+			colorTheme.value = theme;
 
-      // 判断远程配置地址是否变更过，如果是则重载远程配置并重启服务
-      if (this.config.app.remoteConfig.url !== this.urlBackup || this.config.app.remoteConfig.personalUrl !== this.personalUrlBackup) {
-        await this.$api.config.downloadRemoteConfig()
-        await this.reloadConfigAndRestart()
-        reloadLazy = 300
-        setTimeout(() => window.location.reload(), reloadLazy)
-      }
+			// 判断远程配置地址是否变更过，如果是则重载远程配置并重启服务
+			if (
+				this.config.app.remoteConfig.url !== this.urlBackup ||
+				this.config.app.remoteConfig.personalUrl !== this.personalUrlBackup
+			) {
+				await this.$api.config.downloadRemoteConfig();
+				await this.reloadConfigAndRestart();
+				reloadLazy = 300;
+				setTimeout(() => window.location.reload(), reloadLazy);
+			}
 
-      // 变更 “打开窗口快捷键”
-      ipcRenderer.send('change-showHideShortcut', this.config.app.showHideShortcut)
-    },
-    async openExternal (url) {
-      await this.$api.ipc.openExternal(url)
-    },
-    onAutoStartChange () {
-      this.$api.autoStart.enabled(this.config.app.autoStart.enabled)
-      this.saveConfig()
-    },
-    async onRemoteConfigEnabledChange () {
-      await this.saveConfig()
-      if (this.config.app.remoteConfig.enabled === true) {
-        this.reloadLoading = true
-        try {
-          this.$message.info('开始下载远程配置')
-          await this.$api.config.downloadRemoteConfig()
-          this.$message.info('下载远程配置成功，开始重启代理服务和系统代理')
-          await this.reloadConfigAndRestart()
-        } finally {
-          this.reloadLoading = false
-        }
-      } else {
-        this.$message.info('远程配置已关闭，开始重启代理服务和系统代理')
-        await this.reloadConfigAndRestart()
-      }
-    },
-    async reloadRemoteConfig () {
-      if (this.config.app.remoteConfig.enabled === false) {
-        return
-      }
+			// 变更 “打开窗口快捷键”
+			ipcRenderer.send(
+				"change-showHideShortcut",
+				this.config.app.showHideShortcut,
+			);
+		},
+		async openExternal(url) {
+			await this.$api.ipc.openExternal(url);
+		},
+		onAutoStartChange() {
+			this.$api.autoStart.enabled(this.config.app.autoStart.enabled);
+			this.saveConfig();
+		},
+		async onRemoteConfigEnabledChange() {
+			await this.saveConfig();
+			if (this.config.app.remoteConfig.enabled === true) {
+				this.reloadLoading = true;
+				try {
+					this.$message.info("开始下载远程配置");
+					await this.$api.config.downloadRemoteConfig();
+					this.$message.info("下载远程配置成功，开始重启代理服务和系统代理");
+					await this.reloadConfigAndRestart();
+				} finally {
+					this.reloadLoading = false;
+				}
+			} else {
+				this.$message.info("远程配置已关闭，开始重启代理服务和系统代理");
+				await this.reloadConfigAndRestart();
+			}
+		},
+		async reloadRemoteConfig() {
+			if (this.config.app.remoteConfig.enabled === false) {
+				return;
+			}
 
-      this.reloadLoading = true
-      try {
-        const remoteConfig = {}
+			this.reloadLoading = true;
+			try {
+				const remoteConfig = {};
 
-        await this.$api.config.readRemoteConfigStr().then((ret) => {
-          remoteConfig.old1 = ret
-        })
-        await this.$api.config.readRemoteConfigStr('_personal').then((ret) => {
-          remoteConfig.old2 = ret
-        })
-        await this.$api.config.downloadRemoteConfig()
-        await this.$api.config.readRemoteConfigStr().then((ret) => {
-          remoteConfig.new1 = ret
-        })
-        await this.$api.config.readRemoteConfigStr('_personal').then((ret) => {
-          remoteConfig.new2 = ret
-        })
+				await this.$api.config.readRemoteConfigStr().then((ret) => {
+					remoteConfig.old1 = ret;
+				});
+				await this.$api.config.readRemoteConfigStr("_personal").then((ret) => {
+					remoteConfig.old2 = ret;
+				});
+				await this.$api.config.downloadRemoteConfig();
+				await this.$api.config.readRemoteConfigStr().then((ret) => {
+					remoteConfig.new1 = ret;
+				});
+				await this.$api.config.readRemoteConfigStr("_personal").then((ret) => {
+					remoteConfig.new2 = ret;
+				});
 
-        if (remoteConfig.old1 === remoteConfig.new1 && remoteConfig.old2 === remoteConfig.new2) {
-          this.$message.info('远程配置没有变化，不做任何处理。')
-          this.$message.warn('如果您确实修改了远程配置，请稍等片刻再重试！')
-        } else {
-          this.$message.success('获取到了最新的远程配置，开始重启代理服务和系统代理')
-          await this.reloadConfigAndRestart()
-        }
-      } finally {
-        this.reloadLoading = false
-      }
-    },
-    async restoreFactorySettings () {
-      this.$confirm({
-        title: '确定要恢复出厂设置吗？',
-        width: 610,
-        content: h => h('div', { class: 'restore-factory-settings' }, [
-          h('hr'),
-          h('div', [
-            h('h3', '操作警告：'),
-            h('div', [
-              '该功能将备份您的所有页面的个性化配置，并重载',
-              h('span', '默认配置'),
-              '及',
-              h('span', '远程配置'),
-              '，请谨慎操作！！！'
-            ])
-          ]),
-          h('hr'),
-          h('div', [
-            h('h3', '找回个性化配置的方法：'),
-            h('div', [
-              '1. 找到备份文件，路径：',
-              h('span', '~/.dev-sidecar/config.json.时间戳.bak.json'),
-              h('br'),
-              '2. 将该备份文件重命名为',
-              h('span', 'config.json'),
-              '，再重启软件即可恢复个性化配置。'
-            ])
-          ])
-        ]),
-        cancelText: '取消',
-        okText: '确定',
-        onOk: async () => {
-          this.removeUserConfigLoading = true
-          try {
-            const result = await this.$api.config.removeUserConfig()
-            if (result) {
-              this.config = await this.$api.config.get()
-              this.$message.success('恢复出厂设置成功，开始重启代理服务和系统代理')
-              await this.reloadConfigAndRestart()
-            } else {
-              this.$message.info('已是出厂设置，无需恢复')
-            }
-          } finally {
-            this.removeUserConfigLoading = false
-          }
-        },
-        onCancel () {},
-      })
-    },
-    async onMaxLogFileSizeUnitChange (value) {
-      if (value === 'MB') {
-        this.config.app.maxLogFileSize = Math.ceil((this.config.app.maxLogFileSize || 1024) * 1024) // 转为整数
-        this.maxLogFileSizeStep = 100
-      } else {
-        this.config.app.maxLogFileSize = ((this.config.app.maxLogFileSize || 1024) / 1024).toFixed(2) - 0 // 最多保留2位小数
-        this.maxLogFileSizeStep = 1
-      }
-      this.$refs.maxLogFileSize.focus()
-    },
-    async onLogFileSavePathSelect () {
-      const value = await this.$api.fileSelector.open(this.config.app.logFileSavePath, 'dir')
-      if (value != null && value.length > 0) {
-        this.config.app.logFileSavePath = value[0]
-      }
-    },
-  },
-}
+				if (
+					remoteConfig.old1 === remoteConfig.new1 &&
+					remoteConfig.old2 === remoteConfig.new2
+				) {
+					this.$message.info("远程配置没有变化，不做任何处理。");
+					this.$message.warn("如果您确实修改了远程配置，请稍等片刻再重试！");
+				} else {
+					this.$message.success(
+						"获取到了最新的远程配置，开始重启代理服务和系统代理",
+					);
+					await this.reloadConfigAndRestart();
+				}
+			} finally {
+				this.reloadLoading = false;
+			}
+		},
+		async restoreFactorySettings() {
+			this.$confirm({
+				title: "确定要恢复出厂设置吗？",
+				width: 610,
+				content: (h) =>
+					h("div", { class: "restore-factory-settings" }, [
+						h("hr"),
+						h("div", [
+							h("h3", "操作警告："),
+							h("div", [
+								"该功能将备份您的所有页面的个性化配置，并重载",
+								h("span", "默认配置"),
+								"及",
+								h("span", "远程配置"),
+								"，请谨慎操作！！！",
+							]),
+						]),
+						h("hr"),
+						h("div", [
+							h("h3", "找回个性化配置的方法："),
+							h("div", [
+								"1. 找到备份文件，路径：",
+								h("span", "~/.dev-sidecar/config.json.时间戳.bak.json"),
+								h("br"),
+								"2. 将该备份文件重命名为",
+								h("span", "config.json"),
+								"，再重启软件即可恢复个性化配置。",
+							]),
+						]),
+					]),
+				cancelText: "取消",
+				okText: "确定",
+				onOk: async () => {
+					this.removeUserConfigLoading = true;
+					try {
+						const result = await this.$api.config.removeUserConfig();
+						if (result) {
+							this.config = await this.$api.config.get();
+							this.$message.success(
+								"恢复出厂设置成功，开始重启代理服务和系统代理",
+							);
+							await this.reloadConfigAndRestart();
+						} else {
+							this.$message.info("已是出厂设置，无需恢复");
+						}
+					} finally {
+						this.removeUserConfigLoading = false;
+					}
+				},
+				onCancel() {},
+			});
+		},
+		async onMaxLogFileSizeUnitChange(value) {
+			if (value === "MB") {
+				this.config.app.maxLogFileSize = Math.ceil(
+					(this.config.app.maxLogFileSize || 1024) * 1024,
+				); // 转为整数
+				this.maxLogFileSizeStep = 100;
+			} else {
+				this.config.app.maxLogFileSize =
+					((this.config.app.maxLogFileSize || 1024) / 1024).toFixed(2) - 0; // 最多保留2位小数
+				this.maxLogFileSizeStep = 1;
+			}
+			this.$refs.maxLogFileSize.focus();
+		},
+		async onLogFileSavePathSelect() {
+			const value = await this.$api.fileSelector.open(
+				this.config.app.logFileSavePath,
+				"dir",
+			);
+			if (value != null && value.length > 0) {
+				this.config.app.logFileSavePath = value[0];
+			}
+		},
+	},
+};
 </script>
 
 <template>

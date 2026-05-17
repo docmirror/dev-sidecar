@@ -1,4 +1,4 @@
-module.exports = require('./src')
+module.exports = require("./src");
 
 // TODO  这是一个解谜游戏 ↓ ↓ ↓ ↓ ↓ ↓ ，如果你破解了它，请不要公开，好好用它来学习和查资料吧（特别注意：为了你的人身安全，请不要用它来查看和发表不当言论，你懂得）。
 /**

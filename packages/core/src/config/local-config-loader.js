@@ -1,84 +1,87 @@
-const fs = require('node:fs')
-const path = require('node:path')
-const lodash = require('lodash')
-const jsonApi = require('@docmirror/mitmproxy/src/json')
-const mergeApi = require('../merge')
-const logOrConsole = require('../utils/util.log-or-console')
+const fs = require("node:fs");
+const path = require("node:path");
+const lodash = require("lodash");
+const jsonApi = require("@docmirror/mitmproxy/src/json");
+const mergeApi = require("../merge");
+const logOrConsole = require("../utils/util.log-or-console");
 
-function getUserBasePath (autoCreate = true) {
-  const userHome = process.env.USERPROFILE || process.env.HOME || '/'
-  const dir = path.resolve(userHome, './.dev-sidecar')
+function getUserBasePath(autoCreate = true) {
+	const userHome = process.env.USERPROFILE || process.env.HOME || "/";
+	const dir = path.resolve(userHome, "./.dev-sidecar");
 
-  // 自动创建目录
-  if (autoCreate && !fs.existsSync(dir)) {
-    fs.mkdirSync(dir)
-  }
+	// 自动创建目录
+	if (autoCreate && !fs.existsSync(dir)) {
+		fs.mkdirSync(dir);
+	}
 
-  return dir
+	return dir;
 }
 
-function loadConfigFromFile (configFilePath) {
-  if (configFilePath == null) {
-    logOrConsole.error('配置文件地址为空')
-    return {}
-  }
+function loadConfigFromFile(configFilePath) {
+	if (configFilePath == null) {
+		logOrConsole.error("配置文件地址为空");
+		return {};
+	}
 
-  if (!fs.existsSync(configFilePath)) {
-    logOrConsole.info('配置文件不存在:', configFilePath)
-    return {} // 文件不存在，返回空配置
-  }
+	if (!fs.existsSync(configFilePath)) {
+		logOrConsole.info("配置文件不存在:", configFilePath);
+		return {}; // 文件不存在，返回空配置
+	}
 
-  // 读取配置文件
-  let configStr
-  try {
-    configStr = fs.readFileSync(configFilePath)
-  } catch (e) {
-    logOrConsole.error('读取配置文件失败:', configFilePath, ', error:', e)
-    return {}
-  }
+	// 读取配置文件
+	let configStr;
+	try {
+		configStr = fs.readFileSync(configFilePath);
+	} catch (e) {
+		logOrConsole.error("读取配置文件失败:", configFilePath, ", error:", e);
+		return {};
+	}
 
-  // 解析配置文件
-  try {
-    const config = jsonApi.parse(configStr)
-    logOrConsole.info('读取配置文件成功:', configFilePath)
-    return config
-  } catch (e) {
-    logOrConsole.error(`解析配置文件失败，文件内容格式不正确，文件路径: ${configFilePath}，文件内容：${configStr}，error:`, e)
-    return {}
-  }
+	// 解析配置文件
+	try {
+		const config = jsonApi.parse(configStr);
+		logOrConsole.info("读取配置文件成功:", configFilePath);
+		return config;
+	} catch (e) {
+		logOrConsole.error(
+			`解析配置文件失败，文件内容格式不正确，文件路径: ${configFilePath}，文件内容：${configStr}，error:`,
+			e,
+		);
+		return {};
+	}
 }
 
-function getUserConfigPath () {
-  const dir = getUserBasePath()
+function getUserConfigPath() {
+	const dir = getUserBasePath();
 
-  // 兼容1.7.3及以下版本的配置文件处理逻辑
-  const newFilePath = path.join(dir, '/config.json')
-  const oldFilePath = path.join(dir, '/config.json5')
-  if (!fs.existsSync(newFilePath) && fs.existsSync(oldFilePath)) {
-    return oldFilePath // 如果新文件不存在，但旧文件存在，则返回旧文件路径
-  }
+	// 兼容1.7.3及以下版本的配置文件处理逻辑
+	const newFilePath = path.join(dir, "/config.json");
+	const oldFilePath = path.join(dir, "/config.json5");
+	if (!fs.existsSync(newFilePath) && fs.existsSync(oldFilePath)) {
+		return oldFilePath; // 如果新文件不存在，但旧文件存在，则返回旧文件路径
+	}
 
-  return newFilePath
+	return newFilePath;
 }
 
-function getUserConfig () {
-  const configFilePath = getUserConfigPath()
-  return loadConfigFromFile(configFilePath)
+function getUserConfig() {
+	const configFilePath = getUserConfigPath();
+	return loadConfigFromFile(configFilePath);
 }
 
-function getRemoteConfigPath (suffix = '') {
-  const dir = getUserBasePath()
-  return path.join(dir, `/remote_config${suffix}.json5`)
+function getRemoteConfigPath(suffix = "") {
+	const dir = getUserBasePath();
+	return path.join(dir, `/remote_config${suffix}.json5`);
 }
 
-function getRemoteConfig (suffix = '') {
-  const remoteConfigFilePath = getRemoteConfigPath(suffix)
-  return loadConfigFromFile(remoteConfigFilePath)
+function getRemoteConfig(suffix = "") {
+	const remoteConfigFilePath = getRemoteConfigPath(suffix);
+	return loadConfigFromFile(remoteConfigFilePath);
 }
 
-function getAutomaticCompatibleConfigPath () {
-  const dir = getUserBasePath()
-  return path.join(dir, '/automaticCompatibleConfig.json')
+function getAutomaticCompatibleConfigPath() {
+	const dir = getUserBasePath();
+	return path.join(dir, "/automaticCompatibleConfig.json");
 }
 
 /**
@@ -87,41 +90,41 @@ function getAutomaticCompatibleConfigPath () {
  * @param userConfig 用户配置
  * @param defaultConfig 默认配置
  */
-function getConfigFromFiles (userConfig, defaultConfig) {
-  const merged = userConfig != null ? lodash.cloneDeep(userConfig) : {}
+function getConfigFromFiles(userConfig, defaultConfig) {
+	const merged = userConfig != null ? lodash.cloneDeep(userConfig) : {};
 
-  const personalRemoteConfig = getRemoteConfig('_personal')
-  const shareRemoteConfig = getRemoteConfig()
+	const personalRemoteConfig = getRemoteConfig("_personal");
+	const shareRemoteConfig = getRemoteConfig();
 
-  mergeApi.doMerge(merged, personalRemoteConfig) // 先合并一次个人远程配置，使配置顺序在前
-  mergeApi.doMerge(merged, shareRemoteConfig) // 先合并一次共享远程配置，使配置顺序在前
-  mergeApi.doMerge(merged, defaultConfig) // 合并默认配置，顺序排在最后
-  mergeApi.doMerge(merged, shareRemoteConfig) // 再合并一次共享远程配置，使配置生效
-  mergeApi.doMerge(merged, personalRemoteConfig) // 再合并一次个人远程配置，使配置生效
+	mergeApi.doMerge(merged, personalRemoteConfig); // 先合并一次个人远程配置，使配置顺序在前
+	mergeApi.doMerge(merged, shareRemoteConfig); // 先合并一次共享远程配置，使配置顺序在前
+	mergeApi.doMerge(merged, defaultConfig); // 合并默认配置，顺序排在最后
+	mergeApi.doMerge(merged, shareRemoteConfig); // 再合并一次共享远程配置，使配置生效
+	mergeApi.doMerge(merged, personalRemoteConfig); // 再合并一次个人远程配置，使配置生效
 
-  if (userConfig != null) {
-    mergeApi.doMerge(merged, userConfig) // 再合并一次用户配置，使用户配置重新生效
-  }
+	if (userConfig != null) {
+		mergeApi.doMerge(merged, userConfig); // 再合并一次用户配置，使用户配置重新生效
+	}
 
-  // 删除为null及[delete]的项
-  mergeApi.deleteNullItems(merged)
+	// 删除为null及[delete]的项
+	mergeApi.deleteNullItems(merged);
 
-  logOrConsole.info('加载及合并远程配置完成')
-  return merged
+	logOrConsole.info("加载及合并远程配置完成");
+	return merged;
 }
 
 module.exports = {
-  getUserBasePath,
+	getUserBasePath,
 
-  loadConfigFromFile,
+	loadConfigFromFile,
 
-  getUserConfigPath,
-  getUserConfig,
+	getUserConfigPath,
+	getUserConfig,
 
-  getRemoteConfigPath,
-  getRemoteConfig,
+	getRemoteConfigPath,
+	getRemoteConfig,
 
-  getAutomaticCompatibleConfigPath,
+	getAutomaticCompatibleConfigPath,
 
-  getConfigFromFiles,
-}
+	getConfigFromFiles,
+};

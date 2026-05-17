@@ -1,65 +1,64 @@
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  emits: ['update:open', 'setup'],
-  name: 'SetupCa',
+	emits: ["update:open", "setup"],
+	name: "SetupCa",
 
-  components: {
+	components: {},
 
-  },
+	props: {
+		title: {
+			type: String,
+			default: "安装根证书",
+		},
+		open: {
+			type: Boolean,
+		},
+	},
 
-  props: {
-    title: {
-      type: String,
-      default: '安装根证书',
-    },
-    open: {
-      type: Boolean,
-    },
-  },
+	data() {
+		return {
+			systemPlatform: "",
+		};
+	},
 
-  data () {
-    return {
-      systemPlatform: '',
-    }
-  },
+	computed: {
+		setupImage() {
+			if (this.systemPlatform === "mac") {
+				return "/setup-mac.png";
+			} else if (this.systemPlatform === "linux") {
+				return "/setup-linux.png";
+			} else {
+				return "/setup.png";
+			}
+		},
+	},
 
-  computed: {
-    setupImage () {
-      if (this.systemPlatform === 'mac') {
-        return '/setup-mac.png'
-      } else if (this.systemPlatform === 'linux') {
-        return '/setup-linux.png'
-      } else {
-        return '/setup.png'
-      }
-    },
-  },
+	async created() {
+		this.systemPlatform = await this.$api.info.getSystemPlatform();
+	},
 
-  async created () {
-    this.systemPlatform = await this.$api.info.getSystemPlatform()
-  },
-
-  methods: {
-    async openExternal (url) {
-      await this.$api.ipc.openExternal(url)
-    },
-    afterVisibleChange (val) {
-    },
-    showDrawer () {
-      this.$emit('update:open', true)
-    },
-    onClose () {
-      this.$emit('update:open', false)
-    },
-    async doSetup () {
-      this.$emit('setup')
-      if (this.systemPlatform === 'linux') {
-        this.$message.success('根证书已成功安装到系统证书库（注意：浏览器仍然需要手动安装）')
-      }
-    },
-  },
+	methods: {
+		async openExternal(url) {
+			await this.$api.ipc.openExternal(url);
+		},
+		afterVisibleChange(val) {},
+		showDrawer() {
+			this.$emit("update:open", true);
+		},
+		onClose() {
+			this.$emit("update:open", false);
+		},
+		async doSetup() {
+			this.$emit("setup");
+			if (this.systemPlatform === "linux") {
+				this.$message.success(
+					"根证书已成功安装到系统证书库（注意：浏览器仍然需要手动安装）",
+				);
+			}
+		},
+	},
 });
 </script>
 

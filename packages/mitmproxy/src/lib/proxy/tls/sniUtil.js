@@ -1,5 +1,5 @@
-module.exports = function extractSNI (data) {
-  /*
+module.exports = function extractSNI(data) {
+	/*
     From https://tools.ietf.org/html/rfc5246:
     enum {
         hello_request(0), client_hello(1), server_hello(2),
@@ -51,59 +51,59 @@ module.exports = function extractSNI (data) {
     } ClientHello;
     */
 
-  let end = data.length
+	let end = data.length;
 
-  // skip the record header
-  let pos = 5
+	// skip the record header
+	let pos = 5;
 
-  // skip HandshakeType (you should already have verified this)
-  pos += 1
+	// skip HandshakeType (you should already have verified this)
+	pos += 1;
 
-  // skip handshake length
-  pos += 3
+	// skip handshake length
+	pos += 3;
 
-  // skip protocol version (you should already have verified this)
-  pos += 2
+	// skip protocol version (you should already have verified this)
+	pos += 2;
 
-  // skip Random
-  pos += 32
+	// skip Random
+	pos += 32;
 
-  // skip SessionID
-  if (pos > end - 1) {
-    return null
-  }
-  const sessionIdLength = data[pos]
-  pos += 1 + sessionIdLength
+	// skip SessionID
+	if (pos > end - 1) {
+		return null;
+	}
+	const sessionIdLength = data[pos];
+	pos += 1 + sessionIdLength;
 
-  // skip CipherSuite
-  if (pos > end - 2) {
-    return null
-  }
-  const cipherSuiteLength = data[pos] << 8 | data[pos + 1]
-  pos += 2 + cipherSuiteLength
+	// skip CipherSuite
+	if (pos > end - 2) {
+		return null;
+	}
+	const cipherSuiteLength = (data[pos] << 8) | data[pos + 1];
+	pos += 2 + cipherSuiteLength;
 
-  // skip CompressionMethod
-  if (pos > end - 1) {
-    return null
-  }
-  const compressionMethodLength = data[pos]
-  pos += 1 + compressionMethodLength
+	// skip CompressionMethod
+	if (pos > end - 1) {
+		return null;
+	}
+	const compressionMethodLength = data[pos];
+	pos += 1 + compressionMethodLength;
 
-  // verify extensions exist
-  if (pos > end - 2) {
-    return null
-  }
-  const extensionsLength = data[pos] << 8 | data[pos + 1]
-  pos += 2
+	// verify extensions exist
+	if (pos > end - 2) {
+		return null;
+	}
+	const extensionsLength = (data[pos] << 8) | data[pos + 1];
+	pos += 2;
 
-  // verify the extensions fit
-  const extensionsEnd = pos + extensionsLength
-  if (extensionsEnd > end) {
-    return null
-  }
-  end = extensionsEnd
+	// verify the extensions fit
+	const extensionsEnd = pos + extensionsLength;
+	if (extensionsEnd > end) {
+		return null;
+	}
+	end = extensionsEnd;
 
-  /*
+	/*
     From https://tools.ietf.org/html/rfc5246
      and http://tools.ietf.org/html/rfc6066:
     struct {
@@ -133,53 +133,55 @@ module.exports = function extractSNI (data) {
     } ServerNameList;
     */
 
-  while (pos <= end - 4) {
-    const extensionType = data[pos] << 8 | data[pos + 1]
-    const extensionSize = data[pos + 2] << 8 | data[pos + 3]
-    pos += 4
-    if (extensionType === 0) { // ExtensionType was server_name(0)
-      // read ServerNameList length
-      if (pos > end - 2) {
-        return null
-      }
-      const nameListLength = data[pos] << 8 | data[pos + 1]
-      pos += 2
+	while (pos <= end - 4) {
+		const extensionType = (data[pos] << 8) | data[pos + 1];
+		const extensionSize = (data[pos + 2] << 8) | data[pos + 3];
+		pos += 4;
+		if (extensionType === 0) {
+			// ExtensionType was server_name(0)
+			// read ServerNameList length
+			if (pos > end - 2) {
+				return null;
+			}
+			const nameListLength = (data[pos] << 8) | data[pos + 1];
+			pos += 2;
 
-      // verify we have enough bytes and loop over SeverNameList
-      let n = pos
-      pos += nameListLength
-      if (pos > end) {
-        return null
-      }
-      while (n < pos - 3) {
-        const nameType = data[n]
-        const nameLength = data[n + 1] << 8 | data[n + 2]
-        n += 3
+			// verify we have enough bytes and loop over SeverNameList
+			let n = pos;
+			pos += nameListLength;
+			if (pos > end) {
+				return null;
+			}
+			while (n < pos - 3) {
+				const nameType = data[n];
+				const nameLength = (data[n + 1] << 8) | data[n + 2];
+				n += 3;
 
-        // check if NameType is host_name(0)
-        if (nameType === 0) {
-          // verify we have enough bytes
-          if (n > end - nameLength) {
-            return null
-          }
+				// check if NameType is host_name(0)
+				if (nameType === 0) {
+					// verify we have enough bytes
+					if (n > end - nameLength) {
+						return null;
+					}
 
-          // decode as ascii and return
+					// decode as ascii and return
 
-          const sniName = data.toString('ascii', n, n + nameLength)
-          return {
-            sniName,
-            start: n,
-            end: n + nameLength,
-            length: nameLength,
-          }
-        } else {
-          n += nameLength
-        }
-      }
-    } else { // ExtensionType was something we are not interested in
-      pos += extensionSize
-    }
-  }
+					const sniName = data.toString("ascii", n, n + nameLength);
+					return {
+						sniName,
+						start: n,
+						end: n + nameLength,
+						length: nameLength,
+					};
+				} else {
+					n += nameLength;
+				}
+			}
+		} else {
+			// ExtensionType was something we are not interested in
+			pos += extensionSize;
+		}
+	}
 
-  return null
-}
+	return null;
+};

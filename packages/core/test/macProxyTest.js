@@ -1,4 +1,4 @@
-const assert = require('node:assert')
+const assert = require("node:assert");
 
 // const childProcess = require('child_process')
 // const util = require('util')
@@ -13,7 +13,7 @@ const assert = require('node:assert')
 // test().then((ret) => {
 //   console.log('haha', ret)
 // })
-let wifiAdaptor = '(151) test'
-wifiAdaptor = wifiAdaptor.substring(wifiAdaptor.indexOf(' ')).trim()
-console.log(wifiAdaptor)
-assert.strictEqual(wifiAdaptor, 'test')
+let wifiAdaptor = "(151) test";
+wifiAdaptor = wifiAdaptor.substring(wifiAdaptor.indexOf(" ")).trim();
+console.log(wifiAdaptor);
+assert.strictEqual(wifiAdaptor, "test");

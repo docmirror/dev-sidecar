@@ -1,91 +1,94 @@
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
-import { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
-import Plugin from '../mixins/plugin'
+import {
+	PlusOutlined,
+	MinusOutlined,
+	SyncOutlined,
+	CheckOutlined,
+} from "@ant-design/icons-vue";
+import Plugin from "../mixins/plugin";
 
 export default defineComponent({
-  name: 'Proxy',
-  components: { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
-  mixins: [Plugin],
+	name: "Proxy",
+	components: { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
+	mixins: [Plugin],
 
-  data () {
-    return {
-      key: 'proxy',
-      loopbackVisible: false,
-      excludeIpList: [],
-      excludeIpOptions: [
-        {
-          label: '排除',
-          value: 'true',
-        },
-        {
-          label: '不排除',
-          value: 'false',
-        },
-      ],
-    }
-  },
+	data() {
+		return {
+			key: "proxy",
+			loopbackVisible: false,
+			excludeIpList: [],
+			excludeIpOptions: [
+				{
+					label: "排除",
+					value: "true",
+				},
+				{
+					label: "不排除",
+					value: "false",
+				},
+			],
+		};
+	},
 
-  async created () {
-  },
+	async created() {},
 
-  mounted () {
-  },
+	mounted() {},
 
-  methods: {
-    async openExternal (url) {
-      await this.$api.ipc.openExternal(url)
-    },
-    ready () {
-      this.initExcludeIpList()
-    },
-    async applyBefore () {
-      this.submitExcludeIpList()
-    },
-    async applyAfter () {
-      await this.$api.proxy.restart()
-    },
-    async openEnableLoopback () {
-      try {
-        await this.$api.proxy.setEnableLoopback()
-      } catch (e) {
-        this.$message.error(`打开失败：${e.message}`)
-      }
-    },
-    getProxyConfig () {
-      return this.config.proxy
-    },
-    initExcludeIpList () {
-      this.excludeIpList = []
-      for (const key in this.config.proxy.excludeIpList) {
-        const value = this.config.proxy.excludeIpList[key]
-        this.excludeIpList.push({
-          key: key || '',
-          value: value === true ? 'true' : 'false',
-        })
-      }
-    },
-    addExcludeIp () {
-      this.excludeIpList.unshift({ key: '', value: 'true' })
-      this.focusFirst(this.$refs.excludeIpList)
-    },
-    delExcludeIp (item, index) {
-      this.excludeIpList.splice(index, 1)
-    },
-    submitExcludeIpList () {
-      const excludeIpList = {}
-      for (const item of this.excludeIpList) {
-        if (item.key) {
-          const hostname = this.handleHostname(item.key)
-          if (hostname) {
-            excludeIpList[hostname] = (item.value === 'true')
-          }
-        }
-      }
-      this.config.proxy.excludeIpList = excludeIpList
-    },
-  },
+	methods: {
+		async openExternal(url) {
+			await this.$api.ipc.openExternal(url);
+		},
+		ready() {
+			this.initExcludeIpList();
+		},
+		async applyBefore() {
+			this.submitExcludeIpList();
+		},
+		async applyAfter() {
+			await this.$api.proxy.restart();
+		},
+		async openEnableLoopback() {
+			try {
+				await this.$api.proxy.setEnableLoopback();
+			} catch (e) {
+				this.$message.error(`打开失败：${e.message}`);
+			}
+		},
+		getProxyConfig() {
+			return this.config.proxy;
+		},
+		initExcludeIpList() {
+			this.excludeIpList = [];
+			for (const key in this.config.proxy.excludeIpList) {
+				const value = this.config.proxy.excludeIpList[key];
+				this.excludeIpList.push({
+					key: key || "",
+					value: value === true ? "true" : "false",
+				});
+			}
+		},
+		addExcludeIp() {
+			this.excludeIpList.unshift({ key: "", value: "true" });
+			this.focusFirst(this.$refs.excludeIpList);
+		},
+		delExcludeIp(item, index) {
+			this.excludeIpList.splice(index, 1);
+		},
+		submitExcludeIpList() {
+			const excludeIpList = {};
+			for (const item of this.excludeIpList) {
+				if (item.key) {
+					const hostname = this.handleHostname(item.key);
+					if (hostname) {
+						excludeIpList[hostname] = item.value === "true";
+					}
+				}
+			}
+			this.config.proxy.excludeIpList = excludeIpList;
+		},
+	},
 });
 </script>
 
