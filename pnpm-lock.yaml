@@ -11,6 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: ^2.4.15
         version: 2.4.15
+      '@j178/prek':
+        specifier: ^0.4.0
+        version: 0.4.0
       oxlint:
         specifier: ^1.65.0
         version: 1.65.0
@@ -903,6 +906,124 @@ packages:
   '@isaacs/fs-minipass@4.0.1':
     resolution: {integrity: sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==}
     engines: {node: '>=18.0.0'}
+
+  '@j178/prek-android-arm64@0.4.0':
+    resolution: {integrity: sha512-J0gBKIcgYV+3NM6h18AuEZoYvz6lK/zlsq/Sbvj/UsZPaeBNbUNGZQFrZKk4Sj6gUEmi42HMHHSjo21UMw3K1A==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [android]
+
+  '@j178/prek-darwin-arm64@0.4.0':
+    resolution: {integrity: sha512-ybVr2u58DWXgRKXoDtBg3CKg+YlPZXjfG0nyj1oSH7yGVDT/oVUCnD76TDcjJCU22EYHR2cFwRavh7wQ7148cA==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@j178/prek-darwin-x64@0.4.0':
+    resolution: {integrity: sha512-OaULujT3l2Nl2lGmrChgrwZxNbcyrx+jnpwJDc2FRvJa+rohPwanYczh0DdPA8RwTcsRo6enLPUm+Aq0eQ85Cg==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@j178/prek-linux-arm-gnueabihf@0.4.0':
+    resolution: {integrity: sha512-isP93lHAXLNlJc8Fb4kiMqJf3nuEl1J0X9QPFoAiUu384kMbzfpyCz6Ps4hszlf8nJM2K97hONaMcI6i3EzP0g==}
+    engines: {node: '>=18'}
+    cpu: [arm]
+    os: [linux]
+    libc: [glibc]
+
+  '@j178/prek-linux-arm-musleabihf@0.4.0':
+    resolution: {integrity: sha512-1oOWn9mBmi57kypN7CH38vMMRf2kuPfxBODAp1Q/xkXH7HEEdB6D6rL4+ckLQY3y31PI7TX1Dgg0Z/Y6nz3iig==}
+    engines: {node: '>=18'}
+    cpu: [arm]
+    os: [linux]
+    libc: [musl]
+
+  '@j178/prek-linux-arm64-gnu@0.4.0':
+    resolution: {integrity: sha512-CiQauPIURTTdB+H6d51ogOrV8v3e/upZtYYVwXQYaZEQiuMM+trQBQzBTDsZ8rLi0f72ZpV3Q0xWGqeDa1HFBQ==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@j178/prek-linux-arm64-musl@0.4.0':
+    resolution: {integrity: sha512-RPchFFTIiJsr4hk8GhlN3eZPaoW0QP9JfsnMCOWmkLGyeGkF6CMf8GEio4cb9tFbGG1ZWcHGWjMN05lvmhGADg==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@j178/prek-linux-armv7-musleabihf@0.4.0':
+    resolution: {integrity: sha512-ZSRgB2dHbiFvrlqLo5Z2cRwngMCm7E/94PCygYUKmkkXfhCLo4ZXJsArCdi4VcLL7Ss2fEcdJMinNAGGREVJBg==}
+    engines: {node: '>=18'}
+    cpu: [arm]
+    os: [linux]
+    libc: [musl]
+
+  '@j178/prek-linux-ia32-gnu@0.4.0':
+    resolution: {integrity: sha512-tlTeuQRtU+K4fYbHDeseIKhqnv/UgCqFBcBiizSZdJGqIHnLkVk8JbNQtUVZs8iOXg5zWORG7ZaSZB7ua6PBSg==}
+    engines: {node: '>=18'}
+    cpu: [ia32]
+    os: [linux]
+    libc: [glibc]
+
+  '@j178/prek-linux-ia32-musl@0.4.0':
+    resolution: {integrity: sha512-Sj2L4O9LYWpHASGaNvuwXixXETteXpjkPzNZ4BbflHcbG055hcZLK8QCm+iyQHitM3yHmyh2CMm7/rQJdKQIwQ==}
+    engines: {node: '>=18'}
+    cpu: [ia32]
+    os: [linux]
+    libc: [musl]
+
+  '@j178/prek-linux-riscv64-gnu@0.4.0':
+    resolution: {integrity: sha512-/4cGYbgxOqkPVi4QuXveoZHjZJvFCKWX6q5XdtgwqzRuT9uGKR9C3Gitr8m5zHPV/wvCqeoRitqQCRWTsBmVdw==}
+    engines: {node: '>=18'}
+    cpu: [riscv64]
+    os: [linux]
+    libc: [glibc]
+
+  '@j178/prek-linux-s390x-gnu@0.4.0':
+    resolution: {integrity: sha512-6a1Q2ENlFMTLVHsndJd8jedGkDcseSlnTNyZ5/Jenl0NWTGM3Y6rp3u/ea7JNSMjCH5Z2NjWc0ToMk2nzqcrvw==}
+    engines: {node: '>=18'}
+    cpu: [s390x]
+    os: [linux]
+    libc: [glibc]
+
+  '@j178/prek-linux-x64-gnu@0.4.0':
+    resolution: {integrity: sha512-IJsSjtFf7LyquDdaQWMSjyK1iZdHKfN3uKeOXDvVckkjw2W84OlpqNwt6fA6M8Is9A3e3/sUVg3hpexGPA5/9Q==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@j178/prek-linux-x64-musl@0.4.0':
+    resolution: {integrity: sha512-1umuGcxoNr0k5qVVZEqL1GmPxNIZ6j0Aq51Kx8jXO4EV2IRXjcG2300zQFy3sx2bsBkyeL+N36z+YcYLGF7XtA==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@j178/prek-win32-arm64-msvc@0.4.0':
+    resolution: {integrity: sha512-AsE7XvWPCPsnivr83Dk9eE/TLDrHMwUA4h/FONF0lSXDq4UoCRLBzWdkBJbtYtPeNckhGDwxtDY5D5TcSXa72A==}
+    engines: {node: '>=18'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@j178/prek-win32-ia32-msvc@0.4.0':
+    resolution: {integrity: sha512-F9458j6FBJGZvfH2OOzko4sEnxNepwkrakgoQRKU8ia7I1y03x9LESEX4/d1dQTXRDmI86qxoP4JkQ9/pxZHIg==}
+    engines: {node: '>=18'}
+    cpu: [ia32]
+    os: [win32]
+
+  '@j178/prek-win32-x64-msvc@0.4.0':
+    resolution: {integrity: sha512-bO87dRrxPvQqy2NMJ8qa7R1Mkr43lJJtoEpRkDEH0xlXny78THaQQ3tBGCxPHiEgrqzsQ2xi4BLlH/y5Ie7zOA==}
+    engines: {node: '>=18'}
+    cpu: [x64]
+    os: [win32]
+
+  '@j178/prek@0.4.0':
+    resolution: {integrity: sha512-qTD4qGiN06ewv+dG1TRvs+hxyVG7gPbeKBlsi0X5uU4BOubZQ69/1gZBg6JJSGz+n710NSrOK58+sMghTQsq1g==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   '@jimp/bmp@0.16.13':
     resolution: {integrity: sha512-9edAxu7N2FX7vzkdl5Jo1BbACfycUtBQX+XBMcHA2bk62P8R0otgkHg798frgAk/WxQIzwxqOH6wMiCwrlAzdQ==}
@@ -7263,6 +7384,77 @@ snapshots:
   '@isaacs/fs-minipass@4.0.1':
     dependencies:
       minipass: 7.1.3
+
+  '@j178/prek-android-arm64@0.4.0':
+    optional: true
+
+  '@j178/prek-darwin-arm64@0.4.0':
+    optional: true
+
+  '@j178/prek-darwin-x64@0.4.0':
+    optional: true
+
+  '@j178/prek-linux-arm-gnueabihf@0.4.0':
+    optional: true
+
+  '@j178/prek-linux-arm-musleabihf@0.4.0':
+    optional: true
+
+  '@j178/prek-linux-arm64-gnu@0.4.0':
+    optional: true
+
+  '@j178/prek-linux-arm64-musl@0.4.0':
+    optional: true
+
+  '@j178/prek-linux-armv7-musleabihf@0.4.0':
+    optional: true
+
+  '@j178/prek-linux-ia32-gnu@0.4.0':
+    optional: true
+
+  '@j178/prek-linux-ia32-musl@0.4.0':
+    optional: true
+
+  '@j178/prek-linux-riscv64-gnu@0.4.0':
+    optional: true
+
+  '@j178/prek-linux-s390x-gnu@0.4.0':
+    optional: true
+
+  '@j178/prek-linux-x64-gnu@0.4.0':
+    optional: true
+
+  '@j178/prek-linux-x64-musl@0.4.0':
+    optional: true
+
+  '@j178/prek-win32-arm64-msvc@0.4.0':
+    optional: true
+
+  '@j178/prek-win32-ia32-msvc@0.4.0':
+    optional: true
+
+  '@j178/prek-win32-x64-msvc@0.4.0':
+    optional: true
+
+  '@j178/prek@0.4.0':
+    optionalDependencies:
+      '@j178/prek-android-arm64': 0.4.0
+      '@j178/prek-darwin-arm64': 0.4.0
+      '@j178/prek-darwin-x64': 0.4.0
+      '@j178/prek-linux-arm-gnueabihf': 0.4.0
+      '@j178/prek-linux-arm-musleabihf': 0.4.0
+      '@j178/prek-linux-arm64-gnu': 0.4.0
+      '@j178/prek-linux-arm64-musl': 0.4.0
+      '@j178/prek-linux-armv7-musleabihf': 0.4.0
+      '@j178/prek-linux-ia32-gnu': 0.4.0
+      '@j178/prek-linux-ia32-musl': 0.4.0
+      '@j178/prek-linux-riscv64-gnu': 0.4.0
+      '@j178/prek-linux-s390x-gnu': 0.4.0
+      '@j178/prek-linux-x64-gnu': 0.4.0
+      '@j178/prek-linux-x64-musl': 0.4.0
+      '@j178/prek-win32-arm64-msvc': 0.4.0
+      '@j178/prek-win32-ia32-msvc': 0.4.0
+      '@j178/prek-win32-x64-msvc': 0.4.0
 
   '@jimp/bmp@0.16.13(@jimp/custom@0.16.13)':
     dependencies:

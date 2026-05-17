@@ -10,10 +10,11 @@
 		"format:check": "biome format && biome lint",
 		"lint": "oxlint",
 		"lint:fix": "oxlint --fix",
-		"prepare": "prek install || npx prek@latest install"
+		"prepare": "prek install"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.15",
+		"@j178/prek": "^0.4.0",
 		"oxlint": "^1.65.0"
 	},
 	"pnpm": {
