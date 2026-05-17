@@ -84,6 +84,10 @@ jobs:
         run: |
           node -e 'const fs=require("fs");const p="packages/gui/package.json";const j=JSON.parse(fs.readFileSync(p,"utf8"));j.version=process.env.BUILD_VERSION;fs.writeFileSync(p,JSON.stringify(j,null,2)+"\n");console.log("set gui version to",j.version);'
 
+      - name: "Format package.json after version update"
+        run: |
+          pnpm biome format --write packages/gui/package.json
+
       - name: "Print"
         run: |
           echo "version = ${{ steps.package-info.outputs.version }}";
