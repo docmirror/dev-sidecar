@@ -11,16 +11,16 @@
   "license": "MPL-2.0",
   "homepage": "https://github.com/docmirror/dev-sidecar",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "electron": "concurrently -k \"vue-cli-service serve --port 8080\" \"wait-on http-get://localhost:8080 && cross-env WEBPACK_DEV_SERVER_URL=http://localhost:8080 electron .\"",
-    "electron:build": "npm run build && electron-builder --config electron-builder.config.cjs",
-    "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps",
-    "electron:icons": "electron-icon-builder --input=./public/logo/win.png --output=build --flatten",
-    "electron:icons-mac": "electron-icon-builder --input=./public/logo/mac.png --output=build --flatten",
-    "electron:icons-black": "electron-icon-builder --input=./public/logo/win-black.png --output=build/black --flatten"
+    "serve": "pnpm exec vue-cli-service serve",
+    "build": "pnpm exec vue-cli-service build",
+    "lint": "pnpm exec vue-cli-service lint",
+    "electron": "node ../../_script/electron-dev.mjs",
+    "electron:build": "pnpm run build && pnpm exec electron-builder --config electron-builder.config.cjs",
+    "postinstall": "pnpm exec electron-builder install-app-deps",
+    "postuninstall": "pnpm exec electron-builder install-app-deps",
+    "electron:icons": "pnpm exec electron-icon-builder --input=./public/logo/win.png --output=build --flatten",
+    "electron:icons-mac": "pnpm exec electron-icon-builder --input=./public/logo/mac.png --output=build --flatten",
+    "electron:icons-black": "pnpm exec electron-icon-builder --input=./public/logo/win-black.png --output=build/black --flatten"
   },
   "dependencies": {
     "@docmirror/dev-sidecar": "workspace:*",
