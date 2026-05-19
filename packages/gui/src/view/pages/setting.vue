@@ -2,7 +2,7 @@
 import { ipcRenderer } from 'electron'
 import { ProfileOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
 import Plugin from '../mixins/plugin'
-import { colorTheme } from '../composables/theme'
+import { setThemeMode } from '../composables/theme'
 
 export default {
   name: 'Setting',
@@ -194,11 +194,8 @@ export default {
     async applyAfter () {
       let reloadLazy = 10
 
-      let theme = this.config.app.theme
-      if (theme === 'system') {
-        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      }
-      colorTheme.value = theme
+      // 应用主题设置
+      setThemeMode(this.config.app.theme)
 
       // 判断远程配置地址是否变更过，如果是则重载远程配置并重启服务
       if (this.config.app.remoteConfig.url !== this.urlBackup || this.config.app.remoteConfig.personalUrl !== this.personalUrlBackup) {
