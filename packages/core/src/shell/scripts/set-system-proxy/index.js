@@ -5,6 +5,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const request = require('request')
 const Registry = require('winreg')
+const sudoPrompt = require('@vscode/sudo-prompt')
 const log = require('../../../utils/util.log.core')
 const Shell = require('../../shell')
 const extraPath = require('../extra-path')
@@ -183,6 +184,151 @@ function getProxyExcludeIpStr (split) {
   return excludeIpStr
 }
 
+function parseMacNetworkServiceByDevice (networkServiceOrder, device) {
+  if (!networkServiceOrder || !device) {
+    return null
+  }
+  const lines = networkServiceOrder.split(/\r?\n/)
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].includes(`Device: ${device}`)) {
+      for (let j = i - 1; j >= 0; j--) {
+        const serviceLine = lines[j].trim()
+        const markerIndex = serviceLine.indexOf(') ')
+        if (serviceLine.startsWith('(') && markerIndex > 0) {
+          return serviceLine.slice(markerIndex + 2).trim()
+        }
+      }
+    }
+  }
+  return null
+}
+
+function parseMacRouteDevice (routeOutput) {
+  if (!routeOutput) {
+    return null
+  }
+  const routeLines = routeOutput.split(/\r?\n/)
+  for (const routeLine of routeLines) {
+    const trimmedLine = routeLine.trim()
+    if (trimmedLine.startsWith('interface:')) {
+      return trimmedLine.slice('interface:'.length).trim() || null
+    }
+  }
+  return null
+}
+
+function pickMacNetworkService (listAllNetworkServicesOutput) {
+  if (!listAllNetworkServicesOutput) {
+    return null
+  }
+  const services = listAllNetworkServicesOutput
+    .split(/\r?\n/)
+    .map(item => item.replace(/^\*/, '').trim())
+    .filter(item => item && !item.startsWith('An asterisk (*) denotes'))
+  if (services.length === 0) {
+    return null
+  }
+  const preferredServices = ['Wi-Fi', 'WiFi', 'Ethernet']
+  for (const preferredService of preferredServices) {
+    const matched = services.find(item => item === preferredService)
+    if (matched) {
+      return matched
+    }
+  }
+  return services[0]
+}
+
+async function getMacNetworkService (exec) {
+  try {
+    const routeOutput = await exec('route -n get 0.0.0.0')
+    const device = parseMacRouteDevice(routeOutput)
+    if (device) {
+      log.info('macOS 代理服务检测：当前网络设备:', device)
+      try {
+        const networkServiceOrder = await exec('networksetup -listnetworkserviceorder')
+        const matchedService = parseMacNetworkServiceByDevice(networkServiceOrder, device)
+        if (matchedService) {
+          log.info('macOS 代理服务检测：通过设备名匹配到网络服务:', matchedService)
+          return matchedService
+        }
+        log.warn('macOS 代理服务检测：未通过设备名匹配到网络服务，尝试备用方法')
+      } catch (e) {
+        log.warn('macOS 代理服务检测：获取网络服务列表失败:', e.message, '，尝试备用方法')
+      }
+    } else {
+      log.warn('macOS 代理服务检测：未检测到当前网络设备，尝试备用方法')
+    }
+  } catch (e) {
+    log.warn('macOS 代理服务检测：获取路由信息失败:', e.message, '，尝试备用方法')
+  }
+
+  try {
+    const allServicesOutput = await exec('networksetup -listallnetworkservices')
+    const fallbackService = pickMacNetworkService(allServicesOutput)
+    if (fallbackService) {
+      log.info('macOS 代理服务检测：通过服务列表备用方法找到网络服务:', fallbackService)
+      return fallbackService
+    }
+    log.warn('macOS 代理服务检测：未通过服务列表找到可用网络服务')
+  } catch (e) {
+    log.warn('macOS 代理服务检测：获取所有网络服务列表失败:', e.message)
+  }
+
+  throw new Error('未找到可用的 macOS 网络服务，无法设置系统代理')
+}
+
+// macOS exit code 14 = "You don't have permission to change the system preferences."
+const MACOS_NETWORKSETUP_PERMISSION_ERROR_CODE = 14
+
+/**
+ * POSIX single-quote escaping: wraps `arg` in single quotes, escaping any
+ * embedded single quotes with the '\''-idiom.  This prevents shell
+ * metacharacter expansion regardless of the character set of the value.
+ * @param {string|number} arg
+ * @returns {string}
+ */
+function shellEscapeArg (arg) {
+  return "'" + String(arg).replace(/'/g, "'\\''") + "'"
+}
+
+/**
+ * Strict-validate a proxy host (IPv4 / IPv6 / hostname) and throw if the
+ * value looks suspicious.  This is a defence-in-depth guard for the sudo
+ * execution path; the primary protection is `shellEscapeArg`.
+ */
+function validateProxyIp (ip) {
+  if (typeof ip !== 'string' || !/^[\w.\-:[\]]+$/.test(ip)) {
+    throw new Error(`无效的代理 IP 地址: ${ip}`)
+  }
+}
+
+/**
+ * Strict-validate a TCP port number.
+ */
+function validateProxyPort (port) {
+  const n = Number(port)
+  if (!Number.isInteger(n) || n < 1 || n > 65535) {
+    throw new Error(`无效的代理端口号: ${port}`)
+  }
+}
+
+function sudoExecMac (cmd) {
+  return new Promise((resolve, reject) => {
+    log.info('以管理员权限执行命令:', cmd)
+    sudoPrompt.exec(cmd, { name: 'dev-sidecar' }, (error, stdout, stderr) => {
+      if (stderr) {
+        log.warn('以管理员权限执行命令，stderr:', stderr)
+      }
+      if (error) {
+        log.error('以管理员权限执行命令失败:', error)
+        reject(error)
+      } else {
+        resolve(stdout)
+      }
+    })
+  })
+}
+
 const executor = {
   async windows (exec, params = {}) {
     const { ip, port, setEnv } = params
@@ -324,51 +470,56 @@ const executor = {
     }
   },
   async mac (exec, params = {}) {
-    // exec = _exec
-    let wifiAdaptor = await exec('sh -c "networksetup -listnetworkserviceorder | grep `route -n get 0.0.0.0 | grep \'interface\' | cut -d \':\' -f2` -B 1 | head -n 1 "')
-    wifiAdaptor = wifiAdaptor.trim()
-    wifiAdaptor = wifiAdaptor.substring(wifiAdaptor.indexOf(' ')).trim()
+    const wifiAdaptor = await getMacNetworkService(exec)
     const { ip, port } = params
+
+    let cmds
     if (ip != null) { // 设置代理
       // 延迟加载config
       loadConfig()
 
       // https
-      await exec(`networksetup -setsecurewebproxy "${wifiAdaptor}" ${ip} ${port}`)
+      cmds = [`networksetup -setsecurewebproxy "${wifiAdaptor}" ${ip} ${port}`]
       // http
       if (config.get().proxy.proxyHttp) {
-        await exec(`networksetup -setwebproxy "${wifiAdaptor}" ${ip} ${port - 1}`)
+        cmds.push(`networksetup -setwebproxy "${wifiAdaptor}" ${ip} ${port - 1}`)
       } else {
-        await exec(`networksetup -setwebproxystate "${wifiAdaptor}" off`)
+        cmds.push(`networksetup -setwebproxystate "${wifiAdaptor}" off`)
       }
 
       // 设置排除域名
       const excludeIpStr = getProxyExcludeIpStr('" "')
-      await exec(`networksetup -setproxybypassdomains "${wifiAdaptor}" "${excludeIpStr}"`)
-
-      // const setEnv = `cat <<ENDOF >>  ~/.zshrc
-      // export http_proxy="http://${ip}:${port}"
-      // export https_proxy="http://${ip}:${port}"
-      // ENDOF
-      // source ~/.zshrc
-      // `
-      // await exec(setEnv)
+      cmds.push(`networksetup -setproxybypassdomains "${wifiAdaptor}" "${excludeIpStr}"`)
     } else { // 关闭代理
-      // https
-      await exec(`networksetup -setsecurewebproxystate "${wifiAdaptor}" off`)
-      // http
-      await exec(`networksetup -setwebproxystate "${wifiAdaptor}" off`)
+      // https + http
+      cmds = [
+        `networksetup -setsecurewebproxystate "${wifiAdaptor}" off`,
+        `networksetup -setwebproxystate "${wifiAdaptor}" off`,
+      ]
+    }
 
-      // const removeEnv = `
-      // sed -ie '/export http_proxy/d' ~/.zshrc
-      // sed -ie '/export https_proxy/d' ~/.zshrc
-      // source ~/.zshrc
-      // `
-      // await exec(removeEnv)
+    // 先尝试直接执行；若因权限不足（exit code 14）失败，弹出系统授权对话框后重试
+    try {
+      for (const cmd of cmds) {
+        await exec(cmd)
+      }
+    } catch (e) {
+      if (e.code === MACOS_NETWORKSETUP_PERMISSION_ERROR_CODE) {
+        log.warn('networksetup 命令需要管理员权限（exit code 14），正在弹出系统授权对话框...')
+        await sudoExecMac(cmds.join(' && '))
+        log.info('以管理员权限执行 networksetup 命令成功')
+      } else {
+        throw e
+      }
     }
   },
 }
 
-module.exports = async function (args) {
+const setSystemProxy = async function (args) {
   return execute(executor, args)
 }
+
+module.exports = setSystemProxy
+module.exports.parseMacNetworkServiceByDevice = parseMacNetworkServiceByDevice
+module.exports.parseMacRouteDevice = parseMacRouteDevice
+module.exports.pickMacNetworkService = pickMacNetworkService

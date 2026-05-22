@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import clientModule from './client.js'
 
-const runTests = (clientModule && (clientModule.runTests || (clientModule.default && clientModule.default.runTests)))
+const runTests = clientModule.runTests
 import freeEyeConfig from './config.js'
 
 const PLUGIN_STATUS_KEY = 'plugin.free_eye'
@@ -85,13 +85,9 @@ const FreeEyePlugin = function (context) {
 
   const executeTests = async () => {
     const currentConfig = config.get()
-    const pluginConfig = currentConfig.plugin.free_eye || {}
-    const setting = pluginConfig.setting || {}
-    const configFilePath = resolvePath(setting.testsConfigFile, 'config.json')
-    const testsDir = resolvePath(setting.testsDir, 'checkpoints')
-    log.info(`FreeEye tests triggering, config=${configFilePath}, testsDir=${testsDir}`)
+    const setting = currentConfig.plugin.free_eye.setting || {}
     try {
-      const { result, logs } = await captureLogs(() => runTests({ configPath: configFilePath, testsDir }))
+      const { result, logs } = await captureLogs(() => runTests(setting))
       const payload = {
         finishedAt: new Date().toISOString(),
         totalTests: result.totalTests,

@@ -396,7 +396,7 @@ source .venv/bin/activate # for linux/mac
 
 #### 2）安装 `pnpm`
 
-运行如下命令即可安装所需依赖：
+运行如下命令即可安装：
 
 ```shell
 npm install -g pnpm --registry=https://registry.npmmirror.com
@@ -422,6 +422,7 @@ npm run electron
 ```
 
 > 如果electron依赖包下载不动，可以开启ds的npm加速
+> 如果pnpm install只是单纯卡住，大概是因为你忘记进python环境了
 
 ### 8.3、打包成可执行文件
 
