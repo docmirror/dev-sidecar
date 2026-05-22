@@ -13,7 +13,7 @@ import dateUtil from '@docmirror/dev-sidecar/src/utils/util.date.js'
 
 const { configFromFiles } = coreDefaultConfig
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const _dirname = path.dirname(fileURLToPath(import.meta.url))
 // 根据环境判断 mitmproxy.js 的路径
 // electron-vite 开发模式下，主进程构建输出在 out/main/，所以 mitmproxy.js 也在同一目录
 const isDev = process.env.NODE_ENV !== 'production'

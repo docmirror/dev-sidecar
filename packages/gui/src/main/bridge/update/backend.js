@@ -13,7 +13,7 @@ import appPathUtil from '../../utils/util.apppath.js'
 import log from '../../utils/util.log.gui.js'
 import { isNewVersion } from '@docmirror/dev-sidecar/src/utils/util.version.js'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const _dirname = path.dirname(fileURLToPath(import.meta.url))
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 
@@ -80,11 +80,11 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     //   url: publishUrl
     // })
     if (isMac) {
-      autoUpdater.updateConfigPath = path.join(__dirname, 'mac/dev-sidecar.app/Contents/Resources/app-update.yml')
+      autoUpdater.updateConfigPath = path.join(_dirname, 'mac/dev-sidecar.app/Contents/Resources/app-update.yml')
     } else if (isLinux) {
-      autoUpdater.updateConfigPath = path.join(__dirname, 'linux-unpacked/resources/app-update.yml')
+      autoUpdater.updateConfigPath = path.join(_dirname, 'linux-unpacked/resources/app-update.yml')
     } else {
-      autoUpdater.updateConfigPath = path.join(__dirname, 'win-unpacked/resources/app-update.yml')
+      autoUpdater.updateConfigPath = path.join(_dirname, 'win-unpacked/resources/app-update.yml')
     }
   }
 

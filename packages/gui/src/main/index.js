@@ -15,7 +15,7 @@ const isWindows = process.platform === 'win32'
 const isLinux = process.platform === 'linux'
 const isMac = process.platform === 'darwin'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const _dirname = path.dirname(fileURLToPath(import.meta.url))
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const staticPath = isDevelopment
   ? path.resolve('public')
@@ -100,7 +100,7 @@ function setTray () {
     },
   ]
   // 设置系统托盘图标
-  const iconRootPath = path.join(__dirname, '../extra/icons/tray')
+  const iconRootPath = path.join(_dirname, '../extra/icons/tray')
   let iconPath = path.join(iconRootPath, 'icon.png')
   const iconWhitePath = path.join(iconRootPath, 'icon-white.png')
   const iconBlackPath = path.join(iconRootPath, 'icon-black.png')
@@ -405,7 +405,7 @@ function registerShowHideShortcut (showHideShortcut) {
 function initApp () {
   if (isMac) {
     app.whenReady().then(() => {
-      app.dock.setIcon(path.join(__dirname, '../extra/icons/512x512-2.png'))
+      app.dock.setIcon(path.join(_dirname, '../extra/icons/512x512-2.png'))
     })
   }
 

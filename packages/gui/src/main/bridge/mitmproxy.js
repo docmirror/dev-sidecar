@@ -5,7 +5,7 @@ import server from '@docmirror/mitmproxy'
 import jsonApi from '@docmirror/mitmproxy/src/json.js'
 import log from '@docmirror/mitmproxy/src/utils/util.log.server.js' // 当前脚本是在 server 的进程中执行的，所以使用 mitmproxy 中的logger
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const _dirname = path.dirname(fileURLToPath(import.meta.url))
 const configPath = process.argv[2]
 const configJson = fs.readFileSync(configPath)
 log.info('读取 running.json by gui bridge 成功:', configPath)
@@ -20,6 +20,6 @@ try {
 // config.setting.script.defaultDir = path.join(__dirname, scriptDir)
 // const pacFilePath = '../extra/pac/pac.txt'
 // config.plugin.overwall.pac.customPacFilePath = path.join(__dirname, pacFilePath)
-config.setting.rootDir = path.join(__dirname, '../')
+config.setting.rootDir = path.join(_dirname, '../')
 log.info(`start mitmproxy by gui bridge, configPath: ${configPath}`)
 server.start(config)
