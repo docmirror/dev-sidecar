@@ -97,7 +97,9 @@ function childExec (composeCmds, options = {}) {
         if (options.printErrorLog !== false) {
           log.error('cmd 命令执行错误：\n===>\ncommands:', composeCmds, '\n   error:', error, '\n<===')
         }
-        reject(new Error(stderr))
+        const err = new Error(`${stderr || error.message} (command: ${composeCmds})`)
+        err.code = error.code
+        reject(err)
       } else {
         // log.info('cmd 命令完成：', stdout)
         resolve(stdout.replace('Active code page: 65001\r\n', ''))

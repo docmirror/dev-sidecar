@@ -44,7 +44,7 @@ function resolveTestsDir (customDir) {
   return fs.existsSync(candidate) ? candidate : fallbackDir
 }
 
-async function loadAllTests (globalConfig, testsDir) {
+async function loadAllTests (testsDir, globalConfig) {
   const tests = []
   const resolvedDir = resolveTestsDir(testsDir)
   if (!fs.existsSync(resolvedDir)) {
@@ -85,37 +85,16 @@ function getNextTest (todoTests, doneTests) {
 }
 
 async function runTests (options = {}) {
-  const { configPath, testsDir } = options
-  const preferredConfigPath = configPath && configPath.length > 0
-    ? (path.isAbsolute(configPath) ? configPath : path.join(PLUGIN_ROOT, configPath))
-    : null
-  const fallbackConfigPath = path.join(PLUGIN_ROOT, 'config.json')
+  const { testsDir, config } = options
 
-  const configCandidates = Array.from(new Set([preferredConfigPath, fallbackConfigPath].filter(Boolean)))
-
-  let globalConfig
-  let lastError
-  for (const candidatePath of configCandidates) {
-    try {
-      if (!fs.existsSync(candidatePath)) {
-        lastError = new Error(`Config file not found: ${candidatePath}`)
-        continue
-      }
-      const configData = fs.readFileSync(candidatePath, 'utf8')
-      globalConfig = JSON.parse(configData)
-      break
-    } catch (error) {
-      lastError = new Error(`Error reading config file (${candidatePath}): ${error.message}`)
-    }
-  }
-
+  const globalConfig = (config && typeof config === 'object') ? config : null
   if (!globalConfig) {
-    throw lastError || new Error('Unable to load FreeEye config.')
+    throw new Error('FreeEye runtime config is required.')
   }
 
   const globalResults = {}
   const summaries = []
-  const todoTests = await loadAllTests(globalConfig, testsDir)
+  const todoTests = await loadAllTests(testsDir, globalConfig)
   console.log(
     `Loaded ${todoTests.length} tests: ${
       todoTests.map(t => t.getTestTag()).join(' ')}`,
