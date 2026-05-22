@@ -1,8 +1,15 @@
-import { defineConfig, externalizeDepsPlugin } from "electron-vite";
+import { defineConfig } from "electron-vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
-import { resolve } from "path";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
 import fs from "fs";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// 读取 package.json 中的 dependencies 作为外部依赖
+const pkg = JSON.parse(fs.readFileSync(resolve(__dirname, "package.json"), "utf8"));
+const dependencies = Object.keys(pkg.dependencies || {});
 
 // 复制 mitmproxy.js 到输出目录的插件
 function copyMitmproxyPlugin() {
@@ -26,14 +33,11 @@ export default defineConfig({
       rollupOptions: {
         external: [
           "electron",
-          "@starknt/sysproxy",
-          "@starknt/sysproxy-linux-arm64-gnu",
-          "@starknt/shutdown-handler-napi",
-          "@starknt/shutdown-handler-napi-linux-arm64-gnu",
+          ...dependencies,
         ],
       },
     },
-    plugins: [externalizeDepsPlugin(), copyMitmproxyPlugin()],
+    plugins: [copyMitmproxyPlugin()],
     resolve: {
       alias: {
         "@": resolve(__dirname, "src/main"),
@@ -52,10 +56,10 @@ export default defineConfig({
         fileName: () => "index.js",
       },
       rollupOptions: {
-        external: ["electron"],
+        external: ["electron", ...dependencies],
       },
     },
-    plugins: [externalizeDepsPlugin()],
+    plugins: [],
   },
   renderer: {
     root: resolve(__dirname, "src/renderer"),

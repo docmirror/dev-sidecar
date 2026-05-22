@@ -27,8 +27,8 @@ extraResources:
   - from: extra
     to: extra
 
-afterPack: ./pkg/after-pack.cjs
-afterAllArtifactBuild: ./pkg/after-all-artifact-build.cjs
+afterPack: ./pkg/after-pack.mjs
+afterAllArtifactBuild: ./pkg/after-all-artifact-build.mjs
 
 nsis:
   oneClick: false

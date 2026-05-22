@@ -1,6 +1,9 @@
-const fs = require('node:fs')
-const path = require('node:path')
-const pkg = require('../package.json')
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'))
 
 function appendIntro (context, systemType, latest) {
   const version = pkg.version
@@ -20,7 +23,8 @@ function appendIntro (context, systemType, latest) {
     }
   })
 }
-exports.default = async function (context) {
+
+export default async function (context) {
   console.log('after-all-artifact-build')
   appendIntro(context, 'mac', 'latest-mac.yml')
   appendIntro(context, 'win', 'latest.yml')

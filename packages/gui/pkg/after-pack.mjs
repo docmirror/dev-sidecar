@@ -1,7 +1,10 @@
-const fs = require('node:fs')
-const path = require('node:path')
-const archiver = require('archiver')
-const pkg = require('../package.json')
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import archiver from 'archiver'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'))
 
 function writeAppUpdateYmlForLinux (appOutDir) {
   const publishUrl = process.env.VUE_APP_PUBLISH_URL
@@ -17,7 +20,8 @@ updaterCacheDirName: 'dev-sidecar-gui-updater'
   const filePath = path.join(appOutDir, 'resources', 'app-update.yml')
   fs.writeFileSync(filePath, fileContent)
 }
-exports.default = async function (context) {
+
+export default async function (context) {
   let targetPath
   let systemType
   if (context.packager.platform.nodeName === 'darwin') {
