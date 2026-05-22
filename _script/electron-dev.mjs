@@ -1,10 +1,8 @@
 import { spawn } from 'node:child_process'
-import { createRequire } from 'node:module'
 import process from 'node:process'
 import { setTimeout as delay } from 'node:timers/promises'
 
 const guiDir = process.cwd()
-const require = createRequire(import.meta.url)
 
 const devServerUrl = 'http://localhost:8080'
 const state = {
@@ -20,12 +18,6 @@ function spawnCommand (entry, args = [], extraEnv = {}) {
     shell: false,
     stdio: 'inherit',
     windowsHide: false,
-  })
-}
-
-function resolveVueCliServiceBin () {
-  return require.resolve('@vue/cli-service/bin/vue-cli-service.js', {
-    paths: [guiDir],
   })
 }
 
@@ -68,7 +60,6 @@ async function shutdown (code = 0) {
   if (state.closing) {
     return
   }
-
   state.closing = true
   stopChild(state.electron)
   stopChild(state.devServer)
@@ -83,10 +74,10 @@ process.on('SIGTERM', () => {
 })
 
 async function main () {
-  const vueCliServiceBin = resolveVueCliServiceBin()
   const electronBin = resolveElectronBin()
 
-  state.devServer = spawnCommand(process.execPath, [vueCliServiceBin, 'serve', '--port', '8080'])
+  // 使用 electron-vite dev 启动开发服务器
+  state.devServer = spawnCommand('pnpm', ['exec', 'electron-vite', 'dev', '--watch'])
   state.devServer.on('exit', (code, signal) => {
     if (!state.closing) {
       void shutdown(code ?? (signal ? 1 : 0))
@@ -96,7 +87,7 @@ async function main () {
   try {
     await waitForServer(devServerUrl, state.devServer)
     state.electron = spawnCommand(electronBin, ['.'], {
-      WEBPACK_DEV_SERVER_URL: devServerUrl,
+      VITE_DEV_SERVER_URL: devServerUrl,
     })
     state.electron.on('exit', (code, signal) => {
       void shutdown(code ?? (signal ? 1 : 0))
