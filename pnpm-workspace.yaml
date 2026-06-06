@@ -1,5 +1,0 @@
-packages:
-  # all packages in subdirectories of packages/ and components/
-  - packages/*
-  # exclude packages that are inside test directories
-  - '!**/test/**'
