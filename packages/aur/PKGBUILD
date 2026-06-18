@@ -1,0 +1,54 @@
+# Maintainer: Greper <xiaojunnuo@qq.com>
+pkgname=dev-sidecar-bin
+pkgver=2.0.2
+pkgrel=1
+pkgdesc="给开发者的边车辅助工具，通过代理的方式来改善国内访问github等境外网站的情况"
+arch=('x86_64' 'aarch64')
+url="https://github.com/docmirror/dev-sidecar"
+license=('MPL-2.0')
+depends=('libnotify' 'libappindicator-gtk3' 'libxtst' 'nss' 'libxss' 'gtk3')
+provides=('dev-sidecar')
+conflicts=('dev-sidecar')
+options=('!strip')
+
+source_x86_64=("https://github.com/docmirror/dev-sidecar/releases/download/v${pkgver}/DevSidecar-${pkgver}-linux-x86_64.tar.gz")
+source_aarch64=("https://github.com/docmirror/dev-sidecar/releases/download/v${pkgver}/DevSidecar-${pkgver}-linux-arm64.tar.gz")
+
+sha256sums_x86_64=('SKIP')
+sha256sums_aarch64=('SKIP')
+
+package() {
+    local _installdir="${pkgdir}/opt/${pkgname%-bin}"
+
+    install -dm755 "${_installdir}"
+    cp -r "${srcdir}/"* "${_installdir}/"
+
+    # chrome-sandbox must be setuid root
+    if [[ -f "${_installdir}/chrome-sandbox" ]]; then
+        chmod 4755 "${_installdir}/chrome-sandbox"
+    fi
+
+    # symlink the main executable into PATH
+    install -dm755 "${pkgdir}/usr/bin"
+    ln -sf "/opt/${pkgname%-bin}/dev-sidecar" "${pkgdir}/usr/bin/dev-sidecar"
+
+    # desktop entry
+    install -dm755 "${pkgdir}/usr/share/applications"
+    cat > "${pkgdir}/usr/share/applications/dev-sidecar.desktop" << EOF
+[Desktop Entry]
+Name=DevSidecar
+Comment=给开发者的边车辅助工具
+Exec=/opt/dev-sidecar/dev-sidecar %U
+Icon=dev-sidecar
+Terminal=false
+Type=Application
+Categories=Utility;System;
+StartupNotify=true
+EOF
+
+    # application icon (if provided by the package)
+    if [[ -f "${_installdir}/resources/app/public/logo/linux.png" ]]; then
+        install -Dm644 "${_installdir}/resources/app/public/logo/linux.png" \
+            "${pkgdir}/usr/share/pixmaps/dev-sidecar.png"
+    fi
+}

@@ -17,7 +17,8 @@ const ProxyPlugin = function (context) {
     async setProxy () {
       const ip = '127.0.0.1'
       const port = config.get().server.port
-      const setEnv = config.get().proxy.setEnv
+      const proxyConfig = config.get().proxy || {}
+      const setEnv = proxyConfig.setEnv ?? false
       await shell.setSystemProxy({ ip, port, setEnv })
       log.info(`开启系统代理成功：${ip}:${port}`)
       event.fire('status', { key: 'proxy.enabled', value: true })
@@ -26,7 +27,8 @@ const ProxyPlugin = function (context) {
 
     async unsetProxy (setEnv) {
       if (setEnv == null) {
-        setEnv = config.get().proxy.setEnv
+        const proxyConfig = config.get().proxy || {}
+        setEnv = proxyConfig.setEnv ?? false
       }
       try {
         await shell.setSystemProxy({ setEnv })

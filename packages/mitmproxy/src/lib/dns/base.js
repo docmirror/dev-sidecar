@@ -194,6 +194,7 @@ module.exports = class BaseDNS {
       const timeout = 8000
       const timeoutId = setTimeout(() => {
         if (!isOver) {
+          isOver = true
           log.error(`[DNS-over-${this.dnsType} '${this.dnsName}'] DNS查询超时, hostname: ${hostname}, sni: ${this.dnsServerName || '无'}, type: ${type}${this.dnsServer ? `, dnsServer: ${this.dnsServer}` : ''}${this.dnsServerPort ? `:${this.dnsServerPort}` : ''}, cost: ${Date.now() - start} ms`)
           reject(new Error('DNS查询超时'))
         }

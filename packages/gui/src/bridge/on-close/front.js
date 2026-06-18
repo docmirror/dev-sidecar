@@ -1,36 +1,52 @@
+import { h, resolveComponent } from 'vue'
+
 let closeType = 2
 let doSave = false
 
 function install (app, api) {
   api.ipc.on('close.showTip', (event, message) => {
     console.info('ipc channel: "close.showTip", event:', event, ', message:', message)
-    function onRadioChange (event) {
-      closeType = event.target.value
+    function onRadioChange (e) {
+      closeType = parseInt(e.target.value)
     }
-    function onCheckChange (event) {
-      doSave = event.target.checked
+    function onCheckChange (e) {
+      doSave = e.target.checked
     }
-    app.$confirm({
+
+    const shortcut = message.showHideShortcut || '无'
+
+    const ARadioGroup = resolveComponent('a-radio-group')
+    const ARadio = resolveComponent('a-radio')
+    const ACheckbox = resolveComponent('a-checkbox')
+
+    // 使用 h 函数创建 VNode
+    const content = h('div', {}, [
+      h('div', { style: { marginTop: '10px' } }, [
+        h(ARadioGroup, {
+          value: closeType,
+          'onUpdate:value': (val) => { closeType = val },
+          onChange: onRadioChange,
+        }, [
+          h(ARadio, { value: 1 }, '直接关闭'),
+          h(ARadio, { value: 2 }, '最小化到系统托盘'),
+        ]),
+      ]),
+      h('div', { style: { marginTop: '10px' } }, [
+        h(ACheckbox, {
+          checked: doSave,
+          'onUpdate:checked': (val) => { doSave = val },
+          onChange: onCheckChange,
+        }, '记住本次选择，不再提示'),
+      ]),
+      h('div', { style: { marginTop: '20px' } }, [
+        '提示：打开窗口的快捷键为 ',
+        h('code', {}, shortcut),
+      ]),
+    ])
+
+    app.config.globalProperties.$confirm({
       title: '关闭策略',
-      content: (h) => (
-        <div>
-          <div style="margin-top:10px">
-            <a-radio-group vOn:change={onRadioChange} defaultValue={closeType}>
-              <a-radio value={1}>直接关闭</a-radio>
-              <a-radio value={2}>最小化到系统托盘</a-radio>
-            </a-radio-group>
-          </div>
-          <div style="margin-top:10px">
-            <a-checkbox vOn:change={onCheckChange} defaultChecked={doSave}>
-              记住本次选择，不再提示
-            </a-checkbox>
-          </div>
-          <div style="margin-top:20px">
-            提示：打开窗口的快捷键为
-            <code>{message.showHideShortcut || '无'}</code>
-          </div>
-        </div>
-      ),
+      content,
       async onOk () {
         console.log('OK. closeType=', closeType, ', doSave:', doSave)
         if (doSave) {

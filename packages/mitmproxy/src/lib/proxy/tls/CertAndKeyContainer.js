@@ -17,7 +17,7 @@ module.exports = class CertAndKeyContainer {
         return 1
       },
       dispose: (_evictCertPromiseObj, evictKey) => {
-        log.error(`旧证书缓存被移除：${evictKey}`)
+        log.info(`旧证书缓存被移除：${evictKey}`)
       },
     })
     this.caCert = caCert
@@ -33,7 +33,7 @@ module.exports = class CertAndKeyContainer {
     // 获取缓存
     const cached = this.cache.get(dnsName)
     if (cached) {
-      log.info(`Load fakeCertPromise from cache, hostname: ${hostname}:${port}, certPromiseObj: {"mappingHostNames":${JSON.stringify(cached.mappingHostNames)}}`)
+      log.debug(`Load fakeCertPromise from cache, hostname: ${hostname}:${port}, certPromiseObj: {"mappingHostNames":${JSON.stringify(cached.mappingHostNames)}}`)
       return cached.promise
     }
 

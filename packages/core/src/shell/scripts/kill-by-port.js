@@ -4,7 +4,7 @@ const execute = Shell.execute
 
 const executor = {
   async windows (exec, { port }) {
-    const cmds = [`for /f "tokens=5" %a in ('netstat -aon ^| find ":${port}" ^| find "LISTENING"') do (taskkill /f /pid %a & exit /B) `]
+    const cmds = [`for /f "tokens=5" %a in ('netstat -aon ^| find ":${port}" ^| find "LISTENING"') do (taskkill /f /pid %a /t & exit /B) `]
     await exec(cmds, { type: 'cmd' })
     return true
   },

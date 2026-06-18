@@ -1,16 +1,20 @@
 import { ipcRenderer, shell } from 'electron'
 import lodash from 'lodash'
-import path from 'node:path'
+import path from 'path'
 
 let inited = false
 let apiObj = null
 export function apiInit (app) {
   const invoke = (api, args) => {
     return ipcRenderer.invoke('apiInvoke', [api, args]).catch((e) => {
-      app.$notification.error({
-        message: 'Api invoke error',
-        description: e.message,
-      })
+      const notification = app.config.globalProperties.$notification
+      if (notification) {
+        notification.error({
+          message: 'Api invoke error',
+          description: e.message,
+        })
+      }
+      throw e
     })
   }
   const send = (channel, message) => {

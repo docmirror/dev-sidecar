@@ -32,7 +32,6 @@ module.exports = {
 
       // status
       const status = response.status || 403
-      response.status = status
 
       // body
       const body = response.html || response.json || response.script || response.css || response.text || response.body
@@ -40,9 +39,8 @@ module.exports = {
         + '  This request is matched by abort intercept.\n\n'
         + `  因配置abort拦截器，本请求直接返回${status}禁止访问。`
 
-      // headers
-      const headers = response.headers || {}
-      response.headers = headers
+      // headers：浅拷贝配置中的 headers，避免将 origin 等请求级数据写入共享的拦截器配置对象
+      const headers = { ...(response.headers || {}) }
       headers['DS-Interceptor'] = 'abort'
       // headers.Content-Type
       if (status !== 204) {

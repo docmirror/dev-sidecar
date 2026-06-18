@@ -1,3 +1,6 @@
+// 提前编译，避免在 getLastModifiedTimeFromIfModifiedSince 中重复创建 RegExp 对象
+const PURE_NUMBER_RE = /^\s*\d+\s*$/
+
 function getMaxAge (interceptOpt) {
   // 秒
   if (interceptOpt.cacheSeconds > 0 || interceptOpt.cacheMaxAge > 0 || interceptOpt.cache > 0) {
@@ -33,24 +36,25 @@ function getMaxAge (interceptOpt) {
 
 // 获取 lastModifiedTime 的方法
 function getLastModifiedTimeFromIfModifiedSince (rOptions, log) {
-  // 获取 If-Modified-Since 和 If-None-Match 用于判断是否命中缓存
+  // 获取 If-Modified-Since 用于判断是否命中缓存
   const lastModified = rOptions.headers['if-modified-since']
   if (lastModified == null || lastModified.length === 0) {
     return null // 没有lastModified，返回null
   }
 
-  try {
-    // 尝试解析 lastModified，并获取time
-    return new Date(lastModified).getTime()
-  } catch (e) {
-    // 为数字时，直接返回
-    if (/^\s*\d+\s*$/.test(lastModified)) {
-      return Number.parseInt(lastModified)
-    }
+  // 优先尝试作为纯数字时间戳（毫秒）解析，避免 new Date() 将其当作无效日期而返回 NaN
+  if (PURE_NUMBER_RE.test(lastModified)) {
+    return Number.parseInt(lastModified, 10)
+  }
 
-    log.warn(`cache intercept: 解析 if-modified-since 失败: '${lastModified}', error:`, e)
+  // 再尝试作为日期字符串解析
+  const time = new Date(lastModified).getTime()
+  if (Number.isNaN(time)) {
+    log.warn(`cache intercept: 解析 if-modified-since 失败: '${lastModified}'`)
     return null
   }
+
+  return time
 }
 
 module.exports = {

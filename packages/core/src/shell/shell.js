@@ -59,14 +59,34 @@ class WindowsSystemShell extends SystemShell {
         ps.dispose()
       }
     } else {
-      let compose = 'chcp 65001' // 'chcp 65001  '
+      await childExecCmdWindows('chcp 65001', args)
+      let ret
       for (const cmd of cmds) {
-        compose += ` && ${cmd}`
+        ret = await childExecCmdWindows(cmd, args)
       }
-      // compose += '&& exit'
-      return await childExec(compose, args)
+      return ret
     }
   }
+}
+
+function childExecCmdWindows (cmd, options = {}) {
+  return new Promise((resolve, reject) => {
+    const execOptions = { ...options }
+    delete execOptions.type
+    delete execOptions.printErrorLog
+
+    log.info('shell:', cmd)
+    childProcess.execFile('cmd.exe', ['/d', '/s', '/c', cmd], execOptions, (error, stdout, stderr) => {
+      if (error) {
+        if (options.printErrorLog !== false) {
+          log.error('cmd 命令执行错误：\n===>\ncommands:', cmd, '\n   error:', error, '\n<===')
+        }
+        reject(new Error(stderr))
+      } else {
+        resolve(stdout.replace('Active code page: 65001\r\n', ''))
+      }
+    })
+  })
 }
 
 function childExec (composeCmds, options = {}) {
@@ -77,7 +97,9 @@ function childExec (composeCmds, options = {}) {
         if (options.printErrorLog !== false) {
           log.error('cmd 命令执行错误：\n===>\ncommands:', composeCmds, '\n   error:', error, '\n<===')
         }
-        reject(new Error(stderr))
+        const err = new Error(`${stderr || error.message} (command: ${composeCmds})`)
+        err.code = error.code
+        reject(err)
       } else {
         // log.info('cmd 命令完成：', stdout)
         resolve(stdout.replace('Active code page: 65001\r\n', ''))

@@ -1,11 +1,13 @@
 <script>
 import { ipcRenderer } from 'electron'
+import { ProfileOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
 import Plugin from '../mixins/plugin'
 import { colorTheme } from '../composables/theme'
 
 export default {
   name: 'Setting',
   mixins: [Plugin],
+  components: { ProfileOutlined, SyncOutlined, CheckOutlined },
   data () {
     return {
       key: 'app',
@@ -271,33 +273,31 @@ export default {
       this.$confirm({
         title: '确定要恢复出厂设置吗？',
         width: 610,
-        content: h => (
-          <div class="restore-factory-settings">
-            <hr />
-            <p>
-              <h3>操作警告：</h3>
-              <div>
-                该功能将备份您的所有页面的个性化配置，并重载
-                <span>默认配置</span>
-                及
-                <span>远程配置</span>
-                ，请谨慎操作！！！
-              </div>
-            </p>
-            <hr />
-            <p>
-              <h3>找回个性化配置的方法：</h3>
-              <div>
-                1. 找到备份文件，路径：
-                <span>~/.dev-sidecar/config.json.时间戳.bak.json</span>
-                <br />
-                2. 将该备份文件重命名为
-                <span>config.json</span>
-                ，再重启软件即可恢复个性化配置。
-              </div>
-            </p>
-          </div>
-        ),
+        content: h => h('div', { class: 'restore-factory-settings' }, [
+          h('hr'),
+          h('div', [
+            h('h3', '操作警告：'),
+            h('div', [
+              '该功能将备份您的所有页面的个性化配置，并重载',
+              h('span', '默认配置'),
+              '及',
+              h('span', '远程配置'),
+              '，请谨慎操作！！！'
+            ])
+          ]),
+          h('hr'),
+          h('div', [
+            h('h3', '找回个性化配置的方法：'),
+            h('div', [
+              '1. 找到备份文件，路径：',
+              h('span', '~/.dev-sidecar/config.json.时间戳.bak.json'),
+              h('br'),
+              '2. 将该备份文件重命名为',
+              h('span', 'config.json'),
+              '，再重启软件即可恢复个性化配置。'
+            ])
+          ])
+        ]),
         cancelText: '取消',
         okText: '确定',
         onOk: async () => {
@@ -340,21 +340,21 @@ export default {
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       设置
     </template>
-    <template slot="header-right">
-      <a-button class="mr10" icon="profile" @click="openLog()">查看日志</a-button>
+    <template #header-right>
+      <a-button class="mr10" @click="openLog()"><ProfileOutlined />查看日志</a-button>
     </template>
 
     <div v-if="config">
       <a-form-item label="开机自启" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.app.autoStart.enabled" @change="onAutoStartChange">
+        <a-checkbox v-model:checked="config.app.autoStart.enabled" @change="onAutoStartChange">
           本应用开机自启
         </a-checkbox>
       </a-form-item>
       <a-form-item v-if="systemPlatform === 'mac'" label="隐藏Dock图标" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.app.dock.hideWhenWinClose">
+        <a-checkbox v-model:checked="config.app.dock.hideWhenWinClose">
           关闭窗口时隐藏Dock图标(仅限Mac)
         </a-checkbox>
         <div class="form-help">
@@ -363,7 +363,7 @@ export default {
       </a-form-item>
       <hr>
       <a-form-item label="远程配置" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.app.remoteConfig.enabled" @change="onRemoteConfigEnabledChange">
+        <a-checkbox v-model:checked="config.app.remoteConfig.enabled" @change="onRemoteConfigEnabledChange">
           启用远程配置
         </a-checkbox>
         <div class="form-help">
@@ -373,14 +373,14 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="共享远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.app.remoteConfig.url" :title="config.app.remoteConfig.url" spellcheck="false" />
+        <a-input v-model:value="config.app.remoteConfig.url" :title="config.app.remoteConfig.url" spellcheck="false" />
       </a-form-item>
       <a-form-item label="个人远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.app.remoteConfig.personalUrl" :title="config.app.remoteConfig.personalUrl" spellcheck="false" />
+        <a-input v-model:value="config.app.remoteConfig.personalUrl" :title="config.app.remoteConfig.personalUrl" spellcheck="false" />
       </a-form-item>
       <a-form-item label="重载远程配置" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-button :disabled="config.app.remoteConfig.enabled === false" :loading="reloadLoading" icon="sync" @click="reloadRemoteConfig()">
-          重载远程配置
+        <a-button :disabled="config.app.remoteConfig.enabled === false" :loading="reloadLoading" @click="reloadRemoteConfig()">
+          <SyncOutlined />重载远程配置
         </a-button>
         <div class="form-help">
           注意，部分远程配置文件所在站点，修改内容后可能需要等待一段时间才能生效。<br>
@@ -389,7 +389,7 @@ export default {
       </a-form-item>
       <hr>
       <a-form-item label="主题设置" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.theme" default-value="light" button-style="solid">
+        <a-radio-group v-model:value="config.app.theme" default-value="light" button-style="solid">
           <a-radio-button value="light" title="light">
             亮色
           </a-radio-button>
@@ -402,7 +402,7 @@ export default {
         </a-radio-group>
       </a-form-item>
       <a-form-item label="首页提示" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.showShutdownTip" default-value="true" button-style="solid">
+        <a-radio-group v-model:value="config.app.showShutdownTip" default-value="true" button-style="solid">
           <a-radio-button :value="true">
             显示
           </a-radio-button>
@@ -415,7 +415,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item v-if="!isLinux()" label="关闭策略" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.closeStrategy" default-value="0" button-style="solid">
+        <a-radio-group v-model:value="config.app.closeStrategy" default-value="0" button-style="solid">
           <a-radio-button :value="0">
             弹出提示
           </a-radio-button>
@@ -432,13 +432,13 @@ export default {
       </a-form-item>
       <hr>
       <a-form-item label="打开窗口快捷键" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.app.showHideShortcut" spellcheck="false" @change="shortcutChange" @keydown="shortcutKeyDown" @keyup="shortcutKeyUp" />
+        <a-input v-model:value="config.app.showHideShortcut" spellcheck="false" @change="shortcutChange" @keydown="shortcutKeyDown" @keyup="shortcutKeyUp" />
         <div class="form-help">
           部分快捷键已被占用：<code>F5</code>、<code>F12</code>、<code>Ctrl+F</code>、<code>F3</code>、<code>Shift+F3</code>
         </div>
       </a-form-item>
       <a-form-item label="启动时窗口状态" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.startShowWindow" default-value="true" button-style="solid">
+        <a-radio-group v-model:value="config.app.startShowWindow" default-value="true" button-style="solid">
           <a-radio-button :value="true">
             打开窗口
           </a-radio-button>
@@ -451,12 +451,12 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="启动时窗口大小" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number v-model="config.app.windowSize.width" :step="50" :min="600" :max="2400" :precision="0" spellcheck="false" />&nbsp;×
-        <a-input-number v-model="config.app.windowSize.height" :step="50" :min="500" :max="2000" :precision="0" spellcheck="false" />
+        <a-input-number v-model:value="config.app.windowSize.width" :step="50" :min="600" :max="2400" :precision="0" spellcheck="false" />&nbsp;×
+        <a-input-number v-model:value="config.app.windowSize.height" :step="50" :min="500" :max="2000" :precision="0" spellcheck="false" />
       </a-form-item>
       <hr>
       <a-form-item label="自动检查更新" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.autoChecked" default-value="light" button-style="solid">
+        <a-radio-group v-model:value="config.app.autoChecked" default-value="light" button-style="solid">
           <a-radio-button :value="true">
             开启
           </a-radio-button>
@@ -469,7 +469,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="忽略预发布版本" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model="config.app.skipPreRelease" default-value="light" button-style="solid">
+        <a-radio-group v-model:value="config.app.skipPreRelease" default-value="light" button-style="solid">
           <a-radio-button :value="true">
             忽略
           </a-radio-button>
@@ -484,7 +484,7 @@ export default {
       <hr>
       <a-form-item label="日志文件保存目录" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input-search
-          v-model="config.app.logFileSavePath" enter-button="选择"
+          v-model:value="config.app.logFileSavePath" enter-button="选择"
           :title="config.app.logFileSavePath" spellcheck="false"
           @search="onLogFileSavePathSelect"
         />
@@ -494,8 +494,8 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="最大日志文件大小" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number ref="maxLogFileSize" v-model="config.app.maxLogFileSize" :step="maxLogFileSizeStep" :min="0" spellcheck="false" />
-        <a-select v-model="config.app.maxLogFileSizeUnit" class="ml5" @change="onMaxLogFileSizeUnitChange">
+        <a-input-number ref="maxLogFileSize" v-model:value="config.app.maxLogFileSize" :step="maxLogFileSizeStep" :min="0" spellcheck="false" />
+        <a-select v-model:value="config.app.maxLogFileSizeUnit" class="ml5" @change="onMaxLogFileSizeUnitChange">
           <a-select-option v-for="(item) of maxLogFileSizeUnit" :key="item.value" :value="item.value">
             {{ item.label }}
           </a-select-option>
@@ -506,24 +506,26 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="保留日志文件数" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input-number v-model="config.app.keepLogFileCount" :step="1" :min="0" :precision="0" spellcheck="false" />
+        <a-input-number v-model:value="config.app.keepLogFileCount" :step="1" :min="0" :precision="0" spellcheck="false" />
         <div class="form-help">
           修改后，重启DS才生效，<code>隔天</code>或<code>达到日志文件大小限制</code>时，才会触发清理程序！
         </div>
       </a-form-item>
     </div>
-    <template slot="footer">
+
+    <template #footer>
       <div class="footer-bar">
-        <a-button :loading="removeUserConfigLoading" class="mr10" icon="sync" @click="restoreFactorySettings()">
-          恢复出厂设置
+        <a-button :loading="removeUserConfigLoading" class="mr10" @click="restoreFactorySettings()">
+          <SyncOutlined />恢复出厂设置
         </a-button>
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
     </template>
+
   </ds-container>
 </template>

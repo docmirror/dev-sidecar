@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.16.0",
-    "eslint": "^9.39.4",
+    "eslint": "^10.2.1",
     "eslint-plugin-format": "^0.1.3"
   },
   "pnpm": {

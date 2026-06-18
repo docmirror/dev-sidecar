@@ -1,11 +1,14 @@
 <script>
-import Plugin from '../../mixins/plugin'
-import MockInput from '@/view/components/mock-input.vue'
+import { defineComponent } from 'vue';
 
-export default {
+import { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
+import Plugin from '../../mixins/plugin'
+
+export default defineComponent({
   name: 'Overwall',
-  components: { MockInput },
+  components: { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
   mixins: [Plugin],
+
   data () {
     return {
       key: 'plugin.overwall',
@@ -25,11 +28,14 @@ export default {
       ],
     }
   },
+
   created () {
     console.log('status:', this.status)
   },
+
   mounted () {
   },
+
   methods: {
     async openExternal (url) {
       await this.$api.ipc.openExternal(url)
@@ -114,22 +120,22 @@ export default {
       this.config.plugin.overwall.server = map
     },
   },
-}
+});
 </script>
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       梯子
     </template>
-    <template slot="header-right">
+    <template #header-right>
       <a-button type="primary" @click="openExternal('https://github.com/docmirror/dev-sidecar-doc/blob/main/ow.md')">原理说明</a-button>
     </template>
 
     <div v-if="config">
       <a-form layout="horizontal">
         <a-form-item label="梯子" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.overwall.enabled">
+          <a-checkbox v-model:checked="config.plugin.overwall.enabled">
             启用
           </a-checkbox>
           <div class="form-help">
@@ -140,7 +146,7 @@ export default {
         </a-form-item>
         <hr>
         <a-form-item label="PAC" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.overwall.pac.enabled">
+          <a-checkbox v-model:checked="config.plugin.overwall.pac.enabled">
             启用PAC
           </a-checkbox>
           <div class="form-help">
@@ -148,7 +154,7 @@ export default {
           </div>
         </a-form-item>
         <a-form-item label="自动更新PAC" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.overwall.pac.autoUpdate">
+          <a-checkbox v-model:checked="config.plugin.overwall.pac.autoUpdate">
             是否自动更新PAC
           </a-checkbox>
           <div class="form-help">
@@ -157,7 +163,7 @@ export default {
           </div>
         </a-form-item>
         <a-form-item label="远程PAC文件" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model="config.plugin.overwall.pac.pacFileUpdateUrl" :title="config.plugin.overwall.pac.pacFileUpdateUrl" spellcheck="false" />
+          <a-input v-model:value="config.plugin.overwall.pac.pacFileUpdateUrl" :title="config.plugin.overwall.pac.pacFileUpdateUrl" spellcheck="false" />
           <div class="form-help">
             远程PAC文件内容可以是<code>base64</code>编码格式，也可以是未经过编码的
           </div>
@@ -170,22 +176,22 @@ export default {
                 <span>PAC没有拦截到的域名，可以在此处定义；配置为<code>禁用</code>时，将不使用梯子</span>
               </a-col>
               <a-col :span="2">
-                <a-button type="primary" icon="plus" @click="addTarget()" />
+                <a-button type="primary" @click="addTarget()"><PlusOutlined /></a-button>
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of targets" ref="targets" :key="index" :gutter="10">
               <a-col :span="18">
-                <MockInput v-model="item.key" class="mt-2" />
+                <a-input v-model:value="item.key" class="mt-2" spellcheck="false" />
               </a-col>
               <a-col :span="4">
-                <a-select v-model="item.value" class="w100">
+                <a-select v-model:value="item.value" class="w100">
                   <a-select-option v-for="(item2) of overwallOptions" :key="item2.value" :value="item2.value">
                     {{ item2.label }}
                   </a-select-option>
                 </a-select>
               </a-col>
               <a-col :span="2">
-                <a-button type="danger" icon="minus" @click="deleteTarget(item, index)" />
+                <a-button type="danger" @click="deleteTarget(item, index)"><MinusOutlined /></a-button>
               </a-col>
             </a-row>
           </div>
@@ -197,24 +203,24 @@ export default {
                 <span>Nginx二层代理服务端配置</span>
               </a-col>
               <a-col :span="2">
-                <a-button type="primary" icon="plus" @click="addServer()" />
+                <a-button type="primary" @click="addServer()"><PlusOutlined /></a-button>
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of servers" ref="servers" :key="index" :gutter="10">
               <a-col :span="6">
-                <a-input v-model="item.key" :title="item.key" addon-before="域名" placeholder="yourdomain.com" spellcheck="false" />
+                <a-input v-model:value="item.key" :title="item.key" addon-before="域名" placeholder="yourdomain.com" spellcheck="false" />
               </a-col>
               <a-col :span="5">
-                <a-input v-model="item.value.port" :title="item.value.port" addon-before="端口" placeholder="443" spellcheck="false" />
+                <a-input v-model:value="item.value.port" :title="item.value.port" addon-before="端口" placeholder="443" spellcheck="false" />
               </a-col>
               <a-col :span="6">
-                <a-input v-model="item.value.path" :title="item.value.path" addon-before="路径" placeholder="xxxxxx" spellcheck="false" />
+                <a-input v-model:value="item.value.path" :title="item.value.path" addon-before="路径" placeholder="xxxxxx" spellcheck="false" />
               </a-col>
               <a-col :span="5">
-                <a-input v-model="item.value.password" addon-before="密码" type="password" placeholder="password" spellcheck="false" />
+                <a-input v-model:value="item.value.password" addon-before="密码" type="password" placeholder="password" spellcheck="false" />
               </a-col>
               <a-col :span="2">
-                <a-button type="danger" icon="minus" @click="deleteServer(item, index)" />
+                <a-button type="danger" @click="deleteServer(item, index)"><MinusOutlined /></a-button>
               </a-col>
             </a-row>
             <div class="form-help">
@@ -225,13 +231,13 @@ export default {
         </a-form-item>
       </a-form>
     </div>
-    <template slot="footer">
+    <template #footer>
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
     </template>

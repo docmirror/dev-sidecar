@@ -1,6 +1,6 @@
 import os from 'node:os'
 import path from 'node:path'
-import log from './util.log.gui'
+import log from './util.log.gui.js'
 
 function getSystemPlatform (throwIfUnknown = false) {
   switch (os.platform()) {

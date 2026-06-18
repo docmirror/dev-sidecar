@@ -1,11 +1,14 @@
 <script>
-import Plugin from '../mixins/plugin'
-import MockInput from '@/view/components/mock-input.vue'
+import { defineComponent } from 'vue';
 
-export default {
+import { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
+import Plugin from '../mixins/plugin'
+
+export default defineComponent({
   name: 'Proxy',
-  components: { MockInput },
+  components: { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
   mixins: [Plugin],
+
   data () {
     return {
       key: 'proxy',
@@ -23,10 +26,13 @@ export default {
       ],
     }
   },
+
   async created () {
   },
+
   mounted () {
   },
+
   methods: {
     async openExternal (url) {
       await this.$api.ipc.openExternal(url)
@@ -80,18 +86,18 @@ export default {
       this.config.proxy.excludeIpList = excludeIpList
     },
   },
-}
+});
 </script>
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       系统代理设置
     </template>
 
     <div v-if="config">
       <a-form-item label="启用系统代理" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.enabled">
+        <a-checkbox v-model:checked="config.proxy.enabled">
           随应用启动
         </a-checkbox>
         <a-tag v-if="status.proxy.enabled" color="green">
@@ -105,7 +111,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="代理HTTP请求" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.proxyHttp">
+        <a-checkbox v-model:checked="config.proxy.proxyHttp">
           是否代理HTTP请求
         </a-checkbox>
         <div class="form-help">
@@ -116,7 +122,7 @@ export default {
 
       <!-- 以下两个功能仅windows支持，mac和linux暂不支持 -->
       <a-form-item v-if="isWindows()" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.setEnv">
+        <a-checkbox v-model:checked="config.proxy.setEnv">
           是否同时修改<code>HTTPS_PROXY</code>环境变量（不好用，不建议勾选）
         </a-checkbox>
         <div class="form-help">
@@ -135,7 +141,7 @@ export default {
 
       <hr>
       <a-form-item label="排除国内域名" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.excludeDomesticDomainAllowList">
+        <a-checkbox v-model:checked="config.proxy.excludeDomesticDomainAllowList">
           是否排除国内域名白名单
         </a-checkbox>
         <div class="form-help">
@@ -143,7 +149,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="自动更新国内域名" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model="config.proxy.autoUpdateDomesticDomainAllowList">
+        <a-checkbox v-model:checked="config.proxy.autoUpdateDomesticDomainAllowList">
           是否自动更新国内域名白名单
         </a-checkbox>
         <div class="form-help">
@@ -152,7 +158,7 @@ export default {
         </div>
       </a-form-item>
       <a-form-item label="远程国内域名地址" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model="config.proxy.remoteDomesticDomainAllowListFileUrl" :title="config.proxy.remoteDomesticDomainAllowListFileUrl" spellcheck="false" />
+        <a-input v-model:value="config.proxy.remoteDomesticDomainAllowListFileUrl" :title="config.proxy.remoteDomesticDomainAllowListFileUrl" spellcheck="false" />
         <div class="form-help">
           远程国内域名白名单文件内容可以是<code>base64</code>编码格式，也可以是未经过编码的
         </div>
@@ -164,33 +170,33 @@ export default {
             <span>国内域名不包含的域名，可以在此处定义；配置为 <code>不排除</code>时，将被代理</span>
           </a-col>
           <a-col :span="2">
-            <a-button type="primary" icon="plus" @click="addExcludeIp()" />
+            <a-button type="primary" @click="addExcludeIp()"><PlusOutlined /></a-button>
           </a-col>
         </a-row>
         <a-row v-for="(item, index) of excludeIpList" ref="excludeIpList" :key="index" :gutter="10" class="fine-tuning">
           <a-col :span="17">
-            <MockInput v-model="item.key" class="mt-1" />
+            <a-input v-model:value="item.key" class="mt-1" spellcheck="false" />
           </a-col>
           <a-col :span="5">
-            <a-select v-model="item.value" class="w100">
+            <a-select v-model:value="item.value" class="w100">
               <a-select-option v-for="(item2) of excludeIpOptions" :key="item2.value" :value="item2.value">
                 {{ item2.label }}
               </a-select-option>
             </a-select>
           </a-col>
           <a-col :span="2">
-            <a-button type="danger" icon="minus" @click="delExcludeIp(item, index)" />
+            <a-button type="danger" @click="delExcludeIp(item, index)"><MinusOutlined /></a-button>
           </a-col>
         </a-row>
       </a-form-item>
     </div>
-    <template slot="footer">
+    <template #footer>
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
     </template>
@@ -198,14 +204,13 @@ export default {
     <a-drawer
       placement="right"
       :closable="false"
-      :visible.sync="loopbackVisible"
+      v-model:open="loopbackVisible"
       width="660px"
       height="100%"
-      :slots="{ title: 'title' }"
       wrap-class-name="json-wrapper"
       @close="loopbackVisible = false"
     >
-      <template slot="title">
+      <template #title>
         设置Loopback
         <a-button style="float:right;margin-right:10px;" @click="openEnableLoopback()">
           打开EnableLoopback

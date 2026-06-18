@@ -1,16 +1,21 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import DevSidecar from '@docmirror/dev-sidecar'
 import AdmZip from 'adm-zip'
 import { ipcMain } from 'electron'
-import { autoUpdater } from 'electron-updater'
+import electronUpdater from 'electron-updater'
+const { autoUpdater } = electronUpdater
 import request from 'request'
 import progress from 'request-progress'
-import pkg from '../../../package.json'
-import appPathUtil from '../../utils/util.apppath'
-import log from '../../utils/util.log.gui'
-import { isNewVersion } from '@docmirror/dev-sidecar/src/utils/util.version'
+import { createRequire } from 'node:module'
+const require = createRequire(import.meta.url)
+const pkg = require('../../../package.json')
+import appPathUtil from '../../utils/util.apppath.js'
+import log from '../../utils/util.log.gui.js'
+import { isNewVersion } from '@docmirror/dev-sidecar/src/utils/util.version.js'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 

@@ -6,15 +6,15 @@ function appendIntro (context, systemType, latest) {
   const version = pkg.version
   const partUpdateFile = `update-${systemType}-${version}.zip`
 
-  const partUpdateUrl = context.configuration.publish.url + partUpdateFile
+  const publishConfig = context.configuration.publish
+  if (!publishConfig || !publishConfig.url) {
+    console.log(`跳过 latest 修改: ${latest}，publish 配置不可用`)
+    return
+  }
+  const partUpdateUrl = publishConfig.url + partUpdateFile
 
   const latestFilePath = path.join(context.outDir, latest)
-  fs.appendFile(latestFilePath, `partPackage: ${partUpdateUrl}
-partMiniVersion: 1.7.0
-releaseNotes:
-  - 升级日志
-  - https://download.fastgit.org/docmirror/dev-sidecar/releases/download/v${version}/DevSidecar-${version}.exe
-`, (err) => {
+  fs.appendFile(latestFilePath, `partPackage: ${partUpdateUrl}\npartMiniVersion: 1.7.0\nreleaseNotes:\n  - 升级日志\n  - https://download.fastgit.org/docmirror/dev-sidecar/releases/download/v${version}/DevSidecar-${version}.exe\n`, (err) => {
     if (err) {
       console.log('修改latest 失败')
     }

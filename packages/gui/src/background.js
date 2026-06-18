@@ -1,13 +1,12 @@
 'use strict'
-/* global __static */
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import DevSidecar from '@docmirror/dev-sidecar'
-import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, protocol, Tray } from 'electron'
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, Tray } from 'electron'
 import minimist from 'minimist'
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-import backend from './bridge/backend'
-import jsonApi from '@docmirror/mitmproxy/src/json'
-import log from './utils/util.log.gui'
+import backend from './bridge/backend.js'
+import jsonApi from '@docmirror/mitmproxy/src/json.js'
+import log from './utils/util.log.gui.js'
 
 log.info(`background.js start, platform is ${process.platform}`)
 
@@ -15,17 +14,13 @@ const isWindows = process.platform === 'win32'
 const isLinux = process.platform === 'linux'
 const isMac = process.platform === 'darwin'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const staticPath = isDevelopment
+  ? path.resolve('public')
+  : path.join(app.getAppPath(), 'dist')
 
-// 避免其他系统出现异常，只有 Windows 使用 './background/powerMonitor'
 let _powerMonitor = powerMonitor
-if (isWindows) {
-  try {
-    _powerMonitor = require('./background/powerMonitor').powerMonitor
-  } catch (e) {
-    log.error(`加载 './background/powerMonitor' 失败，现捕获异常并使用默认的 powerMonitor。\r\n目前，启动着DS重启电脑时，将无法正常关闭系统代理，届时请自行关闭系统代理！\r\n捕获的异常信息:`, e)
-  }
-}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -42,10 +37,7 @@ try {
 }
 
 let hideDockWhenWinClose = DevSidecar.api.config.get().app.dock.hideWhenWinClose || false
-// Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { secure: true, standard: true } },
-])
+
 
 function openDevTools () {
   try {
@@ -222,7 +214,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
         nodeIntegration: true, // process.env.ELECTRON_NODE_INTEGRATION
       },
       show: !startHideWindow,
-      icon: path.join(__static, 'icon.png'),
+      icon: path.join(staticPath, 'icon.png'),
     })
   } catch (e) {
     log.error('创建窗口失败:', e)
@@ -249,9 +241,8 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
       setTimeout(openDevTools, 2000)
     }
   } else {
-    createProtocol('app')
     // Load the index.html when not in development
-    win.loadURL('app://./index.html')
+    win.loadFile(path.join(app.getAppPath(), 'dist', 'index.html'))
   }
 
   if (startHideWindow) {
@@ -494,14 +485,14 @@ try {
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
     app.on('ready', async () => {
-      // if (isDevelopment && !process.env.IS_TEST) {
-      //   // Install Vue Devtools
-      //   try {
-      //     await installExtension(VUEJS_DEVTOOLS)
-      //   } catch (e) {
-      //     log.error('Vue Devtools failed to install:', e.toString())
-      //   }
-      // }
+      if (isWindows) {
+        try {
+          const mod = await import('./background/powerMonitor.js')
+          _powerMonitor = mod.powerMonitor
+        } catch (e) {
+          log.error(`加载 './background/powerMonitor' 失败，现捕获异常并使用默认的 powerMonitor。\r\n目前，启动着DS重启电脑时，将无法正常关闭系统代理，届时请自行关闭系统代理！\r\n捕获的异常信息:`, e)
+        }
+      }
 
       try {
         if (!createWindow(startHideWindow)) {

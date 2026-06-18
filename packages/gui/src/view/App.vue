@@ -1,12 +1,16 @@
 <script>
+import { h } from 'vue';
+import * as Icons from '@ant-design/icons-vue';
+
 import { ipcRenderer } from 'electron'
 import createMenus from '@/view/router/menu'
-import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
+import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import { colorTheme } from './composables/theme'
 
 export default {
   name: 'App',
-  data () {
+
+  data() {
     return {
       locale: zhCN,
       info: {
@@ -16,36 +20,64 @@ export default {
           personalRemote: {},
         },
       },
-      menus: undefined,
       config: undefined,
       configReadyPromise: null,
+      selectedKeys: [],
+      openKeys: ['/plugin'],
+      menus: [],
       hideSearchBar: true,
       searchBarIsFocused: false,
       searchBarInputKeyupTimeout: null,
     }
   },
+
   computed: {
-    themeClass () {
-      return `theme-${colorTheme.value}`
+    themeClass() {
+      return `theme-${this.theme}`
     },
-    theme () {
+    theme() {
       return colorTheme.value
     },
-  },
-  async mounted () {
-    if (this.configReadyPromise) {
-      await this.configReadyPromise
-    } // 强制在mounted之前等待created里对配置的刷新完成，以避免mounted里对this.config.app的访问为空
+    // 将菜单数据转换为 items 格式
+    menuItems() {
+      return (this.menus || []).map(item => {
+        const iconName = item.icon
+          ? item.icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) + 'Outlined'
+          : 'FileOutlined'
+        const IconComponent = Icons[iconName]
 
-    const appConfig = (this.config && this.config.app) || (this.$global && this.$global.config && this.$global.config.app) || {} // this.$global.config 可能不是最新值，但它作为已有的配置用于兜底
-    let theme = appConfig.theme || 'dark' // TODO: 这里可能存在一个问题，就是如果用户在系统主题为dark的情况下，app.theme是system，那么colorTheme会被设置为dark，但如果用户在app运行时将系统主题切换为light，colorTheme就不会更新了。后续可以考虑监听系统主题变化事件来动态更新colorTheme。
-    if (appConfig.theme === 'system') {
-      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    }
-
-    colorTheme.value = theme
+        if (item.children && item.children.length > 0) {
+          return {
+            key: item.path,
+            icon: () => h(IconComponent),
+            label: item.title,
+            children: item.children.map(child => {
+              const childIconName = child.icon
+                ? child.icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) + 'Outlined'
+                : 'FileOutlined'
+              const ChildIconComponent = Icons[childIconName]
+              return {
+                key: child.path,
+                icon: () => h(ChildIconComponent),
+                label: child.title,
+              }
+            }),
+          }
+        }
+        return {
+          key: item.path,
+          icon: () => h(IconComponent),
+          label: item.title,
+        }
+      })
+    },
+    isPreRelease () {
+      const version = this.info && this.info.version
+      return typeof version === 'string' && version.includes('-')
+    },
   },
-  created () {
+
+  created() {
     this.menus = createMenus(this)
     this.configReadyPromise = this.refreshConfigAndInfo()
     ipcRenderer.on('config.changed', this.onConfigChanged)
@@ -76,35 +108,41 @@ export default {
           // 显示后，获取输入框焦点
           if (!this.hideSearchBar) {
             this.doSearchBarInputFocus()
-          } else {
-            this.searchBarIsFocused = false
           }
-        } else if (message.key === 'hide') { // 隐藏
-          this.hideSearchBar = true
-          this.searchBarIsFocused = false
-        } else if (message.key === 'next') { // 下一项
-          this.$refs.searchBar.next()
-        } else if (message.key === 'previous') { // 上一项
-          this.$refs.searchBar.previous()
+        } else if (message.key === 'search-next') { // 下一个
+          this.doSearchBarSearch(message)
+        } else if (message.key === 'search-previous') { // 上一个
+          this.doSearchBarSearch(message, true)
         }
       } catch (e) {
-        console.error('操作SearchBar出现异常：', e)
-      }
-
-      const input = this.getSearchBarInput()
-      if (input) {
-        input.addEventListener('focus', this.onSearchBarInputFocus)
-        input.addEventListener('blur', this.onSearchBarInputBlur)
-        input.addEventListener('keydown', this.onSearchBarInputKeydown)
-        input.addEventListener('keyup', this.onSearchBarInputKeyup)
+        console.error('search-bar event handle error:', e)
       }
     })
   },
-  beforeDestroy () {
+
+  async mounted() {
+    if (this.configReadyPromise) {
+      await this.configReadyPromise
+    }
+
+    const appConfig = (this.config && this.config.app) || (this.$global && this.$global.config && this.$global.config.app) || {}
+    let theme = appConfig.theme || 'dark'
+    if (appConfig.theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    }
+
+    colorTheme.value = theme
+
+    // 设置默认选中的菜单项
+    this.updateSelectedKeys(this.$route.fullPath)
+  },
+
+  beforeUnmount() {
     ipcRenderer.removeListener('config.changed', this.onConfigChanged)
   },
+
   methods: {
-    async refreshConfigAndInfo () {
+    async refreshConfigAndInfo() {
       try {
         const config = await this.$api.config.get()
         if (config) {
@@ -124,50 +162,96 @@ export default {
         console.error('刷新信息出现异常：', e)
       }
     },
-    async onConfigChanged () {
+    async onConfigChanged() {
       await this.refreshConfigAndInfo()
     },
-    getSearchBarInput () {
-      return this.$refs.searchBar.$el.querySelector('input[type=text]')
+    updateSelectedKeys(currentPath) {
+      // 查找匹配的菜单项
+      for (const item of this.menus || []) {
+        if (item.children && item.children.length > 0) {
+          for (const sub of item.children) {
+            if (sub.path === currentPath) {
+              this.selectedKeys = [sub.path]
+              return
+            }
+          }
+        } else if (item.path === currentPath) {
+          this.selectedKeys = [item.path]
+          return
+        }
+      }
+      // 默认选中第一个菜单项
+      if (this.menus && this.menus.length > 0) {
+        const firstItem = this.menus[0]
+        if (firstItem.children && firstItem.children.length > 0) {
+          this.selectedKeys = [firstItem.children[0].path]
+        } else {
+          this.selectedKeys = [firstItem.path]
+        }
+      }
     },
-    onSearchBarInputFocus () {
+    handleMenuClick({ key }) {
+      console.log('menu click:', key)
+      window.config.disableSearchBar = false
+      // 找到对应的菜单项
+      for (const item of this.menus || []) {
+        if (item.path === key) {
+          this.$router.replace(key)
+          this.selectedKeys = [key]
+          return
+        }
+        if (item.children) {
+          for (const sub of item.children) {
+            if (sub.path === key) {
+              this.$router.replace(key)
+              this.selectedKeys = [key]
+              return
+            }
+          }
+        }
+      }
+    },
+    async openExternal(url) {
+      await this.$api.ipc.openExternal(url)
+    },
+    doSearchBarInputFocus() {
+      this.$nextTick(() => {
+        const searchBarInput = document.getElementById('search-bar-input')
+        if (searchBarInput) {
+          searchBarInput.focus()
+        }
+      })
+    },
+    doSearchBarSearch(message, isPrevious) {
+      this.$nextTick(() => {
+        const searchBarInput = document.getElementById('search-bar-input')
+        if (searchBarInput) {
+          const event = new CustomEvent('search-bar-search', {
+            detail: { keyword: searchBarInput.value, isPrevious }
+          })
+          document.dispatchEvent(event)
+        }
+      })
+    },
+    onSearchBarInput(value) {
+      const event = new CustomEvent('search-bar-input', {
+        detail: { keyword: value }
+      })
+      document.dispatchEvent(event)
+    },
+    onSearchBarInputKeyup(event) {
+      if (this.searchBarInputKeyupTimeout) {
+        clearTimeout(this.searchBarInputKeyupTimeout)
+      }
+      this.searchBarInputKeyupTimeout = setTimeout(() => {
+        this.onSearchBarInput(event.target.value)
+      }, 300)
+    },
+    onSearchBarFocus() {
       this.searchBarIsFocused = true
     },
-    onSearchBarInputBlur () {
+    onSearchBarBlur() {
       this.searchBarIsFocused = false
-    },
-    onSearchBarInputKeydown () {
-      clearTimeout(this.searchBarInputKeyupTimeout)
-    },
-    onSearchBarInputKeyup (e) {
-      if (!this.$refs.searchBar || e.key === 'Enter' || e.key === 'F3') {
-        return
-      }
-      clearTimeout(this.searchBarInputKeyupTimeout)
-      this.searchBarInputKeyupTimeout = setTimeout(() => {
-        // 连续调用以下两个方法，为了获取检索结果中的第一项
-        this.$refs.searchBar.next()
-        this.$refs.searchBar.previous()
-      }, 150)
-    },
-    doSearchBarInputFocus () {
-      setTimeout(() => {
-        const input = this.getSearchBarInput()
-        if (input) {
-          input.focus()
-        }
-      }, 100)
-    },
-    titleClick (item) {
-      console.log('title click:', item)
-    },
-    menuClick (item) {
-      console.log('menu click:', item)
-      window.config.disableSearchBar = false
-      this.$router.replace(item.path)
-    },
-    async openExternal (url) {
-      await this.$api.ipc.openExternal(url)
     },
   },
 }
@@ -176,42 +260,37 @@ export default {
 <template>
   <a-config-provider :locale="locale">
     <div class="ds_layout" :class="themeClass">
-      <SearchBar
-        ref="searchBar"
-        root="#document"
-        highlight-class="search-bar-highlight"
-        selected-class="selected-highlight"
-        :hiden.sync="hideSearchBar"
-        style="inset:auto auto 53px 210px; background-color:#ddd"
-      />
       <a-layout>
         <a-layout-sider :theme="theme" style="overflow-y: auto">
           <div class="logo" />
           <div class="aside">
             <a-menu
               mode="inline"
-              :default-selected-keys="[$route.fullPath]"
-              :default-open-keys="['/plugin']"
-            >
-              <template v-for="(item) of menus">
-                <a-sub-menu v-if="item.children && item.children.length > 0" :key="item.path" @titleClick="titleClick(item)">
-                  <span slot="title"><a-icon :type="item.icon ? item.icon : 'file'" /><span>{{ item.title }}</span></span>
-                  <a-menu-item v-for="(sub) of item.children" :key="sub.path" @click="menuClick(sub)">
-                    <a-icon :type="sub.icon ? sub.icon : 'file'" /> {{ sub.title }}
-                  </a-menu-item>
-                </a-sub-menu>
-                <a-menu-item v-else :key="item.path" @click="menuClick(item)">
-                  <a-icon :type="item.icon ? item.icon : 'file'" />
-                  <span class="nav-text">{{ item.title }}</span>
-                </a-menu-item>
-              </template>
-            </a-menu>
+              v-model:selectedKeys="selectedKeys"
+              v-model:openKeys="openKeys"
+              :items="menuItems"
+              @click="handleMenuClick"
+            />
           </div>
         </a-layout-sider>
         <a-layout>
           <!-- <a-layout-header>Header</a-layout-header> -->
           <a-layout-content>
-            <router-view id="document" />
+            <div v-if="isPreRelease" class="pre-release-banner">
+              当前运行的是测试版本，可能不稳定，请谨慎使用
+            </div>
+            <div v-show="!hideSearchBar" class="search-bar">
+              <a-input
+                id="search-bar-input"
+                placeholder="搜索..."
+                @keyup="onSearchBarInputKeyup"
+                @focus="onSearchBarFocus"
+                @blur="onSearchBarBlur"
+              />
+            </div>
+            <div class="content-inner">
+              <router-view id="document" />
+            </div>
           </a-layout-content>
           <a-layout-footer>
             <div class="footer">
@@ -229,6 +308,7 @@ export default {
                 <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>,
                 <a @click="openExternal('https://github.com/cute-omega')">CuteOmega</a>
                 <span class="ml5">{{ info.version }}</span>
+                <span v-if="isPreRelease" class="pre-release-tag">非正式版</span>
               </div>
             </div>
           </a-layout-footer>
@@ -251,11 +331,33 @@ body {
   .ant-layout-has-sider {
     border: 1px solid #eee;
   }
+  .ant-layout-sider {
+    flex: 0 0 200px;
+    max-width: 200px;
+    min-width: 200px;
+    width: 200px;
+  }
   .ant-layout-sider-children {
     border-right: 1px solid #eee;
   }
-  .ant-layout {
+  > .ant-layout {
     height: 100%;
+  }
+  > .ant-layout > .ant-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .ant-layout-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .content-inner {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
   }
   .logo {
     padding: 5px;
@@ -270,11 +372,44 @@ body {
     padding: 10px;
     text-align: center;
     border-top: #d6d4d4 solid 1px;
+    flex: 0 0 auto;
+    background: #fff;
+    position: relative;
+    z-index: 1;
   }
   .ant-menu-inline,
   .ant-menu-vertical,
   .ant-menu-vertical-left {
     border: 0;
+  }
+
+  .pre-release-banner {
+    margin: 0 12px 12px;
+    padding: 10px 12px;
+    border: 1px solid #ffa940;
+    background: #fff7e6;
+    color: #ad4e00;
+    font-weight: 600;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .pre-release-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid #ffa940;
+    background: #fff7e6;
+    color: #ad4e00;
+    font-size: 12px;
+    line-height: 20px;
+  }
+
+  .search-bar {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    background: #fff;
   }
 }
 .search-bar-highlight {

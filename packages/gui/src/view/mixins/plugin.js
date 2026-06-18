@@ -81,7 +81,8 @@ export default {
       })
     },
     saveConfig () {
-      return this.$api.config.save(this.config).then((ret) => {
+      const configCopy = lodash.cloneDeep(this.config)
+      return this.$api.config.save(configCopy).then((ret) => {
         this.$message.success('设置已保存')
         this.setConfig(ret.allConfig)
         this.printConfig('After saveConfig(), ')
@@ -96,7 +97,7 @@ export default {
       return value
     },
     setConfig (newConfig) {
-      this.$set(this, 'config', newConfig)
+      this.config = newConfig
     },
     printConfig (prefix = '') {
       console.log(`${prefix}${this.key} page config:`, this.config, this.systemPlatform)

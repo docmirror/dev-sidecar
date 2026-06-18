@@ -3,7 +3,7 @@
 开发者边车，命名取自service-mesh的service-sidecar，意为为开发者打辅助的边车工具（以下简称ds）
 通过本地代理的方式将https请求代理到一些国内的加速通道上
 
-<a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+<a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github&cacheSeconds=86400"></a>
 
 [![Star History Chart](https://api.star-history.com/svg?repos=docmirror/dev-sidecar&type=date&legend=top-left)](https://www.star-history.com/#docmirror/dev-sidecar&type=date&legend=top-left)
 
@@ -192,6 +192,7 @@
 > 1. ~~[hub.fastgit.org](https://hub.fastgit.org/) （2024/11/18：这个好像失效了？）~~
 > 2. ~~[github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限（2024/11/18：这个好像失效了？）~~
 > 3. [bgithub.xyz](https://bgithub.xyz/)（edge浏览器可能报毒）
+> 4. [kkgithub.com](https://kkgithub.com/)（目前正在维护中）
 
 ## 五、api
 
@@ -310,12 +311,12 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 #### 3）火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书
 
 1. 火狐浏览器->选项->隐私与安全->证书->查看证书
-   ![](./doc/figures/Firefox/1.png)
+   ![](./doc/Firefox/1.png)
 2. 证书颁发机构->导入
 3. 选择证书文件 `C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为 `~/.dev-sidecar` 目录）
-   ![](./doc/figures/Firefox/2.png)
+   ![](./doc/Firefox/2.png)
 4. 勾选信任由此证书颁发机构来标识网站，确定即可
-   ![](./doc/figures/Firefox/3.png)
+   ![](./doc/Firefox/3.png)
 
 ### 6.4、打开github显示连接超时
 
@@ -385,13 +386,27 @@ npm config delete https-proxy
 
 ### 8.1、准备环境
 
-#### 1）安装 `nodejs`
+#### 1）安装 `nodejs` 及其他环境
 
 推荐安装 nodejs `22.x.x` 的版本，其他版本未做测试
 
+Windows上需要msvc，推荐使用VS 2022（node-gyp对VS 2026支持可能存在问题），安装时选择C++桌面开发工作负载即可。
+
+另外还需要带distutils的python，推荐安装自带setuptools的python 3.11版本。如果本地有uv，则可以简单的运行以下命令
+
+```shell
+uv init .
+uv sync
+.venv/Scripts/activate.ps1 # for windows pwsh
+.venv/Scripts/activate.bat # for windows cmd
+source .venv/bin/activate # for linux/mac
+```
+
+这会根据.python-version文件自动安装python 3.11版本。如不想使用python 3.11，也可删除.python-version文件，pyproject.toml已经指定了所需依赖。
+
 #### 2）安装 `pnpm`
 
-运行如下命令即可安装所需依赖：
+运行如下命令即可安装：
 
 ```shell
 npm install -g pnpm --registry=https://registry.npmmirror.com
@@ -417,6 +432,7 @@ npm run electron
 ```
 
 > 如果electron依赖包下载不动，可以开启ds的npm加速
+> 如果pnpm install只是单纯卡住，大概是因为你忘记进python环境了
 
 ### 8.3、打包成可执行文件
 

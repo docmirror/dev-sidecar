@@ -2,9 +2,10 @@
  * first step
  * @param {*} ipcMain
  */
+import request from 'request'
+
 function ebtMain (ipcMain) {
   const isDevelopment = process.env.NODE_ENV !== 'production'
-  const request = require('request')
   /* istanbul ignore else */
   if (!(ipcMain && ipcMain.on)) {
     throw new TypeError('require ipcMain')

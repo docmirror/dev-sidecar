@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "private": false,
   "description": "给开发者的加速代理工具",
   "author": "docmirror.cn",
@@ -23,6 +23,7 @@
     "lodash": "^4.18.1",
     "log4js": "^6.9.1",
     "node-powershell": "^4.0.0",
+    "request": "^2.88.2",
     "spawn-sync": "^2.0.0",
     "winreg": "^1.2.5"
   },

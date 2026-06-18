@@ -7,13 +7,13 @@ module.exports = {
   responseIntercept (context, interceptOpt, req, res, proxyReq, proxyRes, ssl, next) {
     const { rOptions, log } = context
 
-    if (rOptions.method === 'OPTIONS') {
+    if (rOptions.method === 'OPTIONS' || !rOptions.headers.origin) {
       return
     }
 
     const headers = {
       'Access-Control-Allow-Credentials': 'true',
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': rOptions.headers.origin,
       'Cross-Origin-Resource-Policy': interceptOpt.optionsCrossPolicy || 'cross-origin',
     }
 

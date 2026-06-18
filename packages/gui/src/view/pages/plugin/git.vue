@@ -1,11 +1,14 @@
 <script>
-import Plugin from '../../mixins/plugin'
-import MockInput from '@/view/components/mock-input.vue'
+import { defineComponent } from 'vue';
 
-export default {
+import { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
+import Plugin from '../../mixins/plugin'
+
+export default defineComponent({
   name: 'Git',
-  components: { MockInput },
+  components: { PlusOutlined, MinusOutlined, SyncOutlined, CheckOutlined },
   mixins: [Plugin],
+
   data () {
     return {
       key: 'plugin.git',
@@ -15,11 +18,14 @@ export default {
       needRestart: false,
     }
   },
+
   created () {
     console.log('status:', this.status)
   },
+
   mounted () {
   },
+
   methods: {
     ready () {
       this.initNoProxyUrls()
@@ -68,22 +74,22 @@ export default {
       this.config.plugin.git.setting.noProxyUrls = noProxyUrls
     },
   },
-}
+});
 </script>
 
 <template>
   <ds-container>
-    <template slot="header">
+    <template #header>
       Git.exe代理设置
     </template>
-    <template slot="header-right">
+    <template #header-right>
       仅针对git命令行的代理设置，github网站的访问无需设置
     </template>
 
     <div v-if="config">
       <a-form layout="horizontal">
         <a-form-item label="启用Git代理" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.git.enabled">
+          <a-checkbox v-model:checked="config.plugin.git.enabled">
             随应用启动
           </a-checkbox>
           <a-tag v-if="status.plugin.git.enabled" color="green">
@@ -94,7 +100,7 @@ export default {
           </a-tag>
         </a-form-item>
         <a-form-item label="SSL校验" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model="config.plugin.git.setting.sslVerify">
+          <a-checkbox v-model:checked="config.plugin.git.setting.sslVerify">
             关闭sslVerify
           </a-checkbox>
           安装Git时未选择使用系统证书管理服务时必须关闭
@@ -106,28 +112,28 @@ export default {
                 <span><code>Git.exe</code>将不代理以下仓库；可以是根地址、组织/机构地址、完整地址</span>
               </a-col>
               <a-col :span="2">
-                <a-button type="primary" icon="plus" @click="addNoProxyUrl()" />
+                <a-button type="primary" @click="addNoProxyUrl()"><PlusOutlined /></a-button>
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of noProxyUrls" ref="noProxyUrls" :key="index" :gutter="10">
               <a-col :span="22">
-                <MockInput v-model="item.key" class="mt-2" />
+                <a-input v-model:value="item.key" class="mt-2" spellcheck="false" />
               </a-col>
               <a-col :span="2">
-                <a-button type="danger" icon="minus" @click="delNoProxyUrl(item, index)" />
+                <a-button type="danger" @click="delNoProxyUrl(item, index)"><MinusOutlined /></a-button>
               </a-col>
             </a-row>
           </div>
         </a-form-item>
       </a-form>
     </div>
-    <template slot="footer">
+    <template #footer>
       <div class="footer-bar">
-        <a-button :loading="resetDefaultLoading" class="mr10" icon="sync" @click="resetDefault()">
-          恢复默认
+        <a-button :loading="resetDefaultLoading" class="mr10" @click="resetDefault()">
+          <SyncOutlined />恢复默认
         </a-button>
-        <a-button :loading="applyLoading" icon="check" type="primary" @click="apply()">
-          应用
+        <a-button :loading="applyLoading" type="primary" @click="apply()">
+          <CheckOutlined />应用
         </a-button>
       </div>
     </template>

@@ -23,7 +23,7 @@ const defaultConfig = {
     remoteConfig: {
       enabled: true,
       // 共享远程配置地址
-      url: 'https://gitee.com/wangliang181230/dev-sidecar-config/raw/main/remote_config.json',
+      url: 'https://raw.giteeusercontent.com/wangliang181230/dev-sidecar-config/raw/main/remote_config.json',
       // 个人远程配置地址
       personalUrl: '',
     },
@@ -108,9 +108,9 @@ const defaultConfig = {
         },
         '^(/[\\w-.]+){2,}/?(\\?.*)?$': {
           // 篡改猴插件地址，以下是高速镜像地址
-          tampermonkeyScript: 'https://gitee.com/wangliang181230/dev-sidecar-config/raw/main/tampermonkey.js',
+          tampermonkeyScript: 'https://raw.giteeusercontent.com/wangliang181230/dev-sidecar-config/raw/main/tampermonkey.js',
           // Github油猴脚本地址，以下是高速镜像地址
-          script: 'https://gitee.com/wangliang181230/dev-sidecar-config/raw/main/GithubEnhanced-High-Speed-Download.user.js',
+          script: 'https://raw.giteeusercontent.com/wangliang181230/dev-sidecar-config/raw/main/GithubEnhanced-High-Speed-Download.user.js',
           remark: '注：上面所使用的脚本地址，为高速镜像地址。',
           desc: '油猴脚本：高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载、添加 git clone 命令',
         },
@@ -221,14 +221,22 @@ const defaultConfig = {
       },
       'ajax.googleapis.com': {
         '.*': {
-          proxy: 'ajax.lug.ustc.edu.cn',
+          proxy: 'ajax.proxy.ustclug.org',
           backup: ['gapis.geekzu.org'],
           test: 'ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
         },
       },
       'fonts.googleapis.com': {
         '.*': {
-          proxy: 'fonts.loli.net',
+          proxy: 'fonts.googleapis.cn',
+          backup: ['fonts.loli.net'],
+          test: 'https://fonts.googleapis.com/css?family=Oswald',
+        },
+      },
+      'fonts.gstatic.com': {
+        '.*': {
+          proxy: 'fonts-gstatic.proxy.ustclug.org',
+          backup: ['gstatic.loli.net'],
           test: 'https://fonts.googleapis.com/css?family=Oswald',
         },
       },
@@ -241,19 +249,13 @@ const defaultConfig = {
       'themes.googleusercontent.com': {
         '.*': { proxy: 'google-themes.proxy.ustclug.org' },
       },
-      // 'fonts.gstatic.com': {
-      //   '.*': {
-      //     proxy: 'gstatic.loli.net',
-      //     backup: ['fonts-gstatic.proxy.ustclug.org']
-      //   }
-      // },
       'clients*.google.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
       'www.googleapis.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
       'lh*.googleusercontent.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
       // mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
       '*.s3.1amazonaws1.com': {
         '/sqlite3/.*': {
-          redirect: 'npm.taobao.org/mirrors',
+          redirect: 'npmmirror.com/mirrors',
         },
       },
       // 'packages.elastic.co': { '.*': { proxy: 'elastic.proxy.ustclug.org' } },
