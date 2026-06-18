@@ -91,16 +91,6 @@
 
 支持windows、Mac、Linux(Ubuntu)
 
-<div align="center">
-  <video src="https://xfatcat.ccwu.cc/dev-sidecar从头使用.mp4" width="800" controls muted autoplay>
-    抱歉，您的浏览器不支持内嵌视频。
-  </video>
-  <p align="center"><i>Dev-Sidecar 运行流程演示</i></p>
-</div>
-
-
-
-
 ### 2.1、DevSidecar桌面应用
 
 #### 1）下载安装包
