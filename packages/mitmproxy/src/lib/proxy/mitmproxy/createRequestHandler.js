@@ -186,6 +186,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             proxyReq.end()
             proxyReq.destroy()
             const error = new Error(errorMsg)
+            error.code = 'ETIMEOUT'
             error.status = 408
             reject(error)
           })
@@ -361,7 +362,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             }
           </style>
           <p>DevSidecar Error:</p>
-          <p>目标网站请求错误：【${e.code}】 ${e.message}</p>
+          <p>目标网站请求错误：【${e.code || (e.status || 'UNKNOWN')}】 ${e.message}</p>
           <p>目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}</p>`,
           )
         } catch {
