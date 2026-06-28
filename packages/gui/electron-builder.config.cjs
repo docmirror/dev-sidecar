@@ -91,7 +91,7 @@ module.exports = {
     icon: './build/mac/icon.icns',
     target: {
       target: 'dmg',
-      arch: ['x64', 'arm64', 'universal'],
+      arch: ['x64', 'arm64'],
     },
     category: 'public.app-category.developer-tools',
   },
