@@ -63,16 +63,36 @@ export default {
     await this.reloadConfig()
     this.status = this.$status
     this.switchBtns = this.createSwitchBtns()
-    this.update = this.$global.update
-    if (!this.update.autoChecked && this.config.app.autoChecked) {
-      this.update.autoChecked = true // 应用启动时，执行一次
-      this.doCheckUpdate(false)
+    // 合并全局更新参数到 data() 中的默认值，避免 $global.update 尚未
+    // 初始化时（update/front.js 在 mount 之后才执行）覆盖为 undefined
+    if (this.$global.update) {
+      Object.assign(this.update, this.$global.update)
     }
+    // 自动检查更新 延后到 mounted 中处理（等待代理服务启动后再执行）
     this.$api.info.get().then((ret) => {
       this.info = ret
     })
   },
   mounted () {
+    // 自动检查更新：等待代理服务启动后再执行，避免代理未就绪时
+    // 直接请求 GitHub API 导致超时或失败
+    const tryAutoCheck = () => {
+      if (!this.config || !this.update) return
+      if (this.update.autoChecked) return
+      if (!this.config.app.autoChecked) return
+      this.update.autoChecked = true
+      this.$watch('status.server.enabled', (enabled) => {
+        if (enabled) {
+          this.doCheckUpdate(false)
+        }
+      }, { immediate: true })
+    }
+    // mounted 时 config 可能尚未加载完毕（created 是 async 的），
+    // 先试一次，不行就等 config 就绪后再试
+    tryAutoCheck()
+    if (!this.config) {
+      this.$watch('config', () => { tryAutoCheck() }, { immediate: true })
+    }
   },
   methods: {
     async modeChange (event) {
@@ -484,5 +504,10 @@ export default {
 
 div.ant-form-item {
   margin-bottom: 9px;
+}
+
+/* 表单标签固定宽度，防止不同长度文字导致按钮错位 */
+.page_index .ant-form-item-label {
+  flex: 0 0 100px !important;
 }
 </style>

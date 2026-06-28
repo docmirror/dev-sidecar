@@ -3,16 +3,16 @@
  */
 
 // Linking socket constants to human-readable strings
-const FAMILY_VALUES = {
+export const FAMILY_VALUES = {
   IPv4: 4,
   IPv6: 6,
 }
-const PROTOCOL_VALUES = {
+export const PROTOCOL_VALUES = {
   TCP: 'tcp',
   UDP: 'udp',
 }
 
-class LogColors {
+export class LogColors {
   /**
    * ANSI color codes for pretty terminal output
    * Update: Dev-sidecar doesn't support ANSI color codes in its console output.
@@ -27,9 +27,9 @@ class LogColors {
   static WHITE = ''
 }
 
-const DISPLAY_WIDTH = 50
+export const DISPLAY_WIDTH = 50
 
-function printHeader (title, isRes) { // test start, test res
+export function printHeader (title, isRes) { // test start, test res
   const sep = `\n${'='.repeat(DISPLAY_WIDTH)}\n`
   console.log(
     (isRes ? LogColors.MAGENTA : LogColors.CYAN)
@@ -38,7 +38,7 @@ function printHeader (title, isRes) { // test start, test res
   )
 }
 
-function getResultIcon (success, infoStr = null) {
+export function getResultIcon (success, infoStr = null) {
   let resColor, resIcon
   if (success === true) {
     resColor = LogColors.GREEN
@@ -56,7 +56,7 @@ function getResultIcon (success, infoStr = null) {
   return `(${resColor}${resIcon}${LogColors.RESET})`
 }
 
-function getCensorsString (censors) {
+export function getCensorsString (censors) {
   let resStr = ''
   if (censors && censors.length > 0) {
     for (const c of censors) {

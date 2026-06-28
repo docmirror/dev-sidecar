@@ -38,8 +38,10 @@ try {
     // 初始化status
     try {
       await view.initPre(app, api)
-      app.mount('#app')
+      // 先安装模块（update 等），再挂载 app，
+      // 避免组件 mounted 时 $api.update 尚未初始化导致崩溃
       view.initModules(app, router)
+      app.mount('#app')
     } catch (e) {
       console.error('view初始化出现未知异常：', e)
       ipcRenderer.send('view初始化出现未知异常：', e)

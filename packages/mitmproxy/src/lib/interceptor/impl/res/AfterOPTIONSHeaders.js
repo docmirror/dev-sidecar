@@ -11,10 +11,27 @@ module.exports = {
       return
     }
 
+    // 合并 Vary 头：如果原始响应已有 Vary，追加 Origin；否则直接设置 Origin
+    let varyValue = 'Origin'
+    for (let i = 0; i < proxyRes.rawHeaders.length; i += 2) {
+      if (proxyRes.rawHeaders[i].toLowerCase() === 'vary') {
+        const existing = proxyRes.rawHeaders[i + 1]
+        if (existing && !existing.split(/\s*,\s*/).includes('Origin')) {
+          varyValue = `${existing}, Origin`
+        } else {
+          varyValue = existing // 已包含 Origin，无需修改
+        }
+        break
+      }
+    }
+
     const headers = {
       'Access-Control-Allow-Credentials': 'true',
       'Access-Control-Allow-Origin': rOptions.headers.origin,
       'Cross-Origin-Resource-Policy': interceptOpt.optionsCrossPolicy || 'cross-origin',
+      // 当 Access-Control-Allow-Origin 是特定值时，应设置 Vary: Origin
+      // 防止不同 Origin 的请求使用相同的缓存响应
+      'Vary': varyValue,
     }
 
     // 替换响应头

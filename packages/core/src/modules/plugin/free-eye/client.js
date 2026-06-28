@@ -1,7 +1,11 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import utils from './utils.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const printHeader = (utils && utils.printHeader) || (utils && utils.default && utils.default.printHeader)
 
@@ -137,7 +141,8 @@ async function runTests (options = {}) {
   }
 }
 
-if (require.main === module) {
+// 独立运行时入口（CLI 模式），在 dev-sidecar 中不走此路径
+if (process.argv[1] != null && process.argv[1].endsWith('client.js')) {
   runTests().catch((error) => {
     console.error(error)
     process.exitCode = 1

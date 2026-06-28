@@ -22,7 +22,24 @@ $dark-input: #777; //输入框：背景色
   }
   div,
   span,
-  label {
+  label,
+  p,
+  li,
+  td,
+  th,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: $dark-text;
+  }
+  .ant-form-item-label > label {
+    color: $dark-text;
+  }
+  .ant-descriptions-item-label,
+  .ant-descriptions-item-content {
     color: $dark-text;
   }
   .form-help {
@@ -116,6 +133,19 @@ $dark-input: #777; //输入框：背景色
       box-shadow: 0 0 0 2px rgb(255 255 255 / 35%);
     }
   }
+  /* Select 需要更高优先级覆盖 ant-design CSS-in-JS 动态样式 */
+  .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    background-color: $dark-input !important;
+    border-color: #aaa !important;
+    color: $dark-text !important;
+    &:hover {
+      border-color: #eee !important;
+    }
+  }
+  .ant-select-focused:not(.ant-select-customize-input) .ant-select-selector {
+    border-color: #eee !important;
+    box-shadow: 0 0 0 2px rgb(255 255 255 / 35%) !important;
+  }
 
   /* 选中的下拉框 */
   .ant-select-open,
@@ -123,6 +153,49 @@ $dark-input: #777; //输入框：背景色
     .ant-select-selection {
       box-shadow: 0 0 0 2px rgb(255 255 255 / 35%);
     }
+  }
+
+  /* 下拉框弹出面板 */
+  .ant-select-dropdown {
+    z-index: 1050;
+    background-color: $dark-btn;
+    .ant-select-item {
+      color: $dark-text;
+    }
+    .ant-select-item-option-active:not(.ant-select-item-option-disabled),
+    .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+      background-color: $dark-input;
+    }
+  }
+
+  /* 弹出确认框、对话框、抽屉 */
+  .ant-modal-content,
+  .ant-modal-header,
+  .ant-drawer-content,
+  .ant-drawer-header {
+    background-color: $dark-bg;
+    color: $dark-text;
+  }
+  .ant-modal-title,
+  .ant-drawer-title {
+    color: $dark-text;
+  }
+  .ant-modal-close-x,
+  .ant-drawer-close {
+    color: $dark-text;
+  }
+  .ant-modal-footer {
+    border-top-color: $dark-bd;
+  }
+  .ant-drawer-body {
+    background-color: $dark-bg;
+    color: $dark-text;
+  }
+
+  /* 全局提示消息 */
+  .ant-message-notice-content {
+    background-color: $dark-btn;
+    color: $dark-text;
   }
 
   /* 卡片消息：IP测速 */
@@ -159,13 +232,29 @@ $dark-input: #777; //输入框：背景色
     color: #ccc;
   }
 
-  /* 按钮 */
-  .ant-btn:not(.ant-btn-danger, .ant-btn-primary) {
+  /* 按钮（排除 primary 和 danger 类型，它们有自己的主题色） */
+  .ant-btn:not(.ant-btn-primary):not(.ant-btn-dangerous):not(.ant-btn-danger) {
     background-color: $dark-btn;
     border-color: $dark-btn;
     color: $dark-text;
     &:hover {
       opacity: 0.8;
+    }
+  }
+  /* danger 按钮暗色模式保持红色实心 */
+  .ant-btn-dangerous,
+  .ant-btn-danger {
+    &.ant-btn {
+      background-color: #a61d24 !important;
+      border-color: #a61d24 !important;
+      color: #fff !important;
+      &:hover {
+        background-color: #c7252e !important;
+        border-color: #c7252e !important;
+      }
+    }
+    span {
+      color: inherit !important;
     }
   }
 
@@ -188,7 +277,7 @@ $dark-input: #777; //输入框：背景色
   }
 
   /* JSON编辑器：应用于拦截设置 */
-  .jsoneditor-vue {
+  .json-editor-wrapper {
     /*整个编辑框：背景色和边框*/
     div.jsoneditor {
       background-color: $dark-bg-highlight;
@@ -264,6 +353,78 @@ $dark-input: #777; //输入框：背景色
     }
     span {
       color: #000;
+    }
+  }
+
+  /* 首页：主开关按钮暗色模式 */
+  .page_index .main-switch-wrapper .big-button > button:not(.is-active) {
+    border-color: #555;
+    background-color: $dark-btn;
+    &:hover {
+      border-color: #40a9ff;
+    }
+  }
+  .page_index .main-switch-wrapper .big-button > button.is-active {
+    background-color: #1890ff;
+    border-color: #1890ff;
+    box-shadow: 0 0 12px rgba(24, 144, 255, 0.4);
+    &:hover {
+      background-color: #40a9ff;
+      border-color: #40a9ff;
+    }
+  }
+  /* 首页：开关状态标签 */
+  .page_index .main-switch-wrapper .switch-status-label {
+    color: #999;
+  }
+  /* 恢复出厂设置弹窗中的标签 */
+  .restore-factory-settings span {
+    background-color: $dark-input;
+    color: $dark-text;
+  }
+
+  /* 表格、描述列表（网络检测等页面） */
+  .ant-table {
+    background-color: $dark-bg;
+    color: $dark-text;
+  }
+  .ant-table-thead > tr > th {
+    background-color: $dark-bg-highlight;
+    color: $dark-text;
+    border-bottom-color: $dark-bd;
+  }
+  .ant-table-tbody > tr > td {
+    border-bottom-color: $dark-bd;
+  }
+  .ant-table-tbody > tr:hover > td {
+    background-color: $dark-bg-highlight !important;
+  }
+  .ant-descriptions-bordered {
+    .ant-descriptions-item-label,
+    .ant-descriptions-item-content {
+      background-color: $dark-bg;
+      border-color: $dark-bd;
+    }
+    .ant-descriptions-item-label {
+      background-color: $dark-bg-highlight;
+    }
+  }
+
+  /* 折叠面板 */
+  .ant-collapse {
+    background-color: $dark-bg;
+    border-color: $dark-bd;
+    > .ant-collapse-item {
+      border-bottom-color: $dark-bd;
+      > .ant-collapse-header {
+        background-color: $dark-bg-highlight;
+        color: $dark-text;
+      }
+      > .ant-collapse-content {
+        background-color: $dark-bg;
+        color: $dark-text;
+        border-top-color: $dark-bd;
+      }
     }
   }
 }

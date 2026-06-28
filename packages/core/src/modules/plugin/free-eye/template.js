@@ -1,6 +1,6 @@
 import { performance } from 'node:perf_hooks'
 
-class TestThread {
+export class TestThread {
   /**
    * A single test that should be run in its own thread and
    * preempted when its timeout is reached
@@ -45,7 +45,7 @@ class TestThread {
   }
 }
 
-class TestGroup {
+export class TestGroup {
   /**
    * A group of related tests that can be run in parallel.
    */

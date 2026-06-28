@@ -105,8 +105,15 @@ util.parseHostnameAndPort = (host, defaultPort) => {
 util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, compatibleConfig = null) => {
   // eslint-disable-next-line node/no-deprecated-api
   const urlObj = URL.parse(req.url)
-  const defaultPort = ssl ? 443 : 80
-  const protocol = ssl ? 'https:' : 'http:'
+
+  // 修复：当 ssl=true（请求来自HTTPS代理端口）但请求URL是绝对HTTP路径时，
+  // 说明这是HTTP请求被错误发送到了HTTPS代理端口。
+  // 例：GET http://example.com/path HTTP/1.1 被发送到HTTPS代理端口。
+  // 此时应修正协议为HTTP，避免将HTTP请求以HTTPS方式转发到目标服务器。
+  const isHttpAbsUrl = !!(urlObj.protocol === 'http:' && urlObj.hostname)
+  const actualSsl = ssl && !isHttpAbsUrl
+  const defaultPort = actualSsl ? 443 : 80
+  const protocol = actualSsl ? 'https:' : 'http:'
   const headers = Object.assign({}, req.headers)
   let externalProxyUrl = null
 
@@ -154,6 +161,9 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
     headers: req.headers,
     agent,
     compatibleConfig,
+    // 增大响应头大小限制（默认 16KB），
+    // 解决 issue #575 中 Google Cloud Console 等站点响应头过大导致的 HPE_HEADER_OVERFLOW 错误
+    maxHeaderSize: 65536,
   }
 
   if (protocol === 'http:' && externalProxyUrl) {

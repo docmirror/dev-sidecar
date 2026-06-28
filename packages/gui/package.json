@@ -35,6 +35,7 @@
     "electron-baidu-tongji": "^1.0.5",
     "electron-updater": "^6.8.3",
     "json5": "^2.2.3",
+    "jsoneditor": "^10.4.3",
     "lodash": "^4.18.1",
     "minimist": "^1.2.8",
     "request-progress": "^3.0.0",
@@ -42,8 +43,7 @@
     "sass-loader": "^16.0.7",
     "tiny-emitter": "^2.1.0",
     "vue": "^3.5.33",
-    "vue-router": "^4.6.4",
-    "vue3-json-editor": "^1.1.5"
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

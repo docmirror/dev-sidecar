@@ -35,6 +35,8 @@ module.exports = {
       'Access-Control-Allow-Methods': allowMethods,
       'Access-Control-Max-Age': interceptOpt.optionsMaxAge > 0 ? interceptOpt.optionsMaxAge : 2592000, // 默认有效一个月
       'Date': new Date().toUTCString(),
+      // 当 Access-Control-Allow-Origin 是特定值时，应设置 Vary: Origin
+      'Vary': 'Origin',
     }
 
     // 判断是否允许

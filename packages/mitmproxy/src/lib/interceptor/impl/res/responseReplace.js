@@ -31,7 +31,7 @@ function replaceResponseHeaders (newHeaders, res, proxyRes) {
     const headerKey = proxyRes.rawHeaders[i].toLowerCase()
 
     const newHeaderValue = newHeaders[headerKey]
-    if (newHeaderValue) {
+    if (newHeaderValue != null) {
       if (newHeaderValue !== proxyRes.rawHeaders[i + 1]) {
         preHeaders[headerKey] = proxyRes.rawHeaders[i + 1] // 先保存原先响应头
         if (newHeaderValue === REMOVE) { // 由于拦截配置中不允许配置null，会被删，所以配置一个 "[remove]"，当作删除响应头的意思

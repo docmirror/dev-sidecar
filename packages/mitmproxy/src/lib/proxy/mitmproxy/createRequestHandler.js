@@ -215,6 +215,14 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             reject(new Error(errorMsg))
           })
 
+          // 设置代理请求超时（避免请求无限挂起）
+          // agent.options.timeout 是连接池空闲超时（20s），不适合直接用作请求超时。
+          // request timeout 是 socket 空闲超时：socket 上多久无数据即判定超时。
+          // 部分站点响应慢（如 Google Cloud），默认 60 秒，最小 10 秒。
+          const agentTimeout = (rOptions.agent && rOptions.agent.options && rOptions.agent.options.timeout) || 30000
+          const reqTimeout = Math.max(agentTimeout * 2, 10000)
+          proxyReq.setTimeout(reqTimeout)
+
           // 原始请求的事件监听
           req.on('aborted', () => {
             const cost = Date.now() - start
@@ -341,6 +349,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           if (rOptions.headers.origin) {
             headers['Access-Control-Allow-Credentials'] = 'true'
             headers['Access-Control-Allow-Origin'] = rOptions.headers.origin
+            headers['Vary'] = 'Origin'
           }
 
           res.writeHead(status, headers)

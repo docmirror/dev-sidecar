@@ -1,5 +1,4 @@
 <script>
-import { h } from 'vue';
 import * as Icons from '@ant-design/icons-vue';
 
 import { ipcRenderer } from 'electron'
@@ -23,7 +22,6 @@ export default {
       config: undefined,
       configReadyPromise: null,
       selectedKeys: [],
-      openKeys: ['/plugin'],
       menus: [],
       hideSearchBar: true,
       searchBarIsFocused: false,
@@ -38,42 +36,28 @@ export default {
     theme() {
       return colorTheme.value
     },
-    // 将菜单数据转换为 items 格式
-    menuItems() {
-      return (this.menus || []).map(item => {
-        const iconName = item.icon
-          ? item.icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) + 'Outlined'
-          : 'FileOutlined'
-        const IconComponent = Icons[iconName]
-
-        if (item.children && item.children.length > 0) {
-          return {
-            key: item.path,
-            icon: () => h(IconComponent),
-            label: item.title,
-            children: item.children.map(child => {
-              const childIconName = child.icon
-                ? child.icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) + 'Outlined'
-                : 'FileOutlined'
-              const ChildIconComponent = Icons[childIconName]
-              return {
-                key: child.path,
-                icon: () => h(ChildIconComponent),
-                label: child.title,
-              }
-            }),
-          }
-        }
-        return {
-          key: item.path,
-          icon: () => h(IconComponent),
-          label: item.title,
-        }
-      })
-    },
     isPreRelease () {
       const version = this.info && this.info.version
       return typeof version === 'string' && version.includes('-')
+    },
+    // 预计算菜单图标引用，避免 ant-design-vue 渲染上下文无法访问 $options 方法
+    menuIconMap () {
+      const map = {}
+      for (const item of this.menus) {
+        const iconName = item.icon
+          ? item.icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) + 'Outlined'
+          : 'FileOutlined'
+        map[item.path] = Icons[iconName]
+        if (item.children) {
+          for (const child of item.children) {
+            const cIconName = child.icon
+              ? child.icon.replace(/(^|-)(\w)/g, (_, _s, c) => c.toUpperCase()) + 'Outlined'
+              : 'FileOutlined'
+            map[child.path] = Icons[cIconName]
+          }
+        }
+      }
+      return map
     },
   },
 
@@ -133,11 +117,20 @@ export default {
 
     colorTheme.value = theme
 
+    // 将暗色模式类名同步到 body，确保 Teleport 渲染到 body 的组件
+    // （Select 下拉面板、Modal、Drawer、Message 等）也能应用暗色主题
+    if (theme === 'dark') {
+      document.body.classList.add('theme-dark')
+    } else {
+      document.body.classList.remove('theme-dark')
+    }
+
     // 设置默认选中的菜单项
     this.updateSelectedKeys(this.$route.fullPath)
   },
 
   beforeUnmount() {
+    document.body.classList.remove('theme-dark')
     ipcRenderer.removeListener('config.changed', this.onConfigChanged)
   },
 
@@ -166,50 +159,22 @@ export default {
       await this.refreshConfigAndInfo()
     },
     updateSelectedKeys(currentPath) {
-      // 查找匹配的菜单项
       for (const item of this.menus || []) {
-        if (item.children && item.children.length > 0) {
-          for (const sub of item.children) {
-            if (sub.path === currentPath) {
-              this.selectedKeys = [sub.path]
-              return
-            }
-          }
-        } else if (item.path === currentPath) {
+        if (item.path === currentPath) {
           this.selectedKeys = [item.path]
           return
         }
       }
       // 默认选中第一个菜单项
       if (this.menus && this.menus.length > 0) {
-        const firstItem = this.menus[0]
-        if (firstItem.children && firstItem.children.length > 0) {
-          this.selectedKeys = [firstItem.children[0].path]
-        } else {
-          this.selectedKeys = [firstItem.path]
-        }
+        this.selectedKeys = [this.menus[0].path]
       }
     },
     handleMenuClick({ key }) {
       console.log('menu click:', key)
       window.config.disableSearchBar = false
-      // 找到对应的菜单项
-      for (const item of this.menus || []) {
-        if (item.path === key) {
-          this.$router.replace(key)
-          this.selectedKeys = [key]
-          return
-        }
-        if (item.children) {
-          for (const sub of item.children) {
-            if (sub.path === key) {
-              this.$router.replace(key)
-              this.selectedKeys = [key]
-              return
-            }
-          }
-        }
-      }
+      this.$router.replace(key)
+      this.selectedKeys = [key]
     },
     async openExternal(url) {
       await this.$api.ipc.openExternal(url)
@@ -267,10 +232,26 @@ export default {
             <a-menu
               mode="inline"
               v-model:selectedKeys="selectedKeys"
-              v-model:openKeys="openKeys"
-              :items="menuItems"
               @click="handleMenuClick"
-            />
+            >
+              <template v-for="item in menus" :key="item.path">
+                <a-sub-menu v-if="item.children && item.children.length" :key="item.path">
+                  <template #icon>
+                    <component :is="menuIconMap[item.path]" />
+                  </template>
+                  <template #title>{{ item.title }}</template>
+                  <a-menu-item v-for="child in item.children" :key="child.path">
+                    {{ child.title }}
+                  </a-menu-item>
+                </a-sub-menu>
+                <a-menu-item v-else :key="item.path">
+                  <template #icon>
+                    <component :is="menuIconMap[item.path]" />
+                  </template>
+                  {{ item.title }}
+                </a-menu-item>
+              </template>
+            </a-menu>
           </div>
         </a-layout-sider>
         <a-layout>
