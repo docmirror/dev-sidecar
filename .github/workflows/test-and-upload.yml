@@ -294,7 +294,6 @@ jobs:
           cd packages/gui/dist_electron;
           mv DevSidecar-${{ env.BUILD_VERSION }}-x64.dmg        DevSidecar-${{ env.BUILD_VERSION }}-macos-x86_64.dmg;
           mv DevSidecar-${{ env.BUILD_VERSION }}-arm64.dmg      DevSidecar-${{ env.BUILD_VERSION }}-macos-arm64.dmg;
-          mv DevSidecar-${{ env.BUILD_VERSION }}-universal.dmg  DevSidecar-${{ env.BUILD_VERSION }}-macos-universal.dmg;
           ls -lah;
 
       # region Upload artifacts - Windows
@@ -449,12 +448,5 @@ jobs:
         with:
           path: packages/gui/dist_electron/DevSidecar-${{ env.BUILD_VERSION }}-macos-arm64.dmg
           name: "DevSidecar-${{ env.BUILD_VERSION }}-macos-arm64.dmg"
-          if-no-files-found: error
-      - name: "Upload DevSidecar-${{ env.BUILD_VERSION }}-macos-universal.dmg"
-        uses: actions/upload-artifact@v4.4.0
-        if: ${{ matrix.os == 'macos' }}
-        with:
-          path: packages/gui/dist_electron/DevSidecar-${{ env.BUILD_VERSION }}-macos-universal.dmg
-          name: "DevSidecar-${{ env.BUILD_VERSION }}-macos-universal.dmg"
           if-no-files-found: error
       # endregion Upload artifacts - macOS

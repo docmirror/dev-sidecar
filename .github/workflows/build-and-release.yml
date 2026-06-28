@@ -266,7 +266,6 @@ jobs:
           cd packages/gui/dist_electron;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-x64.dmg        DevSidecar-${{ steps.package-info.outputs.version }}-macos-x86_64.dmg;
           mv DevSidecar-${{ steps.package-info.outputs.version }}-arm64.dmg      DevSidecar-${{ steps.package-info.outputs.version }}-macos-arm64.dmg;
-          mv DevSidecar-${{ steps.package-info.outputs.version }}-universal.dmg  DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg;
           ls -lah;
 
       # region Upload artifacts - Windows
@@ -424,13 +423,6 @@ jobs:
           path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-macos-arm64.dmg
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-macos-arm64.dmg"
           if-no-files-found: error
-      - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg"
-        uses: actions/upload-artifact@v4.4.0
-        if: ${{ matrix.os == 'macos' }}
-        with:
-          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg"
-          if-no-files-found: error
 
   # job 2
   download-and-release:
@@ -544,11 +536,6 @@ jobs:
         uses: actions/download-artifact@v4.1.8
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-macos-arm64.dmg"
-          path: release
-      - name: "Download DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg"
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: "DevSidecar-${{ steps.package-info.outputs.version }}-macos-universal.dmg"
           path: release
 
       - name: 'Print files from "release" dir'
