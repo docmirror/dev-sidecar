@@ -4,7 +4,7 @@ import * as Icons from '@ant-design/icons-vue';
 import { ipcRenderer } from 'electron'
 import createMenus from '@/view/router/menu'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
-import { colorTheme } from './composables/theme'
+import { appliedTheme, initTheme, getAntThemeConfig } from './composables/theme'
 
 export default {
   name: 'App',
@@ -30,11 +30,11 @@ export default {
   },
 
   computed: {
-    themeClass() {
-      return `theme-${this.theme}`
-    },
     theme() {
-      return colorTheme.value
+      return appliedTheme.value
+    },
+    themeConfig() {
+      return getAntThemeConfig(this.theme === 'dark')
     },
     isPreRelease () {
       const version = this.info && this.info.version
@@ -109,29 +109,21 @@ export default {
       await this.configReadyPromise
     }
 
+    // 初始化主题系统
     const appConfig = (this.config && this.config.app) || (this.$global && this.$global.config && this.$global.config.app) || {}
-    let theme = appConfig.theme || 'dark'
-    if (appConfig.theme === 'system') {
-      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    }
-
-    colorTheme.value = theme
-
-    // 将暗色模式类名同步到 body，确保 Teleport 渲染到 body 的组件
-    // （Select 下拉面板、Modal、Drawer、Message 等）也能应用暗色主题
-    if (theme === 'dark') {
-      document.body.classList.add('theme-dark')
-    } else {
-      document.body.classList.remove('theme-dark')
-    }
+    const initialThemeMode = appConfig.theme || 'dark'
+    this.cleanupTheme = initTheme(initialThemeMode)
 
     // 设置默认选中的菜单项
     this.updateSelectedKeys(this.$route.fullPath)
   },
 
   beforeUnmount() {
-    document.body.classList.remove('theme-dark')
     ipcRenderer.removeListener('config.changed', this.onConfigChanged)
+    // 清理主题监听器
+    if (this.cleanupTheme) {
+      this.cleanupTheme()
+    }
   },
 
   methods: {
@@ -223,10 +215,10 @@ export default {
 </script>
 
 <template>
-  <a-config-provider :locale="locale">
-    <div class="ds_layout" :class="themeClass">
+  <a-config-provider :locale="locale" :theme="themeConfig">
+    <div class="ds_layout">
       <a-layout>
-        <a-layout-sider :theme="theme" style="overflow-y: auto">
+        <a-layout-sider :style="{ background: theme === 'dark' ? '#1e1f22' : '#ffffff', overflowY: 'auto' }">
           <div class="logo" />
           <div class="aside">
             <a-menu
@@ -299,106 +291,3 @@ export default {
   </a-config-provider>
 </template>
 
-<style lang="scss">
-body {
-  height: 100%;
-}
-.ds_layout {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  height: 100%;
-  .ant-layout-has-sider {
-    border: 1px solid #eee;
-  }
-  .ant-layout-sider {
-    flex: 0 0 200px;
-    max-width: 200px;
-    min-width: 200px;
-    width: 200px;
-  }
-  .ant-layout-sider-children {
-    border-right: 1px solid #eee;
-  }
-  > .ant-layout {
-    height: 100%;
-  }
-  > .ant-layout > .ant-layout {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-  }
-  .ant-layout-content {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  .content-inner {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: auto;
-  }
-  .logo {
-    padding: 5px;
-    border-bottom: #eee solid 1px;
-    height: 60px;
-    background-image: url('../../public/logo/logo-lang.svg');
-    background-size: auto 50px;
-    background-repeat: no-repeat;
-    background-position: 5px center;
-  }
-  .ant-layout-footer {
-    padding: 10px;
-    text-align: center;
-    border-top: #d6d4d4 solid 1px;
-    flex: 0 0 auto;
-    background: #fff;
-    position: relative;
-    z-index: 1;
-  }
-  .ant-menu-inline,
-  .ant-menu-vertical,
-  .ant-menu-vertical-left {
-    border: 0;
-  }
-
-  .pre-release-banner {
-    margin: 0 12px 12px;
-    padding: 10px 12px;
-    border: 1px solid #ffa940;
-    background: #fff7e6;
-    color: #ad4e00;
-    font-weight: 600;
-    border-radius: 6px;
-    text-align: center;
-  }
-
-  .pre-release-tag {
-    display: inline-block;
-    margin-left: 8px;
-    padding: 1px 8px;
-    border-radius: 999px;
-    border: 1px solid #ffa940;
-    background: #fff7e6;
-    color: #ad4e00;
-    font-size: 12px;
-    line-height: 20px;
-  }
-
-  .search-bar {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    background: #fff;
-  }
-}
-.search-bar-highlight {
-  background-color: #ef0fff;
-  color: #fdfdfd;
-
-  &.selected-highlight {
-    background-color: #17a450;
-  }
-}
-</style>

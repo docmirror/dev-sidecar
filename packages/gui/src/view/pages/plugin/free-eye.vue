@@ -1,10 +1,11 @@
 <script>
 import lodash from 'lodash'
 import Plugin from '../../mixins/plugin'
-
+import { ExperimentOutlined } from '@ant-design/icons-vue'
 export default {
   name: 'FreeEye',
   mixins: [Plugin],
+  components: { ExperimentOutlined },
   data () {
     return {
       key: 'plugin.free_eye',
@@ -134,7 +135,8 @@ export default {
       />
 
       <div class="action-bar">
-        <a-button type="primary" icon="experiment" :loading="running" @click="runTests">
+        <a-button type="primary" :loading="running" @click="runTests">
+          <ExperimentOutlined/>
           运行检测
         </a-button>
         <span v-if="lastResult" class="last-run">最近完成：{{ formatTime(lastResult.finishedAt) }}</span>
@@ -222,7 +224,7 @@ export default {
   margin-bottom: 16px;
 }
 .last-run {
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--text-secondary);
 }
 .summary-output {
   margin: 0;
@@ -230,7 +232,7 @@ export default {
 }
 .raw-json {
   margin: 0;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-highlight);
   padding: 12px;
   border-radius: 4px;
   overflow-x: auto;

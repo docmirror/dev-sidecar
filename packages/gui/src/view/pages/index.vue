@@ -442,23 +442,23 @@ export default {
         height: 100px;
         border-radius: 100px;
         transition: all 0.3s ease;
-        border: 2px solid #d9d9d9;
-        background-color: #fff;
+        border: 2px solid var(--btn-border);
+        background-color: var(--btn-bg);
 
         &:hover {
-          border-color: #40a9ff;
-          box-shadow: 0 0 8px rgba(24, 144, 255, 0.2);
+          border-color: var(--accent-hover);
+          box-shadow: 0 0 8px var(--accent-shadow);
         }
 
         /* 激活状态 */
         &.is-active {
-          background-color: #1890ff;
-          border-color: #1890ff;
-          box-shadow: 0 0 12px rgba(24, 144, 255, 0.4);
+          background-color: var(--accent-color);
+          border-color: var(--accent-color);
+          box-shadow: 0 0 12px var(--accent-shadow);
 
           &:hover {
-            background-color: #40a9ff;
-            border-color: #40a9ff;
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
           }
         }
       }
@@ -472,11 +472,11 @@ export default {
       margin-top: 10px;
       font-size: 14px;
       font-weight: 500;
-      color: #666;
+      color: var(--text-secondary);
       transition: color 0.3s ease;
 
       &.is-active {
-        color: #1890ff;
+        color: var(--accent-color);
         font-weight: 600;
       }
     }
