@@ -3,7 +3,7 @@ const through = require('through2')
 const log = require('../../../utils/util.log.server')
 
 const HTML_CONTENT_TYPE_RE = /text\/html|application\/xhtml\+xml/
-const CSP_SCRIPT_SRC_RE = /script-src ([^:]*);/i
+const CSP_SCRIPT_SRC_RE = /script-src(-elem)?\s+([^;]*)/gi
 
 // 编解码器
 const codecMap = {
@@ -100,12 +100,14 @@ function handleResponseHeaders (res, proxyRes) {
       if (key === 'content-security-policy') {
         // content-security-policy
         let policy = proxyRes.headers[key]
-        const matched = policy.match(CSP_SCRIPT_SRC_RE)
-        if (matched) {
-          if (!matched[1].includes('self')) {
-            policy = policy.replace('script-src', 'script-src \'self\' ')
+        policy = policy.replace(CSP_SCRIPT_SRC_RE, (match, elem, value) => {
+          const directive = `script-src${elem || ''}`
+          const trimmedValue = value.trim()
+          if (trimmedValue.includes("'self'")) {
+            return match
           }
-        }
+          return `${directive} 'self' ${trimmedValue}`
+        })
         res.setHeader(newkey, policy)
         return
       }
