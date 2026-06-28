@@ -22,6 +22,7 @@ export default {
       config: undefined,
       configReadyPromise: null,
       selectedKeys: [],
+      openKeys: ['/plugin'],
       menus: [],
       hideSearchBar: true,
       searchBarIsFocused: false,
@@ -156,6 +157,17 @@ export default {
           this.selectedKeys = [item.path]
           return
         }
+        if (item.children) {
+          for (const child of item.children) {
+            if (child.path === currentPath) {
+              this.selectedKeys = [child.path]
+              if (!this.openKeys.includes(item.path)) {
+                this.openKeys = [...this.openKeys, item.path]
+              }
+              return
+            }
+          }
+        }
       }
       // 默认选中第一个菜单项
       if (this.menus && this.menus.length > 0) {
@@ -167,6 +179,17 @@ export default {
       window.config.disableSearchBar = false
       this.$router.replace(key)
       this.selectedKeys = [key]
+      // 确保点击子菜单项时父级保持展开
+      for (const item of this.menus) {
+        if (item.children) {
+          for (const child of item.children) {
+            if (child.path === key && !this.openKeys.includes(item.path)) {
+              this.openKeys = [...this.openKeys, item.path]
+              return
+            }
+          }
+        }
+      }
     },
     async openExternal(url) {
       await this.$api.ipc.openExternal(url)
@@ -224,6 +247,7 @@ export default {
             <a-menu
               mode="inline"
               v-model:selectedKeys="selectedKeys"
+              v-model:openKeys="openKeys"
               @click="handleMenuClick"
             >
               <template v-for="item in menus" :key="item.path">
