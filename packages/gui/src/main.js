@@ -7,8 +7,8 @@ import App from './view/App.vue'
 import DsContainer from './view/components/container'
 import routes from './view/router'
 import 'ant-design-vue/dist/reset.css'
+import './view/style/theme/variables.scss'
 import './view/style/index.scss'
-import './view/style/theme/dark.scss' // 暗色主题
 
 try {
   window.onerror = (message, source, lineno, colno, error) => {

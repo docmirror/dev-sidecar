@@ -1,7 +1,13 @@
+/**
+ * 基础样式文件
+ * 主题相关样式已迁移到 theme/variables.scss，使用 CSS 变量管理
+ */
+
+/* ==================== 布局工具类 ==================== */
 .footer-bar {
   padding: 10px;
   text-align: right;
-  border-top: #eee 1px solid;
+  border-top: 1px solid var(--border-color);
 }
 
 .flex-l-r {
@@ -17,12 +23,27 @@
   }
 }
 
+/* ==================== 组件样式覆盖 ==================== */
 span.ant-input {
   white-space: nowrap;
   overflow: hidden;
   vertical-align: middle;
 }
 
+.ant-radio-button-wrapper {
+  margin-bottom: 3px;
+}
+
+.ant-form-item-control {
+  line-height: 37px;
+}
+
+.ace_search_form .ace_searchbtn {
+  width: auto;
+  min-width: 27px;
+}
+
+/* ==================== 间距工具类 ==================== */
 .w100 {
   width: 100%;
 }
@@ -54,16 +75,18 @@ span.ant-input {
   margin-left: 10px;
 }
 
+/* ==================== 列表样式 ==================== */
 ol {
   margin-block-start: 0em;
   margin-block-end: 0em;
   padding-inline-start: 20px;
 }
 
+/* ==================== 表单帮助文字 ==================== */
 .form-help {
   font-size: 12px;
   line-height: 15px;
-  color: #a1a1a1;
+  color: var(--form-help-text);
 
   i {
     font-family: 'Microsoft YaHei', serif;
@@ -76,54 +99,46 @@ ol {
   }
 }
 
+/* ==================== 代码块 ==================== */
 code {
   font-size: 85%;
   font-style: normal;
   border-radius: 6px;
-  color: #888;
-  background-color: #f1f1f1;
+  color: var(--code-text);
+  background-color: var(--code-bg);
   margin-left: 0.2em;
   margin-right: 0.2em;
   padding: 0.2em 0.4em;
   white-space: break-spaces;
 }
 
-.ace_search_form .ace_searchbtn {
-  width: auto;
-  min-width: 27px;
-}
-
-.ant-radio-button-wrapper {
-  margin-bottom: 3px;
-}
-
-.ant-form-item-control {
-  line-height: 37px;
-}
-
+/* ==================== 分隔线 ==================== */
 hr {
   border-width: 2px 0 0 0;
   border-style: solid;
-  border-color: #eee;
+  border-color: var(--border-color);
   width: 100%;
 }
 
+/* ==================== 弹窗 ==================== */
 .ant-modal-content {
-  background-color: #fbfbfb;
+  background-color: var(--bg-secondary);
 }
 
+/* ==================== 恢复出厂设置弹窗 ==================== */
 .restore-factory-settings {
   div {
     padding-left: 1em;
   }
   span {
     display: inline-block;
-    background-color: #eee;
+    background-color: var(--bg-highlight);
     padding: 2px 5px;
     margin: 0 5px 5px 5px;
   }
 }
 
+/* ==================== 帮助列表 ==================== */
 .help-list {
   ul {
     padding-left: 10px;
@@ -140,11 +155,11 @@ hr {
       }
 
       a {
-        color: #3990e0;
+        color: var(--accent-color);
       }
       a:hover {
         text-decoration: underline;
-        color: #2c9be5;
+        color: var(--accent-hover);
       }
     }
 
@@ -161,7 +176,7 @@ hr {
   .title1 {
     font-size: 18px;
     font-weight: bold;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
     margin-top: 12px;
     margin-bottom: 5px;
     padding-bottom: 5px;
