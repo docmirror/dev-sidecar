@@ -148,6 +148,10 @@ module.exports = class FakeServersCenter {
           serverObj.port = address.port
         })
         fakeServer.on('request', (req, res) => {
+          // HTTP/2 使用 :authority 伪头而非 host 头，需补全以兼容下游处理
+          if (!req.headers.host && req.authority) {
+            req.headers.host = req.authority
+          }
           if (printDebugLog) {
             log.debug(`【fakeServer request - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
           }
