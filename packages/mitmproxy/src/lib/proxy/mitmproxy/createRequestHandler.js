@@ -23,11 +23,11 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
     let url = `${rOptions.method} ➜ ${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
 
     if (rOptions.headers.connection === 'close') {
-      req.socket.setKeepAlive(false)
+      req.socket && req.socket.setKeepAlive(false)
     } else if (rOptions.customSocketId != null) { // for NTLM
-      req.socket.setKeepAlive(true, 60 * 60 * 1000)
+      req.socket && req.socket.setKeepAlive(true, 60 * 60 * 1000)
     } else {
-      req.socket.setKeepAlive(true, 30000)
+      req.socket && req.socket.setKeepAlive(true, 30000)
     }
     const context = {
       rOptions,
@@ -320,6 +320,8 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       await responseInterceptorPromise
 
       if (!res.headersSent) { // prevent duplicate set headers
+        // HTTP/2 禁止头，上游服务器可能返回，直传会导致 http2 模块抛异常
+        const HTTP2_FORBIDDEN = new Set(['connection', 'keep-alive', 'proxy-connection', 'transfer-encoding', 'upgrade', 'http2-settings'])
         Object.keys(proxyRes.headers).forEach((key) => {
           if (proxyRes.headers[key] !== undefined) {
             // https://github.com/nodejitsu/node-http-proxy/issues/362
@@ -328,6 +330,9 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
                 proxyRes.headers[key] = proxyRes.headers[key] && proxyRes.headers[key].split(',')
               }
               key = 'www-authenticate'
+            }
+            if (HTTP2_FORBIDDEN.has(key)) {
+              return
             }
             res.setHeader(key, proxyRes.headers[key])
           }

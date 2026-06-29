@@ -87,14 +87,16 @@ function injectScriptIntoHtml (tags, chunk, script) {
 }
 
 function handleResponseHeaders (res, proxyRes) {
+  // HTTP/2 禁止头，上游服务器可能返回，直传会导致 http2 模块抛异常
+  const HTTP2_FORBIDDEN = new Set(['connection', 'keep-alive', 'proxy-connection', 'transfer-encoding', 'upgrade', 'http2-settings'])
   Object.keys(proxyRes.headers).forEach((key) => {
     if (proxyRes.headers[key] !== undefined) {
-      // let newkey = key.replace(/^[a-z]|-[a-z]/g, (match) => {
-      //   return match.toUpperCase()
-      // })
       const newkey = key
       if (key === 'content-length') {
-        // do nothing
+        // 因为下方会重新编码响应体，故丢弃 content-length
+        return
+      }
+      if (HTTP2_FORBIDDEN.has(key)) {
         return
       }
       if (key === 'content-security-policy') {

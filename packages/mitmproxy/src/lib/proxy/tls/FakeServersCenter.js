@@ -1,5 +1,4 @@
-const http = require('node:http')
-const https = require('node:https')
+const http2 = require('node:http2')
 const tls = require('node:tls')
 const forge = require('node-forge')
 const { LRUCache } = require('lru-cache')
@@ -121,7 +120,8 @@ module.exports = class FakeServersCenter {
           const certPem = pki.certificateToPem(cert)
           const keyPem = pki.privateKeyToPem(key)
           const secureContext = tls.createSecureContext({ key: keyPem, cert: certPem })
-          fakeServer = new https.Server({
+          fakeServer = http2.createSecureServer({
+            allowHTTP1: true, // 兼容不支持 HTTP/2 的客户端，支持 h2 的浏览器通过 ALPN 自动协商
             key: keyPem,
             cert: certPem,
             SNICallback: (hostname, done) => {
@@ -130,7 +130,7 @@ module.exports = class FakeServersCenter {
             },
           })
         } else {
-          fakeServer = new http.Server()
+          fakeServer = http2.createServer({ allowHTTP1: true })
         }
         const serverObj = {
           cert,
