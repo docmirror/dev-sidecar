@@ -162,8 +162,20 @@ export default {
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`
     },
     async handleCaSetuped () {
-      console.log('this.config.server.setting.rootCaFile.certPath', this.config.server.setting.rootCaFile.certPath)
-      await this.$api.shell.setupCa({ certPath: this.config.server.setting.rootCaFile.certPath })
+      const certPath = this.config?.server?.setting?.rootCaFile?.certPath
+      console.log('certPath:', certPath)
+      if (!certPath) {
+        this.$message.error('证书路径未配置，请先启动代理服务生成 CA 根证书后再试')
+        return
+      }
+      // 获取系统平台类型：Linux 用 shell.setupCa 复制证书，
+      // Windows/macOS 用 Electron 主进程 shell.openPath 避免 cmd.exe 权限问题
+      const platform = await this.$api.info.getSystemPlatform()
+      if (platform === 'linux') {
+        await this.$api.shell.setupCa({ certPath })
+      } else {
+        await this.$api.shell.openPath(certPath)
+      }
       this.setting.rootCa = this.setting.rootCa || {}
       const rootCa = this.setting.rootCa
 
@@ -176,7 +188,7 @@ export default {
       // 删除noTip数据
       // delete rootCa.noTip
 
-      this.$api.setting.save(this.setting)
+      this.$api.setting.save(JSON.parse(JSON.stringify(this.setting)))
     },
     reloadConfig () {
       return this.$api.config.reload().then((ret) => {

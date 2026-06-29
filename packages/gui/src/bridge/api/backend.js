@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import DevSidecar from '@docmirror/dev-sidecar'
-import { app, ipcMain } from 'electron'
+import { app, ipcMain, shell } from 'electron'
 import lodash from 'lodash'
 import jsonApi from '@docmirror/mitmproxy/src/json.js'
 import { createRequire } from 'node:module'
@@ -191,6 +191,14 @@ const localApi = {
      */
     restart () {
       return DevSidecar.api.server.restart({ mitmproxyPath })
+    },
+  },
+  shell: {
+    /**
+     * 使用 Electron 主进程原生 API 打开文件（避免 cmd.exe start 权限问题）
+     */
+    openPath (filePath) {
+      return shell.openPath(path.resolve(filePath))
     },
   },
 }
