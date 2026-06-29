@@ -15,7 +15,7 @@
   "dependencies": {
     "@docmirror/dev-sidecar": "workspace:*",
     "agentkeepalive": "^4.6.0",
-    "axios": "^1.15.0",
+    "axios": "^1.18.1",
     "baidu-aip-sdk": "^4.16.16",
     "dns-over-http": "^0.2.0",
     "is-browser": "^2.1.0",

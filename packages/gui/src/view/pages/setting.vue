@@ -492,7 +492,7 @@ export default {
       </a-form-item>
       <a-form-item label="最大日志文件大小" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input-number ref="maxLogFileSize" v-model:value="config.app.maxLogFileSize" :step="maxLogFileSizeStep" :min="0" spellcheck="false" />
-        <a-select v-model:value="config.app.maxLogFileSizeUnit" style="width:80px; margin-left:5px" @change="onMaxLogFileSizeUnitChange">
+        <a-select v-model:value="config.app.maxLogFileSizeUnit" style="width:80px; margin-left:5px; vertical-align: middle" @change="onMaxLogFileSizeUnitChange">
           <a-select-option v-for="(item) of maxLogFileSizeUnit" :key="item.value" :value="item.value">
             {{ item.label }}
           </a-select-option>
