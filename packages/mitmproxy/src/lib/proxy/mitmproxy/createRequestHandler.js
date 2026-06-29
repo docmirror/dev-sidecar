@@ -6,6 +6,7 @@ const RequestCounter = require('../../choice/RequestCounter')
 const commonUtil = require('../common/util')
 // const upgradeHeader = /(^|,)\s*upgrade\s*($|,)/i
 const DnsUtil = require('../../dns')
+const { reportIPv6Error } = require('../../dns/base')
 const compatible = require('../compatible/compatible')
 const InsertScriptMiddleware = require('../middleware/InsertScriptMiddleware')
 const dnsLookup = require('./dnsLookup')
@@ -211,6 +212,9 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             const cost = Date.now() - start
             log.error(`代理请求错误: ${url}, cost: ${cost} ms, error:`, e, ', rOptions:', jsonApi.stringify2(rOptions))
             countSlow(isDnsIntercept, `代理请求错误: ${e.message}`)
+            if (e.code === 'ENETUNREACH' && isDnsIntercept && isDnsIntercept.ip) {
+              reportIPv6Error(isDnsIntercept.ip)
+            }
             reject(e)
 
             // 自动兼容程序：2

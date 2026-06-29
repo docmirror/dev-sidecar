@@ -3,6 +3,34 @@ const log = require('../../utils/util.log.server')
 const matchUtil = require('../../utils/util.match')
 const { isIPv6 } = require('./util.ip')
 const { DynamicChoice } = require('../choice/index')
+const os = require('node:os')
+
+// 启动时检测系统是否有 IPv6 网络能力（遍历本机网卡），无则过滤所有 IPv6 DNS 结果
+// 注意：忽略 fe80::/10 本地链路地址，它们不代表实际上游 IPv6 连通性
+let ipv6Unavailable = (() => {
+  const nets = os.networkInterfaces()
+  for (const name of Object.keys(nets)) {
+    for (const info of nets[name]) {
+      if (!info.internal && info.family === 'IPv6' && !info.address.startsWith('fe80:')) {
+        return false
+      }
+    }
+  }
+  log.info('未检测到可用的 IPv6 网络接口，将过滤所有 IPv6 DNS 解析结果')
+  return true
+})()
+
+// 运行时兜底：累计 3 次 IPv6 ENETUNREACH 后，认为上游 IPv6 不可达
+let ipv6ErrCount = 0
+function reportIPv6Error (ip) {
+  if (!isIPv6(ip) || ipv6Unavailable) return
+  ipv6ErrCount++
+  if (ipv6ErrCount >= 3) {
+    ipv6Unavailable = true
+    log.warn(`IPv6 地址 ${ip} 多次不可达（ENETUNREACH），已自动禁用 IPv6 DNS 解析`)
+  }
+}
+module.exports.reportIPv6Error = reportIPv6Error
 
 function mapToList (ipMap) {
   const ipList = []
@@ -95,6 +123,10 @@ module.exports = class BaseDNS {
       if (ipList == null) {
         // 没有获取到ip
         ipList = []
+      }
+      // 本机无 IPv6 网络能力时过滤 IPv6 地址，避免 ENETUNREACH
+      if (ipv6Unavailable) {
+        ipList = ipList.filter(ip => !isIPv6(ip))
       }
       ipList.push(hostname) // 把原域名加入到统计里去
 
