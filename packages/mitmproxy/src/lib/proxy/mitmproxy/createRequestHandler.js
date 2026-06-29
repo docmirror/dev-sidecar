@@ -131,7 +131,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
                 rOptions.family = 6
               }
               log.debug(`域名 ${rOptions.hostname} DNS: ${dnsAndFamily.dns.dnsName}, family: ${rOptions.family || 4}`)
-              res.setHeader('DS-DNS', dnsAndFamily.dns.dnsName)
+              res.setHeader('DS-DNS', dnsAndFamily.dns.dnsName === '预设IP' ? 'PreSet' : dnsAndFamily.dns.dnsName.replace(/[^\x20-\x7E]/g, ''))
             } else {
               log.info(`域名 ${rOptions.hostname} 在DNS中未配置`)
             }
