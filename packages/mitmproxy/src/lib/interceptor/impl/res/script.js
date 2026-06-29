@@ -28,6 +28,7 @@ function getNonceAttr (proxyRes) {
     return ''
   }
   return ` nonce="${match[1]}"`
+}
 
 module.exports = {
   name: 'script',
