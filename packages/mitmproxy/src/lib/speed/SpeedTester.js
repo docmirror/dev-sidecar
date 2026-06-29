@@ -31,7 +31,34 @@ class SpeedTester {
     this.isTesting = false
     this.isTestingBackups = false
 
+    this._probeIndex = 0 // 按需探测的轮转索引
+
     this.test() // 异步：初始化完成后先测速一次
+  }
+
+  // 按需探测：SpeedTester 未就绪时，轮转分配未失败 IP，并发请求自动分散
+  pickNextForProbing () {
+    const candidates = this.backupList.filter(item => item.status !== 'failed')
+    if (candidates.length === 0) return null
+    this._probeIndex = this._probeIndex % candidates.length
+    const pick = candidates[this._probeIndex]
+    this._probeIndex++
+    pick._probing = true
+    return pick
+  }
+
+  // 按需探测结果反馈：记录 IP 成败，供后续请求决策
+  reportProbeResult (host, success) {
+    const item = this.backupList.find(i => i.host === host)
+    if (!item) return
+    item._probing = false
+    if (success) {
+      item.status = 'success'
+      item.time = item.time || 1
+      this.alive.push(item)
+    } else {
+      item.status = 'failed'
+    }
   }
 
   pickFastAliveIpObj () {

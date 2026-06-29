@@ -76,6 +76,18 @@ module.exports = {
 
       const ipChecker = createIpChecker(tester)
 
+      // 无已测速的存活 IP，轮转分配未失败 IP 逐个探测，并发请求自动分散
+      if (tester && tester.backupList.length > 0) {
+        const probe = tester.pickNextForProbing()
+        if (probe && isValidIpAddress(probe.host)) {
+          const addressFamily = getAddressFamily(probe.host)
+          log.info(`----- ${action}: ${hostname}, use probing ip: ${probe.host} (family: ${addressFamily})${target} -----`)
+          if (isDnsIntercept) { isDnsIntercept.tester = tester }
+          respondLookup(callback, probe.host, addressFamily, all)
+          return
+        }
+      }
+
       dns.lookup(hostname, { ipChecker, family }).then((ip) => {
         if (ip !== hostname && isValidIpAddress(ip)) {
           const addressFamily = getAddressFamily(ip)
@@ -83,6 +95,7 @@ module.exports = {
             isDnsIntercept.dns = dns
             isDnsIntercept.hostname = hostname
             isDnsIntercept.ip = ip
+            if (tester) isDnsIntercept.tester = tester
           }
           log.info(`----- ${action}: ${hostname}, use ip from dns '${dns.dnsName}': ${ip}(family: ${addressFamily})${target} -----`)
           if (res) {

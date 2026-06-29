@@ -169,6 +169,11 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             } else {
               log.info(`请求返回: 【${proxyRes.statusCode}】${url}, cost: ${cost} ms`)
             }
+
+            // 按需探测反馈：IP 连接成功
+            if (isDnsIntercept && isDnsIntercept.tester) {
+              isDnsIntercept.tester.reportProbeResult(isDnsIntercept.ip, true)
+            }
             // log.info('request:', proxyReq, proxyReq.socket)
 
             if (cost > MAX_SLOW_TIME) {
@@ -181,6 +186,9 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           // 代理请求的事件监听
           // 连接超时定时器：OS 级 TCP 超时 15-21 秒太慢，7 秒内未建立连接则判定 IP 不通
           let connectionTimer = setTimeout(() => {
+            if (isDnsIntercept && isDnsIntercept.tester && isDnsIntercept.ip) {
+              isDnsIntercept.tester.reportProbeResult(isDnsIntercept.ip, false)
+            }
             const cost = Date.now() - start
             const errorMsg = `连接超时: ${url}, cost: ${cost} ms`
             log.error(errorMsg, ', rOptions:', jsonApi.stringify2(rOptions))
@@ -209,6 +217,9 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           })
           proxyReq.on('error', (e) => {
             if (connectionTimer) { clearTimeout(connectionTimer); connectionTimer = null }
+            if (isDnsIntercept && isDnsIntercept.tester && isDnsIntercept.ip) {
+              isDnsIntercept.tester.reportProbeResult(isDnsIntercept.ip, false)
+            }
             const cost = Date.now() - start
             log.error(`代理请求错误: ${url}, cost: ${cost} ms, error:`, e, ', rOptions:', jsonApi.stringify2(rOptions))
             countSlow(isDnsIntercept, `代理请求错误: ${e.message}`)
