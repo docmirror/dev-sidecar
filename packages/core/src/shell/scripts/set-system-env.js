@@ -35,8 +35,8 @@ const executor = {
           const cmdsSetxUser = []
           for (const item of list) {
             const v = item.value == null ? '' : String(item.value)
-            // basic escape for double quotes in cmd
-            const escaped = v.replace(/"/g, '\\"')
+            // escape backslashes first, then double quotes (cmd.exe quoting order)
+            const escaped = v.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
             cmdsSetxMachine.push(`setx ${item.key} "${escaped}" /M`)
             cmdsSetxUser.push(`setx ${item.key} "${escaped}"`)
           }

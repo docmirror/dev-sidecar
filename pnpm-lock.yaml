@@ -8,7 +8,10 @@ overrides:
   axios: '>=1.18.1'
   brace-expansion: '>=2.1.0'
   cross-spawn: '>=7.0.5'
+  dns-packet: '>=5.6.1'
   form-data: '>=4.0.6'
+  hoek: npm:@hapi/hoek@>=10.0.0
+  ip: '>=2.0.1'
   minimist: '>=1.2.6'
   qs: '>=6.15.3'
   tough-cookie: '>=4.1.3 <5.0.0'
@@ -991,6 +994,9 @@ packages:
   '@eslint/plugin-kit@0.4.1':
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@hapi/hoek@11.0.7':
+    resolution: {integrity: sha512-HV5undWkKzcB4RZUusqOpcgxOaq6VOAH7zhhIr2g3G8NF/MlFO75SjOr2NfuSx0Mh40+1FqCkagKLJRykUWoFQ==}
 
   '@hapi/hoek@9.3.0':
     resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
@@ -3210,10 +3216,6 @@ packages:
   dns-over-http@0.2.0:
     resolution: {integrity: sha512-K+SyN2L3ljxJ2MFtOv/vRS+3/YEMLvOuH7MrmO5ejaubi4w02/DLqzoK1kBGKlQrT9ND57pbapeDf+ue8AElEA==}
 
-  dns-packet@4.2.0:
-    resolution: {integrity: sha512-bn1AKpfkFbm0MIioOMHZ5qJzl2uypdBwI4nYNsqvhjsegBhcKJUlCrMPWLx6JEezRjxZmxhtIz/FkBEur2l8Cw==}
-    engines: {node: '>=4'}
-
   dns-packet@5.6.1:
     resolution: {integrity: sha512-l4gcSouhcgIKRvyy99RNVOgxXiicE+2jZoNmaNmZ6JXiGajBOJAesk1OBlJuM5k2c+eudGdLxDqXuPCKIj6kpw==}
     engines: {node: '>=6'}
@@ -4091,10 +4093,6 @@ packages:
   highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
 
-  hoek@6.1.3:
-    resolution: {integrity: sha512-YXXAAhmF9zpQbC7LEcREFtXfGq5K1fmd+4PHkBq8NUqmzW3G+Dq10bI/i0KucLRwss3YYFQ0fSfoxBZYiGUqtQ==}
-    deprecated: This module has moved and is now available at @hapi/hoek. Please update your dependencies as this version is no longer maintained an may contain bugs and security issues.
-
   hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
 
@@ -4255,9 +4253,6 @@ packages:
   invert-kv@1.0.0:
     resolution: {integrity: sha512-xgs2NH9AE66ucSq4cNG1nhSFghr5l6tdL15Pk+jl46bmmBapgoaY/AacXyaDznAqmGL99TiLSQgO/XazFSKYeQ==}
     engines: {node: '>=0.10.0'}
-
-  ip@1.1.9:
-    resolution: {integrity: sha512-cyRxvOEpNHNtchU3Ln9KC/auJgup87llfQpQ+t5ghoC/UhL16SWzbueiCsdTnWmqAWl7LadfuwhlqmtOaqMHdQ==}
 
   ipaddr.js@1.9.1:
     resolution: {integrity: sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==}
@@ -8042,6 +8037,8 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
+  '@hapi/hoek@11.0.7': {}
+
   '@hapi/hoek@9.3.0': {}
 
   '@hapi/topo@5.1.0':
@@ -9412,7 +9409,7 @@ snapshots:
   accept@3.1.3:
     dependencies:
       boom: 7.3.0
-      hoek: 6.1.3
+      hoek: '@hapi/hoek@11.0.7'
 
   accepts@1.3.8:
     dependencies:
@@ -9822,7 +9819,7 @@ snapshots:
 
   boom@7.3.0:
     dependencies:
-      hoek: 6.1.3
+      hoek: '@hapi/hoek@11.0.7'
 
   brace-expansion@5.0.6:
     dependencies:
@@ -10539,7 +10536,7 @@ snapshots:
       accept: 3.1.3
       cors: 2.8.6
       debug: 3.2.7
-      dns-packet: 4.2.0
+      dns-packet: 5.6.1
       dns-socket: 3.0.0
       extend: 3.0.2
       lru-cache: 4.1.5
@@ -10548,18 +10545,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  dns-packet@4.2.0:
-    dependencies:
-      ip: 1.1.9
-      safe-buffer: 5.2.1
-
   dns-packet@5.6.1:
     dependencies:
       '@leichtgewicht/ip-codec': 2.0.5
 
   dns-socket@3.0.0:
     dependencies:
-      dns-packet: 4.2.0
+      dns-packet: 5.6.1
 
   dom-align@1.12.4: {}
 
@@ -11644,8 +11636,6 @@ snapshots:
 
   highlight.js@10.7.3: {}
 
-  hoek@6.1.3: {}
-
   hosted-git-info@2.8.9: {}
 
   hosted-git-info@4.1.0:
@@ -11830,8 +11820,6 @@ snapshots:
   inherits@2.0.4: {}
 
   invert-kv@1.0.0: {}
-
-  ip@1.1.9: {}
 
   ipaddr.js@1.9.1: {}
 
