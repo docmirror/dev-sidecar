@@ -15,7 +15,7 @@ const emit = defineEmits(['update:modelValue', 'json-save', 'has-error'])
 
 const containerRef = ref(null)
 let editor = null
-const uid = `jsoneditor-${Math.random().toString(36).slice(2, 9)}`
+const uid = `jsoneditor-${crypto.getRandomValues(new Uint32Array(1))[0].toString(36)}`
 
 function initEditor () {
   if (!containerRef.value) {
