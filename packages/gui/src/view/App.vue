@@ -257,6 +257,9 @@ export default {
                   </template>
                   <template #title>{{ item.title }}</template>
                   <a-menu-item v-for="child in item.children" :key="child.path">
+                    <template #icon>
+                      <component :is="menuIconMap[child.path]" />
+                    </template>
                     {{ child.title }}
                   </a-menu-item>
                 </a-sub-menu>

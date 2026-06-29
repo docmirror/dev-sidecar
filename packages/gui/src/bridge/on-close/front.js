@@ -1,42 +1,50 @@
-import { h, resolveComponent } from 'vue'
-
-let closeType = 2
-let doSave = false
+import { h, reactive } from 'vue'
+import { ipcRenderer } from 'electron'
 
 function install (app, api) {
-  api.ipc.on('close.showTip', (event, message) => {
-    console.info('ipc channel: "close.showTip", event:', event, ', message:', message)
-    function onRadioChange (e) {
-      closeType = parseInt(e.target.value)
-    }
-    function onCheckChange (e) {
-      doSave = e.target.checked
-    }
+  ipcRenderer.on('close.showTip', (event, message) => {
+    const state = reactive({
+      closeType: 2,
+      doSave: false,
+    })
 
     const shortcut = message.showHideShortcut || '无'
 
-    const ARadioGroup = resolveComponent('a-radio-group')
-    const ARadio = resolveComponent('a-radio')
-    const ACheckbox = resolveComponent('a-checkbox')
-
-    // 使用 h 函数创建 VNode
     const content = h('div', {}, [
-      h('div', { style: { marginTop: '10px' } }, [
-        h(ARadioGroup, {
-          value: closeType,
-          'onUpdate:value': (val) => { closeType = val },
-          onChange: onRadioChange,
-        }, [
-          h(ARadio, { value: 1 }, '直接关闭'),
-          h(ARadio, { value: 2 }, '最小化到系统托盘'),
+      h('div', { style: { marginTop: '10px', lineHeight: '28px' } }, [
+        h('label', { style: { marginRight: '20px', cursor: 'pointer' } }, [
+          h('input', {
+            type: 'radio',
+            name: 'closeStrategy',
+            value: 1,
+            checked: state.closeType === 1,
+            onChange: () => { state.closeType = 1 },
+            style: { marginRight: '6px' },
+          }),
+          '直接关闭',
+        ]),
+        h('label', { style: { cursor: 'pointer' } }, [
+          h('input', {
+            type: 'radio',
+            name: 'closeStrategy',
+            value: 2,
+            checked: state.closeType === 2,
+            onChange: () => { state.closeType = 2 },
+            style: { marginRight: '6px' },
+          }),
+          '最小化到系统托盘',
         ]),
       ]),
       h('div', { style: { marginTop: '10px' } }, [
-        h(ACheckbox, {
-          checked: doSave,
-          'onUpdate:checked': (val) => { doSave = val },
-          onChange: onCheckChange,
-        }, '记住本次选择，不再提示'),
+        h('label', { style: { cursor: 'pointer' } }, [
+          h('input', {
+            type: 'checkbox',
+            checked: state.doSave,
+            onChange: (e) => { state.doSave = e.target.checked },
+            style: { marginRight: '6px' },
+          }),
+          '记住本次选择，不再提示',
+        ]),
       ]),
       h('div', { style: { marginTop: '20px' } }, [
         '提示：打开窗口的快捷键为 ',
@@ -48,15 +56,12 @@ function install (app, api) {
       title: '关闭策略',
       content,
       async onOk () {
-        console.log('OK. closeType=', closeType, ', doSave:', doSave)
-        if (doSave) {
-          await api.config.update({ app: { closeStrategy: closeType } })
+        if (state.doSave) {
+          await api.config.update({ app: { closeStrategy: state.closeType } })
         }
-        api.ipc.send('close', { key: 'selected', value: closeType })
+        api.ipc.send('close', { key: 'selected', value: state.closeType })
       },
-      onCancel () {
-        console.log('Cancel. closeType=', closeType)
-      },
+      onCancel () {},
     })
   })
 }
