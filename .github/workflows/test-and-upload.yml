@@ -1,5 +1,8 @@
 name: "Test And Upload"
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
