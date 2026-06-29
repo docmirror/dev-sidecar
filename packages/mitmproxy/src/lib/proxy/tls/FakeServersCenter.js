@@ -1,5 +1,4 @@
-const http = require('node:http')
-const https = require('node:https')
+const http2 = require('node:http2')
 const tls = require('node:tls')
 const forge = require('node-forge')
 const { LRUCache } = require('lru-cache')
@@ -121,7 +120,8 @@ module.exports = class FakeServersCenter {
           const certPem = pki.certificateToPem(cert)
           const keyPem = pki.privateKeyToPem(key)
           const secureContext = tls.createSecureContext({ key: keyPem, cert: certPem })
-          fakeServer = new https.Server({
+          fakeServer = http2.createSecureServer({
+            allowHTTP1: true, // 兼容不支持 HTTP/2 的客户端，支持 h2 的浏览器通过 ALPN 自动协商
             key: keyPem,
             cert: certPem,
             SNICallback: (hostname, done) => {
@@ -130,7 +130,7 @@ module.exports = class FakeServersCenter {
             },
           })
         } else {
-          fakeServer = new http.Server()
+          fakeServer = http2.createServer({ allowHTTP1: true })
         }
         const serverObj = {
           cert,
@@ -148,6 +148,10 @@ module.exports = class FakeServersCenter {
           serverObj.port = address.port
         })
         fakeServer.on('request', (req, res) => {
+          // HTTP/2 使用 :authority 伪头而非 host 头，需补全以兼容下游处理
+          if (!req.headers.host && req.authority) {
+            req.headers.host = req.authority
+          }
           if (printDebugLog) {
             log.debug(`【fakeServer request - ${hostname}:${port}】\r\n----- req -----\r\n`, req, '\r\n----- res -----\r\n', res)
           }
@@ -175,6 +179,21 @@ module.exports = class FakeServersCenter {
           if (!isListening) {
             reject(e)
           }
+        })
+        // HTTP/2 会话错误：协议违规、帧错误等
+        fakeServer.on('sessionError', (err, session) => {
+          log.error(`【fakeServer sessionError - ${hostname}:${port}】`, err)
+        })
+        // HTTP/2 会话建立：绑定流错误监听，避免未捕获异常
+        fakeServer.on('session', (session) => {
+          session.on('error', (err) => {
+            log.warn(`【fakeServer session error - ${hostname}:${port}】`, err)
+          })
+          session.on('stream', (stream) => {
+            stream.on('error', (err) => {
+              log.warn(`【fakeServer stream error - ${hostname}:${port}】`, err)
+            })
+          })
         })
         fakeServer.on('clientError', (err, _socket) => {
           // log.error(`【fakeServer clientError - ${hostname}:${port}】\r\n----- error -----\r\n`, err, '\r\n----- socket -----\r\n', socket)

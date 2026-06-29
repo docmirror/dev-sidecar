@@ -114,7 +114,11 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
   const actualSsl = ssl && !isHttpAbsUrl
   const defaultPort = actualSsl ? 443 : 80
   const protocol = actualSsl ? 'https:' : 'http:'
-  const headers = Object.assign({}, req.headers)
+  // 过滤 HTTP/2 伪头（:method, :path, :authority, :scheme），
+  // 它们在上游 HTTP/1.1 请求中不合法
+  const headers = Object.fromEntries(
+    Object.entries(req.headers).filter(([key]) => !key.startsWith(':')),
+  )
   let externalProxyUrl = null
 
   if (externalProxy) {
@@ -158,7 +162,7 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
     hostname,
     port,
     path: urlObj.path,
-    headers: req.headers,
+    headers,
     agent,
     compatibleConfig,
     // 增大响应头大小限制（默认 16KB），
