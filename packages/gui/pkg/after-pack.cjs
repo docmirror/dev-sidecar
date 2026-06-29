@@ -27,7 +27,7 @@ function pruneLocales (resourcesDir, platform) {
     }
   }
 
-  const keep = new Set(['en-US.pak', 'en.pak', 'en-US', 'en', 'zh-CN.pak', 'zh-CN', 'zh-TW.pak', 'zh-TW'])
+  const keep = new Set(['zh-CN.pak'])
   const files = fs.readdirSync(localesDir)
   let removed = 0
   let savedBytes = 0
