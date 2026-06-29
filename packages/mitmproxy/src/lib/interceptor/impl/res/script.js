@@ -17,11 +17,17 @@ function getScriptByUrlOrPath (scriptUrlOrPath, nonce) {
 
 // 从 CSP 头中提取 nonce 值，用于注入脚本以通过 'strict-dynamic' 检查
 function getNonceAttr (proxyRes) {
+  // CSP 可能在 content-security-policy 或 content-security-policy-report-only 中
   const csp = proxyRes.headers['content-security-policy']
+    || proxyRes.headers['content-security-policy-report-only']
   if (!csp) return ''
-  const match = csp.match(/'nonce-([^']+)'/)
-  return match ? ` nonce="${match[1]}"` : ''
-}
+  // 支持单引号和双引号包裹的 nonce 值
+  const match = csp.match(/['"]nonce-([^'"]+)['"]/)
+  if (!match) {
+    log.warn('getNonce: CSP 存在但未匹配到 nonce, CSP:', csp.substring(0, 200))
+    return ''
+  }
+  return ` nonce="${match[1]}"`
 
 module.exports = {
   name: 'script',
