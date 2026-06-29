@@ -178,7 +178,23 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           })
 
           // 代理请求的事件监听
+          // 连接超时定时器：OS 级 TCP 超时 15-21 秒太慢，7 秒内未建立连接则判定 IP 不通
+          let connectionTimer = setTimeout(() => {
+            const cost = Date.now() - start
+            const errorMsg = `连接超时: ${url}, cost: ${cost} ms`
+            log.error(errorMsg, ', rOptions:', jsonApi.stringify2(rOptions))
+            countSlow(isDnsIntercept, `连接超时, cost: ${cost} ms`)
+            proxyReq.destroy(new Error(errorMsg))
+          }, 7000)
+          proxyReq.once('socket', (socket) => {
+            socket.once('connect', () => {
+              clearTimeout(connectionTimer)
+              connectionTimer = null
+            })
+          })
+
           proxyReq.on('timeout', () => {
+            if (connectionTimer) { clearTimeout(connectionTimer); connectionTimer = null }
             const cost = Date.now() - start
             const errorMsg = `代理请求超时: ${url}, cost: ${cost} ms`
             log.error(errorMsg, ', rOptions:', jsonApi.stringify2(rOptions))
@@ -191,6 +207,7 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
             reject(error)
           })
           proxyReq.on('error', (e) => {
+            if (connectionTimer) { clearTimeout(connectionTimer); connectionTimer = null }
             const cost = Date.now() - start
             log.error(`代理请求错误: ${url}, cost: ${cost} ms, error:`, e, ', rOptions:', jsonApi.stringify2(rOptions))
             countSlow(isDnsIntercept, `代理请求错误: ${e.message}`)

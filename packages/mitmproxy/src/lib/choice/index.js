@@ -110,7 +110,9 @@ class DynamicChoice {
 
     if (isError) {
       count.error++ // 失败次数+1
-      count.keepErrorCount++ // 累计连续失败次数+1
+      count.keepErrorCount++ // 连续失败次数+1
+    } else {
+      count.keepErrorCount = 0 // 成功后重置连续失败计数
     }
     count.total++ // 总次数+1
 
@@ -119,8 +121,8 @@ class DynamicChoice {
 
     // 判断是否需要切换下一个
     if (isError && this.value === ip) {
-      if (count.keepErrorCount >= 3) {
-        // 连续错误3次，切换下一个
+      // 连续失败 1 次就切：坏 IP 不值得等 3 次 × 15s = 45s
+      if (count.keepErrorCount >= 1) {
         this.changeNext(count)
       } else if (count.successRate < 0.4) {
         // 成功率小于40%,切换下一个
