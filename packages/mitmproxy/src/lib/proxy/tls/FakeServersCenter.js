@@ -180,6 +180,21 @@ module.exports = class FakeServersCenter {
             reject(e)
           }
         })
+        // HTTP/2 会话错误：协议违规、帧错误等
+        fakeServer.on('sessionError', (err, session) => {
+          log.error(`【fakeServer sessionError - ${hostname}:${port}】`, err)
+        })
+        // HTTP/2 会话建立：绑定流错误监听，避免未捕获异常
+        fakeServer.on('session', (session) => {
+          session.on('error', (err) => {
+            log.warn(`【fakeServer session error - ${hostname}:${port}】`, err)
+          })
+          session.on('stream', (stream) => {
+            stream.on('error', (err) => {
+              log.warn(`【fakeServer stream error - ${hostname}:${port}】`, err)
+            })
+          })
+        })
         fakeServer.on('clientError', (err, _socket) => {
           // log.error(`【fakeServer clientError - ${hostname}:${port}】\r\n----- error -----\r\n`, err, '\r\n----- socket -----\r\n', socket)
           log.error(`【fakeServer clientError - ${hostname}:${port}】\r\n`, err)
