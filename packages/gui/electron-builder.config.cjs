@@ -16,10 +16,11 @@ module.exports = {
     buildResources: 'build',
   },
   asar: {
-    smartUnpack: true, // 自动解包原生模块（.node），避免 require 失败
+    smartUnpack: true,
   },
   asarUnpack: [
-    'src/bridge/mitmproxy.js', // 子进程 fork 入口，必须在 asar 外才能执行
+    'src/bridge/mitmproxy.js',
+    'dist/icon.png',
   ],
   files: [
     {

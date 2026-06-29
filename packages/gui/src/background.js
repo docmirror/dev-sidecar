@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import DevSidecar from '@docmirror/dev-sidecar'
 import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, Tray } from 'electron'
+import fs from 'node:fs'
 import minimist from 'minimist'
 import backend from './bridge/backend.js'
 import jsonApi from '@docmirror/mitmproxy/src/json.js'
@@ -55,9 +56,6 @@ app.commandLine.appendSwitch('disable-features', [
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isDevelopment = process.env.NODE_ENV !== 'production'
-const staticPath = isDevelopment
-  ? path.resolve('public')
-  : path.join(app.getAppPath(), 'dist')
 
 let _powerMonitor = powerMonitor
 
@@ -133,7 +131,13 @@ function setTray () {
     },
   ]
   // 设置系统托盘图标
-  const iconRootPath = path.join(__dirname, '../extra/icons/tray')
+  // 生产模式下 extra 在 resources/extra/（asar 外），开发模式下在项目根目录的 extra/
+  const appPath = app.getAppPath()
+  let iconRootPath = path.join(appPath, 'extra', 'icons', 'tray')
+  if (!fs.existsSync(path.join(iconRootPath, 'icon.png'))) {
+    // extra 在 asar 外，需要从 asar 路径向上一级
+    iconRootPath = path.join(path.dirname(appPath), 'extra', 'icons', 'tray')
+  }
   let iconPath = path.join(iconRootPath, 'icon.png')
   const iconWhitePath = path.join(iconRootPath, 'icon-white.png')
   const iconBlackPath = path.join(iconRootPath, 'icon-black.png')
@@ -235,6 +239,21 @@ function changeAppConfig (config) {
   }
 }
 
+function loadAppIcon () {
+  // 优先：从 asar 内读取（fs.readFileSync 被 Electron 补丁支持 asar）
+  try {
+    const p = path.join(app.getAppPath(), 'dist', 'icon.png')
+    if (fs.existsSync(p)) return nativeImage.createFromBuffer(fs.readFileSync(p))
+  } catch { /* ignore */ }
+  // 回退：asar.unpacked 真实路径
+  try {
+    const p = path.join(app.getAppPath(), '..', 'app.asar.unpacked', 'dist', 'icon.png')
+    if (fs.existsSync(p)) return nativeImage.createFromPath(p)
+  } catch { /* ignore */ }
+  // 开发模式回退
+  return nativeImage.createFromPath(path.resolve('public/icon.png'))
+}
+
 function createWindow (startHideWindow, autoQuitIfError = true) {
   // Create the browser window.
   const windowSize = DevSidecar.api.config.get().app.windowSize || {}
@@ -253,7 +272,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
         nodeIntegration: true, // process.env.ELECTRON_NODE_INTEGRATION
       },
       show: !startHideWindow,
-      icon: path.join(staticPath, 'icon.png'),
+      icon: loadAppIcon(),
     })
   } catch (e) {
     log.error('创建窗口失败:', e)
@@ -440,7 +459,12 @@ function registerShowHideShortcut (showHideShortcut) {
 function initApp () {
   if (isMac) {
     app.whenReady().then(() => {
-      app.dock.setIcon(path.join(__dirname, '../extra/icons/512x512-2.png'))
+      const appPath = app.getAppPath()
+      let iconPath = path.join(appPath, 'extra', 'icons', '512x512-2.png')
+      if (!fs.existsSync(iconPath)) {
+        iconPath = path.join(path.dirname(appPath), 'extra', 'icons', '512x512-2.png')
+      }
+      app.dock.setIcon(iconPath)
     })
   }
 
