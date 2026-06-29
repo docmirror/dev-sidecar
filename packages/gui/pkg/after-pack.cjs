@@ -3,35 +3,95 @@ const path = require('node:path')
 const archiver = require('archiver')
 const pkg = require('../package.json')
 
+/**
+ * 删除 Electron 自带的语言包，只保留中文和英文
+ * 可减少约 15-20MB
+ */
+function pruneLocales (resourcesDir, platform) {
+  let localesDir
+  if (platform === 'mac') {
+    // macOS: Contents/Resources/locales/
+    localesDir = path.join(resourcesDir, 'locales')
+  } else {
+    // Windows/Linux: resources/app.asar.unpacked 的 locales 可能在 framework 中
+    // Electron 的 locales 通常在 app 同级目录
+    localesDir = path.join(path.dirname(resourcesDir), 'locales')
+  }
+
+  if (!fs.existsSync(localesDir)) {
+    // try alternative: inside resources
+    localesDir = path.join(resourcesDir, 'locales')
+    if (!fs.existsSync(localesDir)) {
+      console.log('locales dir not found at:', localesDir)
+      return
+    }
+  }
+
+  const keep = new Set(['en-US.pak', 'en.pak', 'en-US', 'en', 'zh-CN.pak', 'zh-CN', 'zh-TW.pak', 'zh-TW'])
+  const files = fs.readdirSync(localesDir)
+  let removed = 0
+  let savedBytes = 0
+  for (const file of files) {
+    if (keep.has(file)) continue
+    const filePath = path.join(localesDir, file)
+    const stat = fs.statSync(filePath)
+    savedBytes += stat.size
+    fs.unlinkSync(filePath)
+    removed++
+  }
+  console.log(`Removed ${removed} unused locale files, saved ${(savedBytes / 1024 / 1024).toFixed(1)} MB`)
+}
+
 function writeAppUpdateYmlForLinux (appOutDir) {
   const publishUrl = process.env.VUE_APP_PUBLISH_URL
   const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
-  // provider: generic
-  // url: 'http://dev-sidecar.docmirror.cn/update/preview/'
-  // updaterCacheDirName: '@docmirrordev-sidecar-gui-updater'
+  if (!publishUrl || !publishProvider) return
   const fileContent = `provider: ${publishProvider}
 url: '${publishUrl}'
 updaterCacheDirName: 'dev-sidecar-gui-updater'
 `
-  console.log('write linux app-update.yml,updateUrl:', publishUrl)
+  console.log('write linux app-update.yml, updateUrl:', publishUrl)
   const filePath = path.join(appOutDir, 'resources', 'app-update.yml')
   fs.writeFileSync(filePath, fileContent)
 }
+
 exports.default = async function (context) {
-  let targetPath
-  let systemType
+  let resourcesDir
+  let platform
+
   if (context.packager.platform.nodeName === 'darwin') {
-    targetPath = path.join(context.appOutDir, `${context.packager.appInfo.productName}.app/Contents/Resources`)
-    systemType = 'mac'
+    resourcesDir = path.join(context.appOutDir, `${context.packager.appInfo.productName}.app/Contents/Resources`)
+    platform = 'mac'
   } else if (context.packager.platform.nodeName === 'linux') {
-    targetPath = path.join(context.appOutDir, './resources')
-    systemType = 'linux'
+    resourcesDir = path.join(context.appOutDir, './resources')
+    platform = 'linux'
     writeAppUpdateYmlForLinux(context.appOutDir)
   } else {
-    targetPath = path.join(context.appOutDir, './resources')
-    systemType = 'win'
+    resourcesDir = path.join(context.appOutDir, './resources')
+    platform = 'win'
   }
-  const partUpdateFile = `update-${systemType}-${pkg.version}.zip`
+
+  // 清理无用语言包
+  pruneLocales(resourcesDir, platform)
+
+  // 删除 core 包里冗余的 exe（已在 extra/ 中通过 extraResources 提供）
+  const duplicateExes = [
+    'EnableLoopback.exe',
+    'sysproxy.exe',
+  ]
+  for (const exe of duplicateExes) {
+    const dupPath = path.join(resourcesDir, 'app.asar.unpacked', 'node_modules', '@docmirror', 'dev-sidecar', 'src', 'shell', 'scripts', 'extra-path', exe)
+    if (fs.existsSync(dupPath)) {
+      fs.unlinkSync(dupPath)
+      console.log(`Removed duplicate exe: ${dupPath}`)
+    }
+  }
+
+  // 打包 update 用的 ZIP（按架构分离，原生模块架构相关）
+  const arch = context.packager.platform.arch === 'arm64' ? 'arm64'
+    : context.packager.platform.arch === 'ia32' ? 'ia32'
+    : 'x64'
+  const partUpdateFile = `update-${platform}-${arch}-${pkg.version}.zip`
   const outputPath = path.join(context.outDir, partUpdateFile)
 
   await new Promise((resolve, reject) => {
@@ -48,7 +108,7 @@ exports.default = async function (context) {
     })
 
     archive.pipe(output)
-    archive.directory(targetPath, false)
+    archive.directory(resourcesDir, false)
     archive.finalize()
   })
 }

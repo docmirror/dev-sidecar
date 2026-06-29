@@ -14,6 +14,45 @@ const isWindows = process.platform === 'win32'
 const isLinux = process.platform === 'linux'
 const isMac = process.platform === 'darwin'
 
+// 禁用不需要的 Chromium 组件以减少内存和 CPU 占用
+// 这些开关必须在 app.whenReady() 之前设置
+
+// ── 渲染器 / 进程限制 ──
+app.commandLine.appendSwitch('renderer-process-limit', '1') // 单个渲染器进程（默认是每个 CPU 核心一个）
+
+// ── 证书 / 网络 ──
+app.commandLine.appendSwitch('use-system-ca') // 使用系统证书库，信任 dev-sidecar 自签 CA
+
+// ── 功能开关 ──
+app.commandLine.appendSwitch('disable-pdf-viewer')                      // PDF 查看器
+app.commandLine.appendSwitch('disable-print-preview')                   // 打印预览
+app.commandLine.appendSwitch('disable-speech-api')                      // 语音识别/合成
+app.commandLine.appendSwitch('disable-gpu-rasterization')               // GPU 光栅化
+app.commandLine.appendSwitch('disable-accelerated-video-decode')        // 硬件视频解码
+app.commandLine.appendSwitch('disable-background-networking')           // 后台网络活动（同步/遥测）
+app.commandLine.appendSwitch('disable-sync')                            // Chrome 同步服务
+app.commandLine.appendSwitch('disable-default-apps')                    // 默认应用注册
+app.commandLine.appendSwitch('disable-component-update')                // 组件自动更新
+app.commandLine.appendSwitch('disable-client-side-phishing-detection')  // 钓鱼检测
+app.commandLine.appendSwitch('disable-domain-reliability')              // 域名可靠性监控
+
+// ── 通过 --disable-features 禁用的 Chromium Feature 列表 ──
+app.commandLine.appendSwitch('disable-features', [
+  'MediaRouter',              // 投屏 / 媒体路由
+  'WebRTC',                   // 实时通信（视频/音频通话）
+  'SensorAPI',                // 传感器 API（陀螺仪/加速度计等）
+  'GamepadAPI',               // 游戏手柄 API
+  'ColorCorrectRendering',    // 显示颜色校正
+  'SerializeBackingStores',   // 页面内容序列化到磁盘缓存
+  'CrashReporting',           // Chromium 崩溃报告（已有自身日志）
+  'TranslateUI',              // 翻译 UI
+  'AutofillServerCommunication', // 自动填充服务器通信
+  'SafeBrowsing',             // 安全浏览（URL 黑名单检查）
+  'NotificationTriggers',     // 定时通知
+  'WebPayments',              // 支付请求 API
+  'BackgroundFetch',          // 后台下载
+].join(','))
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const staticPath = isDevelopment

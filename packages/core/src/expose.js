@@ -43,14 +43,14 @@ function newServerStart ({ mitmproxyPath }) {
 server.start = newServerStart
 async function startup ({ mitmproxyPath }) {
   const conf = config.get()
-  if (conf.server.enabled) {
+  if (conf.server.enabled && !status.server.enabled) {
     try {
       await server.start({ mitmproxyPath })
     } catch (err) {
       log.error('代理服务启动失败：', err)
     }
   }
-  if (conf.proxy.enabled) {
+  if (conf.proxy.enabled && !status.proxy.enabled) {
     try {
       await proxy.start()
     } catch (err) {
@@ -60,7 +60,7 @@ async function startup ({ mitmproxyPath }) {
   try {
     const plugins = []
     for (const key in plugin) {
-      if (conf.plugin[key].enabled) {
+      if (conf.plugin[key].enabled && !status.plugin[key]?.enabled) {
         const start = async () => {
           try {
             await plugin[key].start()

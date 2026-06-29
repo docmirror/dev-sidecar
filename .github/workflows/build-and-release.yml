@@ -429,6 +429,51 @@ jobs:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-macos-arm64.dmg"
           if-no-files-found: error
 
+      # region Upload update ZIPs (for auto-update, per-arch since native modules are arch-specific)
+      - name: "Upload update ZIP (Win x64)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'windows' }}
+        with:
+          path: packages/gui/dist_electron/update-win-x64-${{ steps.package-info.outputs.version }}.zip
+          name: "update-win-x64-${{ steps.package-info.outputs.version }}.zip"
+          if-no-files-found: error
+      - name: "Upload update ZIP (Win ia32)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'windows' }}
+        with:
+          path: packages/gui/dist_electron/update-win-ia32-${{ steps.package-info.outputs.version }}.zip
+          name: "update-win-ia32-${{ steps.package-info.outputs.version }}.zip"
+          if-no-files-found: error
+      - name: "Upload update ZIP (Win arm64)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'windows' }}
+        with:
+          path: packages/gui/dist_electron/update-win-arm64-${{ steps.package-info.outputs.version }}.zip
+          name: "update-win-arm64-${{ steps.package-info.outputs.version }}.zip"
+          if-no-files-found: error
+      - name: "Upload update ZIP (macOS x64)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'macos' }}
+        with:
+          path: packages/gui/dist_electron/update-mac-x64-${{ steps.package-info.outputs.version }}.zip
+          name: "update-mac-x64-${{ steps.package-info.outputs.version }}.zip"
+          if-no-files-found: error
+      - name: "Upload update ZIP (macOS arm64)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'macos' }}
+        with:
+          path: packages/gui/dist_electron/update-mac-arm64-${{ steps.package-info.outputs.version }}.zip
+          name: "update-mac-arm64-${{ steps.package-info.outputs.version }}.zip"
+          if-no-files-found: error
+      - name: "Upload update ZIP (Linux x64)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/update-linux-x64-${{ steps.package-info.outputs.version }}.zip
+          name: "update-linux-x64-${{ steps.package-info.outputs.version }}.zip"
+          if-no-files-found: error
+      # endregion Upload update ZIPs
+
   # job 2
   download-and-release:
     runs-on: ubuntu-latest
@@ -542,6 +587,39 @@ jobs:
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-macos-arm64.dmg"
           path: release
+
+      # region Download update ZIPs (for auto-update, per-arch)
+      - name: "Download update ZIP (Win x64)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "update-win-x64-${{ steps.package-info.outputs.version }}.zip"
+          path: release
+      - name: "Download update ZIP (Win ia32)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "update-win-ia32-${{ steps.package-info.outputs.version }}.zip"
+          path: release
+      - name: "Download update ZIP (Win arm64)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "update-win-arm64-${{ steps.package-info.outputs.version }}.zip"
+          path: release
+      - name: "Download update ZIP (macOS x64)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "update-mac-x64-${{ steps.package-info.outputs.version }}.zip"
+          path: release
+      - name: "Download update ZIP (macOS arm64)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "update-mac-arm64-${{ steps.package-info.outputs.version }}.zip"
+          path: release
+      - name: "Download update ZIP (Linux x64)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "update-linux-x64-${{ steps.package-info.outputs.version }}.zip"
+          path: release
+      # endregion Download update ZIPs
 
       - name: 'Print files from "release" dir'
         run: |

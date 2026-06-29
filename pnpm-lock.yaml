@@ -7804,7 +7804,7 @@ snapshots:
   '@babel/types@7.29.0':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
-      '@babel/helper-validator-identifier': 7.28.5
+      '@babel/helper-validator-identifier': 7.29.7
 
   '@clack/core@0.4.1':
     dependencies:
@@ -8947,7 +8947,7 @@ snapshots:
       '@vue/babel-preset-jsx': 1.4.0(@babel/core@7.29.0)(vue@3.5.33(typescript@5.9.3))
       babel-plugin-dynamic-import-node: 2.3.3
       core-js-compat: 3.49.0
-      semver: 7.7.4
+      semver: 7.8.5
     optionalDependencies:
       core-js: 3.49.0
       vue: 3.5.33(typescript@5.9.3)
@@ -9186,7 +9186,7 @@ snapshots:
       open: 8.4.2
       ora: 5.4.1
       read-pkg: 5.2.0
-      semver: 7.7.4
+      semver: 7.8.5
       strip-ansi: 6.0.1
     transitivePeerDependencies:
       - encoding
@@ -11517,7 +11517,7 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
-      semver: 7.7.4
+      semver: 7.8.5
       serialize-error: 7.0.1
     optional: true
 
@@ -13885,7 +13885,7 @@ snapshots:
 
   simple-update-notifier@2.0.0:
     dependencies:
-      semver: 7.7.4
+      semver: 7.8.5
 
   sirv@2.0.4:
     dependencies:
@@ -14111,7 +14111,7 @@ snapshots:
       mime: 2.6.0
       qs: 6.15.3
       readable-stream: 3.6.2
-      semver: 7.7.4
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
 

@@ -160,6 +160,13 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
             log.info(`版本比对结果：isNewVersion('${onlineVersion}', '${curVersion}') = ${isNew}`)
             if (isNew > 0) {
               log.info(`检查更新：发现新版本 '${onlineVersion}'，当前版本号为 '${curVersion}'`)
+
+              // 查找当前平台+架构对应的增量更新包
+              const arch = process.arch === 'ia32' ? 'ia32' : process.arch === 'arm64' ? 'arm64' : 'x64'
+              const platformPrefix = isMac ? `update-mac-${arch}-` : isLinux ? `update-linux-${arch}-` : `update-win-${arch}-`
+              const partAsset = versionData.assets.find(a => a.name && a.name.startsWith(platformPrefix) && a.name.endsWith('.zip'))
+              const partPackage = partAsset ? partAsset.browser_download_url : null
+
               win.webContents.send('update', {
                 key: 'available',
                 value: {
@@ -167,6 +174,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
                   releaseNotes: versionData.body
                     ? (versionData.body.replace(/\r\n/g, '\n').replace(/https:\/\/github.com\/docmirror\/dev-sidecar/g, '').replace(/(?<=(^|\n))[ \t]*(?:#[ #]*)?#\s*/g, '') || '无')
                     : '无',
+                  partPackage,
                 },
               })
             } else {
