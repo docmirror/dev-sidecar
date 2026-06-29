@@ -27,12 +27,13 @@ export default defineComponent({
 
   computed: {
     setupImage () {
+      const base = process.env.BASE_URL || './'
       if (this.systemPlatform === 'mac') {
-        return '/setup-mac.png'
+        return `${base}setup-mac.png`
       } else if (this.systemPlatform === 'linux') {
-        return '/setup-linux.png'
+        return `${base}setup-linux.png`
       } else {
-        return '/setup.png'
+        return `${base}setup.png`
       }
     },
   },
