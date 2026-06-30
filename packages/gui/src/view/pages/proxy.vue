@@ -130,13 +130,13 @@ export default defineComponent({
           注意：当前已打开的命令行并不会实时生效，需要重新打开一个新的命令行窗口
         </div>
       </a-form-item>
-      <a-form-item v-if="isWindows() && config.proxy.setEnv" label="设置CA证书路径" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-checkbox v-model:checked="config.proxy.setCaBundle">
+      <a-form-item v-if="isWindows()" label="设置CA证书路径" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-checkbox v-model:checked="config.proxy.setCaBundle" :disabled="!config.proxy.setEnv">
           是否同时设置<code>REQUEST_CA_BUNDLE</code>环境变量
         </a-checkbox>
         <div class="form-help">
           设置为DS的CA证书路径，解决 Python/QT 等程序因不信任自签 CA 证书而报错的问题<br>
-          注意：需要同时勾选上面"设置环境变量"选项
+          注意：必须先勾选上面"设置环境变量"才可启用此选项
         </div>
       </a-form-item>
       <a-form-item v-if="isWindows()" label="设置Loopback" :label-col="labelCol" :wrapper-col="wrapperCol">
