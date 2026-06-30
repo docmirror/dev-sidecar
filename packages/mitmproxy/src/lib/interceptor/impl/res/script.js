@@ -24,7 +24,7 @@ function getNonceAttr (proxyRes) {
   // 支持单引号和双引号包裹的 nonce 值
   const match = csp.match(/['"]nonce-([^'"]+)['"]/)
   if (!match) {
-    log.warn('getNonce: CSP 存在但未匹配到 nonce, CSP:', csp.substring(0, 200))
+    log.warn('getNonce: CSP 存在但未匹配到 nonce, CSP:', csp.substring(0, 500))
     return ''
   }
   return ` nonce="${match[1]}"`
