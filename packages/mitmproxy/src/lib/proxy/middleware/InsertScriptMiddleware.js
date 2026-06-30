@@ -102,6 +102,11 @@ function handleResponseHeaders (res, proxyRes) {
       if (key === 'content-security-policy') {
         // content-security-policy
         let policy = proxyRes.headers[key]
+
+        // 检查是否已有 script-src 指令
+        const hasScriptSrc = /script-src(-elem)?\s+/i.test(policy)
+
+        // 如果已有 script-src，确保包含 'self'
         policy = policy.replace(CSP_SCRIPT_SRC_RE, (match, elem, value) => {
           const directive = `script-src${elem || ''}`
           const trimmedValue = value.trim()
@@ -110,6 +115,12 @@ function handleResponseHeaders (res, proxyRes) {
           }
           return `${directive} 'self' ${trimmedValue}`
         })
+
+        // 如果原本没有 script-src，显式添加（否则 fallback 到 default-src 'none' 会屏蔽同源脚本）
+        if (!hasScriptSrc) {
+          policy = `script-src 'self'; ${policy}`
+        }
+
         res.setHeader(newkey, policy)
         return
       }
