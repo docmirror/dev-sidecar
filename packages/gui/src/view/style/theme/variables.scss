@@ -398,12 +398,21 @@ hr {
   background: var(--pre-release-bg);
   border-color: var(--pre-release-border);
   color: var(--pre-release-text);
+  padding: 8px 16px;
+  text-align: center;
+  font-size: 14px;
+  border-bottom: 1px solid var(--pre-release-border);
 }
 
 .pre-release-tag {
   background: var(--pre-release-bg);
-  border-color: var(--pre-release-border);
+  border: 1px solid var(--pre-release-border);
+  border-radius: 4px;
   color: var(--pre-release-text);
+  padding: 1px 6px;
+  font-size: 12px;
+  margin-left: 6px;
+  white-space: nowrap;
 }
 
 /* 搜索栏 */
