@@ -10,7 +10,7 @@
   ],
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --exit"
   },
   "dependencies": {
     "@docmirror/dev-sidecar": "workspace:*",
