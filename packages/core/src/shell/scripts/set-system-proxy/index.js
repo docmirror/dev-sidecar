@@ -331,7 +331,7 @@ function sudoExecMac (cmd) {
 
 const executor = {
   async windows (exec, params = {}) {
-    const { ip, port, setEnv } = params
+    const { ip, port, setEnv, setCaBundle } = params
     if (ip != null) { // 设置代理
       // 延迟加载config
       loadConfig()
@@ -368,7 +368,7 @@ const executor = {
       if (setEnv) {
         // 设置全局代理所需的环境变量
         try {
-          await exec(`echo '设置环境变量 HTTPS_PROXY${config.get().proxy.proxyHttp ? '、HTTP_PROXY' : ''}'`)
+          await exec(`echo '设置环境变量 HTTPS_PROXY${config.get().proxy.proxyHttp ? '、HTTP_PROXY' : ''}${setCaBundle ? '、REQUEST_CA_BUNDLE' : ''}'`)
 
           log.info(`开启系统代理的同时设置环境变量：HTTPS_PROXY = "http://${ip}:${port}/"`)
           await exec(`setx HTTPS_PROXY "http://${ip}:${port}/"`)
@@ -378,9 +378,15 @@ const executor = {
             await exec(`setx HTTP_PROXY "http://${ip}:${port - 1}/"`)
           }
 
+          if (setCaBundle) {
+            const caCertPath = config.get().server.setting.rootCaFile.certPath
+            log.info(`开启系统代理的同时设置环境变量：REQUEST_CA_BUNDLE = "${caCertPath}"`)
+            await exec(`setx REQUEST_CA_BUNDLE "${caCertPath}"`)
+          }
+
           //  await addClearScriptIni()
         } catch (e) {
-          log.error('设置环境变量 HTTPS_PROXY、HTTP_PROXY 失败:', e)
+          log.error('设置环境变量 HTTPS_PROXY、HTTP_PROXY、REQUEST_CA_BUNDLE 失败:', e)
         }
       }
 
@@ -404,7 +410,7 @@ const executor = {
       }
 
       try {
-        await exec('echo \'删除环境变量 HTTPS_PROXY、HTTP_PROXY\'')
+        await exec('echo \'删除环境变量 HTTPS_PROXY、HTTP_PROXY、REQUEST_CA_BUNDLE\'')
         const regKey = new Registry({ // new operator is optional
           hive: Registry.HKCU, // open registry hive HKEY_CURRENT_USER
           key: '\\Environment', // key containing autostart programs
@@ -425,6 +431,15 @@ const executor = {
             regKey.remove('HTTP_PROXY', async (err) => {
               if (err) {
                 log.warn('删除环境变量 HTTP_PROXY 失败:', err)
+              }
+            })
+          }
+        })
+        regKey.get('REQUEST_CA_BUNDLE', (err) => {
+          if (!err) {
+            regKey.remove('REQUEST_CA_BUNDLE', async (err) => {
+              if (err) {
+                log.warn('删除环境变量 REQUEST_CA_BUNDLE 失败:', err)
               }
             })
           }
