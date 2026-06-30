@@ -95,7 +95,10 @@ module.exports = {
   mac: {
     icon: './build/mac/icon.icns',
     target: isCI
-      ? { target: 'dmg', arch: ['x64', 'arm64'] }
+      ? [
+          { target: 'dmg', arch: ['x64', 'arm64'] },
+          { target: 'zip', arch: ['x64', 'arm64'] },
+        ]
       : { target: 'dmg', arch: [localArch] },
     category: 'public.app-category.developer-tools',
   },
