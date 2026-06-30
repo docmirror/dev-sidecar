@@ -197,11 +197,23 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
             bodyObj = null
           }
 
+          let detail = bodyObj && bodyObj.message ? bodyObj.message : ''
+          if (!detail) {
+            // 尝试从 DS 的 HTML 错误页面提取错误描述
+            const titleMatch = typeof body === 'string' && body.match(/<title>([^<]*)<\/title>/i)
+            if (titleMatch) {
+              detail = titleMatch[1]
+            } else if (response && response.statusMessage) {
+              detail = response.statusMessage
+            } else if (typeof body === 'string') {
+              detail = body.substring(0, 200)
+            }
+          }
           let message
           if (response) {
-            message = `检查更新失败: ${bodyObj && bodyObj.message ? bodyObj.message : response.message}, code: ${response.statusCode}`
+            message = `检查更新失败: ${detail}, code: ${response.statusCode}`
           } else {
-            message = `检查更新失败: ${bodyObj && bodyObj.message ? bodyObj.message : body}`
+            message = `检查更新失败: ${detail || body}`
           }
           win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: message })
         }
