@@ -88,9 +88,9 @@ exports.default = async function (context) {
   }
 
   // 打包 update 用的 ZIP（按架构分离，原生模块架构相关）
-  const arch = context.packager.platform.arch === 'arm64' ? 'arm64'
-    : context.packager.platform.arch === 'ia32' ? 'ia32'
-    : 'x64'
+  // context.arch is the target architecture string (e.g., 'arm64', 'x64', 'ia32', 'armv7l')
+  // context.packager.platform does NOT have an .arch property — using it always fell through to 'x64'
+  const arch = context.arch || 'x64'  // fallback to x64 if undefined
   const partUpdateFile = `update-${platform}-${arch}-${pkg.version}.zip`
   const outputPath = path.join(context.outDir, partUpdateFile)
 

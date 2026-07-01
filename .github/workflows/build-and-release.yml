@@ -474,6 +474,79 @@ jobs:
           if-no-files-found: error
       # endregion Upload update ZIPs
 
+      # region Upload auto-update metadata files (latest*.yml + blockmaps + macOS zip target)
+      - name: "Upload latest.yml (Windows)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'windows' }}
+        with:
+          path: packages/gui/dist_electron/latest.yml
+          name: "latest.yml"
+          if-no-files-found: error
+      - name: "Upload blockmap (Win x64)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'windows' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe.blockmap
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe.blockmap"
+          if-no-files-found: error
+      - name: "Upload blockmap (Win ia32)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'windows' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe.blockmap
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe.blockmap"
+          if-no-files-found: warn
+      - name: "Upload blockmap (Win arm64)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'windows' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe.blockmap
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe.blockmap"
+          if-no-files-found: warn
+      - name: "Upload latest-mac.yml"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'macos' }}
+        with:
+          path: packages/gui/dist_electron/latest-mac.yml
+          name: "latest-mac.yml"
+          if-no-files-found: error
+      - name: "Upload blockmap (macOS x64)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'macos' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-x64.dmg.blockmap
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-x64.dmg.blockmap"
+          if-no-files-found: error
+      - name: "Upload blockmap (macOS arm64)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'macos' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-arm64.dmg.blockmap
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-arm64.dmg.blockmap"
+          if-no-files-found: error
+      - name: "Upload macOS zip target (x64)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'macos' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-x64.zip
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-x64.zip"
+          if-no-files-found: error
+      - name: "Upload macOS zip target (arm64)"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'macos' }}
+        with:
+          path: packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-arm64.zip
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-arm64.zip"
+          if-no-files-found: error
+      - name: "Upload latest-linux.yml"
+        uses: actions/upload-artifact@v4.4.0
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/latest-linux.yml
+          name: "latest-linux.yml"
+          if-no-files-found: error
+      # endregion Upload auto-update metadata files
+
   # job 2
   download-and-release:
     runs-on: ubuntu-latest
@@ -620,6 +693,59 @@ jobs:
           name: "update-linux-x64-${{ steps.package-info.outputs.version }}.zip"
           path: release
       # endregion Download update ZIPs
+
+      # region Download auto-update metadata files (latest*.yml + blockmaps + macOS zip target)
+      - name: "Download latest.yml"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "latest.yml"
+          path: release
+      - name: "Download blockmap (Win x64)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-x64.exe.blockmap"
+          path: release
+      - name: "Download blockmap (Win ia32)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe.blockmap"
+          path: release
+      - name: "Download blockmap (Win arm64)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe.blockmap"
+          path: release
+      - name: "Download latest-mac.yml"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "latest-mac.yml"
+          path: release
+      - name: "Download blockmap (macOS x64)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-x64.dmg.blockmap"
+          path: release
+      - name: "Download blockmap (macOS arm64)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-arm64.dmg.blockmap"
+          path: release
+      - name: "Download macOS zip target (x64)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-x64.zip"
+          path: release
+      - name: "Download macOS zip target (arm64)"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-arm64.zip"
+          path: release
+      - name: "Download latest-linux.yml"
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: "latest-linux.yml"
+          path: release
+      # endregion Download auto-update metadata files
 
       - name: 'Print files from "release" dir'
         run: |
