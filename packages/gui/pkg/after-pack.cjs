@@ -1,6 +1,7 @@
 const fs = require('node:fs')
 const path = require('node:path')
 const archiver = require('archiver')
+const { Arch } = require('builder-util')
 const pkg = require('../package.json')
 
 /**
@@ -88,9 +89,9 @@ exports.default = async function (context) {
   }
 
   // 打包 update 用的 ZIP（按架构分离，原生模块架构相关）
-  // context.arch is the target architecture string (e.g., 'arm64', 'x64', 'ia32', 'armv7l')
-  // context.packager.platform does NOT have an .arch property — using it always fell through to 'x64'
-  const arch = context.arch || 'x64'  // fallback to x64 if undefined
+  // context.arch is the numeric Arch enum (ia32=0, x64=1, armv7l=2, arm64=3)
+  // Use Arch[context.arch] to get the string name; use != null to avoid ia32 (0) being falsy
+  const arch = context.arch != null ? Arch[context.arch] : 'x64'
   const partUpdateFile = `update-${platform}-${arch}-${pkg.version}.zip`
   const outputPath = path.join(context.outDir, partUpdateFile)
 
