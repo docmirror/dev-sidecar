@@ -16,21 +16,28 @@ function writePartPackages (context) {
     linux: 'latest-linux.yml',
   }
 
-  // Collect partPackage URLs per platform from update ZIP artifacts
+  // Collect partPackage URLs per platform from update ZIPs in outDir
   const platformParts = { mac: [], win: [], linux: [] }
 
-  for (const artifactPath of context.artifactPaths) {
-    const basename = path.basename(artifactPath)
+  let files
+  try {
+    files = fs.readdirSync(context.outDir)
+  } catch {
+    console.log('无法读取 outDir:', context.outDir)
+    return
+  }
+
+  const version = pkg.version
+  for (const filename of files) {
     // Match: update-{platform}-{arch}-{version}.zip
-    const match = basename.match(/^update-(mac|win|linux)-(x64|ia32|arm64|armv7l)-(.+)\.zip$/)
+    const match = filename.match(/^update-(mac|win|linux)-(x64|ia32|arm64|armv7l)-(.+)\.zip$/)
     if (match) {
       const [, platform] = match
-      const partUpdateUrl = publishConfig.url + basename
+      const partUpdateUrl = publishConfig.url + filename
       platformParts[platform].push(partUpdateUrl)
     }
   }
 
-  const version = pkg.version
   // Write partPackage entries to each latest yml
   for (const [platform, urls] of Object.entries(platformParts)) {
     if (urls.length === 0) continue

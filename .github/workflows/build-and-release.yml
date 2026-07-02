@@ -481,7 +481,7 @@ jobs:
         with:
           path: packages/gui/dist_electron/latest.yml
           name: "latest.yml"
-          if-no-files-found: error
+          if-no-files-found: warn
       - name: "Upload blockmap (Win x64)"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'windows' }}
@@ -509,7 +509,7 @@ jobs:
         with:
           path: packages/gui/dist_electron/latest-mac.yml
           name: "latest-mac.yml"
-          if-no-files-found: error
+          if-no-files-found: warn
       - name: "Upload blockmap (macOS x64)"
         uses: actions/upload-artifact@v4.4.0
         if: ${{ matrix.os == 'macos' }}
@@ -544,7 +544,7 @@ jobs:
         with:
           path: packages/gui/dist_electron/latest-linux.yml
           name: "latest-linux.yml"
-          if-no-files-found: error
+          if-no-files-found: warn
       # endregion Upload auto-update metadata files
 
   # job 2
@@ -697,6 +697,7 @@ jobs:
       # region Download auto-update metadata files (latest*.yml + blockmaps + macOS zip target)
       - name: "Download latest.yml"
         uses: actions/download-artifact@v4.1.8
+        continue-on-error: true
         with:
           name: "latest.yml"
           path: release
@@ -707,16 +708,19 @@ jobs:
           path: release
       - name: "Download blockmap (Win ia32)"
         uses: actions/download-artifact@v4.1.8
+        continue-on-error: true
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-ia32.exe.blockmap"
           path: release
       - name: "Download blockmap (Win arm64)"
         uses: actions/download-artifact@v4.1.8
+        continue-on-error: true
         with:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-arm64.exe.blockmap"
           path: release
       - name: "Download latest-mac.yml"
         uses: actions/download-artifact@v4.1.8
+        continue-on-error: true
         with:
           name: "latest-mac.yml"
           path: release
@@ -742,6 +746,7 @@ jobs:
           path: release
       - name: "Download latest-linux.yml"
         uses: actions/download-artifact@v4.1.8
+        continue-on-error: true
         with:
           name: "latest-linux.yml"
           path: release
