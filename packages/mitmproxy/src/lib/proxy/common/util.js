@@ -25,13 +25,15 @@ function getTimeoutConfig (hostname, serverSetting) {
   return {
     timeout: timeoutConfig.timeout || serverSetting.defaultTimeout || 20000,
     keepAliveTimeout: timeoutConfig.keepAliveTimeout || serverSetting.defaultKeepAliveTimeout || 30000,
+    allowTls12: serverSetting.allowTls12 === true,
   }
 }
 
 function createHttpsAgent (timeoutConfig, verifySsl) {
-  const key = `${timeoutConfig.timeout}-${timeoutConfig.keepAliveTimeout}`
+  const key = `${timeoutConfig.timeout}-${timeoutConfig.keepAliveTimeout}-${timeoutConfig.allowTls12 === true ? 'tls12' : 'tls13'}`
   if (!httpsAgentCache[key]) {
     verifySsl = !!verifySsl
+    const allowTls12 = timeoutConfig.allowTls12 === true
 
     // 证书回调函数
     const checkServerIdentity = (host, cert) => {
@@ -44,6 +46,8 @@ function createHttpsAgent (timeoutConfig, verifySsl) {
       keepAliveTimeout: timeoutConfig.keepAliveTimeout,
       checkServerIdentity,
       rejectUnauthorized: verifySsl,
+      minVersion: allowTls12 ? 'TLSv1.2' : 'TLSv1.3',
+      maxVersion: 'TLSv1.3',
     })
 
     agent.unVerifySslAgent = new HttpsAgent({
@@ -52,6 +56,8 @@ function createHttpsAgent (timeoutConfig, verifySsl) {
       keepAliveTimeout: timeoutConfig.keepAliveTimeout,
       checkServerIdentity,
       rejectUnauthorized: false,
+      minVersion: allowTls12 ? 'TLSv1.2' : 'TLSv1.3',
+      maxVersion: 'TLSv1.3',
     })
 
     httpsAgentCache[key] = agent
