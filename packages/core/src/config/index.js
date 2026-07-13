@@ -54,6 +54,7 @@ const defaultConfig = {
     setting: {
       NODE_TLS_REJECT_UNAUTHORIZED: true,
       verifySsl: true,
+      allowTls12: false,
       script: {
         enabled: true,
         defaultDir: './extra/scripts/',

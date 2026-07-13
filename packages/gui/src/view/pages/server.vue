@@ -300,6 +300,14 @@ export default defineComponent({
                 如果目标网站证书有问题，但你想强行访问，可以临时关闭此项
               </div>
             </a-form-item>
+            <a-form-item label="允许TLS1.2" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-checkbox v-model:checked="config.server.setting.allowTls12">
+                允许使用TLS1.2访问目标网站
+              </a-checkbox>
+              <div class="form-help">
+                ⚠️ 警告：启用后会允许降级到TLS1.2，TLS1.2会泄露目标网站证书，从而暴露访问网站足迹；在网络受到严重监控的环境下有高度隐私风险，除非必须兼容旧站点请勿开启。
+              </div>
+            </a-form-item>
             <a-form-item label="根证书" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-input-search
                 v-model:value="config.server.setting.rootCaFile.certPath" addon-before="Cert" enter-button="选择"
