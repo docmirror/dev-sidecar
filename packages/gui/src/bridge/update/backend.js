@@ -97,8 +97,23 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
 
   // 检查更新
   const releasesApiUrl = 'https://api.github.com/repos/docmirror/dev-sidecar/releases'
+  function getUpdateRequestOptions () {
+    const headers = {
+      'User-Agent': `DS/${curVersion}`,
+      'Accept': 'application/vnd.github+json',
+    }
+    const options = { headers, timeout: 10000 }
+    const config = DevSidecar.api.config.get()
+    if (config?.server?.enabled) {
+      const host = config.server.host || '127.0.0.1'
+      const port = config.server.port || 31181
+      options.proxy = `http://${host}:${port}`
+    }
+    return options
+  }
+
   async function checkForUpdatesFromGitHub () {
-    request(releasesApiUrl, { headers: { 'User-Agent': `DS/${curVersion}`, 'Server-Name': 'baidu.com' } }, (error, response, body) => {
+    request(releasesApiUrl, getUpdateRequestOptions(), (error, response, body) => {
       try {
         if (error) {
           log.error('检查更新失败:', error)
