@@ -177,12 +177,18 @@
   > 2. clone 出来的 remote "origin" 为fastgit的地址，需要手动改回来
   > 3. 你也可以直接使用他们的clone加速工具 [fgit-go](https://github.com/FastGitORG/fgit-go)
 
-#### 2）`github.com` 的镜像网站（注意：部分镜像网站不能登录）
+#### 2) 镜像网站
+##### 1）`github.com` 的镜像网站（注意：部分镜像网站不能登录）
 
 > 1. ~~[hub.fastgit.org](https://hub.fastgit.org/) （2024/11/18：这个好像失效了？）~~
 > 2. ~~[github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限（2024/11/18：这个好像失效了？）~~
-> 3. [bgithub.xyz](https://bgithub.xyz/)（edge浏览器可能报毒）
-> 4. [kkgithub.com](https://kkgithub.com/)（目前正在维护中）
+> 3. ~~[bgithub.xyz](https://bgithub.xyz/)（edge浏览器可能报毒）~~
+> 4. [kkgithub.com](https://kkgithub.com/)
+> 5. [5github.com](https://5github.com)
+
+##### 2) `youtube.com`的镜像网站（建议ipv6访问）
+> 1. [https://s3.dualstack.us-east-1.amazonaws.com/zhifan/ytb.html](https://s3.dualstack.us-east-1.amazonaws.com/zhifan/ytb.html)
+> 2. [https://s3.dualstack.us-east-1.amazonaws.com/zhifan/ytb2.html](https://s3.dualstack.us-east-1.amazonaws.com/zhifan/ytb2.html)
 
 ## 五、api
 
