@@ -48,9 +48,12 @@ pnpm --filter @docmirror/mitmproxy test
 ```
 packages/cli/
 ├── cli.js                    # bin 入口，路由到 src/index.js
+├── sea-config.json           # SEA 打包配置
 ├── src/
 │   ├── index.js              # 主入口，命令路由 + 守护进程模式
+│   ├── sea-entry.js          # SEA 入口，同进程启动代理
 │   ├── banner.txt            # ASCII art banner
+│   ├── mitmproxy.js          # fork 模式的代理入口
 │   ├── plugin-worker.js      # 插件操作临时子进程
 │   ├── free-eye-worker.js    # free_eye 测试临时子进程
 │   └── commands/
@@ -59,13 +62,15 @@ packages/cli/
 │       ├── restart.js        # restart 逻辑
 │       ├── status.js         # status 逻辑
 │       ├── plugin.js         # plugin 命令路由 + overwall 解锁检测
+│       ├── service.js        # 开机自启动 (systemd/launchd/注册表)
 │       └── gui.js            # GUI 启停 + 端口检测
 └── test/
     ├── start.test.js         # 端口检测、配置读取、PID 逻辑测试
     ├── plugin.test.js        # 插件列表、overwall 解锁测试
     ├── status.test.js        # 状态格式化、文件逻辑测试
     ├── gui.test.js           # 端口检测、GUI 检测测试
-    └── index.test.js         # 命令路由解析测试
+    ├── service.test.js       # 开机自启动测试
+    └── index.test.js         # 命令路由、help、version 测试
 ```
 
 ### 添加新命令
@@ -229,6 +234,115 @@ ds-cli plugin stop <name>         # fork 临时子进程停止指定插件后退
 ## 日志
 
 日志写入 `~/.dev-sidecar/logs/core.log`，按日期轮转，支持压缩。
+
+## 构建打包
+
+CLI 使用 Node.js SEA（Single Executable Applications）打包为单个可执行文件。
+
+### 当前平台打包
+
+```bash
+# 1. 安装依赖
+pnpm install --filter @docmirror/dev-sidecar-cli...
+
+# 2. esbuild 打包为单文件 JS bundle
+npx esbuild packages/cli/src/sea-entry.js \
+  --bundle --platform=node --target=node18 --format=cjs \
+  --outfile=dist/ds-cli-bundle.js \
+  '--external:node:*' \
+  '--external:@docmirror/dev-sidecar/src/modules/plugin/free-eye/*'
+
+# 3. 生成 SEA blob
+cat > dist/sea-config.json << EOF
+{
+  "main": "$(pwd)/dist/ds-cli-bundle.js",
+  "output": "$(pwd)/dist/ds-cli-prep.blob",
+  "disableExperimentalSEAWarning": true
+}
+EOF
+node --experimental-sea-config dist/sea-config.json
+
+# 4. 复制当前平台的 node 二进制并注入 blob
+VERSION=$(node -p "require('./packages/cli/package.json').version")
+cp $(which node) dist/ds-cli-${VERSION}
+npx postject dist/ds-cli-${VERSION} NODE_SEA_BLOB dist/ds-cli-prep.blob \
+  --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
+chmod +x dist/ds-cli-${VERSION}
+
+# 5. 验证
+./dist/ds-cli-${VERSION} version
+```
+
+### 交叉打包（从当前平台构建其他平台的二进制）
+
+SEA 的 blob 是跨平台通用的，只需下载目标平台的 Node.js 二进制文件注入即可。
+
+```bash
+NODE_VERSION=v24.14.0
+VERSION=$(node -p "require('./packages/cli/package.json').version")
+
+# --- 前两步与上面相同（esbuild + 生成 blob） ---
+
+# 下载各平台 Node.js 二进制
+mkdir -p dist/node-bin
+
+# Linux x64
+curl -sL -o dist/node-bin/node-linux-x64 \
+  https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64
+
+# Linux arm64
+curl -sL -o dist/node-bin/node-linux-arm64 \
+  https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-arm64
+
+# macOS x64（tar.gz 格式，需解压）
+curl -sL -o /tmp/node-macos-x64.tar.gz \
+  https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-darwin-x64.tar.gz
+tar -xzf /tmp/node-macos-x64.tar.gz -C /tmp
+cp /tmp/node-${NODE_VERSION}-darwin-x64/bin/node dist/node-bin/node-macos-x64
+rm -rf /tmp/node-${NODE_VERSION}-darwin-x64 /tmp/node-macos-x64.tar.gz
+
+# macOS arm64（tar.gz 格式，需解压）
+curl -sL -o /tmp/node-macos-arm64.tar.gz \
+  https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-darwin-arm64.tar.gz
+tar -xzf /tmp/node-macos-arm64.tar.gz -C /tmp
+cp /tmp/node-${NODE_VERSION}-darwin-arm64/bin/node dist/node-bin/node-macos-arm64
+rm -rf /tmp/node-${NODE_VERSION}-darwin-arm64 /tmp/node-macos-arm64.tar.gz
+
+# Windows x64
+curl -sL -o dist/node-bin/node-win-x64.exe \
+  https://nodejs.org/dist/${NODE_VERSION}/win-x64/node.exe
+
+# 注入 blob 到各平台
+for platform in linux-x64 linux-arm64 macos-x64 macos-arm64; do
+  cp dist/node-bin/node-${platform} dist/ds-cli-${VERSION}-${platform}
+  npx postject dist/ds-cli-${VERSION}-${platform} NODE_SEA_BLOB dist/ds-cli-prep.blob \
+    --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
+done
+
+# Windows
+cp dist/node-bin/node-win-x64.exe dist/ds-cli-${VERSION}-windows-x64.exe
+npx postject dist/ds-cli-${VERSION}-windows-x64.exe NODE_SEA_BLOB dist/ds-cli-prep.blob \
+  --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
+
+chmod +x dist/ds-cli-${VERSION}-*
+
+# 验证
+./dist/ds-cli-${VERSION}-linux-x64 version
+```
+
+### 自动构建（CI）
+
+推送到 `release*` 分支或 `v*` 标签时，GitHub Actions 自动构建 5 个平台的二进制：
+
+| 平台 | 产物 |
+|------|------|
+| Linux x64 | `ds-cli-<version>-linux-x64` |
+| Linux arm64 | `ds-cli-<version>-linux-arm64` |
+| macOS x64 | `ds-cli-<version>-macos-x64` |
+| macOS arm64 | `ds-cli-<version>-macos-arm64` |
+| Windows x64 | `ds-cli-<version>-windows-x64.exe` |
+
+打 `v*` 标签时自动创建 GitHub Release（draft 模式）。
 
 ## 测试
 
