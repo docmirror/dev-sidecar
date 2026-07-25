@@ -68,12 +68,42 @@ function runDaemon () {
   startup()
 }
 
+// ── 帮助信息 ──────────────────────────────────────────────
+
+function printHelp () {
+  console.log(`用法: ds-cli <命令> [选项]
+
+命令:
+  start                     启动守护进程
+  stop                      停止守护进程
+  restart                   重启守护进程
+  status                    显示运行状态
+  version                   显示版本号
+  plugin start <name>       启动插件 (git/node/pip/overwall/free_eye)
+  plugin stop <name>        停止插件
+  service install           注册开机自启动
+  service uninstall         移除开机自启动
+  help                      显示此帮助信息
+
+选项:
+  --gui                     仅操作 GUI
+  --all                     同时操作 CLI 和 GUI
+  -h, --help                显示帮助信息`)
+}
+
 // ── 命令路由 ──────────────────────────────────────────────
 
 function routeCommand (args) {
   // 过滤掉 flag 参数，提取命令和值
   const flags = args.filter(a => a.startsWith('--'))
-  const positional = args.filter(a => !a.startsWith('--'))
+  const positional = args.filter(a => !a.startsWith('--') && a !== '-h')
+
+  // 处理帮助标志
+  if (flags.includes('--help') || flags.includes('-h') || args.includes('-h')) {
+    printHelp()
+    return
+  }
+
   const command = positional[0] || 'start'
   const value = positional[1]
 
@@ -137,9 +167,18 @@ function routeCommand (args) {
       }
       break
     }
+    case 'help': {
+      printHelp()
+      break
+    }
     default:
-      console.error(`未知命令: ${command}`)
-      console.error('用法: ds-cli [start|stop|restart|status|version|plugin|service] [--gui|--all]')
+      if (flags.includes('--help') || flags.includes('-h')) {
+        printHelp()
+      } else {
+        console.error(`未知命令: ${command}`)
+        printHelp()
+        process.exit(1)
+      }
       process.exit(1)
   }
 }
