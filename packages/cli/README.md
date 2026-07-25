@@ -49,6 +49,8 @@ pnpm --filter @docmirror/mitmproxy test
 packages/cli/
 ├── cli.js                    # bin 入口，路由到 src/index.js
 ├── sea-config.json           # SEA 打包配置
+├── scripts/
+│   └── build.js              # SEA 打包脚本（支持 --all 交叉编译）
 ├── src/
 │   ├── index.js              # 主入口，命令路由 + 守护进程模式
 │   ├── sea-entry.js          # SEA 入口，同进程启动代理
@@ -239,110 +241,32 @@ ds-cli plugin stop <name>         # fork 临时子进程停止指定插件后退
 
 CLI 使用 Node.js SEA（Single Executable Applications）打包为单个可执行文件。
 
-### 当前平台打包
+### 一键打包
 
 ```bash
-# 1. 安装依赖
-pnpm install --filter @docmirror/dev-sidecar-cli...
+# 打包本机平台（自动识别）
+node packages/cli/scripts/build.js
 
-# 2. esbuild 打包为单文件 JS bundle
-npx esbuild packages/cli/src/sea-entry.js \
-  --bundle --platform=node --target=node18 --format=cjs \
-  --outfile=dist/ds-cli-bundle.js \
-  '--external:node:*' \
-  '--external:@docmirror/dev-sidecar/src/modules/plugin/free-eye/*'
-
-# 3. 生成 SEA blob
-cat > dist/sea-config.json << EOF
-{
-  "main": "$(pwd)/dist/ds-cli-bundle.js",
-  "output": "$(pwd)/dist/ds-cli-prep.blob",
-  "disableExperimentalSEAWarning": true
-}
-EOF
-node --experimental-sea-config dist/sea-config.json
-
-# 4. 复制当前平台的 node 二进制并注入 blob
-VERSION=$(node -p "require('./packages/cli/package.json').version")
-cp $(which node) dist/ds-cli-${VERSION}
-npx postject dist/ds-cli-${VERSION} NODE_SEA_BLOB dist/ds-cli-prep.blob \
-  --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
-chmod +x dist/ds-cli-${VERSION}
-
-# 5. 验证
-./dist/ds-cli-${VERSION} version
+# 打包所有平台（交叉编译）
+node packages/cli/scripts/build.js --all
 ```
 
-### 交叉打包（从当前平台构建其他平台的二进制）
+脚本自动完成：esbuild 打包 → SEA blob 生成 → 下载 Node.js 二进制 → 注入 blob → 验证。
 
-SEA 的 blob 是跨平台通用的，只需下载目标平台的 Node.js 二进制文件注入即可。
+### 输出产物
 
-```bash
-NODE_VERSION=v24.14.0
-VERSION=$(node -p "require('./packages/cli/package.json').version")
+打包完成后在 `packages/cli/dist/` 下生成：
 
-# --- 前两步与上面相同（esbuild + 生成 blob） ---
+| 命令 | 产物 |
+|------|------|
+| `node scripts/build.js` | `ds-cli-<version>-<本机平台>` |
+| `node scripts/build.js --all` | 5 个平台的二进制 |
 
-# 下载各平台 Node.js 二进制
-mkdir -p dist/node-bin
-
-# Linux x64
-curl -sL -o dist/node-bin/node-linux-x64 \
-  https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64
-
-# Linux arm64
-curl -sL -o dist/node-bin/node-linux-arm64 \
-  https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-arm64
-
-# macOS x64（tar.gz 格式，需解压）
-curl -sL -o /tmp/node-macos-x64.tar.gz \
-  https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-darwin-x64.tar.gz
-tar -xzf /tmp/node-macos-x64.tar.gz -C /tmp
-cp /tmp/node-${NODE_VERSION}-darwin-x64/bin/node dist/node-bin/node-macos-x64
-rm -rf /tmp/node-${NODE_VERSION}-darwin-x64 /tmp/node-macos-x64.tar.gz
-
-# macOS arm64（tar.gz 格式，需解压）
-curl -sL -o /tmp/node-macos-arm64.tar.gz \
-  https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-darwin-arm64.tar.gz
-tar -xzf /tmp/node-macos-arm64.tar.gz -C /tmp
-cp /tmp/node-${NODE_VERSION}-darwin-arm64/bin/node dist/node-bin/node-macos-arm64
-rm -rf /tmp/node-${NODE_VERSION}-darwin-arm64 /tmp/node-macos-arm64.tar.gz
-
-# Windows x64
-curl -sL -o dist/node-bin/node-win-x64.exe \
-  https://nodejs.org/dist/${NODE_VERSION}/win-x64/node.exe
-
-# 注入 blob 到各平台
-for platform in linux-x64 linux-arm64 macos-x64 macos-arm64; do
-  cp dist/node-bin/node-${platform} dist/ds-cli-${VERSION}-${platform}
-  npx postject dist/ds-cli-${VERSION}-${platform} NODE_SEA_BLOB dist/ds-cli-prep.blob \
-    --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
-done
-
-# Windows
-cp dist/node-bin/node-win-x64.exe dist/ds-cli-${VERSION}-windows-x64.exe
-npx postject dist/ds-cli-${VERSION}-windows-x64.exe NODE_SEA_BLOB dist/ds-cli-prep.blob \
-  --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
-
-chmod +x dist/ds-cli-${VERSION}-*
-
-# 验证
-./dist/ds-cli-${VERSION}-linux-x64 version
-```
+支持的平台：`linux-x64`、`linux-arm64`、`macos-x64`、`macos-arm64`、`windows-x64`。
 
 ### 自动构建（CI）
 
-推送到 `release*` 分支或 `v*` 标签时，GitHub Actions 自动构建 5 个平台的二进制：
-
-| 平台 | 产物 |
-|------|------|
-| Linux x64 | `ds-cli-<version>-linux-x64` |
-| Linux arm64 | `ds-cli-<version>-linux-arm64` |
-| macOS x64 | `ds-cli-<version>-macos-x64` |
-| macOS arm64 | `ds-cli-<version>-macos-arm64` |
-| Windows x64 | `ds-cli-<version>-windows-x64.exe` |
-
-打 `v*` 标签时自动创建 GitHub Release（draft 模式）。
+推送到 `release*` 分支或 `v*` 标签时，GitHub Actions 自动构建所有平台。打 `v*` 标签时自动创建 GitHub Release（draft 模式）。
 
 ## 测试
 
