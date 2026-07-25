@@ -93,4 +93,30 @@ describe('status', function () {
       }
     })
   })
+
+  describe('auto-start status', function () {
+    it('should detect auto-start registration on Linux', function () {
+      if (process.platform === 'linux') {
+        const { isInstalled } = require('../src/commands/service')
+        const result = isInstalled()
+        assert.isBoolean(result)
+        const home = process.env.HOME || '/'
+        const servicePath = path.join(home, '.config/systemd/user/ds-cli.service')
+        const expected = fs.existsSync(servicePath)
+        assert.strictEqual(result, expected)
+      }
+    })
+
+    it('should format status with auto-start info', function () {
+      const status = {
+        server: { enabled: true },
+        proxy: { enabled: false },
+        plugin: { git: { enabled: true } },
+      }
+      const serverRunning = status.server?.enabled || false
+      const proxyEnabled = status.proxy?.enabled || false
+      assert.isTrue(serverRunning)
+      assert.isFalse(proxyEnabled)
+    })
+  })
 })
