@@ -167,13 +167,7 @@ async function runDaemon () {
 
 function routeCommand (args) {
   const flags = args.filter(a => a.startsWith('--'))
-  const positional = args.filter(a => !a.startsWith('--') && a !== '-h')
-
-  if (flags.includes('--help') || flags.includes('-h') || args.includes('-h')) {
-    printHelp()
-    return
-  }
-
+  const positional = args.filter(a => !a.startsWith('--'))
   const command = positional[0] || 'start'
 
   switch (command) {
@@ -228,13 +222,9 @@ function routeCommand (args) {
       break
     }
     default:
-      if (flags.includes('--help') || flags.includes('-h')) {
-        printHelp()
-      } else {
-        console.error(`未知命令: ${command}`)
-        printHelp()
-        process.exit(1)
-      }
+      console.error(`未知命令: ${command}`)
+      printHelp()
+      process.exit(1)
   }
 }
 
@@ -255,6 +245,5 @@ function printHelp () {
 
 选项:
   --gui                     仅操作 GUI
-  --all                     同时操作 CLI 和 GUI
-  -h, --help                显示帮助信息`)
+  --all                     同时操作 CLI 和 GUI`)
 }

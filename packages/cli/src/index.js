@@ -87,23 +87,14 @@ function printHelp () {
 
 选项:
   --gui                     仅操作 GUI
-  --all                     同时操作 CLI 和 GUI
-  -h, --help                显示帮助信息`)
+  --all                     同时操作 CLI 和 GUI`)
 }
 
 // ── 命令路由 ──────────────────────────────────────────────
 
 function routeCommand (args) {
-  // 过滤掉 flag 参数，提取命令和值
   const flags = args.filter(a => a.startsWith('--'))
-  const positional = args.filter(a => !a.startsWith('--') && a !== '-h')
-
-  // 处理帮助标志
-  if (flags.includes('--help') || flags.includes('-h') || args.includes('-h')) {
-    printHelp()
-    return
-  }
-
+  const positional = args.filter(a => !a.startsWith('--'))
   const command = positional[0] || 'start'
   const value = positional[1]
 
