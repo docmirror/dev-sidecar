@@ -12,12 +12,19 @@
     "代理"
   ],
   "main": "src/index.js",
-  "bin": "./cli.js",
+  "bin": {
+    "ds-cli": "./cli.js"
+  },
   "scripts": {
-    "start": "node ./src"
+    "start": "node ./src",
+    "test": "mocha"
   },
   "dependencies": {
     "@docmirror/dev-sidecar": "workspace:*",
     "@docmirror/mitmproxy": "workspace:*"
+  },
+  "devDependencies": {
+    "chai": "^4.5.0",
+    "mocha": "^8.4.0"
   }
 }
