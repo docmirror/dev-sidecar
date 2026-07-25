@@ -117,7 +117,8 @@ function routeCommand (args) {
       break
     }
     case 'version': {
-      const pkg = require('../../package.json')
+      const pkgPath = path.join(__dirname, '../package.json')
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
       console.log(pkg.version)
       break
     }
