@@ -126,9 +126,19 @@ function routeCommand (args) {
       handlePlugin(value, positional[2])
       break
     }
+    case 'service': {
+      const { install, uninstall } = require('./commands/service')
+      if (value === 'install') install()
+      else if (value === 'uninstall') uninstall()
+      else {
+        console.error('用法: ds-cli service <install|uninstall>')
+        process.exit(1)
+      }
+      break
+    }
     default:
       console.error(`未知命令: ${command}`)
-      console.error('用法: ds-cli [start|stop|restart|status|version|plugin <start|stop> <name>] [--gui|--all]')
+      console.error('用法: ds-cli [start|stop|restart|status|version|plugin|service] [--gui|--all]')
       process.exit(1)
   }
 }

@@ -26,9 +26,16 @@ function printStatus (status) {
   const serverRunning = status.server?.enabled || false
   const proxyEnabled = status.proxy?.enabled || false
 
+  let autoStart = '未知'
+  try {
+    const { isInstalled } = require('./service')
+    autoStart = isInstalled() ? '已注册' : '未注册'
+  } catch {}
+
   console.log('dev-sidecar 运行状态:')
   console.log(`  代理服务:  ${serverRunning ? '运行中' : '未运行'}`)
   console.log(`  系统代理:  ${proxyEnabled ? '已开启' : '未开启'}`)
+  console.log(`  开机启动:  ${autoStart}`)
   console.log('  插件:')
 
   const pluginNames = ['git', 'node', 'pip', 'overwall', 'free_eye']
@@ -44,6 +51,12 @@ function showStatus () {
   const pidFile = getPidFile()
 
   if (!fs.existsSync(statusFile)) {
+    let autoStart = '未知'
+    try {
+      const { isInstalled } = require('./service')
+      autoStart = isInstalled() ? '已注册' : '未注册'
+    } catch {}
+
     if (fs.existsSync(pidFile)) {
       const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim(), 10)
       if (isAlive(pid)) {
@@ -55,6 +68,7 @@ function showStatus () {
     } else {
       console.log('dev-sidecar 未在运行')
     }
+    console.log(`  开机启动:  ${autoStart}`)
     return
   }
 

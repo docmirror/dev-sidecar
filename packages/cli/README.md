@@ -89,6 +89,8 @@ ds-cli status                 # 显示 CLI 运行状态
 ds-cli version                # 显示版本号
 ds-cli plugin start <name>    # 启动单个插件
 ds-cli plugin stop <name>     # 停止单个插件
+ds-cli service install        # 注册开机自启动
+ds-cli service uninstall      # 移除开机自启动
 ```
 
 ### GUI 操作参数
@@ -135,6 +137,7 @@ ds-cli status
 dev-sidecar 运行状态:
   代理服务:  运行中
   系统代理:  已开启
+  开机启动:  已注册
   GUI:       未运行
   插件:
     git       已启用
@@ -173,6 +176,21 @@ ds-cli plugin stop git        # 停止 git 加速
   PASS example.com - 响应正常
   PASS github.com - 连接成功
 ```
+
+### 开机自启动
+
+```bash
+ds-cli service install        # 注册开机自启动
+ds-cli service uninstall      # 移除
+```
+
+各平台实现：
+
+| 平台 | 机制 | 说明 |
+|------|------|------|
+| Linux | systemd user service | 自动重启崩溃进程，`systemctl --user` 管理 |
+| macOS | launchd | `~/Library/LaunchAgents/com.dev-sidecar.cli.plist` |
+| Windows | 注册表 Run 键 | `HKCU\...\Run`，不依赖 Task Scheduler |
 
 ## 启动流程
 
