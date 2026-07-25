@@ -1,0 +1,5 @@
+{
+  "main": "/tmp/ds-cli-bundle.js",
+  "output": "/tmp/ds-cli-prep.blob",
+  "disableExperimentalSEAWarning": true
+}

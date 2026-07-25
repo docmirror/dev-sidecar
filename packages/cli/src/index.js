@@ -16,7 +16,7 @@ function runDaemon () {
   const DevSidecar = require('@docmirror/dev-sidecar')
   const log = require('@docmirror/dev-sidecar/src/utils/util.log-or-console')
 
-  const mitmproxyPath = './mitmproxy'
+  const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
 
   const userBasePath = path.join(
     process.env.USERPROFILE || process.env.HOME || '/',
