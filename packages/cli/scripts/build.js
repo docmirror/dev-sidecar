@@ -7,6 +7,7 @@
 const fs = require('node:fs')
 const path = require('node:path')
 const os = require('node:os')
+const crypto = require('node:crypto')
 const { execSync } = require('node:child_process')
 const https = require('node:https')
 const http = require('node:http')
@@ -29,7 +30,6 @@ function getCurrentPlatform () {
   return 'unknown'
 }
 
-// Node.js 下载 URL 映射
 function getNodeDownloadUrl (platform) {
   const base = `https://nodejs.org/dist/${NODE_VERSION}`
   const map = {
@@ -45,7 +45,6 @@ function getNodeDownloadUrl (platform) {
 }
 
 function needsExtraction (platform) {
-  // 只有 linux-x64 和 windows-x64 是裸二进制，其他都是 tar.gz
   return platform !== 'windows-x64' && platform !== 'linux-x64'
 }
 
@@ -55,49 +54,7 @@ function getOutputName (platform) {
     : `ds-cli-${VERSION}-${platform}`
 }
 
-// ── 动态获取可用平台 ──────────────────────────────────
-
-async function getAvailablePlatforms () {
-  const url = `https://nodejs.org/dist/${NODE_VERSION}/SHASUMS256.txt`
-  const tmpFile = path.join(DIST, 'shasums.txt')
-  fs.mkdirSync(DIST, { recursive: true })
-  await download(url, tmpFile)
-  const content = fs.readFileSync(tmpFile, 'utf-8')
-  fs.unlinkSync(tmpFile)
-
-  const platforms = new Set()
-  for (const line of content.split('\n')) {
-    // 匹配 tar.gz 文件名中的平台: node-vXX.XX.X-<os>-<arch>.tar.gz
-    const tarMatch = line.match(/node-v[^ ]+?-(linux|darwin|aix|sunos)-(x64|arm64|armv7l|ppc64|s390x)\.tar\.gz/)
-    if (tarMatch) {
-      const mapped = mapNodePlatform(`${tarMatch[1]}-${tarMatch[2]}`)
-      if (mapped) platforms.add(mapped)
-    }
-    // 匹配裸二进制: win-x64/node.exe, win-arm64/node.exe, linux-x64 (无后缀)
-    const binMatch = line.match(/(?:node-v[^ ]+?-)?(linux-x64|win-x64|win-arm64)(?:\/node\.exe)?$/)
-    if (binMatch) {
-      const mapped = mapNodePlatform(binMatch[1])
-      if (mapped) platforms.add(mapped)
-    }
-  }
-  return [...platforms].sort()
-}
-
-function mapNodePlatform (nodePlatform) {
-  // Node.js 使用 "darwin" 而不是 "macos", "win" 而不是 "windows"
-  const map = {
-    'linux-x64': 'linux-x64',
-    'linux-arm64': 'linux-arm64',
-    'linux-armv7l': 'linux-x64-armv7l',
-    'darwin-x64': 'macos-x64',
-    'darwin-arm64': 'macos-arm64',
-    'win-x64': 'windows-x64',
-    'win-arm64': 'windows-arm64',
-  }
-  return map[nodePlatform]
-}
-
-// ── 下载 ──────────────────────────────────────────────
+// ── 下载与校验 ────────────────────────────────────────
 
 function download (url, dest) {
   return new Promise((resolve, reject) => {
@@ -116,14 +73,67 @@ function download (url, dest) {
       }
       res.pipe(file)
       file.on('finish', () => { file.close(); resolve() })
-    }).on('error', (err) => { file.close(); fs.unlinkSync(dest); reject(err) })
+    }).on('error', (err) => { file.close(); try { fs.unlinkSync(dest) } catch {} ; reject(err) })
   })
 }
 
-// ── 解压 tar.gz ───────────────────────────────────────
+function sha256 (filePath) {
+  const data = fs.readFileSync(filePath)
+  return crypto.createHash('sha256').update(data).digest('hex')
+}
 
 async function extractTarGz (tarPath, destDir) {
   await tar.extract({ file: tarPath, cwd: destDir })
+}
+
+// ── 动态获取可用平台 + 校验和 ──────────────────────────
+
+async function fetchChecksums () {
+  const url = `https://nodejs.org/dist/${NODE_VERSION}/SHASUMS256.txt`
+  const tmpFile = path.join(DIST, 'shasums.txt')
+  fs.mkdirSync(DIST, { recursive: true })
+  await download(url, tmpFile)
+  const content = fs.readFileSync(tmpFile, 'utf-8')
+  fs.unlinkSync(tmpFile)
+
+  const checksums = {} // filename -> sha256
+  const platforms = new Set()
+
+  for (const line of content.split('\n')) {
+    const parts = line.trim().split(/\s+/)
+    if (parts.length < 2) continue
+    const [hash, filename] = parts
+    if (!/^[a-f0-9]{64}$/.test(hash)) continue
+
+    checksums[filename] = hash
+
+    // 从文件名提取平台
+    const tarMatch = filename.match(/node-v[^ ]+?-(linux|darwin|aix|sunos)-(x64|arm64|armv7l|ppc64|s390x)\.tar\.gz$/)
+    if (tarMatch) {
+      const mapped = mapNodePlatform(`${tarMatch[1]}-${tarMatch[2]}`)
+      if (mapped) platforms.add(mapped)
+    }
+    const binMatch = filename.match(/(?:node-v[^ ]+?-)?(linux-x64|win-x64|win-arm64)(?:\/node\.exe)?$/)
+    if (binMatch) {
+      const mapped = mapNodePlatform(binMatch[1])
+      if (mapped) platforms.add(mapped)
+    }
+  }
+
+  return { checksums, platforms: [...platforms].sort() }
+}
+
+function mapNodePlatform (nodePlatform) {
+  const map = {
+    'linux-x64': 'linux-x64',
+    'linux-arm64': 'linux-arm64',
+    'linux-armv7l': 'linux-x64-armv7l',
+    'darwin-x64': 'macos-x64',
+    'darwin-arm64': 'macos-arm64',
+    'win-x64': 'windows-x64',
+    'win-arm64': 'windows-arm64',
+  }
+  return map[nodePlatform]
 }
 
 // ── 主流程 ────────────────────────────────────────────
@@ -131,12 +141,10 @@ async function extractTarGz (tarPath, destDir) {
 async function main () {
   const buildAll = process.argv.includes('--all')
   const currentPlatform = getCurrentPlatform()
-  const targets = buildAll ? await getAvailablePlatforms() : [currentPlatform]
 
   console.log(`版本:     v${VERSION}`)
   console.log(`本机系统: ${os.type()} ${os.release()} (${os.arch()})`)
   console.log(`本机平台: ${currentPlatform}`)
-  console.log(`目标平台: ${targets.join(', ')}`)
   console.log(`Node.js:  ${NODE_VERSION}`)
   console.log()
 
@@ -174,54 +182,34 @@ async function main () {
   execSync(`node --experimental-sea-config "${seaConfig}"`, { stdio: 'inherit' })
   console.log()
 
-  // Step 3: 下载 Node.js 二进制
-  console.log('==> Step 3: 下载 Node.js 二进制...')
-  for (const platform of targets) {
-    const nodeBin = path.join(DIST, 'node-bin', `node-${platform}`)
-    if (fs.existsSync(nodeBin)) {
-      console.log(`    ${platform} 已存在，跳过`)
-      continue
-    }
-
-    const url = getNodeDownloadUrl(platform)
-    if (!url) {
-      console.error(`    ${platform} 不支持，跳过`)
-      continue
-    }
-
-    const tmpFile = path.join(DIST, 'node-bin', `tmp-${platform}`)
-
-    try {
-      await download(url, tmpFile)
-
-      if (needsExtraction(platform)) {
-        const extractDir = path.join(DIST, 'node-bin', `extract-${platform}`)
-        fs.mkdirSync(extractDir, { recursive: true })
-        await extractTarGz(tmpFile, extractDir)
-        const entries = fs.readdirSync(extractDir, { recursive: true })
-        const nodeEntry = entries.find(e => path.basename(e) === 'node' && path.dirname(e).endsWith('bin'))
-        if (nodeEntry) {
-          fs.copyFileSync(path.join(extractDir, nodeEntry), nodeBin)
-        }
-        fs.rmSync(extractDir, { recursive: true, force: true })
-        fs.unlinkSync(tmpFile)
-      } else {
-        fs.renameSync(tmpFile, nodeBin)
-      }
-
-      if (process.platform !== 'win32') {
-        fs.chmodSync(nodeBin, 0o755)
-      }
-      console.log(`    ${platform} 下载完成`)
-    } catch (e) {
-      console.error(`    ${platform} 下载失败: ${e.message}`)
-      process.exit(1)
-    }
-  }
+  // Step 3: 获取校验和 + 确定目标平台
+  console.log('==> Step 3: 获取平台信息和校验和...')
+  const { checksums, platforms: availablePlatforms } = await fetchChecksums()
+  const targets = buildAll ? availablePlatforms : [currentPlatform]
+  console.log(`    目标平台: ${targets.join(', ')}`)
   console.log()
 
-  // Step 4: 注入 blob
-  console.log('==> Step 4: 注入 SEA blob...')
+  // Step 4: 并行下载 Node.js 二进制
+  console.log('==> Step 4: 下载 Node.js 二进制（并行）...')
+  const downloadTasks = targets.map(platform => downloadNodeBinary(platform, checksums))
+  const results = await Promise.allSettled(downloadTasks)
+
+  let downloadFailed = false
+  for (let i = 0; i < results.length; i++) {
+    const result = results[i]
+    const platform = targets[i]
+    if (result.status === 'fulfilled') {
+      console.log(`    ${platform} 下载完成`)
+    } else {
+      console.error(`    ${platform} 下载失败: ${result.reason.message}`)
+      downloadFailed = true
+    }
+  }
+  if (downloadFailed) process.exit(1)
+  console.log()
+
+  // Step 5: 注入 blob
+  console.log('==> Step 5: 注入 SEA blob...')
   for (const platform of targets) {
     const nodeBin = path.join(DIST, 'node-bin', `node-${platform}`)
     if (!fs.existsSync(nodeBin)) {
@@ -242,8 +230,8 @@ async function main () {
   }
   console.log()
 
-  // Step 5: 验证
-  console.log('==> Step 5: 验证...')
+  // Step 6: 验证
+  console.log('==> Step 6: 验证...')
   const verifyBin = path.join(DIST, getOutputName(currentPlatform))
   if (fs.existsSync(verifyBin)) {
     try {
@@ -267,6 +255,73 @@ async function main () {
     const size = (fs.statSync(path.join(DIST, f)).size / 1024 / 1024).toFixed(1)
     console.log(`    ${f}  (${size}MB)`)
   }
+}
+
+// ── 下载单个平台的 Node.js 二进制（含校验） ───────────
+
+async function downloadNodeBinary (platform, checksums) {
+  const nodeBin = path.join(DIST, 'node-bin', `node-${platform}`)
+
+  // 如果已缓存且校验通过，跳过
+  if (fs.existsSync(nodeBin)) {
+    const expectedHash = checksums[getNodeFilename(platform)]
+    if (expectedHash) {
+      const actualHash = sha256(nodeBin)
+      if (actualHash === expectedHash) {
+        return // 缓存有效，跳过
+      }
+      // 校验失败，重新下载
+      fs.rmSync(nodeBin, { force: true })
+    }
+  }
+
+  const url = getNodeDownloadUrl(platform)
+  if (!url) throw new Error(`${platform} 不支持`)
+
+  const tmpFile = path.join(DIST, 'node-bin', `tmp-${platform}`)
+  await download(url, tmpFile)
+
+  // SHA256 校验
+  const expectedHash = checksums[getNodeFilename(platform)]
+  if (expectedHash) {
+    const actualHash = sha256(tmpFile)
+    if (actualHash !== expectedHash) {
+      fs.unlinkSync(tmpFile)
+      throw new Error(`SHA256 校验失败: 期望 ${expectedHash}, 实际 ${actualHash}`)
+    }
+  }
+
+  if (needsExtraction(platform)) {
+    const extractDir = path.join(DIST, 'node-bin', `extract-${platform}`)
+    fs.mkdirSync(extractDir, { recursive: true })
+    await extractTarGz(tmpFile, extractDir)
+    const entries = fs.readdirSync(extractDir, { recursive: true })
+    const nodeEntry = entries.find(e => path.basename(e) === 'node' && path.dirname(e).endsWith('bin'))
+    if (nodeEntry) {
+      fs.copyFileSync(path.join(extractDir, nodeEntry), nodeBin)
+    }
+    fs.rmSync(extractDir, { recursive: true, force: true })
+    fs.unlinkSync(tmpFile)
+  } else {
+    fs.renameSync(tmpFile, nodeBin)
+  }
+
+  if (process.platform !== 'win32') {
+    fs.chmodSync(nodeBin, 0o755)
+  }
+}
+
+// 获取 SHASUMS256.txt 中对应的文件名
+function getNodeFilename (platform) {
+  const map = {
+    'linux-x64': `node-${NODE_VERSION}-linux-x64`,
+    'linux-arm64': `node-${NODE_VERSION}-linux-arm64.tar.gz`,
+    'macos-x64': `node-${NODE_VERSION}-darwin-x64.tar.gz`,
+    'macos-arm64': `node-${NODE_VERSION}-darwin-arm64.tar.gz',
+    'windows-x64': `win-x64/node.exe`,
+    'windows-arm64': `win-arm64/node.exe`,
+  }
+  return map[platform]
 }
 
 main().catch((e) => {
