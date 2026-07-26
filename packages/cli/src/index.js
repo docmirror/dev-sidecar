@@ -79,8 +79,8 @@ function printHelp () {
   restart                   重启守护进程
   status                    显示运行状态
   version                   显示版本号
-  plugin start <name>       启动插件 (git/node/pip/overwall/free_eye)
-  plugin stop <name>        停止插件
+  plugin start <name>       启用插件 (git/node/pip/overwall/free_eye)
+  plugin stop <name>        禁用插件
   service install           注册开机自启动
   service uninstall         移除开机自启动
   help                      显示此帮助信息

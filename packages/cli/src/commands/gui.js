@@ -151,4 +151,24 @@ function restartGui () {
   }, 200)
 }
 
-module.exports = { isGuiRunning, isPortInUse, getProxyPort, startGui, stopGui, restartGui }
+function readConfig () {
+  const configPath = path.join(getUserBase(), 'config.json')
+  if (!fs.existsSync(configPath)) return {}
+  try {
+    return jsonApi.parse(fs.readFileSync(configPath, 'utf-8'))
+  } catch {
+    return {}
+  }
+}
+
+function writeConfig (config) {
+  const configPath = path.join(getUserBase(), 'config.json')
+  fs.mkdirSync(path.dirname(configPath), { recursive: true })
+  fs.writeFileSync(configPath, jsonApi.stringify(config))
+}
+
+module.exports = {
+  isGuiRunning, isPortInUse, getProxyPort,
+  startGui, stopGui, restartGui,
+  readConfig, writeConfig,
+}
