@@ -1,0 +1,6 @@
+# SEA 打包产物
+dist/
+
+# 覆盖率报告
+.nyc_output/
+coverage/
