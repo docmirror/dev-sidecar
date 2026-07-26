@@ -88,6 +88,7 @@ describe('index', function () {
       assert.include(out, 'restart')
       assert.include(out, 'status')
       assert.include(out, 'version')
+      assert.include(out, 'proxy')
       assert.include(out, 'plugin')
       assert.include(out, 'service')
       assert.include(out, 'help')
