@@ -336,6 +336,45 @@ const PROXY_ENV_FILE = path.join(
   '.dev-sidecar/proxy.env',
 )
 
+function detectShell () {
+  // 优先使用 $SHELL 环境变量
+  const envShell = process.env.SHELL || ''
+  if (envShell.includes('zsh')) return 'zsh'
+  if (envShell.includes('bash')) return 'bash'
+  if (envShell.includes('fish')) return 'fish'
+
+  // 检查常见 shell 配置文件是否存在
+  const home = process.env.HOME || '/'
+  if (fs.existsSync(path.join(home, '.zshrc'))) return 'zsh'
+  if (fs.existsSync(path.join(home, '.bashrc'))) return 'bash'
+  if (fs.existsSync(path.join(home, '.config/fish/config.fish'))) return 'fish'
+
+  return 'bash' // 默认
+}
+
+function getShellProfilePath (shell) {
+  const home = process.env.HOME || '/'
+  switch (shell) {
+    case 'zsh': return path.join(home, '.zshrc')
+    case 'fish': return path.join(home, '.config/fish/config.fish')
+    case 'bash':
+    default: return path.join(home, '.bashrc')
+  }
+}
+
+function getSourceCommand (shell, envFile) {
+  switch (shell) {
+    case 'fish': return `source "${envFile}"`
+    case 'zsh':
+    case 'bash':
+    default: return `[ -f "${envFile}" ] && source "${envFile}"`
+  }
+}
+
+function getSourceComment (shell) {
+  return '# dev-sidecar proxy'
+}
+
 function writeProxyEnvFile (ip, port, proxyHttp) {
   const lines = [
     `export HTTPS_PROXY="http://${ip}:${port}"`,
@@ -355,16 +394,10 @@ function writeProxyEnvFile (ip, port, proxyHttp) {
 }
 
 function addProxyEnvToShellProfile () {
-  const home = process.env.USERPROFILE || process.env.HOME || '/'
-  const shell = process.env.SHELL || ''
-  let profilePath
-  if (shell.includes('zsh')) {
-    profilePath = path.join(home, '.zshrc')
-  } else {
-    profilePath = path.join(home, '.bashrc')
-  }
-
-  const sourceLine = `[ -f "${PROXY_ENV_FILE}" ] && source "${PROXY_ENV_FILE}"`
+  const shell = detectShell()
+  const profilePath = getShellProfilePath(shell)
+  const sourceLine = getSourceCommand(shell, PROXY_ENV_FILE)
+  const comment = getSourceComment(shell)
 
   try {
     let content = ''
@@ -372,8 +405,10 @@ function addProxyEnvToShellProfile () {
       content = fs.readFileSync(profilePath, 'utf-8')
     }
     if (!content.includes(sourceLine)) {
-      fs.appendFileSync(profilePath, `\n# dev-sidecar proxy\n${sourceLine}\n`)
+      fs.appendFileSync(profilePath, `\n${comment}\n${sourceLine}\n`)
       log.info('已添加代理环境变量到:', profilePath)
+      console.log(`代理环境变量已写入 ${profilePath}`)
+      console.log(`请执行 source ${profilePath} 使当前终端生效`)
     }
   } catch (e) {
     log.error('添加代理环境变量到 shell profile 失败:', e)
@@ -392,21 +427,21 @@ function removeProxyEnvFromShellProfile () {
   }
 
   // 从 shell profile 中移除 source 行
-  const home = process.env.USERPROFILE || process.env.HOME || '/'
-  const shell = process.env.SHELL || ''
-  const profilePath = shell.includes('zsh')
-    ? path.join(home, '.zshrc')
-    : path.join(home, '.bashrc')
-
-  const sourceLine = `[ -f "${PROXY_ENV_FILE}" ] && source "${PROXY_ENV_FILE}"`
+  const shell = detectShell()
+  const profilePath = getShellProfilePath(shell)
+  const sourceLine = getSourceCommand(shell, PROXY_ENV_FILE)
+  const comment = getSourceComment(shell)
 
   try {
     if (fs.existsSync(profilePath)) {
       let content = fs.readFileSync(profilePath, 'utf-8')
       if (content.includes(sourceLine)) {
-        content = content.replace(new RegExp(`\n# dev-sidecar proxy\n${sourceLine.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\n`), '\n')
+        const escaped = sourceLine.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        content = content.replace(new RegExp(`\n${comment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\n${escaped}\n`), '\n')
         fs.writeFileSync(profilePath, content)
         log.info('已从 shell profile 移除代理环境变量:', profilePath)
+        console.log(`已从 ${profilePath} 移除代理环境变量`)
+        console.log(`请执行 source ${profilePath} 使当前终端生效`)
       }
     }
   } catch (e) {
