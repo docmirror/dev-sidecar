@@ -214,7 +214,13 @@ function routeCommand (args) {
         config.proxy = config.proxy || {}
         config.proxy.enabled = positional[1] === 'on'
         writeConfig(config)
-        console.log(`系统代理已${positional[1] === 'on' ? '开启' : '关闭'}（重启后生效）`)
+
+        const { fork } = require('node:child_process')
+        const workerPath = path.join(__dirname, 'proxy-worker.js')
+        const child = fork(workerPath, [positional[1]])
+        child.on('exit', (code) => {
+          process.exit(code || 0)
+        })
       } else {
         console.error('用法: ds-cli proxy <on|off>')
         process.exit(1)

@@ -153,11 +153,19 @@ function routeCommand (args) {
     case 'proxy': {
       const { readConfig, writeConfig } = require('./commands/gui')
       if (value === 'on' || value === 'off') {
+        // 持久化到 config.json
         const config = readConfig()
         config.proxy = config.proxy || {}
         config.proxy.enabled = value === 'on'
         writeConfig(config)
-        console.log(`系统代理已${value === 'on' ? '开启' : '关闭'}（重启后生效）`)
+
+        // fork worker 立即设置/取消系统代理
+        const { fork } = require('node:child_process')
+        const workerPath = path.join(__dirname, 'proxy-worker.js')
+        const child = fork(workerPath, [value])
+        child.on('exit', (code) => {
+          process.exit(code || 0)
+        })
       } else {
         console.error('用法: ds-cli proxy <on|off>')
         process.exit(1)
