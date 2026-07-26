@@ -207,6 +207,20 @@ function routeCommand (args) {
       handlePlugin(positional[1], positional[2])
       break
     }
+    case 'proxy': {
+      const { readConfig, writeConfig } = require('./commands/gui')
+      if (positional[1] === 'on' || positional[1] === 'off') {
+        const config = readConfig()
+        config.proxy = config.proxy || {}
+        config.proxy.enabled = positional[1] === 'on'
+        writeConfig(config)
+        console.log(`系统代理已${positional[1] === 'on' ? '开启' : '关闭'}（重启后生效）`)
+      } else {
+        console.error('用法: ds-cli proxy <on|off>')
+        process.exit(1)
+      }
+      break
+    }
     case 'service': {
       const { install, uninstall } = require('./commands/service')
       if (positional[1] === 'install') install()
@@ -237,8 +251,10 @@ function printHelp () {
   restart                   重启守护进程
   status                    显示运行状态
   version                   显示版本号
-  plugin start <name>       启动插件 (git/node/pip/overwall/free_eye)
-  plugin stop <name>        停止插件
+  proxy on                  开启系统代理
+  proxy off                 关闭系统代理
+  plugin start <name>       启用插件 (git/node/pip/overwall/free_eye)
+  plugin stop <name>        禁用插件
   service install           注册开机自启动
   service uninstall         移除开机自启动
   help                      显示此帮助信息

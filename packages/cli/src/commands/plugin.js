@@ -84,23 +84,19 @@ function handlePlugin (action, name) {
     return
   }
 
-  // 持久化到 config.json（重启后生效）
-  const config = readConfig()
-  config.plugin = config.plugin || {}
-  config.plugin[name] = config.plugin[name] || {}
-  config.plugin[name].enabled = action === 'start'
-  writeConfig(config)
-  console.log(`已${action === 'start' ? '启用' : '禁用'}插件 ${name}（重启后生效）`)
-
-  // 如果守护进程正在运行，尝试重启使其立即生效
-  const pidFile = path.join(getUserBase(), 'ds-cli.pid')
-  if (fs.existsSync(pidFile)) {
-    try {
-      const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim(), 10)
-      process.kill(pid, 'SIGINT')
-      console.log('正在重启守护进程...')
-    } catch {}
-  }
+  // git/node/pip 不依赖代理服务，fork worker 立即生效
+  const workerPath = path.join(__dirname, '../plugin-worker.js')
+  const child = fork(workerPath, [action, name])
+  child.on('exit', (code) => {
+    // 同时持久化到 config.json（重启后生效）
+    const config = readConfig()
+    config.plugin = config.plugin || {}
+    config.plugin[name] = config.plugin[name] || {}
+    config.plugin[name].enabled = action === 'start'
+    writeConfig(config)
+    console.log(`已${action === 'start' ? '启用' : '禁用'}插件 ${name}`)
+    process.exit(code || 0)
+  })
 }
 
 module.exports = { handlePlugin }
