@@ -143,6 +143,15 @@ async function main () {
   fs.mkdirSync(DIST, { recursive: true })
   fs.mkdirSync(path.join(DIST, 'node-bin'), { recursive: true })
 
+  // 清理旧构建产物（保留 node-bin 缓存）
+  console.log('==> 清理旧构建产物...')
+  for (const f of fs.readdirSync(DIST)) {
+    if (f.startsWith('ds-cli-') || f === 'sea-config.json' || f === 'ds-cli-bundle.js' || f === 'ds-cli-prep.blob') {
+      fs.rmSync(path.join(DIST, f), { force: true })
+    }
+  }
+  console.log()
+
   // Step 1: esbuild
   console.log('==> Step 1: esbuild 打包...')
   const bundle = path.join(DIST, 'ds-cli-bundle.js')
