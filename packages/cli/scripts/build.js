@@ -136,6 +136,43 @@ function mapNodePlatform (nodePlatform) {
   return map[nodePlatform]
 }
 
+// ── 增量构建 ──────────────────────────────────────────
+
+function computeSourceHash () {
+  const hash = crypto.createHash('sha256')
+  // 入口文件
+  hash.update(fs.readFileSync(path.join(ROOT, 'src/sea-entry.js')))
+  // src/ 下所有 js 文件
+  const srcDir = path.join(ROOT, 'src')
+  for (const f of fs.readdirSync(srcDir, { recursive: true })) {
+    if (f.endsWith('.js') && f !== 'sea-entry.js') {
+      hash.update(fs.readFileSync(path.join(srcDir, f)))
+    }
+  }
+  // commands 目录
+  const cmdDir = path.join(srcDir, 'commands')
+  if (fs.existsSync(cmdDir)) {
+    for (const f of fs.readdirSync(cmdDir, { recursive: true })) {
+      if (f.endsWith('.js')) {
+        hash.update(fs.readFileSync(path.join(cmdDir, f)))
+      }
+    }
+  }
+  // package.json（版本号变化也应触发重建）
+  hash.update(fs.readFileSync(path.join(ROOT, 'package.json')))
+  return hash.digest('hex')
+}
+
+function getCachedBuildHash () {
+  const hashFile = path.join(DIST, 'build-hash.txt')
+  if (!fs.existsSync(hashFile)) return null
+  return fs.readFileSync(hashFile, 'utf-8').trim()
+}
+
+function saveBuildHash (hash) {
+  fs.writeFileSync(path.join(DIST, 'build-hash.txt'), hash)
+}
+
 // ── 主流程 ────────────────────────────────────────────
 
 async function main () {
@@ -151,36 +188,46 @@ async function main () {
   fs.mkdirSync(DIST, { recursive: true })
   fs.mkdirSync(path.join(DIST, 'node-bin'), { recursive: true })
 
-  // 清理旧构建产物（保留 node-bin 缓存）
-  console.log('==> 清理旧构建产物...')
-  for (const f of fs.readdirSync(DIST)) {
-    if (f.startsWith('ds-cli-') || f === 'sea-config.json' || f === 'ds-cli-bundle.js' || f === 'ds-cli-prep.blob') {
-      fs.rmSync(path.join(DIST, f), { force: true })
-    }
-  }
-  console.log()
-
-  // Step 1: esbuild
-  console.log('==> Step 1: esbuild 打包...')
+  // 增量构建检查
+  const currentHash = computeSourceHash()
+  const cachedHash = getCachedBuildHash()
   const bundle = path.join(DIST, 'ds-cli-bundle.js')
-  execSync(
-    `npx esbuild src/sea-entry.js --bundle --platform=node --target=node18 --format=cjs --outfile="${bundle}" "--external:node:*" "--external:@docmirror/dev-sidecar/src/modules/plugin/free-eye/*"`,
-    { cwd: ROOT, stdio: 'inherit' },
-  )
-  const bundleSize = (fs.statSync(bundle).size / 1024 / 1024).toFixed(1)
-  console.log(`    完成: ${bundle} (${bundleSize}MB)\n`)
-
-  // Step 2: SEA blob
-  console.log('==> Step 2: 生成 SEA blob...')
   const blob = path.join(DIST, 'ds-cli-prep.blob')
-  const seaConfig = path.join(DIST, 'sea-config.json')
-  fs.writeFileSync(seaConfig, JSON.stringify({
-    main: bundle,
-    output: blob,
-    disableExperimentalSEAWarning: true,
-  }))
-  execSync(`node --experimental-sea-config "${seaConfig}"`, { stdio: 'inherit' })
-  console.log()
+  const skipBuild = cachedHash === currentHash && fs.existsSync(bundle) && fs.existsSync(blob)
+
+  if (skipBuild) {
+    console.log('==> 源码未变化，跳过 esbuild 和 blob 生成（使用缓存）')
+  } else {
+    // 清理旧构建产物（保留 node-bin 缓存）
+    console.log('==> 清理旧构建产物...')
+    for (const f of fs.readdirSync(DIST)) {
+      if (f.startsWith('ds-cli-') || f === 'sea-config.json' || f === 'ds-cli-bundle.js' || f === 'ds-cli-prep.blob') {
+        fs.rmSync(path.join(DIST, f), { force: true })
+      }
+    }
+    console.log()
+
+    // Step 1: esbuild
+    console.log('==> Step 1: esbuild 打包...')
+    execSync(
+      `npx esbuild src/sea-entry.js --bundle --platform=node --target=node18 --format=cjs --outfile="${bundle}" "--external:node:*" "--external:@docmirror/dev-sidecar/src/modules/plugin/free-eye/*"`,
+      { cwd: ROOT, stdio: 'inherit' },
+    )
+    const bundleSize = (fs.statSync(bundle).size / 1024 / 1024).toFixed(1)
+    console.log(`    完成: ${bundle} (${bundleSize}MB)\n`)
+
+    // Step 2: SEA blob
+    console.log('==> Step 2: 生成 SEA blob...')
+    const seaConfig = path.join(DIST, 'sea-config.json')
+    fs.writeFileSync(seaConfig, JSON.stringify({
+      main: bundle,
+      output: blob,
+      disableExperimentalSEAWarning: true,
+    }))
+    execSync(`node --experimental-sea-config "${seaConfig}"`, { stdio: 'inherit' })
+    saveBuildHash(currentHash)
+    console.log()
+  }
 
   // Step 3: 获取校验和 + 确定目标平台
   console.log('==> Step 3: 获取平台信息和校验和...')
@@ -317,7 +364,7 @@ function getNodeFilename (platform) {
     'linux-x64': `node-${NODE_VERSION}-linux-x64`,
     'linux-arm64': `node-${NODE_VERSION}-linux-arm64.tar.gz`,
     'macos-x64': `node-${NODE_VERSION}-darwin-x64.tar.gz`,
-    'macos-arm64': `node-${NODE_VERSION}-darwin-arm64.tar.gz',
+    'macos-arm64': `node-${NODE_VERSION}-darwin-arm64.tar.gz`,
     'windows-x64': `win-x64/node.exe`,
     'windows-arm64': `win-arm64/node.exe`,
   }
