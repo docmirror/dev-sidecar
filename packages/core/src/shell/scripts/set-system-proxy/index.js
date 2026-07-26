@@ -329,6 +329,91 @@ function sudoExecMac (cmd) {
   })
 }
 
+// ── 环境变量代理设置（Linux/macOS） ───────────────────
+
+const PROXY_ENV_FILE = path.join(
+  process.env.USERPROFILE || process.env.HOME || '/',
+  '.dev-sidecar/proxy.env',
+)
+
+function writeProxyEnvFile (ip, port, proxyHttp) {
+  const lines = [
+    `export HTTPS_PROXY="http://${ip}:${port}"`,
+    `export https_proxy="http://${ip}:${port}"`,
+  ]
+  if (proxyHttp) {
+    lines.push(`export HTTP_PROXY="http://${ip}:${port - 1}"`)
+    lines.push(`export http_proxy="http://${ip}:${port - 1}"`)
+  }
+  try {
+    fs.mkdirSync(path.dirname(PROXY_ENV_FILE), { recursive: true })
+    fs.writeFileSync(PROXY_ENV_FILE, lines.join('\n') + '\n')
+    log.info('写入代理环境变量文件:', PROXY_ENV_FILE)
+  } catch (e) {
+    log.error('写入代理环境变量文件失败:', e)
+  }
+}
+
+function addProxyEnvToShellProfile () {
+  const home = process.env.USERPROFILE || process.env.HOME || '/'
+  const shell = process.env.SHELL || ''
+  let profilePath
+  if (shell.includes('zsh')) {
+    profilePath = path.join(home, '.zshrc')
+  } else {
+    profilePath = path.join(home, '.bashrc')
+  }
+
+  const sourceLine = `[ -f "${PROXY_ENV_FILE}" ] && source "${PROXY_ENV_FILE}"`
+
+  try {
+    let content = ''
+    if (fs.existsSync(profilePath)) {
+      content = fs.readFileSync(profilePath, 'utf-8')
+    }
+    if (!content.includes(sourceLine)) {
+      fs.appendFileSync(profilePath, `\n# dev-sidecar proxy\n${sourceLine}\n`)
+      log.info('已添加代理环境变量到:', profilePath)
+    }
+  } catch (e) {
+    log.error('添加代理环境变量到 shell profile 失败:', e)
+  }
+}
+
+function removeProxyEnvFromShellProfile () {
+  // 删除 proxy.env 文件
+  try {
+    if (fs.existsSync(PROXY_ENV_FILE)) {
+      fs.unlinkSync(PROXY_ENV_FILE)
+      log.info('已删除代理环境变量文件:', PROXY_ENV_FILE)
+    }
+  } catch (e) {
+    log.error('删除代理环境变量文件失败:', e)
+  }
+
+  // 从 shell profile 中移除 source 行
+  const home = process.env.USERPROFILE || process.env.HOME || '/'
+  const shell = process.env.SHELL || ''
+  const profilePath = shell.includes('zsh')
+    ? path.join(home, '.zshrc')
+    : path.join(home, '.bashrc')
+
+  const sourceLine = `[ -f "${PROXY_ENV_FILE}" ] && source "${PROXY_ENV_FILE}"`
+
+  try {
+    if (fs.existsSync(profilePath)) {
+      let content = fs.readFileSync(profilePath, 'utf-8')
+      if (content.includes(sourceLine)) {
+        content = content.replace(new RegExp(`\n# dev-sidecar proxy\n${sourceLine.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\n`), '\n')
+        fs.writeFileSync(profilePath, content)
+        log.info('已从 shell profile 移除代理环境变量:', profilePath)
+      }
+    }
+  } catch (e) {
+    log.error('从 shell profile 移除代理环境变量失败:', e)
+  }
+}
+
 const executor = {
   async windows (exec, params = {}) {
     const { ip, port, setEnv, setCaBundle } = params
@@ -452,10 +537,16 @@ const executor = {
     }
   },
   async linux (exec, params = {}) {
-    const { ip, port } = params
+    const { ip, port, setEnv } = params
     if (ip != null) { // 设置代理
       // 延迟加载config
       loadConfig()
+
+      // 设置环境变量（独立于 gsettings，即使 gsettings 失败也设置）
+      if (setEnv) {
+        writeProxyEnvFile(ip, port, config.get().proxy.proxyHttp)
+        addProxyEnvToShellProfile()
+      }
 
       // https
       const setProxyCmd = [
@@ -476,17 +567,26 @@ const executor = {
       const excludeIpStr = getProxyExcludeIpStr('\', \'')
       setProxyCmd.push(`gsettings set org.gnome.system.proxy ignore-hosts "['${excludeIpStr}']"`)
 
-      await exec(setProxyCmd)
+      try {
+        await exec(setProxyCmd)
+      } catch (e) {
+        log.warn('gsettings 设置系统代理失败（可能无桌面环境），环境变量已设置')
+      }
     } else { // 关闭代理
-      const setProxyCmd = [
-        'gsettings set org.gnome.system.proxy mode none',
-      ]
-      await exec(setProxyCmd)
+      if (setEnv) {
+        removeProxyEnvFromShellProfile()
+      }
+
+      try {
+        await exec(['gsettings set org.gnome.system.proxy mode none'])
+      } catch (e) {
+        log.warn('gsettings 关闭系统代理失败（可能无桌面环境）')
+      }
     }
   },
   async mac (exec, params = {}) {
     const wifiAdaptor = await getMacNetworkService(exec)
-    const { ip, port } = params
+    const { ip, port, setEnv } = params
 
     let cmds
     if (ip != null) { // 设置代理
@@ -525,6 +625,17 @@ const executor = {
         log.info('以管理员权限执行 networksetup 命令成功')
       } else {
         throw e
+      }
+    }
+
+    // 设置环境变量
+    if (setEnv) {
+      if (ip != null) {
+        loadConfig()
+        writeProxyEnvFile(ip, port, config.get().proxy.proxyHttp)
+        addProxyEnvToShellProfile()
+      } else {
+        removeProxyEnvFromShellProfile()
       }
     }
   },
