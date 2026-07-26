@@ -71,11 +71,25 @@ function isRunning () {
 function isGuiRunning () {
   try {
     if (process.platform === 'win32') {
-      const out = execSync('tasklist /fi "imagename eq dev-sidecar.exe" /fo csv /nh', { encoding: 'utf-8' })
+      const out = execSync('tasklist /fi "imagename eq dev-sidecar.exe" /fo csv /nh', {
+        encoding: 'utf-8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+      })
       return out.includes('dev-sidecar.exe')
     }
-    execSync('pgrep -x dev-sidecar', { stdio: 'ignore' })
-    return true
+    // Linux/macOS: 查找 dev-sidecar 进程，排除 CLI 自身
+    const out = execSync('pgrep -x dev-sidecar', { encoding: 'utf-8' }).trim()
+    if (!out) return false
+    const pids = out.split('\n').filter(Boolean)
+    for (const pid of pids) {
+      try {
+        const args = execSync(`ps -p ${pid} -o args=`, { encoding: 'utf-8' }).trim()
+        if (args.includes('electron') || args.includes('.app') || (!args.includes('--daemon') && !args.includes('ds-cli'))) {
+          return true
+        }
+      } catch {}
+    }
+    return false
   } catch {
     return false
   }

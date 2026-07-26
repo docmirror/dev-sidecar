@@ -31,35 +31,62 @@ function isPortInUse (port) {
 }
 
 function isGuiRunningSync () {
-  const port = getProxyPort()
   try {
     if (process.platform === 'win32') {
-      const out = execSync(`netstat -aon | find ":${port}"`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return out.includes('LISTENING')
+      const out = execSync('tasklist /fi "imagename eq dev-sidecar.exe" /fo csv /nh', {
+        encoding: 'utf-8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+      })
+      return out.includes('dev-sidecar.exe')
     }
-    execSync(`lsof -i :${port} -sTCP:LISTEN`, { stdio: 'ignore' })
-    return true
+    // Linux/macOS: 检查 dev-sidecar (Electron GUI) 进程
+    // 排除当前 ds-cli 进程自身
+    const out = execSync('pgrep -x dev-sidecar', { encoding: 'utf-8' }).trim()
+    if (!out) return false
+    // 有 dev-sidecar 进程，检查是否是 GUI（Electron）
+    const pids = out.split('\n').filter(Boolean)
+    for (const pid of pids) {
+      try {
+        const args = execSync(`ps -p ${pid} -o args=`, { encoding: 'utf-8' }).trim()
+        // GUI 进程包含 electron 或 dev-sidecar.app，CLI 的 --daemon 进程不包含
+        if (args.includes('electron') || args.includes('.app') || (!args.includes('--daemon') && !args.includes('ds-cli'))) {
+          return true
+        }
+      } catch {}
+    }
+    return false
   } catch {
     return false
   }
 }
 
 function getGuiPidByPort () {
-  const port = getProxyPort()
   try {
     if (process.platform === 'win32') {
-      const out = execSync(`netstat -aon | find ":${port}"`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      const lines = out.split(/\r?\n/)
-      for (const line of lines) {
-        if (!line.includes('LISTENING')) continue
-        const parts = line.trim().split(/\s+/)
-        const pid = parseInt(parts[parts.length - 1], 10)
-        if (pid && pid > 0) return pid
+      const out = execSync('tasklist /fi "imagename eq dev-sidecar.exe" /fo csv /nh', {
+        encoding: 'utf-8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+      })
+      const lines = out.split(/\r?\n/).filter(l => l.includes('dev-sidecar.exe'))
+      if (lines.length > 0) {
+        const match = lines[0].match(/"(\d+)"/)
+        return match ? parseInt(match[1], 10) : null
       }
       return null
     }
-    const out = execSync(`lsof -i :${port} -sTCP:LISTEN -t`, { encoding: 'utf-8' }).trim()
-    return out ? parseInt(out.split('\n')[0], 10) : null
+    // Linux/macOS: 查找 GUI 进程
+    const out = execSync('pgrep -x dev-sidecar', { encoding: 'utf-8' }).trim()
+    if (!out) return null
+    const pids = out.split('\n').filter(Boolean)
+    for (const pid of pids) {
+      try {
+        const args = execSync(`ps -p ${pid} -o args=`, { encoding: 'utf-8' }).trim()
+        if (args.includes('electron') || args.includes('.app') || (!args.includes('--daemon') && !args.includes('ds-cli'))) {
+          return parseInt(pid, 10)
+        }
+      } catch {}
+    }
+    return null
   } catch {
     return null
   }
