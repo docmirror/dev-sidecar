@@ -20,6 +20,14 @@ const SENTINEL = 'NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2'
 
 const ALL_PLATFORMS = ['linux-x64', 'linux-arm64', 'macos-x64', 'macos-arm64', 'windows-x64']
 
+const PLATFORM_LABELS = {
+  'linux-x64': 'Linux x64',
+  'linux-arm64': 'Linux arm64',
+  'macos-x64': 'macOS x64',
+  'macos-arm64': 'macOS arm64',
+  'windows-x64': 'Windows x64',
+}
+
 // ── 平台识别 ──────────────────────────────────────────
 
 function getCurrentPlatform () {
@@ -84,13 +92,16 @@ async function extractTarGz (tarPath, destDir) {
 // ── 主流程 ────────────────────────────────────────────
 
 async function main () {
+  const os = require('node:os')
   const buildAll = process.argv.includes('--all')
   const currentPlatform = getCurrentPlatform()
   const targets = buildAll ? ALL_PLATFORMS : [currentPlatform]
 
-  console.log(`版本: ${VERSION}`)
-  console.log(`本机: ${currentPlatform}`)
-  console.log(`目标: ${targets.join(', ')}`)
+  console.log(`版本:     v${VERSION}`)
+  console.log(`本机系统: ${os.type()} ${os.release()} (${os.arch()})`)
+  console.log(`本机平台: ${PLATFORM_LABELS[currentPlatform] || currentPlatform}`)
+  console.log(`目标平台: ${targets.map(t => PLATFORM_LABELS[t] || t).join(', ')}`)
+  console.log(`Node.js:  ${NODE_VERSION}`)
   console.log()
 
   fs.mkdirSync(DIST, { recursive: true })
