@@ -38,108 +38,15 @@ jobs:
       - name: "Test CLI"
         run: pnpm --filter @docmirror/dev-sidecar-cli test
 
-      - name: "Get version"
-        id: version
-        run: echo "version=$(node -p "require('./packages/cli/package.json').version")" >> $GITHUB_OUTPUT
-
-      - name: "Bundle with esbuild"
-        run: |
-          npx esbuild packages/cli/src/sea-entry.js \
-            --bundle \
-            --platform=node \
-            --target=node18 \
-            --format=cjs \
-            --outfile=dist/ds-cli-bundle.js \
-            '--external:node:*' \
-            '--external:@docmirror/dev-sidecar/src/modules/plugin/free-eye/*'
-
-      - name: "Generate SEA blob"
-        run: |
-          cat > dist/sea-config.json << EOF
-          {
-            "main": "${{ github.workspace }}/dist/ds-cli-bundle.js",
-            "output": "${{ github.workspace }}/dist/ds-cli-prep.blob",
-            "disableExperimentalSEAWarning": true
-          }
-          EOF
-          node --experimental-sea-config dist/sea-config.json
-
-      - name: "Download Node.js binaries"
-        run: |
-          NODE_VERSION=v24.14.0
-          mkdir -p dist/node-bin
-
-          # Linux x64
-          curl -sL -o dist/node-bin/node-linux-x64 \
-            https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64
-
-          # Linux arm64
-          curl -sL -o dist/node-bin/node-linux-arm64 \
-            https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-arm64
-
-          # macOS x64 (tar.gz)
-          curl -sL -o dist/node-bin/node-macos-x64.tar.gz \
-            https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-darwin-x64.tar.gz
-          tar -xzf dist/node-bin/node-macos-x64.tar.gz -C dist/node-bin
-          mv dist/node-bin/node-${NODE_VERSION}-darwin-x64/bin/node dist/node-bin/node-macos-x64
-          rm -rf dist/node-bin/node-${NODE_VERSION}-darwin-x64 dist/node-bin/node-macos-x64.tar.gz
-
-          # macOS arm64 (tar.gz)
-          curl -sL -o dist/node-bin/node-macos-arm64.tar.gz \
-            https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-darwin-arm64.tar.gz
-          tar -xzf dist/node-bin/node-macos-arm64.tar.gz -C dist/node-bin
-          mv dist/node-bin/node-${NODE_VERSION}-darwin-arm64/bin/node dist/node-bin/node-macos-arm64
-          rm -rf dist/node-bin/node-${NODE_VERSION}-darwin-arm64 dist/node-bin/node-macos-arm64.tar.gz
-
-          # Windows x64
-          curl -sL -o dist/node-bin/node-win-x64.exe \
-            https://nodejs.org/dist/${NODE_VERSION}/win-x64/node.exe
-
-          chmod +x dist/node-bin/node-*
-
-      - name: "Inject SEA blob into binaries"
-        run: |
-          VERSION=${{ steps.version.outputs.version }}
-          BLOB=dist/ds-cli-prep.blob
-          SENTINEL=NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
-
-          # Linux x64
-          cp dist/node-bin/node-linux-x64 dist/ds-cli-${VERSION}-linux-x64
-          npx postject dist/ds-cli-${VERSION}-linux-x64 NODE_SEA_BLOB ${BLOB} --sentinel-fuse ${SENTINEL}
-
-          # Linux arm64
-          cp dist/node-bin/node-linux-arm64 dist/ds-cli-${VERSION}-linux-arm64
-          npx postject dist/ds-cli-${VERSION}-linux-arm64 NODE_SEA_BLOB ${BLOB} --sentinel-fuse ${SENTINEL}
-
-          # macOS x64
-          cp dist/node-bin/node-macos-x64 dist/ds-cli-${VERSION}-macos-x64
-          npx postject dist/ds-cli-${VERSION}-macos-x64 NODE_SEA_BLOB ${BLOB} --sentinel-fuse ${SENTINEL}
-
-          # macOS arm64
-          cp dist/node-bin/node-macos-arm64 dist/ds-cli-${VERSION}-macos-arm64
-          npx postject dist/ds-cli-${VERSION}-macos-arm64 NODE_SEA_BLOB ${BLOB} --sentinel-fuse ${SENTINEL}
-
-          # Windows x64
-          cp dist/node-bin/node-win-x64.exe dist/ds-cli-${VERSION}-windows-x64.exe
-          npx postject dist/ds-cli-${VERSION}-windows-x64.exe NODE_SEA_BLOB ${BLOB} --sentinel-fuse ${SENTINEL}
-
-          chmod +x dist/ds-cli-${VERSION}-*
-
-      - name: "Verify Linux x64 binary"
-        run: |
-          VERSION=${{ steps.version.outputs.version }}
-          ./dist/ds-cli-${VERSION}-linux-x64 version
+      - name: "Build all platforms"
+        run: node packages/cli/scripts/build.js --all
 
       - name: "Upload artifacts"
         uses: actions/upload-artifact@v4
         with:
-          name: ds-cli-${{ steps.version.outputs.version }}
+          name: ds-cli-${{ github.sha }}
           path: |
-            dist/ds-cli-${{ steps.version.outputs.version }}-linux-x64
-            dist/ds-cli-${{ steps.version.outputs.version }}-linux-arm64
-            dist/ds-cli-${{ steps.version.outputs.version }}-macos-x64
-            dist/ds-cli-${{ steps.version.outputs.version }}-macos-arm64
-            dist/ds-cli-${{ steps.version.outputs.version }}-windows-x64.exe
+            packages/cli/dist/ds-cli-*
           if-no-files-found: error
 
   release:
