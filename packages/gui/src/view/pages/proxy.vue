@@ -120,8 +120,7 @@ export default defineComponent({
         </div>
       </a-form-item>
 
-      <!-- 以下两个功能仅windows支持，mac和linux暂不支持 -->
-      <a-form-item v-if="isWindows()" label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-item label="设置环境变量" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model:checked="config.proxy.setEnv">
           是否同时修改<code>HTTPS_PROXY</code>环境变量
         </a-checkbox>

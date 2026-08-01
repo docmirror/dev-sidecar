@@ -40,16 +40,14 @@ function isGuiRunningSync () {
       return out.includes('dev-sidecar.exe')
     }
     // Linux/macOS: 检查 dev-sidecar (Electron GUI) 进程
-    // 排除当前 ds-cli 进程自身
+    // GUI 进程特征：包含 electron 或 .app（macOS 应用包）
     const out = execSync('pgrep -x dev-sidecar', { encoding: 'utf-8' }).trim()
     if (!out) return false
-    // 有 dev-sidecar 进程，检查是否是 GUI（Electron）
     const pids = out.split('\n').filter(Boolean)
     for (const pid of pids) {
       try {
         const args = execSync(`ps -p ${pid} -o args=`, { encoding: 'utf-8' }).trim()
-        // GUI 进程包含 electron 或 dev-sidecar.app，CLI 的 --daemon 进程不包含
-        if (args.includes('electron') || args.includes('.app') || (!args.includes('--daemon') && !args.includes('ds-cli'))) {
+        if (args.includes('electron') || args.includes('.app')) {
           return true
         }
       } catch {}

@@ -4,11 +4,13 @@ const Plugin = function (context) {
   const { config, shell, event, log } = context
   const api = {
     async start () {
-      // event.fire('status', { key: 'plugin.overwall.enabled', value: true })
+      event.fire('status', { key: 'plugin.overwall.enabled', value: true })
+      log.info('开启【Overwall】代理成功')
     },
 
     async close () {
-      // event.fire('status', { key: 'plugin.overwall.enabled', value: false })
+      event.fire('status', { key: 'plugin.overwall.enabled', value: false })
+      log.info('关闭【Overwall】代理成功')
     },
 
     async restart () {
@@ -49,5 +51,8 @@ const Plugin = function (context) {
 module.exports = {
   key: 'overwall',
   config: pluginConfig,
+  status: {
+    enabled: false,
+  },
   plugin: Plugin,
 }

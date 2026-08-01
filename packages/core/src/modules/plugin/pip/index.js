@@ -6,9 +6,13 @@ const PipPlugin = function (context) {
     async start () {
       await api.setRegistry({ registry: config.get().plugin.pip.setting.registry })
       await api.setTrustedHost(config.get().plugin.pip.setting.trustedHost)
+      event.fire('status', { key: 'plugin.pip.enabled', value: true })
+      log.info('开启【Pip】代理成功')
     },
 
     async close () {
+      event.fire('status', { key: 'plugin.pip.enabled', value: false })
+      log.info('关闭【Pip】代理成功')
     },
 
     async restart () {
