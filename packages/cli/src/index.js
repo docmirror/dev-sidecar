@@ -23,7 +23,6 @@ function runDaemon () {
     '.dev-sidecar',
   )
   const PID_FILE = path.join(userBasePath, 'ds-cli.pid')
-  const STATUS_FILE = path.join(userBasePath, 'status.json')
 
   async function startup () {
     // 获取实例锁，防止 CLI/GUI 重复运行
@@ -51,19 +50,6 @@ function runDaemon () {
     await DevSidecar.api.startup({ mitmproxyPath })
     await DevSidecar.api.config.startAutoDownloadRemoteConfig()
     log.info('dev-sidecar 已启动')
-
-    // 定期写入 status.json
-    writeStatus()
-    setInterval(writeStatus, 5000)
-  }
-
-  function writeStatus () {
-    try {
-      const status = DevSidecar.api.status.get()
-      fs.writeFileSync(STATUS_FILE, JSON.stringify(status, null, 2))
-    } catch (e) {
-      log.error('写入 status.json 失败:', e.message)
-    }
   }
 
   async function onClose () {
@@ -76,7 +62,6 @@ function runDaemon () {
 
   function cleanupFiles () {
     try { if (fs.existsSync(PID_FILE)) fs.unlinkSync(PID_FILE) } catch {}
-    try { if (fs.existsSync(STATUS_FILE)) fs.unlinkSync(STATUS_FILE) } catch {}
   }
 
   process.on('SIGINT', onClose)
@@ -152,9 +137,7 @@ function routeCommand (args) {
     }
     case 'status': {
       const { showStatus } = require('./commands/status')
-      const { isGuiRunning } = require('./commands/gui')
-      showStatus()
-      console.log(`  GUI:       ${isGuiRunning() ? '运行中' : '未运行'}`)
+      showStatus().then(() => process.exit(0))
       break
     }
     case 'version': {

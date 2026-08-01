@@ -14,7 +14,6 @@ describe('status', function () {
           node: { enabled: true },
           pip: { enabled: true },
           overwall: { enabled: false },
-          free_eye: { enabled: false },
         },
       }
       assert.isTrue(status.server.enabled)
@@ -36,20 +35,98 @@ describe('status', function () {
     })
   })
 
-  describe('showStatus file logic', function () {
-    it('should detect missing status.json and PID file', function () {
+  describe('plugin list', function () {
+    it('should not include free_eye (one-shot plugin without persistent status)', function () {
+      const { getPluginNames } = require('../src/commands/status')
+      const names = getPluginNames()
+      assert.notInclude(names, 'free_eye')
+    })
+
+    it('should include overwall only when unlocked', function () {
+      const { getPluginNames } = require('../src/commands/status')
+      // 测试环境未解锁 setting.json 时不应包含 overwall
+      const names = getPluginNames()
+      assert.include(names, 'git')
+      assert.include(names, 'node')
+      assert.include(names, 'pip')
+    })
+  })
+
+  describe('isOverwallUnlocked', function () {
+    it('should return false when setting.json does not exist', function () {
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-cli-test-'))
       try {
-        const statusFile = path.join(tmpDir, 'status.json')
-        const pidFile = path.join(tmpDir, 'ds-cli.pid')
-        assert.isFalse(fs.existsSync(statusFile))
-        assert.isFalse(fs.existsSync(pidFile))
+        const settingPath = path.join(tmpDir, 'setting.json')
+        const exists = fs.existsSync(settingPath)
+        assert.isFalse(exists)
       } finally {
         fs.rmSync(tmpDir, { recursive: true, force: true })
       }
     })
 
-    it('should detect stale PID file', function () {
+    it('should return true when setting.json has overwall: true', function () {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-cli-test-'))
+      try {
+        const settingPath = path.join(tmpDir, 'setting.json')
+        fs.writeFileSync(settingPath, JSON.stringify({ overwall: true }))
+        const setting = JSON.parse(fs.readFileSync(settingPath, 'utf-8'))
+        assert.isTrue(setting?.overwall === true)
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true })
+      }
+    })
+  })
+
+  describe('running.json file logic', function () {
+    it('should read status from running.json app.status', function () {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-cli-test-'))
+      try {
+        const runningPath = path.join(tmpDir, 'running.json')
+        const data = {
+          app: {
+            instance: { type: 'cli', pid: 12345, startTime: '2026-01-01T00:00:00.000Z' },
+            status: {
+              server: { enabled: true },
+              proxy: { enabled: true },
+              plugin: { git: { enabled: true }, node: { enabled: true } },
+            },
+          },
+        }
+        fs.writeFileSync(runningPath, JSON.stringify(data))
+        const parsed = JSON.parse(fs.readFileSync(runningPath, 'utf-8'))
+        assert.isTrue(parsed.app.status.server.enabled)
+        assert.isTrue(parsed.app.status.proxy.enabled)
+        assert.isTrue(parsed.app.status.plugin.git.enabled)
+        assert.strictEqual(parsed.app.instance.type, 'cli')
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true })
+      }
+    })
+
+    it('should handle missing running.json', function () {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-cli-test-'))
+      try {
+        const runningPath = path.join(tmpDir, 'running.json')
+        assert.isFalse(fs.existsSync(runningPath))
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true })
+      }
+    })
+
+    it('should handle corrupted running.json', function () {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-cli-test-'))
+      try {
+        const runningPath = path.join(tmpDir, 'running.json')
+        fs.writeFileSync(runningPath, '{ invalid json }')
+        let error = null
+        try { JSON.parse(fs.readFileSync(runningPath, 'utf-8')) } catch (e) { error = e }
+        assert.isNotNull(error)
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true })
+      }
+    })
+
+    it('should handle stale PID file', function () {
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-cli-test-'))
       try {
         const pidFile = path.join(tmpDir, 'ds-cli.pid')
@@ -58,36 +135,6 @@ describe('status', function () {
         let alive = true
         try { process.kill(pid, 0) } catch { alive = false }
         assert.isFalse(alive)
-      } finally {
-        fs.rmSync(tmpDir, { recursive: true, force: true })
-      }
-    })
-
-    it('should read valid status.json', function () {
-      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-cli-test-'))
-      try {
-        const statusFile = path.join(tmpDir, 'status.json')
-        const status = {
-          server: { enabled: true },
-          proxy: { enabled: true },
-          plugin: { git: { enabled: true }, node: { enabled: true } },
-        }
-        fs.writeFileSync(statusFile, JSON.stringify(status))
-        const readStatus = JSON.parse(fs.readFileSync(statusFile, 'utf-8'))
-        assert.deepEqual(readStatus, status)
-      } finally {
-        fs.rmSync(tmpDir, { recursive: true, force: true })
-      }
-    })
-
-    it('should handle corrupted status.json', function () {
-      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-cli-test-'))
-      try {
-        const statusFile = path.join(tmpDir, 'status.json')
-        fs.writeFileSync(statusFile, '{ invalid json }')
-        let error = null
-        try { JSON.parse(fs.readFileSync(statusFile, 'utf-8')) } catch (e) { error = e }
-        assert.isNotNull(error)
       } finally {
         fs.rmSync(tmpDir, { recursive: true, force: true })
       }

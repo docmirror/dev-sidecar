@@ -5,12 +5,8 @@ function getUserBase () {
   return path.join(process.env.USERPROFILE || process.env.HOME || '/', '.dev-sidecar')
 }
 
-function getStatusFile () {
-  return path.join(getUserBase(), 'status.json')
-}
-
-function getPidFile () {
-  return path.join(getUserBase(), 'ds-cli.pid')
+function getRunningJsonPath () {
+  return path.join(getUserBase(), 'running.json')
 }
 
 function isAlive (pid) {
@@ -20,6 +16,19 @@ function isAlive (pid) {
   } catch {
     return false
   }
+}
+
+// 插件列表：free_eye 是一次性插件，无持久化状态，不显示；
+// overwall 仅解锁后（setting.json 中 overwall === true）才显示
+function getPluginNames () {
+  const names = ['git', 'node', 'pip']
+  try {
+    const { isOverwallUnlocked } = require('./plugin')
+    if (isOverwallUnlocked()) {
+      names.push('overwall')
+    }
+  } catch {}
+  return names
 }
 
 function printStatus (status) {
@@ -51,46 +60,38 @@ function printStatus (status) {
   }
   console.log('  插件:')
 
-  const pluginNames = ['git', 'node', 'pip', 'overwall', 'free_eye']
-  for (const name of pluginNames) {
+  for (const name of getPluginNames()) {
     const enabled = status.plugin?.[name]?.enabled || false
-    const label = name === 'free_eye' ? 'free_eye' : name.padEnd(8)
+    const label = name.padEnd(8)
     console.log(`    ${label} ${enabled ? '已启用' : '未启用'}`)
   }
 }
 
-function showStatus () {
-  const statusFile = getStatusFile()
-  const pidFile = getPidFile()
+async function showStatus () {
+  // 锁新鲜 = 有实例在运行（GUI 或 CLI），替代 status.json/PID 文件判断
+  const DevSidecar = require('@docmirror/dev-sidecar')
+  const running = await DevSidecar.api.instance.isLocked()
 
-  if (!fs.existsSync(statusFile)) {
-    let autoStart = '未知'
-    try {
-      const { isInstalled } = require('./service')
-      autoStart = isInstalled() ? '已注册' : '未注册'
-    } catch {}
+  let autoStart = '未知'
+  try {
+    const { isInstalled } = require('./service')
+    autoStart = isInstalled() ? '已注册' : '未注册'
+  } catch {}
 
-    if (fs.existsSync(pidFile)) {
-      const pid = parseInt(fs.readFileSync(pidFile, 'utf-8').trim(), 10)
-      if (isAlive(pid)) {
-        console.log(`dev-sidecar 正在运行 (PID: ${pid})，但 status.json 尚未生成，请稍后重试`)
-      } else {
-        console.log('dev-sidecar 未在运行（PID 文件存在但进程已退出）')
-        fs.unlinkSync(pidFile)
-      }
-    } else {
-      console.log('dev-sidecar 未在运行')
-    }
+  if (!running) {
+    console.log('dev-sidecar 未在运行')
     console.log(`  开机启动:  ${autoStart}`)
     return
   }
 
+  // 读取 running.json 中的运行时状态（由状态事件驱动写入）
+  let status = {}
   try {
-    const status = JSON.parse(fs.readFileSync(statusFile, 'utf-8'))
-    printStatus(status)
-  } catch (e) {
-    console.error('读取状态文件失败:', e.message)
-  }
+    const data = JSON.parse(fs.readFileSync(getRunningJsonPath(), 'utf-8'))
+    status = data?.app?.status || {}
+  } catch {}
+
+  printStatus(status)
 }
 
-module.exports = { showStatus }
+module.exports = { showStatus, getPluginNames }

@@ -8,7 +8,6 @@ const lodash = require('lodash')
 
 const userBase = path.join(process.env.USERPROFILE || process.env.HOME || '/', '.dev-sidecar')
 const PID_FILE = path.join(userBase, 'ds-cli.pid')
-const STATUS_FILE = path.join(userBase, 'status.json')
 
 // ── 加载配置 ──────────────────────────────────────────
 
@@ -101,13 +100,6 @@ if (isDaemon) {
 async function runDaemon () {
   const log = require('@docmirror/dev-sidecar/src/utils/util.log-or-console')
 
-  // 跟踪运行状态
-  const status = {
-    server: { enabled: false },
-    proxy: { enabled: false },
-    plugin: {},
-  }
-
   async function startup () {
     const log = require('@docmirror/dev-sidecar/src/utils/util.log-or-console')
 
@@ -166,19 +158,9 @@ async function runDaemon () {
     const mitmproxy = await startProxy(serverConfig)
     log.info('dev-sidecar 已启动（同进程模式）')
 
-    // 更新状态
-    status.server.enabled = true
-    status.proxy.enabled = !!(allConfig.proxy && allConfig.proxy.enabled)
-
-    // 定期写入 status.json
-    writeStatus()
-    setInterval(writeStatus, 5000)
-  }
-
-  function writeStatus () {
-    try {
-      fs.writeFileSync(STATUS_FILE, JSON.stringify(status, null, 2))
-    } catch {}
+    // 主动同步状态到 running.json（SEA 模式不走 core 的 server/proxy 模块，状态事件不会自动触发）
+    DevSidecar.api.instance.updateStatus('server.enabled', true)
+    DevSidecar.api.instance.updateStatus('proxy.enabled', !!(allConfig.proxy && allConfig.proxy.enabled))
   }
 
   async function onClose () {
@@ -195,7 +177,6 @@ async function runDaemon () {
 
   function cleanupFiles () {
     try { if (fs.existsSync(PID_FILE)) fs.unlinkSync(PID_FILE) } catch {}
-    try { if (fs.existsSync(STATUS_FILE)) fs.unlinkSync(STATUS_FILE) } catch {}
   }
 
   process.on('SIGINT', onClose)
@@ -242,9 +223,7 @@ async function routeCommand (args) {
     }
     case 'status': {
       const { showStatus } = require('./commands/status')
-      const { isGuiRunning } = require('./commands/gui')
-      showStatus()
-      console.log(`  GUI:       ${isGuiRunning() ? '运行中' : '未运行'}`)
+      showStatus().then(() => process.exit(0))
       break
     }
     case 'version': {

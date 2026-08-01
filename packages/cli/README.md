@@ -203,24 +203,24 @@ ds-cli service uninstall      # 移除
 
 执行 `ds-cli`（或 `ds-cli start`）后：
 
-1. 检查 `~/.dev-sidecar/ds-cli.pid` 判断 CLI 是否已运行（验证 PID 存活 + 进程身份，防止 PID 复用误判）
-2. 检查 GUI 进程是否已在运行（通过进程名 `dev-sidecar` 精确匹配），若已运行则提示并退出
-3. 若无冲突，fork 一个 detached 子进程作为守护进程，父进程写入 PID 文件后立即退出，终端恢复控制权
-4. 守护进程启动：
+1. 检查实例锁（`~/.dev-sidecar/dev-sidecar.lock`）判断 CLI/GUI 是否已运行，若已运行则提示并退出
+2. 若无冲突，fork 一个 detached 子进程作为守护进程，父进程写入 PID 文件后立即退出，终端恢复控制权
+3. 守护进程启动：
+   - 获取实例锁，防止 CLI/GUI 重复运行
    - 从 `~/.dev-sidecar/config.json` 加载用户配置（与 GUI 版共享）
    - 启动 mitmproxy 代理服务器（默认端口 31180 HTTP / 31181 HTTPS）
    - 设置系统代理
    - 启动已启用的插件（git、node、pip 等）
    - 通过代理下载远程加速规则配置
-   - 每 5 秒将运行状态写入 `~/.dev-sidecar/status.json`
-5. 守护进程监听 SIGINT / SIGTERM / exit 信号，收到后恢复系统代理并清理文件
+   - 运行状态（代理服务、系统代理、插件开关）事件驱动写入 `~/.dev-sidecar/running.json`（app.status 字段）
+4. 守护进程监听 SIGINT / SIGTERM / exit 信号，收到后恢复系统代理并清理文件
 
 ## 其他命令
 
 ```bash
 ds-cli stop                       # 读取 PID 文件，发送 SIGINT，等待进程退出后清理
 ds-cli restart                    # 停止当前守护进程后重新启动
-ds-cli status                     # 读取 status.json 显示代理、系统代理、插件状态
+ds-cli status                     # 通过实例锁判断运行状态，读取 running.json 显示代理、系统代理、插件状态
 ds-cli plugin start <name>        # fork 临时子进程启动指定插件后退出
 ds-cli plugin stop <name>         # fork 临时子进程停止指定插件后退出
 ```
@@ -230,8 +230,10 @@ ds-cli plugin stop <name>         # fork 临时子进程停止指定插件后退
 - `~/.dev-sidecar/config.json` — 用户配置（与 GUI 版共享）
 - `~/.dev-sidecar/remote_config.json5` — 远程共享规则（自动下载）
 - `~/.dev-sidecar/remote_config_personal.json5` — 远程个人规则（自动下载）
+- `~/.dev-sidecar/setting.json` — 软件设置（含 overwall 解锁标记）
 - `~/.dev-sidecar/ds-cli.pid` — 守护进程 PID 文件
-- `~/.dev-sidecar/status.json` — 运行状态文件
+- `~/.dev-sidecar/dev-sidecar.lock` — 实例互斥锁（proper-lockfile，异常退出由 stale 机制自动接管）
+- `~/.dev-sidecar/running.json` — mitmproxy 子进程启动配置 + 实例信息（app.instance）+ 运行时状态（app.status）
 
 ## 日志
 

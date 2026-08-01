@@ -99,4 +99,4 @@ function handlePlugin (action, name) {
   })
 }
 
-module.exports = { handlePlugin }
+module.exports = { handlePlugin, isOverwallUnlocked, getSettingsPath, getValidPlugins }
