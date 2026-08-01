@@ -26,6 +26,24 @@ function runDaemon () {
   const STATUS_FILE = path.join(userBasePath, 'status.json')
 
   async function startup () {
+    // 获取实例锁，防止 CLI/GUI 重复运行
+    try {
+      await DevSidecar.api.instance.acquireLock({ log })
+    } catch (e) {
+      log.error('另一个 dev-sidecar 实例正在运行，CLI 启动失败:', e.message)
+      process.exit(1)
+    }
+    try {
+      await DevSidecar.api.instance.writeInstance({
+        type: 'cli',
+        pid: process.pid,
+        command: process.argv.join(' '),
+        startTime: new Date().toISOString(),
+      })
+    } catch (e) {
+      log.error('写入 running.json 实例信息失败:', e.message)
+    }
+
     const banner = fs.readFileSync(path.join(__dirname, 'banner.txt'))
     log.info(banner.toString())
 

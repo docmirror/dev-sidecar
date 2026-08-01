@@ -69,6 +69,9 @@ importers:
       node-powershell:
         specifier: ^4.0.0
         version: 4.0.0
+      proper-lockfile:
+        specifier: ^4.1.2
+        version: 4.1.2
       request:
         specifier: ^2.88.2
         version: 2.88.2

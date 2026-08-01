@@ -77,14 +77,15 @@ function isGuiRunning () {
       })
       return out.includes('dev-sidecar.exe')
     }
-    // Linux/macOS: 查找 dev-sidecar 进程，排除 CLI 自身
+    // Linux/macOS: 查找 dev-sidecar 进程
+    // GUI 进程特征：包含 electron 或 .app（macOS 应用包）
     const out = execSync('pgrep -x dev-sidecar', { encoding: 'utf-8' }).trim()
     if (!out) return false
     const pids = out.split('\n').filter(Boolean)
     for (const pid of pids) {
       try {
         const args = execSync(`ps -p ${pid} -o args=`, { encoding: 'utf-8' }).trim()
-        if (args.includes('electron') || args.includes('.app') || (!args.includes('--daemon') && !args.includes('ds-cli'))) {
+        if (args.includes('electron') || args.includes('.app')) {
           return true
         }
       } catch {}
@@ -96,14 +97,12 @@ function isGuiRunning () {
 }
 
 async function startDaemon () {
-  if (isRunning()) {
-    const pid = fs.readFileSync(getPidFile(), 'utf-8').trim()
-    console.log(`dev-sidecar 已在运行中，PID: ${pid}`)
-    return
-  }
-
-  if (isGuiRunning()) {
-    console.log('dev-sidecar GUI 已在运行，请先关闭 GUI 再启动 CLI')
+  // 锁检查：锁被持有说明 CLI 或 GUI 已在运行
+  const DevSidecar = require('@docmirror/dev-sidecar')
+  if (await DevSidecar.api.instance.isLocked()) {
+    const instance = await DevSidecar.api.instance.readInstance()
+    const typeLabel = instance?.type === 'gui' ? 'GUI' : 'CLI'
+    console.log(`dev-sidecar ${typeLabel} 已在运行中${instance?.pid ? `（PID: ${instance.pid}）` : ''}，请先关闭后再启动 CLI`)
     return
   }
 

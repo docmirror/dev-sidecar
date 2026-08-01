@@ -548,6 +548,25 @@ try {
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
     app.on('ready', async () => {
+      // 获取实例锁，防止 CLI/GUI 重复运行
+      try {
+        await DevSidecar.api.instance.acquireLock({ log })
+        try {
+          DevSidecar.api.instance.writeInstance({
+            type: 'gui',
+            pid: process.pid,
+            command: process.argv.join(' '),
+            startTime: new Date().toISOString(),
+          })
+        } catch (e) {
+          log.error('写入 running.json 实例信息失败:', e)
+        }
+      } catch (e) {
+        log.error('另一个 dev-sidecar 实例正在运行，GUI 启动失败:', e.message)
+        app.quit()
+        return
+      }
+
       if (isWindows) {
         try {
           const mod = await import('./background/powerMonitor.js')
