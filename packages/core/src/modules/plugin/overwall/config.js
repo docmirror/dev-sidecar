@@ -1,6 +1,6 @@
 module.exports = {
-  name: '梯子',
-  enabled: false, // 默认关闭梯子
+  name: '增强功能',
+  enabled: false, // 默认关闭
   restartServer: true, // 首页开关切换后需要重启代理服务才能生效
   server: {},
   serverDefault: {

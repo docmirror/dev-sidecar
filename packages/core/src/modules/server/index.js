@@ -85,7 +85,7 @@ const serverApi = {
     }
     serverConfig.plugin = lodash.cloneDeep(allConfig.plugin || {})
     if (setting && setting.overwall !== true && serverConfig.plugin.overwall) {
-      // setting.json 未开启 overwall 时，梯子插件不生效
+      // setting.json 未开启 overwall 时，增强功能插件不生效
       serverConfig.plugin.overwall.enabled = false
     }
 

@@ -252,7 +252,7 @@ export default defineComponent({
           <div>
             <a-row :gutter="10" style="">
               <a-col :span="22">
-                <span>PAC没有拦截到的域名，可以在此处定义；配置为<code>启用</code>时，可为该域名选择代理服务器，默认优先使用 <code>ID 1</code>，若 <code>ID 1</code> 不存在则自动使用 <code>ID 0</code>；配置为<code>禁用</code>时，将不使用梯子</span>
+                <span>PAC没有拦截到的域名，可以在此处定义；配置为<code>启用</code>时，可为该域名选择代理服务器，默认优先使用 <code>ID 1</code>，若 <code>ID 1</code> 不存在则自动使用 <code>ID 0</code>；配置为<code>禁用</code>时，将不使用增强功能</span>
               </a-col>
               <a-col :span="2">
                 <a-button type="primary" @click="addTarget()"><PlusOutlined /></a-button>

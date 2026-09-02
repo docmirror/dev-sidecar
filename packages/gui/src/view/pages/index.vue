@@ -62,7 +62,7 @@ export default {
     await this.doCheckRootCa()
     await this.reloadConfig()
     this.status = this.$status
-    // setting.json 未开启 overwall 时，梯子开关不显示，同时确保梯子配置不生效
+    // setting.json 未开启 overwall 时，增强功能开关不显示，同时确保增强功能配置不生效
     if (!this.setting.overwall && this.config?.plugin?.overwall?.enabled) {
       this.config.plugin.overwall.enabled = false
       const saveRet = await this.$api.config.save(lodash.cloneDeep(this.config))
@@ -212,7 +212,7 @@ export default {
       btns.server = this.createSwitchBtn('server', '代理服务', this.$api.server, status)
       btns.proxy = this.createSwitchBtn('proxy', '系统代理', this.$api.proxy, status)
       lodash.forEach(status.plugin, (item, key) => {
-        // setting.json 未开启 overwall 时，首页不显示“梯子”开关
+        // setting.json 未开启 overwall 时，首页不显示“增强功能”开关
         if (key === 'overwall' && !this.setting.overwall) {
           return
         }
