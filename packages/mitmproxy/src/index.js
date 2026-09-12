@@ -53,6 +53,9 @@ const api = {
   async close () {
     trafficMonitor.stop()
     cloudflareRoute.stop()
+    if (typeof mitmproxy.stopProcessResolver === 'function') {
+      mitmproxy.stopProcessResolver()
+    }
     return new Promise((resolve, reject) => {
       if (servers && servers.length > 0) {
         for (const server of servers) {

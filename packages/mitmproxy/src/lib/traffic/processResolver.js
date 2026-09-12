@@ -1,5 +1,7 @@
 const { execFile } = require('node:child_process')
 
+const isWindows = process.platform === 'win32'
+
 function execFileAsync (file, args) {
   return new Promise((resolve, reject) => {
     execFile(file, args, { windowsHide: true, maxBuffer: 4 * 1024 * 1024 }, (error, stdout) => {
@@ -14,18 +16,22 @@ function execFileAsync (file, args) {
 
 // 解析 netstat -ano -p tcp：
 // 找出所有 ESTABLISHED 连接的“本地端口 -> PID”映射。
+// 支持 IPv4 `1.2.3.4:port` 与 IPv6 `[::1]:port` / `[2001:db8::1]:port`。
 // 监听器只对 TrafficMonitor 当前记录的客户端端口查表，因此不会误用代理服务端端口。
+const NETSTAT_LINE_RE = /^\s*TCP\s+(\[[^\]]+\]|[^:\s]+):(\d+)\s+(\[[^\]]+\]|[^:\s]+):(\d+)\s+(\S+)\s+(\d+)/
+
 function parseNetstat (output) {
   const portPidMap = new Map()
   for (const line of output.split(/\r?\n/)) {
-    const match = line.match(/^\s*TCP\s+([^:]+):(\d+)\s+([^:]+):(\d+)\s+(\S+)\s+(\d+)/)
+    const match = line.match(NETSTAT_LINE_RE)
     if (!match) {
       continue
     }
     const localPort = Number.parseInt(match[2], 10)
     const state = match[5]
     const pid = Number.parseInt(match[6], 10)
-    if (state === 'ESTABLISHED') {
+    // 同一本地端口可能出现在多个四元组中：保留首个 ESTABLISHED 记录，避免后读覆盖
+    if (state === 'ESTABLISHED' && !portPidMap.has(localPort)) {
       portPidMap.set(localPort, pid)
     }
   }
@@ -54,6 +60,11 @@ function startProcessResolver (monitor, interval = 2500) {
     return () => {}
   }
 
+  // netstat.exe / tasklist.exe 仅 Windows 可用；其他平台跳过，避免每 2.5s 无意义 spawn
+  if (!isWindows) {
+    return () => {}
+  }
+
   let running = false
   let timer = null
 
@@ -74,7 +85,7 @@ function startProcessResolver (monitor, interval = 2500) {
         return
       }
 
-      const pids = [...new Set(activePorts.map((port) => portPidMap.get(port)).filter((pid) => pid != null))]
+      const pids = [...new Set(activePorts.map(port => portPidMap.get(port)).filter(pid => pid != null))]
       if (pids.length === 0) {
         return
       }

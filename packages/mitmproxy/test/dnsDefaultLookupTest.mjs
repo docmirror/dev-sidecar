@@ -6,7 +6,6 @@ const require = createRequire(import.meta.url)
 // 回归测试：Node 20+ 默认开启 autoSelectFamily，会以 { all: true } 调用自定义 lookup，
 // 期望回传完整地址数组。旧实现只回传单个 IP 字符串，导致
 // ERR_INVALID_IP_ADDRESS: Invalid IP address: undefined。
-const dnsModulePath = require.resolve('node:dns')
 const dnsLookupModulePath = require.resolve('../src/lib/proxy/mitmproxy/dnsLookup.js')
 
 const IPV6 = '2603:1030:a07:e::102'
@@ -82,7 +81,8 @@ async function main () {
     const emptyResult = await new Promise((resolve) => {
       let settled = false
       lookup2('example.com', { all: true }, (err, address) => {
-        if (settled) return
+        if (settled)
+          return
         settled = true
         resolve({ err, address })
       })

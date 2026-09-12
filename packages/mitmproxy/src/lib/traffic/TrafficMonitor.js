@@ -3,6 +3,8 @@ const log = require('../../utils/util.log.server')
 const DEFAULT_PROXY_PORTS = [31180, 31181]
 const ENTRY_TTL = 60 * 1000
 const BLOCKED_HOST_TTL = 5 * 60 * 1000
+const DOMAIN_MAP_MAX = 5000
+const DOMAIN_IDLE_TTL = 60 * 60 * 1000
 
 function normalizeHost (host) {
   if (!host) {
@@ -10,21 +12,30 @@ function normalizeHost (host) {
   }
   let value = String(host).trim()
   if (value.startsWith('[')) {
-    value = value.slice(1, value.indexOf(']') >= 0 ? value.indexOf(']') : value.length)
+    const closeIdx = value.indexOf(']')
+    value = value.slice(1, closeIdx >= 0 ? closeIdx : value.length)
   } else if (value.includes(':')) {
     value = value.slice(0, value.indexOf(':'))
   }
   return value || 'unknown'
 }
 
+function isLoopbackAddress (address) {
+  return address === '127.0.0.1' || address === '::1' || address === '::ffff:127.0.0.1'
+}
+
 class TrafficMonitor {
   constructor () {
     this.entries = new Map() // clientPort -> entry
-    this.domainMap = new Map() // host -> { requests, errors }
+    this.domainMap = new Map() // host -> { requests, errors, lastSeen }
     this.blockedHosts = new Map() // host -> 过期时间戳（Adblock 拦截域名）
+    this.internalPortMap = new Map() // MITM fakeServer 本地端口 -> 真实客户端端口
     this.proxyPorts = DEFAULT_PROXY_PORTS
     this.timer = null
     this.lastSampleTime = Date.now()
+    // 终身累计字节（条目过期删除后仍保留，避免 UI 上“累计流量”回落）
+    this.lifetimeBytesUp = 0
+    this.lifetimeBytesDown = 0
   }
 
   start (proxyPorts) {
@@ -47,6 +58,29 @@ class TrafficMonitor {
       clearInterval(this.timer)
       this.timer = null
     }
+    this.internalPortMap.clear()
+  }
+
+  // MITM：将 fakeServer 连接的本地端口映射回真实客户端端口，便于进程归属
+  mapInternalToClient (internalPort, clientPort) {
+    if (internalPort != null && clientPort != null) {
+      this.internalPortMap.set(internalPort, clientPort)
+    }
+  }
+
+  resolveClientPort (socket) {
+    if (!socket) {
+      return null
+    }
+    const remotePort = socket.remotePort
+    if (!remotePort) {
+      return null
+    }
+    // 内部连接（连到本地 fakeServer）时，映射回真实客户端端口
+    if (isLoopbackAddress(socket.remoteAddress) && this.internalPortMap.has(remotePort)) {
+      return this.internalPortMap.get(remotePort)
+    }
+    return remotePort
   }
 
   setProcessName (clientPort, name) {
@@ -66,12 +100,14 @@ class TrafficMonitor {
     if (!socket) {
       return
     }
-    const clientPort = socket.remotePort
+    const clientPort = this.resolveClientPort(socket)
     if (!clientPort) {
       return
     }
     const host = normalizeHost(req.headers.host || req.authority || req.url)
-    this.ensureEntry(socket, clientPort, host)
+    // MITM 内部连接只更新 host/请求计数，字节统计仍走已关联的客户端 socket
+    const isInternal = isLoopbackAddress(socket.remoteAddress) && this.internalPortMap.has(socket.remotePort)
+    this.ensureEntry(socket, clientPort, host, { keepExistingSocket: isInternal })
     this.markRequest(clientPort, host)
 
     res.once('finish', () => {
@@ -104,7 +140,7 @@ class TrafficMonitor {
     this.markError(null, normalized)
   }
 
-  ensureEntry (socket, clientPort, host) {
+  ensureEntry (socket, clientPort, host, options = {}) {
     const now = Date.now()
     let entry = this.entries.get(clientPort)
     if (!entry) {
@@ -127,32 +163,81 @@ class TrafficMonitor {
       }
       this.entries.set(clientPort, entry)
     } else {
+      // keep-alive 复用：先把上次采样后的增量记入累计值，再重置基线，避免丢字节
+      if (!options.keepExistingSocket) {
+        const bytesRead = socket.bytesRead || 0
+        const bytesWritten = socket.bytesWritten || 0
+        entry.bytesUp += Math.max(0, bytesRead - entry.lastBytesUp)
+        entry.bytesDown += Math.max(0, bytesWritten - entry.lastBytesDown)
+        entry.lastBytesUp = bytesRead
+        entry.lastBytesDown = bytesWritten
+        entry.socket = socket
+      }
       entry.host = host
-      entry.socket = socket
-      entry.lastBytesUp = socket.bytesRead || 0
-      entry.lastBytesDown = socket.bytesWritten || 0
       entry.lastActive = now
     }
-    socket.once('close', () => {
-      this.finalizeSocket(clientPort)
-    })
+    if (!options.keepExistingSocket) {
+      socket.once('close', () => {
+        this.finalizeSocket(clientPort, socket)
+      })
+    }
     return entry
   }
 
-  finalizeSocket (clientPort) {
+  finalizeSocket (clientPort, closedSocket) {
     const entry = this.entries.get(clientPort)
     if (!entry) {
       return
     }
+    // 端口被新 socket 复用时，旧 socket 的 close 事件不应影响新条目
+    if (closedSocket && entry.socket && entry.socket !== closedSocket) {
+      return
+    }
     const socket = entry.socket
     if (socket) {
-      entry.bytesUp += Math.max(0, (socket.bytesRead || 0) - entry.lastBytesUp)
-      entry.bytesDown += Math.max(0, (socket.bytesWritten || 0) - entry.lastBytesDown)
+      const deltaUp = Math.max(0, (socket.bytesRead || 0) - entry.lastBytesUp)
+      const deltaDown = Math.max(0, (socket.bytesWritten || 0) - entry.lastBytesDown)
+      entry.bytesUp += deltaUp
+      entry.bytesDown += deltaDown
+      this.lifetimeBytesUp += deltaUp
+      this.lifetimeBytesDown += deltaDown
       entry.lastBytesUp = socket.bytesRead || 0
       entry.lastBytesDown = socket.bytesWritten || 0
       entry.socket = null
     }
     entry.lastActive = Date.now()
+  }
+
+  touchDomain (normalized) {
+    let domain = this.domainMap.get(normalized)
+    if (!domain) {
+      domain = { requests: 0, errors: 0, lastSeen: Date.now() }
+      this.domainMap.set(normalized, domain)
+      this.evictDomainMapIfNeeded()
+    } else {
+      domain.lastSeen = Date.now()
+    }
+    return domain
+  }
+
+  evictDomainMapIfNeeded () {
+    if (this.domainMap.size <= DOMAIN_MAP_MAX) {
+      return
+    }
+    const now = Date.now()
+    for (const [host, domain] of this.domainMap) {
+      if (now - (domain.lastSeen || 0) > DOMAIN_IDLE_TTL) {
+        this.domainMap.delete(host)
+      }
+    }
+    // 仍超限时按插入序淘汰最旧条目（Map 保持插入顺序）
+    while (this.domainMap.size > DOMAIN_MAP_MAX) {
+      const oldest = this.domainMap.keys().next()
+      if (oldest.done) {
+        break
+      }
+      this.domainMap.delete(oldest.value)
+    }
   }
 
   markRequest (clientPort, host) {
@@ -168,12 +253,7 @@ class TrafficMonitor {
         entry.lastActive = now
       }
     }
-    let domain = this.domainMap.get(normalized)
-    if (!domain) {
-      domain = { requests: 0, errors: 0 }
-      this.domainMap.set(normalized, domain)
-    }
-    domain.requests++
+    this.touchDomain(normalized).requests++
   }
 
   markError (clientPort, host) {
@@ -189,12 +269,7 @@ class TrafficMonitor {
         entry.lastActive = now
       }
     }
-    let domain = this.domainMap.get(normalized)
-    if (!domain) {
-      domain = { requests: 0, errors: 0 }
-      this.domainMap.set(normalized, domain)
-    }
-    domain.errors++
+    this.touchDomain(normalized).errors++
   }
 
   // Adblock 规则命中时 DNS 返回 0.0.0.0 / ::，这类请求/错误不应进入域名错误统计
@@ -233,8 +308,12 @@ class TrafficMonitor {
       if (socket && !socket.destroyed) {
         const bytesRead = socket.bytesRead || 0
         const bytesWritten = socket.bytesWritten || 0
-        entry.bytesUp += Math.max(0, bytesRead - entry.lastBytesUp)
-        entry.bytesDown += Math.max(0, bytesWritten - entry.lastBytesDown)
+        const deltaUp = Math.max(0, bytesRead - entry.lastBytesUp)
+        const deltaDown = Math.max(0, bytesWritten - entry.lastBytesDown)
+        entry.bytesUp += deltaUp
+        entry.bytesDown += deltaDown
+        this.lifetimeBytesUp += deltaUp
+        this.lifetimeBytesDown += deltaDown
         entry.lastBytesUp = bytesRead
         entry.lastBytesDown = bytesWritten
       }
@@ -245,18 +324,23 @@ class TrafficMonitor {
       entry.lastSampleBytesDown = entry.bytesDown
     }
 
-    // 清理已关闭且长时间无活动的连接条目
+    // 清理已关闭且长时间无活动的连接条目；字节已计入 lifetime，删除不会导致累计值回落
     for (const [clientPort, entry] of this.entries) {
       if (!entry.socket && now - entry.lastActive > ENTRY_TTL) {
         this.entries.delete(clientPort)
+        if (this.internalPortMap.size > 0) {
+          for (const [internalPort, mappedClientPort] of this.internalPortMap) {
+            if (mappedClientPort === clientPort) {
+              this.internalPortMap.delete(internalPort)
+            }
+          }
+        }
       }
     }
 
     const processMap = new Map()
     let totalRequests = 0
     let totalErrors = 0
-    let totalBytesUp = 0
-    let totalBytesDown = 0
     for (const entry of this.entries.values()) {
       const name = entry.processName || '未知进程'
       let process = processMap.get(name)
@@ -283,9 +367,6 @@ class TrafficMonitor {
       if (entry.socket && !entry.socket.destroyed) {
         process.connections += 1
       }
-
-      totalBytesUp += entry.bytesUp
-      totalBytesDown += entry.bytesDown
     }
 
     const domainStats = []
@@ -308,8 +389,8 @@ class TrafficMonitor {
         requests: totalRequests,
         errors: totalErrors,
         errorRate: totalRequests > 0 ? Number((totalErrors / totalRequests).toFixed(4)) : 0,
-        bytesUp: totalBytesUp,
-        bytesDown: totalBytesDown,
+        bytesUp: this.lifetimeBytesUp,
+        bytesDown: this.lifetimeBytesDown,
       },
       updateTime: now,
     }

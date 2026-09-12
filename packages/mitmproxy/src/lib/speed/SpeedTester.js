@@ -197,7 +197,7 @@ class SpeedTester {
         const rewritten = cloudflareRoute.rewriteIp(ip, this.hostname)
         if (rewritten !== ip) {
           // 命中 Cloudflare 路由重定向：测速内容替换为优选 IP 或 CNAME 域名
-          item.host = cloudflareRoute.getPreferredEndpoint() || rewritten
+          item.host = rewritten
           item.cf = true
           item.cfOriginalHost = ip
         }

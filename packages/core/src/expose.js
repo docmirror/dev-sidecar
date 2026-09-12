@@ -41,7 +41,9 @@ for (const key in modules.plugin) {
         start: async () => log.warn(`插件【${key}】不可用，无法启动`),
         stop: async () => {},
         close: async () => {},
-        run: async () => { throw new Error(`插件【${key}】不可用`) },
+        run: async () => {
+          throw new Error(`插件【${key}】不可用`)
+        },
       }),
     }
     const stubApi = setupPlugin(`plugin.${key}`, stub, context, config)
@@ -63,6 +65,7 @@ async function startup ({ mitmproxyPath, setting }) {
   const conf = config.get()
   const tasks = []
 
+  // 并行启动：服务未监听瞬间的请求失败属计划内行为（代理未开请求同样会失败）
   if (conf.server.enabled && !status.server.enabled) {
     tasks.push((async () => {
       try {
@@ -104,7 +107,7 @@ async function startup ({ mitmproxyPath, setting }) {
   }
 
   if (tasks.length > 0) {
-    // server、系统代理、各插件之间没有相互依赖，并行启动以缩短整体等待时间
+    // 系统代理与各插件之间没有相互依赖，并行启动以缩短整体等待时间
     await Promise.all(tasks)
   }
 }

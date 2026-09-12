@@ -10,6 +10,9 @@ const createFakeServerCenter = require('./createFakeServerCenter')
 const createRequestHandler = require('./createRequestHandler')
 const createUpgradeHandler = require('./createUpgradeHandler')
 
+// 进程解析器清理函数（createProxy 时写入，close 时调用，避免重复 start 泄漏 interval）
+let stopProcessResolver = null
+
 module.exports = {
   createProxy ({
     host = config.defaultHost,
@@ -157,11 +160,20 @@ module.exports = {
 
     // 启动流量统计与进程解析
     trafficMonitor.start([httpPort, httpsPort])
-    startProcessResolver(trafficMonitor)
+    if (stopProcessResolver) {
+      stopProcessResolver()
+    }
+    stopProcessResolver = startProcessResolver(trafficMonitor)
 
     return [httpsServer, httpServer]
   },
   createCA (caPaths) {
     return tlsUtils.initCA(caPaths)
+  },
+  stopProcessResolver () {
+    if (stopProcessResolver) {
+      stopProcessResolver()
+      stopProcessResolver = null
+    }
   },
 }

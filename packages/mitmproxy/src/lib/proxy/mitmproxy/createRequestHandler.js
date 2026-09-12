@@ -16,15 +16,23 @@ const MAX_SLOW_TIME = 8000 // 超过此时间 则认为太慢了
 const MAX_RETRY_BODY_SIZE = 1024 * 1024 // 自动重试时最多缓存 1MB 请求体，超过则跳过重试
 const WWW_AUTH_HEADER_RE = /^www-authenticate$/i
 
-// 判断当前请求是否支持自动重试（方法可重试且请求体不超过上限）
+// 可能携带请求体的方法；缺少 Content-Length 时无法有界缓存，禁止重试
+const BODY_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
+
+// HTML 转义，防止请求可控内容写入错误页造成反射型 XSS
+function escapeHtml (value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+// 判断当前请求是否支持自动重试（方法可重试且请求体可有界缓存）
 function canRetryWithBody (retryConfig, req) {
   const method = (req.method || 'GET').toUpperCase()
   if (!retryConfig.methods.includes(method)) {
-    return false
-  }
-
-  const contentLength = Number.parseInt(req.headers['content-length'], 10)
-  if (Number.isFinite(contentLength) && contentLength > MAX_RETRY_BODY_SIZE) {
     return false
   }
 
@@ -38,16 +46,29 @@ function canRetryWithBody (retryConfig, req) {
     return false
   }
 
+  if (BODY_METHODS.has(method)) {
+    const contentLength = Number.parseInt(req.headers['content-length'], 10)
+    // 未知长度无法有界缓存，避免无上限占用内存；超限则跳过重试
+    if (!Number.isFinite(contentLength) || contentLength > MAX_RETRY_BODY_SIZE) {
+      return false
+    }
+  }
+
   return true
 }
 
-// 缓存请求体，供自动重试时重新发送
+// 缓存请求体，供自动重试时重新发送（有界：超过 MAX_RETRY_BODY_SIZE 则中止）
 function bufferRequestBody (req) {
   return new Promise((resolve, reject) => {
     const chunks = []
     let size = 0
     req.on('data', (chunk) => {
       size += chunk.length
+      if (size > MAX_RETRY_BODY_SIZE) {
+        req.destroy()
+        reject(new Error(`请求体超过重试缓存上限 ${MAX_RETRY_BODY_SIZE} bytes`))
+        return
+      }
       chunks.push(chunk)
     })
     req.on('end', () => {
@@ -437,7 +458,8 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
         return false
       }
 
-      const retryConfig = context.retryConfig
+      // 每次循环读取 context.retryConfig：proxyRequestPromise 内校验失败会将其置空，
+      // 避免本地快照仍非空导致 POST/无 Content-Length 请求被空体重试
       let retryCount = 0
       let proxyRes
       while (true) {
@@ -445,22 +467,22 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           proxyRes = await proxyRequestPromise()
         } catch (e) {
           // 连接失败（连接超时、连接重置等）时也会重试；这些错误原本会由下方 catch 包装成 500 页面返回给浏览器
-          if (retryConfig && retryCount < retryConfig.times && e && e.retryable) {
+          if (context.retryConfig && retryCount < context.retryConfig.times && e && e.retryable) {
             retryCount++
             context.retryCount = retryCount
             res.setHeader('DS-Retry', String(retryCount))
-            log.warn(`请求失败，自动重试 (${retryCount}/${retryConfig.times}): ${url}, error: ${e.code || e.message}`)
+            log.warn(`请求失败，自动重试 (${retryCount}/${context.retryConfig.times}): ${url}, error: ${e.code || e.message}`)
             continue
           }
           throw e
         }
 
         // 收到配置的状态码（默认 500）时自动重试
-        if (retryConfig && retryCount < retryConfig.times && retryConfig.statuses.includes(proxyRes.statusCode)) {
+        if (context.retryConfig && retryCount < context.retryConfig.times && context.retryConfig.statuses.includes(proxyRes.statusCode)) {
           retryCount++
           context.retryCount = retryCount
           res.setHeader('DS-Retry', String(retryCount))
-          log.warn(`收到 ${proxyRes.statusCode} 响应，自动重试 (${retryCount}/${retryConfig.times}): ${url}`)
+          log.warn(`收到 ${proxyRes.statusCode} 响应，自动重试 (${retryCount}/${context.retryConfig.times}): ${url}`)
           proxyRes.on('error', () => {})
           proxyRes.resume()
           continue
@@ -554,13 +576,35 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       if (!res.writableEnded) {
         try {
           const status = e.status || 500
+          const errorMsg = `目标网站请求错误：【${e.code || (e.status || 'UNKNOWN')}】 ${e.message}`
+          const retryInfo = context.retryCount > 0 ? `自动重试：已尝试 ${context.retryCount} 次` : ''
+          const target = `目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
 
-          // 浏览器导航（document/iframe）才返回 HTML 错误页；
-          // 图片/脚本等 no-cors 子资源返回 text/plain，避免被 Chromium ORB 拦截成 ERR_BLOCKED_BY_ORB
+          // 内容协商：
+          // 1) 浏览器导航（document/iframe）→ HTML 统一样式错误页（黑底白字），动态值需转义防 XSS
+          // 2) 明确要 JSON 的客户端 → application/json，避免把 HTML/text 当 JSON 解析失败
+          // 3) 图片/脚本等 no-cors 子资源 → text/plain，避免被 Chromium ORB 拦截
           const accept = req.headers.accept || ''
           const secFetchDest = req.headers['sec-fetch-dest'] || ''
           const acceptsHtml = accept.includes('text/html') || secFetchDest === 'document' || secFetchDest === 'iframe'
-          const headers = { 'Content-Type': acceptsHtml ? 'text/html;charset=UTF8' : 'text/plain; charset=utf-8' }
+          // 明确声明要 JSON，或典型 XHR API 调用（非文档/子资源）时返回 JSON
+          const isAssetDest = secFetchDest === 'image'
+            || secFetchDest === 'script'
+            || secFetchDest === 'style'
+            || secFetchDest === 'font'
+            || secFetchDest === 'audio'
+            || secFetchDest === 'video'
+          const acceptsJson = !acceptsHtml && !isAssetDest && (
+            accept.includes('application/json')
+            || req.headers['x-requested-with'] === 'XMLHttpRequest'
+          )
+          const headers = {
+            'Content-Type': acceptsHtml
+              ? 'text/html;charset=UTF8'
+              : acceptsJson
+                ? 'application/json; charset=utf-8'
+                : 'text/plain; charset=utf-8',
+          }
 
           // headers.Access-Control-Allow-*：避免跨域问题
           if (rOptions.headers.origin) {
@@ -570,11 +614,9 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
           }
 
           res.writeHead(status, headers)
-          const errorMsg = `目标网站请求错误：【${e.code || (e.status || 'UNKNOWN')}】 ${e.message}`
-          const retryInfo = context.retryCount > 0 ? `自动重试：已尝试 ${context.retryCount} 次` : ''
-          const target = `目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
 
           if (acceptsHtml) {
+            // 动态值必须转义，避免 hostname/path/e.message 写成可执行标记
             res.write(`<style>
               p {
                 margin: 10px 0;
@@ -583,10 +625,18 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
               }
             </style>
             <p>DevSidecar Error:</p>
-            <p>${errorMsg}</p>
-            ${retryInfo ? `<p>${retryInfo}</p>` : ''}
-            <p>${target}</p>`,
+            <p>${escapeHtml(errorMsg)}</p>
+            ${retryInfo ? `<p>${escapeHtml(retryInfo)}</p>` : ''}
+            <p>${escapeHtml(target)}</p>`,
             )
+          } else if (acceptsJson) {
+            res.write(JSON.stringify({
+              error: 'DevSidecar Error',
+              message: errorMsg,
+              code: e.code || e.status || 'UNKNOWN',
+              target,
+              ...(retryInfo ? { retryInfo } : {}),
+            }))
           } else {
             res.write(`DevSidecar Error:\n${errorMsg}\n${retryInfo ? `${retryInfo}\n` : ''}${target}`)
           }

@@ -53,6 +53,52 @@ function removeWindowsEnvVariable (regKey, key) {
   })
 }
 
+function getWindowsEnvVariable (regKey, key) {
+  return new Promise((resolve) => {
+    regKey.get(key, (err, item) => {
+      if (err || !item) {
+        resolve(null)
+      } else {
+        resolve(item.value)
+      }
+    })
+  })
+}
+
+// 记录开启代理前的环境变量值，关闭时恢复，避免覆盖用户/其他工具已有配置
+function getProxyEnvBackupPath () {
+  loadConfig()
+  return path.join(config.get().server.setting.userBasePath, '/proxy-env-backup.json')
+}
+
+async function saveProxyEnvBackup (regKey, keys) {
+  try {
+    const backup = {}
+    for (const key of keys) {
+      backup[key] = await getWindowsEnvVariable(regKey, key)
+    }
+    fs.writeFileSync(getProxyEnvBackupPath(), JSON.stringify(backup), 'utf-8')
+  } catch (e) {
+    log.warn('备份代理环境变量原值失败:', e)
+  }
+}
+
+function restoreProxyEnvBackup () {
+  const backupPath = getProxyEnvBackupPath()
+  if (!fs.existsSync(backupPath)) {
+    // 无备份：退回旧行为（直接删除），保证兼容
+    return null
+  }
+  try {
+    const backup = JSON.parse(fs.readFileSync(backupPath, 'utf-8'))
+    fs.unlinkSync(backupPath)
+    return backup
+  } catch (e) {
+    log.warn('读取代理环境变量备份失败:', e)
+    return null
+  }
+}
+
 async function broadcastWindowsEnvChange (exec) {
   try {
     await exec('setx DS_REFRESH "1"', { type: 'cmd' })
@@ -67,30 +113,13 @@ async function setWindowsEnvVariables (exec, envList) {
   }
 
   const regKey = createEnvRegKey()
+  // 覆盖前保存原值，便于关闭代理时恢复
+  await saveProxyEnvBackup(regKey, envList.map(item => item.key))
   for (const item of envList) {
     await setWindowsEnvVariable(regKey, item.key, item.value)
     process.env[item.key] = String(item.value)
   }
   await broadcastWindowsEnvChange(exec)
-}
-
-async function removeWindowsEnvVariables (exec, keys) {
-  if (!keys || keys.length === 0) {
-    return
-  }
-
-  const regKey = createEnvRegKey()
-  let removed = false
-  for (const key of keys) {
-    const existed = await removeWindowsEnvVariable(regKey, key)
-    if (existed) {
-      delete process.env[key]
-      removed = true
-    }
-  }
-  if (removed) {
-    await broadcastWindowsEnvChange(exec)
-  }
 }
 
 async function downloadDomesticDomainAllowListAsync () {
@@ -609,9 +638,29 @@ const executor = {
       }
 
       try {
-        await removeWindowsEnvVariables(exec, ['HTTPS_PROXY', 'HTTP_PROXY', 'REQUEST_CA_BUNDLE'])
+        const keys = ['HTTPS_PROXY', 'HTTP_PROXY', 'REQUEST_CA_BUNDLE']
+        const backup = restoreProxyEnvBackup()
+        const regKey = createEnvRegKey()
+        let changed = false
+        for (const key of keys) {
+          const previous = backup ? backup[key] : undefined
+          if (backup && previous != null) {
+            await setWindowsEnvVariable(regKey, key, previous)
+            process.env[key] = String(previous)
+            changed = true
+          } else {
+            const existed = await removeWindowsEnvVariable(regKey, key)
+            if (existed) {
+              delete process.env[key]
+              changed = true
+            }
+          }
+        }
+        if (changed) {
+          await broadcastWindowsEnvChange(exec)
+        }
       } catch (e) {
-        log.error('删除环境变量 HTTPS_PROXY、HTTP_PROXY、REQUEST_CA_BUNDLE 失败:', e)
+        log.error('恢复/删除环境变量 HTTPS_PROXY、HTTP_PROXY、REQUEST_CA_BUNDLE 失败:', e)
       }
 
       return true

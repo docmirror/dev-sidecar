@@ -344,12 +344,14 @@ export default defineComponent({
             validatedData[hostname] = {
               alive: item.alive || [],
               backupList: item.backupList.map(ipObj => {
-                // 标准化IP地址格式
+                // 标准化IP地址格式；保留 Cloudflare 元数据，供 hasCf / 模板展示
                 const standardized = {
                   host: ipObj.host,
                   port: ipObj.port || 443,
                   dns: ipObj.dns || 'unknown',
-                  time: ipObj.time || null
+                  time: ipObj.time || null,
+                  cf: ipObj.cf === true,
+                  cfOriginalHost: ipObj.cfOriginalHost
                 }
                 return standardized
               })

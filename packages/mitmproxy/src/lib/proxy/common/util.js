@@ -172,15 +172,23 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
 
   delete headers['proxy-connection']
   let agent
+  let tlsVersionOptions = null
   if (!externalProxyUrl) {
+    const timeoutConfig = getTimeoutConfig(hostname, serverSetting)
     // keepAlive
     if (headers.connection !== 'close') {
-      const timeoutConfig = getTimeoutConfig(hostname, serverSetting)
       // log.info(`get timeoutConfig '${hostname}':`, timeoutConfig)
       agent = createAgent(protocol, timeoutConfig, serverSetting.verifySsl)
       headers.connection = 'keep-alive'
     } else {
+      // Connection: close 时不走 Agent，需把 TLS 版本映射写到直连请求 options
       agent = false
+      if (protocol === 'https:' && timeoutConfig.tlsVersion) {
+        tlsVersionOptions = {
+          minVersion: timeoutConfig.tlsVersion,
+          maxVersion: timeoutConfig.tlsVersion,
+        }
+      }
     }
   } else {
     agent = util.getTunnelAgent(protocol === 'https:', externalProxyUrl)
@@ -200,6 +208,7 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
     // 增大响应头大小限制（默认 16KB），
     // 解决 issue #575 中 Google Cloud Console 等站点响应头过大导致的 HPE_HEADER_OVERFLOW 错误
     maxHeaderSize: 65536,
+    ...tlsVersionOptions,
   }
 
   if (protocol === 'http:' && externalProxyUrl) {

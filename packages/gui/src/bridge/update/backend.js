@@ -68,7 +68,8 @@ function getPlatformAssetInfo () {
     partArch = 'arm64'
     fullArch = 'arm64'
   } else if (arch === 'arm') {
-    partArch = 'x64' // 无 arm 增量包时兜底
+    // 无 arm 增量包：不要回退到 x64 增量包，否则可能把不兼容补丁装到 ARM 安装上
+    partArch = null
     fullArch = 'armv7l'
   } else {
     partArch = 'x64'
@@ -98,8 +99,27 @@ function extractVersion (versionData) {
   return null
 }
 
+function getUpdateDownloadDir (app) {
+  // 安装目录（Program Files / .app 内）可能只读，下载到 userData/update
+  const userData = app.getPath('userData')
+  const fileDir = path.join(userData, 'update')
+  fs.mkdirSync(fileDir, { recursive: true })
+  return fileDir
+}
+
 function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
   log.info('download url', uri)
+  const writeStream = fs.createWriteStream(filePath)
+  let settled = false
+  const fail = (err) => {
+    if (settled) {
+      return
+    }
+    settled = true
+    writeStream.destroy()
+    log.error('下载升级包失败:', err)
+    onError(err)
+  }
   progress(request(uri, { ca: getTrustedCaList() }), {
     // throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
     // delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
@@ -109,16 +129,17 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
       onProgress(state.percent * 100)
       log.log('progress', state.percent)
     })
-    .on('error', (err) => {
-      // Do something with err
-      log.error('下载升级包失败:', err)
-      onError(err)
-    })
-    .on('end', () => {
-      // Do something after request finishes
+    .on('error', fail)
+    .pipe(writeStream)
+    .on('error', fail)
+    .on('finish', () => {
+      // 必须等写流 flush 完成，避免文件未落盘就通知安装
+      if (settled) {
+        return
+      }
+      settled = true
       onSuccess(filePath)
     })
-    .pipe(fs.createWriteStream(filePath))
 }
 
 /**
@@ -225,9 +246,12 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
 
               // 查找当前平台+架构对应的增量更新包
               const assetInfo = getPlatformAssetInfo()
-              const partPrefix = `update-${assetInfo.partPlatform}-${assetInfo.partArch}-`
-              const partAsset = versionData.assets.find(a => a.name && a.name.startsWith(partPrefix) && a.name.endsWith('.zip'))
-              const partPackage = partAsset ? partAsset.browser_download_url : null
+              let partPackage = null
+              if (assetInfo.partArch) {
+                const partPrefix = `update-${assetInfo.partPlatform}-${assetInfo.partArch}-`
+                const partAsset = versionData.assets.find(a => a.name && a.name.startsWith(partPrefix) && a.name.endsWith('.zip'))
+                partPackage = partAsset ? partAsset.browser_download_url : null
+              }
 
               // 查找当前平台+架构对应的完整安装包
               const fullPrefix = `DevSidecar-${onlineVersion}-${assetInfo.platform}-${assetInfo.fullArch}.`
@@ -299,14 +323,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
 
   // 下载升级包
   function downloadPart (app, value) {
-    const appPath = appPathUtil.getAppRootPath(app)
-    const fileDir = path.join(appPath, 'update')
+    const fileDir = getUpdateDownloadDir(app)
     log.info('download dir:', fileDir)
-    try {
-      fs.accessSync(fileDir, fs.constants.F_OK)
-    } catch {
-      fs.mkdirSync(fileDir)
-    }
     const filePath = path.join(fileDir, `${value.version}.zip`)
 
     downloadFile(value.partPackage, filePath, (data) => {
@@ -333,14 +351,8 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
       sendUpdateMessage({ key: 'error', value: new Error('未找到对应的完整安装包'), error: '未找到对应的完整安装包' })
       return
     }
-    const appPath = appPathUtil.getAppRootPath(app)
-    const fileDir = path.join(appPath, 'update')
+    const fileDir = getUpdateDownloadDir(app)
     log.info('download full dir:', fileDir)
-    try {
-      fs.accessSync(fileDir, fs.constants.F_OK)
-    } catch {
-      fs.mkdirSync(fileDir)
-    }
     const fileName = value.fullPackageName || `${value.version}-${getPlatformAssetInfo().platform}-${getPlatformAssetInfo().fullArch}`
     const filePath = path.join(fileDir, fileName)
 
