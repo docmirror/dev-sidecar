@@ -10,7 +10,7 @@ shamefullyHoist: true
 overrides:
   axios: '>=1.18.1'
   brace-expansion@<2.0.0: '1.1.11'
-  cross-spawn: '>=7.0.5'
+  # cross-spawn: 不要加 override——与 electron-builder/SEA 打包冲突（Production dependency cross-spawn not found）
   dns-packet: '>=5.6.1'
   form-data: '>=4.0.6'
   hoek: 'npm:@hapi/hoek@>=10.0.0'
