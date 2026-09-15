@@ -167,8 +167,12 @@ class TrafficMonitor {
       if (!options.keepExistingSocket) {
         const bytesRead = socket.bytesRead || 0
         const bytesWritten = socket.bytesWritten || 0
-        entry.bytesUp += Math.max(0, bytesRead - entry.lastBytesUp)
-        entry.bytesDown += Math.max(0, bytesWritten - entry.lastBytesDown)
+        const deltaUp = Math.max(0, bytesRead - entry.lastBytesUp)
+        const deltaDown = Math.max(0, bytesWritten - entry.lastBytesDown)
+        entry.bytesUp += deltaUp
+        entry.bytesDown += deltaDown
+        this.lifetimeBytesUp += deltaUp
+        this.lifetimeBytesDown += deltaDown
         entry.lastBytesUp = bytesRead
         entry.lastBytesDown = bytesWritten
         entry.socket = socket
@@ -177,9 +181,14 @@ class TrafficMonitor {
       entry.lastActive = now
     }
     if (!options.keepExistingSocket) {
-      socket.once('close', () => {
-        this.finalizeSocket(clientPort, socket)
-      })
+      // 同一 socket 只挂一次 close，避免 keep-alive 请求叠加监听器
+      const flagKey = Symbol.for('dev-sidecar.traffic.closeAttached')
+      if (!socket[flagKey]) {
+        socket[flagKey] = true
+        socket.once('close', () => {
+          this.finalizeSocket(clientPort, socket)
+        })
+      }
     }
     return entry
   }
@@ -298,10 +307,19 @@ class TrafficMonitor {
     return false
   }
 
+  sweepBlockedHosts (now) {
+    for (const [host, expiresAt] of this.blockedHosts) {
+      if (now >= expiresAt) {
+        this.blockedHosts.delete(host)
+      }
+    }
+  }
+
   sampleAndSend () {
     const now = Date.now()
     const dt = Math.max(1, (now - this.lastSampleTime) / 1000)
     this.lastSampleTime = now
+    this.sweepBlockedHosts(now)
 
     for (const entry of this.entries.values()) {
       const socket = entry.socket

@@ -175,8 +175,10 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
   let tlsVersionOptions = null
   if (!externalProxyUrl) {
     const timeoutConfig = getTimeoutConfig(hostname, serverSetting)
-    // keepAlive
-    if (headers.connection !== 'close') {
+    // keepAlive；Connection 头大小写不敏感，且可能是逗号分隔 token 列表
+    const connectionHeader = String(headers.connection || '').toLowerCase()
+    const wantsClose = connectionHeader.split(',').map(t => t.trim()).includes('close')
+    if (!wantsClose) {
       // log.info(`get timeoutConfig '${hostname}':`, timeoutConfig)
       agent = createAgent(protocol, timeoutConfig, serverSetting.verifySsl)
       headers.connection = 'keep-alive'

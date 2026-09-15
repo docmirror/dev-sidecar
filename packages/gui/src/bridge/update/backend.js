@@ -353,8 +353,14 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     }
     const fileDir = getUpdateDownloadDir(app)
     log.info('download full dir:', fileDir)
-    const fileName = value.fullPackageName || `${value.version}-${getPlatformAssetInfo().platform}-${getPlatformAssetInfo().fullArch}`
+    // 文件名来自 renderer/更新元数据，必须限制在 update 目录内，防止 path traversal
+    const rawName = value.fullPackageName || `${value.version}-${getPlatformAssetInfo().platform}-${getPlatformAssetInfo().fullArch}`
+    const fileName = path.basename(String(rawName))
     const filePath = path.join(fileDir, fileName)
+    if (!filePath.startsWith(fileDir + path.sep)) {
+      sendUpdateMessage({ key: 'error', value: new Error('非法的安装包文件名'), error: '非法的安装包文件名' })
+      return
+    }
 
     downloadFile(value.fullPackage, filePath, (data) => {
       win.webContents.send('update', { key: 'progress', value: Number.parseInt(data) })

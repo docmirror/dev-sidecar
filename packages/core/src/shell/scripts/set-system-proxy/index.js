@@ -113,8 +113,10 @@ async function setWindowsEnvVariables (exec, envList) {
   }
 
   const regKey = createEnvRegKey()
-  // 覆盖前保存原值，便于关闭代理时恢复
-  await saveProxyEnvBackup(regKey, envList.map(item => item.key))
+  // 仅在尚无备份时保存原值：重复 enable 时不能把 DS 注入值再当成“用户原值”
+  if (!fs.existsSync(getProxyEnvBackupPath())) {
+    await saveProxyEnvBackup(regKey, envList.map(item => item.key))
+  }
   for (const item of envList) {
     await setWindowsEnvVariable(regKey, item.key, item.value)
     process.env[item.key] = String(item.value)
@@ -638,8 +640,10 @@ const executor = {
       }
 
       try {
-        const keys = ['HTTPS_PROXY', 'HTTP_PROXY', 'REQUEST_CA_BUNDLE']
+        const defaultKeys = ['HTTPS_PROXY', 'HTTP_PROXY', 'REQUEST_CA_BUNDLE']
         const backup = restoreProxyEnvBackup()
+        // 有备份时只处理备份中的 key，避免误删用户本来就有、但 DS 未写入的变量
+        const keys = backup ? Object.keys(backup) : defaultKeys
         const regKey = createEnvRegKey()
         let changed = false
         for (const key of keys) {
