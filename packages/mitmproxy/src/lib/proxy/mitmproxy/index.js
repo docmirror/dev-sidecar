@@ -1,12 +1,17 @@
 const http = require('node:http')
 const log = require('../../../utils/util.log.server')
 const speedTest = require('../../speed/index.js')
+const trafficMonitor = require('../../traffic/TrafficMonitor')
+const { startProcessResolver } = require('../../traffic/processResolver')
 const config = require('../common/config')
 const tlsUtils = require('../tls/tlsUtils')
 const createConnectHandler = require('./createConnectHandler')
 const createFakeServerCenter = require('./createFakeServerCenter')
 const createRequestHandler = require('./createRequestHandler')
 const createUpgradeHandler = require('./createUpgradeHandler')
+
+// 进程解析器清理函数（createProxy 时写入，close 时调用，避免重复 start 泄漏 interval）
+let stopProcessResolver = null
 
 module.exports = {
   createProxy ({
@@ -41,19 +46,13 @@ module.exports = {
 
     port = ~~port
     const speedTestConfig = dnsConfig.speedTest
-    const dnsMap = dnsConfig.dnsMap
     if (speedTestConfig) {
-      const dnsProviders = speedTestConfig.dnsProviders
-      const map = {}
-      for (const dnsProvider of dnsProviders) {
-        if (dnsMap[dnsProvider]) {
-          map[dnsProvider] = dnsMap[dnsProvider]
-        }
-      }
-      speedTest.initSpeedTest({ ...speedTestConfig, dnsMap: map })
+      // 将完整 dnsConfig 传给测速器，由测速器按域名动态选择 DNS：
+      // 预设IP > DNS设置(mapping) > IP测速勾选的 dnsProviders
+      speedTest.initSpeedTest({ ...speedTestConfig, dnsConfig })
     }
 
-    const requestHandler = createRequestHandler(
+    const rawRequestHandler = createRequestHandler(
       createIntercepts,
       middlewares,
       externalProxy,
@@ -61,6 +60,12 @@ module.exports = {
       setting,
       compatibleConfig,
     )
+
+    // 所有 HTTP 请求（含 MITM 解密后的 HTTPS 请求）都会经过这里，统一做流量统计
+    const requestHandler = (req, res, ssl) => {
+      trafficMonitor.attachRequest(req, res)
+      rawRequestHandler(req, res, ssl)
+    }
 
     const upgradeHandler = createUpgradeHandler(setting)
 
@@ -153,9 +158,22 @@ module.exports = {
     serverListen(httpsServer, true, httpsPort, host)
     serverListen(httpServer, false, httpPort, host)
 
+    // 启动流量统计与进程解析
+    trafficMonitor.start([httpPort, httpsPort])
+    if (stopProcessResolver) {
+      stopProcessResolver()
+    }
+    stopProcessResolver = startProcessResolver(trafficMonitor)
+
     return [httpsServer, httpServer]
   },
   createCA (caPaths) {
     return tlsUtils.initCA(caPaths)
+  },
+  stopProcessResolver () {
+    if (stopProcessResolver) {
+      stopProcessResolver()
+      stopProcessResolver = null
+    }
   },
 }

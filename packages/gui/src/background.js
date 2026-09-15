@@ -1,4 +1,5 @@
 'use strict'
+import './utils/util.log-env.js'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import DevSidecar from '@docmirror/dev-sidecar'
@@ -14,6 +15,12 @@ log.info(`background.js start, platform is ${process.platform}`)
 const isWindows = process.platform === 'win32'
 const isLinux = process.platform === 'linux'
 const isMac = process.platform === 'darwin'
+
+if (isWindows) {
+  // 让 Windows 托盘气泡/通知/任务栏显示正常软件名，而不是开发模式默认的 electron.app
+  app.setName('dev-sidecar')
+  app.setAppUserModelId('dev-sidecar')
+}
 
 // 禁用不需要的 Chromium 组件以减少内存和 CPU 占用
 // 这些开关必须在 app.whenReady() 之前设置
@@ -240,18 +247,30 @@ function changeAppConfig (config) {
 }
 
 function loadAppIcon () {
-  // 优先：从 asar 内读取（fs.readFileSync 被 Electron 补丁支持 asar）
-  try {
-    const p = path.join(app.getAppPath(), 'dist', 'icon.png')
-    if (fs.existsSync(p)) return nativeImage.createFromBuffer(fs.readFileSync(p))
-  } catch { /* ignore */ }
+  const candidates = []
+
+  // Windows 下优先使用 exe 同款 ico，任务栏图标更清晰
+  if (isWindows) {
+    candidates.push(path.join(process.resourcesPath, 'extra', 'icons', 'icon.ico'))
+  }
+  // 优先：从 asar 内读取
+  candidates.push(path.join(app.getAppPath(), 'dist', 'icon.png'))
   // 回退：asar.unpacked 真实路径
-  try {
-    const p = path.join(app.getAppPath(), '..', 'app.asar.unpacked', 'dist', 'icon.png')
-    if (fs.existsSync(p)) return nativeImage.createFromPath(p)
-  } catch { /* ignore */ }
+  candidates.push(path.join(app.getAppPath(), '..', 'app.asar.unpacked', 'dist', 'icon.png'))
+  // 再回退：extra 资源目录
+  candidates.push(path.join(process.resourcesPath, 'extra', 'icons', '512x512.png'))
   // 开发模式回退
-  return nativeImage.createFromPath(path.resolve('public/icon.png'))
+  candidates.push(path.resolve('public/icon.png'))
+
+  for (const p of candidates) {
+    try {
+      if (p && fs.existsSync(p)) {
+        return nativeImage.createFromPath(p)
+      }
+    } catch { /* ignore */ }
+  }
+
+  return nativeImage.createEmpty()
 }
 
 function createWindow (startHideWindow, autoQuitIfError = true) {
@@ -295,9 +314,7 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) {
-      setTimeout(openDevTools, 2000)
-    }
+    // 默认不自动打开 DevTools，需要调试时可手动按 F12 或通过托盘菜单打开
   } else {
     // Load the index.html when not in development
     win.loadFile(path.join(app.getAppPath(), 'dist', 'index.html'))

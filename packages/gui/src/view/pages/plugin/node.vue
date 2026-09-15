@@ -54,6 +54,33 @@ export default defineComponent({
       console.log('type', type)
       await this.$api.plugin.node.setRegistry({ registry, type })
     },
+    restoreVariableDefault (item) {
+      if (item && item.defaultValue != null) {
+        item.value = item.defaultValue
+      }
+    },
+    async applyBefore () {
+      // 将页面上编辑后的镜像变量值保存到 config，再交给 saveConfig 持久化
+      if (this.npmVariables && this.npmVariables.length > 0) {
+        const envVariables = {}
+        for (const item of this.npmVariables) {
+          if (item.key) {
+            envVariables[item.key] = item.value
+          }
+        }
+        this.config.plugin.node.envVariables = envVariables
+      }
+    },
+    async applyAfter () {
+      // 应用按钮点击后，应用当前配置里的镜像环境变量
+      try {
+        await this.$api.plugin.node.setVariables()
+        await this.ready()
+      } catch (e) {
+        console.error('set variables error:', e)
+        this.$message.warning('镜像变量设置失败，请查看日志')
+      }
+    },
     setNpmVariableAll () {
       this.saveConfig().then(() => {
         this.$api.plugin.node.setVariables()
@@ -137,12 +164,17 @@ export default defineComponent({
             <a-col :span="10">
               <a-input v-model:value="item.key" :title="item.key" read-only spellcheck="false" />
             </a-col>
-            <a-col :span="13">
-              <a-input v-model:value="item.value" :title="item.value" read-only spellcheck="false" />
+            <a-col :span="11">
+              <a-input v-model:value="item.value" :title="item.value" spellcheck="false" />
             </a-col>
             <a-col :span="1">
               <CheckOutlined v-if="item.exists && item.hadSet" title="已设置" style="color:green" />
               <ExclamationCircleOutlined v-else title="还未设置" style="color:red" />
+            </a-col>
+            <a-col :span="2">
+              <a-button size="small" type="link" :disabled="item.defaultValue == null" @click="restoreVariableDefault(item)">
+                默认
+              </a-button>
             </a-col>
           </a-row>
         </a-form-item>

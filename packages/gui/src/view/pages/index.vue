@@ -62,6 +62,15 @@ export default {
     await this.doCheckRootCa()
     await this.reloadConfig()
     this.status = this.$status
+    // setting.json 未开启 overwall 时，增强功能开关不显示，同时确保增强功能配置不生效
+    if (!this.setting.overwall && this.config?.plugin?.overwall?.enabled) {
+      this.config.plugin.overwall.enabled = false
+      const saveRet = await this.$api.config.save(lodash.cloneDeep(this.config))
+      this.config = saveRet.allConfig
+      if (this.status.server?.enabled) {
+        await this.$api.server.restart()
+      }
+    }
     this.switchBtns = this.createSwitchBtns()
     // 合并全局更新参数到 data() 中的默认值，避免 $global.update 尚未
     // 初始化时（update/front.js 在 mount 之后才执行）覆盖为 undefined
@@ -203,19 +212,25 @@ export default {
       btns.server = this.createSwitchBtn('server', '代理服务', this.$api.server, status)
       btns.proxy = this.createSwitchBtn('proxy', '系统代理', this.$api.proxy, status)
       lodash.forEach(status.plugin, (item, key) => {
+        // setting.json 未开启 overwall 时，首页不显示“增强功能”开关
+        if (key === 'overwall' && !this.setting.overwall) {
+          return
+        }
         if (this.config.plugin[key].statusOff) {
           return
         }
-        btns[key] = this.createSwitchBtn(key, this.config.plugin[key].name, this.$api.plugin[key], status.plugin, this.config.plugin[key].tip)
+        btns[key] = this.createSwitchBtn(key, this.config.plugin[key].name, this.$api.plugin[key], status.plugin, this.config.plugin[key].tip, this.config.plugin[key])
       })
       return btns
     },
-    createSwitchBtn (key, label, apiTarget, statusParent, tip) {
+    createSwitchBtn (key, label, apiTarget, statusParent, tip, pluginConfig) {
       return {
         loading: false,
         key,
         label,
         tip,
+        isPlugin: pluginConfig != null,
+        restartServer: pluginConfig != null && pluginConfig.restartServer === true,
         status: () => {
           return statusParent[key].enabled
         },
@@ -238,12 +253,25 @@ export default {
       }
     },
 
-    onSwitchClick (btn, openApi, closeApi, checked) {
-      if (checked) {
-        return this.apiCall(btn, openApi)
-      } else {
-        return this.apiCall(btn, closeApi)
+    async onSwitchClick (btn, openApi, closeApi, checked) {
+      const ret = checked
+        ? await this.apiCall(btn, openApi)
+        : await this.apiCall(btn, closeApi)
+
+      // 插件快捷开关需要持久化 enabled 状态，并与对应设置页保持同步
+      if (btn.isPlugin) {
+        try {
+          this.config.plugin[btn.key].enabled = checked
+          const saveRet = await this.$api.config.save(lodash.cloneDeep(this.config))
+          this.config = saveRet.allConfig
+          if (btn.restartServer && this.status.server && this.status.server.enabled) {
+            await this.$api.server.restart()
+          }
+        } catch (e) {
+          console.error('保存插件开关状态失败:', e)
+        }
       }
+      return ret
     },
     onServerClick (checked) {
       return this.onSwitchClick(this.server, this.$api.server.start, this.$api.server.close, checked)

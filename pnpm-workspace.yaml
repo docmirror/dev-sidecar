@@ -6,17 +6,9 @@ packages:
 
 shamefullyHoist: true
 
-overrides:
-  axios: '>=1.18.1'
-  brace-expansion@<2.0.0: '1.1.11'
-  cross-spawn: '>=7.0.5'
-  dns-packet: '>=5.6.1'
-  form-data: '>=4.0.6'
-  hoek: 'npm:@hapi/hoek@>=10.0.0'
-  ip: '>=2.0.1'
-  minimist: '>=1.2.6'
-  qs: '>=6.15.3'
-  tough-cookie: '>=4.1.3 <5.0.0'
+# 不要恢复 overrides：cross-spawn / form-data 等会与 electron-builder 生产依赖解析冲突
+# （Production dependency not found），见历史 commit「移除 cross-spawn 覆盖以修复 Windows 打包失败」。
+# 安全版本需通过升级直接依赖（如 request）解决，而不是全局 override。
 
 supportedArchitectures:
   os:

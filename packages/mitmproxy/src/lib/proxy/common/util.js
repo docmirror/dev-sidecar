@@ -17,24 +17,50 @@ let socketId = 0
 
 let httpsOverHttpAgent, httpOverHttpsAgent, httpsOverHttpsAgent
 
+function normalizeTlsVersion (tlsVersion) {
+  if (tlsVersion === 'TLSv1.2' || tlsVersion === '1.2' || tlsVersion === 'tls1.2') {
+    return 'TLSv1.2'
+  }
+  if (tlsVersion === 'TLSv1.3' || tlsVersion === '1.3' || tlsVersion === 'tls1.3') {
+    return 'TLSv1.3'
+  }
+  return ''
+}
+
 function getTimeoutConfig (hostname, serverSetting) {
   const timeoutMapping = serverSetting.timeoutMapping
 
   const timeoutConfig = matchUtil.matchHostname(timeoutMapping, hostname, 'get timeoutConfig') || {}
 
+  // 按域名指定 TLS 版本（优先级高于 allowTls12）
+  // 支持两种配置：
+  //   1. "TLSv1.2"                              -> 启用
+  //   2. { enabled: true/false, version: "..." } -> 可远程下发后由用户自行启用
+  const tlsVersionMapping = matchUtil.domainMapRegexply(serverSetting.tlsVersionMapping)
+  const tlsVersionConf = matchUtil.matchHostname(tlsVersionMapping, hostname, 'get tlsVersion')
+  let tlsVersion = ''
+  if (typeof tlsVersionConf === 'string') {
+    tlsVersion = normalizeTlsVersion(tlsVersionConf)
+  } else if (tlsVersionConf && typeof tlsVersionConf === 'object' && tlsVersionConf.enabled !== false) {
+    tlsVersion = normalizeTlsVersion(tlsVersionConf.version || tlsVersionConf.value)
+  }
+
   return {
     timeout: timeoutConfig.timeout || serverSetting.defaultTimeout || 20000,
     keepAliveTimeout: timeoutConfig.keepAliveTimeout || serverSetting.defaultKeepAliveTimeout || 30000,
     allowTls12: serverSetting.allowTls12 === true,
+    tlsVersion,
   }
 }
 
 function createHttpsAgent (timeoutConfig, verifySsl) {
   verifySsl = !!verifySsl
   const allowTls12 = timeoutConfig.allowTls12 === true
-  const key = `${timeoutConfig.timeout}-${timeoutConfig.keepAliveTimeout}-${allowTls12 ? 'tls12' : 'tls13'}-${verifySsl ? 'verify' : 'noverify'}`
+  // 按域名指定 TLS 版本时，强制只使用该版本；否则跟随全局 allowTls12 开关
+  const minVersion = timeoutConfig.tlsVersion || (allowTls12 ? 'TLSv1.2' : 'TLSv1.3')
+  const maxVersion = timeoutConfig.tlsVersion || 'TLSv1.3'
+  const key = `${timeoutConfig.timeout}-${timeoutConfig.keepAliveTimeout}-${minVersion}-${maxVersion}-${verifySsl ? 'verify' : 'noverify'}`
   if (!httpsAgentCache[key]) {
-
     // 证书回调函数
     const checkServerIdentity = (host, cert) => {
       log.info(`checkServerIdentity: ${host}, CN: ${cert.subject.CN}, C: ${cert.subject.C || cert.issuer.C}, ST: ${cert.subject.ST || cert.issuer.ST}, bits: ${cert.bits}`)
@@ -46,8 +72,8 @@ function createHttpsAgent (timeoutConfig, verifySsl) {
       keepAliveTimeout: timeoutConfig.keepAliveTimeout,
       checkServerIdentity,
       rejectUnauthorized: verifySsl,
-      minVersion: allowTls12 ? 'TLSv1.2' : 'TLSv1.3',
-      maxVersion: 'TLSv1.3',
+      minVersion,
+      maxVersion,
     })
 
     agent.unVerifySslAgent = new HttpsAgent({
@@ -56,8 +82,8 @@ function createHttpsAgent (timeoutConfig, verifySsl) {
       keepAliveTimeout: timeoutConfig.keepAliveTimeout,
       checkServerIdentity,
       rejectUnauthorized: false,
-      minVersion: allowTls12 ? 'TLSv1.2' : 'TLSv1.3',
-      maxVersion: 'TLSv1.3',
+      minVersion,
+      maxVersion,
     })
 
     httpsAgentCache[key] = agent
@@ -146,15 +172,25 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
 
   delete headers['proxy-connection']
   let agent
+  let tlsVersionOptions = null
   if (!externalProxyUrl) {
-    // keepAlive
-    if (headers.connection !== 'close') {
-      const timeoutConfig = getTimeoutConfig(hostname, serverSetting)
+    const timeoutConfig = getTimeoutConfig(hostname, serverSetting)
+    // keepAlive；Connection 头大小写不敏感，且可能是逗号分隔 token 列表
+    const connectionHeader = String(headers.connection || '').toLowerCase()
+    const wantsClose = connectionHeader.split(',').map(t => t.trim()).includes('close')
+    if (!wantsClose) {
       // log.info(`get timeoutConfig '${hostname}':`, timeoutConfig)
       agent = createAgent(protocol, timeoutConfig, serverSetting.verifySsl)
       headers.connection = 'keep-alive'
     } else {
+      // Connection: close 时不走 Agent，需把 TLS 版本映射写到直连请求 options
       agent = false
+      if (protocol === 'https:' && timeoutConfig.tlsVersion) {
+        tlsVersionOptions = {
+          minVersion: timeoutConfig.tlsVersion,
+          maxVersion: timeoutConfig.tlsVersion,
+        }
+      }
     }
   } else {
     agent = util.getTunnelAgent(protocol === 'https:', externalProxyUrl)
@@ -174,6 +210,7 @@ util.getOptionsFromRequest = (req, ssl, externalProxy = null, serverSetting, com
     // 增大响应头大小限制（默认 16KB），
     // 解决 issue #575 中 Google Cloud Console 等站点响应头过大导致的 HPE_HEADER_OVERFLOW 错误
     maxHeaderSize: 65536,
+    ...tlsVersionOptions,
   }
 
   if (protocol === 'http:' && externalProxyUrl) {

@@ -4,6 +4,8 @@ const _ = require('lodash')
 const log = require('../../utils/util.log.server')
 const config = require('./config.js')
 const matchUtil = require('../../utils/util.match.js')
+const cloudflareRoute = require('../cloudflareRoute')
+const { isZeroIp } = require('../dns/util.ip')
 const { configFromFiles } = require('@docmirror/dev-sidecar/src/config/index.js')
 
 const familyMapping = matchUtil.domainMapRegexply(configFromFiles.server.dns.familyMapping)
@@ -14,7 +16,7 @@ const DISABLE_TIMEOUT = 60 * 60 * 1000
 
 class SpeedTester {
   constructor ({ hostname, port }) {
-    this.dnsMap = config.getConfig().dnsMap
+    this.dnsConfig = config.getConfig().dnsConfig || null
 
     this.hostname = hostname
     this.port = port || 443
@@ -30,6 +32,8 @@ class SpeedTester {
     this.tryTestCount = 0
     this.isTesting = false
     this.isTestingBackups = false
+    this.pendingTest = false
+    this.waitingForCloudflareReady = false
 
     this._probeIndex = 0 // 按需探测的轮转索引
 
@@ -61,19 +65,30 @@ class SpeedTester {
   // 按需探测结果反馈：记录 IP 成败，供后续请求决策
   reportProbeResult (host, success) {
     const item = this.backupList.find(i => i.host === host)
-    if (!item) return
+    if (!item) {
+      return
+    }
     item._probing = false
     if (success) {
       item.status = 'success'
       item.time = item.time || 1
-      this.alive.push(item)
+      if (!this.alive.some(i => i.host === host)) {
+        this.alive.push(item)
+      }
     } else {
       item.status = 'failed'
+      // 从存活列表中移除失败 IP，避免后续请求和自动重试继续使用这个已失败的 IP
+      this.alive = this.alive.filter(i => i.host !== host)
     }
   }
 
   pickFastAliveIpObj () {
     this.touch()
+
+    // 防御：过滤掉状态已被标记为 failed 的存活 IP
+    if (this.alive.length > 0) {
+      this.alive = this.alive.filter(item => item.status !== 'failed')
+    }
 
     if (this.alive.length === 0) {
       if (this.backupList.length > 0 && this.tryTestCount % 10 > 0) {
@@ -114,14 +129,58 @@ class SpeedTester {
     }, config.getConfig().interval)
   }
 
-  async getIpListFromDns (dnsMap) {
+  // 按域名动态选择测速使用的 DNS：
+  // 1. 预设IP优先级最高；
+  // 2. 已在 DNS设置 中配置了 DNS 和 IP版本 的域名，使用该设置项；
+  // 3. 其余域名使用 IP测速 中勾选的 dnsProviders。
+  getEffectiveDnsConfig () {
+    const dnsConfig = this.dnsConfig
+    if (dnsConfig == null || dnsConfig.dnsMap == null) {
+      return { dnsMap: {}, family: null }
+    }
+
+    // 1. 预设IP优先级最高
+    const preSetIpList = matchUtil.matchHostname(dnsConfig.preSetIpList, this.hostname, 'matched preSetIpList(speedTest)')
+    if (preSetIpList) {
+      return {
+        dnsMap: { PreSet: dnsConfig.dnsMap.PreSet },
+        family: null,
+      }
+    }
+
+    // 2. DNS设置 中已配置的域名，使用其配置的 DNS 和 IP版本
+    const dnsData = matchUtil.matchHostname(dnsConfig.mapping, this.hostname, 'speedTest get dns data')
+    if (dnsData && dnsConfig.dnsMap[dnsData.dnsName]) {
+      return {
+        dnsMap: { [dnsData.dnsName]: dnsConfig.dnsMap[dnsData.dnsName] },
+        family: dnsData.family,
+      }
+    }
+
+    // 3. 其余域名使用 IP测速 中勾选的 dnsProviders
+    const dnsMap = {}
+    const dnsProviders = config.getConfig().dnsProviders || []
+    for (const dnsProvider of dnsProviders) {
+      if (dnsConfig.dnsMap[dnsProvider]) {
+        dnsMap[dnsProvider] = dnsConfig.dnsMap[dnsProvider]
+      }
+    }
+    return { dnsMap, family: null }
+  }
+
+  async getIpListFromDns (dnsMap, family) {
     const ips = {}
     const promiseList = []
     for (const dnsKey in dnsMap) {
       const dns = dnsMap[dnsKey]
-      const one = this.getFromOneDns(dns).then((ipList) => {
+      const one = this.getFromOneDns(dns, family).then((ipList) => {
         if (ipList && ipList.length > 0) {
           for (const ip of ipList) {
+            // Adblock 拦截返回的 0.0.0.0 / :: 不参与测速，避免出现在 IP 测速列表和 DNS 优选统计中
+            if (isZeroIp(ip)) {
+              log.info(`[speed] 忽略零 IP 地址（Adblock 拦截特征）: ${this.hostname} -> ${ip}`)
+              continue
+            }
             ips[ip] = { dns: ipList.isPreSet === true ? '预设IP' : dnsKey }
           }
         }
@@ -132,18 +191,36 @@ class SpeedTester {
 
     const items = []
     for (const ip in ips) {
-      items.push({ host: ip, dns: ips[ip].dns })
+      const item = { host: ip, dns: ips[ip].dns }
+      // 预设 IP 优先级最高，不参与 Cloudflare 路由重定向
+      if (item.dns !== '预设IP') {
+        const rewritten = cloudflareRoute.rewriteIp(ip, this.hostname)
+        if (rewritten !== ip) {
+          // 命中 Cloudflare 路由重定向：测速内容替换为优选 IP 或 CNAME 域名
+          item.host = rewritten
+          item.cf = true
+          item.cfOriginalHost = ip
+        }
+      }
+      items.push(item)
     }
     return items
   }
 
-  async getFromOneDns (dns) {
-    const family = Number.parseInt(matchUtil.matchHostname(familyMapping, this.hostname, 'get family')) === 6 ? 6 : 4
-    return await dns._lookupWithPreSetIpList(this.hostname, { family })
+  async getFromOneDns (dns, family) {
+    const lookupFamily = family != null
+      ? (Number.parseInt(family) === 6 ? 6 : 4)
+      : (Number.parseInt(matchUtil.matchHostname(familyMapping, this.hostname, 'get family')) === 6 ? 6 : 4)
+    return await dns._lookupWithPreSetIpList(this.hostname, { family: lookupFamily })
   }
 
   async test () {
     if (this.isTesting) {
+      // 正在等待 Cloudflare 路由数据就绪的测速，就绪后自然会用最新数据继续，无需再挂起一轮
+      if (!this.waitingForCloudflareReady) {
+        // 当前正在测速时先挂起，待本轮结束后再重测，避免错过关键时机
+        this.pendingTest = true
+      }
       log.debug(`[speed] test skipped (already running): ${this.hostname}`)
       return
     }
@@ -152,9 +229,32 @@ class SpeedTester {
     log.debug(`[speed] test start: ${this.hostname}, testCount: ${this.testCount}`)
 
     try {
-      const newList = await this.getIpListFromDns(this.dnsMap)
-      const newBackupList = [...newList, ...this.backupList]
-      this.backupList = _.unionBy(newBackupList, 'host')
+      // Cloudflare 路由重定向开启后，若 IP 段/优选地址尚未就绪，先等待就绪再解析测速，
+      // 避免首轮测速拿到原始 Cloudflare IP
+      if (cloudflareRoute.isEnabled() && !cloudflareRoute.isReady()) {
+        this.waitingForCloudflareReady = true
+        log.info(`[speed] 等待 Cloudflare 路由数据就绪后开始测速: ${this.hostname}`)
+        try {
+          await cloudflareRoute.whenReady()
+          log.info(`[speed] Cloudflare 路由数据已就绪，开始测速: ${this.hostname}`)
+        } catch (e) {
+          log.warn(`[speed] 等待 Cloudflare 路由数据就绪超时，将按原始解析测速: ${this.hostname}, error: ${e.message}`)
+        } finally {
+          this.waitingForCloudflareReady = false
+        }
+      }
+
+      const { dnsMap, family } = this.getEffectiveDnsConfig()
+      const newList = await this.getIpListFromDns(dnsMap, family)
+      // Cloudflare 路由重定向命中后，只测优选 IP/域名，不再保留旧的原始解析 IP
+      if (newList.some(item => item.cf === true)) {
+        this.backupList = _.unionBy(newList, 'host')
+      } else {
+        const newBackupList = [...newList, ...this.backupList]
+        this.backupList = _.unionBy(newBackupList, 'host')
+      }
+      // 兜底：剔除历史遗留的零 IP（Adblock 拦截特征），确保不会进入测速与优选
+      this.backupList = this.backupList.filter(item => !isZeroIp(item.host))
       await this.testBackups()
       log.info(`[speed] test end: ${this.hostname} ➜ ip-list:`, this.backupList, `, testCount: ${this.testCount}`)
       if (config.notify) {
@@ -164,6 +264,10 @@ class SpeedTester {
       log.error(`[speed] test failed: ${this.hostname}, testCount: ${this.testCount}, error:`, e)
     } finally {
       this.isTesting = false
+      if (this.pendingTest) {
+        this.pendingTest = false
+        this.test()
+      }
     }
   }
 

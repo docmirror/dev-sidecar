@@ -60,7 +60,11 @@ const configApi = {
       if (remoteConfigUrl.startsWith('https://raw.githubusercontent.com/')) {
         headers['Server-Name'] = 'baidu.com'
       }
-      request(remoteConfigUrl, { headers }, (error, response, body) => {
+      // 禁用环境变量代理（HTTPS_PROXY/HTTP_PROXY）：
+      // 当用户开启 proxy.setEnv 后，环境变量会指向 dev-sidecar 自己的代理端口，
+      // 启动时本地代理尚未监听，走代理会导致下载失败（ECONNREFUSED 127.0.0.1:31181），
+      // 新装用户会因此无法下载远程配置，只能使用内置规则。
+      request(remoteConfigUrl, { headers, proxy: null }, (error, response, body) => {
         if (error) {
           log.error(`下载远程配置失败: ${remoteConfigUrl}, error:`, error, ', response:', response, ', body:', body)
           reject(error)

@@ -8,6 +8,7 @@ module.exports = class DNSOverTLS extends BaseDNS {
     super(dnsServer.replace(/\s+/, ''), dnsFamily, dnsName, 'TLS', cacheSize, preSetIpList)
     this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort
     this.dnsServerName = dnsServerName
+    this.isIPv6 = dnsServer.includes(':') && dnsServer.includes('[') && dnsServer.includes(']')
   }
 
   _dnsQueryPromise (hostname, type = 'A') {

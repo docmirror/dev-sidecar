@@ -10,14 +10,15 @@ const dateUtil = require('@docmirror/dev-sidecar/src/utils/util.date')
 
 let pacClient = null
 
-function matched (hostname, overWallTargetMap) {
+function matchTarget (hostname, overWallTargetMap) {
   // 匹配配置文件
   const ret1 = matchUtil.matchHostname(overWallTargetMap, hostname, 'matched overwall')
   if (ret1) {
-    return 'in config'
-  } else if (ret1 === false || ret1 === 'false') {
-    log.debug(`域名 ${hostname} 的overwall配置为 false，跳过增强功能，即使它在 pac.txt 里`)
-    return null
+    if (ret1 === false || ret1 === 'false') {
+      log.debug(`域名 ${hostname} 的overwall配置为 false，跳过增强功能，即使它在 pac.txt 里`)
+      return null
+    }
+    return { source: 'config', value: ret1 }
   }
 
   // 匹配 pac.txt
@@ -27,7 +28,7 @@ function matched (hostname, overWallTargetMap) {
   const ret = pacClient.FindProxyForURL(`https://${hostname}`, hostname)
   if (ret && ret.indexOf('PROXY ') === 0) {
     log.info(`matchHostname: matched overwall: '${hostname}' -> '${ret}' in pac.txt`)
-    return 'in pac.txt'
+    return { source: 'pac' }
   } else {
     log.debug(`matchHostname: matched overwall: Not-Matched '${hostname}' -> '${ret}' in pac.txt`)
     return null
@@ -124,6 +125,42 @@ async function downloadPacAsync (pacConfig) {
   })
 }
 
+function buildServerList (overWallConfig) {
+  const list = []
+  const customServer = overWallConfig.server || {}
+  const defaultServer = overWallConfig.serverDefault || {}
+
+  // 内置默认服务器 ID 固定为 0；用户自定义服务器在此基础上依次增加
+  let nextId = 1
+  for (const [domain, cfg] of Object.entries(defaultServer)) {
+    if (!customServer[domain]) {
+      list.push({
+        id: cfg && cfg.id != null ? Number.parseInt(cfg.id, 10) : 0,
+        domain,
+        port: cfg && cfg.port,
+        path: cfg && cfg.path,
+        password: cfg && cfg.password,
+      })
+    }
+  }
+
+  for (const [domain, cfg] of Object.entries(customServer)) {
+    const item = {
+      id: cfg && cfg.id != null ? Number.parseInt(cfg.id, 10) : nextId,
+      domain,
+      port: cfg && cfg.port,
+      path: cfg && cfg.path,
+      password: cfg && cfg.password,
+    }
+    if (item.id >= nextId) {
+      nextId = item.id + 1
+    }
+    list.push(item)
+  }
+
+  return list
+}
+
 function createOverwallMiddleware (overWallConfig) {
   if (!overWallConfig || overWallConfig.enabled !== true) {
     return null
@@ -133,55 +170,52 @@ function createOverwallMiddleware (overWallConfig) {
     pacClient = pac.createPacClient(overWallConfig.pac.pacFileAbsolutePath)
   }
 
-  let server = overWallConfig.server
-  let keys = Object.keys(server)
-  if (keys.length === 0) {
-    server = overWallConfig.serverDefault
-    keys = Object.keys(server)
-  }
-  if (keys.length === 0) {
+  const serverList = buildServerList(overWallConfig)
+  if (serverList.length === 0) {
     return null
   }
+  const serverById = new Map(serverList.map((item) => [item.id, item]))
+
+  // 默认优先使用 ID 为 1 的服务器；若 ID 为 1 的服务器不存在，则自动使用 ID 为 0 的默认服务器
+  const defaultServerId = serverById.has(1) ? 1 : 0
+
+  function resolveServerId (targetValue) {
+    if (targetValue && typeof targetValue === 'object' && targetValue.enabled !== false && targetValue.serverId != null) {
+      const id = Number.parseInt(targetValue.serverId, 10)
+      if (serverById.has(id)) {
+        return id
+      }
+    }
+    return defaultServerId
+  }
+
   const overWallTargetMap = matchUtil.domainMapRegexply(overWallConfig.targets)
   return {
     sslConnectInterceptor: (req, _cltSocket, _head) => {
       const hostname = req.url.split(':')[0]
-      return matched(hostname, overWallTargetMap)
+      return matchTarget(hostname, overWallTargetMap) != null
     },
     requestIntercept (context, req, res, _ssl, _next) {
-      const { rOptions, log, RequestCounter } = context
+      const { rOptions, log } = context
       if (rOptions.protocol === 'http:') {
         return
       }
       const hostname = rOptions.hostname
-      const matchedResult = matched(hostname, overWallTargetMap)
-      if (matchedResult == null || matchedResult === false || matchedResult === 'false') {
+      const target = matchTarget(hostname, overWallTargetMap)
+      if (target == null) {
         return
       }
-      const cacheKey = '__over_wall_proxy__'
-      let proxyServer = keys[0]
-      if (RequestCounter && keys.length > 1) {
-        const count = RequestCounter.getOrCreate(cacheKey, keys)
-        if (count.value == null) {
-          count.doRank()
-        }
-        if (count.value == null) {
-          log.error('`count.value` is null, the count:', count)
-        } else {
-          count.doCount(count.value)
-          proxyServer = count.value
-          context.requestCount = {
-            key: cacheKey,
-            value: count.value,
-            count,
-          }
-        }
+
+      const serverId = target.source === 'config' ? resolveServerId(target.value) : defaultServerId
+      const selected = serverById.get(serverId)
+      if (!selected) {
+        return
       }
 
-      const domain = proxyServer
-      const port = server[domain].port
-      const path = server[domain].path
-      const password = server[domain].password
+      const domain = selected.domain
+      const port = selected.port
+      const path = selected.path
+      const password = selected.password
       const proxyTarget = `${domain}/${path}/${hostname}${req.url}`
 
       // const backup = interceptOpt.backup
@@ -206,12 +240,9 @@ function createOverwallMiddleware (overWallConfig) {
       } else {
         rOptions.port = port || (rOptions.protocol === 'https:' ? 443 : 80)
       }
-      log.info('OverWall:', rOptions.hostname, '➜', proxyTarget)
-      if (context.requestCount) {
-        log.debug('OverWall choice:', JSON.stringify(context.requestCount))
-      }
+      log.info('OverWall:', rOptions.hostname, '➜', proxyTarget, `, serverId: ${serverId}`)
 
-      res.setHeader('DS-Overwall', matchedResult)
+      res.setHeader('DS-Overwall', `${target.source}:${serverId}`)
 
       return true
     },

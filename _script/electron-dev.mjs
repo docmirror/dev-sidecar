@@ -6,7 +6,17 @@ import { setTimeout as delay } from 'node:timers/promises'
 const guiDir = process.cwd()
 const require = createRequire(import.meta.url)
 
-const devServerUrl = 'http://localhost:8080'
+function resolveDevServer () {
+  const argv = process.argv.slice(2)
+  const portIndex = argv.indexOf('--port')
+  const port = portIndex >= 0 ? Number.parseInt(argv[portIndex + 1], 10) : 8080
+  if (!Number.isInteger(port) || port <= 0 || port > 65535) {
+    throw new Error(`无效的端口号: ${argv[portIndex + 1]}`)
+  }
+  return { port, url: `http://localhost:${port}` }
+}
+
+const { port: devServerPort, url: devServerUrl } = resolveDevServer()
 const state = {
   closing: false,
   devServer: null,
@@ -86,7 +96,7 @@ async function main () {
   const vueCliServiceBin = resolveVueCliServiceBin()
   const electronBin = resolveElectronBin()
 
-  state.devServer = spawnCommand(process.execPath, [vueCliServiceBin, 'serve', '--port', '8080'])
+  state.devServer = spawnCommand(process.execPath, [vueCliServiceBin, 'serve', '--port', String(devServerPort)])
   state.devServer.on('exit', (code, signal) => {
     if (!state.closing) {
       void shutdown(code ?? (signal ? 1 : 0))

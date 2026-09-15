@@ -109,7 +109,7 @@ module.exports = (serverConfig) => {
   // 插件列表
   const middlewares = []
 
-  // 梯子插件：如果启用了，则添加到插件列表中
+  // 增强功能插件：如果启用了，则添加到插件列表中
   const overwallMiddleware = createOverwallMiddleware(overWallConfig)
   if (overwallMiddleware) {
     middlewares.push(overwallMiddleware)

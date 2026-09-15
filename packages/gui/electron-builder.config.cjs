@@ -63,8 +63,10 @@ module.exports = {
     allowToChangeInstallationDirectory: true,
   },
   win: {
-    icon: 'build/icons/',
-    signAndEditExecutable: isCI, // 本地开发跳过签名
+    icon: 'build/icons/icon.ico',
+    // 必须为 true 才会用 rcedit 写入 exe 图标和版本信息；
+    // 未配置证书时 electron-builder 会自动跳过签名，不会失败。
+    signAndEditExecutable: true,
     target: isCI
       ? [
           { target: 'nsis', arch: ['x64'] },
@@ -84,12 +86,6 @@ module.exports = {
           { target: 'tar.gz', arch: ['x64', 'arm64', 'armv7l'] },
           { target: 'rpm', arch: ['x64', 'arm64', 'armv7l'] },
           { target: 'flatpak', arch: ['x64'] },
-          // Arch Linux (fpm/pacman), 产物为 .pkg.tar.xz, 可直接 pacman -U 安装
-          {
-            target: 'pacman',
-            arch: ['x64', 'arm64'],
-            artifactName: 'DevSidecar-${version}-${arch}.pkg.tar.xz',
-          },
         ]
       : [
           { target: 'deb', arch: [localArch] },

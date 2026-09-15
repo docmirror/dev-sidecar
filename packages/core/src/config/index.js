@@ -41,6 +41,7 @@ const defaultConfig = {
     showShutdownTip: true,
 
     // 日志相关配置
+    logDisabled: false, // 完全禁用日志：控制台不输出，日志文件也不写入
     logFileSavePath: path.join(configLoader.getUserBasePath(), '/logs'), // 日志文件保存路径
     keepLogFileCount: 15, // 保留日志文件数
     maxLogFileSize: 1, // 最大日志文件大小
@@ -98,6 +99,11 @@ const defaultConfig = {
         //   }
         // }
       },
+    },
+    // Cloudflare 路由重定向：命中 Cloudflare IP 段时改写为优选地址
+    cloudflareRoute: {
+      enabled: false,
+      preferredEndpoint: '', // 优选地址，可填写 IP 或 CNAME 域名
     },
     intercept: {
       enabled: true,
