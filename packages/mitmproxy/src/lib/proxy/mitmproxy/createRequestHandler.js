@@ -606,10 +606,11 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
                 : 'text/plain; charset=utf-8',
           }
 
-          // headers.Access-Control-Allow-*：避免跨域问题
-          if (rOptions.headers.origin) {
-            headers['Access-Control-Allow-Credentials'] = 'true'
-            headers['Access-Control-Allow-Origin'] = rOptions.headers.origin
+          // 跨域读取错误正文：反射 Origin 即可。
+          // 禁止同时设置 Allow-Credentials: true，否则任意站点可带凭据读响应（CodeQL high）。
+          const requestOrigin = rOptions.headers.origin
+          if (requestOrigin) {
+            headers['Access-Control-Allow-Origin'] = requestOrigin
             headers.Vary = 'Origin'
           }
 
