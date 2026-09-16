@@ -1,22 +1,24 @@
 import assert from 'node:assert'
-import { isIPv6 } from '../src/lib/dns/util.ip.js'
+import utilIp from '../src/lib/dns/util.ip.js'
+
+const { isIPv6 } = utilIp
 
 assert.strictEqual(isIPv6, isIPv6)
-assert.strictEqual(isIPv6('2001:0db8:0000:0000:0000:0000:1428:57ab'), true); // true
-assert.strictEqual(isIPv6('[2001:0db8:0000:0000:0000:0000:1428:57ab]'), true); // true
-assert.strictEqual(isIPv6('[2001:0db8:0000:0000:0000:0000:1428:57ab]:443'), true); // true
-assert.strictEqual(isIPv6('http://[2001:0db8:0000:0000:0000:0000:1428:57ab]:443'), true); // true
-assert.strictEqual(isIPv6('2001:db8:0:0:0:0:1428:57ab'), true); // true
-assert.strictEqual(isIPv6('http://[2001:db8:0:0:0:0:1428:57ab]:443'), true); // true
-assert.strictEqual(isIPv6('2001:db8::1428:57ab'), true); // true
-assert.strictEqual(isIPv6('http://[2001:db8::1428:57ab]:443'), true); // true
-assert.strictEqual(isIPv6('fe80::1'), true); // true
-assert.strictEqual(isIPv6('http://[fe80::1]:443'), true); // true
-assert.strictEqual(isIPv6('::1'), true); // true
-assert.strictEqual(isIPv6('http://[::1]:443'), true); // true
-assert.strictEqual(isIPv6('2001:4860:4860::8888'), true); // true
-assert.strictEqual(isIPv6('http://[2001:4860:4860::8888]:443'), true); // true
-assert.strictEqual(isIPv6('http://example.com'), false); // false
+assert.strictEqual(isIPv6('2001:0db8:0000:0000:0000:0000:1428:57ab'), true) // true
+assert.strictEqual(isIPv6('[2001:0db8:0000:0000:0000:0000:1428:57ab]'), true) // true
+assert.strictEqual(isIPv6('[2001:0db8:0000:0000:0000:0000:1428:57ab]:443'), true) // true
+assert.strictEqual(isIPv6('http://[2001:0db8:0000:0000:0000:0000:1428:57ab]:443'), true) // true
+assert.strictEqual(isIPv6('2001:db8:0:0:0:0:1428:57ab'), true) // true
+assert.strictEqual(isIPv6('http://[2001:db8:0:0:0:0:1428:57ab]:443'), true) // true
+assert.strictEqual(isIPv6('2001:db8::1428:57ab'), true) // true
+assert.strictEqual(isIPv6('http://[2001:db8::1428:57ab]:443'), true) // true
+assert.strictEqual(isIPv6('fe80::1'), true) // true
+assert.strictEqual(isIPv6('http://[fe80::1]:443'), true) // true
+assert.strictEqual(isIPv6('::1'), true) // true
+assert.strictEqual(isIPv6('http://[::1]:443'), true) // true
+assert.strictEqual(isIPv6('2001:4860:4860::8888'), true) // true
+assert.strictEqual(isIPv6('http://[2001:4860:4860::8888]:443'), true) // true
+assert.strictEqual(isIPv6('http://example.com'), false) // false
 
 import defaultDns from 'node:dns'
 import dns from '../src/lib/dns/index.js'
@@ -41,7 +43,7 @@ const dnsProviders = dns.initDNS({
     server: 'tcp://223.5.5.5',
   },
   TCP2: {
-    server: "tcp://[2606:4700:4700::1111]",
+    server: 'tcp://[2606:4700:4700::1111]',
   },
   // udp
   UDP1: {
@@ -60,7 +62,7 @@ const hostname = 'rr4---sn-npoe7nek.gvt1.com'
 
 const family = 6
 
-async function test(dns) {
+async function test (dns) {
   const ip = await dns.lookup(hostname, { family })
   console.log(`\n\n【${dns.dnsName} - ${dns.dnsServer}（IPv${dns.dnsFamily}）】 ${hostname} -> ${ip}（IPv${family}）`, '\n\n')
 }
@@ -74,7 +76,6 @@ await test(dnsProviders.TCP2)
 await test(dnsProviders.UDP1)
 await test(dnsProviders.UDP2)
 
-// eslint-disable-next-line node/handle-callback-err
 defaultDns.lookup(hostname, { family }, (...args) => {
   console.log(`\n\n【test Default DNS（IPv${family}）】 ${hostname} -> ${args[1]}`, '\n\n', args)
 })

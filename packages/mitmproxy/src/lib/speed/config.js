@@ -1,5 +1,7 @@
 const config = {
   dnsMap: {},
+  dnsConfig: null,
+  dnsProviders: [],
 }
 module.exports = {
   getConfig () {

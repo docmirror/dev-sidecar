@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const log = require('../../utils/util.log.server')
 const config = require('./config')
+const cloudflareRoute = require('../cloudflareRoute')
 const SpeedTester = require('./SpeedTester.js')
 
 const SpeedTestPool = {
@@ -29,14 +30,21 @@ function addSpeedTest (hostname, port) {
 }
 
 function initSpeedTest (runtimeConfig) {
-  const { enabled, hostnameList } = runtimeConfig
+  const { enabled, hostnameList, dnsConfig } = runtimeConfig
   const conf = config.getConfig()
   _.merge(conf, runtimeConfig)
+  // 保存完整的 dnsConfig，供 SpeedTester 按域名动态选择 DNS
+  conf.dnsConfig = dnsConfig
   if (!enabled) {
     return
   }
   _.forEach(hostnameList, (hostname) => {
     addSpeedTest(hostname)
+  })
+  // Cloudflare 路由数据就绪后重新测速一次，避免首次测速时 CF 段尚未拉取导致未重写
+  cloudflareRoute.setReadyListener(() => {
+    log.info('[speed] Cloudflare 路由数据已就绪，重新测速一次')
+    reSpeedTest()
   })
   log.info('[speed] enabled，SpeedTestPool:', SpeedTestPool)
 }

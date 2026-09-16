@@ -20,6 +20,10 @@ function install (app, api) {
       // 增量更新
       api.ipc.send('update', { key: 'downloadPart', value })
     },
+    downloadFull (value) {
+      // 完整安装包更新
+      api.ipc.send('update', { key: 'downloadFull', value })
+    },
     doUpdateNow () {
       api.ipc.send('update', { key: 'doUpdateNow' })
     },
@@ -35,8 +39,16 @@ function install (app, api) {
       updateParams.checking = false
       noNewVersion()
     } else if (type === 'downloaded') {
-      // 更新包已下载完成，让用户确认是否更新
+      // 更新包已下载完成
       updateParams.downloading = false
+      if (message.updateType === 'full') {
+        // 完整安装包：自动打开，由用户完成安装
+        if (message.filePath) {
+          api.ipc.openPath(message.filePath)
+        }
+        app.config.globalProperties.$message.success(message.filePath ? '完整安装包已下载并自动打开，请按提示完成安装' : '完整安装包已下载完成')
+        return
+      }
       console.log('updateParams', updateParams)
       newUpdateIsReady(message.value)
     } else if (type === 'progress') {
@@ -95,7 +107,7 @@ function install (app, api) {
   async function downloadNewVersion (value) {
     const platform = await api.info.getSystemPlatform()
     console.log(`download new version: ${JSON.stringify(value)}, platform: ${platform}`)
-    if (platform === 'linux') {
+    if (platform === 'linux' && !value.fullPackage) {
       goManualUpdate(value)
       return
     }
@@ -103,6 +115,10 @@ function install (app, api) {
       // 有增量更新 ZIP，走增量更新流程
       updateParams.downloading = true
       api.update.downloadPart(value)
+    } else if (value.fullPackage) {
+      // 没有增量包时，自动下载当前平台/架构对应的完整安装包
+      updateParams.downloading = true
+      api.update.downloadFull(value)
     } else {
       goManualUpdate(value)
     }
@@ -117,13 +133,15 @@ function install (app, api) {
     }
 
     const hasPartPackage = !!value.partPackage
-    const platform = api.info ? null : null // placeholder, will resolve below
+    const hasFullPackage = !!value.fullPackage
+    const okText = hasPartPackage ? '自动更新（实验性）' : hasFullPackage ? '自动下载安装包' : '手动下载'
+    const okType = hasPartPackage ? 'danger' : hasFullPackage ? 'primary' : 'default'
 
     app.config.globalProperties.$confirm({
       title: `发现新版本：v${value.version}`,
       cancelText: '暂不升级',
-      okText: hasPartPackage ? '自动更新（实验性）' : '手动下载',
-      okType: hasPartPackage ? 'danger' : 'default',
+      okText,
+      okType,
       width: 700,
       content: (h) => {
         const children = []
@@ -146,20 +164,25 @@ function install (app, api) {
               h('span', { style: { fontWeight: 'bold' } }, '更新方式说明：'),
               h('ul', { style: { marginTop: '6px', paddingLeft: '20px' } }, [
                 h('li', {}, [h('b', {}, '自动更新（实验性）'), ' — 下载增量包自动覆盖，重启即完成。仅 Windows/macOS 支持']),
-                h('li', {}, [h('b', {}, '手动下载'), ' — 跳转 GitHub Releases 下载完整安装包，覆盖安装即可']),
+                h('li', {}, [h('b', {}, '自动下载安装包'), ' — 下载当前平台/架构对应的完整安装包']),
               ]),
             ]),
           )
         }
-        if (!hasPartPackage) {
+        if (!hasPartPackage && hasFullPackage) {
           children.push(
-            h('div', { style: { marginTop: '12px' } }, '当前平台不支持增量更新，点击"手动下载"前往 GitHub Releases。'),
+            h('div', { style: { marginTop: '12px', color: '#888' } }, `已自动识别当前平台/架构，将下载安装包：${value.fullPackageName || '对应完整安装包'}，下载完成后自动打开供你安装。`),
+          )
+        }
+        if (!hasPartPackage && !hasFullPackage) {
+          children.push(
+            h('div', { style: { marginTop: '12px' } }, '当前平台/架构暂未匹配到安装包，点击"手动下载"前往 GitHub Releases。'),
           )
         }
         return h('div', {}, children)
       },
       onOk () {
-        if (hasPartPackage) {
+        if (hasPartPackage || hasFullPackage) {
           downloadNewVersion(value)
         } else {
           openGithubUrl()
@@ -177,7 +200,7 @@ function install (app, api) {
       cancelText: '暂不升级',
       okText: '立即升级',
       width: 700,
-      content: (h) => {
+      content: (_h) => {
         if (value.releaseNotes) {
           const notes = []
           if (typeof value.releaseNotes === 'string') {

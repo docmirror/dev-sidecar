@@ -10,6 +10,7 @@ module.exports = class DNSOverTCP extends BaseDNS {
   constructor (dnsName, cacheSize, preSetIpList, dnsServer, dnsServerPort, dnsFamily) {
     super(dnsServer.replace(/\s+/, ''), dnsFamily, dnsName, 'TCP', cacheSize, preSetIpList)
     this.dnsServerPort = Number.parseInt(dnsServerPort) || defaultPort
+    this.isIPv6 = dnsServer.includes(':') && dnsServer.includes('[') && dnsServer.includes(']')
   }
 
   _dnsQueryPromise (hostname, type = 'A') {

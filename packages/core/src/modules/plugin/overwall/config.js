@@ -1,9 +1,11 @@
 module.exports = {
-  name: '梯子',
-  enabled: false, // 默认关闭梯子
+  name: '增强功能',
+  enabled: false, // 默认关闭
+  restartServer: true, // 首页开关切换后需要重启代理服务才能生效
   server: {},
   serverDefault: {
     'ow-prod.docmirror.top': {
+      id: 0, // 自带默认服务器 ID 固定为 0，用户新增服务器依次为 1、2、3...
       port: 443,
       path: 'X2dvX292ZXJfd2FsbF8',
       password: 'dev_sidecar_is_666',

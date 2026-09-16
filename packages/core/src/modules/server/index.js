@@ -19,6 +19,16 @@ function sleep (time) {
     }, time)
   })
 }
+
+function onceExit (child) {
+  return new Promise((resolve) => {
+    if (child.exitCode != null || child.signalCode != null) {
+      resolve(true)
+      return
+    }
+    child.once('exit', () => resolve(true))
+  })
+}
 const serverApi = {
   async startup () {
     if (config.get().server.startup) {
@@ -30,7 +40,7 @@ const serverApi = {
       return this.close()
     }
   },
-  async start ({ mitmproxyPath, plugins }) {
+  async start ({ mitmproxyPath, plugins, setting }) {
     // 防止重复启动：如果已有子进程存活，直接返回
     if (server && server.process && !server.process.killed && server.process.exitCode == null) {
       log.warn('server is already running, skip start (pid:', server.id, ')')
@@ -73,7 +83,11 @@ const serverApi = {
         plugin.overrideRunningConfig(serverConfig)
       }
     }
-    serverConfig.plugin = allConfig.plugin
+    serverConfig.plugin = lodash.cloneDeep(allConfig.plugin || {})
+    if (setting && setting.overwall !== true && serverConfig.plugin.overwall) {
+      // setting.json 未开启 overwall 时，增强功能插件不生效
+      serverConfig.plugin.overwall.enabled = false
+    }
 
     if (allConfig.proxy && allConfig.proxy.enabled) {
       serverConfig.proxy = allConfig.proxy
@@ -137,23 +151,34 @@ const serverApi = {
         event.fire('error', { key: 'server', value: code, error: msg.event, message: msg.message })
       } else if (msg.type === 'speed') {
         event.fire('speed', msg.event)
+      } else if (msg.type === 'traffic') {
+        event.fire('traffic', msg.event)
       }
     })
     return { port: serverConfig.port }
   },
   async kill () {
     if (server) {
-      server.process.kill('SIGINT')
-      await sleep(1000)
+      const child = server.process
+      if (child.exitCode == null && child.signalCode == null) {
+        const exited = onceExit(child)
+        child.kill('SIGINT')
+        const exitedBySigint = await Promise.race([exited, sleep(1000).then(() => false)])
+        if (!exitedBySigint) {
+          log.warn('server process 未在 1 秒内响应 SIGINT，尝试强制结束')
+          child.kill('SIGKILL')
+          await Promise.race([exited, sleep(1000).then(() => false)])
+        }
+      }
     }
     fireStatus(false)
   },
   async close () {
     return await serverApi.kill()
   },
-  async restart ({ mitmproxyPath }) {
+  async restart ({ mitmproxyPath, setting }) {
     await serverApi.kill()
-    await serverApi.start({ mitmproxyPath })
+    await serverApi.start({ mitmproxyPath, setting })
   },
   getServer () {
     return server

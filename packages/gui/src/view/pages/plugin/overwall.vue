@@ -29,6 +29,30 @@ export default defineComponent({
     }
   },
 
+  computed: {
+    serverOptions () {
+      const options = []
+      const defaultServer = this.config?.plugin?.overwall?.serverDefault || {}
+      for (const [domain, cfg] of Object.entries(defaultServer)) {
+        options.push({
+          id: cfg && cfg.id != null ? Number.parseInt(cfg.id, 10) : 0,
+          domain,
+          label: `ID 0（默认） - ${domain}`,
+        })
+      }
+      for (const item of this.servers || []) {
+        if (item.key) {
+          options.push({
+            id: item.id,
+            domain: item.key,
+            label: `ID ${item.id} - ${item.key}`,
+          })
+        }
+      }
+      return options
+    },
+  },
+
   created () {
     console.log('status:', this.status)
   },
@@ -46,26 +70,55 @@ export default defineComponent({
       }
     },
     ready () {
-      this.initTarget()
       this.initServer()
+      this.initTarget()
     },
     async applyBefore () {
       this.submitTarget()
       this.submitServer()
     },
+    preferredServerId () {
+      return this.serverOptions.some((item) => item.id === 1)
+        ? 1
+        : (this.serverOptions.some((item) => item.id === 0) ? 0 : null)
+    },
+    nextServerId () {
+      const ids = (this.servers || []).map((item) => item.id).filter((id) => id != null)
+      return ids.length > 0 ? Math.max(...ids) + 1 : 1
+    },
+    onTargetValueChange (item) {
+      if (item.value === 'true' && (item.serverId == null || item.serverId === '')) {
+        item.serverId = 'default'
+      }
+    },
     initTarget () {
       this.targets = []
-      const targetsMap = this.config.plugin.overwall.targets
+      const targetsMap = this.config.plugin.overwall.targets || {}
       for (const key in targetsMap) {
         const value = targetsMap[key]
-        this.targets.push({
-          key: key || '',
-          value: value === true ? 'true' : 'false',
-        })
+        if (value && typeof value === 'object') {
+          this.targets.push({
+            key: key || '',
+            value: value.enabled === false ? 'false' : 'true',
+            serverId: value.serverId != null ? Number.parseInt(value.serverId, 10) : 'default',
+          })
+        } else if (value === false || value === 'false') {
+          this.targets.push({
+            key: key || '',
+            value: 'false',
+            serverId: 'default',
+          })
+        } else {
+          this.targets.push({
+            key: key || '',
+            value: 'true',
+            serverId: 'default',
+          })
+        }
       }
     },
     addTarget () {
-      this.targets.unshift({ key: '', value: 'true' })
+      this.targets.unshift({ key: '', value: 'true', serverId: 'default' })
       this.focusFirst(this.$refs.targets)
     },
     deleteTarget (item, index) {
@@ -77,7 +130,16 @@ export default defineComponent({
         if (item.key) {
           const hostname = this.handleHostname(item.key)
           if (hostname) {
-            map[hostname] = (item.value === 'true')
+            if (item.value === 'true') {
+              // 选择“默认”时不写死服务器，交给中间件动态选择：优先 ID1，否则 ID0
+              if (item.serverId === 'default' || item.serverId == null || item.serverId === '') {
+                map[hostname] = true
+              } else {
+                map[hostname] = { enabled: true, serverId: Number.parseInt(item.serverId, 10) }
+              }
+            } else {
+              map[hostname] = false
+            }
           }
         }
       }
@@ -86,12 +148,19 @@ export default defineComponent({
 
     initServer () {
       this.servers = []
-      const targetsMap = this.config.plugin.overwall.server
-      for (const key in targetsMap) {
-        const value = targetsMap[key]
+      const serverMap = this.config.plugin.overwall.server || {}
+      for (const key in serverMap) {
+        const value = serverMap[key] || {}
+        const id = value.id != null ? Number.parseInt(value.id, 10) : this.nextServerId()
         this.servers.push({
+          id,
           key,
-          value,
+          value: {
+            type: value.type || 'path',
+            port: value.port,
+            path: value.path,
+            password: value.password,
+          },
         })
       }
       if (this.servers.length === 0) {
@@ -102,7 +171,11 @@ export default defineComponent({
       this.servers.splice(index, 1)
     },
     addServer (needFocus = true) {
-      this.servers.unshift({ key: '', value: { type: 'path' } })
+      this.servers.unshift({
+        id: this.nextServerId(),
+        key: '',
+        value: { type: 'path', port: 443, path: '', password: '' },
+      })
       if (needFocus) {
         this.focusFirst(this.$refs.servers)
       }
@@ -113,7 +186,13 @@ export default defineComponent({
         if (item.key) {
           const hostname = this.handleHostname(item.key)
           if (hostname) {
-            map[hostname] = item.value
+            map[hostname] = {
+              id: item.id != null ? Number.parseInt(item.id, 10) : this.nextServerId(),
+              type: item.value.type || 'path',
+              port: item.value.port,
+              path: item.value.path,
+              password: item.value.password,
+            }
           }
         }
       }
@@ -173,20 +252,28 @@ export default defineComponent({
           <div>
             <a-row :gutter="10" style="">
               <a-col :span="22">
-                <span>PAC没有拦截到的域名，可以在此处定义；配置为<code>禁用</code>时，将不使用梯子</span>
+                <span>PAC没有拦截到的域名，可以在此处定义；配置为<code>启用</code>时，可为该域名选择代理服务器，默认优先使用 <code>ID 1</code>，若 <code>ID 1</code> 不存在则自动使用 <code>ID 0</code>；配置为<code>禁用</code>时，将不使用增强功能</span>
               </a-col>
               <a-col :span="2">
                 <a-button type="primary" @click="addTarget()"><PlusOutlined /></a-button>
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of targets" ref="targets" :key="index" :gutter="10">
-              <a-col :span="18">
+              <a-col :span="12">
                 <a-input v-model:value="item.key" class="mt-2" spellcheck="false" />
               </a-col>
               <a-col :span="4">
-                <a-select v-model:value="item.value" class="w100">
+                <a-select v-model:value="item.value" class="w100" @change="onTargetValueChange(item)">
                   <a-select-option v-for="(item2) of overwallOptions" :key="item2.value" :value="item2.value">
                     {{ item2.label }}
+                  </a-select-option>
+                </a-select>
+              </a-col>
+              <a-col :span="6">
+                <a-select v-model:value="item.serverId" class="w100" :disabled="item.value !== 'true'">
+                  <a-select-option value="default">默认（优先 ID1，否则 ID0）</a-select-option>
+                  <a-select-option v-for="(server) of serverOptions" :key="server.id" :value="server.id">
+                    {{ server.label }}
                   </a-select-option>
                 </a-select>
               </a-col>
@@ -207,13 +294,16 @@ export default defineComponent({
               </a-col>
             </a-row>
             <a-row v-for="(item, index) of servers" ref="servers" :key="index" :gutter="10">
-              <a-col :span="6">
+              <a-col :span="2">
+                <a-tag color="blue">ID {{ item.id }}</a-tag>
+              </a-col>
+              <a-col :span="5">
                 <a-input v-model:value="item.key" :title="item.key" addon-before="域名" placeholder="yourdomain.com" spellcheck="false" />
               </a-col>
               <a-col :span="5">
                 <a-input v-model:value="item.value.port" :title="item.value.port" addon-before="端口" placeholder="443" spellcheck="false" />
               </a-col>
-              <a-col :span="6">
+              <a-col :span="5">
                 <a-input v-model:value="item.value.path" :title="item.value.path" addon-before="路径" placeholder="xxxxxx" spellcheck="false" />
               </a-col>
               <a-col :span="5">
@@ -224,6 +314,7 @@ export default defineComponent({
               </a-col>
             </a-row>
             <div class="form-help">
+              <code>ID 0</code> 为内置默认服务器；在此处新增的服务器 ID 会依次为 <code>1、2、3...</code>。<br>
               您可以在此处配置自己的代理服务器地址。<br>
               警告：请勿使用来源不明的服务器地址，有安全风险！
             </div>

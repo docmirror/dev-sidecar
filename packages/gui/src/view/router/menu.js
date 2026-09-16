@@ -13,6 +13,8 @@ export default function createMenus (app) {
     { title: '首页', path: '/index', icon: 'home' },
     { title: '加速服务', path: '/server', icon: 'thunderbolt' },
     { title: '系统代理', path: '/proxy', icon: 'deployment-unit' },
+    { title: '日志与流量', path: '/traffic', icon: 'fund' },
+    { title: 'GitHub状态监控', path: '/github-status', icon: 'line-chart' },
     { title: '设置', path: '/setting', icon: 'setting' },
     { title: '帮助中心', path: '/help', icon: 'star' },
     { title: '应用', path: '/plugin', icon: 'appstore', children: plugins },

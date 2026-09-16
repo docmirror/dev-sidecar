@@ -25,12 +25,112 @@ function getDomesticDomainAllowListTmpFilePath () {
   return path.join(config.get().server.setting.userBasePath, '/domestic-domain-allowlist.txt')
 }
 
+// 通过 HKCU\Environment 注册表直接写入/删除环境变量，避免每次 setx 都启动 PowerShell 造成数秒卡顿
+function createEnvRegKey () {
+  return new Registry({
+    hive: Registry.HKCU,
+    key: '\\Environment',
+  })
+}
+
+function setWindowsEnvVariable (regKey, key, value) {
+  return new Promise((resolve, reject) => {
+    regKey.set(key, Registry.REG_SZ, value == null ? '' : String(value), (err) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve()
+      }
+    })
+  })
+}
+
+function removeWindowsEnvVariable (regKey, key) {
+  return new Promise((resolve) => {
+    regKey.remove(key, (removeErr) => {
+      resolve(!removeErr)
+    })
+  })
+}
+
+function getWindowsEnvVariable (regKey, key) {
+  return new Promise((resolve) => {
+    regKey.get(key, (err, item) => {
+      if (err || !item) {
+        resolve(null)
+      } else {
+        resolve(item.value)
+      }
+    })
+  })
+}
+
+// 记录开启代理前的环境变量值，关闭时恢复，避免覆盖用户/其他工具已有配置
+function getProxyEnvBackupPath () {
+  loadConfig()
+  return path.join(config.get().server.setting.userBasePath, '/proxy-env-backup.json')
+}
+
+async function saveProxyEnvBackup (regKey, keys) {
+  try {
+    const backup = {}
+    for (const key of keys) {
+      backup[key] = await getWindowsEnvVariable(regKey, key)
+    }
+    fs.writeFileSync(getProxyEnvBackupPath(), JSON.stringify(backup), 'utf-8')
+  } catch (e) {
+    log.warn('备份代理环境变量原值失败:', e)
+  }
+}
+
+function restoreProxyEnvBackup () {
+  const backupPath = getProxyEnvBackupPath()
+  if (!fs.existsSync(backupPath)) {
+    // 无备份：退回旧行为（直接删除），保证兼容
+    return null
+  }
+  try {
+    const backup = JSON.parse(fs.readFileSync(backupPath, 'utf-8'))
+    fs.unlinkSync(backupPath)
+    return backup
+  } catch (e) {
+    log.warn('读取代理环境变量备份失败:', e)
+    return null
+  }
+}
+
+async function broadcastWindowsEnvChange (exec) {
+  try {
+    await exec('setx DS_REFRESH "1"', { type: 'cmd' })
+  } catch {
+    // 广播失败不影响主流程
+  }
+}
+
+async function setWindowsEnvVariables (exec, envList) {
+  if (!envList || envList.length === 0) {
+    return
+  }
+
+  const regKey = createEnvRegKey()
+  // 仅在尚无备份时保存原值：重复 enable 时不能把 DS 注入值再当成“用户原值”
+  if (!fs.existsSync(getProxyEnvBackupPath())) {
+    await saveProxyEnvBackup(regKey, envList.map(item => item.key))
+  }
+  for (const item of envList) {
+    await setWindowsEnvVariable(regKey, item.key, item.value)
+    process.env[item.key] = String(item.value)
+  }
+  await broadcastWindowsEnvChange(exec)
+}
+
 async function downloadDomesticDomainAllowListAsync () {
   loadConfig()
 
   const remoteFileUrl = config.get().proxy.remoteDomesticDomainAllowListFileUrl
   log.info('开始下载远程 domestic-domain-allowlist.txt 文件:', remoteFileUrl)
-  request(remoteFileUrl, (error, response, body) => {
+  // 禁用环境变量代理：防止走 dev-sidecar 自己的代理（127.0.0.1:31181）导致启动时下载失败
+  request(remoteFileUrl, { proxy: null }, (error, response, body) => {
     if (error) {
       log.error(`下载远程 domestic-domain-allowlist.txt 文件失败: ${remoteFileUrl}, error:`, error, ', response:', response, ', body:', body)
       return
@@ -458,18 +558,27 @@ const executor = {
 
       log.info('开始设置windows系统代理:', ip, port, setEnv)
 
-      // https
-      let proxyAddr = `https=http://${ip}:${port}`
-      // http
-      if (config.get().proxy.proxyHttp) {
-        proxyAddr = `http=http://${ip}:${port - 1};${proxyAddr}`
+      const sysproxy = require('@starknt/sysproxy')
+      const proxyHttp = config.get().proxy.proxyHttp
+
+      // 同时代理 HTTP+HTTPS 时需要两个端口，使用 WinINET 协议格式（协议=地址:端口）；
+      // 只代理 HTTPS 时，地址和端口分开传参，Windows 会按规范分别填入“地址”和“端口”两个框。
+      let proxyAddr
+      if (proxyHttp) {
+        proxyAddr = `http=${ip}:${port - 1};https=${ip}:${port}`
+      } else {
+        proxyAddr = `${ip}:${port}`
       }
 
       // 读取排除域名
       const excludeIpStr = getProxyExcludeIpStr(';')
       // 设置代理，同时设置排除域名
       try {
-        require('@starknt/sysproxy').triggerManualProxyByUrl(true, proxyAddr, excludeIpStr, true)
+        if (proxyHttp) {
+          sysproxy.triggerManualProxyByUrl(true, proxyAddr, excludeIpStr, true)
+        } else {
+          sysproxy.triggerManualProxy(true, ip, port, excludeIpStr)
+        }
         log.info(`设置windows系统代理成功: ${proxyAddr} ......(省略排除IP列表)`)
       } catch (e1) {
         log.warn('设置windows系统代理失败：执行 `@starknt/sysproxy` 失败，现尝试通过执行 `sysproxy.exe global ...` 来设置系统代理！\r\n捕获的异常:', e1)
@@ -488,23 +597,24 @@ const executor = {
       if (setEnv) {
         // 设置全局代理所需的环境变量
         try {
-          await exec(`echo '设置环境变量 HTTPS_PROXY${config.get().proxy.proxyHttp ? '、HTTP_PROXY' : ''}${setCaBundle ? '、REQUEST_CA_BUNDLE' : ''}'`)
-
-          log.info(`开启系统代理的同时设置环境变量：HTTPS_PROXY = "http://${ip}:${port}/"`)
-          await exec(`setx HTTPS_PROXY "http://${ip}:${port}/"`)
+          const envList = []
+          const httpsProxy = `http://${ip}:${port}/`
+          log.info(`开启系统代理的同时设置环境变量：HTTPS_PROXY = "${httpsProxy}"`)
+          envList.push({ key: 'HTTPS_PROXY', value: httpsProxy })
 
           if (config.get().proxy.proxyHttp) {
-            log.info(`开启系统代理的同时设置环境变量：HTTP_PROXY = "http://${ip}:${port - 1}/"`)
-            await exec(`setx HTTP_PROXY "http://${ip}:${port - 1}/"`)
+            const httpProxy = `http://${ip}:${port - 1}/`
+            log.info(`开启系统代理的同时设置环境变量：HTTP_PROXY = "${httpProxy}"`)
+            envList.push({ key: 'HTTP_PROXY', value: httpProxy })
           }
 
           if (setCaBundle) {
             const caCertPath = config.get().server.setting.rootCaFile.certPath
             log.info(`开启系统代理的同时设置环境变量：REQUEST_CA_BUNDLE = "${caCertPath}"`)
-            await exec(`setx REQUEST_CA_BUNDLE "${caCertPath}"`)
+            envList.push({ key: 'REQUEST_CA_BUNDLE', value: caCertPath })
           }
 
-          //  await addClearScriptIni()
+          await setWindowsEnvVariables(exec, envList)
         } catch (e) {
           log.error('设置环境变量 HTTPS_PROXY、HTTP_PROXY、REQUEST_CA_BUNDLE 失败:', e)
         }
@@ -530,42 +640,31 @@ const executor = {
       }
 
       try {
-        await exec('echo \'删除环境变量 HTTPS_PROXY、HTTP_PROXY、REQUEST_CA_BUNDLE\'')
-        const regKey = new Registry({ // new operator is optional
-          hive: Registry.HKCU, // open registry hive HKEY_CURRENT_USER
-          key: '\\Environment', // key containing autostart programs
-        })
-        regKey.get('HTTPS_PROXY', (err) => {
-          if (!err) {
-            regKey.remove('HTTPS_PROXY', async (err) => {
-              if (err) {
-                log.warn('删除环境变量 HTTPS_PROXY 失败:', err)
-              } else {
-                await exec('setx DS_REFRESH "1"')
-              }
-            })
+        const defaultKeys = ['HTTPS_PROXY', 'HTTP_PROXY', 'REQUEST_CA_BUNDLE']
+        const backup = restoreProxyEnvBackup()
+        // 有备份时只处理备份中的 key，避免误删用户本来就有、但 DS 未写入的变量
+        const keys = backup ? Object.keys(backup) : defaultKeys
+        const regKey = createEnvRegKey()
+        let changed = false
+        for (const key of keys) {
+          const previous = backup ? backup[key] : undefined
+          if (backup && previous != null) {
+            await setWindowsEnvVariable(regKey, key, previous)
+            process.env[key] = String(previous)
+            changed = true
+          } else {
+            const existed = await removeWindowsEnvVariable(regKey, key)
+            if (existed) {
+              delete process.env[key]
+              changed = true
+            }
           }
-        })
-        regKey.get('HTTP_PROXY', (err) => {
-          if (!err) {
-            regKey.remove('HTTP_PROXY', async (err) => {
-              if (err) {
-                log.warn('删除环境变量 HTTP_PROXY 失败:', err)
-              }
-            })
-          }
-        })
-        regKey.get('REQUEST_CA_BUNDLE', (err) => {
-          if (!err) {
-            regKey.remove('REQUEST_CA_BUNDLE', async (err) => {
-              if (err) {
-                log.warn('删除环境变量 REQUEST_CA_BUNDLE 失败:', err)
-              }
-            })
-          }
-        })
+        }
+        if (changed) {
+          await broadcastWindowsEnvChange(exec)
+        }
       } catch (e) {
-        log.error('删除环境变量 HTTPS_PROXY、HTTP_PROXY 失败:', e)
+        log.error('恢复/删除环境变量 HTTPS_PROXY、HTTP_PROXY、REQUEST_CA_BUNDLE 失败:', e)
       }
 
       return true

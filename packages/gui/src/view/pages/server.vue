@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 
 import _ from 'lodash'
 import JsonEditor from '@/view/components/JsonEditor.vue'
-import { CheckOutlined, InfoCircleOutlined, PlusOutlined, MinusOutlined, SyncOutlined, ReloadOutlined } from '@ant-design/icons-vue'
+import { CheckOutlined, CloudOutlined, InfoCircleOutlined, PlusOutlined, MinusOutlined, SyncOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 import Plugin from '../mixins/plugin'
 
 export default defineComponent({
@@ -12,6 +12,7 @@ export default defineComponent({
   components: {
     JsonEditor,
     CheckOutlined,
+    CloudOutlined,
     InfoCircleOutlined,
     PlusOutlined,
     MinusOutlined,
@@ -28,7 +29,29 @@ export default defineComponent({
       dnsMappings: [],
       speedTestList: [],
       whiteList: [],
+      tlsMappings: [],
       speedRefreshInterval: null,
+      tlsVersionOptions: [
+        {
+          label: 'TLS 1.2',
+          value: 'TLSv1.2',
+        },
+        {
+          label: 'TLS 1.3',
+          value: 'TLSv1.3',
+        },
+      ],
+      cfRouteDomains: [],
+      cfRouteModeOptions: [
+        {
+          label: '黑名单模式（名单内不重定向）',
+          value: 'blacklist',
+        },
+        {
+          label: '白名单模式（仅名单内重定向）',
+          value: 'whitelist',
+        },
+      ],
       whiteListOptions: [
         {
           label: '不代理',
@@ -99,6 +122,8 @@ export default defineComponent({
     ready () {
       this.initDnsMapping()
       this.initWhiteList()
+      this.initTlsMappings()
+      this.initCfRouteDomains()
       if (this.config.server.dns.speedTest.dnsProviders) {
         this.speedDns = this.config.server.dns.speedTest.dnsProviders
       }
@@ -106,6 +131,8 @@ export default defineComponent({
     async applyBefore () {
       this.submitDnsMappings()
       this.submitWhiteList()
+      this.submitTlsMappings()
+      this.submitCfRouteDomains()
       this.delEmptySpeedHostname()
     },
     async applyAfter () {
@@ -190,6 +217,90 @@ export default defineComponent({
       }
       this.config.server.whiteList = whiteList
     },
+
+    // TLS版本设置
+    initTlsMappings () {
+      this.tlsMappings = []
+      const tlsVersionMapping = this.config.server.setting.tlsVersionMapping || {}
+      for (const key in tlsVersionMapping) {
+        const conf = tlsVersionMapping[key]
+        if (typeof conf === 'string') {
+          this.tlsMappings.push({
+            key: key || '',
+            value: conf === 'TLSv1.3' ? 'TLSv1.3' : 'TLSv1.2',
+            enabled: true,
+          })
+        } else if (conf && typeof conf === 'object') {
+          this.tlsMappings.push({
+            key: key || '',
+            value: conf.version === 'TLSv1.3' ? 'TLSv1.3' : 'TLSv1.2',
+            enabled: conf.enabled !== false,
+          })
+        }
+      }
+    },
+    addTlsMapping () {
+      this.tlsMappings.unshift({ key: '', value: 'TLSv1.2', enabled: true })
+      this.focusFirst(this.$refs.tlsMappings)
+    },
+    deleteTlsMapping (item, index) {
+      this.tlsMappings.splice(index, 1)
+    },
+    submitTlsMappings () {
+      const tlsVersionMapping = {}
+      for (const item of this.tlsMappings) {
+        if (item.key) {
+          const hostname = this.handleHostname(item.key)
+          if (hostname) {
+            tlsVersionMapping[hostname] = {
+              enabled: item.enabled !== false,
+              version: item.value === 'TLSv1.3' ? 'TLSv1.3' : 'TLSv1.2',
+            }
+          }
+        }
+      }
+      this.config.server.setting.tlsVersionMapping = tlsVersionMapping
+    },
+
+    // Cloudflare 路由重定向
+    initCfRouteDomains () {
+      this.cfRouteDomains = []
+      const cfRoute = this.config.server.cloudflareRoute || (this.config.server.cloudflareRoute = {})
+      if (!cfRoute.mode) {
+        cfRoute.mode = 'blacklist'
+      }
+      if (!cfRoute.domains) {
+        cfRoute.domains = {}
+      }
+      for (const key in cfRoute.domains) {
+        if (cfRoute.domains[key]) {
+          this.cfRouteDomains.push({ key: key || '' })
+        }
+      }
+    },
+    addCfRouteDomain () {
+      this.cfRouteDomains.unshift({ key: '' })
+      this.focusFirst(this.$refs.cfRouteDomains)
+    },
+    deleteCfRouteDomain (item, index) {
+      this.cfRouteDomains.splice(index, 1)
+    },
+    submitCfRouteDomains () {
+      const cfRoute = this.config.server.cloudflareRoute || (this.config.server.cloudflareRoute = {})
+      const domains = {}
+      for (const item of this.cfRouteDomains) {
+        if (item.key) {
+          const hostname = this.handleHostname(item.key)
+          if (hostname) {
+            domains[hostname] = true
+          }
+        }
+      }
+      cfRoute.domains = domains
+      if (!cfRoute.mode || (cfRoute.mode !== 'whitelist' && cfRoute.mode !== 'blacklist')) {
+        cfRoute.mode = 'blacklist'
+      }
+    },
     getSpeedTestConfig () {
       return this.config.server.dns.speedTest
     },
@@ -211,11 +322,43 @@ export default defineComponent({
     reSpeedTest () {
       this.$api.server.reSpeedTest()
     },
+    hasCf (item) {
+      if (!item) {
+        return false
+      }
+      const list = (item.alive || []).concat(item.backupList || [])
+      return list.some((element) => element.cf === true)
+    },
     registerSpeedTestEvent () {
       const listener = async (event, message) => {
-        console.log('get speed event', event, message)
         if (message.key === 'getList') {
-          this.speedTestList = message.value
+          // 数据验证和标准化
+          const validatedData = {}
+          for (const hostname in message.value) {
+            const item = message.value[hostname]
+            if (!item.backupList) {
+              console.warn(`Missing backupList for ${hostname}`)
+              continue
+            }
+
+            validatedData[hostname] = {
+              alive: item.alive || [],
+              backupList: item.backupList.map(ipObj => {
+                // 标准化IP地址格式；保留 Cloudflare 元数据，供 hasCf / 模板展示
+                const standardized = {
+                  host: ipObj.host,
+                  port: ipObj.port || 443,
+                  dns: ipObj.dns || 'unknown',
+                  time: ipObj.time || null,
+                  cf: ipObj.cf === true,
+                  cfOriginalHost: ipObj.cfOriginalHost
+                }
+                return standardized
+              })
+            }
+          }
+
+          this.speedTestList = validatedData
         }
       }
       this.$api.ipc.on('speed', listener)
@@ -359,6 +502,39 @@ export default defineComponent({
               v-model="config.server.setting.timeoutMapping" style="flex-grow:1;min-height:300px;margin-top:10px" mode="code"
               :show-btns="false" :expanded-on-start="true"
             />
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="tls" tab="TLS版本设置">
+          <div v-if="activeTabKey === 'tls'">
+            <a-row style="margin-top:10px">
+              <a-col span="21">
+                <div>指定域名使用的 TLS 版本：<span class="form-help">（域名配置可使用通配符或正则）</span></div>
+                <div class="form-help">
+                  例如 <code>production.cloudflare.docker.com</code> 选择 <code>TLS 1.2</code>。每行右侧开关可单独启用/停用；远程下发的规则会显示为停用状态，由你自行启用。未匹配到或停用的域名遵循“允许TLS1.2”开关。
+                </div>
+              </a-col>
+              <a-col span="3">
+                <a-button style="margin-left:8px" type="primary" @click="addTlsMapping()"><PlusOutlined /></a-button>
+              </a-col>
+            </a-row>
+            <a-row v-for="(item, index) of tlsMappings" ref="tlsMappings" :key="index" :gutter="10" style="margin-top: 5px">
+              <a-col :span="13">
+                <a-input v-model:value="item.key" spellcheck="false" placeholder="例如 production.cloudflare.docker.com" />
+              </a-col>
+              <a-col :span="5">
+                <a-select v-model:value="item.value" class="w100">
+                  <a-select-option v-for="(item2) of tlsVersionOptions" :key="item2.value" :value="item2.value">
+                    {{ item2.label }}
+                  </a-select-option>
+                </a-select>
+              </a-col>
+              <a-col :span="3">
+                <a-switch v-model:checked="item.enabled" />
+              </a-col>
+              <a-col :span="3">
+                <a-button type="danger" @click="deleteTlsMapping(item, index)"><MinusOutlined /></a-button>
+              </a-col>
+            </a-row>
           </div>
         </a-tab-pane>
         <a-tab-pane key="4" tab="域名白名单">
@@ -510,6 +686,7 @@ export default defineComponent({
                 <a-card size="small" class="mt10" :title="key">
                   <template #extra>
                     <a href="javascript:void(0)" :title="key" style="cursor:default">
+                      <CloudOutlined v-if="hasCf(item)" style="color:#faad14;margin-right:4px" />
                       <CheckOutlined v-if="item.alive.length > 0" />
                       <InfoCircleOutlined v-else />
                     </a>
@@ -518,9 +695,54 @@ export default defineComponent({
                     v-for="(element, index) of item.backupList" :key="index" style="margin:2px;"
                     :title="element.title || `测速中：${element.host}`" :color="element.time ? (element.time > config.server.setting.lowSpeedDelay ? 'orange' : 'green') : (element.title ? 'red' : '')"
                   >
+                    <CloudOutlined v-if="element.cf" style="margin-right:2px" />
                     {{ element.host }} {{ element.time ? `${element.time}ms` : (element.title ? '' : '测速中') }} {{ element.dns }}
                   </a-tag>
                 </a-card>
+              </a-col>
+            </a-row>
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="10" tab="Cloudflare路由重定向">
+          <div v-if="activeTabKey === '10'" style="padding-right:10px">
+            <a-alert type="info" message="根据 Cloudflare 官方 IP 段（运行时动态获取），若访问域名解析到 Cloudflare IP，则自动改写为你指定的优选地址。预设 IP 优先级最高，不会被重定向。" />
+            <a-form-item label="启用功能" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-checkbox v-model:checked="config.server.cloudflareRoute.enabled">
+                启用
+              </a-checkbox>
+            </a-form-item>
+            <a-form-item label="优选地址" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input
+                v-model:value="config.server.cloudflareRoute.preferredEndpoint"
+                placeholder="可填写 IP 地址或 CNAME 域名，例如 1.2.3.4 或 example.com"
+                spellcheck="false"
+              />
+              <div class="form-help">
+                可填写 IP 地址或 CNAME 域名；留空则不进行重写。
+              </div>
+            </a-form-item>
+            <a-form-item label="模式" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-select v-model:value="config.server.cloudflareRoute.mode" class="w100">
+                <a-select-option v-for="(item2) of cfRouteModeOptions" :key="item2.value" :value="item2.value">
+                  {{ item2.label }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+            <hr>
+            <a-row style="margin-top:10px">
+              <a-col span="21">
+                <div>域名名单：<span class="form-help">（域名配置可使用通配符或正则，填法与“域名白名单”一致）</span></div>
+              </a-col>
+              <a-col span="3">
+                <a-button style="margin-left:8px" type="primary" @click="addCfRouteDomain()"><PlusOutlined /></a-button>
+              </a-col>
+            </a-row>
+            <a-row v-for="(item, index) of cfRouteDomains" ref="cfRouteDomains" :key="index" :gutter="10" style="margin-top: 5px">
+              <a-col :span="21">
+                <a-input v-model:value="item.key" spellcheck="false" placeholder="例如 production.cloudflare.docker.com" />
+              </a-col>
+              <a-col :span="3">
+                <a-button type="danger" @click="deleteCfRouteDomain(item, index)"><MinusOutlined /></a-button>
               </a-col>
             </a-row>
           </div>
@@ -579,5 +801,104 @@ export default defineComponent({
   .ant-input-group-addon:first-child {
     width: 45px;
   }
+}
+.ipv6-tag {
+  position: relative;
+  padding-right: 45px !important;
+  margin-right: 5px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  min-width: 200px !important;
+}
+.ipv6-badge {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  background: #1890ff;
+  color: white;
+  padding: 0 4px;
+  border-radius: 3px;
+  line-height: 16px;
+  height: 16px;
+}
+.ip-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  background-color: #fafafa;
+  border-radius: 4px;
+  margin-top: 8px;
+  max-width: 100%;
+  overflow: hidden;
+}
+.ip-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #666;
+  word-break: break-all;
+  max-width: calc(100% - 16px);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.ip-item .ip-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ip-item .ip-speed {
+  margin-left: 8px;
+  white-space: nowrap;
+}
+.ip-item .ip-speed.success {
+  color: #52c41a;
+}
+.ip-item .ip-speed.warning {
+  color: #faad14;
+}
+.ip-item .ip-speed.error {
+  color: #ff4d4f;
+}
+.domain-box {
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+.domain-box .domain-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.domain-box .domain-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.domain-box .domain-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+  flex-shrink: 0;
 }
 </style>

@@ -479,6 +479,15 @@ export default {
         </div>
       </a-form-item>
       <hr>
+      <a-form-item label="完全禁用日志" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-checkbox v-model:checked="config.app.logDisabled">
+          不要任何日志
+        </a-checkbox>
+        <div class="form-help">
+          修改后，重启DS才生效！<br>
+          开启后控制台不输出日志，<code>core.log</code>、<code>gui.log</code>、<code>server.log</code> 也不会再写入。
+        </div>
+      </a-form-item>
       <a-form-item label="日志文件保存目录" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-input-search
           v-model:value="config.app.logFileSavePath" enter-button="选择"

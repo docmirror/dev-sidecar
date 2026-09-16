@@ -175,7 +175,7 @@ const localApi = {
    * @returns {Promise<void>}
    */
   startup () {
-    return DevSidecar.api.startup({ mitmproxyPath })
+    return DevSidecar.api.startup({ mitmproxyPath, setting: localApi.setting.load() })
   },
   server: {
     /**
@@ -183,14 +183,14 @@ const localApi = {
      * @returns {Promise<{port: *}>}
      */
     start () {
-      return DevSidecar.api.server.start({ mitmproxyPath })
+      return DevSidecar.api.server.start({ mitmproxyPath, setting: localApi.setting.load() })
     },
     /**
      * 重启代理服务
      * @returns {Promise<void>}
      */
     restart () {
-      return DevSidecar.api.server.restart({ mitmproxyPath })
+      return DevSidecar.api.server.restart({ mitmproxyPath, setting: localApi.setting.load() })
     },
   },
   shell: {
@@ -279,6 +279,11 @@ export default {
     DevSidecar.api.event.register('speed', (event) => {
       if (win) {
         win.webContents.send('speed', event)
+      }
+    })
+    DevSidecar.api.event.register('traffic', (event) => {
+      if (win) {
+        win.webContents.send('traffic', event)
       }
     })
 
