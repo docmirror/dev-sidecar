@@ -27,13 +27,13 @@ jobs:
       ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v5
 
       - name: "Setup pnpm"
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v5
 
       - name: "Setup Node.js 22.x"
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           registry-url: https://npm.pkg.github.com/
@@ -46,7 +46,7 @@ jobs:
         run: pnpm --filter @docmirror/dev-sidecar-cli test
 
       - name: "Cache Node.js binaries (node-bin)"
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: packages/cli/dist/node-bin
           key: cli-node-bin-${{ runner.os }}-${{ hashFiles('packages/cli/scripts/build.js') }}
@@ -66,7 +66,7 @@ jobs:
           file packages/cli/dist/ds-cli-* 2>/dev/null || true
 
       - name: "Upload artifacts"
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v6
         with:
           name: ds-cli-${{ github.sha }}
           path: |
@@ -80,7 +80,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: "Download artifacts"
-        uses: actions/download-artifact@v4.1.8
+        uses: actions/download-artifact@v7
         with:
           pattern: ds-cli-*
           merge-multiple: true

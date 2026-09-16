@@ -35,23 +35,23 @@ jobs:
           - 22
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v5
         with:
           submodules: true
           fetch-depth: 0
 
       - name: "Setup pnpm"
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v5
 
       - name: 'Setup Node.js "${{ matrix.node }}.x" environment'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
           cache: pnpm
 
       - name: "Setup Python environment, because of electron-builder install-app-deps requires Python setup tools"
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.10"
 
@@ -79,7 +79,7 @@ jobs:
           python --version;
 
       - name: "Setup electron cache"
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ github.workspace }}/.cache/electron
           key: ${{ runner.os }}-electron-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -87,7 +87,7 @@ jobs:
             ${{ runner.os }}-electron-cache-
 
       - name: "Setup electron-builder cache"
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ github.workspace }}/.cache/electron-builder
           key: ${{ runner.os }}-electron-builder-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
