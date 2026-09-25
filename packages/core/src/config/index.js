@@ -39,6 +39,13 @@ const defaultConfig = {
     },
     closeStrategy: 0,
     showShutdownTip: true,
+    // 首页可关闭广告（url 为空时不显示，可在设置里填写联盟/推广链接）
+    showHomeAd: true,
+    homeAd: {
+      text: '',
+      url: '',
+      description: '',
+    },
 
     // 日志相关配置
     logDisabled: false, // 完全禁用日志：控制台不输出，日志文件也不写入

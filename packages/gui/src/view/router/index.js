@@ -4,6 +4,7 @@ import Node from '../pages/plugin/node'
 import Overwall from '../pages/plugin/overwall'
 import Pip from '../pages/plugin/pip'
 import FreeEye from '../pages/plugin/free-eye.vue'
+import P2p from '../pages/plugin/p2p.vue'
 import Proxy from '../pages/proxy'
 import Server from '../pages/server'
 import Setting from '../pages/setting'
@@ -25,6 +26,7 @@ const routes = [
   { path: '/plugin/pip', component: Pip },
   { path: '/plugin/free-eye', component: FreeEye },
   { path: '/plugin/overwall', component: Overwall },
+  { path: '/plugin/p2p', component: P2p },
 ]
 
 export default routes

@@ -8,6 +8,7 @@ export default function createMenus (app) {
   const $global = app.$global || app.config?.globalProperties?.$global
   if ($global?.setting?.overwall) {
     plugins.push({ title: '增强功能', path: '/plugin/overwall', icon: 'global' })
+    plugins.push({ title: '统一加速', path: '/plugin/p2p', icon: 'api' })
   }
   const menus = [
     { title: '首页', path: '/index', icon: 'home' },

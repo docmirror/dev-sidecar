@@ -21,7 +21,7 @@ function readUserConfig () {
   } catch {
     // json5 配置：使用 mitmproxy 同款解析器
     try {
-      const jsonApi = require('@docmirror/mitmproxy/src/json')
+      const jsonApi = require('@blue-frontier/mitmproxy/src/json')
       return jsonApi.parse(raw)
     } catch {
       return null
@@ -34,6 +34,9 @@ if (process.env.DEV_SIDECAR_LOG_DISABLED !== 'true') {
     const userConfig = readUserConfig()
     if (userConfig && userConfig.app && userConfig.app.logDisabled === true) {
       process.env.DEV_SIDECAR_LOG_DISABLED = 'true'
+    }
+    if (userConfig && userConfig.app && userConfig.app.logDetail === true) {
+      process.env.DEV_SIDECAR_LOG_DETAIL = 'true'
     }
   } catch {
     // 配置文件不存在或格式异常时，按默认（允许日志）处理

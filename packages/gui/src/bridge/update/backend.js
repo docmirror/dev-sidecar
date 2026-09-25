@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import tls from 'node:tls'
 import { fileURLToPath } from 'node:url'
-import DevSidecar from '@docmirror/dev-sidecar'
+import DevSidecar from '@blue-frontier/dev-sidecar'
 import AdmZip from 'adm-zip'
 import { ipcMain } from 'electron'
 import electronUpdater from 'electron-updater'
@@ -14,7 +14,7 @@ const require = createRequire(import.meta.url)
 const pkg = require('../../../package.json')
 import appPathUtil from '../../utils/util.apppath.js'
 import log from '../../utils/util.log.gui.js'
-import { isNewVersion } from '@docmirror/dev-sidecar/src/utils/util.version.js'
+import { isNewVersion } from '@blue-frontier/dev-sidecar/src/utils/util.version.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isMac = process.platform === 'darwin'

@@ -21,8 +21,8 @@
     "postuninstall": "pnpm exec electron-builder install-app-deps"
   },
   "dependencies": {
-    "@docmirror/dev-sidecar": "workspace:*",
-    "@docmirror/mitmproxy": "workspace:*",
+    "@blue-frontier/dev-sidecar": "workspace:*",
+    "@blue-frontier/mitmproxy": "workspace:*",
     "@starknt/shutdown-handler-napi": "^0.0.3",
     "@starknt/shutdown-handler-napi-win32-x64-msvc": "^0.0.3",
     "@starknt/sysproxy": "^0.0.3",

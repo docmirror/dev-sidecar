@@ -1,17 +1,17 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import DevSidecar from '@docmirror/dev-sidecar'
+import DevSidecar from '@blue-frontier/dev-sidecar'
 import { app, ipcMain, shell } from 'electron'
 import lodash from 'lodash'
-import jsonApi from '@docmirror/mitmproxy/src/json.js'
+import jsonApi from '@blue-frontier/mitmproxy/src/json.js'
 import { createRequire } from 'node:module'
 const require = createRequire(import.meta.url)
 const pk = require('../../../package.json')
-import coreDefaultConfig from '@docmirror/dev-sidecar/src/config/index.js'
-import configLoader from '@docmirror/dev-sidecar/src/config/local-config-loader.js'
+import coreDefaultConfig from '@blue-frontier/dev-sidecar/src/config/index.js'
+import configLoader from '@blue-frontier/dev-sidecar/src/config/local-config-loader.js'
 import log from '../../utils/util.log.gui.js'
-import dateUtil from '@docmirror/dev-sidecar/src/utils/util.date.js'
+import dateUtil from '@blue-frontier/dev-sidecar/src/utils/util.date.js'
 
 const { configFromFiles } = coreDefaultConfig
 
@@ -85,6 +85,17 @@ const localApi = {
     },
     getLogDir () {
       return configFromFiles.app.logFileSavePath || path.join(getDefaultConfigBasePath(), '/logs/')
+    },
+    /** 迁移 2.2.0 → 3.0.0（migrations/v3.0.0）：密钥入 SecretStore，删明文 */
+    async securityMigrate () {
+      const migrate = require('@blue-frontier/dev-sidecar/src/utils/util.security-migrate')
+      return migrate.runMigration_to3_0_0()
+    },
+    /** 一键脱敏历史日志 */
+    async redactLogs () {
+      const dir = configFromFiles.app.logFileSavePath || path.join(getDefaultConfigBasePath(), '/logs/')
+      const { redactLogDir } = require('@blue-frontier/dev-sidecar/src/utils/util.redact-logs')
+      return redactLogDir(dir)
     },
     getSystemPlatform (throwIfUnknown = false) {
       return DevSidecar.api.shell.getSystemPlatform(throwIfUnknown)

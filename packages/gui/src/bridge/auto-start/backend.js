@@ -1,4 +1,4 @@
-import DevSidecar from '@docmirror/dev-sidecar'
+import DevSidecar from '@blue-frontier/dev-sidecar'
 
 async function setAutoStartForLinux (app, enable = true) {
   const path = app.getPath('exe')

@@ -2,12 +2,12 @@
 import './utils/util.log-env.js'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import DevSidecar from '@docmirror/dev-sidecar'
+import DevSidecar from '@blue-frontier/dev-sidecar'
 import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, Tray } from 'electron'
 import fs from 'node:fs'
 import minimist from 'minimist'
 import backend from './bridge/backend.js'
-import jsonApi from '@docmirror/mitmproxy/src/json.js'
+import jsonApi from '@blue-frontier/mitmproxy/src/json.js'
 import log from './utils/util.log.gui.js'
 
 log.info(`background.js start, platform is ${process.platform}`)

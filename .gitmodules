@@ -1,0 +1,3 @@
+[submodule "vendor/ds-core"]
+	path = vendor/ds-core
+	url = https://github.com/Blue-Frontier/ds-core.git

@@ -1,5 +1,5 @@
 import { app } from 'electron'
-import DevSidecar from '@docmirror/dev-sidecar'
+import DevSidecar from '@blue-frontier/dev-sidecar'
 import sudoPrompt from '@vscode/sudo-prompt'
 import { join } from 'node:path'
 import log from '../../utils/util.log.gui.js'

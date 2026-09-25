@@ -30,8 +30,27 @@ export default {
   },
   methods: {
     ready (config) {
+      this.ensureAppDefaults(config)
       this.urlBackup = config.app.remoteConfig.url
       this.personalUrlBackup = config.app.remoteConfig.personalUrl
+    },
+    ensureAppDefaults (config) {
+      if (!config || !config.app) {
+        return
+      }
+      if (!config.app.homeAd) {
+        config.app.homeAd = { text: '', url: '', description: '' }
+      }
+      if (config.app.logDetail == null) {
+        config.app.logDetail = false
+      }
+      if (config.app.showHomeAd == null) {
+        config.app.showHomeAd = true
+      }
+    },
+    setConfig (newConfig) {
+      this.ensureAppDefaults(newConfig)
+      this.config = newConfig
     },
     getEventKey (event) {
       // 忽略以下键
@@ -331,6 +350,23 @@ export default {
         this.config.app.logFileSavePath = value[0]
       }
     },
+    async onSecurityMigrate () {
+      try {
+        const ret = await this.$api.info.securityMigrate()
+        const acts = (ret && ret.results || []).map((x) => `${x.account}:${x.action}`).join(", ")
+        this.$message.success(`已迁移到 3.0.0（${ret && ret.backend}） ${acts}`)
+      } catch (e) {
+        this.$message.error(`安全迁移失败: ${e.message || e}`)
+      }
+    },
+    async onRedactLogs () {
+      try {
+        const ret = await this.$api.info.redactLogs()
+        this.$message.success(`已脱敏日志：${(ret && ret.changed) || 0} / ${(ret && ret.files) || 0} 个文件`)
+      } catch (e) {
+        this.$message.error(`脱敏失败: ${e.message || e}`)
+      }
+    },
   },
 }
 </script>
@@ -411,6 +447,34 @@ export default {
           是否显示首页的警告提示
         </div>
       </a-form-item>
+      <a-form-item label="首页广告" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-radio-group v-model:value="config.app.showHomeAd" button-style="solid">
+          <a-radio-button :value="true">
+            显示
+          </a-radio-button>
+          <a-radio-button :value="false">
+            隐藏
+          </a-radio-button>
+        </a-radio-group>
+        <div class="form-help">
+          链接为空时不展示。关闭后可在本设置中重新打开。
+        </div>
+      </a-form-item>
+      <a-form-item label="广告文案" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-input v-model:value="config.app.homeAd.text" placeholder="推荐：xxx 优惠" spellcheck="false" />
+        <div class="form-help">
+          首页广告上的可点击文字
+        </div>
+      </a-form-item>
+      <a-form-item label="广告说明" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-input v-model:value="config.app.homeAd.description" placeholder="可选，灰色小字" spellcheck="false" />
+      </a-form-item>
+      <a-form-item label="广告链接" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-input v-model:value="config.app.homeAd.url" placeholder="https://... 联盟/推广链接" spellcheck="false" />
+        <div class="form-help">
+          点击广告文案后用系统浏览器打开。请填写带推广 ID 的链接以便统计分成。
+        </div>
+      </a-form-item>
       <a-form-item v-if="!isLinux()" label="关闭策略" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model:value="config.app.closeStrategy" default-value="0" button-style="solid">
           <a-radio-button :value="0">
@@ -479,6 +543,27 @@ export default {
         </div>
       </a-form-item>
       <hr>
+      <a-form-item label="详细调试日志" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-checkbox v-model:checked="config.app.logDetail">
+          问题排查时再开启
+        </a-checkbox>
+        <div class="form-help">
+          <strong>可能包含敏感信息</strong>（访问的 URL 路径等）。默认只记域名；凭据始终脱敏。<br>
+          修改后，重启 DS 才生效。
+        </div>
+      </a-form-item>
+      <a-form-item label="历史日志" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-button style="margin-right:8px" @click="onSecurityMigrate()">
+          迁移到 3.0.0
+        </a-button>
+        <a-button @click="onRedactLogs()">
+          一键脱敏
+        </a-button>
+        <div class="form-help">
+          对日志目录下的 <code>*.log</code> 做脱敏覆盖（凭据、完整 URL 等）。<br>
+          旧日志可能仍含敏感信息，发送日志前可先点此处理。
+        </div>
+      </a-form-item>
       <a-form-item label="完全禁用日志" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model:checked="config.app.logDisabled">
           不要任何日志

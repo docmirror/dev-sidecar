@@ -213,7 +213,7 @@ export default {
       btns.proxy = this.createSwitchBtn('proxy', '系统代理', this.$api.proxy, status)
       lodash.forEach(status.plugin, (item, key) => {
         // setting.json 未开启 overwall 时，首页不显示“增强功能”开关
-        if (key === 'overwall' && !this.setting.overwall) {
+        if ((key === 'overwall' || key === 'share') && !this.setting.overwall) {
           return
         }
         if (this.config.plugin[key].statusOff) {
@@ -309,6 +309,22 @@ export default {
         },
       })
     },
+    onAdClose () {
+      this.$confirm({
+        title: '是否关闭首页广告',
+        okText: '不再显示',
+        cancelText: '仅本次关闭',
+        onOk: () => {
+          this.$api.config.update({ app: { showHomeAd: false } })
+        },
+      })
+    },
+    openAd () {
+      const url = this.config?.app?.homeAd?.url
+      if (url) {
+        this.openExternal(url)
+      }
+    },
   },
 }
 </script>
@@ -335,6 +351,20 @@ export default {
 
     <div class="box">
       <a-alert v-if="config && config.app.showShutdownTip" message="本应用开启后会修改系统代理，直接重启电脑可能会无法上网，您可以再次启动本应用即可恢复。如您需要卸载，在卸载前请务必完全退出本应用再进行卸载" banner closable @close="onShutdownTipClose" />
+      <a-alert
+        v-if="config && config.app.showHomeAd && config.app.homeAd && config.app.homeAd.url"
+        type="info"
+        banner
+        closable
+        class="home-ad"
+        @close="onAdClose"
+      >
+        <template #message>
+          <span class="home-ad-label">广告</span>
+          <a v-if="config.app.homeAd.text" class="home-ad-link" @click.prevent="openAd">{{ config.app.homeAd.text }}</a>
+          <span v-if="config.app.homeAd.description" class="home-ad-desc">{{ config.app.homeAd.description }}</span>
+        </template>
+      </a-alert>
       <div v-if="config && config.app" class="mode-bar" style="margin:20px;">
         <a-radio-group v-model:value="config.app.mode" button-style="solid" @change="modeChange">
           <a-tooltip placement="topLeft" title="启用测速，关闭拦截，关闭增强（不稳定，不需要安装证书，最安全）">
@@ -549,5 +579,33 @@ div.ant-form-item {
 /* 表单标签固定宽度，防止不同长度文字导致按钮错位 */
 .page_index .ant-form-item-label {
   flex: 0 0 100px !important;
+}
+
+.home-ad {
+  .home-ad-label {
+    display: inline-block;
+    margin-right: 8px;
+    padding: 0 6px;
+    font-size: 12px;
+    line-height: 18px;
+    color: #999;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+  }
+
+  .home-ad-link {
+    color: #1890ff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .home-ad-desc {
+    margin-left: 8px;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 12px;
+  }
 }
 </style>
