@@ -15,7 +15,7 @@ const PID_FILE = path.join(userBase, 'ds-cli.pid')
 // ── 加载配置 ──────────────────────────────────────────
 
 function loadConfig () {
-  const defConfig = require('@blue-frontier/dev-sidecar/src/config/index.js')
+  const { defaultConfig: defConfig, applyDeprecatedRemoteConfigUrlOverride } = require('@blue-frontier/dev-sidecar/src/config/index.js')
   const configLoader = require('@blue-frontier/dev-sidecar/src/config/local-config-loader')
   const mergeApi = require('@blue-frontier/dev-sidecar/src/merge')
   const jsonApi = require('@blue-frontier/mitmproxy/src/json')
@@ -45,7 +45,7 @@ function loadConfig () {
   }
   mergeApi.deleteNullItems(merged)
 
-  return merged
+  return applyDeprecatedRemoteConfigUrlOverride(merged)
 }
 
 // ── 准备服务配置 ──────────────────────────────────────

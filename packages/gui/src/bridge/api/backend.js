@@ -9,13 +9,13 @@ import jsonApi from '@blue-frontier/mitmproxy/src/json.js'
 import { createRequire } from 'node:module'
 const require = createRequire(import.meta.url)
 const pk = require('../../../package.json')
-import coreDefaultConfig from '@blue-frontier/dev-sidecar/src/config/index.js'
 import configLoader from '@blue-frontier/dev-sidecar/src/config/local-config-loader.js'
+import loggerFactory from '@blue-frontier/dev-sidecar/src/utils/util.logger.js'
 import log from '../../utils/util.log.gui.js'
 import dateUtil from '@blue-frontier/dev-sidecar/src/utils/util.date.js'
+import coreConfig from '@blue-frontier/dev-sidecar/src/config/index.js'
 
-const { configFromFiles } = coreDefaultConfig
-
+const { defaultConfig: coreDefaultConfig } = coreConfig
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const mitmproxyPath = path.join(__dirname, '../mitmproxy.js')
 // extra/ 在打包后位于 resources/extra（extraResources，asar 外）；开发时在项目根 extra/
@@ -89,7 +89,7 @@ const localApi = {
       return getDefaultConfigBasePath()
     },
     getLogDir () {
-      return configFromFiles.app.logFileSavePath || path.join(getDefaultConfigBasePath(), '/logs/')
+      return loggerFactory.getLogDir()
     },
     /** 迁移 2.2.0 → 3.0.0（migrations/v3.0.0）：密钥入 SecretStore，删明文 */
     async securityMigrate () {
@@ -98,7 +98,7 @@ const localApi = {
     },
     /** 一键脱敏历史日志 */
     async redactLogs () {
-      const dir = configFromFiles.app.logFileSavePath || path.join(getDefaultConfigBasePath(), '/logs/')
+      const dir = loggerFactory.getLogDir()
       const { redactLogDir } = require('@blue-frontier/dev-sidecar/src/utils/util.redact-logs')
       return redactLogDir(dir)
     },
