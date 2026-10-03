@@ -25,3 +25,4 @@ packages/cli/.nyc_output
 .mimocode
 .claude
 .workbuddy-ai/
+atlas.facets.json
