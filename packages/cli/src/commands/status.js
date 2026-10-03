@@ -44,7 +44,7 @@ function printStatus (status) {
   // 读取 running.json 中的实例信息
   let instanceInfo = ''
   try {
-    const DevSidecar = require('@docmirror/dev-sidecar')
+    const DevSidecar = require('@blue-frontier/dev-sidecar')
     const instance = DevSidecar.api.instance.readInstance()
     if (instance) {
       instanceInfo = `  运行实例:  ${instance.type === 'gui' ? 'GUI' : 'CLI'}${instance.pid ? ` (PID: ${instance.pid})` : ''}${instance.startTime ? `，启动于 ${instance.startTime}` : ''}`
@@ -69,7 +69,7 @@ function printStatus (status) {
 
 async function showStatus () {
   // 锁新鲜 = 有实例在运行（GUI 或 CLI），替代 status.json/PID 文件判断
-  const DevSidecar = require('@docmirror/dev-sidecar')
+  const DevSidecar = require('@blue-frontier/dev-sidecar')
   const running = await DevSidecar.api.instance.isLocked()
 
   let autoStart = '未知'

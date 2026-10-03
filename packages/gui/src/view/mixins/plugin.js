@@ -73,6 +73,10 @@ export default {
               await this.ready(this.config)
             }
             await this.apply()
+            // 页面可在「恢复默认」应用后做补充处理（如 setting 页重新拉取远程配置）
+            if (this.afterResetDefault) {
+              await this.afterResetDefault(this.config)
+            }
           } finally {
             this.resetDefaultLoading = false
           }

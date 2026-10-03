@@ -602,6 +602,30 @@ hr {
 
 /* ==================== 布局样式 ==================== */
 
+/* a-app 渲染的 div.ant-app 默认无高度，会截断 height:100% 链 */
+#app {
+  height: 100%;
+  width: 100%;
+}
+
+.ant-app {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  > .ds_layout {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+
+/* 窗口拉高后露出默认白底 */
+html,
+body {
+  background-color: var(--bg-primary);
+}
+
 /* 基础布局 */
 .ds_layout {
   font-family: Avenir, Helvetica, Arial, sans-serif;

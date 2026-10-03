@@ -4,7 +4,8 @@ import tls from 'node:tls'
 import { fileURLToPath } from 'node:url'
 import DevSidecar from '@blue-frontier/dev-sidecar'
 import AdmZip from 'adm-zip'
-import { ipcMain } from 'electron'
+import electron from '../../electron.js'
+const { ipcMain } = electron
 import electronUpdater from 'electron-updater'
 const { autoUpdater } = electronUpdater
 import request from 'request'
@@ -57,6 +58,22 @@ function getTrustedCaList () {
  * - partArch: 增量包命名用（win-x64 / win-arm64 / win-ia32）
  * - fullArch: 完整安装包命名用（windows-x86_64 / windows-arm64 / linux-armv7l 等）
  */
+function safeHostname (uri) {
+  try {
+    return new URL(uri).hostname
+  } catch {
+    return 'api.github.com'
+  }
+}
+
+function updateProxyUrl () {
+  return process.env.HTTPS_PROXY
+    || process.env.https_proxy
+    || process.env.HTTP_PROXY
+    || process.env.http_proxy
+    || 'http://127.0.0.1:31181'
+}
+
 function getPlatformAssetInfo () {
   const arch = process.arch
   let partArch
@@ -120,7 +137,10 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
     log.error('下载升级包失败:', err)
     onError(err)
   }
-  progress(request(uri, { ca: getTrustedCaList() }), {
+  progress(request(uri, {
+    ca: getTrustedCaList(),
+    proxy: updateProxyUrl(),
+  }), {
     // throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
     // delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
     // lengthHeader: 'x-transfer-length'  // Length header to use, defaults to content-length
@@ -181,7 +201,11 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   // 检查更新
   const releasesApiUrl = 'https://api.github.com/repos/docmirror/dev-sidecar/releases'
   async function checkForUpdatesFromGitHub () {
-    request(releasesApiUrl, { headers: { 'User-Agent': `DS/${curVersion}`, 'Server-Name': 'baidu.com' }, ca: getTrustedCaList() }, (error, response, body) => {
+    request(releasesApiUrl, {
+      headers: { 'User-Agent': `DS/${curVersion}`, 'Server-Name': 'baidu.com' },
+      ca: getTrustedCaList(),
+      proxy: updateProxyUrl(),
+    }, (error, response, body) => {
       try {
         if (error) {
           log.error('检查更新失败:', error)

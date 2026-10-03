@@ -29,6 +29,8 @@ export default defineComponent({
       dnsMappings: [],
       speedTestList: [],
       whiteList: [],
+      echDomains: [],
+      echPreSetIpDomains: [],
       tlsMappings: [],
       speedRefreshInterval: null,
       tlsVersionOptions: [
@@ -122,6 +124,8 @@ export default defineComponent({
     ready () {
       this.initDnsMapping()
       this.initWhiteList()
+      this.initEchDomains()
+      this.initEchPreSetIpDomains()
       this.initTlsMappings()
       this.initCfRouteDomains()
       if (this.config.server.dns.speedTest.dnsProviders) {
@@ -131,6 +135,8 @@ export default defineComponent({
     async applyBefore () {
       this.submitDnsMappings()
       this.submitWhiteList()
+      this.submitEchDomains()
+      this.submitEchPreSetIpDomains()
       this.submitTlsMappings()
       this.submitCfRouteDomains()
       this.delEmptySpeedHostname()
@@ -216,6 +222,74 @@ export default defineComponent({
         }
       }
       this.config.server.whiteList = whiteList
+    },
+
+    // ECH（Encrypted Client Hello）
+    getEchConfig () {
+      const dns = this.config.server.dns || (this.config.server.dns = {})
+      return dns.ech || (dns.ech = {})
+    },
+    // 把配置里的域名列表转成表格行（兼容数组与对象两种写法）
+    toDomainRows (domains) {
+      const rows = []
+      if (Array.isArray(domains)) {
+        for (const domain of domains) {
+          if (typeof domain === 'string' && domain) {
+            rows.push({ key: domain })
+          }
+        }
+      } else if (domains != null && typeof domains === 'object') {
+        // 兼容对象写法： { 'example.com': true }
+        for (const key in domains) {
+          if (domains[key] !== false && domains[key] != null) {
+            rows.push({ key })
+          }
+        }
+      }
+      return rows
+    },
+    toDomains (rows) {
+      const domains = []
+      for (const item of rows) {
+        if (item.key) {
+          const hostname = this.handleHostname(item.key)
+          if (hostname && !domains.includes(hostname)) {
+            domains.push(hostname)
+          }
+        }
+      }
+      return domains
+    },
+    initEchDomains () {
+      this.echDomains = this.toDomainRows(this.getEchConfig().domains)
+    },
+    addEchDomain () {
+      this.echDomains.unshift({ key: '' })
+      this.focusFirst(this.$refs.echDomains)
+    },
+    deleteEchDomain (item, index) {
+      this.echDomains.splice(index, 1)
+    },
+    initEchPreSetIpDomains () {
+      this.echPreSetIpDomains = this.toDomainRows(this.getEchConfig().preSetIpDomains)
+    },
+    addEchPreSetIpDomain () {
+      this.echPreSetIpDomains.unshift({ key: '' })
+      this.focusFirst(this.$refs.echPreSetIpDomains)
+    },
+    deleteEchPreSetIpDomain (item, index) {
+      this.echPreSetIpDomains.splice(index, 1)
+    },
+    submitEchDomains () {
+      const echConfig = this.getEchConfig()
+      echConfig.domains = this.toDomains(this.echDomains)
+      // 未选择ECH专用DNS时，归一化为空字符串（与默认配置保持一致，便于差分保存）
+      echConfig.dns = echConfig.dns || ''
+      // 共享ECH配置的来源域名：去掉空格与协议前缀
+      echConfig.publicName = (echConfig.publicName || '').trim().replace(/^https?:\/\//, '').replace(/\/.*$/, '')
+    },
+    submitEchPreSetIpDomains () {
+      this.getEchConfig().preSetIpDomains = this.toDomains(this.echPreSetIpDomains)
     },
 
     // TLS版本设置
@@ -417,7 +491,8 @@ export default defineComponent({
             <a-form-item label="绑定IP" :label-col="labelCol" :wrapper-col="wrapperCol">
               <a-input v-model:value="config.server.host" spellcheck="false" />
               <div class="form-help">
-                你可以设置为<code>0.0.0.0</code>，让其他电脑可以使用此代理服务
+                你可以设置为<code>0.0.0.0</code>，让其他电脑可以使用此代理服务。<br>
+                这里控制的是<b>代理端口</b>的监听地址（谁能连你的代理）；MITM 证书相关的本地内部服务始终只在 <code>127.0.0.1</code>，不受此项影响。
               </div>
             </a-form-item>
             <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -627,6 +702,119 @@ export default defineComponent({
                 <a-button type="danger" @click="deleteDnsMapping(item, index)"><MinusOutlined /></a-button>
               </a-col>
             </a-row>
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="11" tab="ECH设置">
+          <div v-if="activeTabKey === '11'" style="padding-right:10px">
+            <a-alert
+              type="info"
+              message="ECH（Encrypted Client Hello）会把TLS握手中的SNI加密，使中间网络无法看到你访问的真实域名。只有目标网站支持ECH（其DNS下发了HTTPS记录）时才会生效，任何一步失败都会自动降级为普通TLS，不影响访问。"
+            />
+            <a-alert
+              type="warning"
+              style="margin-top:5px"
+              message="名单中的域名会被自动拦截（无需再配置拦截器），并强制忽略修改SNI等配置：上游TLS握手固定使用真实SNI，避免ECH因SNI被改写而失效；预设IP与IP测速结果默认也被忽略（可在下方为个别域名开例外）。"
+            />
+            <a-form-item label="启用ECH" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-checkbox v-model:checked="getEchConfig().enabled">
+                从DNS的HTTPS记录获取ECH参数
+              </a-checkbox>
+              <div class="form-help">
+                关闭后不再查询ECH参数，也不使用ECH
+              </div>
+            </a-form-item>
+            <a-form-item label="ECH专用DNS" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-select v-model:value="getEchConfig().dns" style="width: 260px" placeholder="不指定">
+                <a-select-option value="">
+                  不指定（由域名映射或系统DNS决定）
+                </a-select-option>
+                <a-select-option v-for="item of speedDnsOptions" :key="item.value" :value="item.value">
+                  {{ item.label }}
+                </a-select-option>
+              </a-select>
+              <div class="form-help">
+                从上方「DNS服务管理」中选择一个DNS，名单中的域名只从该DNS获取ECH参数与IP解析结果（不再使用其它DNS），查询更快也更准确；已在下方开例外的域名仍会使用预设IP
+              </div>
+            </a-form-item>
+            <a-form-item label="共享ECH配置" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input v-model:value="getEchConfig().publicName" style="width: 260px" spellcheck="false" placeholder="cloudflare-ech.com" />
+              <div class="form-help">
+                域名自己没有下发ECH记录时，用该域名的ECH配置兜底（默认<code>cloudflare-ech.com</code>，Cloudflare 的共享配置对所有 Cloudflare 站点通用，例如 character.ai 这类站点就是靠它启用ECH）；留空表示不使用兜底
+              </div>
+            </a-form-item>
+            <a-form-item label="上游使用ECH" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-checkbox v-model:checked="getEchConfig().use">
+                在「代理 ➜ 源站」的TLS握手中使用ECH
+              </a-checkbox>
+              <div class="form-help">
+                关闭后只查询ECH参数，但不使用
+              </div>
+            </a-form-item>
+            <a-form-item label="尝试其它DNS" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-checkbox v-model:checked="getEchConfig().tryAllProviders">
+                映射DNS未下发时，尝试其它DNS
+              </a-checkbox>
+              <div class="form-help">
+                未指定「ECH专用DNS」时：域名映射到的DNS未下发ECH参数时，自动尝试其它DNS
+              </div>
+            </a-form-item>
+            <a-form-item label="并发查询延迟" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-number v-model:value="getEchConfig().parallelDelay" :min="0" :step="50" :precision="0" spellcheck="false" /> ms
+              <div class="form-help">
+                并发查询多个DNS时，除第一个DNS外的其它DNS的延迟启动时间，设为<code>0</code>表示全部同时查询；指定「ECH专用DNS」后不再并发查询
+              </div>
+            </a-form-item>
+            <hr>
+            <a-row style="margin-top:10px">
+              <a-col span="21">
+                <div>需要使用<code>ECH</code>的域名<span class="form-help">（域名配置可使用通配符或正则，填法与“域名白名单”一致；名单为空表示不启用，此时不会有任何额外开销）</span></div>
+              </a-col>
+              <a-col span="3">
+                <a-button style="margin-left:8px" type="primary" @click="addEchDomain()"><PlusOutlined /></a-button>
+              </a-col>
+            </a-row>
+            <a-row v-for="(item, index) of echDomains" ref="echDomains" :key="index" :gutter="10" style="margin-top: 5px">
+              <a-col :span="21">
+                <a-input v-model:value="item.key" spellcheck="false" placeholder="例如 crypto.cloudflare.com 或 *.cloudflare.com" />
+              </a-col>
+              <a-col :span="3">
+                <a-button type="danger" @click="deleteEchDomain(item, index)"><MinusOutlined /></a-button>
+              </a-col>
+            </a-row>
+            <hr>
+            <a-row style="margin-top:10px">
+              <a-col span="21">
+                <div>其中<code>使用预设IP</code>的域名<span class="form-help">（默认忽略「IP预设置」与「IP测速」的结果，因为预设IP通常是域名自己的源站IP、可能不支持ECH；这里填写的域名例外，可用它把被阻断的域名指到一组可用的 Cloudflare IP，填法与上方一致）</span></div>
+              </a-col>
+              <a-col span="3">
+                <a-button style="margin-left:8px" type="primary" @click="addEchPreSetIpDomain()"><PlusOutlined /></a-button>
+              </a-col>
+            </a-row>
+            <a-row v-for="(item, index) of echPreSetIpDomains" ref="echPreSetIpDomains" :key="index" :gutter="10" style="margin-top: 5px">
+              <a-col :span="21">
+                <a-input v-model:value="item.key" spellcheck="false" placeholder="例如 character.ai" />
+              </a-col>
+              <a-col :span="3">
+                <a-button type="danger" @click="deleteEchPreSetIpDomain(item, index)"><MinusOutlined /></a-button>
+              </a-col>
+            </a-row>
+            <hr>
+            <div>缓存设置：<span class="form-help">（从一个域名的HTTPS记录中获取到的ECH参数会被缓存，避免每次访问都查询DNS）</span></div>
+            <a-form-item label="缓存条数" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-number v-model:value="getEchConfig().cacheSize" :min="0" :precision="0" spellcheck="false" />
+            </a-form-item>
+            <a-form-item label="无ECH缓存" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-number v-model:value="getEchConfig().emptyTtl" :min="0" :step="60000" :precision="0" spellcheck="false" /> ms
+              <div class="form-help">
+                DNS未下发ECH参数时的缓存时间
+              </div>
+            </a-form-item>
+            <a-form-item label="最短缓存" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-number v-model:value="getEchConfig().minTtl" :min="0" :step="60000" :precision="0" spellcheck="false" /> ms
+            </a-form-item>
+            <a-form-item label="最长缓存" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-number v-model:value="getEchConfig().maxTtl" :min="0" :step="60000" :precision="0" spellcheck="false" /> ms
+            </a-form-item>
           </div>
         </a-tab-pane>
         <a-tab-pane key="9" tab="IP测速">

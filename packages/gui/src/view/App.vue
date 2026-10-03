@@ -5,6 +5,7 @@ import { ipcRenderer } from 'electron'
 import createMenus from '@/view/router/menu'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import { appliedTheme, initTheme, getAntThemeConfig } from './composables/theme'
+import { installOverlayGuard } from './utils/overlay-guard'
 
 export default {
   name: 'App',
@@ -114,6 +115,7 @@ export default {
     const appConfig = (this.config && this.config.app) || (this.$global && this.$global.config && this.$global.config.app) || {}
     const initialThemeMode = appConfig.theme || 'dark'
     this.cleanupTheme = initTheme(initialThemeMode)
+    this.cleanupOverlayGuard = installOverlayGuard()
 
     // 设置默认选中的菜单项
     this.updateSelectedKeys(this.$route.fullPath)
@@ -124,6 +126,9 @@ export default {
     // 清理主题监听器
     if (this.cleanupTheme) {
       this.cleanupTheme()
+    }
+    if (this.cleanupOverlayGuard) {
+      this.cleanupOverlayGuard()
     }
   },
 
@@ -239,7 +244,9 @@ export default {
 
 <template>
   <a-config-provider :locale="locale" :theme="themeConfig">
-    <div class="ds_layout">
+    <!-- antd-vue 4 静态 Modal/$confirm/$success/message 需要 App 上下文，否则可能只出遮罩 -->
+    <a-app>
+      <div class="ds_layout">
       <a-layout>
         <a-layout-sider :style="{ background: theme === 'dark' ? '#1e1f22' : '#ffffff', overflowY: 'auto' }">
           <div class="logo" />
@@ -297,8 +304,8 @@ export default {
               <div>
                 <label v-if="info.configProfiles.personalRemote.showLabel !== false">当前配置：</label>
                 <!-- 后端api里，id的回退值是''而version的回退值是0（因为version始终应该是一个Number），所以为了不显示一个零蛋，version在前端需要再做个回退为'' -->
-                <code>{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? ':' : '-' }}{{ info.configProfiles.internal.version || '' }}</code>
-                <code class="ml5">{{ info.configProfiles.sharedRemote.id }}{{ info.configProfiles.sharedRemote.id ? ':' : '-' }}{{ info.configProfiles.sharedRemote.version || '' }}</code>
+                <code>{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? ':' : '-' }}{{ info.configProfiles.internal.version || '' }} </code>
+                <code class="ml5">{{ info.configProfiles.sharedRemote.id }}{{ info.configProfiles.sharedRemote.id ? ':' : '-' }}{{ info.configProfiles.sharedRemote.version || '' }} </code>
                 <code class="ml5">{{ info.configProfiles.personalRemote.id }}{{ info.configProfiles.personalRemote.id ? ':' : '-' }}{{ info.configProfiles.personalRemote.version || '' }}</code>
               </div>
 
@@ -315,6 +322,7 @@ export default {
         </a-layout>
       </a-layout>
     </div>
+    </a-app>
   </a-config-provider>
 </template>
 

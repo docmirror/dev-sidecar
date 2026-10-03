@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar-gui",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "private": false,
   "type": "module",
   "main": "src/background.js",
@@ -12,9 +12,12 @@
   "license": "MPL-2.0",
   "homepage": "https://github.com/docmirror/dev-sidecar",
   "scripts": {
+    "gen:tray-plugins": "node scripts/gen-tray-plugins.mjs",
     "serve": "pnpm exec vue-cli-service serve",
+    "prebuild": "node scripts/gen-tray-plugins.mjs && node ../../_script/sync-official-config.mjs",
     "build": "pnpm exec vue-cli-service build",
     "lint": "pnpm exec vue-cli-service lint",
+    "preelectron": "node scripts/gen-tray-plugins.mjs",
     "electron": "node ../../_script/electron-dev.mjs",
     "electron:build": "pnpm run build && pnpm exec electron-builder --config electron-builder.config.cjs",
     "postinstall": "node -e \"!process.env.CI && require('child_process').execSync('electron-builder install-app-deps', { stdio:'inherit' })\"",

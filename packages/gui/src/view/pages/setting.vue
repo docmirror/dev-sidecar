@@ -3,6 +3,7 @@ import { ipcRenderer } from 'electron'
 import { ProfileOutlined, SyncOutlined, CheckOutlined } from '@ant-design/icons-vue'
 import Plugin from '../mixins/plugin'
 import { setThemeMode } from '../composables/theme'
+import { VERSION_3_FEATURE_ENABLED } from '../../version-3-feature.js'
 
 export default {
   name: 'Setting',
@@ -27,6 +28,12 @@ export default {
         },
       ],
     }
+  },
+  computed: {
+    // 历史日志（迁移/脱敏）入口随 P2P 功能开关隐藏，见 src/version-3-feature.js
+    p2pFeatureEnabled () {
+      return VERSION_3_FEATURE_ENABLED
+    },
   },
   methods: {
     ready (config) {
@@ -285,35 +292,24 @@ export default {
         this.reloadLoading = false
       }
     },
+    /**
+     * 「恢复默认」应用后的补充处理。
+     * resetDefault 会把 app.remoteConfig 重置为默认（enabled=true、地址=官方），
+     * 但 mixin 在 apply() 之前先调用了 ready()，把 urlBackup 覆盖成 reset 后的值，
+     * 导致 applyAfter 的「地址变化才重新下载」判断恒为 false —— 远程配置不会被重新拉取，
+     * 表现为「能拉取到远程配置，但最终不启用」。这里在应用后补一次拉取 + 应用。
+     */
+    async afterResetDefault () {
+      if (this.config?.app?.remoteConfig?.enabled !== true) {
+        return
+      }
+      await this.reloadRemoteConfig()
+    },
     async restoreFactorySettings () {
       this.$confirm({
         title: '确定要恢复出厂设置吗？',
         width: 610,
-        content: h => h('div', { class: 'restore-factory-settings' }, [
-          h('hr'),
-          h('div', [
-            h('h3', '操作警告：'),
-            h('div', [
-              '该功能将备份您的所有页面的个性化配置，并重载',
-              h('span', '默认配置'),
-              '及',
-              h('span', '远程配置'),
-              '，请谨慎操作！！！'
-            ])
-          ]),
-          h('hr'),
-          h('div', [
-            h('h3', '找回个性化配置的方法：'),
-            h('div', [
-              '1. 找到备份文件，路径：',
-              h('span', '~/.dev-sidecar/config.json.时间戳.bak.json'),
-              h('br'),
-              '2. 将该备份文件重命名为',
-              h('span', 'config.json'),
-              '，再重启软件即可恢复个性化配置。'
-            ])
-          ])
-        ]),
+        content: '操作警告：该功能将备份您的所有页面的个性化配置，并重载默认配置及远程配置，请谨慎操作！！！\n\n找回个性化配置：备份路径 ~/.dev-sidecar/config.json.时间戳.bak.json，改名为 config.json 后重启软件即可恢复。',
         cancelText: '取消',
         okText: '确定',
         onOk: async () => {
@@ -447,34 +443,6 @@ export default {
           是否显示首页的警告提示
         </div>
       </a-form-item>
-      <a-form-item label="首页广告" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-radio-group v-model:value="config.app.showHomeAd" button-style="solid">
-          <a-radio-button :value="true">
-            显示
-          </a-radio-button>
-          <a-radio-button :value="false">
-            隐藏
-          </a-radio-button>
-        </a-radio-group>
-        <div class="form-help">
-          链接为空时不展示。关闭后可在本设置中重新打开。
-        </div>
-      </a-form-item>
-      <a-form-item label="广告文案" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model:value="config.app.homeAd.text" placeholder="推荐：xxx 优惠" spellcheck="false" />
-        <div class="form-help">
-          首页广告上的可点击文字
-        </div>
-      </a-form-item>
-      <a-form-item label="广告说明" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model:value="config.app.homeAd.description" placeholder="可选，灰色小字" spellcheck="false" />
-      </a-form-item>
-      <a-form-item label="广告链接" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-input v-model:value="config.app.homeAd.url" placeholder="https://... 联盟/推广链接" spellcheck="false" />
-        <div class="form-help">
-          点击广告文案后用系统浏览器打开。请填写带推广 ID 的链接以便统计分成。
-        </div>
-      </a-form-item>
       <a-form-item v-if="!isLinux()" label="关闭策略" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-radio-group v-model:value="config.app.closeStrategy" default-value="0" button-style="solid">
           <a-radio-button :value="0">
@@ -552,7 +520,8 @@ export default {
           修改后，重启 DS 才生效。
         </div>
       </a-form-item>
-      <a-form-item label="历史日志" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <!-- 历史日志（迁移/脱敏）：随 P2P 功能开关隐藏，见 src/version-3-feature.js -->
+      <a-form-item v-if="p2pFeatureEnabled" label="历史日志" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-button style="margin-right:8px" @click="onSecurityMigrate()">
           迁移到 3.0.0
         </a-button>

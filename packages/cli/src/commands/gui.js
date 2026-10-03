@@ -2,7 +2,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const { execSync, spawn } = require('node:child_process')
 const net = require('node:net')
-const jsonApi = require('@docmirror/mitmproxy/src/json')
+const jsonApi = require('@blue-frontier/mitmproxy/src/json')
 
 const DEFAULT_PORT = 31181
 

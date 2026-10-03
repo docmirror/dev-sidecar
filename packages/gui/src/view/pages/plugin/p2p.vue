@@ -67,7 +67,8 @@ export default defineComponent({
       return this.shareSetting.peers || []
     },
     shareEnabled () {
-      return !!(this.config?.plugin?.share?.enabled)
+      // 与首页/托盘一致，以运行状态为准
+      return !!(this.status?.plugin?.share?.enabled)
     },
   },
 
@@ -102,17 +103,10 @@ export default defineComponent({
       this.shareLoading = true
       try {
         if (checked) {
-          await this.saveConfig()
           await this.$api.plugin.share.start()
-          if (this.config.plugin.share) {
-            this.config.plugin.share.enabled = true
-          }
           this.$message.success('P2P节点分享已开启')
         } else {
           await this.$api.plugin.share.stop()
-          if (this.config.plugin.share) {
-            this.config.plugin.share.enabled = false
-          }
           this.shareInfo = {
             link: '',
             connectionMode: '未启动',
@@ -121,6 +115,10 @@ export default defineComponent({
           }
           this.$message.success('P2P节点分享已关闭')
         }
+        if (this.config.plugin.share) {
+          this.config.plugin.share.enabled = checked
+        }
+        await this.saveConfig()
         await this.refreshShareInfo()
       } catch (e) {
         this.$message.error(`P2P节点分享失败: ${e.message || e}`)

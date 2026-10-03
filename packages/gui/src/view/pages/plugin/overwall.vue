@@ -77,6 +77,26 @@ export default defineComponent({
       this.submitTarget()
       this.submitServer()
     },
+    /** 启用开关与首页模式选择保持同步 */
+    async onEnabledChange (e) {
+      const checked = !!e.target.checked
+      this.config.plugin.overwall.enabled = checked
+      // 与首页模式同一套配置：开=增强模式，关=默认模式
+      if (checked) {
+        this.config.app.mode = 'ow'
+        this.config.server.intercept.enabled = true
+      } else {
+        if (this.config.app.mode === 'ow') {
+          this.config.app.mode = 'default'
+        }
+        this.config.server.intercept.enabled = true
+        this.config.server.dns.speedTest.enabled = true
+      }
+      await this.saveConfig()
+      if (this.status.server.enabled) {
+        return this.$api.server.restart()
+      }
+    },
     preferredServerId () {
       return this.serverOptions.some((item) => item.id === 1)
         ? 1
@@ -214,10 +234,14 @@ export default defineComponent({
     <div v-if="config">
       <a-form layout="horizontal">
         <a-form-item label="梯子" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-checkbox v-model:checked="config.plugin.overwall.enabled">
+          <a-checkbox
+            :checked="config.plugin.overwall.enabled"
+            @change="onEnabledChange"
+          >
             启用
           </a-checkbox>
           <div class="form-help">
+            与首页「安全 / 默认 / 增强」模式同步：勾选即进入增强模式，取消则回到默认模式。<br>
             这是什么功能？你懂的！偷偷的用，别声张。<code><i>注：请不要看视频，流量挺小的！</i></code><br>
             建议参照右上角的<code>原理说明</code>，自建二层代理服务端，并在此页下方配置<code>代理服务端</code>。<br>
             声明：此功能仅供技术学习与探讨！

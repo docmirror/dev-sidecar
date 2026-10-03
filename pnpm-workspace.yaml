@@ -1,8 +1,7 @@
 packages:
-  # GUI 与 ds-core（submodule）；不再使用 monorepo 内旧的 core/mitmproxy
-  - packages/gui
-  - packages/aur
-  - vendor/ds-core/packages/*
+  # packages/core、packages/mitmproxy 为指向 vendor/ds-core/{core,mitmproxy} 的符号链接
+  # ds-core submodule 位于 vendor/ 下（不在 packages/ 内），无需额外排除规则
+  - packages/*
   - '!**/test/**'
 
 shamefullyHoist: true
@@ -24,4 +23,11 @@ allowBuilds:
   electron: true
   electron-winstaller: true
   esbuild: true
+  # keytar 7.9.0 是 N-API（ABI 稳定），install 脚本 = prebuild-install（仅下载 N-API 预编译，不需 C++ 编译器），
+  # 能在 Electron 41 内嵌的 Node 24 里直接加载。务必允许其 install 脚本运行，否则全新 pnpm install 拿不到二进制 → 回退 file-aes。
+  keytar: true
+  # koffi 主包的 install 脚本会尝试 CMake 源码编译，本机无 CMake → 必须禁（allowBuilds.koffi=true 会让 pnpm install 退出 1）。
+  # 但 koffi 3.3.2 的原生二进制由 @koromix/koffi-win32-x64 等「平台预编译包」提供（纯预编译，无需构建脚本），require('koffi') 实测仍可加载；
+  # 且 koffi 仅在 set-system-env.js 的 WM_SETTINGCHANGE 广播一处使用并有 setx 兜底 → 禁用零功能影响。
+  koffi: false
   unrs-resolver: true

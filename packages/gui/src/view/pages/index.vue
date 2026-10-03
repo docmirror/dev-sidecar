@@ -3,6 +3,7 @@ import lodash from 'lodash'
 import { CheckOutlined, CloseOutlined, ArrowRightOutlined } from '@ant-design/icons-vue'
 import DsContainer from '../components/container'
 import SetupCa from '../components/setup-ca'
+import { VERSION_3_FEATURE_ENABLED } from '../../version-3-feature.js'
 
 export default {
   name: 'Index',
@@ -104,8 +105,8 @@ export default {
     }
   },
   methods: {
-    async modeChange (event) {
-      const mode = this.config.app.mode
+    /** 按模式写入拦截/测速/增强开关（首页模式与增强功能页共用） */
+    applyMode (mode) {
       if (mode === 'safe') {
         this.config.server.intercept.enabled = false
         this.config.server.dns.speedTest.enabled = true
@@ -115,12 +116,18 @@ export default {
         this.config.server.dns.speedTest.enabled = true
         this.config.plugin.overwall.enabled = false
       } else if (mode === 'ow') {
-        console.log('event', event)
-        if (!this.setting.overwall) {
-          return
-        }
         this.config.server.intercept.enabled = true
+        this.config.plugin.overwall.enabled = true
       }
+    },
+    async modeChange (event) {
+      const mode = this.config.app.mode
+      // 模式是增强功能的唯一入口：safe/default 关闭，ow 打开
+      if (mode === 'ow' && !this.setting.overwall) {
+        return
+      }
+      console.log('modeChange', mode, event)
+      this.applyMode(mode)
       const configCopy = lodash.cloneDeep(this.config)
       await this.$api.config.save(configCopy)
       if (this.status.server && this.status.server.enabled) {
@@ -130,7 +137,7 @@ export default {
     wantOW () {
       this.$success({
         title: '彩蛋（增强模式）',
-        content: h => h('div', null, '我把它藏在了源码里，感兴趣的话可以找一找它（线索提示 // TODO）'),
+        content: '我把它藏在了源码里，感兴趣的话可以找一找它（线索提示 // TODO）',
       })
     },
     async doCheckRootCa () {
@@ -212,8 +219,12 @@ export default {
       btns.server = this.createSwitchBtn('server', '代理服务', this.$api.server, status)
       btns.proxy = this.createSwitchBtn('proxy', '系统代理', this.$api.proxy, status)
       lodash.forEach(status.plugin, (item, key) => {
-        // setting.json 未开启 overwall 时，首页不显示“增强功能”开关
-        if ((key === 'overwall' || key === 'share') && !this.setting.overwall) {
+        // 增强功能由上方模式选择控制，这里不再放重复开关
+        if (key === 'overwall') {
+          return
+        }
+        // P2P 暂未发布，见 src/version-3-feature.js；setting.json 未开启 overwall 时同样不显示
+        if (key === 'share' && (!VERSION_3_FEATURE_ENABLED || !this.setting.overwall)) {
           return
         }
         if (this.config.plugin[key].statusOff) {
@@ -258,18 +269,22 @@ export default {
         ? await this.apiCall(btn, openApi)
         : await this.apiCall(btn, closeApi)
 
-      // 插件快捷开关需要持久化 enabled 状态，并与对应设置页保持同步
-      if (btn.isPlugin) {
-        try {
+      // 持久化 enabled 状态，并与对应设置页/托盘保持同步
+      try {
+        if (btn.isPlugin) {
           this.config.plugin[btn.key].enabled = checked
-          const saveRet = await this.$api.config.save(lodash.cloneDeep(this.config))
-          this.config = saveRet.allConfig
-          if (btn.restartServer && this.status.server && this.status.server.enabled) {
-            await this.$api.server.restart()
-          }
-        } catch (e) {
-          console.error('保存插件开关状态失败:', e)
+        } else if (btn.key === 'server') {
+          this.config.server.enabled = checked
+        } else if (btn.key === 'proxy') {
+          this.config.proxy.enabled = checked
         }
+        const saveRet = await this.$api.config.save(lodash.cloneDeep(this.config))
+        this.config = saveRet.allConfig
+        if (btn.isPlugin && btn.restartServer && this.status.server && this.status.server.enabled) {
+          await this.$api.server.restart()
+        }
+      } catch (e) {
+        console.error('保存开关状态失败:', e)
       }
       return ret
     },

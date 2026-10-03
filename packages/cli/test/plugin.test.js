@@ -6,13 +6,13 @@ const os = require('node:os')
 describe('plugin', function () {
   describe('getValidPlugins (via core module)', function () {
     it('should return an array of plugin names', function () {
-      const plugins = Object.keys(require('@docmirror/dev-sidecar/src/modules/plugin'))
+      const plugins = Object.keys(require('@blue-frontier/dev-sidecar/src/modules/plugin'))
       assert.isArray(plugins)
       assert.isAbove(plugins.length, 0)
     })
 
     it('should include known plugins', function () {
-      const plugins = Object.keys(require('@docmirror/dev-sidecar/src/modules/plugin'))
+      const plugins = Object.keys(require('@blue-frontier/dev-sidecar/src/modules/plugin'))
       assert.include(plugins, 'git')
       assert.include(plugins, 'node')
       assert.include(plugins, 'pip')
@@ -22,7 +22,7 @@ describe('plugin', function () {
   })
 
   describe('isOverwallUnlocked logic', function () {
-    const jsonApi = require('@docmirror/mitmproxy/src/json')
+    const jsonApi = require('@blue-frontier/mitmproxy/src/json')
 
     it('should return false when setting.json does not exist', function () {
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-cli-test-'))

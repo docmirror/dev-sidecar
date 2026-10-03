@@ -171,11 +171,26 @@ function saveBuildHash (hash) {
   fs.writeFileSync(path.join(DIST, 'build-hash.txt'), hash)
 }
 
+// ── 官方配置同步 ──────────────────────────────────────
+
+// 把「官方远程配置」同步进内置配置（internal），与 GUI 构建保持一致。
+// 不阻断构建：脚本自身在拉取/校验失败时会保留上一次的同步结果并打印警告。
+function syncOfficialConfig () {
+  const script = path.resolve(ROOT, '..', '..', '_script', 'sync-official-config.mjs')
+  try {
+    execSync(`node "${script}"`, { stdio: 'inherit' })
+  } catch (e) {
+    console.warn(`[build] 官方配置同步失败，使用现有内置配置继续构建: ${e.message}`)
+  }
+}
+
 // ── 主流程 ────────────────────────────────────────────
 
 async function main () {
   const buildAll = process.argv.includes('--all')
   const currentPlatform = getCurrentPlatform()
+
+  syncOfficialConfig()
 
   console.log(`版本:     v${VERSION}`)
   console.log(`本机系统: ${os.type()} ${os.release()} (${os.arch()})`)

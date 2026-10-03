@@ -20,7 +20,8 @@ EOF
 `
     await DevSidecar.api.shell.exec(cmd)
   } else {
-    const removeStart = 'sudo rm ~/.config/autostart/dev-sidecar.desktop -rf'
+    // ~/.config/autostart 是用户目录，无需 sudo
+    const removeStart = 'rm -rf ~/.config/autostart/dev-sidecar.desktop'
     await DevSidecar.api.shell.exec(removeStart)
   }
 }

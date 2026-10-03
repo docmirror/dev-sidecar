@@ -2,7 +2,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import DevSidecar from '@blue-frontier/dev-sidecar'
-import { app, ipcMain, shell } from 'electron'
+import electron from '../../electron.js'
+const { app, ipcMain, shell } = electron
 import lodash from 'lodash'
 import jsonApi from '@blue-frontier/mitmproxy/src/json.js'
 import { createRequire } from 'node:module'
@@ -17,7 +18,11 @@ const { configFromFiles } = coreDefaultConfig
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const mitmproxyPath = path.join(__dirname, '../mitmproxy.js')
-process.env.DS_EXTRA_PATH = path.join(app.getAppPath(), 'extra')
+// extra/ 在打包后位于 resources/extra（extraResources，asar 外）；开发时在项目根 extra/
+// 不能用 getAppPath()：打包后它是 app.asar，exe 在 asar 内无法执行
+process.env.DS_EXTRA_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'extra')
+  : path.join(app.getAppPath(), 'extra')
 let currentWin
 
 const getDefaultConfigBasePath = function () {
@@ -255,10 +260,14 @@ function invoke (api, param) {
 }
 
 async function doStart () {
-  // 开启自动下载远程配置
-  await DevSidecar.api.config.startAutoDownloadRemoteConfig()
+  // 远程配置异步下载：有更新时自动 reload 并通知界面，不阻塞四个开关/代理启动
+  DevSidecar.api.config.startAutoDownloadRemoteConfig({
+    onUpdated: () => {
+      emitConfigChanged()
+    },
+  })
   emitConfigChanged()
-  // 启动所有
+  // 启动所有（首页开关无需等待配置下载）
   localApi.startup()
 }
 

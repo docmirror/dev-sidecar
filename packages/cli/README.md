@@ -39,8 +39,8 @@ pnpm --filter @docmirror/dev-sidecar-cli test
 npx nyc --reporter=text pnpm --filter @docmirror/dev-sidecar-cli test
 
 # 运行全部包的测试
-pnpm --filter @docmirror/dev-sidecar test
-pnpm --filter @docmirror/mitmproxy test
+pnpm --filter @blue-frontier/dev-sidecar test
+pnpm --filter @blue-frontier/mitmproxy test
 ```
 
 ### 项目结构

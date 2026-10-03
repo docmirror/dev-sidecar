@@ -1,4 +1,5 @@
-import { app } from 'electron'
+import electron from '../../electron.js'
+const { app } = electron
 import DevSidecar from '@blue-frontier/dev-sidecar'
 import sudoPrompt from '@vscode/sudo-prompt'
 import { join } from 'node:path'

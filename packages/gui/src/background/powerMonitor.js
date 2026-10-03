@@ -1,5 +1,6 @@
 import { acquireShutdownBlock, insertWndProcHook, releaseShutdownBlock, removeWndProcHook, setMainWindowHandle } from '@starknt/shutdown-handler-napi'
-import { powerMonitor as _powerMonitor } from 'electron'
+import electron from '../electron.js'
+const { powerMonitor: _powerMonitor } = electron
 
 class PowerMonitor {
   constructor () {

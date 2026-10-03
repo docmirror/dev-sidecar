@@ -1,4 +1,4 @@
-const DevSidecar = require('@docmirror/dev-sidecar')
+const DevSidecar = require('@blue-frontier/dev-sidecar')
 
 const action = process.argv[2]
 const name = process.argv[3]

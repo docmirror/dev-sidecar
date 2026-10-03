@@ -2,7 +2,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const net = require('node:net')
 const { fork, execSync } = require('node:child_process')
-const jsonApi = require('@docmirror/mitmproxy/src/json')
+const jsonApi = require('@blue-frontier/mitmproxy/src/json')
 
 const DEFAULT_PORT = 31181
 
@@ -98,7 +98,7 @@ function isGuiRunning () {
 
 async function startDaemon () {
   // 锁检查：锁被持有说明 CLI 或 GUI 已在运行
-  const DevSidecar = require('@docmirror/dev-sidecar')
+  const DevSidecar = require('@blue-frontier/dev-sidecar')
   if (await DevSidecar.api.instance.isLocked()) {
     const instance = await DevSidecar.api.instance.readInstance()
     const typeLabel = instance?.type === 'gui' ? 'GUI' : 'CLI'

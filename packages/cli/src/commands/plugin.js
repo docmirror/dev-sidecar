@@ -1,7 +1,7 @@
 const { fork } = require('node:child_process')
 const fs = require('node:fs')
 const path = require('node:path')
-const jsonApi = require('@docmirror/mitmproxy/src/json')
+const jsonApi = require('@blue-frontier/mitmproxy/src/json')
 
 function getUserBase () {
   return path.join(process.env.USERPROFILE || process.env.HOME || '/', '.dev-sidecar')
@@ -24,7 +24,7 @@ function writeConfig (config) {
 }
 
 function getValidPlugins () {
-  return Object.keys(require('@docmirror/dev-sidecar/src/modules/plugin'))
+  return Object.keys(require('@blue-frontier/dev-sidecar/src/modules/plugin'))
 }
 
 function getSettingsPath () {

@@ -3,12 +3,15 @@ import './utils/util.log-env.js'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import DevSidecar from '@blue-frontier/dev-sidecar'
-import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, Tray } from 'electron'
+import electron from './electron.js'
+const { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, Tray } = electron
 import fs from 'node:fs'
 import minimist from 'minimist'
 import backend from './bridge/backend.js'
 import jsonApi from '@blue-frontier/mitmproxy/src/json.js'
 import log from './utils/util.log.gui.js'
+import { TRAY_PLUGINS, TRAY_ACTIONS } from './generated/tray-plugins.js'
+import { VERSION_3_FEATURE_ENABLED } from './version-3-feature.js'
 
 log.info(`background.js start, platform is ${process.platform}`)
 
@@ -32,33 +35,33 @@ app.commandLine.appendSwitch('renderer-process-limit', '1') // 单个渲染器�
 app.commandLine.appendSwitch('use-system-ca') // 使用系统证书库，信任 dev-sidecar 自签 CA
 
 // ── 功能开关 ──
-app.commandLine.appendSwitch('disable-pdf-viewer')                      // PDF 查看器
-app.commandLine.appendSwitch('disable-print-preview')                   // 打印预览
-app.commandLine.appendSwitch('disable-speech-api')                      // 语音识别/合成
-app.commandLine.appendSwitch('disable-gpu-rasterization')               // GPU 光栅化
-app.commandLine.appendSwitch('disable-accelerated-video-decode')        // 硬件视频解码
-app.commandLine.appendSwitch('disable-background-networking')           // 后台网络活动（同步/遥测）
-app.commandLine.appendSwitch('disable-sync')                            // Chrome 同步服务
-app.commandLine.appendSwitch('disable-default-apps')                    // 默认应用注册
-app.commandLine.appendSwitch('disable-component-update')                // 组件自动更新
-app.commandLine.appendSwitch('disable-client-side-phishing-detection')  // 钓鱼检测
-app.commandLine.appendSwitch('disable-domain-reliability')              // 域名可靠性监控
+app.commandLine.appendSwitch('disable-pdf-viewer') // PDF 查看器
+app.commandLine.appendSwitch('disable-print-preview') // 打印预览
+app.commandLine.appendSwitch('disable-speech-api') // 语音识别/合成
+app.commandLine.appendSwitch('disable-gpu-rasterization') // GPU 光栅化
+app.commandLine.appendSwitch('disable-accelerated-video-decode') // 硬件视频解码
+app.commandLine.appendSwitch('disable-background-networking') // 后台网络活动（同步/遥测）
+app.commandLine.appendSwitch('disable-sync') // Chrome 同步服务
+app.commandLine.appendSwitch('disable-default-apps') // 默认应用注册
+app.commandLine.appendSwitch('disable-component-update') // 组件自动更新
+app.commandLine.appendSwitch('disable-client-side-phishing-detection') // 钓鱼检测
+app.commandLine.appendSwitch('disable-domain-reliability') // 域名可靠性监控
 
 // ── 通过 --disable-features 禁用的 Chromium Feature 列表 ──
 app.commandLine.appendSwitch('disable-features', [
-  'MediaRouter',              // 投屏 / 媒体路由
-  'WebRTC',                   // 实时通信（视频/音频通话）
-  'SensorAPI',                // 传感器 API（陀螺仪/加速度计等）
-  'GamepadAPI',               // 游戏手柄 API
-  'ColorCorrectRendering',    // 显示颜色校正
-  'SerializeBackingStores',   // 页面内容序列化到磁盘缓存
-  'CrashReporting',           // Chromium 崩溃报告（已有自身日志）
-  'TranslateUI',              // 翻译 UI
+  'MediaRouter', // 投屏 / 媒体路由
+  'WebRTC', // 实时通信（视频/音频通话）
+  'SensorAPI', // 传感器 API（陀螺仪/加速度计等）
+  'GamepadAPI', // 游戏手柄 API
+  'ColorCorrectRendering', // 显示颜色校正
+  'SerializeBackingStores', // 页面内容序列化到磁盘缓存
+  'CrashReporting', // Chromium 崩溃报告（已有自身日志）
+  'TranslateUI', // 翻译 UI
   'AutofillServerCommunication', // 自动填充服务器通信
-  'SafeBrowsing',             // 安全浏览（URL 黑名单检查）
-  'NotificationTriggers',     // 定时通知
-  'WebPayments',              // 支付请求 API
-  'BackgroundFetch',          // 后台下载
+  'SafeBrowsing', // 安全浏览（URL 黑名单检查）
+  'NotificationTriggers', // 定时通知
+  'WebPayments', // 支付请求 API
+  'BackgroundFetch', // 后台下载
 ].join(','))
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -81,7 +84,6 @@ try {
 }
 
 let hideDockWhenWinClose = DevSidecar.api.config.get().app.dock.hideWhenWinClose || false
-
 
 function openDevTools () {
   try {
@@ -115,28 +117,131 @@ function switchDevTools () {
 }
 
 // 隐藏主窗口，并创建托盘，绑定关闭事件
+function readUserSetting () {
+  try {
+    const userBase = process.env.USERPROFILE || process.env.HOME || '/'
+    const dir = path.join(userBase, '.dev-sidecar')
+    const p = path.join(dir, 'setting.json')
+    if (!fs.existsSync(p)) {
+      return {}
+    }
+    return jsonApi.parse(fs.readFileSync(p, 'utf-8')) || {}
+  } catch {
+    return {}
+  }
+}
+
+// 托盘可见插件：由 scripts/gen-tray-plugins.mjs 打包期扫描生成（见 src/generated/tray-plugins.js）
+// 【临时方案】尚未实现动态插件，表在打包期固定；动态插件落地后应改为运行时读插件注册表
+// needUnlock：仅在 setting.json 的 overwall 解锁后显示（与首页一致）
+// restartServer：切换后若代理服务在运行则重启
+function getMitmproxyPath () {
+  return path.join(__dirname, 'bridge', 'mitmproxy.js')
+}
+
+function isOverwallUnlocked () {
+  return readUserSetting().overwall === true
+}
+
+function getVisibleTrayPlugins () {
+  const unlocked = isOverwallUnlocked()
+  return TRAY_PLUGINS.filter((p) => {
+    // P2P 暂未发布，见 src/version-3-feature.js
+    if (p.key === 'share' && !VERSION_3_FEATURE_ENABLED) {
+      return false
+    }
+    return !p.needUnlock || unlocked
+  })
+}
+
+/** 一键动作（如网络检测）：调用插件 run()，不改 enabled 勾选 */
+async function runTrayAction (key, name) {
+  try {
+    log.info(`托盘一键动作: ${name} (${key})`)
+    const api = DevSidecar.api.plugin[key]
+    if (!api) {
+      log.error(`插件【${key}】不可用`)
+      return
+    }
+    if (typeof api.run === 'function') {
+      await api.run()
+    } else if (typeof api.start === 'function') {
+      await api.start()
+    } else {
+      log.error(`插件【${key}】没有可调用的 run/start`)
+    }
+  } catch (e) {
+    log.error(`托盘一键动作失败: ${name} (${key})`, e)
+  }
+}
+
+async function toggleTraySwitch (key, checked) {
+  try {
+    const setting = readUserSetting()
+    if (key === 'proxy') {
+      if (checked) {
+        await DevSidecar.api.proxy.start()
+      } else {
+        await DevSidecar.api.proxy.close()
+      }
+      const config = DevSidecar.api.config.get()
+      config.proxy.enabled = checked
+      await DevSidecar.api.config.save(config)
+    } else if (key === 'server') {
+      if (checked) {
+        await DevSidecar.api.server.start({ mitmproxyPath: getMitmproxyPath(), setting })
+      } else {
+        await DevSidecar.api.server.close()
+      }
+      const config = DevSidecar.api.config.get()
+      config.server.enabled = checked
+      await DevSidecar.api.config.save(config)
+    } else {
+      const api = DevSidecar.api.plugin[key]
+      if (!api) {
+        return
+      }
+      if (checked) {
+        await api.start()
+      } else {
+        await api.close()
+      }
+      const config = DevSidecar.api.config.get()
+      const pluginConf = config.plugin && config.plugin[key]
+      if (pluginConf) {
+        pluginConf.enabled = checked
+        // 与首页模式选择同步：增强功能 = 增强模式
+        if (key === 'overwall') {
+          if (checked) {
+            config.app.mode = 'ow'
+            if (config.server) {
+              config.server.intercept.enabled = true
+            }
+          } else if (config.app?.mode === 'ow') {
+            config.app.mode = 'default'
+            if (config.server) {
+              config.server.intercept.enabled = true
+              if (config.server.dns?.speedTest) {
+                config.server.dns.speedTest.enabled = true
+              }
+            }
+          }
+        }
+        await DevSidecar.api.config.save(config)
+        const def = TRAY_PLUGINS.find(p => p.key === key)
+        if (def?.restartServer && DevSidecar.api.status.get().server?.enabled) {
+          await DevSidecar.api.server.restart({ mitmproxyPath: getMitmproxyPath(), setting })
+        }
+      }
+    }
+  } catch (e) {
+    log.error('托盘开关切换失败:', key, e)
+  }
+}
+
 function setTray () {
-  // const topMenu = Menu.buildFromTemplate({})
-  // Menu.setApplicationMenu(topMenu)
   // 用一个 Tray 来表示一个图标,这个图标处于正在运行的系统的通知区
   // 通常被添加到一个 context menu 上.
-  // 系统托盘右键菜单
-  const trayMenuTemplate = [
-    {
-      // 系统托盘图标目录
-      label: 'DevTools (F12)',
-      click: switchDevTools,
-    },
-    {
-      // 系统托盘图标目录
-      label: '退出',
-      click: () => {
-        log.info('force quit')
-        forceClose = true
-        quit('系统托盘图标-退出')
-      },
-    },
-  ]
   // 设置系统托盘图标
   // 生产模式下 extra 在 resources/extra/（asar 外），开发模式下在项目根目录的 extra/
   const appPath = app.getAppPath()
@@ -170,22 +275,138 @@ function setTray () {
     })
   }
 
-  // 图标的上下文菜单
-  const contextMenu = Menu.buildFromTemplate(trayMenuTemplate)
+  // 托盘右键菜单：结构固定，仅同步勾选状态
+  const checkables = { server: null, proxy: null, plugins: {} }
+  let trayMenuCache = null
+
+  const buildTrayMenu = () => {
+    const visible = getVisibleTrayPlugins()
+    const items = [
+      { label: '显示主窗口', click: showWin },
+      { type: 'separator' },
+    ]
+
+    const serverItem = { label: '代理服务', type: 'checkbox', click: menuItem => toggleTraySwitch('server', menuItem.checked) }
+    const proxyItem = { label: '系统代理', type: 'checkbox', click: menuItem => toggleTraySwitch('proxy', menuItem.checked) }
+    items.push(serverItem, proxyItem)
+
+    checkables.plugins = {}
+    if (visible.length > 0) {
+      items.push({ type: 'separator' })
+      for (const def of visible) {
+        items.push({
+          label: def.name,
+          type: 'checkbox',
+          click: menuItem => toggleTraySwitch(def.key, menuItem.checked),
+        })
+      }
+    }
+
+    // 一键动作菜单（如网络检测）：非 checkbox，点了就跑
+    const actions = (TRAY_ACTIONS || []).filter(a => a && a.key)
+    if (actions.length > 0) {
+      items.push({ type: 'separator' })
+      for (const def of actions) {
+        items.push({
+          label: `运行${def.name}`,
+          click: () => runTrayAction(def.key, def.name),
+        })
+      }
+    }
+
+    items.push(
+      { type: 'separator' },
+      { label: 'DevTools (F12)', click: switchDevTools },
+      {
+        label: '退出',
+        click: () => {
+          log.info('force quit')
+          forceClose = true
+          quit('系统托盘图标-退出')
+        },
+      },
+    )
+
+    const menu = Menu.buildFromTemplate(items)
+    // 记录勾选项，后续只改 checked，不重建菜单
+    checkables.server = menu.items.find(i => i.label === '代理服务')
+    checkables.proxy = menu.items.find(i => i.label === '系统代理')
+    for (const def of visible) {
+      checkables.plugins[def.key] = menu.items.find(i => i.label === def.name)
+    }
+    return menu
+  }
+
+  const syncTrayChecked = () => {
+    try {
+      const status = DevSidecar.api.status.get()
+      if (checkables.server) {
+        checkables.server.checked = !!(status.server && status.server.enabled)
+      }
+      if (checkables.proxy) {
+        checkables.proxy.checked = !!(status.proxy && status.proxy.enabled)
+      }
+      for (const [key, item] of Object.entries(checkables.plugins)) {
+        if (item) {
+          item.checked = !!(status.plugin && status.plugin[key] && status.plugin[key].enabled)
+        }
+      }
+      // Linux 需重新 setContextMenu 才能让勾选变化被桌面环境感知
+      if (isLinux && trayMenuCache) {
+        appTray.setContextMenu(trayMenuCache)
+      }
+    } catch (e) {
+      log.error('同步托盘勾选状态失败:', e)
+    }
+  }
+
+  trayMenuCache = buildTrayMenu()
+  syncTrayChecked()
+
+  // 仅在增强模式解锁变化时重建菜单结构（插件可见性变了）
+  let lastUnlocked = isOverwallUnlocked()
+  const ensureTrayMenuStructure = () => {
+    const unlocked = isOverwallUnlocked()
+    if (unlocked !== lastUnlocked) {
+      lastUnlocked = unlocked
+      trayMenuCache = buildTrayMenu()
+      syncTrayChecked()
+      if (isLinux) {
+        appTray.setContextMenu(trayMenuCache)
+      }
+    }
+  }
 
   // 设置托盘悬浮提示
   appTray.setToolTip('DevSidecar-开发者边车辅助工具')
   // 单击托盘小图标显示应用
   appTray.on('click', () => {
-    // 显示主程序
     showWin()
   })
 
-  appTray.on('right-click', () => {
-    setTimeout(() => {
-      appTray.popUpContextMenu(contextMenu)
-    }, 200)
-  })
+  // 状态变化：只同步勾选；结构变化（解锁）才重建
+  try {
+    DevSidecar.api.event.register('status', () => {
+      ensureTrayMenuStructure()
+      syncTrayChecked()
+    })
+  } catch (e) {
+    log.error('注册托盘状态刷新失败:', e)
+  }
+
+  if (isLinux) {
+    // Linux（StatusNotifierItem / dbusmenu）必须 setContextMenu 才能导出菜单；
+    // popUpContextMenu 仅支持 macOS/Windows，在 Linux 上是静默 no-op
+    appTray.setContextMenu(trayMenuCache)
+  } else {
+    appTray.on('right-click', () => {
+      ensureTrayMenuStructure()
+      syncTrayChecked()
+      setTimeout(() => {
+        appTray.popUpContextMenu(trayMenuCache)
+      }, 200)
+    })
+  }
 
   return appTray
 }

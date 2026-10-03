@@ -1,4 +1,4 @@
-const DevSidecar = require('@docmirror/dev-sidecar')
+const DevSidecar = require('@blue-frontier/dev-sidecar')
 
 DevSidecar.api.config.reload()
 

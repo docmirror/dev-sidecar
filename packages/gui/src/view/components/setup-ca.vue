@@ -59,6 +59,8 @@ export default defineComponent({
       if (this.systemPlatform === 'linux') {
         this.$message.success('根证书已成功安装到系统证书库（注意：浏览器仍然需要手动安装）')
       }
+      // 安装后关闭抽屉，避免遮罩一直挡住主界面
+      this.onClose()
     },
   },
 });
@@ -67,7 +69,9 @@ export default defineComponent({
 <template>
   <a-drawer
     placement="right"
-    :closable="false"
+    :closable="true"
+    :mask-closable="true"
+    :keyboard="true"
     :open="open"
     @after-open-change="afterVisibleChange"
     width="660px"
@@ -82,6 +86,9 @@ export default defineComponent({
       </a-button>
       <a-button style="float:right;margin-right:10px;" @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/doc/caroot.md')">
         为什么要安装证书？
+      </a-button>
+      <a-button style="float:right;margin-right:10px;" @click="onClose()">
+        关闭
       </a-button>
     </template>
     <div>

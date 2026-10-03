@@ -17,8 +17,8 @@ if (isDaemon) {
 // ── 守护进程模式 ──────────────────────────────────────────
 
 function runDaemon () {
-  const DevSidecar = require('@docmirror/dev-sidecar')
-  const log = require('@docmirror/dev-sidecar/src/utils/util.log-or-console')
+  const DevSidecar = require('@blue-frontier/dev-sidecar')
+  const log = require('@blue-frontier/dev-sidecar/src/utils/util.log-or-console')
 
   const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
 

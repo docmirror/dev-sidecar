@@ -13,11 +13,11 @@
 
 - Testing:
   - Run package tests where they live:
-    - `pnpm --filter @docmirror/dev-sidecar test`
-    - `pnpm --filter @docmirror/mitmproxy test`
+    - `pnpm --filter @blue-frontier/dev-sidecar test`
+    - `pnpm --filter @blue-frontier/mitmproxy test`
   - Run a single test file by passing it after `--`, for example:
-    - `pnpm --filter @docmirror/dev-sidecar test -- test/regex.test.js`
-    - `pnpm --filter @docmirror/mitmproxy test -- test/proxyTest.js`
+    - `pnpm --filter @blue-frontier/dev-sidecar test -- test/regex.test.js`
+    - `pnpm --filter @blue-frontier/mitmproxy test -- test/proxyTest.js`
 
 - GUI development and packaging (from `packages/gui`):
   - `npm run electron`

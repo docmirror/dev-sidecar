@@ -15,10 +15,10 @@ const PID_FILE = path.join(userBase, 'ds-cli.pid')
 // ── 加载配置 ──────────────────────────────────────────
 
 function loadConfig () {
-  const defConfig = require('@docmirror/dev-sidecar/src/config/index.js')
-  const configLoader = require('@docmirror/dev-sidecar/src/config/local-config-loader')
-  const mergeApi = require('@docmirror/dev-sidecar/src/merge')
-  const jsonApi = require('@docmirror/mitmproxy/src/json')
+  const defConfig = require('@blue-frontier/dev-sidecar/src/config/index.js')
+  const configLoader = require('@blue-frontier/dev-sidecar/src/config/local-config-loader')
+  const mergeApi = require('@blue-frontier/dev-sidecar/src/merge')
+  const jsonApi = require('@blue-frontier/mitmproxy/src/json')
 
   // 读取用户配置
   const userConfigPath = configLoader.getUserConfigPath()
@@ -75,7 +75,7 @@ function prepareServerConfig (allConfig) {
 // ── 启动代理 ──────────────────────────────────────────
 
 async function startProxy (serverConfig) {
-  const mitmproxy = require('@docmirror/mitmproxy')
+  const mitmproxy = require('@blue-frontier/mitmproxy')
 
   // 设置 CA 证书路径
   if (serverConfig.setting && serverConfig.setting.userBasePath) {
@@ -101,13 +101,13 @@ if (isDaemon) {
 }
 
 async function runDaemon () {
-  const log = require('@docmirror/dev-sidecar/src/utils/util.log-or-console')
+  const log = require('@blue-frontier/dev-sidecar/src/utils/util.log-or-console')
 
   async function startup () {
-    const log = require('@docmirror/dev-sidecar/src/utils/util.log-or-console')
+    const log = require('@blue-frontier/dev-sidecar/src/utils/util.log-or-console')
 
     // 获取实例锁，防止 CLI/GUI 重复运行
-    const DevSidecar = require('@docmirror/dev-sidecar')
+    const DevSidecar = require('@blue-frontier/dev-sidecar')
     try {
       await DevSidecar.api.instance.acquireLock({ log })
     } catch (e) {
@@ -141,7 +141,7 @@ async function runDaemon () {
     // 写入 running.json（供调试），保留现有 instance 信息
     const runningConfigPath = path.join(userBase, 'running.json')
     try {
-      const jsonApi = require('@docmirror/mitmproxy/src/json')
+      const jsonApi = require('@blue-frontier/mitmproxy/src/json')
       let existingInstance
       if (fs.existsSync(runningConfigPath)) {
         try {
@@ -167,10 +167,10 @@ async function runDaemon () {
   }
 
   async function onClose () {
-    const log = require('@docmirror/dev-sidecar/src/utils/util.log-or-console')
+    const log = require('@blue-frontier/dev-sidecar/src/utils/util.log-or-console')
     log.info('on sigint')
     try {
-      const mitmproxy = require('@docmirror/mitmproxy')
+      const mitmproxy = require('@blue-frontier/mitmproxy')
       await mitmproxy.close()
     } catch {}
     log.info('on closed')
@@ -197,7 +197,7 @@ async function routeCommand (args) {
   switch (command) {
     case 'start': {
       // 锁检查：锁被持有说明 CLI 或 GUI 已在运行
-      const DevSidecar = require('@docmirror/dev-sidecar')
+      const DevSidecar = require('@blue-frontier/dev-sidecar')
       if (await DevSidecar.api.instance.isLocked()) {
         const instance = await DevSidecar.api.instance.readInstance()
         const typeLabel = instance?.type === 'gui' ? 'GUI' : 'CLI'

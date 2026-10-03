@@ -1,0 +1,6 @@
+# Git for Windows: 显式声明符号链接类型。
+# 未声明时 git 会先建 file 类型再尝试升级为 dir 类型（phantom symlink），
+# 而该升级依赖 DeleteFileW；在 ReFS / Dev Drive 上删除符号链接会失败，
+# 导致链接永远停在 file 类型 —— Node 的 stat/readdir/realpath 会 EPERM。
+packages/core symlink=dir
+packages/mitmproxy symlink=dir

@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar-cli",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "private": false,
   "description": "给开发者的加速代理工具",
   "author": "docmirror.cn",
@@ -20,8 +20,8 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@docmirror/dev-sidecar": "workspace:*",
-    "@docmirror/mitmproxy": "workspace:*"
+    "@blue-frontier/dev-sidecar": "workspace:*",
+    "@blue-frontier/mitmproxy": "workspace:*"
   },
   "devDependencies": {
     "chai": "^4.5.0",

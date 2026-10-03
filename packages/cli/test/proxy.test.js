@@ -4,7 +4,7 @@ const path = require('node:path')
 const os = require('node:os')
 
 describe('proxy', function () {
-  const jsonApi = require('@docmirror/mitmproxy/src/json')
+  const jsonApi = require('@blue-frontier/mitmproxy/src/json')
 
   function getUserBase () {
     return path.join(process.env.USERPROFILE || process.env.HOME || '/', '.dev-sidecar')
