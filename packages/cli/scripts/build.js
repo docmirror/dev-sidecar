@@ -234,6 +234,11 @@ async function main () {
         'node:*',
         // 原生 .node 模块无法打进 SEA bundle，运行时 require 失败会被调用方 try/catch 兜底
         '@starknt/sysproxy',
+        // keytar / koffi 及其平台预编译包内含 .node，esbuild 无 .node loader，必须 external
+        'keytar',
+        'koffi',
+        '@koromix/koffi-*',
+        '*.node',
         // free-eye 为 ESM 模块且依赖源码目录数据，独立可执行文件中不可用；
         // core 以相对路径 require 它，必须用通配符匹配，包名前缀匹配不到
         '*free-eye',
