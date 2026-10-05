@@ -59,12 +59,13 @@ jobs:
       - name: "Generate SHA256SUMS"
         run: |
           cd packages/cli/dist
-          sha256sum ds-cli-* > SHA256SUMS.txt
+          # Windows 产物还包含两个 helper，必须一起校验与上传
+          sha256sum ds-cli-* $(ls sysproxy.exe EnableLoopback.exe 2>/dev/null) > SHA256SUMS.txt
           cat SHA256SUMS.txt
 
       - name: "Print dist"
         run: |
-          ls -lah packages/cli/dist/ds-cli-*
+          ls -lah packages/cli/dist/ds-cli-* packages/cli/dist/sysproxy.exe packages/cli/dist/EnableLoopback.exe 2>/dev/null || true
           file packages/cli/dist/ds-cli-* 2>/dev/null || true
 
       - name: "Upload artifacts"
@@ -73,6 +74,8 @@ jobs:
           name: ds-cli-${{ github.sha }}
           path: |
             packages/cli/dist/ds-cli-*
+            packages/cli/dist/sysproxy.exe
+            packages/cli/dist/EnableLoopback.exe
             packages/cli/dist/SHA256SUMS.txt
           if-no-files-found: error
 
@@ -90,11 +93,11 @@ jobs:
 
       - name: "Print release dir"
         run: |
-          chmod +x release/ds-cli-*
+          chmod +x release/ds-cli-* release/sysproxy.exe release/EnableLoopback.exe 2>/dev/null || true
           ls -lah release/
 
       - name: "Create release"
-        uses: wangliang181230/github-action-ghr@master
+        uses: wangliang181230/github-action-ghr@ddd106c0558b2f04b053b161ae9bba63307420f1
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GHR_PATH: release/

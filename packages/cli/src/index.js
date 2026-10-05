@@ -86,6 +86,7 @@ function printHelp () {
   restart                   重启守护进程
   status                    显示运行状态
   version                   显示版本号
+  config update             重新拉取配置里指定地址的远程配置
   proxy on                  开启系统代理
   proxy off                 关闭系统代理
   plugin start <name>       启用插件 (git/node/pip/overwall/free_eye)
@@ -120,14 +121,34 @@ function routeCommand (args) {
       const tasks = []
       if (runCli) tasks.push(startDaemon())
       if (runGui) tasks.push(Promise.resolve(startGui()))
-      Promise.all(tasks).then(() => process.exit(0))
+      Promise.all(tasks).then(() => {
+        // 与 GUI 一致：配置里开着系统代理就自动应用（必须放在守护进程起来之后）
+        if (runCli && require('./commands/gui').readConfig().proxy?.enabled === true) {
+          const { fork } = require('node:child_process')
+          fork(path.join(__dirname, 'proxy-worker.js'), ['on']).on('exit', () => process.exit(0))
+          return
+        }
+        process.exit(0)
+      })
       break
     }
     case 'stop': {
       const { stopDaemon } = require('./commands/stop')
       const { stopGui } = require('./commands/gui')
-      if (runCli) stopDaemon()
       if (runGui) stopGui()
+      if (runCli) {
+        const enabled = require('./commands/gui').readConfig().proxy?.enabled === true
+        // 等守护进程真的退出后再撤代理：否则可能留下指向已停端口的死代理
+        stopDaemon().then(() => {
+          if (enabled) {
+            const { fork } = require('node:child_process')
+            fork(path.join(__dirname, 'proxy-worker.js'), ['off']).on('exit', () => process.exit(0))
+            return
+          }
+          process.exit(0)
+        })
+        return
+      }
       break
     }
     case 'restart': {
@@ -136,12 +157,29 @@ function routeCommand (args) {
       const tasks = []
       if (runCli) tasks.push(restartDaemon())
       if (runGui) tasks.push(Promise.resolve(restartGui()))
-      Promise.all(tasks).then(() => process.exit(0))
+      Promise.all(tasks).then(() => {
+        if (runCli && require('./commands/gui').readConfig().proxy?.enabled === true) {
+          const { fork } = require('node:child_process')
+          fork(path.join(__dirname, 'proxy-worker.js'), ['on']).on('exit', () => process.exit(0))
+          return
+        }
+        process.exit(0)
+      })
       break
     }
     case 'status': {
       const { showStatus } = require('./commands/status')
       showStatus().then(() => process.exit(0))
+      break
+    }
+    case 'config': {
+      // 重新拉取用户在 config.json 里指定地址的远程配置（与 GUI 的「重新拉取远程配置」等价）
+      if (positional[1] !== 'update' && positional[1] !== 'reload') {
+        console.error('用法: ds-cli config update    # 重新拉取 config.json 中指定地址的远程配置')
+        process.exit(1)
+      }
+      const { updateRemoteConfig } = require('./commands/config')
+      updateRemoteConfig().then((code) => process.exit(code))
       break
     }
     case 'version': {
@@ -171,8 +209,16 @@ function routeCommand (args) {
         child.on('exit', (code) => {
           process.exit(code || 0)
         })
+      } else if (value === 'loopback') {
+        // 打开 Windows 回环豁免，需要管理员权限
+        const { fork } = require('node:child_process')
+        const workerPath = path.join(__dirname, 'proxy-worker.js')
+        const child = fork(workerPath, ['loopback'])
+        child.on('exit', (code) => {
+          process.exit(code || 0)
+        })
       } else {
-        console.error('用法: ds-cli proxy <on|off>')
+        console.error('用法: ds-cli proxy <on|off|loopback>')
         process.exit(1)
       }
       break

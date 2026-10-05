@@ -3,9 +3,14 @@ const path = require('node:path')
 const { execSync } = require('node:child_process')
 
 function getExePath () {
-  // SEA 模式: process.argv[0] 就是 ds-cli 二进制
-  // 开发模式: process.argv[0] 是 node, process.argv[1] 是 cli.js
-  if (process.argv[0] && !process.argv[0].includes('node')) {
+  // SEA 模式: process.argv[0] 就是 ds-cli 二进制；开发模式: argv[0] 是 node、argv[1] 是 cli.js。
+  // 用 node:sea 判定，比"路径里是否含 node"可靠 —— 后者在安装路径含 node 字样时会误判，
+  // 使开机自启命令被写成 "某个路径 未定义"。
+  let isSea = false
+  try {
+    isSea = require('node:sea').isSea()
+  } catch {}
+  if (isSea) {
     return process.argv[0]
   }
   return `${process.argv[0]} ${process.argv[1]}`

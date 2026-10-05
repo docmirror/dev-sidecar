@@ -1,6 +1,7 @@
 const { fork } = require('node:child_process')
 const fs = require('node:fs')
 const path = require('node:path')
+const { isSea, spawnSelf } = require('../sea')
 const jsonApi = require('@blue-frontier/mitmproxy/src/json')
 
 function getUserBase () {
@@ -76,8 +77,8 @@ function handlePlugin (action, name) {
       console.log('free_eye 是一次性测试功能，stop 命令不适用')
       return
     }
-    const workerPath = path.join(__dirname, '../free-eye-worker.js')
-    const child = fork(workerPath)
+    // SEA 下 fork 磁盘 .js 不可用，改为重新执行自身（隐藏命令在同进程内加载 worker）
+    const child = isSea() ? spawnSelf(['__worker:free-eye']) : fork(path.join(__dirname, '../free-eye-worker.js'))
     child.on('exit', (code) => {
       process.exit(code || 0)
     })
@@ -85,8 +86,11 @@ function handlePlugin (action, name) {
   }
 
   // git/node/pip 不依赖代理服务，fork worker 立即生效
-  const workerPath = path.join(__dirname, '../plugin-worker.js')
-  const child = fork(workerPath, [action, name])
+  // SEA 下 fork 磁盘 .js 不可用，改为重新执行自身；隐藏命令占 argv[1]，
+  // 因此 worker 里读取的 process.argv[2]/[3] 与原来一致。
+  const child = isSea()
+    ? spawnSelf(['__worker:plugin', action, name])
+    : fork(path.join(__dirname, '../plugin-worker.js'), [action, name])
   child.on('exit', (code) => {
     // 同时持久化到 config.json（重启后生效）
     const config = readConfig()

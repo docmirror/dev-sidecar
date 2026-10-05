@@ -92,6 +92,12 @@ async function startProxy (serverConfig) {
 // ── 主流程 ──────────────────────────────────────────
 
 const args = process.argv.slice(2)
+// SEA 下 __dirname 就是可执行文件所在目录，显式告诉 core 去哪里找 sysproxy.exe / EnableLoopback.exe，
+// 避免依赖启动方式与工作目录（core 的候选顺序是 DS_EXTRA_PATH → resources/extra → __dirname）
+if (process.env.DS_EXTRA_PATH == null || process.env.DS_EXTRA_PATH === '') {
+  process.env.DS_EXTRA_PATH = path.dirname(process.execPath)
+}
+
 const isDaemon = args.includes('--daemon')
 
 if (isDaemon) {
@@ -196,14 +202,31 @@ async function routeCommand (args) {
 
   switch (command) {
     case 'start': {
-      // 锁检查：锁被持有说明 CLI 或 GUI 已在运行
       const DevSidecar = require('@blue-frontier/dev-sidecar')
+      // 锁被持有不等于对方还活着：proper-lockfile 的过期判定是 10 秒，
+      // 刚停掉的实例会在这段时间内仍显示为「已锁定」。只看锁会让 `stop` 之后紧接着 `start` 被误拒，
+      // 因此先看实例记录里的 PID：进程已不在就等锁过期（最多 15 秒）再继续。
       if (await DevSidecar.api.instance.isLocked()) {
-        const instance = await DevSidecar.api.instance.readInstance()
-        const typeLabel = instance?.type === 'gui' ? 'GUI' : 'CLI'
-        console.log(`dev-sidecar ${typeLabel} 已在运行中${instance?.pid ? `（PID: ${instance.pid}）` : ''}，请先关闭后再启动 CLI`)
-        process.exit(0)
-        break
+        const instance = await DevSidecar.api.instance.readInstance().catch(() => null)
+        if (instance?.pid && isPidAlive(instance.pid)) {
+          const typeLabel = instance.type === 'gui' ? 'GUI' : 'CLI'
+          console.log(`dev-sidecar ${typeLabel} 已在运行中（PID: ${instance.pid}），请先关闭后再启动 CLI`)
+          process.exit(0)
+        }
+        console.log('检测到残留的实例锁（记录中的进程已不在），等待其过期…')
+        let cleared = false
+        for (let i = 0; i < 30; i++) {
+          await new Promise(resolve => setTimeout(resolve, 500))
+          if (!await DevSidecar.api.instance.isLocked()) {
+            cleared = true
+            break
+          }
+        }
+        if (!cleared) {
+          console.error('实例锁在 15 秒内没有释放，请稍后重试')
+          process.exit(1)
+        }
+        console.log('锁已释放，继续启动')
       }
       const { fork } = require('node:child_process')
       const child = fork(__filename, ['--daemon'], { detached: true, stdio: 'ignore' })
@@ -211,17 +234,33 @@ async function routeCommand (args) {
       fs.mkdirSync(path.dirname(PID_FILE), { recursive: true })
       fs.writeFileSync(PID_FILE, String(child.pid))
       console.log(`dev-sidecar 已在后台启动，PID: ${child.pid}`)
+      // 与 GUI 行为一致：配置里开着系统代理就自动应用，方便用户只跑 start 也能用
+      const { readConfig } = require('./commands/gui')
+      if (readConfig().proxy?.enabled === true) {
+        await runProxyWorker('on')
+      }
       process.exit(0)
       break
     }
     case 'stop': {
       const { stopDaemon } = require('./commands/stop')
-      stopDaemon()
+      await stopDaemon()
+      // 停止时把系统代理一并撤掉，避免注册表留在指向已停端口的死代理上
+      const { readConfig } = require('./commands/gui')
+      if (readConfig().proxy?.enabled === true) {
+        await runProxyWorker('off')
+      }
       break
     }
     case 'restart': {
       const { restartDaemon } = require('./commands/restart')
-      restartDaemon().then(() => process.exit(0))
+      await restartDaemon()
+      // 重启后同样按配置应用系统代理
+      const { readConfig } = require('./commands/gui')
+      if (readConfig().proxy?.enabled === true) {
+        await runProxyWorker('on')
+      }
+      process.exit(0)
       break
     }
     case 'status': {
@@ -229,8 +268,21 @@ async function routeCommand (args) {
       showStatus().then(() => process.exit(0))
       break
     }
+    case 'config': {
+      // 重新拉取用户在 config.json 里指定地址的远程配置（与 GUI 的「重新拉取远程配置」等价）
+      if (positional[1] !== 'update' && positional[1] !== 'reload') {
+        console.error('用法: ds-cli config update    # 重新拉取 config.json 中指定地址的远程配置')
+        process.exit(1)
+      }
+      const { updateRemoteConfig } = require('./commands/config')
+      updateRemoteConfig().then((code) => process.exit(code))
+      break
+    }
     case 'version': {
-      console.log('2.2.1')
+      // 必须读 package.json：打包脚本 scripts/build.js Step 6 会执行 <产物> version 并与
+      // package.json 的 version 严格比较，写死版本号会让每一次 CI 打包都在这一步失败。
+      // esbuild 会把该 JSON 内联进 bundle，因此注入的本地/CI 版本号都能正确带入。
+      console.log(require('../package.json').version)
       break
     }
     case 'plugin': {
@@ -240,20 +292,20 @@ async function routeCommand (args) {
     }
     case 'proxy': {
       const { readConfig, writeConfig } = require('./commands/gui')
-      if (positional[1] === 'on' || positional[1] === 'off') {
+      const action = positional[1]
+      if (action === 'on' || action === 'off') {
         const config = readConfig()
         config.proxy = config.proxy || {}
-        config.proxy.enabled = positional[1] === 'on'
+        config.proxy.enabled = action === 'on'
         writeConfig(config)
-
-        const { fork } = require('node:child_process')
-        const workerPath = path.join(__dirname, 'proxy-worker.js')
-        const child = fork(workerPath, [positional[1]])
-        child.on('exit', (code) => {
-          process.exit(code || 0)
-        })
+        await runProxyWorker(action)
+        process.exit(0)
+      } else if (action === 'loopback') {
+        // 打开 Windows 回环豁免（UWP/商店应用访问本地代理用），需要管理员权限
+        await runProxyWorker('loopback')
+        process.exit(0)
       } else {
-        console.error('用法: ds-cli proxy <on|off>')
+        console.error('用法: ds-cli proxy <on|off|loopback>')
         process.exit(1)
       }
       break
@@ -268,6 +320,27 @@ async function routeCommand (args) {
       }
       break
     }
+    // 隐藏命令：SEA 下 fork 磁盘上的 .js 不可用（子进程会把路径当命令），
+    // 改为由 spawnSelf 重新执行本二进制，再在这里于同进程内加载对应 worker。
+    // SEA 下 process.argv 的形状与普通 node 不同（argv[0]、argv[1] 都是 execPath），
+    // worker 里按固定下标读参数会错位，因此在入口处扫描 argv 取出参数并写成环境变量，
+    // worker 优先读环境变量、退回到 argv（非 SEA 的 fork 路径仍然照旧）。
+    case '__worker:proxy': {
+      process.env.DS_WORKER_ACTION = workerArg('__worker:proxy', 1)
+      require('./proxy-worker')
+      break
+    }
+    case '__worker:plugin': {
+      process.env.DS_WORKER_ACTION = workerArg('__worker:plugin', 1)
+      process.env.DS_WORKER_NAME = workerArg('__worker:plugin', 2)
+      require('./plugin-worker')
+      break
+    }
+    case '__worker:free-eye': {
+      require('./free-eye-worker')
+      break
+    }
+
     case 'help': {
       printHelp()
       break
@@ -279,6 +352,36 @@ async function routeCommand (args) {
   }
 }
 
+/** 取出隐藏命令之后的第 n 个参数（n 从 1 开始）；放在顶层以便函数提升 */
+/** 通过 worker 子进程设置/取消系统代理（SEA 下 fork 磁盘 .js 不可用，故重新执行自身） */
+function runProxyWorker (action) {
+  return new Promise((resolve) => {
+    const { spawnSelf } = require('./sea')
+    const child = spawnSelf(['__worker:proxy', action])
+    child.on('exit', (code) => {
+      if (code) {
+        console.error(`系统代理操作未成功（退出码 ${code}）`)
+      }
+      resolve(code || 0)
+    })
+  })
+}
+
+/** 进程是否存在（与 commands/stop.js 中同一判据） */
+function isPidAlive (pid) {
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch {
+    return false
+  }
+}
+
+function workerArg (marker, n) {
+  const idx = process.argv.indexOf(marker)
+  return idx >= 0 ? (process.argv[idx + n] ?? '') : ''
+}
+
 function printHelp () {
   console.log(`用法: ds-cli <命令> [选项]
 
@@ -288,8 +391,10 @@ function printHelp () {
   restart                   重启守护进程
   status                    显示运行状态
   version                   显示版本号
+  config update             重新拉取配置里指定地址的远程配置
   proxy on                  开启系统代理
   proxy off                 关闭系统代理
+  proxy loopback            打开 Windows 回环豁免（需管理员权限，UWP/商店应用访问本地代理用）
   plugin start <name>       启用插件 (git/node/pip/overwall/free_eye)
   plugin stop <name>        禁用插件
   service install           注册开机自启动

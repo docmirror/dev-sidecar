@@ -4,9 +4,17 @@
 
 ## 安装
 
-```bash
-npm install -g @docmirror/dev-sidecar-cli
-```
+下载 [GitHub Releases](https://github.com/docmirror/dev-sidecar/releases) 里的单文件可执行程序
+（`ds-cli-<版本>-<平台>`，Windows 为 `.exe`），放进 PATH 即可。
+它内嵌 Node 运行时，**目标机器不需要安装 Node.js**，也不需要额外安装本项目其它包。
+
+> npm 分发目前不可用：本包依赖 `@blue-frontier/dev-sidecar` 与 `@blue-frontier/mitmproxy`，
+> 而这两个包在各自的 package.json 里都是 `private: true`，发布会被 registry 拒绝。
+> 若要走 npm，需要先把它们改为可发布并在 CI 里补一个发布步骤。
+>
+> Windows 产物是三个文件：`ds-cli-<版本>-windows-<架构>.exe` 与 `sysproxy.exe`、`EnableLoopback.exe`，
+> 请放在同一目录。单文件可执行程序里无法加载 `@starknt/sysproxy` 原生模块，
+> 系统代理改由 core 自带的 `sysproxy.exe` 回退实现；`EnableLoopback.exe` 供 `ds-cli proxy loopback` 提权运行。
 
 ## 开发
 
@@ -89,11 +97,15 @@ packages/cli/
 
 ```bash
 ds-cli                        # 启动 CLI 守护进程（默认）
-ds-cli start                  # 启动 CLI 守护进程
-ds-cli stop                   # 停止 CLI 守护进程
+ds-cli start                  # 启动 CLI 守护进程（配置里开着系统代理时会一并应用）
+ds-cli stop                   # 停止 CLI 守护进程（同时撤销系统代理，不会留下指向已停端口的代理）
 ds-cli restart                # 重启 CLI 守护进程
 ds-cli status                 # 显示 CLI 运行状态
 ds-cli version                # 显示版本号
+ds-cli config update          # 重新拉取配置里指定地址的远程配置
+ds-cli proxy on               # 开启系统代理（同时写入配置）
+ds-cli proxy off              # 关闭系统代理
+ds-cli proxy loopback         # 打开 Windows 回环豁免（需管理员权限）
 ds-cli plugin start <name>    # 启动单个插件
 ds-cli plugin stop <name>     # 停止单个插件
 ds-cli service install        # 注册开机自启动

@@ -1,7 +1,8 @@
 const DevSidecar = require('@blue-frontier/dev-sidecar')
 
-const action = process.argv[2]
-const name = process.argv[3]
+// 参数来源：SEA 下由入口扫描 argv 写入环境变量；非 SEA 的 fork 路径仍然走 argv
+const action = process.env.DS_WORKER_ACTION || process.argv[2]
+const name = process.env.DS_WORKER_NAME || process.argv[3]
 
 DevSidecar.api.config.reload()
 

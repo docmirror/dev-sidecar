@@ -7,16 +7,31 @@ describe('start', function () {
   const { isPortInUse, getProxyPort, isAlive } = require('../src/commands/start')
 
   function withTempHome (fn) {
+    // 必须同时改 HOME 与 USERPROFILE：CLI 的 getUserBase() 在 Windows 上优先读 USERPROFILE，
+    // 只改 HOME 会让测试读到真实用户目录（表现为拿到默认端口而不是临时配置里的端口），
+    // 而 Ubuntu 上没有 USERPROFILE，所以这个缺陷只在本地 Windows 上暴露。
     const originalHome = process.env.HOME
+    const originalUserProfile = process.env.USERPROFILE
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-cli-test-'))
     const userBase = path.join(tmpDir, '.dev-sidecar')
     fs.mkdirSync(userBase, { recursive: true })
     process.env.HOME = tmpDir
+    process.env.USERPROFILE = tmpDir
     try {
       fn(userBase, tmpDir)
     } finally {
-      process.env.HOME = originalHome
+      restoreEnv('HOME', originalHome)
+      restoreEnv('USERPROFILE', originalUserProfile)
       fs.rmSync(tmpDir, { recursive: true, force: true })
+    }
+  }
+
+  // 还原环境变量：值为 undefined 时必须 delete，直接赋值会变成字符串 "undefined"
+  function restoreEnv (key, value) {
+    if (value === undefined) {
+      delete process.env[key]
+    } else {
+      process.env[key] = value
     }
   }
 

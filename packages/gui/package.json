@@ -20,6 +20,8 @@
     "preelectron": "node scripts/gen-tray-plugins.mjs",
     "electron": "node ../../_script/electron-dev.mjs",
     "electron:build": "pnpm run build && pnpm exec electron-builder --config electron-builder.config.cjs",
+    "electron:build:local": "node scripts/local-build-version.mjs",
+    "version:local": "node scripts/local-build-version.mjs --print",
     "postinstall": "node -e \"!process.env.CI && require('child_process').execSync('electron-builder install-app-deps', { stdio:'inherit' })\"",
     "postuninstall": "pnpm exec electron-builder install-app-deps"
   },

@@ -19,6 +19,13 @@ const VERSION = require(path.join(ROOT, 'package.json')).version
 const NODE_VERSION = 'v24.14.0'
 const SENTINEL = 'NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2'
 
+/** 下载停滞判定与重试次数：CI 上一次卡住的下载会把 job 拖到超时，必须显式兜住 */
+const DOWNLOAD_STALL_TIMEOUT_MS = 30 * 1000
+const DOWNLOAD_ATTEMPTS = 2
+
+/** Windows 产物需要与可执行文件同目录的 helper（core 的 extra-path 会在此查找） */
+const WINDOWS_HELPERS = ['sysproxy.exe', 'EnableLoopback.exe']
+
 // ── 平台识别 ──────────────────────────────────────────
 
 function getCurrentPlatform () {
@@ -33,7 +40,7 @@ function getCurrentPlatform () {
 function getNodeDownloadUrl (platform) {
   const base = `https://nodejs.org/dist/${NODE_VERSION}`
   const map = {
-    'linux-x64': `${base}/node-${NODE_VERSION}-linux-x64`,
+    'linux-x64': `${base}/node-${NODE_VERSION}-linux-x64.tar.gz`,
     'linux-x64-armv7l': `${base}/node-${NODE_VERSION}-linux-armv7l.tar.gz`,
     'linux-arm64': `${base}/node-${NODE_VERSION}-linux-arm64.tar.gz`,
     'macos-x64': `${base}/node-${NODE_VERSION}-darwin-x64.tar.gz`,
@@ -45,7 +52,10 @@ function getNodeDownloadUrl (platform) {
 }
 
 function needsExtraction (platform) {
-  return platform !== 'windows-x64' && platform !== 'linux-x64'
+  // 只有 Windows 各架构（x64 / arm64）是裸 node.exe，不能解压；
+  // 其余平台一律是 .tar.gz（linux-x64 曾被误当成裸二进制，而 Node v24 的发布物
+  // 只有 node-vX-linux-x64.tar.gz，无扩展名的地址会 404，打包因此失败）。
+  return !platform.startsWith('windows-')
 }
 
 function getOutputName (platform) {
@@ -56,24 +66,73 @@ function getOutputName (platform) {
 
 // ── 下载与校验 ────────────────────────────────────────
 
-function download (url, dest) {
+function download (url, dest, attempt = 1) {
   return new Promise((resolve, reject) => {
     const mod = url.startsWith('https') ? https : http
     const file = fs.createWriteStream(dest)
-    mod.get(url, (res) => {
+    let settled = false
+    let stallTimer = null
+
+    const clearStall = () => {
+      if (stallTimer != null) {
+        clearTimeout(stallTimer)
+        stallTimer = null
+      }
+    }
+    const cleanup = () => {
+      clearStall()
+      try { file.close() } catch {}
+      try { fs.unlinkSync(dest) } catch {}
+    }
+    const fail = (err) => {
+      if (settled) return
+      settled = true
+      cleanup()
+      if (attempt < DOWNLOAD_ATTEMPTS) {
+        console.warn(`    下载失败，第 ${attempt} 次重试：${url}（${err.message}）`)
+        return download(url, dest, attempt + 1).then(resolve, reject)
+      }
+      reject(err)
+    }
+    const ok = () => {
+      if (settled) return
+      settled = true
+      clearStall()
+      file.close()
+      resolve()
+    }
+    // 停滞保护：超过 DOWNLOAD_STALL_TIMEOUT_MS 没有任何数据就判定失败并重试
+    const bumpStall = () => {
+      clearStall()
+      stallTimer = setTimeout(() => {
+        try { req.destroy() } catch {}
+        fail(new Error(`下载停滞超过 ${DOWNLOAD_STALL_TIMEOUT_MS}ms`))
+      }, DOWNLOAD_STALL_TIMEOUT_MS)
+    }
+
+    // 第一次沿用环境变量代理（有 DS 时走它）；失败重试时改用显式 agent 直连。
+    // 本机开着 NODE_USE_ENV_PROXY=1 时，不带 agent 的请求一律被 HTTPS_PROXY 拖走，
+    // 代理没在跑就会直接失败（实测：DS 停止后抓 SHASUMS256.txt 报 ECONNREFUSED）。
+    const directAgent = attempt > 1
+      ? (url.startsWith('https') ? new https.Agent({ keepAlive: false }) : new http.Agent({ keepAlive: false }))
+      : null
+    const req = mod.get(url, directAgent == null ? {} : { agent: directAgent }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        file.close()
-        fs.unlinkSync(dest)
-        return download(res.headers.location, dest).then(resolve, reject)
+        // 重定向不消耗重试次数
+        settled = true
+        cleanup()
+        return download(res.headers.location, dest, attempt).then(resolve, reject)
       }
       if (res.statusCode !== 200) {
-        file.close()
-        fs.unlinkSync(dest)
-        return reject(new Error(`HTTP ${res.statusCode}: ${url}`))
+        try { req.destroy() } catch {}
+        return fail(new Error(`HTTP ${res.statusCode}: ${url}`))
       }
+      res.on('data', bumpStall)
+      bumpStall()
       res.pipe(file)
-      file.on('finish', () => { file.close(); resolve() })
-    }).on('error', (err) => { file.close(); try { fs.unlinkSync(dest) } catch {} ; reject(err) })
+      file.on('finish', ok)
+    })
+    req.on('error', (err) => fail(err))
   })
 }
 
@@ -214,7 +273,8 @@ async function main () {
     // 清理旧构建产物（保留 node-bin 缓存）
     console.log('==> 清理旧构建产物...')
     for (const f of fs.readdirSync(DIST)) {
-      if (f.startsWith('ds-cli-') || f === 'sea-config.json' || f === 'ds-cli-bundle.js' || f === 'ds-cli-prep.blob') {
+      // 两个 helper 是复制进产物目录的，重建时一并清理，避免留下过期文件
+      if (f.startsWith('ds-cli-') || f === 'sea-config.json' || f === 'ds-cli-bundle.js' || f === 'ds-cli-prep.blob' || WINDOWS_HELPERS.includes(f)) {
         fs.rmSync(path.join(DIST, f), { force: true })
       }
     }
@@ -286,8 +346,22 @@ async function main () {
       disableExperimentalSEAWarning: true,
     }))
     const blobNode = path.join(DIST, 'node-bin', `node-${currentPlatform}`)
-    const seaNode = fs.existsSync(blobNode) ? blobNode : process.execPath
-    execSync(`"${seaNode}" --experimental-sea-config "${seaConfig}"`, { stdio: 'inherit' })
+    // 下载的 Windows 裸二进制文件名没有 .exe，交给 cmd 执行会报“不是内部或外部命令”，
+    // 因此在 Windows 上先补一个带 .exe 的临时副本（文件名不影响 --experimental-sea-config）。
+    let seaNode = fs.existsSync(blobNode) ? blobNode : process.execPath
+    let seaNodeTmp = null
+    if (process.platform === 'win32' && seaNode === blobNode) {
+      seaNodeTmp = `${blobNode}.exe`
+      fs.copyFileSync(blobNode, seaNodeTmp)
+      seaNode = seaNodeTmp
+    }
+    try {
+      execSync(`"${seaNode}" --experimental-sea-config "${seaConfig}"`, { stdio: 'inherit' })
+    } finally {
+      if (seaNodeTmp != null) {
+        fs.rmSync(seaNodeTmp, { force: true })
+      }
+    }
     saveBuildHash(currentHash)
     console.log()
   }
@@ -338,7 +412,23 @@ async function main () {
 
   // 输出结果
   console.log('==> 打包完成！')
-  const files = fs.readdirSync(DIST).filter(f => f.startsWith('ds-cli-') && !f.endsWith('.js') && !f.endsWith('.blob') && !f.endsWith('.json'))
+  // Windows 产物需要两个 helper 与可执行文件同目录：
+  // sysproxy.exe 是 core 在原生模块 @starknt/sysproxy 不可用时的回退（SEA 单文件里必然不可用），
+  // EnableLoopback.exe 供 `ds-cli proxy loopback` 提权运行。core 的 extra-path 会按
+  // DS_EXTRA_PATH → resources/extra → __dirname 依次查找，SEA 下 __dirname 即产物目录，所以放在这里即可命中。
+  if (targets.some(t => t.startsWith('windows-'))) {
+    const extraDir = path.resolve(__dirname, '../../core/src/shell/scripts/extra-path')
+    for (const name of WINDOWS_HELPERS) {
+      const src = path.join(extraDir, name)
+      if (!fs.existsSync(src)) {
+        throw new Error(`缺少 Windows helper: ${src}`)
+      }
+      fs.copyFileSync(src, path.join(DIST, name))
+    }
+    console.log(`==> 已随产物复制 Windows helper: ${WINDOWS_HELPERS.join(', ')}`)
+  }
+
+  const files = fs.readdirSync(DIST).filter(f => (f.startsWith('ds-cli-') && !f.endsWith('.js') && !f.endsWith('.blob') && !f.endsWith('.json')) || WINDOWS_HELPERS.includes(f))
   for (const f of files) {
     const size = (fs.statSync(path.join(DIST, f)).size / 1024 / 1024).toFixed(1)
     console.log(`    ${f}  (${size}MB)`)
@@ -402,7 +492,7 @@ async function downloadNodeBinary (platform, checksums) {
 // 获取 SHASUMS256.txt 中对应的文件名
 function getNodeFilename (platform) {
   const map = {
-    'linux-x64': `node-${NODE_VERSION}-linux-x64`,
+    'linux-x64': `node-${NODE_VERSION}-linux-x64.tar.gz`,
     'linux-arm64': `node-${NODE_VERSION}-linux-arm64.tar.gz`,
     'macos-x64': `node-${NODE_VERSION}-darwin-x64.tar.gz`,
     'macos-arm64': `node-${NODE_VERSION}-darwin-arm64.tar.gz`,
