@@ -31,12 +31,12 @@ export default defineComponent({
       this.initNoProxyUrls()
     },
     async applyBefore () {
-      if (this.status.plugin.git.enabled) {
+      // 先记录保存后的目标状态，再关闭当前实例，避免关闭勾选后又被 applyAfter 启动。
+      const shouldEnable = this.config.plugin.git.enabled === true
+      if (this.status.plugin.git.enabled === true) {
         await this.$api.plugin.git.close()
-        this.needRestart = true
-      } else {
-        this.needRestart = false
       }
+      this.needRestart = shouldEnable
       this.submitNoProxyUrls()
     },
     async applyAfter () {

@@ -694,6 +694,36 @@ function registerShowHideShortcut (showHideShortcut) {
   }
 }
 
+function normalizeBooleanArg (value) {
+  const text = `${value}`.replace(/^["']+|["']+$/g, '').trim().toLowerCase()
+  if (text === 'true' || text === '1') {
+    return true
+  }
+  if (text === 'false' || text === '0') {
+    return false
+  }
+  return null
+}
+
+function parseHideWindowArg (argv) {
+  const list = argv || []
+  for (let i = 0; i < list.length; i++) {
+    const match = /^--hide-?window(?:=(.*))?$/i.exec(String(list[i]))
+    if (!match) {
+      continue
+    }
+    if (match[1] != null && match[1] !== '') {
+      return normalizeBooleanArg(match[1])
+    }
+    const next = list[i + 1]
+    if (next != null && !String(next).startsWith('-')) {
+      return normalizeBooleanArg(next)
+    }
+    return true
+  }
+  return null
+}
+
 function initApp () {
   if (isMac) {
     app.whenReady().then(() => {
@@ -724,12 +754,10 @@ try {
     const args = minimist(process.argv)
     log.info('start args:', args)
 
-    // 通过启动参数，判断是否隐藏窗口
-    const hideWindowArg = `${args.hideWindow}`
-    if (hideWindowArg === 'true' || hideWindowArg === '1') {
-      startHideWindow = true
-    } else if (hideWindowArg === 'false' || hideWindowArg === '0') {
-      startHideWindow = false
+    // 兼容旧自启参数的引号，并支持 `--hideWindow=true`。
+    const hideWindowArg = parseHideWindowArg(process.argv)
+    if (hideWindowArg != null) {
+      startHideWindow = hideWindowArg
     }
   }
   log.info('startHideWindow = ', startHideWindow, ', app.getLoginItemSettings() = ', jsonApi.stringify2(app.getLoginItemSettings()))
@@ -755,6 +783,10 @@ try {
     app.on('second-instance', (event, commandLine) => {
       log.info('new app started, command:', commandLine)
       if (win) {
+        if (parseHideWindowArg(commandLine) === true) {
+          log.info('second instance requested hidden startup; keep window hidden')
+          return
+        }
         showWin()
         win.focus()
       }

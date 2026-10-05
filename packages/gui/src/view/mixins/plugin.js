@@ -1,4 +1,5 @@
 import lodash from 'lodash'
+import { ipcRenderer } from 'electron'
 import DsContainer from '../components/container'
 
 export default {
@@ -15,10 +16,30 @@ export default {
       resetDefaultLoading: false,
       applyLoading: false,
       systemPlatform: '',
+      /**
+       * 配置在页面打开期间被外部更新时（如远程配置重新下载后主进程广播 config.changed），
+       * 是否自动重新读取本页配置。只读页面（如帮助中心）可设为 true；
+       * 可编辑页面不要开启 —— 自动重载会把用户正在修改、尚未保存的内容冲掉。
+       */
+      autoReloadConfigOnChange: false,
+      configChangedHandler: null,
     }
   },
   created () {
     this.init()
+
+    if (this.autoReloadConfigOnChange === true) {
+      this.configChangedHandler = () => {
+        this.refreshConfigOnChange()
+      }
+      ipcRenderer.on('config.changed', this.configChangedHandler)
+    }
+  },
+  unmounted () {
+    if (this.configChangedHandler) {
+      ipcRenderer.removeListener('config.changed', this.configChangedHandler)
+      this.configChangedHandler = null
+    }
   },
   mounted () {
   },
@@ -117,6 +138,22 @@ export default {
       const config = await this.$api.config.reload()
       this.setConfig(config)
     },
+    /**
+     * 配置在页面打开期间被外部更新后，刷新本页内容（见 data 里的 autoReloadConfigOnChange）。
+     *
+     * 注意：必须用 `config.get()` 读取，**不能**用 `reloadConfig()`——
+     * 主进程的 `config.reload()` 会再次广播 `config.changed`，与本监听形成无限回环。
+     */
+    async refreshConfigOnChange () {
+      try {
+        const config = await this.$api.config.get()
+        if (config) {
+          this.setConfig(config)
+        }
+      } catch (e) {
+        console.error('配置变更后刷新本页配置失败（不影响使用）:', e)
+      }
+    },
     async reloadConfigAndRestart () {
       if (this.$api.plugin.git.isEnabled()) {
         await this.$api.plugin.git.close()
@@ -145,7 +182,10 @@ export default {
     },
     async openLog () {
       const dir = await this.$api.info.getLogDir()
-      this.$api.ipc.openPath(dir)
+      const errMsg = await this.$api.shell.openPath(dir)
+      if (errMsg) {
+        this.$message.error(`打开日志目录失败：${errMsg}`)
+      }
     },
     async focusFirst (ref) {
       if (ref && ref.length != null) {

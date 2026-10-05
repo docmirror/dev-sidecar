@@ -11,7 +11,7 @@ export default defineComponent({
     <div class="body-wrapper">
       <div v-if="$slots.header" class="container-header">
         <span><slot name="header" /></span>
-        <span style="color:#999"><slot name="header-right" /></span>
+        <span class="container-header-right"><slot name="header-right" /></span>
       </div>
       <div class="container-body">
         <slot />
@@ -26,7 +26,7 @@ export default defineComponent({
 <style lang="scss">
 .ds-container {
   height: 100%;
-  background-color: #fff;
+  background-color: var(--bg-primary);
   display: flex;
   position: relative;
 
@@ -41,10 +41,14 @@ export default defineComponent({
     overflow: hidden;
   }
 
+  .container-header-right {
+    color: var(--text-tertiary);
+  }
+
   .container-header {
     padding: 15px;
-    border-bottom: 1px solid #eee;
-    background-color: #fff;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
     height: 60px;
     display: flex;
     align-items: center;

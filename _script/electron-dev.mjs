@@ -43,6 +43,14 @@ function resolveElectronBin () {
   return require('electron')
 }
 
+// 受限环境（如 DSH 沙箱）下由 dev.js 通过该变量透传额外启动参数，例如
+// --no-sandbox / --user-data-dir=<工作区内目录>
+function resolveElectronArgs () {
+  return (process.env.DEV_SIDECAR_ELECTRON_ARGS || '')
+    .split(/\s+/)
+    .filter(Boolean)
+}
+
 async function waitForServer (url, child) {
   const timeoutAt = Date.now() + 120000
 
@@ -105,7 +113,7 @@ async function main () {
 
   try {
     await waitForServer(devServerUrl, state.devServer)
-    state.electron = spawnCommand(electronBin, ['.'], {
+    state.electron = spawnCommand(electronBin, ['.', ...resolveElectronArgs()], {
       WEBPACK_DEV_SERVER_URL: devServerUrl,
     })
     state.electron.on('exit', (code, signal) => {

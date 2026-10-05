@@ -54,6 +54,11 @@
   --pre-release-border: #ffa940;
   --pre-release-text: #ad4e00;
 
+  /* 页面组件 */
+  --card-bg: #fafafa;
+  --code-block-bg: #f5f5f5;
+  --shadow-color: rgba(0, 0, 0, 0.05);
+
   /* Ant Design 覆盖 */
   --ant-bg-base: #ffffff;
   --ant-bg-container: #ffffff;
@@ -110,6 +115,11 @@
   --pre-release-bg: #332200;
   --pre-release-border: #996600;
   --pre-release-text: #ffcc66;
+
+  /* 页面组件 */
+  --card-bg: #25262b;
+  --code-block-bg: #333333;
+  --shadow-color: rgba(0, 0, 0, 0.28);
 
   /* Ant Design 覆盖 */
   --ant-bg-base: #1e1f22;
@@ -262,8 +272,8 @@
   }
 
   /* 弹窗/对话框/抽屉 */
-  .ant-modal-content, .ant-modal-header,
-  .ant-drawer-content, .ant-drawer-header {
+  .ant-modal-content, .ant-modal-header, .ant-modal-body,
+  .ant-drawer-content, .ant-drawer-header, .ant-drawer-body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
   }

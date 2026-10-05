@@ -42,10 +42,7 @@ export default {
           app.setLoginItemSettings({
             openAtLogin: true,
             openAsHidden: true,
-            args: [
-              '--hideWindow',
-              '"true"',
-            ],
+            args: ['--hideWindow=true'],
           })
         }
 

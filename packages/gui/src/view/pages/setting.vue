@@ -225,7 +225,10 @@ export default {
 
       // 判断远程配置地址是否变更过，如果是则重载远程配置并重启服务
       if (this.config.app.remoteConfig.url !== this.urlBackup || this.config.app.remoteConfig.personalUrl !== this.personalUrlBackup) {
-        await this.$api.config.downloadRemoteConfig()
+        const downloadRet = await this.$api.config.downloadRemoteConfig()
+        if (downloadRet && downloadRet.ok === false) {
+          this.$message.warning(`远程配置下载失败，已继续使用本地缓存：${downloadRet.error}`)
+        }
         await this.reloadConfigAndRestart()
         reloadLazy = 300
         setTimeout(() => window.location.reload(), reloadLazy)
@@ -247,8 +250,12 @@ export default {
         this.reloadLoading = true
         try {
           this.$message.info('开始下载远程配置')
-          await this.$api.config.downloadRemoteConfig()
-          this.$message.info('下载远程配置成功，开始重启代理服务和系统代理')
+          const downloadRet = await this.$api.config.downloadRemoteConfig()
+          if (downloadRet && downloadRet.ok === false) {
+            this.$message.warning(`下载远程配置失败，已继续使用本地缓存（应用会自动重试）：${downloadRet.error}`)
+          } else {
+            this.$message.info('下载远程配置成功，开始重启代理服务和系统代理')
+          }
           await this.reloadConfigAndRestart()
         } finally {
           this.reloadLoading = false
@@ -273,7 +280,11 @@ export default {
         await this.$api.config.readRemoteConfigStr('_personal').then((ret) => {
           remoteConfig.old2 = ret
         })
-        await this.$api.config.downloadRemoteConfig()
+        const downloadRet = await this.$api.config.downloadRemoteConfig()
+        if (downloadRet && downloadRet.ok === false) {
+          this.$message.warning(`远程配置下载失败，已继续使用本地缓存：${downloadRet.error}`)
+          return
+        }
         await this.$api.config.readRemoteConfigStr().then((ret) => {
           remoteConfig.new1 = ret
         })
@@ -398,7 +409,8 @@ export default {
         <div class="form-help">
           应用启动时会向下面的地址请求配置补丁，获得最新的优化后的github访问体验。<br>
           如果您觉得远程配置有安全风险，请关闭此功能，或删除共享远程配置，仅使用个人远程配置。<br>
-          配置优先级：本地修改配置  >  个人远程配置  >  共享远程配置 > 默认配置
+          配置优先级：本地修改配置  >  个人远程配置  >  共享远程配置 > 默认配置<br>
+          <strong>注意：远程配置地址不再支持裸 HTTP（明文下载会被中间人篡改）</strong>，填写 <code>http://</code> 开头的地址会被自动改写为 <code>https://</code> 并保存。
         </div>
       </a-form-item>
       <a-form-item label="共享远程配置地址" :label-col="labelCol" :wrapper-col="wrapperCol">

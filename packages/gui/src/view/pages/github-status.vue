@@ -323,6 +323,8 @@ export default defineComponent({
 }
 .page-tabs :deep(.ant-tabs-tabpane) {
   height: 100%;
+  /* 顶部留出 8px：时间线第一个节点的内容有 top:-7px 的偏移，不留白会被滚动容器裁掉 */
+  padding-top: 8px;
   overflow-y: auto;
   scrollbar-gutter: stable;
 }

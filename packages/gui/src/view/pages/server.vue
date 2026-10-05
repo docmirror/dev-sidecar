@@ -31,6 +31,7 @@ export default defineComponent({
       whiteList: [],
       echDomains: [],
       echPreSetIpDomains: [],
+      nat64Domains: [],
       tlsMappings: [],
       speedRefreshInterval: null,
       tlsVersionOptions: [
@@ -126,6 +127,7 @@ export default defineComponent({
       this.initWhiteList()
       this.initEchDomains()
       this.initEchPreSetIpDomains()
+      this.initNat64Domains()
       this.initTlsMappings()
       this.initCfRouteDomains()
       if (this.config.server.dns.speedTest.dnsProviders) {
@@ -137,6 +139,7 @@ export default defineComponent({
       this.submitWhiteList()
       this.submitEchDomains()
       this.submitEchPreSetIpDomains()
+      this.submitNat64Domains()
       this.submitTlsMappings()
       this.submitCfRouteDomains()
       this.delEmptySpeedHostname()
@@ -290,6 +293,32 @@ export default defineComponent({
     },
     submitEchPreSetIpDomains () {
       this.getEchConfig().preSetIpDomains = this.toDomains(this.echPreSetIpDomains)
+    },
+
+    // NAT64（把真实IPv4嵌入NAT64前缀，走IPv6直连）
+    getNat64Config () {
+      const dns = this.config.server.dns || (this.config.server.dns = {})
+      return dns.nat64 || (dns.nat64 = {})
+    },
+    initNat64Domains () {
+      const nat64Config = this.getNat64Config()
+      if (nat64Config.dns == null) {
+        // 「解析用DNS」与「ECH专用DNS」一致：空表示不指定
+        nat64Config.dns = ''
+      }
+      this.nat64Domains = this.toDomainRows(nat64Config.domains)
+    },
+    addNat64Domain () {
+      this.nat64Domains.unshift({ key: '' })
+      this.focusFirst(this.$refs.nat64Domains)
+    },
+    deleteNat64Domain (item, index) {
+      this.nat64Domains.splice(index, 1)
+    },
+    submitNat64Domains () {
+      const nat64Config = this.getNat64Config()
+      nat64Config.domains = this.toDomains(this.nat64Domains)
+      nat64Config.prefix = (nat64Config.prefix || '').trim()
     },
 
     // TLS版本设置
@@ -817,6 +846,66 @@ export default defineComponent({
             </a-form-item>
           </div>
         </a-tab-pane>
+        <a-tab-pane key="12" tab="NAT64直连">
+          <div v-if="activeTabKey === '12'" style="padding-right:10px">
+            <a-alert
+              type="info"
+              message="NAT64 会把域名解析出的真实IPv4地址嵌入一个IPv6前缀，通过IPv6网络访问该站点。"
+            />
+            <a-form-item label="启用NAT64" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-checkbox v-model:checked="getNat64Config().enabled">
+                通过NAT64直连名单中的域名
+              </a-checkbox>
+              <div class="form-help">
+                是否可用取决于所在网络能否访问下面的NAT64前缀；不可用时会自动回退为普通解析，不影响其它域名
+              </div>
+            </a-form-item>
+            <a-form-item label="NAT64前缀" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input v-model:value="getNat64Config().prefix" style="width: 320px" spellcheck="false" placeholder="请输入NAT64服务提供的IPv6前缀" />
+              <div class="form-help">
+                IPv6前缀，域名的真实IPv4会被嵌入到最末32位；请填写所使用的NAT64服务提供的前缀
+              </div>
+            </a-form-item>
+            <a-form-item label="解析用DNS" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-select v-model:value="getNat64Config().dns" style="width: 260px" placeholder="不指定">
+                <a-select-option value="">
+                  不指定（自动使用内置的公共DoH）
+                </a-select-option>
+                <a-select-option v-for="item of speedDnsOptions" :key="item.value" :value="item.value">
+                  {{ item.label }}
+                </a-select-option>
+              </a-select>
+              <div class="form-help">
+                从上方「DNS服务管理」中选择一个DNS（<b>需为DoH类型，即地址以 <code>https://</code> 开头</b>），
+                域名的真实A记录与ECH参数都<b>经NAT64通道</b>向它查询（所以即使本机DNS被投毒也能拿到真实IP）；
+                该DNS不可用时会自动回退到内置的公共DoH（<code>dns.alidns.com</code>、<code>cloudflare-dns.com</code>、<code>dns.google</code>）
+              </div>
+            </a-form-item>
+            <a-form-item label="A记录缓存" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-input-number v-model:value="getNat64Config().cacheTtl" :min="0" :step="60000" :precision="0" spellcheck="false" /> ms
+              <div class="form-help">
+                真实A记录的缓存时间，避免每次解析都查询一次DoH
+              </div>
+            </a-form-item>
+            <hr>
+            <a-row style="margin-top:10px">
+              <a-col span="21">
+                <div>需要通过<code>NAT64</code>直连的域名<span class="form-help">（域名配置可使用通配符或正则，填法与“域名白名单”一致；名单为空表示不启用，此时不会有任何额外开销）</span></div>
+              </a-col>
+              <a-col span="3">
+                <a-button style="margin-left:8px" type="primary" @click="addNat64Domain()"><PlusOutlined /></a-button>
+              </a-col>
+            </a-row>
+            <a-row v-for="(item, index) of nat64Domains" ref="nat64Domains" :key="index" :gutter="10" style="margin-top: 5px">
+              <a-col :span="21">
+                <a-input v-model:value="item.key" spellcheck="false" placeholder="例如 chatgpt.com 或 *.openai.com" />
+              </a-col>
+              <a-col :span="3">
+                <a-button type="danger" @click="deleteNat64Domain(item, index)"><MinusOutlined /></a-button>
+              </a-col>
+            </a-row>
+          </div>
+        </a-tab-pane>
         <a-tab-pane key="9" tab="IP测速">
           <div v-if="activeTabKey === '9'" class="ip-tester" style="padding-right: 10px">
             <a-alert type="info" message="对从DNS获取到的IP进行测速，使用速度最快的IP进行访问（注意：对使用了增强功能的域名没啥用）" />
@@ -1016,7 +1105,7 @@ export default defineComponent({
   flex-wrap: wrap;
   gap: 8px;
   padding: 8px;
-  background-color: #fafafa;
+  background-color: var(--bg-secondary);
   border-radius: 4px;
   margin-top: 8px;
   max-width: 100%;
@@ -1026,11 +1115,11 @@ export default defineComponent({
   display: flex;
   align-items: center;
   padding: 4px 8px;
-  background-color: #fff;
-  border: 1px solid #e8e8e8;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
   word-break: break-all;
   max-width: calc(100% - 16px);
   flex: 1 1 auto;
@@ -1059,10 +1148,10 @@ export default defineComponent({
 .domain-box {
   margin-bottom: 16px;
   padding: 12px;
-  background-color: #fff;
-  border: 1px solid #e8e8e8;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px var(--shadow-color);
   overflow: hidden;
 }
 .domain-box .domain-header {
@@ -1074,7 +1163,7 @@ export default defineComponent({
 .domain-box .domain-title {
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
   flex: 1;
   min-width: 0;

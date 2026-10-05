@@ -1,9 +1,38 @@
+import { h } from 'vue'
+
 function install (app, api) {
   const updateParams = app.config.globalProperties.$global.update = { fromUser: false, autoDownload: false, progress: 0, checking: false, downloading: false, newVersion: false, isFullUpdate: true }
   api.ipc.on('update', (event, message) => {
     console.log('on message', event, message)
     handleUpdateMessage(message, app)
   })
+
+  let deferredUpdate
+  let visibilityListener
+
+  function showUpdateWhenVisible (value) {
+    if (updateParams.fromUser || document.visibilityState === 'visible') {
+      foundNewVersion(value)
+      return
+    }
+
+    deferredUpdate = value
+    if (visibilityListener) {
+      return
+    }
+
+    visibilityListener = () => {
+      if (document.visibilityState !== 'visible' || !deferredUpdate) {
+        return
+      }
+      const pendingUpdate = deferredUpdate
+      deferredUpdate = null
+      document.removeEventListener('visibilitychange', visibilityListener)
+      visibilityListener = null
+      foundNewVersion(pendingUpdate)
+    }
+    document.addEventListener('visibilitychange', visibilityListener)
+  }
 
   api.update = {
     checkForUpdate (fromUser) {
@@ -34,7 +63,7 @@ function install (app, api) {
     if (type === 'available') {
       updateParams.checking = false
       updateParams.newVersionData = message.value
-      foundNewVersion(message.value)
+      showUpdateWhenVisible(message.value)
     } else if (type === 'notAvailable') {
       updateParams.checking = false
       noNewVersion()
@@ -143,7 +172,7 @@ function install (app, api) {
       okText,
       okType,
       width: 700,
-      content: (h) => {
+      content: () => {
         const children = []
         if (value.releaseNotes) {
           const releaseNotes = typeof value.releaseNotes === 'string'

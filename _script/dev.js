@@ -14,9 +14,14 @@
  *   --skip-kill         # start/restart 时不先结束已占用端口的进程
  */
 
-const { execSync, spawn, spawnSync } = require('child_process');
-const net = require('net');
-const path = require('path');
+import { execSync, spawn, spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import fs from 'node:fs';
+import net from 'node:net';
+import path from 'node:path';
+
+// 根 package.json 声明了 "type": "module"，本文件按 ESM 解析，__dirname 需自行还原
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // ── 参数解析 ──────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -40,6 +45,65 @@ const REPO_ROOT      = path.resolve(__dirname, '..');
 const GUI_DIR        = path.join(REPO_ROOT, 'packages', 'gui');
 const ELECTRON_DEV   = path.join(__dirname, 'electron-dev.mjs');
 const IS_WIN         = process.platform === 'win32';
+
+// ── 受限环境适配（沙箱 / 无 GUI 权限的自动化环境） ─────────────
+// 仅在检测到 DSH 沙箱（DSH_SHELL=1）或显式指定 DEV_SIDECAR_SANDBOX_HOME 时生效，
+// 也可用 DEV_SIDECAR_NO_SANDBOX_COMPAT=1 关闭。适配三件事：
+//   1. 清除 ELECTRON_RUN_AS_NODE，否则 Electron 会退化成纯 Node 进程，GUI 起不来
+//   2. Electron 追加 --no-sandbox，否则 Chromium 沙箱初始化失败（进程直接退出）
+//   3. 把 app 数据目录（~/.dev-sidecar）重定向到工作区内，否则 Electron 无权写
+const SANDBOX_HOME   = process.env.DEV_SIDECAR_SANDBOX_HOME
+  || path.resolve(REPO_ROOT, '..', 'ds-home');
+const CONFIG_FILES   = [
+  'config.json', 'remote_config.json5', 'remote_config_personal.json5',
+  'setting.json', 'automaticCompatibleConfig.json', 'pac.txt',
+  'domestic-domain-allowlist.txt', 'dev-sidecar.ca.crt', 'dev-sidecar.ca.key.pem',
+];
+
+function applySandboxCompat() {
+  if (process.env.DEV_SIDECAR_NO_SANDBOX_COMPAT === '1') return;
+  if (process.env.DSH_SHELL !== '1' && !process.env.DEV_SIDECAR_SANDBOX_HOME) return;
+
+  delete process.env.ELECTRON_RUN_AS_NODE;
+
+  const appDir = path.join(SANDBOX_HOME, '.dev-sidecar');
+  const dirs = [
+    appDir,
+    path.join(SANDBOX_HOME, 'AppData', 'Roaming'),
+    path.join(SANDBOX_HOME, 'AppData', 'Local'),
+    path.join(SANDBOX_HOME, 'Temp'),
+    path.join(SANDBOX_HOME, 'electron-udd'),
+  ];
+  for (const dir of dirs) fs.mkdirSync(dir, { recursive: true });
+
+  // 首次运行时从真实用户目录拷贝配置与证书，保证代理规则与根证书可用
+  const realHome = process.env.USERPROFILE || process.env.HOME || '';
+  if (realHome && path.resolve(realHome) !== path.resolve(SANDBOX_HOME)) {
+    const realDir = path.join(realHome, '.dev-sidecar');
+    for (const name of CONFIG_FILES) {
+      const src = path.join(realDir, name);
+      const dest = path.join(appDir, name);
+      if (fs.existsSync(src) && !fs.existsSync(dest)) {
+        try { fs.copyFileSync(src, dest); } catch { /* 忽略单个文件拷贝失败 */ }
+      }
+    }
+  }
+
+  process.env.USERPROFILE  = SANDBOX_HOME;
+  process.env.APPDATA      = path.join(SANDBOX_HOME, 'AppData', 'Roaming');
+  process.env.LOCALAPPDATA = path.join(SANDBOX_HOME, 'AppData', 'Local');
+  process.env.TEMP         = path.join(SANDBOX_HOME, 'Temp');
+  process.env.TMP          = process.env.TEMP;
+  // 允许外部追加参数（如 --remote-debugging-port=9222，便于自动化调试 GUI）
+  const extraArgs = process.env.DEV_SIDECAR_ELECTRON_ARGS_EXTRA || '';
+  process.env.DEV_SIDECAR_ELECTRON_ARGS =
+    `--no-sandbox --user-data-dir=${path.join(SANDBOX_HOME, 'electron-udd')} ${extraArgs}`.trim();
+
+  log('== 已启用受限环境适配 ==');
+  log(`   数据目录: ${appDir}`);
+  log(`   Electron 参数: ${process.env.DEV_SIDECAR_ELECTRON_ARGS}`);
+  log('');
+}
 
 // ── 工具函数 ──────────────────────────────────────────────────
 const log = (msg) => console.log(msg);
@@ -79,8 +143,12 @@ function getListeners(targetPorts) {
       let localAddr, state, pid;
 
       if (IS_WIN) {
-        [localAddr, , state, pid] = parts;
-        if (state !== 'LISTENING') return list;
+        // netstat -ano 的列顺序为: 协议 本地地址 外部地址 状态 PID
+        const m = line.trim().match(/^TCP\s+(\S+)\s+\S+\s+LISTENING\s+(\d+)$/);
+        if (!m) return list;
+        localAddr = m[1];
+        state = 'LISTENING';
+        pid = m[2];
       } else {
         if (parts.length >= 6) {
           localAddr = parts[3]; state = parts[0]; pid = parts[5].split('/')[0];
@@ -104,12 +172,13 @@ function getListeners(targetPorts) {
 
 function getProcessName(pid) {
   try {
-    return IS_WIN
-      ? execSync(
-          `wmic process where "ProcessId=${pid}" get Name /value`,
-          { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }
-        ).match(/Name=(.+)/)?.[1]?.trim() || '-'
-      : execSync(`ps -p ${pid} -o comm=`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
+    if (!IS_WIN) {
+      return execSync(`ps -p ${pid} -o comm=`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
+    }
+    // 新版 Windows 已移除 wmic，优先用 tasklist
+    const csv = execSync(`tasklist /FI "PID eq ${pid}" /FO CSV /NH`,
+      { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
+    return csv.split('","')[0].replace(/^"/, '') || '-';
   } catch { return '-'; }
 }
 
@@ -119,9 +188,9 @@ function showStatus(title) {
   const listeners = getListeners(PORTS)
     .sort((a, b) => a.port - b.port);
   if (listeners.length) {
-    listeners.forEach(({ address, port, pid }) => {
+    listeners.forEach(({ address, pid }) => {
       const name = getProcessName(pid);
-      log(`  ${address}:${String(port).padEnd(6)} PID ${String(pid).padEnd(7)} ${name}`);
+      log(`  ${address.padEnd(24)} PID ${String(pid).padEnd(7)} ${name}`);
     });
   } else {
     log('  no listeners');
@@ -194,9 +263,9 @@ async function waitPorts(ports, timeoutSec = TIMEOUT_SEC) {
   while (Date.now() < deadline) {
     for (const port of ports) {
       if (ready.has(port)) continue;
-      if (!(await isPortInUse(port))) continue;
 
-      // 双重确认：端口在用 且 netstat 能找到监听者
+      // 以 netstat 的监听列表为准：Windows 上 SO_REUSEADDR 允许重复绑定，
+      // isPortInUse() 对已被占用的端口可能返回 false（如 webpack-dev-server 的 8081）
       const listeners = getListeners([port]);
       if (listeners.length) ready.add(port);
     }
@@ -214,6 +283,8 @@ async function waitPorts(ports, timeoutSec = TIMEOUT_SEC) {
 
 // ── 主流程 ────────────────────────────────────────────────────
 (async () => {
+  applySandboxCompat();
+
   switch (ACTION) {
     case 'check':
       showStatus(`port status (dev: ${DEV_PORT}, http proxy: ${PROXY_HTTP}, https proxy: ${PROXY_HTTPS})`);
