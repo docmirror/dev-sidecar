@@ -14,7 +14,7 @@ Git 正在为 **Git 3.0 默认使用 SHA-256** 做准备（[Git 2.51-rc0](https:
 本仓库通过 git submodule 引用核心代码：
 
 - `vendor/ds-core` → 子模块；`packages/core`、`packages/mitmproxy` 是指向它的软链
-- `packages/cli` 的 SEA 构建同样依赖这份核心
+- CLI 已拆分为独立仓库 `Blue-Frontier/ds-cli`，它同样通过子模块引用这份核心，因此本节结论对它一样适用
 
 **SHA-1 超级项目引用 SHA-256 子模块（或反过来）是 object-format 迁移里已知的薄弱环节**：
 gitlink 的读写与兼容层翻译在混合哈希格式下并不完整，可能出现指针无法解析、

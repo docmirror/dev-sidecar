@@ -87,12 +87,12 @@ Kernel packages live in the **git submodule** `vendor/ds-core` (repo: Blue-Front
 - IPC bridge (`src/bridge/`): dynamic RPC — main process exposes a flat API list, renderer calls methods via `ipcRenderer.invoke('apiInvoke', [path, args])`. Core events (status, error, speed) flow main→renderer via `webContents.send`.
 - Pages: dashboard (index), accelerator server, system proxy, settings, help, plus per-plugin pages (free-eye, git, node, overwall, pip).
 
-**`packages/cli`** (`@docmirror/dev-sidecar-cli`) — Headless CLI launcher. Reads user config, calls `DevSidecar.api.startup()`.
+**CLI** — 已拆分为独立仓库 https://github.com/Blue-Frontier/ds-cli（`@blue-frontier/ds-cli`），通过 git submodule 引用本仓库的核心；本仓库只保留 GUI 及其依赖。
 
 **`packages/aur/`** — Arch Linux PKGBUILD (not a JS package). Kernel sources come from submodule `vendor/ds-core` via the `packages/core` / `packages/mitmproxy` symlinks.
 
 ### Key conventions
-- **Module systems**: `core`, `mitmproxy`, and `cli` use implicit CommonJS (`.js` files, no `"type": "module"`). `gui` uses ESM (`"type": "module"`). The root `package.json` declares `"type": "module"` but this only affects root-level scripts.
+- **Module systems**: `core` and `mitmproxy` use implicit CommonJS (`.js` files, no `"type": "module"`). `gui` uses ESM (`"type": "module"`). The root `package.json` declares `"type": "module"` but this only affects root-level scripts.
 - **Shared JSON5 parser**: `@blue-frontier/mitmproxy/src/json` (in `packages/mitmproxy`) is used across all packages for JSON5 config parsing.
 - **Logging**: log4js-based; log files at `~/.dev-sidecar/logs/core.log`, `gui.log`, `server.log`. Logger factory at `packages/core/src/utils/util.logger.js`. Every category writes to file and, by default, also to stdout (`std` appender); set `DEV_SIDECAR_LOG_TO_CONSOLE=false` to keep logs file-only (CLI daemon sets this automatically).
 - **Status/event bus**: `core/src/event.js` (EventEmitter) and `core/src/status.js` (central status tree updated via events).

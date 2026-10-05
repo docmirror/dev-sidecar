@@ -19,9 +19,6 @@ gen
 *.log
 *.lnk
 .venv
-packages/cli/dist/*
-!packages/cli/dist/sea-config.json
-packages/cli/.nyc_output
 .mimocode
 .claude
 .workbuddy-ai/
