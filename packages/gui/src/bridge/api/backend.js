@@ -1,4 +1,6 @@
 import fs from 'node:fs'
+// 内核身份（构建期烘焙的提交 SHA），供底栏展示；内核 version 已废弃，不展示
+import { KERNEL_SHA_FULL, KERNEL_SHA_SHORT } from '../../generated/kernel-info.js'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import DevSidecar from '@blue-frontier/dev-sidecar'
@@ -70,6 +72,8 @@ const localApi = {
 
       return {
         version: pk.version,
+        // 内核身份只用提交 SHA（version 已废弃）
+        kernel: { sha: KERNEL_SHA_SHORT, shaFull: KERNEL_SHA_FULL },
         configProfiles: {
           internal,
           sharedRemote: {

@@ -315,6 +315,11 @@ export default {
                 <a @click="openExternal('https://github.com/wangliang181230')">WangLiang</a>,
                 <a @click="openExternal('https://github.com/cute-omega')">CuteOmega</a>
                 <span class="ml5">{{ info.version }}</span>
+                <!-- 内核身份：只展示提交 SHA（内核 version 已废弃）；完整 SHA 放 tooltip 便于排障对照 -->
+                <span
+                  class="ml5"
+                  :title="info.kernel && info.kernel.shaFull ? '内核完整提交：' + info.kernel.shaFull : '未取到内核提交（可能是未经 prebuild 的构建）'"
+                >内核 ds-core@{{ info.kernel && info.kernel.sha ? info.kernel.sha : '未知' }}</span>
                 <span v-if="isPreRelease" class="pre-release-tag">非正式版</span>
               </div>
             </div>
