@@ -92,6 +92,11 @@ Kernel packages live in the **git submodule** `vendor/ds-core` (repo: Blue-Front
 **`packages/aur/`** — Arch Linux PKGBUILD (not a JS package). Kernel sources come from submodule `vendor/ds-core` via the `packages/core` / `packages/mitmproxy` symlinks.
 
 ### Key conventions
+- **Commit & push workflow**: AI may `git add`, prepare changes, and run verifications, but
+  **commits (and their signatures) are made by a human**; the AI then performs the `git push`
+  and verifies it landed. Never leave a commit pointing at an unpushed submodule commit:
+  push `vendor/ds-core` first, then bump the pointer, then confirm with a fresh
+  `git clone --recurse-submodules`.
 - **Module systems**: `core` and `mitmproxy` use implicit CommonJS (`.js` files, no `"type": "module"`). `gui` uses ESM (`"type": "module"`). The root `package.json` declares `"type": "module"` but this only affects root-level scripts.
 - **Shared JSON5 parser**: `@blue-frontier/mitmproxy/src/json` (in `packages/mitmproxy`) is used across all packages for JSON5 config parsing.
 - **Logging**: log4js-based; log files at `~/.dev-sidecar/logs/core.log`, `gui.log`, `server.log`. Logger factory at `packages/core/src/utils/util.logger.js`. Every category writes to file and, by default, also to stdout (`std` appender); set `DEV_SIDECAR_LOG_TO_CONSOLE=false` to keep logs file-only (CLI daemon sets this automatically).
