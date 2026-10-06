@@ -4,12 +4,6 @@ packages:
   - packages/*
   - '!**/test/**'
 
-# Electron 打包（electron-builder）无法可靠处理 pnpm 的软链布局：
-# 依赖在本地能解析，但打进 asar 时会丢（表现为启动报 Cannot find module 'xxx'）。
-# 改用扁平链接，让 node_modules 下是实体目录。
-nodeLinker: hoisted
-
-# 保留 shamefullyHoist：扁平链接下它无副作用，且兼容仍需它的旧环境。
 shamefullyHoist: true
 
 # 不要恢复 overrides：cross-spawn / form-data 等会与 electron-builder 生产依赖解析冲突。
