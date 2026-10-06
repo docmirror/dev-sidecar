@@ -555,6 +555,8 @@ jobs:
   # job 2
   download-and-release:
     runs-on: ubuntu-latest
+    # 只在 tag 上发布：branches: release* 那条触发路径不应产出 release（与 CLI 的 build-cli.yml 对齐）
+    if: startsWith(github.ref, 'refs/tags/v')
     needs:
       - build-and-upload
     steps:
