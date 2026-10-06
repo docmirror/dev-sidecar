@@ -4,6 +4,8 @@ packages:
   - packages/*
   - '!**/test/**'
 
+nodeLinker: hoisted
+
 shamefullyHoist: true
 
 # 不要恢复 overrides：cross-spawn / form-data 等会与 electron-builder 生产依赖解析冲突。
