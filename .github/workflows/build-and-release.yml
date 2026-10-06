@@ -51,6 +51,10 @@ jobs:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
           cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            pnpm-workspace.yaml
+            .npmrc
 
       - name: "Setup Python environment, because of electron-builder install-app-deps requires Python setup tools"
         uses: actions/setup-python@v6
