@@ -145,9 +145,9 @@ jobs:
           dir || ls -lah;
 
           echo "======================================================================";
-          echo "pnpm install";
+          echo "pnpm install --node-linker hoisted (pnpm 12 不认 workspace yaml 的 nodeLinker，用 CLI 参数强制 hoisted 实体布局)";
           echo "--------------------";
-          pnpm install;
+          pnpm install --node-linker hoisted;
 
       - name: "test packages/core"
         run: |
