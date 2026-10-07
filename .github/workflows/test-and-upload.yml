@@ -145,6 +145,12 @@ jobs:
           dir || ls -lah;
 
           echo "======================================================================";
+          echo "清理缓存恢复带来的旧 node_modules 布局（.pnpm / .modules.yaml），强制 pnpm 12 按 --node-linker hoisted 全新构建";
+          echo "--------------------";
+          rm -rf node_modules */node_modules packages/*/node_modules _script/node_modules vendor/ds-core/node_modules vendor/ds-core/*/node_modules;
+          ls -lah;
+
+          echo "======================================================================";
           echo "pnpm install --node-linker hoisted (pnpm 12 不认 workspace yaml 的 nodeLinker，用 CLI 参数强制 hoisted 实体布局)";
           echo "--------------------";
           pnpm install --node-linker hoisted;
