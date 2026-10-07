@@ -301,6 +301,12 @@ importers:
       lodash:
         specifier: ^4.18.1
         version: 4.18.1
+      mime-db:
+        specifier: 1.54.0
+        version: 1.54.0
+      mime-types:
+        specifier: 2.1.35
+        version: 2.1.35
       minimist:
         specifier: ^1.2.8
         version: 1.2.8

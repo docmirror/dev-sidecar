@@ -49,7 +49,9 @@
     "sass-loader": "^16.0.7",
     "tiny-emitter": "^2.1.0",
     "vue": "^3.5.33",
-    "vue-router": "^4.6.4"
+    "vue-router": "^4.6.4",
+    "mime-types": "2.1.35",
+    "mime-db": "1.54.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
