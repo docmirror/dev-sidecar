@@ -140,14 +140,15 @@ jobs:
           echo "CL=/std:c++17" >> $env:GITHUB_ENV
 
       - name: "'pnpm install' Because we need to install optional dependencies"
+        shell: bash
         run: |
           echo "======================================================================";
-          dir || ls -lah;
+          ls -lah;
 
           echo "======================================================================";
           echo "清理缓存恢复带来的旧 node_modules 布局（.pnpm / .modules.yaml），强制 pnpm 12 按 --node-linker hoisted 全新构建";
           echo "--------------------";
-          rm -rf node_modules */node_modules packages/*/node_modules _script/node_modules vendor/ds-core/node_modules vendor/ds-core/*/node_modules;
+          rm -rf node_modules packages/gui/node_modules packages/core/node_modules packages/mitmproxy/node_modules _script/node_modules vendor/ds-core/node_modules vendor/ds-core/core/node_modules vendor/ds-core/mitmproxy/node_modules;
           ls -lah;
 
           echo "======================================================================";
