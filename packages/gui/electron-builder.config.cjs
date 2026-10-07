@@ -82,7 +82,7 @@ module.exports = {
     icon: 'build/mac/',
     // 包名 @docmirror/dev-sidecar-gui 去 scope 后含 '@'，electron-builder 26.17+ 的
     // AppImage 目标会校验 executableName 合法字符，故显式指定不含 '@' 的可执行名
-    executableName: 'dev-sidecar',
+    executableName: 'dev-sidecar-gui',
     target: isCI
       ? [
           { target: 'deb', arch: ['x64', 'arm64', 'armv7l'] },
