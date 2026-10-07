@@ -38,6 +38,7 @@
     "adm-zip": "^0.5.17",
     "archiver": "^7.0.1",
     "@starknt/shutdown-handler-napi-win32-x64-msvc": "^0.0.3",
+    "request": "^2.88.2",
     "ant-design-vue": "^4.2.6",
     "@ant-design/icons-vue": "^7.0.1",
     "core-js": "^3.49.0",
