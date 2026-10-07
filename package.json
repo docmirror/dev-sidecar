@@ -2,7 +2,7 @@
   "name": "dev-sidecar-parent",
   "type": "module",
   "private": false,
-  "packageManager": "pnpm@11.8.0",
+  "packageManager": "pnpm@12.9.1",
   "author": "Greper",
   "license": "MPL-2.0",
   "scripts": {

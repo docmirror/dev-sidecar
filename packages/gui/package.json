@@ -61,8 +61,8 @@
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "electron": "^41.3.0",
-    "electron-builder": "^26.8.1",
-    "electron-builder-squirrel-windows": "26.8.1",
+    "electron-builder": "^26.17.0",
+    "electron-builder-squirrel-windows": "26.17.0",
     "json5-loader": "^4.0.1",
     "path-browserify": "^1.0.1",
     "wait-on": "^7.2.0"
