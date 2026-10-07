@@ -259,6 +259,9 @@ importers:
 
   packages/gui:
     dependencies:
+      '@ant-design/icons-vue':
+        specifier: ^7.0.1
+        version: 7.0.1(vue@3.5.33(typescript@5.9.3))
       '@blue-frontier/dev-sidecar':
         specifier: workspace:*
         version: link:../core

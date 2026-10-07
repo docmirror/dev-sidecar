@@ -39,6 +39,7 @@
     "archiver": "^7.0.1",
     "@starknt/shutdown-handler-napi-win32-x64-msvc": "^0.0.3",
     "ant-design-vue": "^4.2.6",
+    "@ant-design/icons-vue": "^7.0.1",
     "core-js": "^3.49.0",
     "@blue-frontier/dev-sidecar": "workspace:*",
     "vue": "^3.5.33",
