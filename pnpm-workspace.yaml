@@ -4,10 +4,6 @@ packages:
   - packages/*
   - '!**/test/**'
 
-# nodeLinker 已挪到 .npmrc（node-linker=hoisted）：CI 的 node_modules 来自缓存恢复，# 若写在 pnpm-workspace.yaml 里，旧缓存遗留的 .modules.yaml 会钉死旧布局，hoisted 不生效。# 放 .npmrc 则每次 install 前自动重写，保证实体目录布局。
-
-shamefullyHoist: true
-
 # 不要恢复 overrides：cross-spawn / form-data 等会与 electron-builder 生产依赖解析冲突。
 # 安全版本请通过升级直接依赖解决。
 
