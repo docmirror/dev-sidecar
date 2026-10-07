@@ -3,6 +3,8 @@ packages:
   # ds-core submodule 位于 vendor/ 下（不在 packages/ 内），无需额外排除规则
   - packages/*
   - '!**/test/**'
+  # 构建辅助脚本（裸 import 的依赖声明在 _script/package.json，纳入 workspace 统一管理）
+  - _script
 
 # 不要恢复 overrides：cross-spawn / form-data 等会与 electron-builder 生产依赖解析冲突。
 # 安全版本请通过升级直接依赖解决。
