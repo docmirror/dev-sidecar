@@ -43,10 +43,15 @@ export default {
       setupCa: {
         visible: false,
       },
-      update: { checking: false, downloading: false, progress: 0, newVersion: false },
     }
   },
   computed: {
+    // 直接引用 $global.update（front.js 里挂的全局对象，所有 IPC 回包直接改它），
+    // 避免 data() 里一次性 Object.assign 拷贝出的局部副本失去响应性，
+    // 导致"检查更新"按钮在下载/进度时永远不亮
+    _update () {
+      return this.$global.update || { checking: false, downloading: false, progress: 0, newVersion: false }
+    },
     _rootCaSetuped () {
       if (this.setting.rootCa) {
         return this.setting.rootCa.setuped === true
@@ -73,11 +78,6 @@ export default {
       }
     }
     this.switchBtns = this.createSwitchBtns()
-    // 合并全局更新参数到 data() 中的默认值，避免 $global.update 尚未
-    // 初始化时（update/front.js 在 mount 之后才执行）覆盖为 undefined
-    if (this.$global.update) {
-      Object.assign(this.update, this.$global.update)
-    }
     // 自动检查更新 延后到 mounted 中处理（等待代理服务启动后再执行）
     this.$api.info.get().then((ret) => {
       this.info = ret
@@ -87,10 +87,10 @@ export default {
     // 自动检查更新：等待代理服务启动后再执行，避免代理未就绪时
     // 直接请求 GitHub API 导致超时或失败
     const tryAutoCheck = () => {
-      if (!this.config || !this.update) return
-      if (this.update.autoChecked) return
+      if (!this.config || !this._update) return
+      if (this._update.autoChecked) return
       if (!this.config.app.autoChecked) return
-      this.update.autoChecked = true
+      this._update.autoChecked = true
       this.$watch('status.server.enabled', (enabled) => {
         if (enabled) {
           this.doCheckUpdate(false)
@@ -355,11 +355,11 @@ export default {
       </a-button>
 
       <a-button
-        style="margin-right:10px" :loading="update.downloading || update.checking" :title="`当前版本:${info.version}`"
+        style="margin-right:10px" :loading="_update.downloading || _update.checking" :title="`当前版本:${info.version}`"
         @click="doCheckUpdate(true)"
       >
-        <a-badge :count="update.newVersion ? 1 : 0" dot>
-          <span v-if="update.downloading">{{ update.progress }}%</span>{{ update.downloading ? '新版本下载中' : (`检查更新${update.checking ? '中' : ''}`) }}
+        <a-badge :count="_update.newVersion ? 1 : 0" dot>
+          <span v-if="_update.downloading">{{ _update.progress }}%</span>{{ _update.downloading ? '新版本下载中' : (`检查更新${_update.checking ? '中' : ''}`) }}
         </a-badge>
       </a-button>
     </template>

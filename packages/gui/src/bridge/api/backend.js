@@ -272,8 +272,11 @@ function invoke (api, param) {
   if (target == null) {
     target = lodash.get(DevSidecar.api, api)
   }
-  if (target == null) {
-    log.info('找不到此接口方法：', api)
+  if (typeof target !== 'function') {
+    // 明确 reject：让调用方 await 的 IPC Promise 能拿到可定位的错误，
+    // 而不是在 main 进程同步抛 TypeError（undefined(param)）
+    log.error(`找不到此接口方法：${api}`)
+    throw new Error(`api 接口不存在: ${api}`)
   }
   const ret = target(param)
   // log.info('api:', api, 'ret:', ret)
