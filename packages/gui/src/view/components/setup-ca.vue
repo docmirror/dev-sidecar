@@ -100,13 +100,12 @@ export default defineComponent({
         3、可能需要重新启动应用和浏览器才能生效<br>
         4、注意：如果出现无法导入提示时，先点一下钥匙串的左边切换到<b style="color:red">“系统”栏</b>，然后再重新安装证书即可<br>
       </template>
-      <template v-else-if="systemPlatform === 'linux'>
+      <template v-else-if="systemPlatform === 'linux'">
         1、点击右上角“点此去安装按钮”,将自动安装到系统证书库中<br>
-        2、<b style="color:red">火狐、chrome等浏览器不走系统证书</b>，需要手动安装（证书文件在 <code>~/.dev-sidecar</code> 目录下）<br>
-        • 火狐浏览器：设置 → 隐私与安全 → 连接与软件安全 → 高级设置 → 证书 → 管理证书 → 证书颁发机构 → 导入
-          （旧版火狐入口为：设置（或选项） → 隐私与安全 → 证书 → 查看证书）
-        • 导入后勾选「信任由此证书颁发机构来标识网站」，确定即可
-        • 详细图文说明见 <a @click="openExternal('https://github.com/docmirror/dev-sidecar/blob/master/README.md#3火狐浏览器火狐浏览器不走系统的根证书需要在设置中添加根证书')">README 火狐章节</a>（含新旧版界面截图）<br>
+        2、<b color="red">火狐、chrome等浏览器不走系统证书</b>，需要手动安装(下图以chrome为例安装根证书)<br>
+        3、火狐浏览器证书入口：设置 → 隐私与安全 → 连接与软件安全 → 高级设置 → 证书 → 管理证书 → 证书颁发机构 → 导入<br>
+        4、旧版火狐证书入口：设置（或选项） → 隐私与安全 → 证书 → 查看证书<br>
+        5、导入证书后勾选「信任由此证书颁发机构来标识网站」，确定即可<br>
       </template>
       <template v-else>
         1、点击右上角“点此去安装按钮”，打开证书<br>
