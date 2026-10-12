@@ -308,6 +308,10 @@ networksetup -setwebproxy 'WiFi' 127.0.0.1 31181
 #### 3）火狐浏览器：火狐浏览器不走系统的根证书，需要在设置中添加根证书
 
 1. 火狐浏览器->设置->隐私与安全->连接与软件安全->高级设置->证书->管理证书（旧版本为：设置（或选项）->隐私与安全->证书->查看证书）
+   新版界面（2026 年左右的火狐，设置页改版后）：
+   ![](./doc/Firefox/4.png)
+   ![](./doc/Firefox/5.png)
+   旧版界面：
    ![](./doc/Firefox/1.png)
 2. 证书颁发机构->导入
 3. 选择证书文件 `C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为 `~/.dev-sidecar` 目录）
