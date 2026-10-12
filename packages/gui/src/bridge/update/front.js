@@ -245,39 +245,28 @@ function install (app, api) {
       cancelText: '暂不升级',
       okText: '立即升级',
       width: 700,
-      content: (_h) => {
-        if (value.releaseNotes) {
-          const notes = []
-          if (typeof value.releaseNotes === 'string') {
-            const releaseNotes = value.releaseNotes.replace(/\r\n/g, '\n')
-            return (
-              <div>
-                <div>
-                  发布公告：
-                  <a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a>
-                </div>
-                <hr />
-                <pre style="max-height:350px;font-family:auto">
-                  {releaseNotes}
-                </pre>
-              </div>
-            )
-          } else {
-            for (const note of value.releaseNotes) {
-              notes.push(<li>{note}</li>)
-            }
-            return (
-              <div>
-                <div>
-                  发布公告：
-                  <a onClick={openGithubUrl}>https://github.com/docmirror/dev-sidecar/releases</a>
-                </div>
-                <div>更新内容：</div>
-                <ol>{notes}</ol>
-              </div>
-            )
-          }
+      content: () => {
+        if (!value.releaseNotes) {
+          return null
         }
+        const children = [
+          h('div', {}, [
+            h('span', {}, '发布公告：'),
+            h('a', { onClick: openGithubUrl }, 'https://github.com/docmirror/dev-sidecar/releases'),
+          ]),
+          h('hr'),
+        ]
+        if (typeof value.releaseNotes === 'string') {
+          const releaseNotes = value.releaseNotes.replace(/\r\n/g, '\n')
+          children.push(h('pre', { style: { maxHeight: '350px', fontFamily: 'auto' } }, releaseNotes))
+        } else {
+          const notes = value.releaseNotes.map(note => h('li', {}, note))
+          children.push(
+            h('div', {}, '更新内容：'),
+            h('ol', {}, notes),
+          )
+        }
+        return h('div', {}, children)
       },
       onOk () {
         api.update.doUpdateNow()
