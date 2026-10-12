@@ -20,6 +20,13 @@ try {
 // config.setting.script.defaultDir = path.join(__dirname, scriptDir)
 // const pacFilePath = '../extra/pac/pac.txt'
 // config.plugin.overwall.pac.customPacFilePath = path.join(__dirname, pacFilePath)
-config.setting.rootDir = path.join(__dirname, '../')
+// extra/ 在打包后位于 resources/extra（extraResources，asar 外），根目录即 extra/ 的上一级。
+// server 子进程（fork）继承 GUI 主进程在 bridge/api/backend.js 里解析好的 DS_EXTRA_PATH
+// （app.isPackaged ? resourcesPath/extra : appPath/extra）。开发模式该 env 未设时回退到
+// __dirname/../../（packages/gui/extra，与 src/ 平级在 gui 包根下），使 dev 下也命中 extra/。
+const extraPath = process.env.DS_EXTRA_PATH
+config.setting.rootDir = extraPath
+  ? path.dirname(extraPath)
+  : path.join(__dirname, '../..')
 log.info(`start mitmproxy by gui bridge, configPath: ${configPath}`)
 server.start(config)

@@ -669,28 +669,41 @@ function hasShortcut (showHideShortcut) {
 
 function registerShowHideShortcut (showHideShortcut) {
   globalShortcut.unregisterAll()
-  if (hasShortcut(showHideShortcut)) {
-    try {
-      const registerSuccess = globalShortcut.register(DevSidecar.api.config.get().app.showHideShortcut, () => {
-        if (winIsHidden) {
-          showWin()
-        } else {
-          if (!win.isFocused()) {
-            win.focus() // 如果窗口打开着，但没有获取焦点，则获取焦点，而不是hide
-          } else {
-            hideWin('shortcut')
-          }
-        }
-      })
-
-      if (registerSuccess) {
-        log.info('注册快捷键成功:', DevSidecar.api.config.get().app.showHideShortcut)
-      } else {
-        log.error('注册快捷键失败:', DevSidecar.api.config.get().app.showHideShortcut)
-      }
-    } catch (e) {
-      log.error('注册快捷键异常:', DevSidecar.api.config.get().app.showHideShortcut, ', error:', e)
+  if (!hasShortcut(showHideShortcut)) {
+    return
+  }
+  const key = DevSidecar.api.config.get().app.showHideShortcut
+  try {
+    // 组合键已被系统或其它应用占用时（常见于 Linux/Wayland 的 GNOME），
+    // Electron 抢占该键会触发桌面弹「快捷键设置」对话框，每次开机自启都重复弹出
+    // （docmirror/dev-sidecar#701）。先探测占用情况，已占用则跳过注册。
+    if (globalShortcut.isRegistered(key)) {
+      log.warn('快捷键已被占用，跳过注册:', key)
+      return
     }
+    const registerSuccess = globalShortcut.register(key, () => {
+      if (winIsHidden) {
+        showWin()
+      } else {
+        if (!win.isFocused()) {
+          win.focus() // 如果窗口打开着，但没有获取焦点，则获取焦点，而不是hide
+        } else {
+          hideWin('shortcut')
+        }
+      }
+    })
+
+    if (registerSuccess) {
+      log.info('注册快捷键成功:', key)
+    } else {
+      // 注册仍失败：不依赖系统弹窗，改为向渲染进程发事件，由设置页提示用户
+      log.error('注册快捷键失败:', key)
+      if (win) {
+        win.webContents.send('shortcut.register-failed', key)
+      }
+    }
+  } catch (e) {
+    log.error('注册快捷键异常:', key, ', error:', e)
   }
 }
 
