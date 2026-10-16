@@ -94,7 +94,7 @@ function getPlatformAssetInfo () {
   }
 
   if (isMac) {
-    return { platform: 'macos', partPlatform: 'mac', partArch, fullArch }
+    return { platform: 'macos', partPlatform: 'mac', partArch, fullArch: arch === 'arm64' ? 'arm64' : 'x64' }
   }
   if (isLinux) {
     return { platform: 'linux', partPlatform: 'linux', partArch, fullArch }
@@ -126,40 +126,65 @@ function getUpdateDownloadDir (app) {
 
 function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
   log.info('download url', uri)
-  const writeStream = fs.createWriteStream(filePath)
+  const tempPath = `${filePath}.download`
+  try {
+    fs.rmSync(tempPath, { force: true })
+  } catch (e) {
+    onError(e)
+    return
+  }
+  const writeStream = fs.createWriteStream(tempPath)
   let settled = false
+  let downloadRequest
   const fail = (err) => {
     if (settled) {
       return
     }
     settled = true
+    if (downloadRequest) {
+      downloadRequest.destroy()
+    }
     writeStream.destroy()
+    try {
+      fs.rmSync(tempPath, { force: true })
+    } catch (cleanupError) {
+      log.warn('清理失败的升级包失败:', cleanupError)
+    }
     log.error('下载升级包失败:', err)
     onError(err)
   }
-  progress(request(uri, {
+  downloadRequest = request(uri, {
     ca: getTrustedCaList(),
     proxy: updateProxyUrl(),
-  }), {
-    // throttle: 2000,                    // Throttle the progress event to 2000ms, defaults to 1000ms
-    // delay: 1000,                       // Only start to emit after 1000ms delay, defaults to 0ms
-    // lengthHeader: 'x-transfer-length'  // Length header to use, defaults to content-length
+  }, (response) => {
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      fail(new Error(`下载升级包失败，HTTP status: ${response.statusCode}`))
+      return
+    }
+    progress(response, {})
+      .on('progress', (state) => {
+        onProgress(state.percent * 100)
+        log.log('progress', state.percent)
+      })
+      .on('error', fail)
+      .pipe(writeStream)
+      .on('error', fail)
+      .on('finish', () => {
+        if (settled) {
+          return
+        }
+        try {
+          fs.rmSync(filePath, { force: true })
+          fs.renameSync(tempPath, filePath)
+        } catch (e) {
+          fail(e)
+          return
+        }
+        settled = true
+        onSuccess(filePath)
+      })
   })
-    .on('progress', (state) => {
-      onProgress(state.percent * 100)
-      log.log('progress', state.percent)
-    })
-    .on('error', fail)
-    .pipe(writeStream)
-    .on('error', fail)
-    .on('finish', () => {
-      // 必须等写流 flush 完成，避免文件未落盘就通知安装
-      if (settled) {
-        return
-      }
-      settled = true
-      onSuccess(filePath)
-    })
+  downloadRequest.on('error', fail)
 }
 
 /**
@@ -278,7 +303,9 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
               }
 
               // 查找当前平台+架构对应的完整安装包
-              const fullPrefix = `DevSidecar-${onlineVersion}-${assetInfo.platform}-${assetInfo.fullArch}.`
+              const fullPrefix = assetInfo.platform === 'macos'
+                ? `DevSidecar-${onlineVersion}-${assetInfo.fullArch}.`
+                : `DevSidecar-${onlineVersion}-${assetInfo.platform}-${assetInfo.fullArch}.`
               const fullSuffix = assetInfo.platform === 'windows' ? '.exe' : assetInfo.platform === 'macos' ? '.dmg' : '.AppImage'
               const fullAsset = versionData.assets.find(a => a.name && a.name.startsWith(fullPrefix) && a.name.endsWith(fullSuffix))
               const fullPackage = fullAsset ? fullAsset.browser_download_url : null
