@@ -222,7 +222,7 @@ jobs:
           echo "--------------------";
           bash _script/linux-arm64-prepare.sh;
 
-      - name: "npm run electron:build (Windows/macOS)"
+      - name: "npm run electron:build:ci (Windows/macOS)"
         if: ${{ matrix.os != 'ubuntu' }}
         run: |
           echo "======================================================================";
@@ -232,11 +232,11 @@ jobs:
           dir || ls -lah;
 
           echo "======================================================================";
-          echo "npm run electron:build";
+          echo "npm run electron:build:ci";
           echo "--------------------";
-          npm run electron:build;
+          npm run electron:build:ci;
 
-      - name: "npm run electron:build (Linux & Linux ARM64)"
+      - name: "npm run electron:build:ci (Linux & Linux ARM64)"
         if: ${{ matrix.os == 'ubuntu' || matrix.os == 'ubuntu-24.04-arm' }}
         env:
           DEBUG: "@malept/flatpak-bundler"
@@ -248,9 +248,9 @@ jobs:
           ls -lah;
 
           echo "======================================================================";
-          echo "npm run electron:build";
+          echo "npm run electron:build:ci";
           echo "--------------------";
-          dbus-run-session -- npm run electron:build;
+          dbus-run-session -- npm run electron:build:ci;
 
       - name: 'Print dir "packages/gui/dist_electron/"'
         run: |

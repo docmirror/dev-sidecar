@@ -438,8 +438,11 @@ npm run electron
 ### 8.3、打包成可执行文件
 
 ```shell
-# 先执行上面的步骤，然后运行如下命令打包成可执行文件
+# 开发者本地打包（版本号带 -dev.<工作区指纹>）
 npm run electron:build
+
+# CI/正式版本打包（使用 package.json 正式版本号）
+npm run electron:build:ci
 ```
 
 ### 8.4、提交pr

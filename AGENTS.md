@@ -22,7 +22,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### GUI Development (from `packages/gui/`)
 - `npm run electron` — launch the Electron app in dev mode (starts Vue dev server + Electron)
 - `npm run serve` — run only the Vue dev server (port 8080)
-- `npm run electron:build` — production build (Vue build + electron-builder)
+- `npm run electron:build` — local developer build (injects `-dev.<workspace fingerprint>` and restores the package version)
+- `npm run electron:build:ci` — production/CI build (Vue build + electron-builder)
 - `npm run lint` — lint GUI code only
 - For debugging: run `npm run electron` and open DevTools (`F12` or View → Toggle Developer Tools)
 

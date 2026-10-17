@@ -18,7 +18,7 @@ export { computeVersion, fingerprint }
 process.exit(await withLocalVersion({
   pkgPath: path.join(GUI_DIR, 'package.json'),
   run: () => runSteps([
-    ['pnpm', ['run', 'build']],
-    ['pnpm', ['exec', 'electron-builder', '--config', 'electron-builder.config.cjs']],
+    ['npm', ['run', 'build']],
+    ['npm', ['exec', 'electron-builder', '--', '--config', 'electron-builder.config.cjs']],
   ], GUI_DIR),
 }))
