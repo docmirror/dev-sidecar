@@ -1,5 +1,6 @@
 // import api from './api/front'
 import autoStart from './auto-start/front'
+import diagnostics from './diagnostics/front'
 import error from './error/front'
 import fileSelector from './file-selector/front'
 import onClose from './on-close/front'
@@ -14,6 +15,7 @@ const modules = {
   update, // 自动更新
   autoStart,
   onClose,
+  diagnostics, // 网页诊断
 }
 export default {
   install (app, api, router) {

@@ -29,7 +29,14 @@ export function apiInit (app) {
       removeAllListeners (channel) {
         ipcRenderer.removeAllListeners(channel)
       },
+      removeListener (channel, callback) {
+        ipcRenderer.removeListener(channel, callback)
+      },
       invoke,
+      // 直达 Electron 通道的调用，供不走后端 API 注册表的专用通道使用（如 diagnostics）
+      invokeChannel (channel, message) {
+        return ipcRenderer.invoke(channel, message)
+      },
       postMessage (channel, ...args) {
         ipcRenderer.postMessage(channel, ...args)
       },
