@@ -8,7 +8,7 @@ const localArch = process.arch === 'ia32' ? 'ia32' : process.arch === 'arm64' ? 
 /** @type {import('electron-builder').Configuration} */
 module.exports = {
   appId: 'dev-sidecar',
-  electronVersion: '41.3.0', // 2.3.1 修复: hoisted 布局下 builder 无法从 node_modules 推断 electron 版本（devDep 用本地脚本 shim），显式钉住
+  electronVersion: '41.10.7', // 必须与 gui 的 electron devDependency 保持一致；hoisted 布局下 builder 无法从 node_modules 推断版本，故显式钉住
   productName: 'dev-sidecar',
   artifactName: 'DevSidecar-${version}-${arch}.${ext}',
   copyright: 'Copyright © 2020-' + new Date().getFullYear() + ' Greper, WangLiang, CuteOmega',
@@ -62,6 +62,8 @@ module.exports = {
     perMachine: true,
     allowElevation: true,
     allowToChangeInstallationDirectory: true,
+    // 可选的全新安装 / 完全卸载：默认不动 ~/.dev-sidecar，由用户在安装选项页和卸载弹窗中决定（见 build/installer.nsh）
+    include: 'installer.nsh',
   },
   win: {
     icon: 'build/icons/icon.ico',
