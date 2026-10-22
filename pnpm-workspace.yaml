@@ -9,6 +9,17 @@ packages:
 # 不要恢复 overrides：cross-spawn / form-data 等会与 electron-builder 生产依赖解析冲突。
 # 安全版本请通过升级直接依赖解决。
 
+# pnpm 12 默认开启供应链「最短发布年龄」检查（24 小时），新发布的包在冷却期内会让
+# `pnpm install` 直接失败。下面这些包属于两种必须豁免的情况：
+#   - electron：CVE 修复要求 42.11.16+，只能跟最新补丁版走；
+#   - caniuse-lite / electron-to-chromium：浏览器数据包，按天更新且不含可执行代码；
+#   - napi-postinstall：随依赖树被动升级的构建脚本辅助包。
+minimumReleaseAgeExclude:
+  - electron
+  - caniuse-lite
+  - electron-to-chromium
+  - napi-postinstall
+
 supportedArchitectures:
   os:
     - current
