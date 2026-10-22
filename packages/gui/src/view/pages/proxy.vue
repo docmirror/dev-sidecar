@@ -131,10 +131,11 @@ export default defineComponent({
       </a-form-item>
       <a-form-item v-if="isWindows()" label="设置CA证书路径" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-checkbox v-model:checked="config.proxy.setCaBundle" :disabled="!config.proxy.setEnv">
-          是否同时设置<code>REQUEST_CA_BUNDLE</code>环境变量
+          是否同时设置<code>REQUESTS_CA_BUNDLE</code>和<code>SSL_CERT_FILE</code>环境变量
         </a-checkbox>
         <div class="form-help">
           设置为DS的CA证书路径，解决 Python/QT 等程序因不信任自签 CA 证书而报错的问题<br>
+          <code>REQUESTS_CA_BUNDLE</code> 供 Python requests 等使用，<code>SSL_CERT_FILE</code> 供 OpenSSL 系程序使用<br>
           注意：必须先勾选上面"设置环境变量"才可启用此选项
         </div>
       </a-form-item>
