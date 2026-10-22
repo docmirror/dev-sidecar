@@ -47,7 +47,7 @@ export default defineComponent({
           allow-clear
         />
         <div class="form-help">
-          填写你部署或使用的 Xget 实例地址，只取其中的域名部分（支持带端口）；优先级等同于本地用户配置，你自己的同名规则仍然优先。
+          填写你部署或使用的 Xget 实例地址，支持子路径与端口（如 https://xget.example.com/xget、http://192.168.1.2:8080）；优先级等同于本地用户配置，你自己的同名规则仍然优先。
         </div>
       </a-form-item>
 
