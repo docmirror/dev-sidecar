@@ -40,12 +40,17 @@ When work is finished and ready to commit, the AI assistant stages files, but th
 
 1. **Review first**: run `git status`, `git diff`, and `git log --oneline -10` (to match the repo's message style). Stage only intended files; never stage secrets, build artifacts, or unrelated changes.
 2. **Stage properly**: use `git add <files>` for new/modified files and `git rm <files>` for deletions (or `git add -u` to record filesystem deletions). Verify the staged set with `git status` before proceeding.
-3. **Do NOT run `git commit` yourself.** Instead, print the **full `git commit` command** and let the user execute it manually, e.g.:
+3. **默认由人类提交。** 把完整的 `git commit` 命令打印给用户执行，例如：
    ```
    git commit -m "fix(cli): 修复 xxx"
    ```
-4. **Commit message style**: follow the repo's convention — a `type(scope): subject` prefix (`fix(scope):`, `feat(scope):`, `chore:`, ...) with a Chinese summary; include a body of bullet points for non-trivial changes. Do not add signing flags (`--no-gpg-sign`, `--no-verify`) or commit/push on the user's behalf unless explicitly requested.
-5. **Push only when explicitly asked**, and only after the user has committed.
+   **例外（用户明确授权时）**：用户可以直接要求 AI 提交并推送。此时允许 AI 执行 `git commit --no-gpg-sign`，并在提交信息末尾附上共同作者署名：
+   ```
+   Co-authored-by: AI Agent <agent@ds-core.local>
+   ```
+   该方式视为本仓库允许的提交方式之一；未获得明确授权时仍按默认流程交给人类。
+4. **Commit message style**: follow the repo's convention — a `type(scope): subject` prefix (`fix(scope):`, `feat(scope):`, `chore:`, ...) with a Chinese summary; include a body of bullet points for non-trivial changes. 签名相关参数（`--no-gpg-sign`、`--no-verify`）只在用户明确授权 AI 提交时使用。
+5. **Push**: 默认只在用户明确要求时推送；用户授权 AI 提交时，可在提交后直接推送并验证远端 HEAD。
 
 ## Architecture
 
