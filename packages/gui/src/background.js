@@ -507,6 +507,8 @@ function createWindow (startHideWindow, autoQuitIfError = true) {
         enableRemoteModule: true,
         contextIsolation: false,
         nativeWindowOpen: true, // ADD THIS
+        // 网页诊断页用 <webview> 内嵌目标站点；未开启时 $refs 只是普通元素（没有 loadURL）
+        webviewTag: true,
         // Use pluginOptions.nodeIntegration, leave this alone
         // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
         nodeIntegration: true, // process.env.ELECTRON_NODE_INTEGRATION
