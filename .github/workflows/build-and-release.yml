@@ -490,6 +490,20 @@ jobs:
           path: packages/gui/dist_electron/update-linux-x64-${{ steps.package-info.outputs.version }}.zip
           name: "update-linux-x64-${{ steps.package-info.outputs.version }}.zip"
           if-no-files-found: error
+      - name: "Upload update ZIP (Linux arm64)"
+        uses: actions/upload-artifact@v6
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/update-linux-arm64-${{ steps.package-info.outputs.version }}.zip
+          name: "update-linux-arm64-${{ steps.package-info.outputs.version }}.zip"
+          if-no-files-found: error
+      - name: "Upload update ZIP (Linux armv7l)"
+        uses: actions/upload-artifact@v6
+        if: ${{ matrix.os == 'ubuntu' }}
+        with:
+          path: packages/gui/dist_electron/update-linux-armv7l-${{ steps.package-info.outputs.version }}.zip
+          name: "update-linux-armv7l-${{ steps.package-info.outputs.version }}.zip"
+          if-no-files-found: error
       # endregion Upload update ZIPs
 
       # region Upload auto-update metadata files (latest*.yml + blockmaps + macOS zip target)
@@ -726,6 +740,16 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: "update-linux-x64-${{ steps.package-info.outputs.version }}.zip"
+          path: release
+      - name: "Download update ZIP (Linux arm64)"
+        uses: actions/download-artifact@v7
+        with:
+          name: "update-linux-arm64-${{ steps.package-info.outputs.version }}.zip"
+          path: release
+      - name: "Download update ZIP (Linux armv7l)"
+        uses: actions/download-artifact@v7
+        with:
+          name: "update-linux-armv7l-${{ steps.package-info.outputs.version }}.zip"
           path: release
       # endregion Download update ZIPs
 

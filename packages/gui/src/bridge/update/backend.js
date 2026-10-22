@@ -55,8 +55,8 @@ function getTrustedCaList () {
 
 /**
  * 获取当前平台/架构对应的资源命名。
- * - partArch: 增量包命名用（win-x64 / win-arm64 / win-ia32）
- * - fullArch: 完整安装包命名用（windows-x86_64 / windows-arm64 / linux-armv7l 等）
+ * - partArch: 增量包命名用（<platform>-<arch>，如 win-x64 / mac-arm64 / linux-armv7l）
+ * - fullArch: 完整安装包命名用（windows-x86_64 / macos-arm64 / linux-armv7l 等）
  */
 function safeHostname (uri) {
   try {
@@ -128,8 +128,8 @@ function getPlatformAssetInfo () {
     partArch = 'arm64'
     fullArch = 'arm64'
   } else if (arch === 'arm') {
-    // 无 arm 增量包：不要回退到 x64 增量包，否则可能把不兼容补丁装到 ARM 安装上
-    partArch = null
+    // Linux armv7l：CI 已产出 update-linux-armv7l 增量包
+    partArch = 'armv7l'
     fullArch = 'armv7l'
   } else {
     partArch = 'x64'
