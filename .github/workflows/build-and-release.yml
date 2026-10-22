@@ -70,6 +70,8 @@ jobs:
       - name: "Print"
         run: |
           echo "version = ${{ steps.package-info.outputs.version }}";
+          echo "github.repository = ${{ github.repository }}";
+          echo "is_official_repo = ${{ github.repository == 'docmirror/dev-sidecar' }}";
           echo "github.ref_type = ${{ github.ref_type }}";
           echo "github.ref = ${{ github.ref }}";
           echo "github.ref_name = ${{ github.ref_name }}";
@@ -580,6 +582,21 @@ jobs:
         with:
           path: ./packages/gui
 
+      # fork 仓库的 CI 不允许产出正式版：标题加 alpha 后缀，并在创建草稿后标记 prerelease，
+      # 这样既不会顶替官方 latest，也不会被正式版用户的更新检查选中。
+      - name: "Compute release identity (fork -> alpha)"
+        id: release-info
+        shell: bash
+        run: |
+          if [ "${{ github.repository }}" = "docmirror/dev-sidecar" ]; then
+            echo "title=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            echo "is_fork=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "title=${{ github.ref_name }}-alpha.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+            echo "is_fork=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "repository=${{ github.repository }} is_fork=${{ github.repository != 'docmirror/dev-sidecar' }}"
+
       - name: 'Make "release" dir'
         run: mkdir release
 
@@ -776,6 +793,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GHR_PATH: release/
-          GHR_TITLE: ${{ github.ref_name }}
+          GHR_TITLE: ${{ steps.release-info.outputs.title }}
           GHR_REPLACE: true
           GHR_DRAFT: true
+
+      - name: "Mark fork release as prerelease (alpha)"
+        if: steps.release-info.outputs.is_fork == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release edit "${{ github.ref_name }}" --repo "${{ github.repository }}" --prerelease
+          gh release view "${{ github.ref_name }}" --repo "${{ github.repository }}" --json isDraft,isPrerelease,name

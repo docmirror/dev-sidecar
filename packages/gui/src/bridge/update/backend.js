@@ -481,7 +481,20 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   }
 
   // 下载升级包
-  function downloadPart (app, value) {
+  function downloadPart (app, api, value) {
+    // Windows 安装到 Program Files 时普通权限无法写 resources，增量包解压必然失败；
+    // 先检查目标目录可写性，不可写就直接改走完整安装包（会走系统安装程序）。
+    try {
+      const appPath = appPathUtil.getAppRootPath(app)
+      const platform = api.shell.getSystemPlatform()
+      const target = platform === 'mac' ? path.join(appPath, 'Resources') : path.join(appPath, 'resources')
+      fs.accessSync(target, fs.constants.W_OK)
+    } catch {
+      log.warn('安装目录不可写，增量更新无法写入，改用完整安装包')
+      downloadFull(app, value)
+      return
+    }
+
     const fileDir = getUpdateDownloadDir(app)
     log.info('download dir:', fileDir)
     const filePath = path.join(fileDir, `${value.version}.zip`)
@@ -621,7 +634,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     } else if (arg.key === 'downloadPart') {
       // 下载增量更新版本
       log.info('autoUpdater downloadPart')
-      downloadPart(app, arg.value)
+      downloadPart(app, api, arg.value)
     } else if (arg.key === 'downloadFull') {
       // 下载完整安装包
       log.info('autoUpdater downloadFull')
