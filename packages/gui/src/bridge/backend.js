@@ -1,6 +1,7 @@
 import api from './api/backend.js'
 import autoStart from './auto-start/backend.js'
 import diagnostics from './diagnostics/backend.js'
+import feedback from './feedback/backend.js'
 import fileSelector from './file-selector/backend.js'
 import tongji from './tongji/backend.js'
 import update from './update/backend.js'
@@ -13,6 +14,7 @@ const modules = {
   update, // 自动更新
   autoStart,
   diagnostics, // 网页诊断
+  feedback, // 反馈：打包日志并打开 issue
 }
 export default {
   install (context) {

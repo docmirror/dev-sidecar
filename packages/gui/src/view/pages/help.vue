@@ -28,6 +28,18 @@ export default defineComponent({
     async openExternal (url) {
       await this.$api.ipc.openExternal(url)
     },
+    async reportIssue () {
+      const hide = this.$message.loading('正在打包日志并打开反馈页面...', 0)
+      try {
+        const ret = await this.$api.feedback.report({})
+        hide()
+        const tail = ret.uploadUrl ? `已自动上传：${ret.uploadUrl}` : `请把日志包拖到页面输入框上传：${ret.zipPath}`
+        this.$message.success(`已打开反馈页面。${tail}`, 8)
+      } catch (e) {
+        hide()
+        this.$message.error(`生成反馈材料失败：${e.message || e}`)
+      }
+    },
   },
 });
 </script>
@@ -38,7 +50,7 @@ export default defineComponent({
       帮助中心
     </template>
     <template #header-right>
-      <a-button class="mr10" @click="openExternal('https://github.com/docmirror/dev-sidecar/issues/new/choose')">反馈问题</a-button>
+      <a-button class="mr10" @click="reportIssue">反馈问题</a-button>
       <a-button class="mr10" @click="openLog()"><ProfileOutlined />查看日志</a-button>
     </template>
 

@@ -2,6 +2,7 @@
 import autoStart from './auto-start/front'
 import diagnostics from './diagnostics/front'
 import error from './error/front'
+import feedback from './feedback/front'
 import fileSelector from './file-selector/front'
 import onClose from './on-close/front'
 import tongji from './tongji/front'
@@ -16,6 +17,7 @@ const modules = {
   autoStart,
   onClose,
   diagnostics, // 网页诊断
+  feedback, // 反馈：打包日志并打开 issue
 }
 export default {
   install (app, api, router) {
