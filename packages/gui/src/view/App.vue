@@ -16,8 +16,13 @@ export default {
       info: {
         configProfiles: {
           internal: {},
+          user: {},
           sharedRemote: {},
           personalRemote: {},
+          selectedVersion: '',
+          personalSelectedVersion: '',
+          history: [],
+          personalHistory: [],
         },
       },
       config: undefined,
@@ -60,6 +65,76 @@ export default {
         }
       }
       return map
+    },
+    /**
+     * 底部展示的「配置版本」。
+     *
+     * 直接读当前生效配置的 app.metaInfo（配置文件里的 version 字段），
+     * 而不是只读共享远程：个人远程配置优先级更高，启用后 metaInfo 会被个人配置覆盖。
+     *
+     * 来源按「版本号来自哪一层」判断，而不是只看 id：
+     * 用户 config.json 里的 app.metaInfo 可能只保留了 id（例如 internal），
+     * version 实际来自共享远程；这时不能因为它仍叫 internal 就显示「内置配置」。
+     * 版本来源顺序：个人远程 > 共享远程 > 内置配置 > 用户配置。
+     */
+    configVersionInfo () {
+      const hasVersion = value => value != null && value !== '' && value !== 0 && value !== '0'
+      const meta = this.config?.app?.metaInfo || {}
+      const profiles = this.info?.configProfiles || {}
+      const layers = [
+        { meta: profiles.personalRemote || {}, active: profiles.personalRemote?.enabled === true, label: '个人远程' },
+        { meta: profiles.sharedRemote || {}, active: profiles.sharedRemote?.enabled === true, label: '共享远程' },
+        { meta: profiles.internal || {}, active: true, label: '内置配置' },
+        { meta: profiles.user || {}, active: true, label: '用户配置' },
+      ]
+
+      let id = meta.id || ''
+      let version = hasVersion(meta.version) ? meta.version : null
+      let source = ''
+      let matched
+
+      if (version != null) {
+        matched = layers.find(layer => layer.active && hasVersion(layer.meta.version)
+          && String(layer.meta.version) === String(version))
+      } else {
+        matched = layers.find(layer => layer.active && hasVersion(layer.meta.version))
+        if (matched) {
+          version = matched.meta.version
+        }
+      }
+
+      if (version == null) {
+        return { text: '', source: '' }
+      }
+      if (matched) {
+        id = matched.meta.id || id || ''
+        source = matched.label
+      }
+
+      return {
+        text: id ? `${id}:${version}` : String(version),
+        source,
+      }
+    },
+    sharedVersionSelector () {
+      const profiles = this.info?.configProfiles || {}
+      const shared = profiles.sharedRemote || {}
+      return {
+        visible: shared.enabled === true,
+        selected: profiles.selectedVersion || '',
+        options: profiles.history || [],
+        placeholder: shared.url ? '暂无可用版本（远程配置未下载成功）' : '未配置共享远程地址',
+      }
+    },
+    personalVersionSelector () {
+      const profiles = this.info?.configProfiles || {}
+      const personal = profiles.personalRemote || {}
+      return {
+        visible: personal.enabled === true,
+        selected: profiles.personalSelectedVersion || '',
+        options: profiles.personalHistory || [],
+        placeholder: personal.url ? '暂无可用版本（请重载远程配置）' : '未配置个人远程地址',
+      }
     },
   },
 
@@ -133,6 +208,42 @@ export default {
   },
 
   methods: {
+    async setRemoteConfigVersion (suffix, version) {
+      try {
+        // 动态 api 桥接只传一个参数，必须用对象承载 suffix/version。
+        await this.$api.config.setRemoteConfigVersion({ suffix: suffix || '', version: version || '' })
+        await this.refreshConfigAndInfo()
+        this.$message.success('远程配置版本已切换，请重启代理服务使其完全生效')
+      } catch (e) {
+        this.$message.error(`切换远程配置版本失败：${e.message || e}`)
+      }
+    },
+    /**
+     * 版本下拉项文案。
+     * - 最新版本：显示当前 live 配置的 id/version，保证不选历史快照时也能看到版本号；
+     * - 历史快照：显示配置自身版本号，并附带快照时间，便于同名版本区分。
+     */
+    versionOptionLabel (item) {
+      const idVersion = item.id ? `${item.id}:${item.label}` : String(item.label ?? '')
+      if (item.latest) {
+        return idVersion ? `最新版本（${idVersion}）` : '最新版本'
+      }
+      const base = idVersion || String(item.version)
+      const snapshot = this.formatSnapshotTime(item.version)
+      return snapshot ? `${base}（快照 ${snapshot}）` : base
+    },
+    formatSnapshotTime (value) {
+      const timestamp = Number(value)
+      if (!Number.isFinite(timestamp) || timestamp <= 0) {
+        return ''
+      }
+      const date = new Date(timestamp)
+      if (Number.isNaN(date.getTime())) {
+        return ''
+      }
+      const pad = num => String(num).padStart(2, '0')
+      return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+    },
     async refreshConfigAndInfo() {
       try {
         const config = await this.$api.config.get()
@@ -301,12 +412,61 @@ export default {
           </a-layout-content>
           <a-layout-footer>
             <div class="footer">
-              <div>
-                <label v-if="info.configProfiles.personalRemote.showLabel !== false">当前配置：</label>
-                <!-- 后端api里，id的回退值是''而version的回退值是0（因为version始终应该是一个Number），所以为了不显示一个零蛋，version在前端需要再做个回退为'' -->
-                <code>{{ info.configProfiles.internal.id }}{{ info.configProfiles.internal.id ? ':' : '-' }}{{ info.configProfiles.internal.version || '' }} </code>
-                <code class="ml5">{{ info.configProfiles.sharedRemote.id }}{{ info.configProfiles.sharedRemote.id ? ':' : '-' }}{{ info.configProfiles.sharedRemote.version || '' }} </code>
-                <code class="ml5">{{ info.configProfiles.personalRemote.id }}{{ info.configProfiles.personalRemote.id ? ':' : '-' }}{{ info.configProfiles.personalRemote.version || '' }}</code>
+              <div class="footer-config-row">
+                <!-- 只有内置配置生效时才显示版本行；共享/个人/用户配置由下方版本选择器展示，避免重复。 -->
+                <div v-if="configVersionInfo.source === '内置配置' && configVersionInfo.text" class="config-version">
+                  <label>配置版本：</label>
+                  <code>{{ configVersionInfo.text }}</code>
+                  <span v-if="configVersionInfo.source" class="config-version-source">（{{ configVersionInfo.source }}）</span>
+                </div>
+
+                <div v-if="sharedVersionSelector.visible" class="config-profile-selector">
+                  <label>共享远程版本：</label>
+                  <a-select
+                    :value="sharedVersionSelector.selected"
+                    :placeholder="sharedVersionSelector.placeholder"
+                    :dropdown-match-select-width="false"
+                    :dropdown-style="{ minWidth: '380px' }"
+                    size="small"
+                    style="width: 350px"
+                    @change="version => setRemoteConfigVersion('', version)"
+                  >
+                    <a-select-option v-if="!sharedVersionSelector.options.length" value="" disabled>
+                      {{ sharedVersionSelector.placeholder }}
+                    </a-select-option>
+                    <a-select-option
+                      v-for="item in sharedVersionSelector.options"
+                      :key="item.version || 'latest'"
+                      :value="item.version"
+                    >
+                      {{ versionOptionLabel(item) }}
+                    </a-select-option>
+                  </a-select>
+                </div>
+
+                <div v-if="personalVersionSelector.visible" class="config-profile-selector">
+                  <label>个人远程版本：</label>
+                  <a-select
+                    :value="personalVersionSelector.selected"
+                    :placeholder="personalVersionSelector.placeholder"
+                    :dropdown-match-select-width="false"
+                    :dropdown-style="{ minWidth: '380px' }"
+                    size="small"
+                    style="width: 350px"
+                    @change="version => setRemoteConfigVersion('_personal', version)"
+                  >
+                    <a-select-option v-if="!personalVersionSelector.options.length" value="" disabled>
+                      {{ personalVersionSelector.placeholder }}
+                    </a-select-option>
+                    <a-select-option
+                      v-for="item in personalVersionSelector.options"
+                      :key="item.version || 'latest'"
+                      :value="item.version"
+                    >
+                      {{ versionOptionLabel(item) }}
+                    </a-select-option>
+                  </a-select>
+                </div>
               </div>
 
               <div class="mt5">
@@ -330,4 +490,29 @@ export default {
     </a-app>
   </a-config-provider>
 </template>
+
+<style scoped>
+.footer-config-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 16px;
+}
+
+.footer {
+  text-align: center;
+}
+
+.config-version,
+.config-profile-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.config-version-source {
+  opacity: 0.75;
+}
+</style>
 

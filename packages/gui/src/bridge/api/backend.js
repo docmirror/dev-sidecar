@@ -68,8 +68,17 @@ const localApi = {
       const remoteConfig = lodash.get(runtimeConfig, 'app.remoteConfig') || {}
 
       const internal = getMetaInfo(coreDefaultConfig, '')
+      const user = getMetaInfo(configLoader.getUserConfig(), '')
       const sharedRemote = getMetaInfo(configLoader.getRemoteConfig(), '')
       const personalRemote = getMetaInfo(configLoader.getRemoteConfig('_personal'), '')
+      const selection = configLoader.getRemoteSelection()
+      const history = configLoader.getRemoteConfigVersions('')
+      const personalHistory = configLoader.getRemoteConfigVersions('_personal')
+      // 选择记录可能指向已被删除的历史快照，这种情况下实际生效的是 live 文件，
+      // 选择器应回落到「最新版本」，而不是显示一个列表里不存在的值。
+      const normalizeSelected = (list, selected) => {
+        return selected && list.some(item => item.version === selected) ? selected : ''
+      }
 
       return {
         version: pk.version,
@@ -77,6 +86,7 @@ const localApi = {
         kernel: { sha: KERNEL_SHA_SHORT, shaFull: KERNEL_SHA_FULL },
         configProfiles: {
           internal,
+          user,
           sharedRemote: {
             ...sharedRemote,
             url: remoteConfig.url || '',
@@ -87,6 +97,11 @@ const localApi = {
             url: remoteConfig.personalUrl || '',
             enabled: remoteConfig.enabled === true && Boolean(remoteConfig.personalUrl),
           },
+          selectedVersion: normalizeSelected(history, selection.shared),
+          // core 的 setRemoteSelection 用 suffix 作为键：共享是 shared，个人是 _personal。
+          personalSelectedVersion: normalizeSelected(personalHistory, selection._personal),
+          history,
+          personalHistory,
         },
       }
     },
