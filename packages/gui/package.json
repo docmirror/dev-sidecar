@@ -62,12 +62,13 @@
     "@vue/cli-service": "^5.0.9",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
-    "electron": "^41.10.7",
+    "electron": "^42.11.16",
     "electron-builder": "26.17.0",
     "electron-builder-squirrel-windows": "26.17.0",
     "json5-loader": "^4.0.1",
     "path-browserify": "^1.0.1",
-    "wait-on": "^7.2.0"
+    "wait-on": "^7.2.0",
+    "webpack": "5.106.2"
   },
   "browserslist": [
     "> 1%",

@@ -324,7 +324,7 @@ importers:
         version: 1.106.0
       sass-loader:
         specifier: ^16.0.8
-        version: 16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4))
+        version: 16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31))
       tiny-emitter:
         specifier: ^2.1.0
         version: 2.1.0
@@ -349,10 +349,10 @@ importers:
         version: 1.4.0(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)(vue@3.5.44(typescript@6.0.3))
       '@vue/cli-plugin-babel':
         specifier: ^5.0.9
-        version: 5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))(clean-css@5.3.3)(core-js@3.51.0)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(supports-color@8.1.1)(svgo@2.8.4)(vue@3.5.44(typescript@6.0.3))
+        version: 5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))(clean-css@5.3.3)(core-js@3.51.0)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(supports-color@8.1.1)(svgo@2.8.4)(vue@3.5.44(typescript@6.0.3))
       '@vue/cli-service':
         specifier: ^5.0.9
-        version: 5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0)
+        version: 5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0)
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
@@ -360,8 +360,8 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       electron:
-        specifier: ^41.10.7
-        version: 41.10.7(supports-color@8.1.1)
+        specifier: ^42.11.16
+        version: 42.11.18(supports-color@8.1.1)
       electron-builder:
         specifier: 26.17.0
         version: 26.17.0(electron-builder-squirrel-windows@26.17.0)(supports-color@8.1.1)
@@ -370,13 +370,16 @@ importers:
         version: 26.17.0(dmg-builder@26.17.0)(supports-color@8.1.1)
       json5-loader:
         specifier: ^4.0.1
-        version: 4.0.1(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4))
+        version: 4.0.1(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31))
       path-browserify:
         specifier: ^1.0.1
         version: 1.0.1
       wait-on:
         specifier: ^7.2.0
         version: 7.2.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
+      webpack:
+        specifier: 5.106.2
+        version: 5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)
 
   packages/mitmproxy:
     dependencies:
@@ -1619,6 +1622,12 @@ packages:
   '@types/debug@4.1.13':
     resolution: {integrity: sha512-KSVgmQmzMwPlmtljOomayoR89W4FynCAi3E8PPs7vmDVPe84hT+vGPKkJfThkmXs0x0jAaa9U8uW8bbfyS2fWw==}
 
+  '@types/eslint-scope@3.7.7':
+    resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
+
+  '@types/eslint@9.6.1':
+    resolution: {integrity: sha512-FXx2pKgId/WyYo2jXw63kk7/+TY7u7AziEJxJAnSFzHlqTAS3Ync6SvgYAN/k4/PQpnnVuzoMuVnByKK2qp0ag==}
+
   '@types/estree@1.0.9':
     resolution: {integrity: sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==}
 
@@ -2147,6 +2156,12 @@ packages:
   ace-builds@1.45.0:
     resolution: {integrity: sha512-tAAorvbQRlsdDeuf4RnBLgaRk4HVT9td2D4QKEqXyuQkZmFoqHxl9JuV2o1XkuDT+zOreooGPiG1tU/Y+pNFkg==}
 
+  acorn-import-phases@1.0.4:
+    resolution: {integrity: sha512-wKmbr/DDiIXzEOiWrTTUcDm24kQ2vGfZQvM2fwg2vXqR5uW6aapr7ObPtj1th32b9u90/Pf4AItvdTh42fBmVQ==}
+    engines: {node: '>=10.13.0'}
+    peerDependencies:
+      acorn: ^8.14.0
+
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
@@ -2183,11 +2198,6 @@ packages:
 
   ajv-formats@3.0.1:
     resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
-    peerDependencies:
-      ajv: ^8.0.0
-    peerDependenciesMeta:
-      ajv:
-        optional: true
 
   ajv-keywords@3.5.2:
     resolution: {integrity: sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==}
@@ -3357,8 +3367,8 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==}
     engines: {node: '>=8.0.0'}
 
-  electron@41.10.7:
-    resolution: {integrity: sha512-AqIiefddlf5i+HYCGatr8VlBuEbWJpad4/yloBFYcMB2r57j7xhW1ogiJ+BfA5kxQyfmSs5yjwy54Me+wJn1jw==}
+  electron@42.11.18:
+    resolution: {integrity: sha512-hbzodG06x/l7uq+oeyob5ugv6qZBmJRWC7Uto5QEE99xSHUARz6d+++Rz+79T/ssTYTQkONW4ciTTcJuAbXKIQ==}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -3608,6 +3618,10 @@ packages:
       '@vue/compiler-sfc': ^3.3.0
       eslint: ^8.50.0 || ^9.0.0
 
+  eslint-scope@5.1.1:
+    resolution: {integrity: sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw==}
+    engines: {node: '>=8.0.0'}
+
   eslint-scope@7.2.2:
     resolution: {integrity: sha512-dOt21O7lTMhDM+X9mB4GX+DZrZtCUJPL/wlcTqxyrx5IvO0IYtILdtrQGQp+8n5S0gwSVmOf9NQrjMOgfQZlIg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -3653,6 +3667,10 @@ packages:
 
   esrecurse@4.3.0:
     resolution: {integrity: sha512-KmfKL3b6G+RXvP8N1vr3Tq1kL/oCFgn2NYXEtqP8/L3pKapUA4G8cFVaoF3SU323CD4XypR/ffioHmkti6/Tag==}
+    engines: {node: '>=4.0'}
+
+  estraverse@4.3.0:
+    resolution: {integrity: sha512-39nnKffWz8xN1BU/2c79n9nB9HDzo0niYUqx6xyqUnyoAnQyyWpOTdZEeiCch8BBu515t4wp9ZmgVfVhn9EBpw==}
     engines: {node: '>=4.0'}
 
   estraverse@5.3.0:
@@ -3952,6 +3970,9 @@ packages:
   glob-parent@6.0.2:
     resolution: {integrity: sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==}
     engines: {node: '>=10.13.0'}
+
+  glob-to-regexp@0.4.1:
+    resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
 
   glob@10.5.0:
     resolution: {integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==}
@@ -6699,6 +6720,16 @@ packages:
   webpack-virtual-modules@0.4.6:
     resolution: {integrity: sha512-5tyDlKLqPfMqjT3Q9TAqf2YqjwmnUleZwzJi1A5qXnlBCdj2AtOJ6wAWdglTIDOPgOiOrXeBeFcsQ8+aGQ6QbA==}
 
+  webpack@5.106.2:
+    resolution: {integrity: sha512-wGN3qcrBQIFmQ/c0AiOAQBvrZ5lmY8vbbMv4Mxfgzqd/B6+9pXtLo73WuS1dSGXM5QYY3hZnIbvx+K1xxe6FyA==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    peerDependencies:
+      webpack-cli: '*'
+    peerDependenciesMeta:
+      webpack-cli:
+        optional: true
+
   webpack@5.112.0:
     resolution: {integrity: sha512-NIBpsRuCll036haDDt/CfcTDfsWNR9Z782nMRMI9D377BsGcYzZDTNU5TyzhCJzPIcihAxMBaMAhq2WSaDrH8Q==}
     engines: {node: '>=10.13.0'}
@@ -8237,6 +8268,16 @@ snapshots:
     dependencies:
       '@types/ms': 2.1.0
 
+  '@types/eslint-scope@3.7.7':
+    dependencies:
+      '@types/eslint': 9.6.1
+      '@types/estree': 1.0.9
+
+  '@types/eslint@9.6.1':
+    dependencies:
+      '@types/estree': 1.0.9
+      '@types/json-schema': 7.0.15
+
   '@types/estree@1.0.9': {}
 
   '@types/express-serve-static-core@4.19.9':
@@ -8644,11 +8685,11 @@ snapshots:
 
   '@vue/cli-overlay@5.0.9': {}
 
-  '@vue/cli-plugin-babel@5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))(clean-css@5.3.3)(core-js@3.51.0)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(supports-color@8.1.1)(svgo@2.8.4)(vue@3.5.44(typescript@6.0.3))':
+  '@vue/cli-plugin-babel@5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))(clean-css@5.3.3)(core-js@3.51.0)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(supports-color@8.1.1)(svgo@2.8.4)(vue@3.5.44(typescript@6.0.3))':
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@vue/babel-preset-app': 5.0.9(@babel/core@7.29.7(supports-color@8.1.1))(core-js@3.51.0)(supports-color@8.1.1)(vue@3.5.44(typescript@6.0.3))
-      '@vue/cli-service': 5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0)
+      '@vue/cli-service': 5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0)
       '@vue/cli-shared-utils': 5.0.9
       babel-loader: 8.4.1(@babel/core@7.29.7(supports-color@8.1.1))(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4))
       thread-loader: 3.0.4(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4))
@@ -8676,26 +8717,26 @@ snapshots:
       - vue
       - webpack-cli
 
-  '@vue/cli-plugin-router@5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))':
+  '@vue/cli-plugin-router@5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))':
     dependencies:
-      '@vue/cli-service': 5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0)
+      '@vue/cli-service': 5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0)
       '@vue/cli-shared-utils': 5.0.9
     transitivePeerDependencies:
       - encoding
 
-  '@vue/cli-plugin-vuex@5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))':
+  '@vue/cli-plugin-vuex@5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))':
     dependencies:
-      '@vue/cli-service': 5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0)
+      '@vue/cli-service': 5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0)
 
-  '@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0)':
+  '@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0)':
     dependencies:
       '@babel/helper-compilation-targets': 7.29.7
       '@soda/friendly-errors-webpack-plugin': 1.8.1(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4))
       '@soda/get-current-script': 1.0.2
       '@types/minimist': 1.2.5
       '@vue/cli-overlay': 5.0.9
-      '@vue/cli-plugin-router': 5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))
-      '@vue/cli-plugin-vuex': 5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))
+      '@vue/cli-plugin-router': 5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))
+      '@vue/cli-plugin-vuex': 5.0.9(@vue/cli-service@5.0.9(@vue/compiler-sfc@3.5.44)(clean-css@5.3.3)(csso@4.2.0)(ejs@3.1.10)(html-minifier-terser@6.1.0)(lodash@4.18.1)(prettier@3.9.10)(sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)))(supports-color@8.1.1)(svgo@2.8.4)(underscore@1.13.8)(vue@3.5.44(typescript@6.0.3))(webpack-sources@3.6.0))
       '@vue/cli-shared-utils': 5.0.9
       '@vue/component-compiler-utils': 3.3.0(ejs@3.1.10)(lodash@4.18.1)(underscore@1.13.8)
       '@vue/vue-loader-v15': vue-loader@15.11.1(@vue/compiler-sfc@3.5.44)(css-loader@6.11.0(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)))(ejs@3.1.10)(lodash@4.18.1)(prettier@3.9.10)(underscore@1.13.8)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4))
@@ -8745,7 +8786,7 @@ snapshots:
       webpack-virtual-modules: 0.4.6
       whatwg-fetch: 3.6.20
     optionalDependencies:
-      sass-loader: 16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4))
+      sass-loader: 16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31))
       webpack-sources: 3.6.0
     transitivePeerDependencies:
       - '@minify-html/node'
@@ -9068,6 +9109,10 @@ snapshots:
 
   ace-builds@1.45.0: {}
 
+  acorn-import-phases@1.0.4(acorn@8.19.0):
+    dependencies:
+      acorn: 8.19.0
+
   acorn-jsx@5.3.2(acorn@8.19.0):
     dependencies:
       acorn: 8.19.0
@@ -9100,8 +9145,8 @@ snapshots:
     dependencies:
       humanize-ms: 1.2.1
 
-  ajv-formats@3.0.1(ajv@8.20.0):
-    optionalDependencies:
+  ajv-formats@3.0.1:
+    dependencies:
       ajv: 8.20.0
 
   ajv-keywords@3.5.2(ajv@6.15.0):
@@ -10307,7 +10352,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@41.10.7(supports-color@8.1.1):
+  electron@42.11.18(supports-color@8.1.1):
     dependencies:
       '@electron-internal/extract-zip': 1.0.5
       '@electron/get': 5.1.0(supports-color@8.1.1)
@@ -10604,6 +10649,11 @@ snapshots:
       '@vue/compiler-sfc': 3.5.44
       eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
 
+  eslint-scope@5.1.1:
+    dependencies:
+      esrecurse: 4.3.0
+      estraverse: 4.3.0
+
   eslint-scope@7.2.2:
     dependencies:
       esrecurse: 4.3.0
@@ -10680,6 +10730,8 @@ snapshots:
   esrecurse@4.3.0:
     dependencies:
       estraverse: 5.3.0
+
+  estraverse@4.3.0: {}
 
   estraverse@5.3.0: {}
 
@@ -11032,6 +11084,8 @@ snapshots:
   glob-parent@6.0.2:
     dependencies:
       is-glob: 4.0.3
+
+  glob-to-regexp@0.4.1: {}
 
   glob@10.5.0:
     dependencies:
@@ -11490,12 +11544,12 @@ snapshots:
 
   json-stringify-safe@5.0.1: {}
 
-  json5-loader@4.0.1(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)):
+  json5-loader@4.0.1(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)):
     dependencies:
       json5: 2.2.3
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)
+      webpack: 5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)
 
   json5@1.0.2:
     dependencies:
@@ -13079,12 +13133,12 @@ snapshots:
     dependencies:
       truncate-utf8-bytes: 1.0.2
 
-  sass-loader@16.0.8(sass@1.106.0)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)):
+  sass-loader@16.0.8(sass@1.106.0)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)):
     dependencies:
       neo-async: 2.6.2
     optionalDependencies:
       sass: 1.106.0
-      webpack: 5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)
+      webpack: 5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)
 
   sass@1.106.0:
     dependencies:
@@ -13108,11 +13162,20 @@ snapshots:
       ajv: 6.15.0
       ajv-keywords: 3.5.2(ajv@6.15.0)
 
+  schema-utils@4.8.1(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)):
+    dependencies:
+      '@types/json-schema': 7.0.15
+      ajv: 8.20.0
+      ajv-formats: 3.0.1
+      ajv-keywords: 5.1.0(ajv@8.20.0)
+    optionalDependencies:
+      webpack: 5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)
+
   schema-utils@4.8.1(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)):
     dependencies:
       '@types/json-schema': 7.0.15
       ajv: 8.20.0
-      ajv-formats: 3.0.1(ajv@8.20.0)
+      ajv-formats: 3.0.1
       ajv-keywords: 5.1.0(ajv@8.20.0)
     optionalDependencies:
       webpack: 5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)
@@ -13617,6 +13680,20 @@ snapshots:
       mkdirp: 0.5.6
       rimraf: 2.6.3
 
+  terser-webpack-plugin@5.6.1(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      jest-worker: 27.5.1
+      schema-utils: 4.8.1(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31))
+      terser: 5.51.2
+      webpack: 5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)
+    optionalDependencies:
+      clean-css: 5.3.3
+      cssnano: 5.1.15(postcss@8.5.31)
+      csso: 4.2.0
+      html-minifier-terser: 6.1.0
+      postcss: 8.5.31
+
   terser-webpack-plugin@5.6.1(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
@@ -14116,6 +14193,46 @@ snapshots:
   webpack-sources@3.6.0: {}
 
   webpack-virtual-modules@0.4.6: {}
+
+  webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31):
+    dependencies:
+      '@types/eslint-scope': 3.7.7
+      '@types/estree': 1.0.9
+      '@types/json-schema': 7.0.15
+      '@webassemblyjs/ast': 1.14.1
+      '@webassemblyjs/wasm-edit': 1.14.1
+      '@webassemblyjs/wasm-parser': 1.14.1
+      acorn: 8.19.0
+      acorn-import-phases: 1.0.4(acorn@8.19.0)
+      browserslist: 4.29.4
+      chrome-trace-event: 1.0.4
+      enhanced-resolve: 5.26.0
+      es-module-lexer: 2.3.2
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
+      loader-runner: 4.3.2
+      mime-db: 1.54.0
+      neo-async: 2.6.2
+      schema-utils: 4.8.1(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31))
+      tapable: 2.3.3
+      terser-webpack-plugin: 5.6.1(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(webpack@5.106.2(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31))
+      watchpack: 2.6.3
+      webpack-sources: 3.6.0
+    transitivePeerDependencies:
+      - '@minify-html/node'
+      - '@swc/core'
+      - '@swc/css'
+      - '@swc/html'
+      - clean-css
+      - cssnano
+      - csso
+      - esbuild
+      - html-minifier-terser
+      - lightningcss
+      - postcss
+      - uglify-js
 
   webpack@5.112.0(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.31))(csso@4.2.0)(html-minifier-terser@6.1.0)(postcss@8.5.31)(svgo@2.8.4):
     dependencies:

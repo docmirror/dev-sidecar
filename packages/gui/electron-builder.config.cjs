@@ -8,7 +8,7 @@ const localArch = process.arch === 'ia32' ? 'ia32' : process.arch === 'arm64' ? 
 /** @type {import('electron-builder').Configuration} */
 module.exports = {
   appId: 'dev-sidecar',
-  electronVersion: '41.10.7', // 必须与 gui 的 electron devDependency 保持一致；hoisted 布局下 builder 无法从 node_modules 推断版本，故显式钉住
+  electronVersion: '42.11.16', // 必须与 gui 的 electron devDependency 保持一致；hoisted 布局下 builder 无法从 node_modules 推断版本，故显式钉住
   productName: 'dev-sidecar',
   artifactName: 'DevSidecar-${version}-${arch}.${ext}',
   copyright: 'Copyright © 2020-' + new Date().getFullYear() + ' Greper, WangLiang, CuteOmega',
