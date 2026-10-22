@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { execFileSync } from 'node:child_process'
 import { createRequire } from 'node:module'
 import AdmZip from 'adm-zip'
 import request from 'request'
@@ -9,6 +10,43 @@ import log from '../../utils/util.log.gui.js'
 
 const require = createRequire(import.meta.url)
 const pkg = require('../../../package.json')
+
+/**
+ * 人类可读的系统版本：win32/x64 这种只说明平台和架构，用户看不懂，
+ * 按平台分别取版本号（Windows 11 / macOS 14.7 / Ubuntu 24.04 + 内核）。
+ */
+function getSystemDescription () {
+  const arch = process.arch
+  if (process.platform === 'win32') {
+    const release = os.release() // 例如 10.0.22631
+    const build = Number.parseInt(release.split('.')[2] || '0', 10)
+    const name = build >= 22000 ? 'Windows 11' : (build >= 10240 ? 'Windows 10' : 'Windows')
+    return `${name} ${release} (${arch})`
+  }
+  if (process.platform === 'darwin') {
+    let version = ''
+    try {
+      version = execFileSync('sw_vers', ['-productVersion'], { encoding: 'utf8' }).trim()
+    } catch {
+      // 取不到时退回 Darwin 内核版本
+    }
+    return `macOS ${version || os.release()} (${arch})`
+  }
+  if (process.platform === 'linux') {
+    let distro = ''
+    try {
+      const content = fs.readFileSync('/etc/os-release', 'utf8')
+      const match = content.match(/^PRETTY_NAME="?([^"\n]+)"?/m)
+      if (match) {
+        distro = match[1]
+      }
+    } catch {
+      // 没有 os-release 的发行版退回内核版本
+    }
+    return `${distro || 'Linux'} ${os.release()} (${arch})`
+  }
+  return `${process.platform} ${os.release()} (${arch})`
+}
 
 const DS_DIR = path.join(os.homedir(), '.dev-sidecar')
 const LOGS_DIR = path.join(DS_DIR, 'logs')
@@ -73,6 +111,7 @@ function createBundle (targetDir) {
 
   zip.addFile('meta.json', Buffer.from(JSON.stringify({
     appVersion: pkg.version,
+    system: getSystemDescription(),
     platform: process.platform,
     arch: process.arch,
     electron: process.versions.electron,
@@ -114,7 +153,7 @@ function buildIssueUrl ({ zipPath, uploadUrl, description }) {
   const body = [
     '### Ⅰ. 请说明操作系统及DS的版本号：',
     '',
-    `1. 操作系统：${process.platform} ${process.arch}`,
+    `1. 操作系统：${getSystemDescription()}`,
     `2. DS版本号：${pkg.version}`,
     '',
     '### Ⅱ. 问题描述：',
