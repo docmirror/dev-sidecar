@@ -5,6 +5,7 @@ import os from 'node:os'
 import path from 'node:path'
 import process from 'node:process'
 import { setTimeout as delay } from 'node:timers/promises'
+import { computeVersion } from './local-build-version.mjs'
 
 const guiDir = process.cwd()
 const repoRoot = path.resolve(guiDir, '..', '..')
@@ -119,6 +120,17 @@ function resolveElectronArgs () {
     .filter(Boolean)
 }
 
+// 源码运行也展示 `<base>-dev.<工作区指纹>`，与本地打包一致，便于确认当前跑的是哪份代码。
+// 只影响界面展示，更新检查仍使用 package.json 的正式版本号。
+function resolveDisplayVersion () {
+  try {
+    return computeVersion(path.join(guiDir, 'package.json'))
+  } catch (e) {
+    console.warn(`[electron-dev] 计算本地版本号失败，继续使用 package.json 版本: ${e.message}`)
+    return ''
+  }
+}
+
 async function waitForServer (url, child) {
   const timeoutAt = Date.now() + 120000
 
@@ -171,6 +183,10 @@ process.on('SIGTERM', () => {
 async function main () {
   const vueCliServiceBin = resolveVueCliServiceBin()
   const electronBin = resolveElectronBin()
+  const displayVersion = resolveDisplayVersion()
+  if (displayVersion) {
+    console.log(`[electron-dev] 本地版本号：${displayVersion}`)
+  }
 
   state.devServer = spawnCommand(process.execPath, [vueCliServiceBin, 'serve', '--port', String(devServerPort)])
   state.devServer.on('exit', (code, signal) => {
@@ -184,6 +200,7 @@ async function main () {
     await waitForServer(devServerUrl, state.devServer)
     state.electron = spawnCommand(electronBin, ['.', ...resolveElectronArgs()], {
       WEBPACK_DEV_SERVER_URL: devServerUrl,
+      ...(displayVersion ? { DEV_SIDECAR_DISPLAY_VERSION: displayVersion } : {}),
     })
     state.electron.on('exit', (code, signal) => {
       if (!state.closing) {

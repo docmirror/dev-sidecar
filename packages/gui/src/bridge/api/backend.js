@@ -81,7 +81,8 @@ const localApi = {
       }
 
       return {
-        version: pk.version,
+        // 源码运行时由 electron-dev.mjs 注入 `<base>-dev.<指纹>`，仅用于展示
+        version: process.env.DEV_SIDECAR_DISPLAY_VERSION || pk.version,
         // 内核身份只用提交 SHA（version 已废弃）
         kernel: { sha: KERNEL_SHA_SHORT, shaFull: KERNEL_SHA_FULL },
         configProfiles: {
