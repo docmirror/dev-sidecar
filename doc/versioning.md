@@ -38,7 +38,7 @@ alpha < beta < dev < rc < 正式版
   - 完整安装包：`DevSidecar-<version>-<platform>-<arch>.<ext>`
   - 增量包：`update-<platform>-<arch>-<version>.zip`
   - 平台取值 `win` / `mac` / `linux`，架构取值 `x64` / `ia32` / `arm64` / `armv7l`
-- 自动更新的回退规则：增量包缺失，或安装目录不可写（例如 Windows 安装在 `Program Files`），改用完整安装包，由系统安装程序完成升级。
+- 自动更新的回退规则：增量包缺失时改用完整安装包；Windows 安装目录不可写时请求 UAC 提权，由提权进程解压增量包并重启应用，取消授权则中止本次更新。
 
 ## 注意
 

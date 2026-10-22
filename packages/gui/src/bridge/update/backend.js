@@ -16,10 +16,12 @@ const pkg = require('../../../package.json')
 import appPathUtil from '../../utils/util.apppath.js'
 import log from '../../utils/util.log.gui.js'
 import { isNewVersion } from '@blue-frontier/dev-sidecar/src/utils/util.version.js'
+import sudoPrompt from '@vscode/sudo-prompt'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
+const isWindows = process.platform === 'win32'
 
 const curVersion = pkg.version
 const isCurrentPreRelease = curVersion.includes('-')
@@ -481,20 +483,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
   }
 
   // 下载升级包
-  function downloadPart (app, api, value) {
-    // Windows 安装到 Program Files 时普通权限无法写 resources，增量包解压必然失败；
-    // 先检查目标目录可写性，不可写就直接改走完整安装包（会走系统安装程序）。
-    try {
-      const appPath = appPathUtil.getAppRootPath(app)
-      const platform = api.shell.getSystemPlatform()
-      const target = platform === 'mac' ? path.join(appPath, 'Resources') : path.join(appPath, 'resources')
-      fs.accessSync(target, fs.constants.W_OK)
-    } catch {
-      log.warn('安装目录不可写，增量更新无法写入，改用完整安装包')
-      downloadFull(app, value)
-      return
-    }
-
+  function downloadPart (app, value) {
     const fileDir = getUpdateDownloadDir(app)
     log.info('download dir:', fileDir)
     const filePath = path.join(fileDir, `${value.version}.zip`)
@@ -562,6 +551,17 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
 
     log.info('开始解压缩，安装升级包:', partPackagePath, target)
 
+    if (!canWrite(target)) {
+      if (isWindows) {
+        // Windows 安装在 Program Files 时普通权限写不进 resources，请求 UAC 后由提权进程解压
+        await updatePartElevated(app, partPackagePath, target)
+        return
+      }
+      log.warn('安装目录不可写，改用完整安装包')
+      downloadFull(app, value)
+      return
+    }
+
     try {
       await beforeQuit()
       app.relaunch()
@@ -571,6 +571,54 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
       log.info('安装完成，重启app')
     } finally {
       app.exit(0)
+    }
+  }
+
+  function canWrite (dir) {
+    try {
+      fs.accessSync(dir, fs.constants.W_OK)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  /**
+   * 提权解压增量包：UAC 授权后由 PowerShell 结束当前进程、覆盖 resources、再重启应用。
+   * 用户取消 UAC 时当前进程仍在，发送错误提示，由用户决定稍后重试。
+   */
+  async function updatePartElevated (app, partPackagePath, target) {
+    const scriptPath = path.join(path.dirname(partPackagePath), 'apply-update.ps1')
+    const quote = p => String(p).replaceAll("'", "''")
+    const script = [
+      "$ErrorActionPreference = 'Stop'",
+      // 连同 mitmproxy 子进程一起结束，避免占用 resources 里的文件
+      `taskkill /PID ${process.pid} /T /F | Out-Null`,
+      'Start-Sleep -Milliseconds 800',
+      `Expand-Archive -LiteralPath '${quote(partPackagePath)}' -DestinationPath '${quote(target)}' -Force`,
+      `Start-Process -FilePath '${quote(app.getPath('exe'))}'`,
+    ].join('\r\n')
+    fs.writeFileSync(scriptPath, script, 'utf8')
+
+    const command = `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "${scriptPath}"`
+    log.info('安装目录不可写，请求管理员权限解压增量包:', scriptPath)
+    try {
+      await new Promise((resolve, reject) => {
+        sudoPrompt.exec(command, { name: 'dev-sidecar' }, (error) => {
+          if (error) {
+            reject(error)
+          } else {
+            resolve()
+          }
+        })
+      })
+    } catch (e) {
+      log.warn('请求管理员权限失败:', e)
+      sendUpdateMessage({
+        key: 'error',
+        value: e,
+        error: `安装目录需要管理员权限，已取消增量更新：${e.message || e}`,
+      })
     }
   }
 
@@ -634,7 +682,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     } else if (arg.key === 'downloadPart') {
       // 下载增量更新版本
       log.info('autoUpdater downloadPart')
-      downloadPart(app, api, arg.value)
+      downloadPart(app, arg.value)
     } else if (arg.key === 'downloadFull') {
       // 下载完整安装包
       log.info('autoUpdater downloadFull')
