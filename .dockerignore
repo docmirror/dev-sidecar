@@ -1,0 +1,8 @@
+node_modules
+**/node_modules
+packages/gui/dist
+packages/gui/dist_electron
+**/dist_electron
+**/.cache
+*.zip
+dev-sidecar-bugfixes.md
