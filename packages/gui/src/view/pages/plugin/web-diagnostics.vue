@@ -2,9 +2,7 @@
 const DEFAULT_URL = 'https://github.com/'
 
 function newSessionId () {
-  if (globalThis.crypto?.randomUUID)
-    return globalThis.crypto.randomUUID()
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`
+  return globalThis.crypto.randomUUID()
 }
 
 export default {

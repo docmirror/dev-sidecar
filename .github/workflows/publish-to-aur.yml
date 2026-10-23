@@ -5,11 +5,9 @@ on:
     types:
       - published
   workflow_dispatch:
-    inputs:
-      version:
-        description: "Package version to publish (e.g. 2.0.2). Leave empty to use the latest release tag."
-        required: false
-        type: string
+
+permissions:
+  contents: read
 
 jobs:
   publish-to-aur:
@@ -23,12 +21,16 @@ jobs:
       # ── Resolve version ──────────────────────────────────────────────────────
       - name: "Resolve version"
         id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if [[ -n "${{ inputs.version }}" ]]; then
-            VERSION="${{ inputs.version }}"
-          else
+          if [[ "${GITHUB_EVENT_NAME}" == "release" ]]; then
             # Strip leading 'v' from the release tag (e.g. v2.0.2 → 2.0.2)
             VERSION="${GITHUB_REF_NAME#v}"
+          else
+            # 手动触发时取最近一次正式发布
+            TAG=$(gh release view --repo "${GITHUB_REPOSITORY}" --json tagName -q .tagName)
+            VERSION="${TAG#v}"
           fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "Resolved version: ${VERSION}"

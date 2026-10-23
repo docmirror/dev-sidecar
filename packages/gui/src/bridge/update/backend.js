@@ -43,6 +43,7 @@ function getLocalProxyUrl () {
     return null
   }
   const host = !server.host || server.host === '0.0.0.0' ? '127.0.0.1' : server.host
+  // eslint-disable-next-line @microsoft/sdl/no-insecure-url -- 本地代理只监听回环地址，不能使用 https
   return `http://${host}:${server.port}`
 }
 
