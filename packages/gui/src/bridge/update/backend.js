@@ -673,7 +673,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
     log.info('安装目录不可写，请求管理员权限解压增量包:', scriptPath)
     try {
       await new Promise((resolve, reject) => {
-        sudoPrompt.exec(command, { name: 'dev-sidecar' }, (error) => {
+        sudoPrompt.exec(command, { name: 'devsidecar' }, (error) => {
           if (error) {
             reject(error)
           } else {
