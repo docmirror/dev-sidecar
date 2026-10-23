@@ -75,12 +75,8 @@
   Var /GLOBAL dsDeleteUserDataCheckboxUn
 
   ; 卸载器欢迎页换成「卸载选项」页：默认保留用户数据，勾选即彻底卸载。
+  ; 升级时卸载器以 /S --updated 静默调用，不会显示本页，变量保持默认值 0（保留数据）。
   Function un.dsUninstallOptionsPageCreate
-    ; 升级时旧卸载器以 --updated 调用，不显示该页，也不删除数据。
-    ${If} ${isUpdated}
-      Abort
-    ${EndIf}
-
     nsDialogs::Create 1018
     Pop $0
     ${If} $0 == error
