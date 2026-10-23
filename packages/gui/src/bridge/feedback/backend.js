@@ -4,7 +4,6 @@ import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { createRequire } from 'node:module'
 import AdmZip from 'adm-zip'
-import request from 'request'
 import electron from '../../electron.js'
 import log from '../../utils/util.log.gui.js'
 
@@ -124,35 +123,39 @@ function createBundle (targetDir) {
   return { zipPath, logCount }
 }
 
-function uploadBundle (zipPath) {
-  return new Promise((resolve) => {
-    const proxy = process.env.HTTPS_PROXY || process.env.https_proxy || process.env.HTTP_PROXY || process.env.http_proxy
-    request.post({
-      url: 'https://0x0.st',
-      formData: { file: fs.createReadStream(zipPath) },
-      proxy: proxy || undefined,
-      timeout: 30000,
-      gzip: true,
-    }, (error, response, body) => {
-      if (error || response == null || response.statusCode !== 200) {
-        log.warn('日志包自动上传失败:', error == null ? `HTTP ${response && response.statusCode}` : error.message)
-        resolve(null)
-        return
-      }
-      const url = String(body).trim()
-      resolve(/^https?:\/\//.test(url) ? url : null)
-    })
-  })
+function getRunningJsonText () {
+  try {
+    return redact(fs.readFileSync(path.join(DS_DIR, 'running.json'), 'utf8'))
+  } catch (e) {
+    log.warn('读取 running.json 失败:', e)
+    return null
+  }
 }
 
-function buildIssueUrl ({ zipPath, uploadUrl, description }) {
+// GitHub 的 issue 预填走 URL，body 过长会被拒（或截断），这里留出安全余量
+const RUNNING_JSON_ISSUE_LIMIT = 3500
+
+function getRunningJsonForIssue () {
+  const text = getRunningJsonText()
+  if (text == null) {
+    return { text: '（读取 running.json 失败）', truncated: false }
+  }
+  let compact = text
+  try {
+    compact = JSON.stringify(JSON.parse(text))
+  } catch {
+    // 非严格 JSON 时保留原文本
+  }
+  if (compact.length > RUNNING_JSON_ISSUE_LIMIT) {
+    return { text: compact.slice(0, RUNNING_JSON_ISSUE_LIMIT), truncated: true }
+  }
+  return { text: compact, truncated: false }
+}
+
+function buildIssueUrl ({ zipPath, description, runningJson }) {
   const title = `[反馈] ${description && description.trim() ? description.trim() : '问题反馈'}`
-  // 上传失败时正文只留压缩包路径：GitHub 无法通过链接自动附加文件，
-  // 「把文件拖进输入框」的提示由界面 toast / 托盘弹窗负责（见 help.vue 与 background.js），
-  // 不写进 issue 正文，避免每个反馈都带一段操作说明。
-  const attachment = uploadUrl
-    ? `日志与运行参数已自动上传：${uploadUrl}`
-    : `日志压缩包已生成：${zipPath}`
+  // 日志压缩包始终由用户手动拖拽上传：GitHub 不支持通过链接自动附加文件
+  const attachment = `日志压缩包：${zipPath}\n\n请把该文件拖到下面的输入框上传（GitHub 不支持通过链接自动附加文件）。`
   const body = [
     '### Ⅰ. 请说明操作系统及DS的版本号：',
     '',
@@ -173,7 +176,22 @@ function buildIssueUrl ({ zipPath, uploadUrl, description }) {
     '',
     attachment,
     '',
-    '> 压缩包内已对 token / password / authorization 等字段做打码处理，仍建议上传前确认没有隐私信息。',
+    '### Ⅵ. running.json：',
+    '',
+    '<details>',
+    `<summary>展开查看 running.json${runningJson.truncated ? '（已截断）' : ''}</summary>`,
+    '',
+    '```json',
+    runningJson.text,
+    '```',
+    '',
+    '</details>',
+    '',
+    runningJson.truncated
+      ? '> GitHub issue 预填链接长度有限，这里只保留前 3500 个字符，完整 running.json 在日志压缩包内。'
+      : '',
+    '',
+    '> 压缩包与上面的 running.json 已对 token / password / authorization 等字段做打码处理，仍建议上传前确认没有隐私信息。',
   ].join('\n')
 
   return `https://github.com/docmirror/dev-sidecar/issues/new?title=${encodeURIComponent(title)
@@ -181,12 +199,11 @@ function buildIssueUrl ({ zipPath, uploadUrl, description }) {
 }
 
 async function report (options = {}) {
-  const { targetDir, description = '', upload = true } = options
+  const { targetDir, description = '' } = options
   const bundle = createBundle(targetDir)
-  const uploadUrl = upload ? await uploadBundle(bundle.zipPath) : null
-  const issueUrl = buildIssueUrl({ ...bundle, uploadUrl, description })
+  const issueUrl = buildIssueUrl({ ...bundle, description, runningJson: getRunningJsonForIssue() })
   await electron.shell.openExternal(issueUrl)
-  return { ...bundle, uploadUrl, issueUrl }
+  return { ...bundle, issueUrl }
 }
 
 const feedbackApi = {

@@ -33,7 +33,7 @@ export default defineComponent({
       try {
         const ret = await this.$api.feedback.report({})
         hide()
-        const tail = ret.uploadUrl ? `已自动上传：${ret.uploadUrl}` : `请把日志包拖到页面输入框上传：${ret.zipPath}`
+        const tail = `请把日志包拖到页面输入框上传：${ret.zipPath}`
         this.$message.success(`已打开反馈页面。${tail}`, 8)
       } catch (e) {
         hide()
