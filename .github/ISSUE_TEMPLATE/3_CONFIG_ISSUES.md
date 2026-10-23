@@ -28,9 +28,9 @@ labels: Config Issue
   - [ ] PIP加速
   - [ ] 增强功能
 
-### Ⅱ. 请详细描述你的问题：
+### Ⅱ. 请详细描述你的问题
 
-### Ⅲ. 有必要时，请提供 `${user.home}/.dev-sidecar/running.json` 文件内容：
+### Ⅲ. 有必要时，请提供 `${user.home}/.dev-sidecar/running.json` 文件内容
 
 <!-- 请将 'running.json' 文件的内容粘贴在这里，方便我们排查问题是否由配置错误导致。 -->
 
@@ -40,4 +40,5 @@ labels: Config Issue
 ```json
 
 ```
+
 </details>
