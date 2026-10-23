@@ -368,9 +368,13 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
           const isTimeout = error.code === 'ETIMEDOUT' || /timeout/i.test(String(error.message || ''))
           const proxyUnavailable = /ECONNREFUSED|tunneling socket could not be established|ECONNRESET/i.test(String(error.message || ''))
             || error.code === 'ECONNREFUSED'
+          // 代理/MITM 返回了非 HTTP 数据时，Node 的 HTTP 解析器会抛 Parse Error
+          const parseError = /Parse Error|HPE_INVALID|invalid response/i.test(String(error.message || ''))
           let errorMsg
           if (proxyUnavailable) {
             errorMsg = '代理未开启或未就绪，请先在首页开启加速服务后重试'
+          } else if (parseError) {
+            errorMsg = '检查更新失败：代理返回了异常响应，请关闭再重新开启加速服务后重试'
           } else if (isTimeout) {
             errorMsg = '检查更新超时（15 秒），请检查网络或系统代理后重试'
           } else {
