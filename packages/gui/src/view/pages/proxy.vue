@@ -134,7 +134,7 @@ export default defineComponent({
           是否同时设置<code>REQUESTS_CA_BUNDLE</code>、<code>SSL_CERT_FILE</code>和<code>CURL_CA_BUNDLE</code>环境变量
         </a-checkbox>
         <div class="form-help">
-          指向「系统根证书 + DS CA」的合并包（<code>~/.dev-sidecar/ca-bundle.pem</code>），既信任自签 CA，也不影响其他站点<br>
+          指向合并包 <code>~/.dev-sidecar/ca-bundle.pem</code>：Windows 证书存储（Root，排除 Disallowed）/ macOS 系统钥匙串 / Linux 系统 CA 包，加上 DS CA 组成；每次开启系统代理时重新生成<br>
           <code>REQUESTS_CA_BUNDLE</code> 供 Python requests 等使用，<code>SSL_CERT_FILE</code> 供 OpenSSL 系程序使用，<code>CURL_CA_BUNDLE</code> 供 curl 使用<br>
           注意：必须先勾选上面"设置环境变量"才可启用此选项
         </div>
