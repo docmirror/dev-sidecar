@@ -4,7 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import DevSidecar from '@blue-frontier/dev-sidecar'
 import electron from './electron.js'
-const { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, Tray } = electron
+const { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, nativeTheme, powerMonitor, screen, Tray } = electron
 import fs from 'node:fs'
 import minimist from 'minimist'
 import backend from './bridge/backend.js'
@@ -510,11 +510,23 @@ function loadAppIcon () {
 function createWindow (startHideWindow, autoQuitIfError = true) {
   // Create the browser window.
   const windowSize = DevSidecar.api.config.get().app.windowSize || {}
+  let workArea = { width: 1280, height: 900 }
+  try {
+    workArea = screen.getPrimaryDisplay().workAreaSize
+  } catch (e) {
+    log.warn('获取屏幕工作区失败，使用默认窗口尺寸:', e)
+  }
+  // 默认放大窗口，同时限制在屏幕工作区内，避免小屏上超出可见范围
+  const width = Math.max(960, Math.min(windowSize.width || 1200, workArea.width - 40))
+  const height = Math.max(640, Math.min(windowSize.height || 860, workArea.height - 40))
 
   try {
     win = new BrowserWindow({
-      width: windowSize.width || 900,
-      height: windowSize.height || 750,
+      width,
+      height,
+      minWidth: 960,
+      minHeight: 640,
+      center: true,
       title: 'DevSidecar',
       webPreferences: {
         enableRemoteModule: true,
