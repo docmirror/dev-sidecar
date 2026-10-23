@@ -1,6 +1,5 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import tls from 'node:tls'
 import { fileURLToPath } from 'node:url'
 import DevSidecar from '@blue-frontier/dev-sidecar'
 import AdmZip from 'adm-zip'
@@ -8,7 +7,6 @@ import electron from '../../electron.js'
 const { ipcMain, net, session } = electron
 import electronUpdater from 'electron-updater'
 const { autoUpdater } = electronUpdater
-import request from 'request'
 import { createRequire } from 'node:module'
 const require = createRequire(import.meta.url)
 const pkg = require('../../../package.json')
@@ -24,35 +22,6 @@ const isWindows = process.platform === 'win32'
 
 const curVersion = pkg.version
 const isCurrentPreRelease = curVersion.includes('-')
-
-let cachedRootCaCert = null
-/**
- * 更新检查/下载会走本地 MITM 代理，需要信任 dev-sidecar 自己的根证书；
- * 同时也保留 Node 内置根证书，保证直连 GitHub 时也能正常校验。
- */
-function getTrustedCaList () {
-  const caList = [...tls.rootCertificates]
-  if (cachedRootCaCert != null) {
-    if (cachedRootCaCert !== false) {
-      caList.push(cachedRootCaCert)
-    }
-    return caList
-  }
-
-  try {
-    const certPath = DevSidecar.api?.config?.get()?.server?.setting?.rootCaFile?.certPath
-    if (certPath && fs.existsSync(certPath)) {
-      cachedRootCaCert = fs.readFileSync(certPath, 'utf8')
-      caList.push(cachedRootCaCert)
-    } else {
-      cachedRootCaCert = false
-    }
-  } catch (e) {
-    log.warn('读取 dev-sidecar 根证书失败:', e)
-    cachedRootCaCert = false
-  }
-  return caList
-}
 
 /**
  * 获取当前平台/架构对应的资源命名。
@@ -289,6 +258,45 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
 }
 
 /**
+ * 用 Electron 网络栈拉取 releases 列表，避免 request 库经代理解析响应时抛 Parse Error
+ */
+function fetchReleasesViaNet (proxy, curVersion, url) {
+  let abort = () => {}
+  const promise = new Promise((resolve, reject) => {
+    ;(async () => {
+      try {
+        const ses = session.fromPartition('update-check')
+        if (proxy.url) {
+          await ses.setProxy({ proxyRules: proxy.url })
+        }
+        const req = net.request({ url, session: ses, redirect: 'follow' })
+        abort = () => {
+          try {
+            req.abort()
+          } catch {
+            // 请求已结束时忽略
+          }
+        }
+        req.setHeader('User-Agent', `DS/${curVersion}`)
+        let body = ''
+        req.on('response', (res) => {
+          res.on('data', (chunk) => {
+            body += chunk.toString('utf8')
+          })
+          res.on('end', () => resolve({ statusCode: res.statusCode, body }))
+          res.on('error', reject)
+        })
+        req.on('error', reject)
+        req.end()
+      } catch (e) {
+        reject(e)
+      }
+    })()
+  })
+  return { promise, abort: () => abort() }
+}
+
+/**
  * 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
  */
 function updateHandle (app, api, win, beforeQuit, quit, log) {
@@ -350,14 +358,7 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
       win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: '检查更新超时（15 秒），请检查网络或系统代理后重试' })
     }, 15000)
 
-    requestHandle = request(releasesApiUrl, {
-      headers: { 'User-Agent': `DS/${curVersion}`, 'Server-Name': 'baidu.com' },
-      ca: getTrustedCaList(),
-      proxy: proxy.url,
-      timeout: 15000,
-      // GitHub 的 releases 响应未压缩时接近 1MB，开 gzip 后约 100KB
-      gzip: true,
-    }, (error, response, body) => {
+    const onResponse = (error, response, body) => {
       if (timedOut) {
         return
       }
@@ -531,6 +532,22 @@ function updateHandle (app, api, win, beforeQuit, quit, log) {
         log.error('检查更新失败:', e)
         win.webContents.send('update', { key: 'error', action: 'checkForUpdate', error: `检查更新失败:${e.message}` })
       }
+    }
+
+    const task = fetchReleasesViaNet(proxy, curVersion, releasesApiUrl)
+    requestHandle = { abort: task.abort }
+    task.promise.then(({ statusCode, body }) => {
+      if (timedOut) {
+        return
+      }
+      clearTimeout(timer)
+      onResponse(null, { statusCode }, body)
+    }).catch((e) => {
+      if (timedOut) {
+        return
+      }
+      clearTimeout(timer)
+      onResponse(e)
     })
   }
 
