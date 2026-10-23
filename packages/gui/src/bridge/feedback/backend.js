@@ -123,38 +123,9 @@ function createBundle (targetDir) {
   return { zipPath, logCount }
 }
 
-function getRunningJsonText () {
-  try {
-    return redact(fs.readFileSync(path.join(DS_DIR, 'running.json'), 'utf8'))
-  } catch (e) {
-    log.warn('读取 running.json 失败:', e)
-    return null
-  }
-}
-
-// GitHub 的 issue 预填走 URL，body 过长会被拒（或截断），这里留出安全余量
-const RUNNING_JSON_ISSUE_LIMIT = 3500
-
-function getRunningJsonForIssue () {
-  const text = getRunningJsonText()
-  if (text == null) {
-    return { text: '（读取 running.json 失败）', truncated: false }
-  }
-  let compact = text
-  try {
-    compact = JSON.stringify(JSON.parse(text))
-  } catch {
-    // 非严格 JSON 时保留原文本
-  }
-  if (compact.length > RUNNING_JSON_ISSUE_LIMIT) {
-    return { text: compact.slice(0, RUNNING_JSON_ISSUE_LIMIT), truncated: true }
-  }
-  return { text: compact, truncated: false }
-}
-
-function buildIssueUrl ({ zipPath, description, runningJson }) {
+function buildIssueUrl ({ zipPath, description }) {
   const title = `[反馈] ${description && description.trim() ? description.trim() : '问题反馈'}`
-  // 日志压缩包始终由用户手动拖拽上传：GitHub 不支持通过链接自动附加文件
+  // 日志压缩包由用户手动拖拽上传：GitHub 不支持通过链接自动附加文件
   const attachment = `日志压缩包：${zipPath}\n\n请把该文件拖到下面的输入框上传（GitHub 不支持通过链接自动附加文件）。`
   const body = [
     '### Ⅰ. 请说明操作系统及DS的版本号：',
@@ -176,22 +147,7 @@ function buildIssueUrl ({ zipPath, description, runningJson }) {
     '',
     attachment,
     '',
-    '### Ⅵ. running.json：',
-    '',
-    '<details>',
-    `<summary>展开查看 running.json${runningJson.truncated ? '（已截断）' : ''}</summary>`,
-    '',
-    '```json',
-    runningJson.text,
-    '```',
-    '',
-    '</details>',
-    '',
-    runningJson.truncated
-      ? '> GitHub issue 预填链接长度有限，这里只保留前 3500 个字符，完整 running.json 在日志压缩包内。'
-      : '',
-    '',
-    '> 压缩包与上面的 running.json 已对 token / password / authorization 等字段做打码处理，仍建议上传前确认没有隐私信息。',
+    '> 压缩包内已对 token / password / authorization 等字段做打码处理，仍建议上传前确认没有隐私信息。',
   ].join('\n')
 
   return `https://github.com/docmirror/dev-sidecar/issues/new?title=${encodeURIComponent(title)
@@ -201,7 +157,9 @@ function buildIssueUrl ({ zipPath, description, runningJson }) {
 async function report (options = {}) {
   const { targetDir, description = '' } = options
   const bundle = createBundle(targetDir)
-  const issueUrl = buildIssueUrl({ ...bundle, description, runningJson: getRunningJsonForIssue() })
+  const issueUrl = buildIssueUrl({ ...bundle, description })
+  // 顺手打开压缩包所在目录并选中文件，方便用户直接拖到 issue 页面
+  electron.shell.showItemInFolder(bundle.zipPath)
   await electron.shell.openExternal(issueUrl)
   return { ...bundle, issueUrl }
 }
