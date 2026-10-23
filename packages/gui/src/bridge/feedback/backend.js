@@ -147,9 +147,12 @@ function uploadBundle (zipPath) {
 
 function buildIssueUrl ({ zipPath, uploadUrl, description }) {
   const title = `[反馈] ${description && description.trim() ? description.trim() : '问题反馈'}`
+  // 上传失败时正文只留压缩包路径：GitHub 无法通过链接自动附加文件，
+  // 「把文件拖进输入框」的提示由界面 toast / 托盘弹窗负责（见 help.vue 与 background.js），
+  // 不写进 issue 正文，避免每个反馈都带一段操作说明。
   const attachment = uploadUrl
     ? `日志与运行参数已自动上传：${uploadUrl}`
-    : `日志压缩包已生成：${zipPath}\n\n请把该文件拖到下面的输入框上传（GitHub 不允许通过链接自动附加文件）。`
+    : `日志压缩包已生成：${zipPath}`
   const body = [
     '### Ⅰ. 请说明操作系统及DS的版本号：',
     '',
