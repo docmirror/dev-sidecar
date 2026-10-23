@@ -43,6 +43,9 @@ export default {
     themeConfig() {
       return getAntThemeConfig(this.theme === 'dark')
     },
+    updateState() {
+      return (this.$global && this.$global.update) || null
+    },
     isPreRelease () {
       const version = this.info && this.info.version
       return typeof version === 'string' && version.includes('-')
@@ -357,6 +360,12 @@ export default {
   <a-config-provider :locale="locale" :theme="themeConfig">
     <!-- antd-vue 4 静态 Modal/$confirm/$success/message 需要 App 上下文，否则可能只出遮罩 -->
     <a-app>
+      <div
+        v-if="updateState && updateState.downloading"
+        class="update-progress-banner"
+      >
+        正在下载新版本：{{ Math.floor(updateState.progress || 0) }}%
+      </div>
       <div class="ds_layout">
       <a-layout>
         <a-layout-sider :style="{ background: theme === 'dark' ? '#1e1f22' : '#ffffff', overflowY: 'auto' }">
@@ -498,6 +507,19 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 6px 16px;
+}
+
+.update-progress-banner {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  padding: 6px 14px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 13px;
 }
 
 .footer {

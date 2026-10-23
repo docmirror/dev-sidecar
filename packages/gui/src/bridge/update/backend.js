@@ -211,7 +211,8 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
     timeout: 60000,
   }, (response) => {
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      fail(new Error(`下载升级包失败，HTTP status: ${response.statusCode}`))
+      const hint = response.statusCode === 404 ? '（发布未公开或资产不存在）' : ''
+      fail(new Error(`下载升级包失败，HTTP status: ${response.statusCode}${hint}`))
       return
     }
     progress(response, {})
