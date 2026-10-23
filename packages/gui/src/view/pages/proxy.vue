@@ -136,6 +136,7 @@ export default defineComponent({
         <div class="form-help">
           指向合并包 <code>~/.dev-sidecar/ca-bundle.pem</code>：Windows 证书存储（Root，排除 Disallowed）/ macOS 系统钥匙串 / Linux 系统 CA 包，加上 DS CA 组成；每次开启系统代理时重新生成<br>
           <code>REQUESTS_CA_BUNDLE</code> 供 Python requests 等使用，<code>SSL_CERT_FILE</code> 供 OpenSSL 系程序使用，<code>CURL_CA_BUNDLE</code> 供 curl 使用<br>
+          合并包只是信任列表快照，<b>不做 CRL / OCSP 吊销检查</b>；对吊销严格校验的程序请改用系统 TLS 栈，或单独关闭其吊销检查（如 curl <code>--ssl-no-revoke</code>）<br>
           注意：必须先勾选上面"设置环境变量"才可启用此选项
         </div>
       </a-form-item>

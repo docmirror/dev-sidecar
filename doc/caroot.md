@@ -57,3 +57,19 @@ DevSidecar在第一次启动时会在本地随机生成一份根证书，当有�
 > 1. 尽量缩小替代配置的范围
 > 2. 不使用来源不明的镜像地址，尽量使用知名度较高的镜像地址
 > 3. 你甚至可以将其他拦截配置全部删除，只保留github相关配置
+
+## 三、CA 证书环境变量与吊销说明
+
+勾选「设置环境变量」和「设置CA证书路径」后，应用会生成合并证书包 `~/.dev-sidecar/ca-bundle.pem`，内容为操作系统证书存储里的根证书（Windows 的 Root，排除 Disallowed；macOS 系统钥匙串；Linux 系统 CA 包）加上 DevSidecar 自己的 CA。每次开启系统代理时重新生成。
+
+设置的环境变量：
+
+- `REQUESTS_CA_BUNDLE`：供 Python requests 等使用；
+- `SSL_CERT_FILE`：供 OpenSSL 系程序使用；
+- `CURL_CA_BUNDLE`：供 curl 使用。
+
+这三个变量都是「替换默认信任库」的语义，所以指向的是合并包，而不是只有 DevSidecar 的 CA。
+
+**吊销限制**：合并包是一份静态信任列表，只回答「这些根证书是否受信」。它不会做 CRL / OCSP 吊销检查，OpenSSL、Python requests、curl（OpenSSL 构建）默认也不检查吊销。操作系统里把某个根证书移除或不信任，会在下次开启代理重建合并包时生效；但单张证书被吊销、根证书仍留在存储中的情况不会被发现。
+
+另外，对吊销检查严格的客户端（如启用吊销检查的 Windows Schannel、部分 curl 构建）可能因为 DevSidecar 签发的中间人证书没有 CRL / OCSP 分发点而拒绝连接。这类程序需要单独关闭吊销检查（例如 curl 的 `--ssl-no-revoke`、git 的 `http.schannelCheckRevoke=false`），或者不要让它走 DevSidecar 的中间人链路。
