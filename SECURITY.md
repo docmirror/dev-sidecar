@@ -2,9 +2,9 @@
 
 ## Supported versions
 
-Only the latest stable release is supported. Once a newer stable version is
-published, older 2.3.x builds are no longer supported. Pre-release, beta and
-local development builds are unsupported.
+Only the latest stable release is supported. Once the latest stable version
+is published, all older builds are no longer supported immediately.
+Pre-release, beta, local and unofficial development builds are unsupported.
 
 ## Reporting a vulnerability
 
