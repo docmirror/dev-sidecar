@@ -10,7 +10,9 @@ const MAX_ENTRIES = 2000
 
 function appendEntry (sessionId, entry) {
   const entries = getSession(sessionId)
-  entries.push({ timestamp: new Date().toISOString(), ...entry })
+  // sessionId 必须随条目一起返回/发送：前端 onDiagnosticEvent 用它过滤本会话事件，
+  // 缺了它实时日志一条都进不了面板（issue #742 之外的「网页诊断日志不显示」缺陷）
+  entries.push({ sessionId, timestamp: new Date().toISOString(), ...entry })
   if (entries.length > MAX_ENTRIES)
     entries.splice(0, entries.length - MAX_ENTRIES)
   return entries[entries.length - 1]
