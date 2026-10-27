@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: write
+  actions: read # SignPath 的 submit-signing-request action 需要用 GITHUB_TOKEN 读取 job 详情
 
 jobs:
   # job 1
@@ -352,6 +353,7 @@ jobs:
           path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe"
           if-no-files-found: error
+          overwrite: true # 覆盖前面上传的未签名版本，使 job 2 发布的是签名后的安装包
       - name: "Re-upload signed DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe"
         if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' }}
         uses: actions/upload-artifact@v6
@@ -359,6 +361,7 @@ jobs:
           path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe"
           if-no-files-found: error
+          overwrite: true
       - name: "Re-upload signed DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe"
         if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' }}
         uses: actions/upload-artifact@v6
@@ -366,6 +369,7 @@ jobs:
           path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe"
           if-no-files-found: error
+          overwrite: true
       # endregion SignPath signing
 
       # region Upload artifacts - Linux
