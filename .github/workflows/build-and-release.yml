@@ -25,6 +25,11 @@ jobs:
       ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
       ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
       VUE_APP_PUBLISH_PROVIDER: generic
+      # SignPath 签名参数：前三个值从 SignPath 界面「签名策略」详情页读取（该页有现成的代码片段）；
+      # API token 放 repo secrets：SIGNPATH_API_TOKEN
+      SIGNPATH_ORG_ID: "<填入: SignPath organization id>"
+      SIGNPATH_PROJECT_SLUG: "<填入: SignPath project slug>"
+      SIGNPATH_POLICY_SLUG: "<填入: 签名策略 slug, 如 test-signing>"
     strategy:
       fail-fast: false
       matrix:
@@ -313,6 +318,55 @@ jobs:
           name: "DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe"
           if-no-files-found: error
       # endregion Upload artifacts - Windows
+
+      # region SignPath signing (Windows 安装包；仅官方仓库运行，fork 没有 SIGNPATH_API_TOKEN)
+      - name: "Upload Windows exes bundle for SignPath"
+        id: signpath-bundle
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' }}
+        uses: actions/upload-artifact@v6
+        with:
+          path: |
+            packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe
+            packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe
+            packages/gui/dist_electron/DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe
+          name: "signpath-win-exes"
+          if-no-files-found: error
+
+      - name: "Submit signing request to SignPath"
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' }}
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ env.SIGNPATH_ORG_ID }}
+          project-slug: ${{ env.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ env.SIGNPATH_POLICY_SLUG }}
+          github-artifact-id: ${{ steps.signpath-bundle.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 3600
+          output-artifact-directory: signed-win-exes
+
+      - name: "Re-upload signed DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe"
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' }}
+        uses: actions/upload-artifact@v6
+        with:
+          path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe"
+          if-no-files-found: error
+      - name: "Re-upload signed DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe"
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' }}
+        uses: actions/upload-artifact@v6
+        with:
+          path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe"
+          if-no-files-found: error
+      - name: "Re-upload signed DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe"
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' }}
+        uses: actions/upload-artifact@v6
+        with:
+          path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe
+          name: "DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe"
+          if-no-files-found: error
+      # endregion SignPath signing
 
       # region Upload artifacts - Linux
       - name: "Upload DevSidecar-${{ steps.package-info.outputs.version }}-linux-x86_64.deb"
