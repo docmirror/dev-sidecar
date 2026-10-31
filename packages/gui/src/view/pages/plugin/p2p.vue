@@ -77,6 +77,15 @@ export default defineComponent({
       this.refreshShareInfo()
       this.probePeers()
     },
+    /** 令牌存系统密钥库，配置里只留空串 */
+    async applyBefore () {
+      const token = String(this.shareSetting.token || '').trim()
+      if (token) {
+        await this.$api.plugin.share.setToken(token)
+        this.shareSetting.token = ''
+        this.$message.success('节点令牌已保存到系统密钥库')
+      }
+    },
     async refreshShareInfo () {
       try {
         if (this.$api.plugin?.share?.getShareInfo) {
@@ -277,7 +286,10 @@ export default defineComponent({
           </div>
         </a-form-item>
         <a-form-item label="Token" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-input v-model:value="shareSetting.token" placeholder="鉴权令牌" spellcheck="false" @change="rebuildShareLink" />
+          <a-input v-model:value="shareSetting.token" placeholder="留空保持不变（令牌存系统密钥库）" spellcheck="false" @change="rebuildShareLink" />
+          <div class="form-help">
+            令牌保存到系统密钥库，不会写进配置文件；输入框只用于写入新令牌，留空表示沿用已保存的令牌。
+          </div>
         </a-form-item>
         <a-form-item label="备注" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-input v-model:value="shareSetting.name" placeholder="家宽 / 公司" spellcheck="false" />

@@ -75,7 +75,24 @@ export default defineComponent({
     },
     async applyBefore () {
       this.submitTarget()
+      await this.savePasswords()
       this.submitServer()
+    },
+    /** 服务器口令存系统密钥库，配置里只留空串 */
+    async savePasswords () {
+      const passwords = {}
+      for (const item of this.servers) {
+        const hostname = item.key ? this.handleHostname(item.key) : ''
+        const value = String(item.value.password || '').trim()
+        if (hostname && value) {
+          passwords[hostname] = value
+        }
+        item.value.password = ''
+      }
+      if (Object.keys(passwords).length > 0) {
+        await this.$api.plugin.overwall.setServerPasswords(passwords)
+        this.$message.success('服务器口令已保存到系统密钥库')
+      }
     },
     /** 启用开关与首页模式选择保持同步 */
     async onEnabledChange (e) {
@@ -179,7 +196,8 @@ export default defineComponent({
             type: value.type || 'path',
             port: value.port,
             path: value.path,
-            password: value.password,
+            // 口令不在配置里，输入框只用于写入新口令
+            password: '',
           },
         })
       }
@@ -331,7 +349,7 @@ export default defineComponent({
                 <a-input v-model:value="item.value.path" :title="item.value.path" addon-before="路径" placeholder="xxxxxx" spellcheck="false" />
               </a-col>
               <a-col :span="5">
-                <a-input v-model:value="item.value.password" addon-before="密码" type="password" placeholder="password" spellcheck="false" />
+                <a-input v-model:value="item.value.password" addon-before="密码" type="password" placeholder="留空保持不变" spellcheck="false" />
               </a-col>
               <a-col :span="2">
                 <a-button type="danger" @click="deleteServer(item, index)"><MinusOutlined /></a-button>
@@ -339,7 +357,7 @@ export default defineComponent({
             </a-row>
             <div class="form-help">
               <code>ID 0</code> 为内置默认服务器；在此处新增的服务器 ID 会依次为 <code>1、2、3...</code>。<br>
-              您可以在此处配置自己的代理服务器地址。<br>
+              您可以在此处配置自己的代理服务器地址；口令保存到系统密钥库，不会写进配置文件（留空表示沿用已保存的口令）。<br>
               警告：请勿使用来源不明的服务器地址，有安全风险！
             </div>
           </div>
