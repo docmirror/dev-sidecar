@@ -26,12 +26,14 @@ jobs:
       ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
       ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
       VUE_APP_PUBLISH_PROVIDER: generic
-      # SignPath 签名参数：前三个值从 SignPath 界面「签名策略」详情页读取（该页有现成的代码片段）；
-      # API token 放 repo secrets：SIGNPATH_API_TOKEN
-      # 下面三项留空 = 跳过签名（发布照常进行）；填好真实值并存好 SIGNPATH_API_TOKEN 后自动启用签名
-      SIGNPATH_ORG_ID: ""
-      SIGNPATH_PROJECT_SLUG: ""
-      SIGNPATH_POLICY_SLUG: ""
+      # SignPath 签名参数：三项标识在
+      #   仓库 Settings → Secrets and variables → Actions → Variables 里配置（普通变量，不是机密）
+      # 取值见 SignPath 界面「签名策略」详情页（该页有现成的代码片段）。
+      # API token 是凭据，放 Settings → Secrets（SIGNPATH_API_TOKEN）。
+      # 三项任一为空 = 跳过签名，发布照常进行（产出未签名安装包）。
+      SIGNPATH_ORG_ID: ${{ vars.SIGNPATH_ORG_ID }}
+      SIGNPATH_PROJECT_SLUG: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+      SIGNPATH_POLICY_SLUG: ${{ vars.SIGNPATH_POLICY_SLUG }}
     strategy:
       fail-fast: false
       matrix:
@@ -324,7 +326,7 @@ jobs:
       # region SignPath signing (Windows 安装包；仅官方仓库运行，fork 没有 SIGNPATH_API_TOKEN)
       - name: "Upload Windows exes bundle for SignPath"
         id: signpath-bundle
-        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' }}
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
         uses: actions/upload-artifact@v6
         with:
           path: |
@@ -335,7 +337,7 @@ jobs:
           if-no-files-found: error
 
       - name: "Submit signing request to SignPath"
-        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' }}
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
         uses: signpath/github-action-submit-signing-request@v3
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
@@ -348,7 +350,7 @@ jobs:
           output-artifact-directory: signed-win-exes
 
       - name: "Re-upload signed DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe"
-        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' }}
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
         uses: actions/upload-artifact@v6
         with:
           path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe
@@ -356,7 +358,7 @@ jobs:
           if-no-files-found: error
           overwrite: true # 覆盖前面上传的未签名版本，使 job 2 发布的是签名后的安装包
       - name: "Re-upload signed DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe"
-        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' }}
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
         uses: actions/upload-artifact@v6
         with:
           path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe
@@ -364,7 +366,7 @@ jobs:
           if-no-files-found: error
           overwrite: true
       - name: "Re-upload signed DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe"
-        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' }}
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
         uses: actions/upload-artifact@v6
         with:
           path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe
