@@ -12,6 +12,8 @@ export default defineComponent({
       key: 'plugin.xget',
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
+      cfAccessSecretInput: '',
+      cfAccessSecretStored: false,
     }
   },
 
@@ -19,13 +21,35 @@ export default defineComponent({
     async openExternal (url) {
       await this.$api.ipc.openExternal(url)
     },
+    async ready () {
+      this.cfAccessSecretStored = await this.$api.plugin.xget.hasCfAccessSecret()
+    },
+    async saveCfAccessSecret () {
+      const value = String(this.cfAccessSecretInput || '').trim()
+      if (!value) {
+        this.$message.warning('请先输入服务令牌')
+        return
+      }
+      const ret = await this.$api.plugin.xget.setCfAccessSecret(value)
+      this.cfAccessSecretInput = ''
+      this.cfAccessSecretStored = true
+      this.$message.success(`服务令牌已保存（${ret && ret.backend === 'keytar' ? '系统密钥库' : '本机加密文件'}）`)
+    },
+    async clearCfAccessSecret () {
+      await this.$api.plugin.xget.clearCfAccessSecret()
+      this.cfAccessSecretStored = false
+      this.$message.success('已清除保存的服务令牌')
+    },
     async applyBefore () {
       const setting = this.config.plugin.xget.setting
       setting.instanceUrl = String(setting.instanceUrl || '').trim()
       setting.cfAccessClientId = String(setting.cfAccessClientId || '').trim()
-      setting.cfAccessClientSecret = String(setting.cfAccessClientSecret || '').trim()
-      if (!!setting.cfAccessClientId !== !!setting.cfAccessClientSecret) {
-        this.$message.warning('Cloudflare Access 的 Client ID 与 Client Secret 需同时填写才会生效')
+      // Secret 不进配置文件：这里填了就存进系统密钥库
+      if (String(this.cfAccessSecretInput || '').trim()) {
+        await this.saveCfAccessSecret()
+      }
+      if (setting.cfAccessClientId && !this.cfAccessSecretStored) {
+        this.$message.warning('已填写 Client ID 但还没有保存 Client Secret，Cloudflare Access 会拒绝请求')
       }
     },
     async applyAfter () {
@@ -70,19 +94,30 @@ export default defineComponent({
           allow-clear
         />
         <div class="form-help">
-          仅当实例挂在 Cloudflare Access 后面时需要。两项都填写后，本插件的所有规则都会自动携带 cf-access-client-id 与 cf-access-client-secret 请求头；只填一项会被忽略。
+          仅当实例挂在 Cloudflare Access 后面时需要。保存 Client Secret 后，本插件的所有规则都会自动携带 cf-access-client-id 与 cf-access-client-secret 请求头。
         </div>
       </a-form-item>
 
       <a-form-item label="CF Access Secret">
-        <a-input-password
-          v-model:value="config.plugin.xget.setting.cfAccessClientSecret"
-          placeholder="可选，与 Client ID 配套的 Client Secret"
-          allow-clear
-        />
-        <div class="form-help">
-          令牌以明文保存在本机用户配置（~/.dev-sidecar/config.json）。轮换时在 Cloudflare 用 Rotate secret 并设置宽限期即可，Client ID 不变。
-        </div>
+        <a-space direction="vertical" style="width: 100%">
+          <a-space wrap>
+            <a-input-password
+              v-model:value="cfAccessSecretInput"
+              :placeholder="cfAccessSecretStored ? '已保存，输入新令牌可覆盖' : '可选，Cloudflare Access 的 Client Secret'"
+              style="width: 340px"
+              allow-clear
+            />
+            <a-button :disabled="!cfAccessSecretInput" @click="saveCfAccessSecret">
+              保存密钥
+            </a-button>
+            <a-button v-if="cfAccessSecretStored" danger @click="clearCfAccessSecret">
+              清除已保存
+            </a-button>
+          </a-space>
+          <div class="form-help">
+            密钥保存到系统密钥库（Windows 凭据管理器 / macOS 钥匙串 / Linux libsecret），不写入 config.json；系统密钥库不可用时退回本机加密文件。输入框只用于写入，不会回显已保存的值。
+          </div>
+        </a-space>
       </a-form-item>
 
       <a-collapse ghost class="cf-guide">
