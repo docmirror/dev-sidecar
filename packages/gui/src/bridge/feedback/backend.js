@@ -58,6 +58,9 @@ const SENSITIVE_RULES = [
   [/((?:set-)?cookie\s*[:=]\s*).*/gi, '$1***'],
   [/([?&](?:token|password|passwd|pwd|secret|key|auth|signature|sig|access_token)=)[^&\s]+/gi, '$1***'],
   [/((?:password|passwd|privateKey|private_key|token|secret)\s*[:=]\s*)\S+/gi, '$1***'],
+  // JSON 形式（running.json 与日志里的 `"password": "..."`）：上面的规则要求关键字后紧跟冒号，引号会打断匹配，
+  // 所以单独补一条 JSON 键值规则；与 core/src/utils/util.redact.js 的 JSON_SECRET_KV 保持一致。
+  [/("(?=[\w.-]*(?:dspassword|password|passwd|pwd|token|secret|privateKey|private_key|authorization|cookie))[\w.-]+"\s*:\s*")[^"]*(")/gi, '$1***$2'],
 ]
 
 function redact (text) {
