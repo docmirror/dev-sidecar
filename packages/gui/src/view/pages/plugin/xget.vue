@@ -16,6 +16,9 @@ export default defineComponent({
   },
 
   methods: {
+    async openExternal (url) {
+      await this.$api.ipc.openExternal(url)
+    },
     async applyBefore () {
       const setting = this.config.plugin.xget.setting
       setting.instanceUrl = String(setting.instanceUrl || '').trim()
@@ -78,9 +81,34 @@ export default defineComponent({
           allow-clear
         />
         <div class="form-help">
-          令牌以明文保存在本机用户配置（~/.dev-sidecar/config.json），建议在 Cloudflare Zero Trust 后台定期轮换。
+          令牌以明文保存在本机用户配置（~/.dev-sidecar/config.json）。轮换时在 Cloudflare 用 Rotate secret 并设置宽限期即可，Client ID 不变。
         </div>
       </a-form-item>
+
+      <a-collapse ghost class="cf-guide">
+        <a-collapse-panel key="guide" header="实例挂在 Cloudflare Access 后面？点这里看配置步骤">
+          <ol class="cf-guide-steps">
+            <li>
+              <b>创建服务令牌</b>：打开
+              <a @click="openExternal('https://one.dash.cloudflare.com')">Cloudflare One</a>
+              → Access controls → Service credentials → Service Tokens → Create Service Token，复制 Client ID 与 Client Secret（Secret 只显示一次）。
+            </li>
+            <li>
+              <b>保护 Worker 入口</b>：Workers &amp; Pages → 你的 Worker → Access → Protect this Worker behind Access → 选 All traffic。
+              这样 workers.dev、自定义域名和预览部署会一起受保护；只保护单个主机名时其余入口仍然公开，<b>建议同时限制预览部署的访问</b>。
+            </li>
+            <li>
+              <b>放行令牌</b>：在 Zero Trust 里编辑该应用，停用所有 Allow 策略，新增 Action 为 Service Auth 的策略并勾选刚创建的令牌。
+            </li>
+            <li>
+              <b>开启严格模式</b>：Access settings → Strict service token authentication。不开的话未授权请求会被 302 到登录页，客户端只拿到 HTML，很难定位问题。
+            </li>
+          </ol>
+          <div class="form-help">
+            填好仍不通：302 到 cloudflareaccess.com 通常是策略还是 Allow 或严格模式未开；403 且令牌正确，通常是策略没勾选这个令牌，或 Access 应用绑定的域名与实际访问的主机不一致。
+          </div>
+        </a-collapse-panel>
+      </a-collapse>
 
       <a-form-item :wrapper-col="{ offset: 4 }">
         <a-button type="primary" :loading="applyLoading" @click="apply()">
@@ -90,3 +118,17 @@ export default defineComponent({
     </a-form>
   </ds-container>
 </template>
+
+<style scoped>
+.cf-guide {
+  margin: 0 0 8px 0;
+}
+.cf-guide-steps {
+  margin: 0 0 8px 0;
+  padding-left: 18px;
+  line-height: 1.8;
+}
+.cf-guide-steps li {
+  margin-bottom: 6px;
+}
+</style>
