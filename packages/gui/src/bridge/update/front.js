@@ -1,7 +1,10 @@
-import { h } from 'vue'
+import { h, reactive } from 'vue'
 
 function install (app, api) {
-  const updateParams = app.config.globalProperties.$global.update = { fromUser: false, autoDownload: false, progress: 0, checking: false, downloading: false, newVersion: false, isFullUpdate: true }
+  // 必须是响应式对象：界面上的「检查更新」按钮直接读 $global.update.checking，
+  // 普通对象的变化不会触发重渲染，会出现「后端 1 秒就检查完，按钮却一直转圈」。
+  const updateParams = reactive({ fromUser: false, autoDownload: false, progress: 0, checking: false, downloading: false, newVersion: false, isFullUpdate: true })
+  app.config.globalProperties.$global.update = updateParams
   api.ipc.on('update', (event, message) => {
     console.log('on message', event, message)
     handleUpdateMessage(message, app)
