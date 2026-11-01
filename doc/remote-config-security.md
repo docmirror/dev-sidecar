@@ -172,13 +172,17 @@ if (!sigObj || !verifyRemoteConfig(Buffer.from(body), sigObj.sig, sigObj.kid)) {
 当前远程配置拉取**不会主动降级到 http**（P0 的 https 强制已落地：http 地址自动改写为 https 并写回用户配置），且**普通网络 MITM 被 TLS 校验拦住**；剩余最大缺口是**全程无任何内容完整性校验**，安全完全依赖「合法证书 + DNS + 公共 CA」。下一步用 P1 的 ed25519 签名校验把「拿到合法证书即可投毒」这条路径堵死。
 
 ## 8. 附：已有的相关风险面（fake SNI + verifyHost）
-远程配置不仅能控制 DNS/重定向，还能通过拦截规则指定 `sni`（握手伪装的 SNI）与 `verifyHost`（证书校验域名）：
+
+远程配置不仅能控制 DNS/重定向，还能通过拦截规则指定 `sni`（握手伪装的 SNI）、`verifyHost`（证书校验域名）与 `unVerifySsl`（关闭校验）：
 - 默认：证书按**真实域名**校验，`sni` 仅用于握手伪装。
-- 当规则显式配置 `verifyHost` 且 ≠ 真实域名时，`checkServerIdentity` 改为按 `verifyHost` 校验（`mitmproxy/.../createRequestHandler.js`）。
-- **风险**：此时证书校验**不再绑定真实目标域名**，任何能拿到 `verifyHost` 合法证书的中间人都能冒充真实域名，削弱防 MITM 保护。该能力对「换 SNI 敲门」类站点（如 huggingface.co 用 huggingface.cn 的 SNI 连、服务器返回 huggingface.cn 证书）是必须的，但绝不可用于无关第三方域名。
-- **已加警告**（2026-10-04）：
-  - `createRequestHandler.js` 在 `verifyHost !== realHost` 时打 `log.warn('[安全风险] ...')`，每命中该规则的请求都会提示。
-  - `sni.js` 的 `applyVerifyHost` JSDoc 增加「配置作者必读」安全提示，说明 MITM 风险与适用边界。
+- 当规则显式配置 `verifyHost` 且 ≠ 真实域名时，`checkServerIdentity` 改为按 `verifyHost` 校验（`mitmproxy/.../tlsVerify.js`）。
+- 只有规则显式配置 `unVerifySsl: true`（或 `ssl: false`）才会换成免校验 agent，由 `unVerifySsl` / `proxy` 拦截器执行。**2026-10 之前**是「只要改写 SNI 就静默免校验」，该隐性行为已移除（见 issue #745）。
+- **风险**：
+  - `verifyHost` 使证书校验**不再绑定真实目标域名**，任何能拿到 `verifyHost` 合法证书的中间人都能冒充真实域名；
+  - `unVerifySsl` 让该域名的传输层身份认证整段失效；
+  - 两者对「换 SNI 敲门」类站点（如 huggingface.co 用 huggingface.cn 的 SNI 连、服务器返回 huggingface.cn 证书）是必须的，但绝不可用于无关第三方域名。
+- **警告**（2026-10 恢复）：`tlsVerify.js` 在 `verifyHost !== realHost` 时打 `log.warn('[安全风险] ...')`，每命中该规则的请求都会提示。
+- **远程配置下发注意**：`sni` 与 `unVerifySsl` 允许叠加执行（`sni`/`unVerifySsl` 都只改 `rOptions`，返回 `undefined` 让链继续）。给已有 `sni` 规则补充 `unVerifySsl: true` 属于扩大免校验面，审阅远程配置时须逐条确认。
 
 ---
 *审计时间：2026-10-04。涉及代码均为 `vendor/ds-core` 子模块（已推送到 `Blue-Frontier/ds-core` `main`）。*
