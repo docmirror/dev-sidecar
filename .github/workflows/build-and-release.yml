@@ -13,6 +13,14 @@ on:
       - "**/.gitignore"
       - "**/LICENSE"
   workflow_dispatch:
+    inputs:
+      signing:
+        description: 'Sign Windows executables with SignPath（disabled = 发布未签名包）'
+        type: choice
+        options:
+          - enabled
+          - disabled
+        default: enabled
 
 permissions:
   contents: write
@@ -34,6 +42,9 @@ jobs:
       SIGNPATH_ORG_ID: ${{ vars.SIGNPATH_ORG_ID }}
       SIGNPATH_PROJECT_SLUG: ${{ vars.SIGNPATH_PROJECT_SLUG }}
       SIGNPATH_POLICY_SLUG: ${{ vars.SIGNPATH_POLICY_SLUG }}
+      # 手动触发时可以选 disabled 跳过签名（SignPath 不可用/未配置时先发未签名包）；
+      # push / tag 触发没有该 input，保持默认签名行为。
+      SIGNING_ENABLED: ${{ github.event_name != 'workflow_dispatch' || inputs.signing != 'disabled' }}
     strategy:
       fail-fast: false
       matrix:
@@ -326,7 +337,7 @@ jobs:
       # region SignPath signing (Windows 安装包；仅官方仓库运行，fork 没有 SIGNPATH_API_TOKEN)
       - name: "Upload Windows exes bundle for SignPath"
         id: signpath-bundle
-        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' && env.SIGNING_ENABLED == 'true' }}
         uses: actions/upload-artifact@v6
         with:
           path: |
@@ -336,25 +347,8 @@ jobs:
           name: "signpath-win-exes"
           if-no-files-found: error
 
-      - name: "Diagnose SignPath connector"
-        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' }}
-        shell: pwsh
-        run: |
-          foreach ($url in @(
-            'https://githubactions.connectors.signpath.io',
-            'https://pipelineconnector.connectors.signpath.io/GitHub/GitHubCom'
-          )) {
-            try {
-              $r = Invoke-WebRequest -Uri $url -Method Post -Body '{}' -ContentType 'application/json' -TimeoutSec 20 -SkipHttpErrorCheck
-              $body = if ($r.Content) { $r.Content.Substring(0, [Math]::Min(300, $r.Content.Length)) } else { '' }
-              Write-Host "$url => status=$($r.StatusCode) bytes=$($r.RawContentLength) body=$body"
-            } catch {
-              Write-Host "$url => error=$($_.Exception.Message)"
-            }
-          }
-
       - name: "Submit signing request to SignPath"
-        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' && env.SIGNING_ENABLED == 'true' }}
         uses: signpath/github-action-submit-signing-request@v2
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
@@ -367,7 +361,7 @@ jobs:
           output-artifact-directory: signed-win-exes
 
       - name: "Re-upload signed DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe"
-        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' && env.SIGNING_ENABLED == 'true' }}
         uses: actions/upload-artifact@v6
         with:
           path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-x86_64.exe
@@ -375,7 +369,7 @@ jobs:
           if-no-files-found: error
           overwrite: true # 覆盖前面上传的未签名版本，使 job 2 发布的是签名后的安装包
       - name: "Re-upload signed DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe"
-        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' && env.SIGNING_ENABLED == 'true' }}
         uses: actions/upload-artifact@v6
         with:
           path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-ia32.exe
@@ -383,7 +377,7 @@ jobs:
           if-no-files-found: error
           overwrite: true
       - name: "Re-upload signed DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe"
-        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' && env.SIGNING_ENABLED == 'true' }}
         uses: actions/upload-artifact@v6
         with:
           path: signed-win-exes/DevSidecar-${{ steps.package-info.outputs.version }}-windows-arm64.exe
