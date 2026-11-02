@@ -136,7 +136,7 @@ function install (app, api) {
   //   return !!(value.partMiniVersion && value.partMiniVersion < info.version)
   // }
 
-  async function downloadNewVersion (value) {
+  async function downloadNewVersion (value, mode) {
     let platform
     try {
       platform = await api.info.getSystemPlatform()
@@ -153,7 +153,8 @@ function install (app, api) {
       goManualUpdate(value)
       return
     }
-    if (value.partPackage) {
+    const preferFull = mode === 'full'
+    if (!preferFull && value.partPackage) {
       // 有增量更新 ZIP，走增量更新流程
       updateParams.downloading = true
       api.update.downloadPart(value)
@@ -179,7 +180,7 @@ function install (app, api) {
     const okText = hasPartPackage ? '自动更新（实验性）' : hasFullPackage ? '自动下载安装包' : '手动下载'
     const okType = hasPartPackage ? 'danger' : hasFullPackage ? 'primary' : 'default'
 
-    app.config.globalProperties.$confirm({
+    const confirmModal = app.config.globalProperties.$confirm({
       title: `发现新版本：v${value.version}`,
       cancelText: '暂不升级',
       okText,
@@ -201,19 +202,40 @@ function install (app, api) {
           )
         }
         if (hasPartPackage) {
+          const downloadFullLink = () => {
+            confirmModal?.destroy()
+            downloadNewVersion(value, 'full').catch((e) => {
+              updateParams.downloading = false
+              app.config.globalProperties.$message.error(`自动下载失败：${(e && e.message) || e}，请手动到 GitHub Releases 下载`)
+            })
+          }
           children.push(
             h('div', { style: { marginTop: '16px', padding: '10px 12px', background: 'rgba(250, 173, 20, 0.12)', border: '1px solid rgba(250, 173, 20, 0.6)', borderRadius: '4px' } }, [
               h('span', { style: { fontWeight: 'bold' } }, '更新方式说明：'),
               h('ul', { style: { marginTop: '6px', paddingLeft: '20px' } }, [
                 h('li', {}, [h('b', {}, '自动更新（实验性）'), ' — 下载增量包自动覆盖，重启即完成。仅 Windows/macOS 支持']),
-                h('li', {}, [h('b', {}, '自动下载安装包'), ' — 下载当前平台/架构对应的完整安装包']),
+                h('li', {}, [
+                  hasFullPackage ? h('a', { onClick: downloadFullLink }, '自动下载安装包') : h('b', {}, '自动下载安装包'),
+                  ' — 下载当前平台/架构对应的完整安装包',
+                ]),
               ]),
             ]),
           )
+          if (hasFullPackage) {
+            children.push(
+              h('div', { style: { marginTop: '8px' } }, [
+                h('a', { onClick: downloadFullLink }, '单独下载完整安装包'),
+                '（下载后手动打开安装）',
+              ]),
+            )
+          }
         }
         if (!hasPartPackage && hasFullPackage) {
           children.push(
-            h('div', { style: { marginTop: '12px', color: '#888' } }, `已自动识别当前平台/架构，将下载安装包：${value.fullPackageName || '对应完整安装包'}，下载完成后自动打开供你安装。`),
+            h('div', { style: { marginTop: '12px', color: '#888' } }, [
+              `已自动识别当前平台/架构，将下载安装包：${value.fullPackageName || '对应完整安装包'}，下载完成后自动打开供你安装。`,
+              h('a', { onClick: openGithubUrl, style: { marginLeft: '8px' } }, '手动下载'),
+            ]),
           )
         }
         if (!hasPartPackage && !hasFullPackage) {
