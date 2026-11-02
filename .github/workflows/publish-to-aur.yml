@@ -82,12 +82,25 @@ jobs:
 
       # ── Push to AUR via git + SSH ─────────────────────────────────────────────
       - name: "Set up SSH key for AUR"
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
         run: |
           install -dm700 ~/.ssh
 
-          # Write the private key
-          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur_id
+          if [ -z "${AUR_SSH_PRIVATE_KEY}" ]; then
+            echo "::error::AUR_SSH_PRIVATE_KEY 未配置，无法推送 AUR"
+            exit 1
+          fi
+
+          # 用 printf 而不是 echo：私钥以 -----BEGIN 开头，且必须保留换行
+          printf '%s\n' "${AUR_SSH_PRIVATE_KEY}" > ~/.ssh/aur_id
           chmod 600 ~/.ssh/aur_id
+
+          # 先校验私钥能被 ssh 解析，避免到 clone 才报 libcrypto 错误
+          if ! ssh-keygen -y -f ~/.ssh/aur_id > /dev/null 2>&1; then
+            echo "::error::AUR_SSH_PRIVATE_KEY 不是有效的私钥（可能被截断、换行丢失或带 passphrase）"
+            exit 1
+          fi
 
           # Trust AUR's host key
           ssh-keyscan -t rsa,ecdsa,ed25519 aur.archlinux.org >> ~/.ssh/known_hosts 2>/dev/null
