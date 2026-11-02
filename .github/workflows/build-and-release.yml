@@ -336,10 +336,28 @@ jobs:
           name: "signpath-win-exes"
           if-no-files-found: error
 
+      - name: "Diagnose SignPath connector"
+        if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' }}
+        shell: pwsh
+        run: |
+          foreach ($url in @(
+            'https://pipelineconnector.connectors.signpath.io/GitHub/GitHubCom',
+            'https://pipelineconnector.connectors.signpath.io/GitHubActions/GitHubCom'
+          )) {
+            try {
+              $r = Invoke-WebRequest -Uri $url -Method Post -Body '{}' -ContentType 'application/json' -TimeoutSec 20 -SkipHttpErrorCheck
+              $body = if ($r.Content) { $r.Content.Substring(0, [Math]::Min(300, $r.Content.Length)) } else { '' }
+              Write-Host "$url => status=$($r.StatusCode) bytes=$($r.RawContentLength) body=$body"
+            } catch {
+              Write-Host "$url => error=$($_.Exception.Message)"
+            }
+          }
+
       - name: "Submit signing request to SignPath"
         if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
         uses: signpath/github-action-submit-signing-request@v3
         with:
+          connector-url: 'https://pipelineconnector.connectors.signpath.io/GitHub/GitHubCom'
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
           organization-id: ${{ env.SIGNPATH_ORG_ID }}
           project-slug: ${{ env.SIGNPATH_PROJECT_SLUG }}
