@@ -341,8 +341,8 @@ jobs:
         shell: pwsh
         run: |
           foreach ($url in @(
-            'https://pipelineconnector.connectors.signpath.io/GitHub/GitHubCom',
-            'https://pipelineconnector.connectors.signpath.io/GitHubActions/GitHubCom'
+            'https://githubactions.connectors.signpath.io',
+            'https://pipelineconnector.connectors.signpath.io/GitHub/GitHubCom'
           )) {
             try {
               $r = Invoke-WebRequest -Uri $url -Method Post -Body '{}' -ContentType 'application/json' -TimeoutSec 20 -SkipHttpErrorCheck
@@ -355,9 +355,8 @@ jobs:
 
       - name: "Submit signing request to SignPath"
         if: ${{ matrix.os == 'windows' && github.repository == 'docmirror/dev-sidecar' && env.SIGNPATH_ORG_ID != '' && env.SIGNPATH_PROJECT_SLUG != '' && env.SIGNPATH_POLICY_SLUG != '' }}
-        uses: signpath/github-action-submit-signing-request@v3
+        uses: signpath/github-action-submit-signing-request@v2
         with:
-          connector-url: 'https://pipelineconnector.connectors.signpath.io/GitHub/GitHubCom'
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
           organization-id: ${{ env.SIGNPATH_ORG_ID }}
           project-slug: ${{ env.SIGNPATH_PROJECT_SLUG }}
