@@ -202,7 +202,7 @@ function install (app, api) {
         }
         if (hasPartPackage) {
           children.push(
-            h('div', { style: { marginTop: '16px', padding: '10px', background: 'var(--warning-bg, #fff7e6)', borderRadius: '4px' } }, [
+            h('div', { style: { marginTop: '16px', padding: '10px 12px', background: 'rgba(250, 173, 20, 0.12)', border: '1px solid rgba(250, 173, 20, 0.6)', borderRadius: '4px' } }, [
               h('span', { style: { fontWeight: 'bold' } }, '更新方式说明：'),
               h('ul', { style: { marginTop: '6px', paddingLeft: '20px' } }, [
                 h('li', {}, [h('b', {}, '自动更新（实验性）'), ' — 下载增量包自动覆盖，重启即完成。仅 Windows/macOS 支持']),
