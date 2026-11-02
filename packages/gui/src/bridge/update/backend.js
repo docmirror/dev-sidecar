@@ -88,6 +88,13 @@ function resolveUpdateProxy () {
   return { url: null, error: '代理未开启，请先在首页开启加速服务后再检查更新' }
 }
 
+// Electron 的 proxyRules 期望 `http=host:port;https=host:port`，直接传
+// `http://host:port` 会被当成无效规则，net.request 回退直连（GitHub 下载因此 60 秒无数据）。
+function toProxyRules (url) {
+  const hostPort = String(url || '').replace(/^https?:\/\//, '').replace(/\/.*$/, '')
+  return `http=${hostPort};https=${hostPort}`
+}
+
 function getPlatformAssetInfo () {
   const arch = process.arch
   let partArch
@@ -215,7 +222,7 @@ function downloadFile (uri, filePath, onProgress, onSuccess, onError) {
     try {
       const ses = session.fromPartition('update-download')
       if (proxy.url) {
-        await ses.setProxy({ proxyRules: proxy.url })
+        await ses.setProxy({ proxyRules: toProxyRules(proxy.url) })
       }
       const req = net.request({ url: uri, session: ses, redirect: 'follow' })
       currentRequest = req
@@ -268,7 +275,7 @@ function fetchReleasesViaNet (proxy, curVersion, url) {
       try {
         const ses = session.fromPartition('update-check')
         if (proxy.url) {
-          await ses.setProxy({ proxyRules: proxy.url })
+          await ses.setProxy({ proxyRules: toProxyRules(proxy.url) })
         }
         const req = net.request({ url, session: ses, redirect: 'follow' })
         abort = () => {
