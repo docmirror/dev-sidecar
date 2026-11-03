@@ -20,6 +20,13 @@ minimumReleaseAgeExclude:
   - electron-to-chromium
   - napi-postinstall
 
+# 统一本地与 CI 的 node_modules 布局：pnpm 12 的隔离布局下，electron-builder
+# 与 pkg/*.cjs 打包钩子看到的依赖树和 CI 不同（未声明的传递依赖在本地解析不到）。
+# 注意 pnpm 12 已不读 .npmrc 里的 node-linker，只认这里的 nodeLinker。
+# 首次切换或 node_modules 里残留 .modules.yaml（hoistedLayout=false）时，
+# 需要执行一次 `pnpm install --node-linker hoisted` 强制重排。
+nodeLinker: hoisted
+
 supportedArchitectures:
   os:
     - current

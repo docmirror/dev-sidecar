@@ -5,15 +5,21 @@ const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
 const isCI = !!process.env.CI
 const localArch = process.arch === 'ia32' ? 'ia32' : process.arch === 'arm64' ? 'arm64' : 'x64'
 
+// 产物目录。默认放在仓库内（dist_electron），但工作区被打了 Low 完整性标签时，
+// 产物（包括 NSIS 卸载器写出器）会继承 Low，Windows 便用 Low 令牌启动它，
+// 而 Low 进程写不了 Medium 的 %TEMP%，打包会在 NSIS 那一步报
+// “Error writing temporary file”。把输出指到工作区外（如 %LOCALAPPDATA%）可绕开。
+const outputDir = process.env.DS_BUILD_OUTPUT || 'dist_electron'
+
 /** @type {import('electron-builder').Configuration} */
 module.exports = {
   appId: 'dev-sidecar',
-  electronVersion: '42.11.16', // 必须与 gui 的 electron devDependency 保持一致；hoisted 布局下 builder 无法从 node_modules 推断版本，故显式钉住
+  electronVersion: '42.11.18', // 与 devDependency 实际解析到的版本一致（^42.11.16 → 42.11.18）；hoisted 布局下 builder 无法从 node_modules 推断版本，故显式钉住
   productName: 'dev-sidecar',
   artifactName: 'DevSidecar-${version}-${arch}.${ext}',
   copyright: 'Copyright © 2020-' + new Date().getFullYear() + ' Greper, WangLiang, CuteOmega',
   directories: {
-    output: 'dist_electron',
+    output: outputDir,
     buildResources: 'build',
   },
   asar: {
@@ -55,6 +61,9 @@ module.exports = {
       to: 'extra',
     },
   ],
+  // 按目标架构裁剪 koffi / @starknt 的非目标平台二进制（files 规则不支持 ${arch} 宏，
+  // 只能在 beforePack 里往 platformSpecificBuildOptions.files 追加排除项）
+  beforePack: './pkg/before-pack.cjs',
   afterPack: './pkg/after-pack.cjs',
   afterAllArtifactBuild: './pkg/after-all-artifact-build.cjs',
   nsis: {

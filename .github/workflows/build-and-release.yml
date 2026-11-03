@@ -153,7 +153,7 @@ jobs:
           ls -lah;
 
           echo "======================================================================";
-          echo "pnpm install --node-linker hoisted (pnpm 12 不认 workspace yaml 的 nodeLinker，用 CLI 参数强制 hoisted 实体布局)";
+          echo "pnpm install --node-linker hoisted（workspace yaml 已设 nodeLinker: hoisted；这里显式传参，防止缓存恢复的 .modules.yaml 把旧布局钉死）";
           echo "--------------------";
           pnpm install --node-linker hoisted;
 

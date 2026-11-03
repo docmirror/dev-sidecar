@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ### Dependency Management
-- Always use `pnpm install` (not `npm install`) from the repository root. The project uses pnpm workspaces with `shamefully-hoist=true`.
+- Always use `pnpm install` (not `npm install`) from the repository root. 项目是 pnpm workspace；`pnpm-workspace.yaml` 设了 `nodeLinker: hoisted`（pnpm 12 已不读 `.npmrc` 的 `node-linker`），本地与 CI 统一用平铺布局。若 `node_modules/.modules.yaml` 还记着旧布局，先执行一次 `pnpm install --node-linker hoisted` 强制重排。
 - If `pnpm install` reports conflicts, update the relevant `package.json` entries to compatible versions and re-run.
 
 ### Linting

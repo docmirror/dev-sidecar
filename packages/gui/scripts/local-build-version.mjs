@@ -18,7 +18,9 @@ export { computeVersion, fingerprint }
 process.exit(await withLocalVersion({
   pkgPath: path.join(GUI_DIR, 'package.json'),
   run: () => runSteps([
-    ['npm', ['run', 'build']],
-    ['npm', ['exec', 'electron-builder', '--', '--config', 'electron-builder.config.cjs']],
+    // 统一走 pnpm：npm 会把 npm_config_user_agent 带进子进程，
+    // 让 electron-builder 误判包管理器（日志里的 resolvedPackageManager=npm）
+    ['pnpm', ['run', 'build']],
+    ['pnpm', ['exec', 'electron-builder', '--config', 'electron-builder.config.cjs']],
   ], GUI_DIR),
 }))

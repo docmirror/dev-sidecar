@@ -1,8 +1,12 @@
 const fs = require('node:fs')
 const path = require('node:path')
 const archiver = require('archiver')
-const { Arch } = require('builder-util')
 const pkg = require('../package.json')
+
+// electron-builder 的 context.arch 是数字枚举；这里自带映射，避免 require('builder-util')
+// ——它不是本仓库的依赖，在 pnpm 12 的严格布局下解析不到，钩子会在打包时直接 MODULE_NOT_FOUND。
+// 顺序必须与 builder-util 的 Arch 枚举一致：ia32=0, x64=1, armv7l=2, arm64=3, universal=4
+const ARCH_NAMES = ['ia32', 'x64', 'armv7l', 'arm64', 'universal']
 
 /**
  * 删除 Electron 自带的语言包，只保留中文和英文
@@ -33,7 +37,8 @@ function pruneLocales (resourcesDir, platform) {
   let removed = 0
   let savedBytes = 0
   for (const file of files) {
-    if (keep.has(file)) continue
+    if (keep.has(file))
+      continue
     const filePath = path.join(localesDir, file)
     const stat = fs.statSync(filePath)
     savedBytes += stat.size
@@ -46,7 +51,8 @@ function pruneLocales (resourcesDir, platform) {
 function writeAppUpdateYmlForLinux (appOutDir) {
   const publishUrl = process.env.VUE_APP_PUBLISH_URL
   const publishProvider = process.env.VUE_APP_PUBLISH_PROVIDER
-  if (!publishUrl || !publishProvider) return
+  if (!publishUrl || !publishProvider)
+    return
   const fileContent = `provider: ${publishProvider}
 url: '${publishUrl}'
 updaterCacheDirName: 'dev-sidecar-gui-updater'
@@ -89,9 +95,9 @@ exports.default = async function (context) {
   }
 
   // 打包 update 用的 ZIP（按架构分离，原生模块架构相关）
-  // context.arch is the numeric Arch enum (ia32=0, x64=1, armv7l=2, arm64=3)
-  // Use Arch[context.arch] to get the string name; use != null to avoid ia32 (0) being falsy
-  const arch = context.arch != null ? Arch[context.arch] : 'x64'
+  // context.arch is the numeric Arch enum: ia32=0, x64=1, armv7l=2, arm64=3, universal=4
+  // 用 != null 判断，避免 ia32(0) 被当成假值
+  const arch = context.arch != null ? ARCH_NAMES[context.arch] || 'x64' : 'x64'
   const partUpdateFile = `update-${platform}-${arch}-${pkg.version}.zip`
   const outputPath = path.join(context.outDir, partUpdateFile)
 

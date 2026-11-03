@@ -178,19 +178,44 @@ export default {
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`
     },
     async handleCaSetuped () {
-      const certPath = this.config?.server?.setting?.rootCaFile?.certPath
-      console.log('certPath:', certPath)
-      if (!certPath) {
-        this.$message.error('证书路径未配置，请先启动代理服务生成 CA 根证书后再试')
-        return
-      }
+      const configuredPath = this.config?.server?.setting?.rootCaFile?.certPath
       // 获取系统平台类型：Linux 用 shell.setupCa 复制证书，
-      // Windows/macOS 用 Electron 主进程 shell.openPath 避免 cmd.exe 权限问题
-      const platform = await this.$api.info.getSystemPlatform()
-      if (platform === 'linux') {
-        await this.$api.shell.setupCa({ certPath })
-      } else {
-        await this.$api.shell.openPath(certPath)
+      // Windows/macOS 用 Electron 主进程 shell.openPath 打开证书文件
+      try {
+        // 证书要等代理启动才生成，这里先补齐，避免第一次使用时根本没有证书可装
+        const ensured = await this.$api.ca.ensureRootCa()
+        if (!ensured || ensured.ok !== true) {
+          const reason = (ensured && ensured.error) || '未知错误'
+          this.$message.error(`准备根证书失败（${reason}）`)
+          return
+        }
+        const certPath = ensured.certPath || configuredPath
+        if (!certPath) {
+          this.$message.error('证书路径未配置，请先启动代理服务生成 CA 根证书后再试')
+          return
+        }
+        if (ensured.created) {
+          this.$message.info('已生成新的根证书，完成安装后浏览器才会信任它')
+        }
+        const platform = await this.$api.info.getSystemPlatform()
+        if (platform === 'linux') {
+          await this.$api.shell.setupCa({ certPath })
+        } else {
+          const opened = await this.$api.shell.openPath(certPath)
+          if (!opened || opened.ok !== true) {
+            // 证书文件打不开（常见于文件还没生成）：改用 certutil 直接装进当前用户根存储
+            const installed = await this.$api.shell.installRootCa({ certPath })
+            if (!installed || installed.ok !== true) {
+              const reason = (installed && installed.error) || (opened && opened.error) || '未知错误'
+              this.$message.error(`根证书安装失败（${reason}）：${certPath}。若文件不存在，请先开启代理服务生成根证书后重试`)
+              return
+            }
+            this.$message.success('根证书已安装到当前用户的证书库')
+          }
+        }
+      } catch (e) {
+        this.$message.error(`安装根证书失败：${(e && e.message) || e}`)
+        return
       }
       this.setting.rootCa = this.setting.rootCa || {}
       const rootCa = this.setting.rootCa

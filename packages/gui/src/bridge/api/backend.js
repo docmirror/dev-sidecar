@@ -17,6 +17,7 @@ import log from '../../utils/util.log.gui.js'
 import dateUtil from '@blue-frontier/dev-sidecar/src/utils/util.date.js'
 import coreConfig from '@blue-frontier/dev-sidecar/src/config/index.js'
 import serviceGroup from '@blue-frontier/dev-sidecar/src/service-group.js'
+import { installRootCa as installRootCaIntoStore, openFile } from './root-ca.js'
 
 const { defaultConfig: coreDefaultConfig } = coreConfig
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -353,12 +354,41 @@ const localApi = {
   },
   shell: {
     /**
-     * 使用 Electron 主进程原生 API 打开文件（避免 cmd.exe start 权限问题）
+     * 使用 Electron 主进程原生 API 打开文件（避免 cmd.exe start 权限问题）。
+     * 返回 { ok, path, error }：openPath 失败时只给一句错误文本，调用方必须据此判断，
+     * 否则界面会在什么都没发生的情况下把证书标成「已安装」。
      */
     openPath (filePath) {
-      return shell.openPath(path.resolve(filePath))
+      const target = path.resolve(filePath)
+      return logOpenResult(openFile(target, p => shell.openPath(p)))
+    },
+    /**
+     * 把根证书装进「当前用户」的根存储（Windows）。
+     * 证书文件打不开时用它兜底，Windows 会弹一次安全警告由用户确认。
+     */
+    installRootCa ({ certPath }) {
+      const target = path.resolve(certPath)
+      return logInstallResult(installRootCaIntoStore(target, { openPath: p => shell.openPath(p) }))
     },
   },
+}
+
+async function logOpenResult (retPromise) {
+  const ret = await retPromise
+  if (!ret.ok) {
+    log.warn('打开文件失败:', ret.path, '-', ret.error)
+  }
+  return ret
+}
+
+async function logInstallResult (retPromise) {
+  const ret = await retPromise
+  if (ret.ok) {
+    log.info('已把根证书安装到当前用户的根存储:', ret.path)
+  } else {
+    log.warn('安装根证书失败:', ret.path, '-', ret.error, ret.detail ? `(${ret.detail.split('\n')[0]})` : '')
+  }
+  return ret
 }
 
 function _deepFindFunction (list, parent, parentKey) {
