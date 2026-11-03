@@ -1,0 +1,49 @@
+name: "Release Notes Check"
+
+# GitHub 没有 release 正文模板机制（issue 模板有，release 没有）。
+# 这里在 Release 发布后校验正文结构，不符合就亮红并给出具体缺哪一节，
+# 发布人据此把正文补成 doc/release-notes-template.md 的格式。
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate release body structure
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          body="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json body --jq .body)"
+
+          fail=0
+          for heading in \
+            "### 一、更新内容：" \
+            "#### 【摘要】" \
+            "### 二、安装前请仔细阅读安装说明" \
+            "### 三、贡献者列表" \
+            "### 四、Full Changelog"
+          do
+            if ! printf '%s' "$body" | grep -qF -- "$heading"; then
+              echo "::error::Release $TAG 缺少标题：$heading（格式见 doc/release-notes-template.md）"
+              fail=1
+            fi
+          done
+
+          if ! printf '%s' "$body" | grep -qE 'compare/v[0-9]+\.[0-9]+\.[0-9]+\.\.\.v'; then
+            echo "::error::Release $TAG 的 Full Changelog 链接未替换成本次版本区间"
+            fail=1
+          fi
+
+          if printf '%s' "$body" | grep -qE '（[^）]*(待补|TBD|TODO)[^）]*）'; then
+            echo "::error::Release $TAG 正文里还留着占位内容"
+            fail=1
+          fi
+
+          exit $fail
