@@ -157,14 +157,10 @@ jobs:
           pnpm install --node-linker hoisted;
 
       - name: "test packages/core"
-        run: |
-          cd packages/core;
-          pnpm run test;
+        run: pnpm --filter @blue-frontier/dev-sidecar test
 
       - name: "test packages/mitmproxy"
-        run: |
-          cd packages/mitmproxy;
-          pnpm run test;
+        run: pnpm --filter @blue-frontier/mitmproxy test
 
       - name: "Cache Flatpak runtime (Linux)"
         if: ${{ matrix.os == 'ubuntu' }}
