@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="160" viewBox="0 0 1200 160" role="img" aria-label="Android will become a locked-down platform in 2027 — keepandroidopen.org">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d32f2f"/>
+      <stop offset="1" stop-color="#b71c1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="160" fill="url(#bg)"/>
+  <rect y="156" width="1200" height="4" fill="#801313"/>
+  <g text-anchor="middle" font-family="'Arial Black','Arial',sans-serif" font-weight="900">
+    <text x="600" y="70" font-size="33" letter-spacing="1.2" fill="#ffffff">ANDROID WILL BECOME A LOCKED-DOWN PLATFORM</text>
+    <text x="600" y="116" font-size="28" letter-spacing="1.2" fill="#ffd9d9">IN 2027 &#183; keepandroidopen.org</text>
+  </g>
+</svg>
